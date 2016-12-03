@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login
 
-from .forms import LoginForm
+from .forms import LoginForm, RegisterForm, UserCreationForm
 # Create your views here.
 
 
@@ -29,3 +29,22 @@ def login(request):
     form = LoginForm
     context['form'] = form
     return render(request, 'userAuth/login.html', context)
+
+
+def register(request):
+    context = {
+        'error_message': [],
+    }
+    print('start')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            print('was valid')
+            return HttpResponseRedirect(reverse('homePage:index'))
+        else:
+            context['error_message'].append('Unable to create user')
+            print(form.errors)
+    form = RegisterForm()
+    context['form'] = form
+    return render(request, 'userAuth/register.html', context)
