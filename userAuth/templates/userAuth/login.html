@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!-- Login Styling -->
+    <link href="{% static "userAuth/signin.css" %}" rel="stylesheet">
+    <!-- Bootstrap style sheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+
+    <form class="form-signin form-horizontal" action="{% url 'userAuth:login' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {% if error_message %}
+                <div class="row">
+                    <div style="color:red">
+                        <p><strong>
+                            {% for error in error_message %}
+                                {{ error }}
+                            {% endfor %}
+                        </strong></p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <h2 class="form-signin-heading">Please sign in</h2>
+        </div>
+        <div class="form-group">
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+        <div class="form-group">
+            {{ form.password }}
+            {{ form.password.errors }}
+            <div class="checkbox">
+                <label>
+                    {{ form.remember }} Remember Me
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
