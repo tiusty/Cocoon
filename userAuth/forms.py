@@ -3,12 +3,19 @@ from django.contrib.auth.models import User
 from django import forms
 
 
+####################################################
+# Notes: The username is set as the current email address
+#
+#
+####################################################
+
 # If you don't do this you cannot use Bootstrap CSS
 class LoginForm(AuthenticationForm):
-    username = forms.CharField(
-        label="Username",
+    username = forms.EmailField(
+        required=True,
+        label="Email",
         max_length=30,
-        widget=forms.TextInput(
+        widget=forms.EmailInput(
             attrs={
                 'class': 'form-control',
                 'name': 'username',
@@ -16,6 +23,7 @@ class LoginForm(AuthenticationForm):
             }),
     )
     password = forms.CharField(
+        required=False,
         label="Password", max_length=30,
         widget=forms.TextInput(
             attrs={
@@ -33,16 +41,6 @@ class LoginForm(AuthenticationForm):
 
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(
-        label="Usernames",
-        max_length=30,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'name': 'username',
-                'placeholder': 'Username',
-            }),
-    )
     password1 = forms.CharField(
         label="Password",
         strip=False,
@@ -66,11 +64,38 @@ class RegisterForm(UserCreationForm):
         help_text="Enter the same password as before, for verification.",
     )
 
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(label="First name")
-    last_name = forms.CharField(label="Last name")
+    email = forms.EmailField(
+        required=True,
+        label="Email",
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Email',
+            }
+        )
+    )
+    first_name = forms.CharField(
+        required=True,
+        label="First name",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'first name',
+            }
+        )
+    )
+    last_name = forms.CharField(
+        required=True,
+        label="Last name",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'last name',
+            }
+        )
+    )
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'password1','password2', 'email']
+        fields = ['first_name', 'last_name', 'email', 'password1','password2']
 

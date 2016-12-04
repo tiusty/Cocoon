@@ -26,7 +26,7 @@ def login(request):
                 return HttpResponseRedirect(reverse('homePage:index'))
             else:
                 # return invalid user
-                context['error_message'].append('Unable to login, try again')
+                context['error_message'].append('Unable to login in with Email/Password combo')
         else:
             context['error_message'].append('Unable to login in, refill out the form')
     context['form'] = form
@@ -42,6 +42,8 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
+            # The email address is used as the username
+            form.username = form.email
             form.save()
             print('was valid')
             return HttpResponseRedirect(reverse('homePage:index'))
