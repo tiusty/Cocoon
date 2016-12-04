@@ -22,6 +22,7 @@ class LoginForm(AuthenticationForm):
                 'class': 'form-control',
                 'name': 'password',
                 'placeholder': 'Password',
+                'type': 'password',
             }),
     )
     remember = forms.ChoiceField(

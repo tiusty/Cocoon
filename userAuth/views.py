@@ -12,26 +12,29 @@ def index(request):
 
 
 def login(request):
+    form = LoginForm()
     context = {
         'error_message': [],
     }
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            # redirect to success page
-            return HttpResponseRedirect(reverse('homePage:index'))
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.username, password=form.password)
+            if user is not None:
+                login(request, user)
+                # redirect to success page
+                return HttpResponseRedirect(reverse('homePage:index'))
+            else:
+                # return invalid user
+                context['error_message'].append('Unable to login, try again')
         else:
-            # return invalid user
-            context['error_message'].append('Unable to login, try again')
-    form = LoginForm
+            context['error_message'].append('Unable to login in, refill out the form')
     context['form'] = form
     return render(request, 'userAuth/login.html', context)
 
 
 def register(request):
+    form = RegisterForm()
     context = {
         'error_message': [],
     }
@@ -44,7 +47,5 @@ def register(request):
             return HttpResponseRedirect(reverse('homePage:index'))
         else:
             context['error_message'].append('Unable to create user')
-            print(form.errors)
-    form = RegisterForm()
     context['form'] = form
     return render(request, 'userAuth/register.html', context)
