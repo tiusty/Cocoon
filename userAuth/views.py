@@ -38,7 +38,6 @@ def register(request):
     context = {
         'error_message': [],
     }
-    print('start')
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():

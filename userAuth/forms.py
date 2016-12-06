@@ -23,7 +23,7 @@ class LoginForm(AuthenticationForm):
             }),
     )
     password = forms.CharField(
-        required=False,
+        required=True,
         label="Password", max_length=30,
         widget=forms.TextInput(
             attrs={

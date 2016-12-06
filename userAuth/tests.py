@@ -17,13 +17,13 @@ class RegisterFormTest(TestCase):
         form = RegisterForm(data=form_data)
         self.assertTrue(form.is_valid())
 
-    def test_form_different_passwords(self):
+
+class LoginFormTest(TestCase):
+    def test_form_correct_input_with_remember(self):
         form_data = {
-            'first_name': 'Alex',
-            'last_name': 'Agudelo',
-            'email': 'email@test.com',
-            'password1': 'sometestPassword',
-            'password2': 'sometestPasswordDifferent',
+            'username': 'email@text.com',
+            'password': 'somePassword',
+            'remember': 'True',
         }
-        form = RegisterForm(data=form_data)
-        self.assertFalse(form.is_valid)
+        form = LoginForm(data=form_data)
+        self.assertTrue(form.is_valid)
