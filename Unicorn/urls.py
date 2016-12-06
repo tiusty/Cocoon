@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^polls/', include('polls.urls')),
     url(r'^homePage/', include('homePage.urls')),
     url(r'^userAuth/', include('userAuth.urls')),
+    url(r'^survey/', include('survey.urls')),
 ]

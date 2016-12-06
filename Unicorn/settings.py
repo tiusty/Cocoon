@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'polls',
     'homePage',
     'userAuth',
+    'survey',
 ]
 
 MIDDLEWARE = [
