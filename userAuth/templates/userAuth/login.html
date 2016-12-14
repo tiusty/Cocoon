@@ -13,7 +13,7 @@
 <body>
 <div class="container">
 
-    <form class="form-signin form-horizontal" action="{% url 'userAuth:login' %}" method="post">
+    <form class="form-signin form-horizontal" action="{% url 'userAuth:loginPage' %}" method='POST'>
         {% csrf_token %}
         <div class="form-group">
             {% if error_message %}
@@ -45,11 +45,11 @@
             </div>
         </div>
         <div class="form-group">
-            <button class="btn btn-lg btn-primary btn-block" value="Login" type="submit">Sign in</button>
+            <button class="btn btn-lg btn-primary btn-block" value="login" type="submit">Sign in</button>
         </div>
     </form>
     <p style="text-align:center">
-	    <a href="{% url 'userAuth:register' %}">Register New User</a>
+	    <a href="{% url 'userAuth:registerPage' %}">Register New User</a>
 	</p>
 </div>
 </body>

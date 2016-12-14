@@ -15,7 +15,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-offset-3 col-sm-6">
-            <form action="{% url 'userAuth:register' %}" method="post" class="form-register form-horizontal">
+            <form action="{% url 'userAuth:registerPage' %}" method="post" class="form-register form-horizontal">
                 <div class="form-group">
                     <h2 class="form-register-heading">Create an Account!</h2>
                 </div>
@@ -41,7 +41,7 @@
         </div>
     </div>
     <p style="text-align:center">
-        <a href="{% url 'userAuth:login' %}">Return to Login Page</a>
+        <a href="{% url 'userAuth:loginPage' %}">Return to Login Page</a>
     </p>
 </div>
 

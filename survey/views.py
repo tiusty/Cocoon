@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .forms import HomePageForm
+from .forms import InitialSurvey
 
 # Create your views here.
 
@@ -9,7 +9,7 @@ def index(request):
 
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = HomePageForm(request.POST)
+        form = InitialSurvey(request.POST)
         # check whether it is valid
         if form.is_valid():
             # process the data in form.cleaned_data as required
@@ -17,7 +17,7 @@ def index(request):
             # redirect to new URL:
             return HttpResponseRedirect('/thanks')
     else:
-        form = HomePageForm()
+        form = InitialSurvey()
 
     return render(request, 'survey/index.html', {'form': form})
 

@@ -2,7 +2,7 @@ from django.test import TestCase
 
 # Create your tests here.
 
-from userAuth.forms import RegisterForm,LoginForm
+from userAuth.forms import RegisterForm,LoginUserForm
 
 
 class RegisterFormTest(TestCase):
@@ -25,5 +25,5 @@ class LoginFormTest(TestCase):
             'password': 'somePassword',
             'remember': 'True',
         }
-        form = LoginForm(data=form_data)
+        form = LoginUserForm(data=form_data)
         self.assertTrue(form.is_valid)

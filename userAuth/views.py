@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login
 
-from .forms import LoginForm, RegisterForm, UserCreationForm
+from .forms import LoginUserForm, RegisterForm
 # Create your views here.
 
 
@@ -11,15 +11,18 @@ def index(request):
     return HttpResponseRedirect(reverse('userAuth:login'))
 
 
-def login(request):
-    form = LoginForm()
+def loginPage(request):
+    form = LoginUserForm()
     context = {
         'error_message': [],
     }
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = LoginUserForm(request, request.POST)
+        print("here")
+        print(form.is_bound)
         if form.is_valid():
-            user = authenticate(username=form.username, password=form.password)
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            print(user)
             if user is not None:
                 login(request, user)
                 # redirect to success page
@@ -33,7 +36,7 @@ def login(request):
     return render(request, 'userAuth/login.html', context)
 
 
-def register(request):
+def registerPage(request):
     form = RegisterForm()
     context = {
         'error_message': [],
@@ -41,8 +44,8 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
+            print(form)
             # The email address is used as the username
-            form.username = form.email
             form.save()
             print('was valid')
             return HttpResponseRedirect(reverse('homePage:index'))

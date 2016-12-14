@@ -10,12 +10,11 @@ from django import forms
 ####################################################
 
 # If you don't do this you cannot use Bootstrap CSS
-class LoginForm(AuthenticationForm):
-    username = forms.EmailField(
-        required=True,
-        label="Email",
+class LoginUserForm(AuthenticationForm):
+    username = forms.CharField(
+        label="Username",
         max_length=30,
-        widget=forms.EmailInput(
+        widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
                 'name': 'username',
@@ -23,8 +22,8 @@ class LoginForm(AuthenticationForm):
             }),
     )
     password = forms.CharField(
-        required=True,
-        label="Password", max_length=30,
+        label="Password",
+        max_length=30,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -33,14 +32,25 @@ class LoginForm(AuthenticationForm):
                 'type': 'password',
             }),
     )
-    remember = forms.ChoiceField(
-        label="Remember",
-        widget=forms.CheckboxInput(),
-        required=False,
-    )
+    # remember = forms.ChoiceField(
+    #     label="Remember",
+    #     widget=forms.CheckboxInput(),
+    #     required=False,
+    # )
 
 
 class RegisterForm(UserCreationForm):
+    username = forms.CharField(
+        required=True,
+        label="Username",
+        max_length=30,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'name': 'username',
+                'placeholder': 'Username',
+            }),
+    )
     password1 = forms.CharField(
         label="Password",
         strip=False,
@@ -97,5 +107,5 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'password1','password2']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
 

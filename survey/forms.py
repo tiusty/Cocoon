@@ -1,7 +1,7 @@
 from django import forms
 
 
-class HomePageForm(forms.Form):
+class InitialSurvey(forms.Form):
     SURVEY_TYPES = [
         ('rent', 'Rent'),
         ('buy', 'Buy'),

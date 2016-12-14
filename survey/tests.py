@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from survey.forms import HomePageForm
+from survey.forms import InitialSurvey
 
 # Create your tests here.
 
@@ -14,7 +14,7 @@ class HomePageFormTest(TestCase):
             'state': 'MA',
             'zip_code': '02476-8019',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         self.assertTrue(form.is_valid())
 
     def test_forms_empty_survey_type_field(self):
@@ -24,7 +24,7 @@ class HomePageFormTest(TestCase):
             'state': 'MA',
             'zip_code': '02476-8019',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         self.assertFalse(form.is_valid())
 
     def test_forms_empty_streetAddress_field(self):
@@ -34,7 +34,7 @@ class HomePageFormTest(TestCase):
             'state': 'MA',
             'zip_code': '02476-8019',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         self.assertFalse(form.is_valid())
 
     def test_forms_empty_city_field(self):
@@ -44,7 +44,7 @@ class HomePageFormTest(TestCase):
             'state': 'MA',
             'zip_code': '02476-8019',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         self.assertFalse(form.is_valid())
 
     def test_forms_empty_state_field(self):
@@ -54,7 +54,7 @@ class HomePageFormTest(TestCase):
             'city': 'Arlington',
             'zip_code': '02476-8019',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         self.assertFalse(form.is_valid())
 
     def test_forms_empty_zip_code_field(self):
@@ -64,7 +64,7 @@ class HomePageFormTest(TestCase):
             'city': 'Arlington',
             'state': 'MA',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         self.assertFalse(form.is_valid())
 
     def test_forms_radio_select_buy(self):
@@ -75,7 +75,7 @@ class HomePageFormTest(TestCase):
             'state': 'MA',
             'zip_code': '02476-8019',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         form.is_valid()
         self.assertEqual(form.cleaned_data['survey_type'], 'buy')
 
@@ -87,6 +87,6 @@ class HomePageFormTest(TestCase):
             'state': 'MA',
             'zip_code': '02476-8019',
         }
-        form = HomePageForm(data=form_data)
+        form = InitialSurvey(data=form_data)
         form.is_valid()
         self.assertEquals(form.cleaned_data['survey_type'], 'rent')
