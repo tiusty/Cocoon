@@ -1,25 +1,52 @@
 from django.contrib import admin
-
-from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
+from userAuth.forms import LoginUserForm, RegisterForm
+from .models import MyUser
+from django.contrib.auth.models import Group
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import UserProfile
 
 
-class ProfileInline(admin.StackedInline):
-    model = UserProfile
-    can_delete = False
-    verbose_name_plural = 'Profile'
-    fk_name = 'user'
+class UserAdmin(BaseUserAdmin):
+    # Form to add a user
+    add_form = RegisterForm
+    readonly_fields = ("joined",)
+    # The fields to be used in displaying the User model:
+    # These override the definitions on the base UserAdmin
+    # that reference specific fields on auth.User
+    list_display = ('email', 'joined', 'first_name', 'last_name', 'is_admin',)
+    list_filter = ('is_admin',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name',)}),
+        ('Joined', {'fields': ('joined',)}),
+        ('Permissions', {'fields': ('is_active', 'is_admin',)}),
+    )
+    # add_fields sets is not a standard ModelAdmin Attribute. UserAdmin
+    # overrides get_fieldsset to use this attirbute when creating a user.
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'joined', 'first_name', 'last_name', 'password')}
+        ),
+    )
+    search_fields = ('email',)
+    ordering = ('email',)
+    filter_horizontal =()
+# class ProfileInline(admin.StackedInline):
+#     model = UserProfile
+#     can_delete = False
+#     verbose_name_plural = 'Profile'
+#     fk_name = 'user'
 
 
-class CustomUserAdmin(UserAdmin):
-    inlines = (ProfileInline, )
+# class CustomUserAdmin(UserAdmin):
+#     inlines = (ProfileInline, )
+#
+#     def get_inline_instances(self, request, obj=None):
+#         if not obj:
+#             return list()
+#         return super(CustomUserAdmin, self).get_inline_instances(request, obj)
 
-    def get_inline_instances(self, request, obj=None):
-        if not obj:
-            return list()
-        return super(CustomUserAdmin, self).get_inline_instances(request, obj)
-
-
-admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
+admin.site.register(MyUser, UserAdmin)
+admin.site.unregister(Group)

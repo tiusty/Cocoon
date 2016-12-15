@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.models import User
+from .models import MyUser
 from django import forms
 
 
@@ -11,7 +11,7 @@ from django import forms
 
 # If you don't do this you cannot use Bootstrap CSS
 class LoginUserForm(AuthenticationForm):
-    username = forms.CharField(
+    username = forms.EmailField(
         label="Username",
         max_length=30,
         widget=forms.TextInput(
@@ -33,16 +33,16 @@ class LoginUserForm(AuthenticationForm):
             }),
     )
     # remember = forms.ChoiceField(
-    #     label="Remember",
-    #     widget=forms.CheckboxInput(),
-    #     required=False,
+    #      label="Remember",
+    #      widget=forms.CheckboxInput(),
+    #      required=False,
     # )
 
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(
+    email = forms.EmailField(
         required=True,
-        label="Username",
+        label="Email Address",
         max_length=30,
         widget=forms.TextInput(
             attrs={
@@ -74,16 +74,6 @@ class RegisterForm(UserCreationForm):
         help_text="Enter the same password as before, for verification.",
     )
 
-    email = forms.EmailField(
-        required=True,
-        label="Email",
-        widget=forms.EmailInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Email',
-            }
-        )
-    )
     first_name = forms.CharField(
         required=True,
         label="First name",
@@ -106,6 +96,9 @@ class RegisterForm(UserCreationForm):
     )
 
     class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        model = MyUser
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
+
+
+
 

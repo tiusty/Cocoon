@@ -8,7 +8,7 @@ from .forms import LoginUserForm, RegisterForm
 
 
 def index(request):
-    return HttpResponseRedirect(reverse('userAuth:login'))
+    return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
 
 def loginPage(request):
@@ -18,10 +18,9 @@ def loginPage(request):
     }
     if request.method == 'POST':
         form = LoginUserForm(request, request.POST)
-        print("here")
-        print(form.is_bound)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            print("In valid")
+            user = authenticate(email=form.cleaned_data['username'], password=form.cleaned_data['password'])
             print(user)
             if user is not None:
                 login(request, user)
@@ -32,6 +31,7 @@ def loginPage(request):
                 context['error_message'].append('Unable to login in with Email/Password combo')
         else:
             context['error_message'].append('Unable to login in, refill out the form')
+    print(form.errors)
     context['form'] = form
     return render(request, 'userAuth/login.html', context)
 
