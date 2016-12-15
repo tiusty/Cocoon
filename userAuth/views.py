@@ -19,9 +19,7 @@ def loginPage(request):
     if request.method == 'POST':
         form = LoginUserForm(request, request.POST)
         if form.is_valid():
-            print("In valid")
-            user = authenticate(email=form.cleaned_data['username'], password=form.cleaned_data['password'])
-            print(user)
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)
                 # redirect to success page

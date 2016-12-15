@@ -11,13 +11,10 @@ class EmailAuthBackend(object):
     def authenticate(self, username=None, password=None):
         """
         Authentication method
-        :param email:
-        :param password:
-        :return:
         """
-        print("hey")
         try:
             user = MyUser.objects.get(email=username)
+            print(user)
             if user.check_password(password):
                 return user
         except MyUser.DoesNotExist:
