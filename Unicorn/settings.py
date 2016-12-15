@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'polls',
     'homePage',
+    'userAuth',
+    'survey',
 ]
 
 MIDDLEWARE = [
@@ -101,6 +103,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'userAuth.MyUser'
+AUTHENTICATION_BACKENDS = ['userAuth.backends.EmailAuthBackend',]
 
 
 # Internationalization
