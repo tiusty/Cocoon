@@ -97,31 +97,7 @@
                     {% csrf_token %}
                     <div class="col-sm-offset-3 col-sm-6">
                         <div class="form-group">
-                            {% for radio in form.survey_type %}
-                                {{ radio }}
-                            {% endfor %}
-                        </div>
-                        <div class="form-group">
-                            <div class="streetAddressDiv">
-                                {{ form.streetAddress.errors }}
-                                {{ form.streetAddress.label_tag }}
-                                {{ form.streetAddress }}
-                            </div>
-                            <div class="cityDiv">
-                                {{ form.city.errors }}
-                                {{ form.city.label_tag }}
-                                {{ form.city }}
-                            </div>
-                            <div class="stateDiv">
-                                {{ form.state.errors }}
-                                {{ form.state.label_tag }}
-                                {{ form.state }}
-                            </div>
-                            <div class="zipCodeDiv">
-                                {{ form.zip_code.errors }}
-                                {{ form.zip_code.label_tag }}
-                                {{ form.zip_code }}
-                            </div>
+                            {{ form.as_p }}
                         </div>
                         <div class="form-group">
                             <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>

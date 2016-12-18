@@ -1,16 +1,8 @@
 from django import forms
+from survey.models import RentingSurveyModel
 
 
 class InitialSurvey(forms.Form):
-    SURVEY_TYPES = [
-        ('rent', 'Rent'),
-        ('buy', 'Buy'),
-    ]
-    survey_type = forms.ChoiceField(
-        choices=SURVEY_TYPES,
-        widget=forms.RadioSelect()
-    )
-
     streetAddress = forms.CharField(
         label="Destination",
         widget=forms.TextInput(
@@ -48,3 +40,21 @@ class InitialSurvey(forms.Form):
             }),
         max_length=200,
     )
+
+
+class RentSurvey(InitialSurvey):
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the Zip Code',
+            }),
+        max_length=200,
+    )
+
+    class Meta:
+        model = RentingSurveyModel
+
+
+class BuySurvey(InitialSurvey):
+    name = forms.CharField(max_length=200)
