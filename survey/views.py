@@ -6,21 +6,21 @@ from .forms import RentSurvey, BuySurvey
 # Create your views here.
 
 
-def index(request):
-    form = RentSurvey()
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = RentSurvey(request.POST)
-        # check whether it is valid
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to new URL:
-            return HttpResponseRedirect('/thanks')
-    else:
-        form = RentSurvey()
-
-    return render(request, 'survey/index.html', {'form': form})
+# def index(request):
+#     form = RentSurvey()
+#     if request.method == 'POST':
+#         # create a form instance and populate it with data from the request:
+#         form = RentSurvey(request.POST)
+#         # check whether it is valid
+#         if form.is_valid():
+#             # process the data in form.cleaned_data as required
+#             # ...
+#             # redirect to new URL:
+#             return HttpResponseRedirect('/thanks')
+#     else:
+#         form = RentSurvey()
+#
+#     return render(request, 'survey/index.html', {'form': form})
 
 
 def renting_survey(request):
@@ -39,7 +39,8 @@ def renting_survey(request):
             # ...
             # redirect to new URL:
             return HttpResponseRedirect('/thanks')
-    return render(request, 'survey/index.html', {'form': form})
+    print(form)
+    return render(request, 'survey/rentingSurvey.html', {'form': form})
 
 
 def buying_survey(request):

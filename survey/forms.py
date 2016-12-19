@@ -1,8 +1,9 @@
 from django import forms
 from survey.models import RentingSurveyModel
+from django.forms import ModelForm
 
 
-class InitialSurvey(forms.Form):
+class InitialSurvey(ModelForm):
     streetAddress = forms.CharField(
         label="Destination",
         widget=forms.TextInput(
@@ -54,6 +55,7 @@ class RentSurvey(InitialSurvey):
 
     class Meta:
         model = RentingSurveyModel
+        fields = ['name', 'streetAddress', 'city', 'state', 'zip_code']
 
 
 class BuySurvey(InitialSurvey):

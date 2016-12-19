@@ -3,7 +3,7 @@ from userAuth.models import UserProfile
 from enum import Enum
 # Create your models here.
 
-survey_types = Enum('survey_type','rent buy')
+survey_types = Enum('survey_type', 'rent buy')
 
 
 class InitialSurveyModel(models.Model):
