@@ -44,18 +44,10 @@ class InitialSurvey(ModelForm):
 
 
 class RentSurvey(InitialSurvey):
-    name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the Zip Code',
-            }),
-        max_length=200,
-    )
-
     class Meta:
         model = RentingSurveyModel
-        fields = ['name', 'streetAddress', 'city', 'state', 'zip_code']
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = ['streetAddress', 'city', 'state', 'zip_code', 'home_type', 'amountMaxCommuteHigh', 'amountMaxCommuteLow']
 
 
 class BuySurvey(InitialSurvey):

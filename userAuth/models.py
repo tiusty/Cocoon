@@ -86,9 +86,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 # Defines the Manager for the custom User model
 
 
-
-
-
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
     test = models.CharField(max_length=200)
