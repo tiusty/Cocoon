@@ -47,7 +47,8 @@ class RentSurvey(InitialSurvey):
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ['streetAddress', 'city', 'state', 'zip_code', 'home_type', 'amountMaxCommuteHigh', 'amountMaxCommuteLow']
+        fields = ['streetAddress', 'city', 'state', 'zip_code', 'home_type', 'amountMaxCommuteHigh',
+                  'amountMaxCommuteLow']
 
 
 class BuySurvey(InitialSurvey):

@@ -11,10 +11,9 @@ class ChoiceInline(admin.TabularInline):
 class RentingSurveyModelAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['name']}),
-        ('Date information', {'fields': ['home_type'], 'classes': ['collapse']}),
     ]
     inlines = [ChoiceInline]
-    list_display = ('name',)
+    list_display = ('get_short_name', )
     list_filter = ['name']
     search_fields = ['name']
 

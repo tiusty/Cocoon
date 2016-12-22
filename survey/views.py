@@ -37,6 +37,7 @@ def renting_survey(request):
         form = RentSurvey(request.POST)
         # check whether it is valid
         if form.is_valid():
+            print(form)
             # process the data in form.cleaned_data as required
             rentingSurvey = form.save(commit=False)
             currProf = UserProfile.objects.get(user=request.user)
@@ -51,11 +52,13 @@ def renting_survey(request):
                 except:
                     print("No surveys to delete")
                 rentingSurvey.save()
+                # Since commit =False in the save, need to save the many to many fields
+                # After saving the form
+                form.save_m2m()
                 # redirect to new URL:
                 return HttpResponseRedirect('/thanks')
             except currProf.DoesNotExist:
                 context['error_message'].append("Could not retrieve the User Profile")
-    print(form)
     return render(request, 'survey/rentingSurvey.html', {'form': form})
 
 

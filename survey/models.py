@@ -42,8 +42,17 @@ class RentingSurveyModel(InitialSurveyModel):
     amountMaxCommuteHigh = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeType)
 
+    def get_short_name(self):
+        nameProf = self.userProf.user.get_short_name()
+        nameSurvey = self.name
+        output = nameProf + ": " + nameSurvey
+        return output
+
     def __str__(self):
-        return self.name
+        nameProf = self.userProf.user.get_short_name()
+        nameSurvey = self.name
+        output = nameProf + ": "+ nameSurvey
+        return output
 
 
 
