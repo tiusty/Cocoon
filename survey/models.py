@@ -4,13 +4,13 @@ from enum import Enum
 from django.core.validators import validate_comma_separated_integer_list
 # Create your models here.
 
-survey_types = Enum('survey_type', 'rent buy')
+survey_types = Enum('survey_types', 'rent buy')
 
 # Stores the type of home
 
 
 class InitialSurveyModel(models.Model):
-    user = models.ForeignKey(UserProfile)
+    userProf = models.ForeignKey(UserProfile)
     survey_type = models.IntegerField(default=-1)
     streetAddress = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
@@ -33,12 +33,17 @@ class HomeType(models.Model):
     def __str__(self):
         return self.homeType
 
-
+# Default name for rent survey that is used for the last survey created
+# Every user gets a history of one survey
+default_rent_survey_name = "recent_rent_survey"
 class RentingSurveyModel(InitialSurveyModel):
-    name = models.CharField(max_length=200, default="recent_survey")
+    name = models.CharField(max_length=200, default=default_rent_survey_name)
     amountMaxCommuteLow = models.IntegerField(default=0)
     amountMaxCommuteHigh = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeType)
+
+    def __str__(self):
+        return self.name
 
 
 

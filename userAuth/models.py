@@ -88,8 +88,9 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
-    test = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.user.get_short_name()
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

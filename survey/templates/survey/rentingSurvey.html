@@ -68,7 +68,7 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="active"><a href="./">Default <span class="sr-only">(current)</span></a></li>
-                    <li><a href="../navbar-static-top/">Static top</a></li>
+                    <li><a href="{% url 'userAuth:loginPage' %}">Login</a></a></li>
                     <li><a href="../navbar-fixed-top/">Fixed top</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
@@ -80,7 +80,7 @@
         <h1>Find your Perfect Home!</h1>
         <p>Please fill out the survey below to find your unicorn :)</p>
         <p>
-            <a class="btn btn-lg btn-success" href="#" role="button">Log In</a>
+            <a class="btn btn-lg btn-success" href="{% url 'userAuth:loginPage' %}" role="button">Log In</a>
         </p>
     </div>
     <div class="row">
