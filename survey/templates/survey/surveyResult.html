@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Survey Results</title>
+    <!-- JQuery CDN -->
+    <script
+            src="https://code.jquery.com/jquery-2.2.4.js"
+            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+            crossorigin="anonymous"></script>
+    <!-- Bootstrap style sheet -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Style sheets for template page -->
+
+    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Project Unicorn</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Something else here</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">Nav header</li>
+                        <li><a href="#">Separated link</a></li>
+                        <li><a href="#">One more separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="./">Default <span class="sr-only">(current)</span></a></li>
+                <li><a href="{% url 'userAuth:loginPage' %}">Login</a></a></li>
+                <li><a href="../navbar-fixed-top/">Fixed top</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div><!--/.container-fluid -->
+</nav>
+<div class="container-fluid">
+    <div class="row" id="row-main">
+        <div class="col-sm-3 sidebar collapsedSide" id="sidebarSurvey">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+                <li><a href="{% url 'homePage:index' %}">Back To Form</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-12 main" id="contentSurvey">
+            <button type="button" class="nav navbar-left toggle-sidebar" id="sidebarToggleBut">
+                <span class="glyphicon glyphicon-align-justify"></span>
+            </button>
+            <h1 class="page-header">Your Personal Results</h1>
+            <div id="map"></div>
+            <h2 class="sub-header">Home List</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Destination Entered</th>
+                        <th>Zip Code entered</th>
+                        <th>Origin</th>
+                        <th>Destination</th>
+                        <th>Time to Destination</th>
+                        <th>Distance between locations</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{.streetAddress}}</td>
+                        <td>{{.zip}}</td>
+                        <td id="distanceMatrixOrigin"></td>
+                        <td id="distanceMatrixDestination"></td>
+                        <td id="distanceMatrixTimeToDestination"></td>
+                        <td id="distanceMatrixDistanceToDestination"></td>
+                    </tr>
+                    <tr>
+                        <td>{{.amountMaxCommuteHigh}}</td>
+                        <td>{{.typeHome}}</td>
+                        <td>{{.numRooms}}</td>
+                        <td>{{.numBathroom}}</td>
+                        <td>{{.costReturnLow}}</td>
+                        <td>{{.amountSizeHigh}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{.airConditioning}}</td>
+                        <td>{{.parkingSpot}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<!-- Loading scripts at the end to increase loading times -->
+<script src="{% static 'survey/survey_result.js' %}"></script>
+<script src="{% static 'survey/addMarkers.js' %}"></script>
+<script src="{% static 'survey/googleMapsDistanceMatrix.js' %}"></script>
+<script src="{% static 'survey/addGoogleMap.js' %}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
+</html>

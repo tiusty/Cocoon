@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from .forms import RentSurvey, BuySurvey
 from userAuth.models import UserProfile
 from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name
@@ -27,7 +28,7 @@ from survey.models import survey_types, RentingSurveyModel, default_rent_survey_
 
 def renting_survey(request):
     # Try to set it so if the user is not logged in then it doesn't ask for a name,
-    # Or if  no name is provided then it saves it as a temperary survey
+    # Or if  no name is provided then it saves it as a temporary survey
     form = RentSurvey()
     context = {
         'error_message': [],
@@ -37,7 +38,6 @@ def renting_survey(request):
         form = RentSurvey(request.POST)
         # check whether it is valid
         if form.is_valid():
-            print(form)
             # process the data in form.cleaned_data as required
             rentingSurvey = form.save(commit=False)
             currProf = UserProfile.objects.get(user=request.user)
@@ -49,14 +49,14 @@ def renting_survey(request):
                 # Then delete it
                 try:
                     currRecentSur = RentingSurveyModel.objects.filter(userProf=currProf).filter(name=default_rent_survey_name).delete()
-                except:
+                except RentingSurveyModel.DoesNotExist:
                     print("No surveys to delete")
                 rentingSurvey.save()
                 # Since commit =False in the save, need to save the many to many fields
                 # After saving the form
                 form.save_m2m()
                 # redirect to new URL:
-                return HttpResponseRedirect('/thanks')
+                return HttpResponseRedirect(reverse('survey:survey_result'))
             except currProf.DoesNotExist:
                 context['error_message'].append("Could not retrieve the User Profile")
     return render(request, 'survey/rentingSurvey.html', {'form': form})
@@ -65,3 +65,7 @@ def renting_survey(request):
 def buying_survey(request):
     form = BuySurvey()
     return render(request, 'survey/buy.html', {'form':form})
+
+
+def survey_result(request):
+    return render(request, 'survey/surveyResult.html')
