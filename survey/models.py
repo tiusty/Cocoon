@@ -1,6 +1,7 @@
 from django.db import models
 from userAuth.models import UserProfile
 from enum import Enum
+from django.utils import timezone
 from django.core.validators import validate_comma_separated_integer_list
 # Create your models here.
 
@@ -16,6 +17,7 @@ class InitialSurveyModel(models.Model):
     city = models.CharField(max_length=200)
     state = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
+    created = models.DateField(auto_now_add=True)
 
 
 class HomeType(models.Model):
