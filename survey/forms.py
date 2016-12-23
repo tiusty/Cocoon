@@ -1,5 +1,5 @@
 from django import forms
-from survey.models import RentingSurveyModel
+from survey.models import RentingSurveyModel, BuyingSurveyModel
 from django.forms import ModelForm
 
 
@@ -52,4 +52,6 @@ class RentSurvey(InitialSurvey):
 
 
 class BuySurvey(InitialSurvey):
-    name = forms.CharField(max_length=200)
+    class Meta:
+        model = BuyingSurveyModel
+        fields = ['streetAddress', 'city', 'state', 'zip_code']

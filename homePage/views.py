@@ -15,7 +15,7 @@ def index(request):
             if survey_type == "rent":
                 return HttpResponseRedirect(reverse('survey:rentingSurvey'))
             elif survey_type == "buy":
-                return HttpResponseRedirect('/thanks/')
+                return HttpResponseRedirect(reverse('survey:buyingSurvey'))
             else:
                 context['error_message'].append("Could not parse radio type")
         else:

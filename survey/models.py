@@ -54,6 +54,11 @@ class RentingSurveyModel(InitialSurveyModel):
         output = nameProf + ": "+ nameSurvey
         return output
 
+# Default name for buying survey
+default_buy_survey_name = "recent_buy_survey"
+class BuyingSurveyModel(InitialSurveyModel):
+    name = models.CharField(max_length=200, default=default_buy_survey_name)
+
 
 
 
