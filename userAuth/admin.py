@@ -32,12 +32,14 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = ('email',)
     ordering = ('email',)
-    filter_horizontal =()
-# class ProfileInline(admin.StackedInline):
-#     model = UserProfile
-#     can_delete = False
-#     verbose_name_plural = 'Profile'
-#     fk_name = 'user'
+    filter_horizontal = ()
+
+
+class ProfileInline(admin.StackedInline):
+     model = UserProfile
+     can_delete = False
+     verbose_name_plural = 'Profile'
+     fk_name = 'user'
 
 
 # class CustomUserAdmin(UserAdmin):
@@ -49,4 +51,5 @@ class UserAdmin(BaseUserAdmin):
 #         return super(CustomUserAdmin, self).get_inline_instances(request, obj)
 
 admin.site.register(MyUser, UserAdmin)
+#admin.site.register(UserProfile, ProfileInline)
 admin.site.unregister(Group)

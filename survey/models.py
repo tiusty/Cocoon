@@ -7,11 +7,11 @@ from django.core.validators import validate_comma_separated_integer_list
 
 survey_types = Enum('survey_types', 'rent buy')
 
+
+
+
 # Stores the type of home
-
-
 class InitialSurveyModel(models.Model):
-    userProf = models.ForeignKey(UserProfile)
     survey_type = models.IntegerField(default=-1)
     streetAddress = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
@@ -39,6 +39,7 @@ class HomeType(models.Model):
 # Every user gets a history of one survey
 default_rent_survey_name = "recent_rent_survey"
 class RentingSurveyModel(InitialSurveyModel):
+    userProf = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=200, default=default_rent_survey_name)
     amountMaxCommuteLow = models.IntegerField(default=0)
     amountMaxCommuteHigh = models.IntegerField(default=0)
