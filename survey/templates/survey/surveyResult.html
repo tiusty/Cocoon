@@ -67,6 +67,17 @@
             </ul>
         </div>
         <div class="col-sm-12 main" id="contentSurvey">
+            {% if error_message %}
+                <div class="row" style="text-align:center">
+                    <div style="color:red">
+                        <p><strong>
+                            {% for error in error_message %}
+                                {{ error }}
+                            {% endfor %}
+                        </strong></p>
+                    </div>
+                </div>
+            {% endif %}
             <button type="button" class="nav navbar-left toggle-sidebar" id="sidebarToggleBut">
                 <span class="glyphicon glyphicon-align-justify"></span>
             </button>
@@ -87,9 +98,9 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td>{{.streetAddress}}</td>
-                        <td>{{.zip}}</td>
-                        <td id="distanceMatrixOrigin"></td>
+                        <td>{{ survey.home_type }}</td>
+                        <td>{{ survey.zip_code }}</td>
+                        <td id="distanceMatrixOrigin"> {{ survey }}</td>
                         <td id="distanceMatrixDestination"></td>
                         <td id="distanceMatrixTimeToDestination"></td>
                         <td id="distanceMatrixDistanceToDestination"></td>
@@ -105,6 +116,9 @@
                     <tr>
                         <td>{{.airConditioning}}</td>
                         <td>{{.parkingSpot}}</td>
+                        {% for type in survey.home_type.all %}
+                            <td>{{ type }}<br/></td>
+                        {% endfor %}
                     </tr>
                     </tbody>
                 </table>
@@ -114,6 +128,11 @@
 </div>
 
 </body>
+<!-- Variables for google map generating with markers -->
+<script>
+var myStreetAddress = "{{ survey.streetAddress }}, {{ survey.city }}, {{ survey.state }}, {{ survey.zip_code }}";
+var myDestination = "Boston, MA";
+</script>
 <!-- Loading scripts at the end to increase loading times -->
 <script src="{% static 'survey/survey_result.js' %}"></script>
 <script src="{% static 'survey/addMarkers.js' %}"></script>

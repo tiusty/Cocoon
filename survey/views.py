@@ -56,7 +56,7 @@ def renting_survey(request):
                 # After saving the form
                 form.save_m2m()
                 # redirect to new URL:
-                return HttpResponseRedirect(reverse('survey:survey_result'))
+                return HttpResponseRedirect(reverse('survey:surveyResult',kwargs={'survey_type':"rent"}))
             except currProf.DoesNotExist:
                 context['error_message'].append("Could not retrieve the User Profile")
     return render(request, 'survey/rentingSurvey.html', {'form': form})
@@ -67,5 +67,19 @@ def buying_survey(request):
     return render(request, 'survey/buy.html', {'form':form})
 
 
-def survey_result(request):
-    return render(request, 'survey/surveyResult.html')
+def survey_result(request, survey_type):
+    context = {
+        'error_message': [],
+    }
+    if survey_type == "rent":
+        try:
+            currProf = UserProfile.objects.get(user=request.user)
+            try:
+                survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name="recent_rent_survey")
+            except survey.DoesNotExist:
+                context['error_message'].append("Could not retrieve rent survey")
+        except currProf.DoesNotExist:
+            context['error_message'].append("Could not find User Profile")
+    print(survey.home_type)
+    context['survey'] = survey
+    return render(request, 'survey/surveyResult.html', context)
