@@ -29,7 +29,6 @@ def loginPage(request):
                 context['error_message'].append('Unable to login in with Email/Password combo')
         else:
             context['error_message'].append('Unable to login in, refill out the form')
-    print(form.errors)
     context['form'] = form
     return render(request, 'userAuth/login.html', context)
 
