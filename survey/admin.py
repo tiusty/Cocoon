@@ -16,7 +16,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
     fieldsets = (
         (None, {'fields': ('name', 'userProf')}),
-        ('Survey', {'fields': ('home_type', 'amountMaxCommuteLow', 'amountMaxCommuteHigh',)}),
+        ('Survey', {'fields': ('home_type', 'minPrice', 'maxPrice',)}),
         ('Info', {'fields': ('streetAddress', 'city', 'state', 'zip_code',)}),
         ('Created', {'fields': ('created',)}),
     )

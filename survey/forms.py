@@ -44,11 +44,27 @@ class InitialSurvey(ModelForm):
 
 
 class RentSurvey(InitialSurvey):
+    minPrice = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the Zip Code',
+            }),
+    )
+
+    maxPrice = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the Zip Code',
+            }),
+    )
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ['streetAddress', 'city', 'state', 'zip_code', 'home_type', 'amountMaxCommuteHigh',
-                  'amountMaxCommuteLow']
+        fields = ['streetAddress', 'city', 'state', 'zip_code', 'home_type', 'maxPrice',
+                  'minPrice']
 
 
 class BuySurvey(InitialSurvey):

@@ -62,6 +62,5 @@ def survey_result(request, survey_type):
                 context['error_message'].append("Could not retrieve rent survey")
         except currProf.DoesNotExist:
             context['error_message'].append("Could not find User Profile")
-    print(survey.home_type)
     context['survey'] = survey
     return render(request, 'survey/surveyResult.html', context)
