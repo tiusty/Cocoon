@@ -99,6 +99,9 @@
                     {% csrf_token %}
                     <div class="col-sm-offset-3 col-sm-6">
                         <div class="form-group">
+                            {{ formDest.as_p }}
+                        </div>
+                        <div class="form-group">
                             {{ form.as_p }}
                         </div>
                         <div class="form-group">

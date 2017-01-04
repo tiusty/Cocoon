@@ -102,7 +102,7 @@
                         <td id="distanceMatrixOrigin"> {{ survey }}</td>
                         <td id="distanceMatrixDestination"></td>
                         <td id="distanceMatrixTimeToDestination"></td>
-                        <td id="distanceMatrixDistanceToDestination"></td>
+                        <td id="distanceMatrixDistanceToDestination"> {% for location in locations %} {{ location.full_address }} {% endfor %}</td>
                     </tr>
                     <tr>
                         <td>{{.amountMaxCommuteHigh}}</td>
