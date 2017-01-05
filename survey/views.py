@@ -4,7 +4,7 @@ from django.urls import reverse
 from .forms import RentSurvey, BuySurvey, DestinationForm
 from userAuth.models import UserProfile
 from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name
-
+from houseDatabase.models import RentDatabase
 
 # Create your views here.
 
@@ -68,7 +68,8 @@ def buying_survey(request):
     form = BuySurvey()
     return render(request, 'survey/buyingSurvey.html', {'form':form})
 
-
+# Switch it so when no survey is specified it just grabs the recent survey, otherwise it grabs
+# the survey that is specified
 def survey_result(request, survey_type):
     context = {
         'error_message': [],
@@ -78,6 +79,7 @@ def survey_result(request, survey_type):
             currProf = UserProfile.objects.get(user=request.user)
             try:
                 survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name="recent_rent_survey")
+                housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))
                 locations = survey.rentingdesintations_set.all()
             except survey.DoesNotExist:
                 context['error_message'].append("Could not retrieve rent survey")
@@ -85,4 +87,6 @@ def survey_result(request, survey_type):
             context['error_message'].append("Could not find User Profile")
     context['survey'] = survey
     context['locations'] = locations
+    print(housingList)
+    context['houseList'] = housingList
     return render(request, 'survey/surveyResult.html', context)

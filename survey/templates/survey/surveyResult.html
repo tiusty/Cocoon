@@ -87,36 +87,38 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>Destination Entered</th>
-                        <th>Zip Code entered</th>
-                        <th>Origin</th>
-                        <th>Destination</th>
-                        <th>Time to Destination</th>
-                        <th>Distance between locations</th>
+                        <th>House Address</th>
+                        <th>Price</th>
+                        <th>Home Type</th>
                     </tr>
                     </thead>
                     <tbody>
+                    {% for house in houseList %}
+                        <tr>
+                            <td> {{ house.address }}</td>
+                            <td> {{ house.price }}</td>
+                            <td> {{ house.home_type }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr><td></td><td></td><td></td></tr>
                     <tr>
+                        <td>Survey Info</td>
+                        <td>Home Type</td>
+                        <td>Survey Result</td>
+                    </tr>
+                    <tr>
+                        <td></td>
                         <td>{{ survey.home_type }}</td>
-                        <td>{{ survey.zip_code }}</td>
-                        <td id="distanceMatrixOrigin"> {{ survey }}</td>
-                        <td id="distanceMatrixDestination"></td>
-                        <td id="distanceMatrixTimeToDestination"></td>
-                        <td id="distanceMatrixDistanceToDestination"> {% for location in locations %} {{ location.full_address }} {% endfor %}</td>
+                        <td> {{ survey }}</td>
                     </tr>
                     <tr>
-                        <td>{{.amountMaxCommuteHigh}}</td>
-                        <td>{{.typeHome}}</td>
-                        <td>{{.numRooms}}</td>
-                        <td>{{.numBathroom}}</td>
-                        <td>{{.costReturnLow}}</td>
-                        <td>{{.amountSizeHigh}}</td>
-                    </tr>
-                    <tr>
-                        <td>{{.airConditioning}}</td>
-                        <td>{{.parkingSpot}}</td>
                         {% for type in survey.home_type.all %}
                             <td>{{ type }}<br/></td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        {% for location in locations %}
+                            <td>{{ location.full_address }}</td>
                         {% endfor %}
                     </tr>
                     </tbody>
@@ -129,7 +131,7 @@
 </body>
 <!-- Variables for google map generating with markers -->
 <script>
-var myStreetAddress = "{{ survey.streetAddress }}, {{ survey.city }}, {{ survey.state }}, {{ survey.zip_code }}";
+var myStreetAddress = "{{ locations.first.full_address }}";
 var myDestination = "Boston, MA";
 </script>
 <!-- Loading scripts at the end to increase loading times -->
