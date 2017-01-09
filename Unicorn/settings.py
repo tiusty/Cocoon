@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'homePage',
     'userAuth',
     'survey',
+    'houseDatabase',
 ]
 
 MIDDLEWARE = [

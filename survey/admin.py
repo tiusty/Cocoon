@@ -1,5 +1,5 @@
 from django.contrib import admin
-from survey.models import RentingSurveyModel
+from survey.models import RentingSurveyModel, RentingDesintations
 
 # Register your models here.
 
@@ -16,13 +16,15 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline]
     fieldsets = (
         (None, {'fields': ('name', 'userProf')}),
-        ('Survey', {'fields': ('home_type', 'amountMaxCommuteLow', 'amountMaxCommuteHigh',)}),
-        ('Info', {'fields': ('streetAddress', 'city', 'state', 'zip_code',)}),
+        ('Survey', {'fields': ('home_type', 'minPrice', 'maxPrice',)}),
         ('Created', {'fields': ('created',)}),
     )
     list_display = ('name', 'userProf','get_short_name', )
     list_filter = ['userProf']
     search_fields = ('name',)
+
+class AddressInLine(admin.StackedInline):
+    model = RentingDesintations
 
 
 admin.site.register(RentingSurveyModel, RentingSurveyModelAdmin)

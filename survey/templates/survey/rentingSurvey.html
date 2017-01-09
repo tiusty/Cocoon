@@ -1,9 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Unicorn</title>
-
+    <!-- JQuery UI style sheet, mostly used for slider ui -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- JQuery CDN -->
     <script
             src="https://code.jquery.com/jquery-2.2.4.js"
@@ -97,7 +99,16 @@
                     {% csrf_token %}
                     <div class="col-sm-offset-3 col-sm-6">
                         <div class="form-group">
+                            {{ formDest.as_p }}
+                        </div>
+                        <div class="form-group">
                             {{ form.as_p }}
+                        </div>
+                        <div class="form-group">
+                            <label for="amountCost">Cost:</label>
+                            <input type="text" id="amountCost" name="amountCost" readonly
+                                   style="border:0; color:#f6931f; font-weight:bold;">
+                            <div id="cost"></div>
                         </div>
                         <div class="form-group">
                             <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
@@ -111,6 +122,8 @@
 
 </div> <!-- /container -->
 
+<!-- Javascripts -->
+<script src="{% static 'survey/costSlider.js' %}"></script>
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
@@ -119,5 +132,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
+<!-- JQuery UI for sliders -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </body>
 </html>
