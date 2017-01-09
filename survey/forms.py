@@ -70,7 +70,39 @@ class RentSurvey(ModelForm):
         fields = ['home_type', 'maxPrice', 'minPrice']
 
 
+class RentSurveyMini(ModelForm):
+    minPrice = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the Zip Code',
+            }),
+    )
+
+    maxPrice = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the Zip Code',
+            }),
+    )
+    name = forms.CharField(
+        label="Survey Name",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the name of the survey',
+            }),
+        max_length=200,
+    )
+
+    class Meta:
+        model = RentingSurveyModel
+        fields = ['maxPrice', 'minPrice', 'name']
+
+
 class BuySurvey(ModelForm):
     class Meta:
         model = BuyingSurveyModel
         fields = ['maxPrice',]
+
