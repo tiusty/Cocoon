@@ -41,10 +41,8 @@ def registerPage(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            print(form)
             # The email address is used as the username
             form.save()
-            print('was valid')
             return HttpResponseRedirect(reverse('homePage:index'))
         else:
             context['error_message'].append('Unable to create user')

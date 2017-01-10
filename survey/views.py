@@ -52,11 +52,11 @@ def renting_survey(request):
                         destinations = formDest.save(commit=False)
                         destinations.survey = survey
                         destinations.save()
-                    except survey.DoesNotExist:
+                    except RentingSurveyModel.DoesNotExist:
                         raise "Could not retrieve object to attach destinations"
                     # redirect to new URL:
                     return HttpResponseRedirect(reverse('survey:surveyResult',kwargs={'survey_type':"rent"}))
-                except currProf.DoesNotExist:
+                except UserProfile.DoesNotExist:
                     context['error_message'].append("Could not retrieve the User Profile")
         else:
             if not form.is_valid():
@@ -72,35 +72,61 @@ def buying_survey(request):
 
 # Switch it so when no survey is specified it just grabs the recent survey, otherwise it grabs
 # the survey that is specified
+
+
+##### Things that need to be worked on
+# Think of a better way of figuring out which survey is needed.
+# One way is to hvae a function default to the deafult survey name if no survey is specified in the url
+# if something is specified in the URL then it loads that survey if that id matches an id of that user
+# This fucntion fails if the survey doesn't have the default name survey, aka if someone changes the name of the most
+#most recent survey. What should happen is if someone tries to change the name of the most recent survey then instead,
+# createa new model with the same data so there is always a recent survey
 def survey_result(request, survey_type):
     context = {
         'error_message': [],
     }
     form = RentSurveyMini()
     if request.method == 'POST':
-        context['error_message'].append("Form was posted")
+        try:
+            currProf = UserProfile.objects.get(user=request.user)
+            try:
+                # Need to handle case
+                survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name=default_rent_survey_name)
+                form = RentSurveyMini(request.POST, instance=survey)
+                if form.is_valid():
+                    if form.cleaned_data['name'] != default_rent_survey_name:
+                        form.instance
+                    form.save()
+                else:
+                    context['error_message'].append("The survey was POSTed incorrectly")
+            except RentingSurveyModel.DoesNotExist:
+                context['error_message'].append("Survey does not exist")
+        except UserProfile.DoesNotExist:
+            context['error_message'].append("User profile doesn't exist")
         # Now add saving the form data to the survey. Make sure to filter by user so someone could not save data
         # to another user
         # Then once the survey is saved, do a redirect to the survey to redisplay new results
-    else:
-        if survey_type == "rent":
+
+    if survey_type == "rent":
+        try:
+            currProf = UserProfile.objects.get(user=request.user)
             try:
-                currProf = UserProfile.objects.get(user=request.user)
-                try:
-                    survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name="recent_rent_survey")
-                    homeTypes = []
-                    for home in survey.home_type.all():
-                        homeTypes.append(home.homeType)
-                    housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))\
-                        .filter(home_type__in=homeTypes)
-                    locations = survey.rentingdesintations_set.all()
-                except survey.DoesNotExist:
-                    context['error_message'].append("Could not retrieve rent survey")
-            except currProf.DoesNotExist:
-                context['error_message'].append("Could not find User Profile")
-        context['survey'] = survey
-        context['locations'] = locations
-        print(housingList)
-        context['houseList'] = housingList
-        context['form'] = form
+                survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name="recent_rent_survey")
+                homeTypes = []
+                for home in survey.home_type.all():
+                    homeTypes.append(home.homeType)
+                housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))\
+                    .filter(home_type__in=homeTypes)
+                locations = survey.rentingdesintations_set.all()
+                print(locations)
+                context['survey'] = survey
+                context['locations'] = locations
+                print(housingList)
+                context['houseList'] = housingList
+            except RentingSurveyModel.DoesNotExist:
+                context['error_message'].append("Could not retrieve rent survey")
+        except UserProfile.DoesNotExist:
+            context['error_message'].append("Could not find User Profile")
+
+    context['form'] = form
     return render(request, 'survey/surveyResult.html', context)
