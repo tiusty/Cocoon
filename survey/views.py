@@ -118,10 +118,8 @@ def survey_result(request, survey_type):
                 housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))\
                     .filter(home_type__in=homeTypes)
                 locations = survey.rentingdesintations_set.all()
-                print(locations)
                 context['survey'] = survey
                 context['locations'] = locations
-                print(housingList)
                 context['houseList'] = housingList
             except RentingSurveyModel.DoesNotExist:
                 context['error_message'].append("Could not retrieve rent survey")
