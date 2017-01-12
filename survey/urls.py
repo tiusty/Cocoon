@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^rent/$', views.renting_survey, name="rentingSurvey"),
     url(r'^buy/$', views.buying_survey, name="buyingSurvey"),
     url(r'^result/(?P<survey_type>(rent|buy))/$', views.survey_result, name="surveyResult"),
+    url(r'^result/(?P<survey_type>(rent|buy))/(?P<survey_id>[0-9]+)/$', views.survey_result, name="surveyResult"),
 ]

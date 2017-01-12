@@ -23,3 +23,6 @@ def index(request):
 
     context['form'] = form
     return render(request, 'homePage/index.html', context)
+
+def contactPage(request):
+    return render(request, 'homePage/contactPage.html')

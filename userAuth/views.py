@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from .forms import LoginUserForm, RegisterForm
 # Create your views here.
@@ -48,3 +48,8 @@ def registerPage(request):
             context['error_message'].append('Unable to create user')
     context['form'] = form
     return render(request, 'userAuth/register.html', context)
+
+
+def logoutPage(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('userAuth:loginPage'))
