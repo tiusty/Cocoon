@@ -31,7 +31,7 @@ def renting_survey(request):
                 # process the data in form.cleaned_data as required
                 rentingSurvey = form.save(commit=False)
                 currProf = UserProfile.objects.get(user=request.user)
-                # Need to retrieve the current userProfile to link the survye to
+                # Need to retrieve the current userProfile to link the survey to
                 try:
                     rentingSurvey.userProf = currProf
                     rentingSurvey.survey_type = survey_types.rent.value

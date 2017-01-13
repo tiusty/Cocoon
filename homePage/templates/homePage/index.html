@@ -28,8 +28,24 @@
               <nav>
                 <ul class="nav masthead-nav">
                   <li class="active"><a href="#">Home</a></li>
-                  <li><a href="{% url 'userAuth:loginPage' %}">Login</a></li>
                   <li><a href="{% url 'homePage:contactPage' %}">Contact</a></li>
+                    {% if user.is_authenticated %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
+                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">Surveys</li>
+                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
+                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'userAuth:loginPage' %}">Login</a></li>
+                    {% endif %}
                 </ul>
               </nav>
             </div>
@@ -57,12 +73,9 @@
                       <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
                   </p>
               </form>
-
           </div>
         </div>
-
       </div>
-
     </div>
 
 <!-- Bootstrap core JavaScript

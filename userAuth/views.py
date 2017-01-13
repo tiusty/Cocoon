@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
+from userAuth.models import UserProfile
 
 from .forms import LoginUserForm, RegisterForm
 # Create your views here.
@@ -53,3 +54,24 @@ def registerPage(request):
 def logoutPage(request):
     logout(request)
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
+
+
+def ProfilePage(request, defaultPage="profile"):
+    context = {
+        'error_message': [],
+    }
+    if request.user.is_authenticated():
+        userProfile = UserProfile.objects.get(user=request.user)
+        context['userProfile'] = userProfile
+        if defaultPage == "profile":
+            context['defaultProfile'] = 0
+        elif defaultPage == "rentSurvey":
+            context['defaultProfile'] = 1
+        elif defaultPage == "buySurvey":
+            context['defaultProfile'] = 2
+        else:
+            context['defaultProfile'] = 0
+
+    else:
+        return HttpResponseRedirect(reverse('userAuth:loginPage'))
+    return render(request, 'userAuth/profilePage.html', context)

@@ -63,11 +63,11 @@
                                aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
-                                <li><a href="#">User Profile</a></li>
+                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header">Surveys</li>
-                                <li><a href="#">Renting Survey</a></li>
-                                <li><a href="#">Buying Surveys</a></li>
+                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
+                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
                             </ul>
                         </li>
                     {% else %}
