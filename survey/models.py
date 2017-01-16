@@ -29,7 +29,7 @@ class HomeType(models.Model):
 
 # Default name for rent survey that is used for the last survey created
 # Every user gets a history of one survey
-default_rent_survey_name = "recent_rent_survey"
+default_rent_survey_name = "Recent Rent Survey"
 class RentingSurveyModel(InitialSurveyModel):
     userProf = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=200, default=default_rent_survey_name)
@@ -46,7 +46,7 @@ class RentingSurveyModel(InitialSurveyModel):
     def __str__(self):
         nameProf = self.userProf.user.get_short_name()
         nameSurvey = self.name
-        output = nameProf + ": "+ nameSurvey
+        output = nameProf + ": " + nameSurvey
         return output
 
 

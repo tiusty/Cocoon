@@ -5,8 +5,6 @@ from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 from userAuth.models import UserProfile
 from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name
 from houseDatabase.models import RentDatabase
-from django.db.models import Q
-
 
 # Create your views here.
 def renting_survey(request):
@@ -132,20 +130,23 @@ def buying_survey(request):
 #     return render(request, 'survey/surveyResult.html', context)
 
 # This is different because the survey id is passed as a variable
-def survey_result(request, survey_type, survey_id):
+def survey_result(request, survey_type, survey_id="recent"):
     context = {
         'error_message': [],
     }
     form = RentSurveyMini()
+    # If the mini form was posted, then save the results before reloading the page
     if request.method == 'POST':
         try:
             currProf = UserProfile.objects.get(user=request.user)
             try:
                 # Need to handle case
-                survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name=default_rent_survey_name)
+                survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=survey_id)
                 form = RentSurveyMini(request.POST, instance=survey)
                 if form.is_valid():
                     form.save()
+                    return HttpResponseRedirect(reverse('survey:surveyResult',
+                                                        kwargs={'survey_type': "rent", "survey_id": survey.id}))
                 else:
                     context['error_message'].append("The survey was POSTed incorrectly")
             except RentingSurveyModel.DoesNotExist:
@@ -156,11 +157,15 @@ def survey_result(request, survey_type, survey_id):
         # to another user
         # Then once the survey is saved, do a redirect to the survey to redisplay new results
 
+    #
     if survey_type == "rent":
         try:
             currProf = UserProfile.objects.get(user=request.user)
             try:
-                survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=survey_id)
+                if survey_id == "recent":
+                    survey = RentingSurveyModel.objects.filter(userProf=currProf).order_by('-created').first()
+                else:
+                    survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=survey_id)
                 homeTypes = []
                 for home in survey.home_type.all():
                     homeTypes.append(home.homeType)
@@ -176,6 +181,10 @@ def survey_result(request, survey_type, survey_id):
                 return HttpResponseRedirect(reverse('survey:rentingSurvey'))
         except UserProfile.DoesNotExist:
             context['error_message'].append("Could not find User Profile")
+
+    # fill form with data from database
+    form = RentSurveyMini(instance=survey)
+
 
     context['form'] = form
     return render(request, 'survey/surveyResult.html', context)
