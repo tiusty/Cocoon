@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from userAuth.models import UserProfile
+from survey.models import RentingSurveyModel
 
 from .forms import LoginUserForm, RegisterForm
 # Create your views here.
@@ -74,4 +75,7 @@ def ProfilePage(request, defaultPage="profile"):
 
     else:
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
+
+    surveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:25]
+    context['surveys'] = surveys
     return render(request, 'userAuth/profilePage.html', context)
