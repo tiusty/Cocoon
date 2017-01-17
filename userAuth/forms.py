@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import MyUser
+from .models import MyUser, UserProfile
 from django import forms
 
 
@@ -100,5 +100,37 @@ class RegisterForm(UserCreationForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
 
-
-
+class ProfileForm(forms.ModelForm):
+    email = forms.EmailField(
+        disabled=True,
+        label="Email Address",
+        max_length=30,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'name': 'username',
+            }),
+    )
+    first_name = forms.CharField(
+        required=True,
+        label="First name",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'first name',
+            }
+        )
+    )
+    last_name = forms.CharField(
+        required=True,
+        label="Last name",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'last name',
+            }
+        )
+    )
+    class Meta:
+        model = MyUser
+        fields = ['email', 'first_name', 'last_name']

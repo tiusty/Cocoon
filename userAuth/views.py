@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from userAuth.models import UserProfile
 from survey.models import RentingSurveyModel
 
-from .forms import LoginUserForm, RegisterForm
+from .forms import LoginUserForm, RegisterForm, ProfileForm
 # Create your views here.
 
 
@@ -61,6 +61,7 @@ def ProfilePage(request, defaultPage="profile"):
     context = {
         'error_message': [],
     }
+
     if request.user.is_authenticated():
         userProfile = UserProfile.objects.get(user=request.user)
         context['userProfile'] = userProfile
@@ -76,6 +77,10 @@ def ProfilePage(request, defaultPage="profile"):
     else:
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
-    surveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:25]
-    context['surveys'] = surveys
+    rentSurveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:50]
+    context['numRentSurveys'] = rentSurveys.count()
+    context['numBuySurveys'] = 0
+    context['surveys'] = rentSurveys
+    form = ProfileForm(instance=userProfile.user)
+    context['form'] = form
     return render(request, 'userAuth/profilePage.html', context)

@@ -61,7 +61,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         # The user is identified by their email address
-        return self.email
+        return self.first_name + " " + self.last_name
 
     def get_short_name(self):
         # The user is identified by their email address
@@ -88,6 +88,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
+
     def __str__(self):
         return self.user.get_short_name()
 
