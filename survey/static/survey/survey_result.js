@@ -12,3 +12,12 @@ $(document).ready(function () {
         return false;
     });
 });
+function selectAddress(currNum) {
+    var currAddress = "address" + currNum;
+    var address = document.getElementById(currAddress).innerHTML;;;;;;;;;;;;;;;
+    myDestination = address;
+    console.log(address);
+
+}
+
+

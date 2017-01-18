@@ -24,7 +24,6 @@ service.getDistanceMatrix(
 
 		for(var i=0; i < origins.length; i++)
 			var results = response.rows[i].elements;
-			console.log(results);
 			for(var j=0; j < results.length; j++) {
 				var element = results[j];
 				var distance = element.distance.text;
@@ -32,10 +31,10 @@ service.getDistanceMatrix(
 				var from = origins[i];
 				var to = destinations[j];
 
-				document.getElementById('distanceMatrixOrigin').innerHTML = origins;
-				document.getElementById("distanceMatrixDestination").innerHTML = destinations;
-				document.getElementById("distanceMatrixTimeToDestination").innerHTML = duration;
-				document.getElementById("distanceMatrixDistanceToDestination").innerHTML = distance;
+				//document.getElementById('distanceMatrixOrigin').innerHTML = origins;
+				//document.getElementById("distanceMatrixDestination").innerHTML = destinations;
+				//document.getElementById("distanceMatrixTimeToDestination").innerHTML = duration;
+				//document.getElementById("distanceMatrixDistanceToDestination").innerHTML = distance;
 			}
 		}
 	});

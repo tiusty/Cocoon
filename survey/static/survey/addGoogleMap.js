@@ -10,5 +10,8 @@ function initMap() {
 	distanceMatrix();
 	var geocoder = new google.maps.Geocoder();
 	addMarkers(geocoder, map, myStreetAddress);
-	addMarkers(geocoder, map, myDestination);
+	for(i=0;i<myDestinations.length; i++)
+	{
+        addMarkers(geocoder, map, myDestinations[i]);
+    }
 }

@@ -107,6 +107,7 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
+                        <th>Select</th>
                         <th>House Address</th>
                         <th>Price</th>
                         <th>Home Type</th>
@@ -115,32 +116,15 @@
                     <tbody>
                     {% for house in houseList %}
                         <tr>
-                            <td> {{ house.address }}</td>
+                            <td> <button type="button" class="btn btn-primary" onclick="selectAddress({{ forloop.counter }})">Select!</button></td>
+                            <td id="address{{ forloop.counter }}"> {{ house.address }}</td>
                             <td> {{ house.price }}</td>
                             <td> {{ house.home_type }}</td>
                         </tr>
+                        <!-- TAKES THIS OUT!!!! -->
+                    {% empty %}
+                        <tr><td>Congratulations!!!  You are homeless :)</td></tr>
                     {% endfor %}
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr>
-                        <td>Survey Info</td>
-                        <td>Home Type</td>
-                        <td>Survey Result</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>{{ survey.home_type }}</td>
-                        <td> {{ survey }}</td>
-                    </tr>
-                    <tr>
-                        {% for type in survey.home_type.all %}
-                            <td>{{ type }}<br/></td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        {% for location in locations %}
-                            <td>{{ location.full_address }}</td>
-                        {% endfor %}
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -152,9 +136,12 @@
 <script src="{% static 'survey/costSliderResults.js' %}"></script>
 <!-- Variables for google map generating with markers -->
 <script>
-    // Variables used by other files
+    // These are the initial values, they should never be touched
     var myStreetAddress = "{{ locations.first.full_address }}";
-    var myDestination = "Boston, MA";
+    var myDestinations = [{% for dest in houseList %}"{{ dest.address }}",{% endfor %}];;;;;;;;;;;;
+    // Manipulated by survey_result.js in selectAddress
+    var myDestination = "{{ houseList.first.address }}";
+    // Manipulated by costSliderResults.js
     costSliderMax = {{ survey.maxPrice }};
     costSliderMin = {{ survey.minPrice }};
 </script>
