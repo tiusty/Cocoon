@@ -14,10 +14,10 @@ $(document).ready(function () {
 });
 function selectAddress(currNum) {
     var currAddress = "address" + currNum;
-    var address = document.getElementById(currAddress).innerHTML;;;;;;;;;;;;;;;
+    var address = document.getElementById(currAddress).innerHTML;
     myDestination = address;
     console.log(address);
-
+    addChosenMarker(address)
 }
 
 

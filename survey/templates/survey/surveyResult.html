@@ -138,7 +138,7 @@
 <script>
     // These are the initial values, they should never be touched
     var myStreetAddress = "{{ locations.first.full_address }}";
-    var myDestinations = [{% for dest in houseList %}"{{ dest.address }}",{% endfor %}];;;;;;;;;;;;
+    var myDestinations = [{% for dest in houseList %}"{{ dest.address }}",{% endfor %}];
     // Manipulated by survey_result.js in selectAddress
     var myDestination = "{{ houseList.first.address }}";
     // Manipulated by costSliderResults.js
