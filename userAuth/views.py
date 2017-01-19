@@ -62,6 +62,15 @@ def ProfilePage(request, defaultPage="profile"):
         'error_message': [],
     }
 
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=request.user)
+        print(form)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('userAuth:profilePage',
+                                                kwargs={'defaultPage': "profile"}))
+        else:
+            context['error_message'].append("Could not post form, try again")
     if request.user.is_authenticated():
         userProfile = UserProfile.objects.get(user=request.user)
         context['userProfile'] = userProfile

@@ -110,6 +110,7 @@ class ProfileForm(forms.ModelForm):
                 'class': 'form-control',
                 'name': 'username',
             }),
+        required=False,
     )
     first_name = forms.CharField(
         required=True,
