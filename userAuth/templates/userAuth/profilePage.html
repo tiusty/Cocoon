@@ -90,9 +90,9 @@
                 <div class="btn-group" role="group">
                     <button type="button" id="stars"
                             {% if defaultProfile == 0 %}
-                                class="btn btn-primary"
+                            class="btn btn-primary"
                             {% else %}
-                                class="btn btn-default"
+                            class="btn btn-default"
                             {% endif %}
                             href="#tab1" data-toggle="tab"><span
                             class="glyphicon glyphicon-user" aria-hidden="true"></span>
@@ -102,9 +102,9 @@
                 <div class="btn-group" role="group">
                     <button type="button" id="favorites"
                             {% if defaultProfile == 1 %}
-                                class="btn btn-primary"
+                            class="btn btn-primary"
                             {% else %}
-                                class="btn btn-default"
+                            class="btn btn-default"
                             {% endif %}
                             href="#tab2" data-toggle="tab"><span
                             class="glyphicon glyphicon-heart" aria-hidden="true"></span>
@@ -114,9 +114,9 @@
                 <div class="btn-group" role="group">
                     <button type="button" id="following"
                             {% if defaultProfile == 2 %}
-                                class="btn btn-primary"
+                            class="btn btn-primary"
                             {% else %}
-                                class="btn btn-default"
+                            class="btn btn-default"
                             {% endif %}
                             href="#tab3" data-toggle="tab"><span
                             class="glyphicon glyphicon-home" aria-hidden="true"></span>
@@ -146,70 +146,80 @@
                     {% else %}
                         <div class="tab-pane fade in" id="tab2">
                     {% endif %}
-                            <div class="panel-group" id="accordion_rent">
-                                {% for survey in surveys %}
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion_rent" href="#collapse{{ forloop.counter }}">
-                                                <h4> <b>Survey Name: {{ survey.name }}</b></h4></a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
-                                        <div class="panel-body">
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th>Survey Name</th>
-                                                    <th>Home_Types</th>
-                                                    <th>Min Price</th>
-                                                    <th>Max Price</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <td>{{ survey.name }}</td>
-                                                    <td>
-                                                        {% for home_type in survey.home_type.all %}
-                                                            {{ home_type }},
-                                                        {% endfor %}
-                                                    </td>
-                                                    <td> {{ survey.minPrice }}</td>
-                                                    <td> {{ survey.maxPrice }}</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                            <a href="{% url 'survey:surveyResult' survey_type="rent" survey_id=survey.id %}"
-                                               class="btn btn-primary active" role="button">Load!</a>
+                    <div class="panel-group" id="accordion_rent">
+                        {% for survey in surveys %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion_rent"
+                                           href="#collapse{{ forloop.counter }}">
+                                            <h4><b>Survey Name: {{ survey.name }}</b></h4></a>
+                                    </h4>
+                                </div>
+                                <div id="collapse{{ forloop.counter }}"
+                                     class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
+                                    <div class="panel-body">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Addresses</th>
+                                                <th>Home_Types</th>
+                                                <th>Min Price</th>
+                                                <th>Max Price</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% with survey.rentingdesintations_set.all as destAddresses %}
+                                                {% for destAddress in destAddresses %}
+                                                    <tr>
+                                                        <td>
+                                                            {{ destAddress.streetAddress }}, {{ destAddress.city }}, {{ destAddress.state }}, {{ destAddress.zip_code }}
+                                                        </td>
+                                                        {% if forloop.counter == 1 %}
+                                                            <td>
+                                                                {% for home_type in survey.home_type.all %}
+                                                                    {{ home_type }},
+                                                                {% endfor %}
+                                                            </td>
+                                                            <td> {{ survey.minPrice }}</td>
+                                                            <td> {{ survey.maxPrice }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                {% endfor %}
+                                            {% endwith %}
+                                            </tbody>
+                                        </table>
+                                        <a href="{% url 'survey:surveyResult' survey_type="rent" survey_id=survey.id %}"
+                                           class="btn btn-primary active" role="button">Load!</a>
                                     </div>
                                 </div>
-                                </div>
-                                {% endfor %}
                             </div>
+                        {% endfor %}
+                    </div>
                     </div>
                     {% if defaultProfile == 2 %}
                         <div class="tab-pane fade in active" id="tab3">
                     {% else %}
                         <div class="tab-pane fade in" id="tab3">
                     {% endif %}
-                        <h3>Not Implemented yet!</h3>
+                    <h3>Not Implemented yet!</h3>
+                    </div>
+                    </div>
+                    </div>
+
                     </div>
                 </div>
-            </div>
-
-        </div>
-    </div>
 
 
-</div> <!-- /container -->
-<!-- Custom Javascript -->
-<script src="{% static 'userAuth/profilePage.js' %}"></script>
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+            </div> <!-- /container -->
+            <!-- Custom Javascript -->
+            <script src="{% static 'userAuth/profilePage.js' %}"></script>
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+                    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+                    crossorigin="anonymous"></script>
 </body>
 </html>

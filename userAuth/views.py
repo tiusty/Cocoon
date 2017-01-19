@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from userAuth.models import UserProfile
-from survey.models import RentingSurveyModel
+from survey.models import RentingSurveyModel, RentingDesintations
 
 from .forms import LoginUserForm, RegisterForm, ProfileForm
 # Create your views here.
