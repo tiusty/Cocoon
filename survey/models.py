@@ -1,6 +1,7 @@
 from django.db import models
 from userAuth.models import UserProfile
 from enum import Enum
+import math
 # Create your models here.
 
 survey_types = Enum('survey_types', 'rent buy')
@@ -35,6 +36,8 @@ class RentingSurveyModel(InitialSurveyModel):
     name = models.CharField(max_length=200, default=default_rent_survey_name)
     maxPrice = models.IntegerField(default=0)
     minPrice = models.IntegerField(default=0)
+    maxCommute = models.IntegerField(default=0)
+    minCommute = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeType)
 
     def get_short_name(self):
@@ -48,6 +51,44 @@ class RentingSurveyModel(InitialSurveyModel):
         nameSurvey = self.name
         output = nameProf + ": " + nameSurvey
         return output
+
+    def get_cost_range(self):
+        if self.maxPrice == 0:
+            return "Not set"
+        else:
+            priceOutput = "$" + str(self.minPrice) + " - $" + str(self.maxPrice)
+            return priceOutput
+
+    def get_commute_range(self):
+        if self.maxCommute == 0:
+            return "Not Set"
+        else:
+            if self.maxCommute > 60:
+                maxOutput = str(math.floor(self.maxCommute/60)) + " hours " + str(self.maxCommute%60) + " Minutes"
+            else:
+                maxOutput = str(self.maxCommute) + " Minutes"
+            if self.minCommute > 60:
+                minOutput = str(math.floor(self.minCommute/60)) + " hours " + str(self.minCommute%60) + " Minutes"
+            else:
+                minOutput = str(self.minCommute) + " Minutes"
+
+        return minOutput + " - " + maxOutput
+
+    def get_home_types(self):
+        homeTypeSet = self.home_type.all()
+        if homeTypeSet.count() == 0:
+            return "Not set"
+        else:
+            typeOutput = ""
+            counter = 0
+            for homeType in homeTypeSet:
+                if counter == 0:
+                    typeOutput = str(homeType)
+                    counter = counter + 1
+                else:
+                    typeOutput = str(homeType) + ", " + typeOutput
+
+        return typeOutput
 
 
 # Default name for buying survey

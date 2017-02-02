@@ -173,8 +173,8 @@
                                             <tr>
                                                 <th>Addresses</th>
                                                 <th>Home_Types</th>
-                                                <th>Min Price</th>
-                                                <th>Max Price</th>
+                                                <th>Price Range</th>
+                                                <th>Commute Range</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -185,13 +185,9 @@
                                                             {{ destAddress.streetAddress }}, {{ destAddress.city }}, {{ destAddress.state }}, {{ destAddress.zip_code }}
                                                         </td>
                                                         {% if forloop.counter == 1 %}
-                                                            <td>
-                                                                {% for home_type in survey.home_type.all %}
-                                                                    {{ home_type }},
-                                                                {% endfor %}
-                                                            </td>
-                                                            <td> {{ survey.minPrice }}</td>
-                                                            <td> {{ survey.maxPrice }}</td>
+                                                            <td>{{ survey.get_home_types }}</td>
+                                                            <td>{{ survey.get_cost_range }}</td>
+                                                            <td>{{ survey.get_commute_range }}</td>
                                                         {% endif %}
                                                     </tr>
                                                 {% endfor %}
