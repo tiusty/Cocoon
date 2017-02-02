@@ -7,7 +7,7 @@ function initMap() {
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
 		center: {lat:42.3601, lng: -71.0589},
-		zoom: 11
+		zoom: 10
 	});
 	distanceMatrix();
 	var geocoder = new google.maps.Geocoder();
@@ -20,9 +20,9 @@ function initMap() {
 
 // Adds a marker to the map and push to the array.
 function addChosenMarker(address) {
-    deleteMarkers();;;;
+    deleteMarkers();
     var geocoder = new google.maps.Geocoder();
-    var marker;;;;
+    var marker;
     geocoder.geocode({'address': address},
         function (results, status) {
             if (status == 'OK') {
