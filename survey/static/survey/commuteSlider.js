@@ -6,23 +6,47 @@ $( function() {
         range: true,
         min: 0,
         max: 180,
-        values: [ 10, 60 ],
+        values: [ commuteSliderMin, commuteSliderMax ],
         slide: function( event, ui ) {
             // If the ui value goes above 61 then start recording in hours
-            if (ui.values[ 1 ] >= 61)
-            {
-                $( "#amountCommute" ).val( ui.values[ 0 ] + " Minutes - " + Math.floor(ui.values[ 1 ]/60) + " Hour " + (ui.values[ 1 ]%60) + " Min");
+            if (ui.values[1] >= 61) {
+                if (ui.values[0] >= 61) {
+                    $( "#amountCommute" ).val( Math.floor(ui.values[ 0 ]/60) + " Hh " + (ui.values[0]%60) + " Min " +
+                        " - " + Math.floor(ui.values[ 1 ]/60) + " Hh " + (ui.values[ 1 ]%60) + " Min");
+                }
+                else {
+                    $( "#amountCommute" ).val( ui.values[ 0 ] + " Min - " + Math.floor(ui.values[ 1 ]/60) + " Hh " + (ui.values[ 1 ]%60) + " Min");
+                }
+
             }
             else
             {
-                $( "#amountCommute" ).val( ui.values[ 0 ] + " Minutes - " + ui.values[ 1 ] + " Minutes");
+                $( "#amountCommute" ).val( ui.values[ 0 ] + " Min - " + ui.values[ 1 ] + " Min");
             }
             $( "#id_minCommute").val(ui.values[0]);
             $( "#id_maxCommute").val(ui.values[1]);
         }
     });
-    $( "#amountCommute" ).val( $( "#commute" ).slider( "values", 0 ) +
-        " Minutes - " + $( "#commute" ).slider( "values", 1 ) + " Minutes");
+    // If the ui value goes above 61 then start recording in hours
+    if ($( "#commute" ).slider( "values", 1 ) >= 61)
+    {
+        if ($( "#commute" ).slider( "values", 0 ) >= 61)
+        {
+            $( "#amountCommute" ).val( Math.floor($( "#commute" ).slider( "values", 0 )/60) + " Hh " + ($( "#commute" ).slider( "values", 0 )%60) + " Min - "
+                + Math.floor($( "#commute" ).slider( "values", 1 )/60) +  " Hh " + ($( "#commute" ).slider( "values", 1 )%60) + " Min");
+        }
+        else
+        {
+            $( "#amountCommute" ).val( $( "#commute" ).slider( "values", 0 ) +
+        " Minutes - " + Math.floor($( "#commute" ).slider( "values", 1 )/60) +  " Hh " + ($( "#commute" ).slider( "values", 1 )%60) + " Min");
+        }
+    }
+    else
+    {
+        $( "#amountCommute" ).val( $( "#commute" ).slider( "values", 0 ) +
+        " Min - " + $( "#commute" ).slider( "values", 1 ) + " Min");
+    }
+
     $( "#id_minCommute").val( $("#commute").slider("values", 0));
     $( "#id_maxCommute").val( $("#commute").slider("values", 1));
 } );

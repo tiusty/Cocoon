@@ -80,6 +80,12 @@
                         <div id="cost"></div>
                     </div>
                     <div class="form-group">
+                        <label for="amountCommute">Cost:</label>
+                        <input type="text" id="amountCommute" name="amountCommute" readonly
+                               style="border:0; color:#f6931f; font-weight:bold;">
+                        <div id="commute"></div>
+                    </div>
+                    <div class="form-group">
                         <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
                     </div>
                 </form>
@@ -133,10 +139,12 @@
 </div>
 </body>
 <!-- Javascripts -->
-<script src="{% static 'survey/costSliderResults.js' %}"></script>
+<script src="{% static 'survey/costSlider.js' %}"></script>
+<script src="{% static 'survey/commuteSlider.js' %}"></script>
 <!-- Variables for google map generating with markers -->
 <script>
-    // These are the initial values, they should never be touched
+    // Deprecating computing commute time and distance in favor of doing in on the server side
+    // Going to keep the portions that create the markers on the map
     var myStreetAddress = "{{ locations.first.full_address }}";
     var myDestinations = [{% for dest in houseList %}"{{ dest.address }}",{% endfor %}];
     // Manipulated by survey_result.js in selectAddress
@@ -144,6 +152,8 @@
     // Manipulated by costSliderResults.js
     costSliderMax = {{ survey.maxPrice }};
     costSliderMin = {{ survey.minPrice }};
+    commuteSliderMin = {{ survey.minCommute }};
+    commuteSliderMax = {{ survey.maxCommute }};
 </script>
 <!-- Loading scripts at the end to increase loading times -->
 <script src="{% static 'survey/survey_result.js' %}"></script>

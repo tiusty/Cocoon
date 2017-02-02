@@ -101,7 +101,6 @@ class RentSurveyMini(ModelForm):
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter the Zip Code',
             }),
     )
 
@@ -109,7 +108,20 @@ class RentSurveyMini(ModelForm):
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter the Zip Code',
+            }),
+    )
+
+    minCommute = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    maxCommute = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
             }),
     )
     name = forms.CharField(
@@ -135,7 +147,7 @@ class RentSurveyMini(ModelForm):
     )
     class Meta:
         model = RentingSurveyModel
-        fields = ['home_type', 'maxPrice', 'minPrice', 'name']
+        fields = ['home_type', 'maxPrice', 'minPrice', 'name', 'minCommute', 'maxCommute']
 
 
 class BuySurvey(ModelForm):
