@@ -45,7 +45,8 @@ def registerPage(request):
         if form.is_valid():
             # The email address is used as the username
             form.save()
-            return HttpResponseRedirect(reverse('homePage:index'))
+            # Try to have the user automatically log in but for now go back to login page
+            return HttpResponseRedirect(reverse('userAuth:loginPage'))
         else:
             context['error_message'].append('Unable to create user')
     context['form'] = form

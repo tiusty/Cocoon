@@ -94,7 +94,7 @@ class UserProfile(models.Model):
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-            UserProfile.objects.create(user=instance, test="Please enter something")
+            UserProfile.objects.create(user=instance)
 
 
 post_save.connect(create_user_profile, sender=MyUser)
