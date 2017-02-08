@@ -104,6 +104,10 @@ class Destinations(models.Model):
     state = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
 
+    def full_address(self):
+        output = str(self.streetAddress) + ", " + str(self.city) + ", " + str(self.state) + ", " + str(self.zip_code)
+        return output
+
 
 # Used for the renting survey
 class RentingDesintations(Destinations):

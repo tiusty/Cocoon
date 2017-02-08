@@ -88,22 +88,34 @@ def buying_survey(request):
     return render(request, 'survey/buyingSurvey.html', {'form':form})
 
 
+# This struct allows each home to easily be associated with a score and appropriate data
+class ScoringStruct:
+    def __init__(self, newHouse):
+        self.house = newHouse
+        self.score = 0
+        self.commuteTime = []
+
+
 # Function takes in the JSON housing list from the distance matrix
 # It will take in the houseMatrix score
-def create_house_score(houseMatrix, houseList, survey):
-    print(houseMatrix["rows"][0])
+def create_house_score(houseScore, survey):
     # For now just printing out all the distance and commute times
-    for house in houseMatrix["rows"]:
-        print(house)
+    for house in houseScore:
+        print(house.house)
 
 
-# This is different because the survey id is passed as a variable
+
+
+
+
+# Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
+# If it can't find the most recent survey it redirects back to the survey
 def survey_result(request, survey_type, survey_id="recent"):
     context = {
         'error_message': [],
     }
 
-    form = RentSurveyMini()
+    #form = RentSurveyMini()
     # If the mini form was posted, then save the results before reloading the page
     if request.method == 'POST':
         try:
@@ -150,25 +162,54 @@ def survey_result(request, survey_type, survey_id="recent"):
 
                 # Generates matrix of commute times from the origin to the destination
                 gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
-                origins =[]
+
+                # First put all the origins into an array then the destinations
+                origins = []
                 for house in housingList:
                     origins.append(house.address)
-                destinations = ["Boston, MA"]
 
-                # Can add things to the arugments, like traffic_model, avoid things, depature_time etc
-                matrix = gmaps.distance_matrix(origins, destinations,
-                                               mode="driving",
-                                               units="imperial",
-                                               )
+                destinations = []
+                for location in locations:
+                    destinations.append(location.full_address())
+                # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
+                # Each row contains the origin with each corresponding destination
+                # The value field of duration is in seconds
 
-                # Generate scores for the homes based on the survey results
-                create_house_score(matrix, housingList, survey)
+                # Need to better define error cases.
+                # Also, put more try blocks in case of error
+                if not destinations or not origins:
+                    print("No destinations or origins")
+                    context['error_message'].append("No Destination or origin")
+                else:
+                    matrix = gmaps.distance_matrix(origins, destinations,
+                                                   mode="driving",
+                                                   units="imperial",
+                                                   )
+                    # Only if the matrix is defined should the calculations occur, otherwise throw an error
+                    if matrix:
+                        print("it is all good")
+                        # While iterating through all the destinations, put homes into a scoring structure to easily
+                        # Keep track of the score for the associated home
+                        houseScore = []
+                        # Try to think of a better way than a simple counter
+                        counter = 0
+                        for house in housingList:
+                            currHouse = ScoringStruct(house)
+                            for commute in matrix["rows"][counter]["elements"]:
+                                currHouse.commuteTime.append(commute["duration"]["value"])
+                            houseScore.append(currHouse)
+                            counter = counter + 1
+
+                        # Generate scores for the homes based on the survey results
+                        create_house_score(houseScore, survey)
+                    else:
+                        context['error_message'].append("Couldn't calculate distances, something went wrong")
 
                 # Populate template with important important information
+                # houseList is going to be removed,
                 context['survey'] = survey
                 context['locations'] = locations
                 context['houseList'] = housingList
-
 
             except RentingSurveyModel.DoesNotExist:
                 context['error_message'].append("Could not retrieve rent survey")
