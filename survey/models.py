@@ -31,6 +31,7 @@ class HomeType(models.Model):
 # Default name for rent survey that is used for the last survey created
 # Every user gets a history of one survey
 default_rent_survey_name = "Recent Rent Survey"
+maxCommuteTime = 180
 class RentingSurveyModel(InitialSurveyModel):
     userProf = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=200, default=default_rent_survey_name)

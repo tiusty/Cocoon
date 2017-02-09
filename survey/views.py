@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 from userAuth.models import UserProfile
-from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name
+from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name, maxCommuteTime
 from houseDatabase.models import RentDatabase
 
 import googlemaps
@@ -93,19 +93,70 @@ class ScoringStruct:
     def __init__(self, newHouse):
         self.house = newHouse
         self.score = 0
+        self.scorePossible = 0
         self.commuteTime = []
+        self.eliminated = False
+
+    # Generates the actual "score" for the house
+    def get_score(self):
+        # Takes care of divide by 0
+        if self.scorePossible != 0:
+            return (self.score/self.scorePossible)*100
+        else:
+            return 0
 
 
 # Function takes in the JSON housing list from the distance matrix
 # It will take in the houseMatrix score
+# We assume that 3 hours is the max possible commute
 def create_house_score(houseScore, survey):
-    # For now just printing out all the distance and commute times
+    # Currently only scores based on commute times
+    # It supports having multiple destinations
+    maxCommute = survey.maxCommute
     for house in houseScore:
-        print(house.house)
+        for commute in house.commuteTime:
+            #print("Commute =" + str(commute))
+            #print("MaxCommute =" + str(maxCommute))
+            # Minimum range is always 10
+            if maxCommute > 11:
+                rangeCom = maxCommute
+            else:
+                rangeCom = 11
+            # IF the commute is less than 10 minutes make it perfect
+            if commute <= 10:
+                house.score += 100
+                house.scorePossible += 100
+            elif commute <= maxCommute:
+                house.score += (1 - (commute-10)/(rangeCom - 10))*100
+                house.scorePossible += 100
+            else:
+                # Mark house for deletion
+                #print("house eleminated")
+                house.eliminated = True
+        #print(house.get_score())
+    return houseScore
 
 
+# Function takes in the ScoringStruct and returns an array of them ordered from top score to least
+def order_by_house_score(houseScore):
+    # Simple insertion sort to sort houses by score
+    for index in range(1, len(houseScore)):
+        currentValue = houseScore[index]
+        position = index
 
+        while position>0 and houseScore[position-1].get_score()<currentValue.get_score():
+            houseScore[position]=houseScore[position-1]
+            position=position-1
 
+        houseScore[position]=currentValue
+
+    # Puts homes into an array ordered by score so it is easier to parse in template
+    # Also, it is the same(simliar) format has the default housing list if the matrix can't get generated
+    sortedHomes = []
+    for house in houseScore:
+        sortedHomes.append(house.house)
+
+    return sortedHomes
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
@@ -187,7 +238,6 @@ def survey_result(request, survey_type, survey_id="recent"):
                                                    )
                     # Only if the matrix is defined should the calculations occur, otherwise throw an error
                     if matrix:
-                        print("it is all good")
                         # While iterating through all the destinations, put homes into a scoring structure to easily
                         # Keep track of the score for the associated home
                         houseScore = []
@@ -195,13 +245,18 @@ def survey_result(request, survey_type, survey_id="recent"):
                         counter = 0
                         for house in housingList:
                             currHouse = ScoringStruct(house)
+                            print(currHouse)
                             for commute in matrix["rows"][counter]["elements"]:
-                                currHouse.commuteTime.append(commute["duration"]["value"])
+                                # Divide by 60 to get minutes
+                                currHouse.commuteTime.append(commute["duration"]["value"]/60)
                             houseScore.append(currHouse)
                             counter = counter + 1
 
                         # Generate scores for the homes based on the survey results
-                        create_house_score(houseScore, survey)
+                        homesScored = create_house_score(houseScore, survey)
+
+                        # Order the homes based off the score
+                        housingList = order_by_house_score(homesScored)
                     else:
                         context['error_message'].append("Couldn't calculate distances, something went wrong")
 

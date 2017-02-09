@@ -9,9 +9,12 @@ function initMap() {
 		center: {lat:42.3601, lng: -71.0589},
 		zoom: 10
 	});
-	distanceMatrix();
+	//distanceMatrix();
 	var geocoder = new google.maps.Geocoder();
-	addDestMarkers(geocoder, map, myStreetAddress);
+	for(i=0; i<myStreetAddresses.length;i++)
+    {
+	    addDestMarkers(geocoder, map, myStreetAddresses[i]);
+    }
 	for(i=0;i<myDestinations.length; i++)
 	{
         addLocationMarkers(geocoder, map, myDestinations[i]);
