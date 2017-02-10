@@ -116,21 +116,24 @@
                         <th>Rank</th>
                         <th>Select</th>
                         <th>House Address</th>
+                        <th>Commute Time</th>
                         <th>Price</th>
                         <th>Home Type</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for house in houseList %}
+                    {% for home in houseList %}
                         <tr>
-                            <td><h3>{{ forloop.counter }}</h3></td>
+                            <td><h3>{% if home.eliminated == False %}{{ forloop.counter }} {% else %} None {% endif %}</h3></td>
                             <td> <button type="button" class="btn btn-primary" onclick="selectAddress({{ forloop.counter }})">Select!</button></td>
-                            <td id="address{{ forloop.counter }}"> {{ house.address }}</td>
-                            <td> {{ house.price }}</td>
-                            <td> {{ house.home_type }}</td>
+                            <td id="address{{ forloop.counter }}"> {{ home.house.address }}</td>
+                            <td> {{ home.get_commute_times }}</td>
+                            <td> {{ home.house.price }}</td>
+                            <td> {{ home.house.home_type }}</td>
                         </tr>
-                        <!-- TAKES THIS OUT!!!! -->
                     {% empty %}
+
+                        <!-- TAKES THIS OUT!!!! -->
                         <tr><td>Congratulations!!!  You are homeless :)</td></tr>
                     {% endfor %}
                     </tbody>
@@ -148,7 +151,7 @@
     // Deprecating computing commute time and distance in favor of doing in on the server side
     // Going to keep the portions that create the markers on the map
     var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
-    var myDestinations = [{% for dest in houseList %}"{{ dest.address }}",{% endfor %}];
+    var myDestinations = [{% for dest in houseList %}"{{ dest.house.address }}",{% endfor %}];
     // Manipulated by survey_result.js in selectAddress
     //var myDestination = "{{ houseList.0.address }}";
     // Manipulated by costSliderResults.js

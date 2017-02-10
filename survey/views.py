@@ -3,8 +3,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 from userAuth.models import UserProfile
-from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name, maxCommuteTime
+from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name
 from houseDatabase.models import RentDatabase
+import math
 
 import googlemaps
 
@@ -99,16 +100,26 @@ class ScoringStruct:
 
     # Generates the actual "score" for the house
     def get_score(self):
-        # Takes care of divide by 0
-        if self.scorePossible != 0:
+        # Takes care of divide by 0, also if it is eleminted the score should be zero
+        if self.scorePossible != 0 and self.eliminated is False:
             return (self.score/self.scorePossible)*100
         else:
             return 0
 
+    def get_commute_times(self):
+        maxOutput=""
+        for commute in self.commuteTime:
+            if commute > 60:
+                maxOutput = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
+            else:
+                maxOutput = str(int(commute)) + " Minutes"
 
-# Function takes in the JSON housing list from the distance matrix
+        return maxOutput
+
+
+
+
 # It will take in the houseMatrix score
-# We assume that 3 hours is the max possible commute
 def create_house_score(houseScore, survey):
     # Currently only scores based on commute times
     # It supports having multiple destinations
@@ -137,14 +148,14 @@ def create_house_score(houseScore, survey):
     return houseScore
 
 
-# Function takes in the ScoringStruct and returns an array of them ordered from top score to least
+# Function takes in the ScoringStruct and returns the sorted list
 def order_by_house_score(houseScore):
     # Simple insertion sort to sort houses by score
     for index in range(1, len(houseScore)):
         currentValue = houseScore[index]
         position = index
 
-        while position>0 and houseScore[position-1].get_score()<currentValue.get_score():
+        while position > 0 and houseScore[position-1].get_score()<currentValue.get_score():
             houseScore[position]=houseScore[position-1]
             position=position-1
 
@@ -152,11 +163,12 @@ def order_by_house_score(houseScore):
 
     # Puts homes into an array ordered by score so it is easier to parse in template
     # Also, it is the same(simliar) format has the default housing list if the matrix can't get generated
-    sortedHomes = []
-    for house in houseScore:
-        sortedHomes.append(house.house)
+    #sortedHomes = []
+    #for house in houseScore:
+    #    sortedHomes.append(house.house)
 
-    return sortedHomes
+    #return sortedHomes
+    return houseScore
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
@@ -166,7 +178,6 @@ def survey_result(request, survey_type, survey_id="recent"):
         'error_message': [],
     }
 
-    #form = RentSurveyMini()
     # If the mini form was posted, then save the results before reloading the page
     if request.method == 'POST':
         try:
@@ -192,11 +203,16 @@ def survey_result(request, survey_type, survey_id="recent"):
             currProf = UserProfile.objects.get(user=request.user)
             try:
                 # If no id is specified in the URL, then it attempts to load the recent survey
-                # Recent surveys are saved with the default name and are not changed by the User
+                # The recent survey is the last survey to be created
                 if survey_id == "recent":
                     survey = RentingSurveyModel.objects.filter(userProf=currProf).order_by('-created').first()
                 else:
-                    survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=survey_id)
+                    # If it can't find the survey id, then just get the recent survey
+                    try:
+                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=survey_id)
+                    except RentingSurveyModel.DoesNotExist:
+                        context['error_message'].append("Could not find survey id, getting recent survey")
+                        survey = RentingSurveyModel.objects.filter(userProf=currProf).order_by('-created').first()
 
                 # Creates an array with all the home types indicated by the survey
                 homeTypes = []
@@ -222,9 +238,6 @@ def survey_result(request, survey_type, survey_id="recent"):
                 destinations = []
                 for location in locations:
                     destinations.append(location.full_address())
-                # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
-                # Each row contains the origin with each corresponding destination
-                # The value field of duration is in seconds
 
                 # Need to better define error cases.
                 # Also, put more try blocks in case of error
@@ -232,12 +245,16 @@ def survey_result(request, survey_type, survey_id="recent"):
                     print("No destinations or origins")
                     context['error_message'].append("No Destination or origin")
                 else:
+                    # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
+                    # Each row contains the origin with each corresponding destination
+                    # The value field of duration is in seconds
                     matrix = gmaps.distance_matrix(origins, destinations,
                                                    mode="driving",
                                                    units="imperial",
                                                    )
                     # Only if the matrix is defined should the calculations occur, otherwise throw an error
                     if matrix:
+                        print(matrix)
                         # While iterating through all the destinations, put homes into a scoring structure to easily
                         # Keep track of the score for the associated home
                         houseScore = []
@@ -245,12 +262,16 @@ def survey_result(request, survey_type, survey_id="recent"):
                         counter = 0
                         for house in housingList:
                             currHouse = ScoringStruct(house)
-                            print(currHouse)
                             for commute in matrix["rows"][counter]["elements"]:
+                                print(commute)
                                 # Divide by 60 to get minutes
-                                currHouse.commuteTime.append(commute["duration"]["value"]/60)
+                                if(commute['status'] == 'OK'):
+                                    currHouse.commuteTime.append(commute['duration']["value"]/60)
+                                else:
+                                    # Eliminate houses that can't have a commute value
+                                    currHouse.eliminated = True
                             houseScore.append(currHouse)
-                            counter = counter + 1
+                            counter += 1
 
                         # Generate scores for the homes based on the survey results
                         homesScored = create_house_score(houseScore, survey)
@@ -260,21 +281,25 @@ def survey_result(request, survey_type, survey_id="recent"):
                     else:
                         context['error_message'].append("Couldn't calculate distances, something went wrong")
 
-                # Populate template with important important information
-                # houseList is going to be removed,
                 context['survey'] = survey
+                # Contains destinations of the user
                 context['locations'] = locations
+                # House list either comes from the scored homes or from the database static list if something went wrong
                 context['houseList'] = housingList
 
+                # fill form with data from database
+                form = RentSurveyMini(instance=survey)
             except RentingSurveyModel.DoesNotExist:
                 context['error_message'].append("Could not retrieve rent survey")
                 print("Error, could not find survey id, redirecting back to survey")
                 return HttpResponseRedirect(reverse('survey:rentingSurvey'))
         except UserProfile.DoesNotExist:
             context['error_message'].append("Could not find User Profile")
-
-    # fill form with data from database
-    form = RentSurveyMini(instance=survey)
+    # For now just return to survey for the buying survey and unknown
+    elif survey_type == "buy":
+        return HttpResponseRedirect(reverse('survey:rentingSurvey'))
+    else:
+        return HttpResponseRedirect(reverse('survey:rentingSurvey'))
 
     context['form'] = form
-    return render(request, 'survey/surveyResult.html', context)
+    return render(request, 'survey/surveyResultRent.html', context)
