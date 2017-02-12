@@ -21,6 +21,8 @@ def loginPage(request):
     if request.method == 'POST':
         form = LoginUserForm(request, request.POST)
         if form.is_valid():
+            if not form.cleaned_data['remember']:
+                request.session.set_expiry(0)
             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
                 login(request, user)

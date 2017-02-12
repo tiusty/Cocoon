@@ -32,11 +32,11 @@ class LoginUserForm(AuthenticationForm):
                 'type': 'password',
             }),
     )
-    # remember = forms.ChoiceField(
-    #      label="Remember",
-    #      widget=forms.CheckboxInput(),
-    #      required=False,
-    # )
+    remember = forms.BooleanField(
+        label="Remember",
+        initial=False,
+        required=False,
+    )
 
 
 class RegisterForm(UserCreationForm):
