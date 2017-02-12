@@ -1,20 +1,11 @@
+{% extends "bootstrapJQuery.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Unicorn</title>
+{% block title %}Unicorn{% endblock %}
+{% block head %}
+    {{ block.super }}
     <!-- JQuery UI style sheet, mostly used for slider ui -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <!-- JQuery CDN -->
-    <script
-            src="https://code.jquery.com/jquery-2.2.4.js"
-            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
-            crossorigin="anonymous"></script>
-    <!-- Bootstrap style sheet -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Smarty Street API -->
+   <!-- Smarty Street API -->
     <script type="text/javascript"
             src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
     <script src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
@@ -32,52 +23,11 @@
         }]
     });
     </script>
-</head>
-<body>
+{% endblock %}
 
-<div class="container">
-    <!-- Static navbar -->
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                        aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{% url 'homePage:index' %}">Project Unicorn</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="{% url 'homePage:index' %}">Home</a></li>
-                    <li class="active"><a>Survey</a></li>
-                    <li><a href="{% url 'homePage:contactPage' %}">Contact</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if user.is_authenticated %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li class="dropdown-header">Surveys</li>
-                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li><a href="{% url 'userAuth:loginPage' %}">Login <span class="sr-only">(current)</span></a></li>
-                    {% endif %}
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-    </nav>
+{% block nav-survey %}<li class="active"><a>Survey</a></li>{% endblock %}
 
+{% block content %}
     <!-- Main component for a primary marketing message or call to action -->
     <div class="jumbotron">
         <h1>Find your Perfect Home!</h1>
@@ -128,9 +78,11 @@
             </div>
         </div>
     </div>
+{% endblock %}
 
 
-</div> <!-- /container -->
+{% block endScripts %}
+    {{ block.super }}
 <script>
     // Default values for sliders
     commuteSliderMin = 10;
@@ -141,15 +93,6 @@
 <!-- Javascripts -->
 <script src="{% static 'survey/costSlider.js' %}"></script>
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
 <!-- JQuery UI for sliders -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-</body>
-</html>
+{% endblock %}

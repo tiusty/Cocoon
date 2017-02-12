@@ -84,13 +84,13 @@ def renting_survey(request):
 
 
 # Function is not implemented, it will basically be the same as the rent survey but for buying instead
+@login_required
 def buying_survey(request):
     form = BuySurvey()
     return render(request, 'survey/buyingSurvey.html', {'form':form})
 
 
 # This struct allows each home to easily be associated with a score and appropriate data
-@login_required
 class ScoringStruct:
     def __init__(self, newHouse):
         self.house = newHouse
