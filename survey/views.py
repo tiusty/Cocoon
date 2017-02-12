@@ -5,15 +5,15 @@ from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 from userAuth.models import UserProfile
 from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name
 from houseDatabase.models import RentDatabase
+from django.contrib.auth.decorators import login_required
 import math
 
 import googlemaps
 
 
 # Create your views here.
+@login_required
 def renting_survey(request):
-    #!!!!!!!!!!!!!!!! TO DO !!!!!!!!!!!!!!!!!!!!!
-    # can't handle anonymous users, either require log in or handle it some how
     # Create the two forms,
     # RentSurvey contains everything except for destinations
     form = RentSurvey()
@@ -90,6 +90,7 @@ def buying_survey(request):
 
 
 # This struct allows each home to easily be associated with a score and appropriate data
+@login_required
 class ScoringStruct:
     def __init__(self, newHouse):
         self.house = newHouse
@@ -107,16 +108,20 @@ class ScoringStruct:
             return 0
 
     def get_commute_times(self):
-        maxOutput=""
+        endResult=""
+        counter = 0;
         for commute in self.commuteTime:
             if commute > 60:
                 maxOutput = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
             else:
                 maxOutput = str(int(commute)) + " Minutes"
+            if counter != 0:
+                endResult = endResult+", "+maxOutput
+            else:
+                endResult = maxOutput
+            counter = 1
 
-        return maxOutput
-
-
+        return endResult
 
 
 # It will take in the houseMatrix score
@@ -126,8 +131,6 @@ def create_house_score(houseScore, survey):
     maxCommute = survey.maxCommute
     for house in houseScore:
         for commute in house.commuteTime:
-            #print("Commute =" + str(commute))
-            #print("MaxCommute =" + str(maxCommute))
             # Minimum range is always 10
             if maxCommute > 11:
                 rangeCom = maxCommute
@@ -142,9 +145,7 @@ def create_house_score(houseScore, survey):
                 house.scorePossible += 100
             else:
                 # Mark house for deletion
-                #print("house eleminated")
                 house.eliminated = True
-        #print(house.get_score())
     return houseScore
 
 
@@ -173,6 +174,7 @@ def order_by_house_score(houseScore):
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
 # If it can't find the most recent survey it redirects back to the survey
+@login_required
 def survey_result(request, survey_type, survey_id="recent"):
     context = {
         'error_message': [],
@@ -248,8 +250,10 @@ def survey_result(request, survey_type, survey_id="recent"):
                     # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
                     # Each row contains the origin with each corresponding destination
                     # The value field of duration is in seconds
+                    modeCommute="driving"
+                    context['commuteMode'] = modeCommute
                     matrix = gmaps.distance_matrix(origins, destinations,
-                                                   mode="driving",
+                                                   mode=modeCommute,
                                                    units="imperial",
                                                    )
                     # Only if the matrix is defined should the calculations occur, otherwise throw an error
