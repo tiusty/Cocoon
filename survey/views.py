@@ -43,14 +43,17 @@ def renting_survey(request):
                 currProf = UserProfile.objects.get(user=request.user)
                 # Need to retrieve the current userProfile to link the survey to
                 try:
+                    # Add the current user to the survey
                     rentingSurvey.userProf = currProf
+                    # Given the enumeration, set the survey to either rent or buy
+                    # This can probably be removed after testing it
                     rentingSurvey.survey_type = survey_types.rent.value
+
                     # Try seeing if there is already a recent survey and if there is
                     # Then delete it. We only want to keep one "recent" survey
                     # The user has the option to change the name of it to save it permanently
                     try:
-                        surveyName = default_rent_survey_name
-                        currRecentSur = RentingSurveyModel.objects.filter(userProf=currProf).filter(name=surveyName).delete()
+                        RentingSurveyModel.objects.filter(userProf=currProf).filter(name=default_rent_survey_name).delete()
                     except RentingSurveyModel.DoesNotExist:
                         print("No surveys to delete")
                     rentingSurvey.save()
@@ -60,7 +63,7 @@ def renting_survey(request):
 
                     # After saving the destination form, retrieve the survey again
                     try:
-                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name=surveyName)
+                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name=default_rent_survey_name)
                         destinations = formDest.save(commit=False)
                         # Set the foreign field from the destination to the corresponding survey
                         destinations.survey = survey
@@ -91,6 +94,7 @@ def buying_survey(request):
 
 
 # This struct allows each home to easily be associated with a score and appropriate data
+# Allows contains member fuctions which allow data to be returned easily
 class ScoringStruct:
     def __init__(self, newHouse):
         self.house = newHouse
@@ -107,9 +111,10 @@ class ScoringStruct:
         else:
             return 0
 
+    # Returns a string of the commute times, works with multiple commute times
     def get_commute_times(self):
         endResult=""
-        counter = 0;
+        counter = 0
         for commute in self.commuteTime:
             if commute > 60:
                 maxOutput = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
@@ -178,17 +183,10 @@ def order_by_house_score(houseScore):
 
         while position > 0 and houseScore[position-1].get_score()<currentValue.get_score():
             houseScore[position]=houseScore[position-1]
-            position=position-1
+            position -= 1
 
-        houseScore[position]=currentValue
+        houseScore[position] = currentValue
 
-    # Puts homes into an array ordered by score so it is easier to parse in template
-    # Also, it is the same(simliar) format has the default housing list if the matrix can't get generated
-    #sortedHomes = []
-    #for house in houseScore:
-    #    sortedHomes.append(house.house)
-
-    #return sortedHomes
     return houseScore
 
 
@@ -240,7 +238,6 @@ def survey_result(request, survey_type, survey_id="recent"):
                 homeTypes = []
                 for home in survey.home_type.all():
                     homeTypes.append(home.homeType)
-
 
                 # Filters the Database with all the static elements as the first pass
                 housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))\
