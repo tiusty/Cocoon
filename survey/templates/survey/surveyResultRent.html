@@ -74,6 +74,7 @@
                         <th>Commute Time ({{ commuteMode }})</th>
                         <th>Price</th>
                         <th>Home Type</th>
+                        <th>Score</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -85,6 +86,7 @@
                             <td> {{ home.get_commute_times }}</td>
                             <td> {{ home.house.price }}</td>
                             <td> {{ home.house.home_type }}</td>
+                            <td> {{ home.get_score }}</td>
                         </tr>
                     {% empty %}
 

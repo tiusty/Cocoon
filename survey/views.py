@@ -125,27 +125,47 @@ class ScoringStruct:
 
 
 # It will take in the houseMatrix score
-def create_house_score(houseScore, survey):
+# It will commute the score based on the commute times to the destinations
+# The score is multiplied by the scale factor which is user determined
+# This factor determines how much the factor will affect the overall weight
+def create_commute_score(houseScore, survey):
     # Currently only scores based on commute times
     # It supports having multiple destinations
     maxCommute = survey.maxCommute
+    scaleFactor = survey.commuteWeight
     for house in houseScore:
+        # It needs to be made clear that the scale factor only effects the homes that are under the
+        # Commute time. For example, if the max commute is 12 minutes, then anything over 12 is removed.
+        # If the scale factor is 0, then all the homes under 12 are weighted equally at 0. Likewise if
+        # the scale factor is 5, then a home with a commute time of 6 minutes will have a much higher score then
+        # a commute of 9 minutes even though in reality it isn't that much.
         for commute in house.commuteTime:
             # Minimum range is always 10
             if maxCommute > 11:
                 rangeCom = maxCommute
             else:
+                # Make sure that the minimum is 11, so that when it subtracts 10, it doesn't do
+                # a divide by zero
                 rangeCom = 11
-            # IF the commute is less than 10 minutes make it perfect
+            # If the commute is less than 10 minutes make it perfect
             if commute <= 10:
-                house.score += 100
-                house.scorePossible += 100
+                house.score += (100 * scaleFactor)
+                house.scorePossible += (100 * scaleFactor)
             elif commute <= maxCommute:
-                house.score += (1 - (commute-10)/(rangeCom - 10))*100
-                house.scorePossible += 100
+                house.score += (((1 - (commute-10)/(rangeCom - 10))*100) * scaleFactor)
+                house.scorePossible += (100 * scaleFactor)
             else:
                 # Mark house for deletion
                 house.eliminated = True
+    return houseScore
+
+
+# Given the houseScore and the survey generate and add the score based
+# On the commute times to the destinations
+def create_house_score(houseScore, survey):
+
+    # Creates score based on commute
+    create_commute_score(houseScore, survey)
     return houseScore
 
 

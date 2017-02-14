@@ -2,9 +2,11 @@ from django.db import models
 from userAuth.models import UserProfile
 from enum import Enum
 import math
-# Create your models here.
 
+# Global Configurations
 survey_types = Enum('survey_types', 'rent buy')
+default_buy_survey_name = "Recent Buy Survey"
+default_rent_survey_name = "Recent Rent Survey"
 
 
 # Stores the type of home
@@ -28,9 +30,9 @@ class HomeType(models.Model):
     def __str__(self):
         return self.homeType
 
+
 # Default name for rent survey that is used for the last survey created
 # Every user gets a history of one survey
-default_rent_survey_name = "Recent Rent Survey"
 class RentingSurveyModel(InitialSurveyModel):
     userProf = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=200, default=default_rent_survey_name)
@@ -38,6 +40,8 @@ class RentingSurveyModel(InitialSurveyModel):
     minPrice = models.IntegerField(default=0)
     maxCommute = models.IntegerField(default=0)
     minCommute = models.IntegerField(default=0)
+    commuteWeight = models.IntegerField(default=1)
+
     home_type = models.ManyToManyField(HomeType)
 
     def get_short_name(self):
@@ -84,7 +88,7 @@ class RentingSurveyModel(InitialSurveyModel):
             for homeType in homeTypeSet:
                 if counter == 0:
                     typeOutput = str(homeType)
-                    counter = counter + 1
+                    counter += 1
                 else:
                     typeOutput = str(homeType) + ", " + typeOutput
 
@@ -92,10 +96,10 @@ class RentingSurveyModel(InitialSurveyModel):
 
 
 # Default name for buying survey
-default_buy_survey_name = "recent_buy_survey"
 class BuyingSurveyModel(InitialSurveyModel):
     name = models.CharField(max_length=200, default=default_buy_survey_name)
     maxPrice = models.IntegerField(default=0)
+
 
 # Stores the destination address since there can be multiple
 class Destinations(models.Model):
