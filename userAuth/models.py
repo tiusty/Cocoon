@@ -61,7 +61,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         # The user is identified by their email address
-        return self.email
+        return self.first_name + " " + self.last_name
 
     def get_short_name(self):
         # The user is identified by their email address
@@ -86,17 +86,15 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 # Defines the Manager for the custom User model
 
 
-
-
-
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
-    test = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.user.get_short_name()
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-            UserProfile.objects.create(user=instance, test="Please enter something")
+            UserProfile.objects.create(user=instance)
 
 
 post_save.connect(create_user_profile, sender=MyUser)

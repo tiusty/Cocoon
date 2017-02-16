@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,99 +13,70 @@
     <!-- Bootstrap style sheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Smarty Street API -->
-    <script type="text/javascript"
-            src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
-    <script src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
-    <script>jQuery.LiveAddress({
-        key: "28808043421919080",
-        debug: false,
-        autocomplete: 5,
-        autoVerify: false,
-        target: "US",
-        addresses: [{
-            address1: '#id_streetAddress',
-            locality: '#id_city',
-            administrative_area: "#id_state",
-            postal_code: '#id_zip_code'
-        }]
-    });
-    </script>
+    <!-- Custom styles for this template -->
+    <link href="{% static 'homePage/cover.css' %}" rel="stylesheet">
 </head>
 <body>
+<body>
 
-<div class="container">
-    <!-- Static navbar -->
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                        aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Project Unicorn</a>
+    <div class="site-wrapper">
+      <div class="site-wrapper-inner">
+        <div class="cover-container">
+          <div class="masthead clearfix">
+            <div class="inner">
+              <h3 class="masthead-brand">Start Survey!</h3>
+              <nav>
+                <ul class="nav masthead-nav">
+                  <li class="active"><a href="#">Home</a></li>
+                  <li><a href="{% url 'homePage:contactPage' %}">Contact</a></li>
+                    {% if user.is_authenticated %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
+                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li class="dropdown-header">Surveys</li>
+                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
+                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'userAuth:loginPage' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+              </nav>
             </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">Dropdown <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li class="dropdown-header">Nav header</li>
-                            <li><a href="#">Separated link</a></li>
-                            <li><a href="#">One more separated link</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="active"><a href="./">Default <span class="sr-only">(current)</span></a></li>
-                    <li><a href="../navbar-static-top/">Static top</a></li>
-                    <li><a href="../navbar-fixed-top/">Fixed top</a></li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-    </nav>
+          </div>
 
-    <!-- Main component for a primary marketing message or call to action -->
-    <div class="jumbotron">
-        <h1>Find your Perfect Home!</h1>
-        <p>Welcome to Unicorn! :)</p>
-        <p>
-            Please log in to save your survey results
-        </p>
-        <p>
-            <a class="btn btn-lg btn-success" href="{% url 'userAuth:loginPage' %}" role="button">Log In</a>
-        </p>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            {% if error_message %}
-                <div class="row">
-                    <div class="col-sm-offset-3 col-sm-6" style="color:red">
-                        <p><strong>{{ error_message }}</strong></p>
-                    </div>
-                </div>
-            {% endif %}
+          <div class="inner cover">
+            <h1 class="cover-heading">Project Unicorn!</h1>
+              <p class="lead">Here at Project Unicorn we strive to find your perfect home! Please click below to get
+                  started!</p>
+              {% if error_message %}
+                  <div class="row">
+                      <div class="col-sm-offset-3 col-sm-6" style="color:red">
+                          <p><strong>{{ error_message }}</strong></p>
+                      </div>
+                  </div>
+              {% endif %}
+              <form class="form-horizontal" action="{% url 'homePage:index' %}" method="post">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      {% for radio in form.survey_type %}
+                          {{ radio }}
+                      {% endfor %}
+                  </div>
+                  <p class="lead">
+                      <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
+                  </p>
+              </form>
+          </div>
         </div>
+      </div>
     </div>
-
-    <div>
-        <a class="btn btn-lg btn-primary" href="{% url 'survey:index' %}">Start Survey</a>
-    </div>
-
-
-</div> <!-- /container -->
-
 
 <!-- Bootstrap core JavaScript
 ================================================== -->

@@ -1,0 +1,98 @@
+{% extends "bootstrapJQuery.html" %}
+{% load static %}
+{% block title %}Unicorn{% endblock %}
+{% block head %}
+    {{ block.super }}
+    <!-- JQuery UI style sheet, mostly used for slider ui -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <!-- Smarty Street API -->
+    <script type="text/javascript"
+            src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
+    <script src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
+    <script>jQuery.LiveAddress({
+        key: "28808043421919080",
+        debug: false,
+        autocomplete: 5,
+        autoVerify: false,
+        target: "US",
+        addresses: [{
+            address1: '#id_streetAddress',
+            locality: '#id_city',
+            administrative_area: "#id_state",
+            postal_code: '#id_zip_code'
+        }]
+    });
+    </script>
+{% endblock %}
+
+{% block nav-survey %}<li class="active"><a>Survey</a></li>{% endblock %}
+
+{% block content %}
+    <!-- Main component for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <h1>Find your Perfect Home!</h1>
+        <p>Please fill out the survey below to find your unicorn :)</p>
+        <p>
+            {% if not user.is_authenticated %}
+                <p>Please login to save personalized surveys!</p>
+                <a class="btn btn-lg btn-success" href="{% url 'userAuth:loginPage' %}" role="button">Log In</a>
+            {% endif %}
+        </p>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            {% if error_message %}
+                <div class="row">
+                    <div class="col-sm-offset-3 col-sm-6" style="color:red">
+                        <p><strong>{{ error_message }}</strong></p>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <form class="form-horizontal" action="{% url 'survey:rentingSurvey' %}" method="post">
+                    {% csrf_token %}
+                    <div class="col-sm-offset-3 col-sm-6">
+                        <div class="form-group">
+                            {{ formDest.as_p }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.as_p }}
+                        </div>
+                        <div class="form-group">
+                            <label for="amountCost">Cost:</label>
+                            <input type="text" id="amountCost" name="amountCost" readonly
+                                   style="border:0; color:#f6931f; font-weight:bold;">
+                            <div id="cost"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="amountCommute">Commute:</label>
+                            <input type="text" id="amountCommute" name="amountCommute" readonly
+                                   style="border:0; color:#f6931f; font-weight:bold;">
+                            <div id="commute"></div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block endScripts %}
+    {{ block.super }}
+<script>
+    // Default values for sliders
+    commuteSliderMin = 10;
+    commuteSliderMax = 60;
+    costSliderMax = 700;
+    costSliderMin = 1400;
+</script>
+<!-- Javascripts -->
+<script src="{% static 'survey/costSlider.js' %}"></script>
+<script src="{% static 'survey/commuteSlider.js' %}"></script>
+<!-- JQuery UI for sliders -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+{% endblock %}

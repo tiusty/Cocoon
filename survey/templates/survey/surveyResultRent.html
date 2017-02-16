@@ -1,0 +1,130 @@
+{% extends "bootstrapJQuery.html" %}
+{% load static %}
+{% block title %}Survey Result{% endblock %}
+
+
+{% block head %}
+    {{ block.super }}
+    <!-- JQuery UI style sheet, mostly used for slider ui -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- Style sheets for template page -->
+    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block nav-survey %}<li class="active"><a>Survey</a></li>{% endblock %}
+{% block container_type %}<div class="container-fluid"> {% endblock %}
+{% block content %}
+    <div class="row" id="row-main">
+        <div class="col-sm-3 sidebar collapsedSide" id="sidebarSurvey">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+                <li><a href="{% url 'homePage:index' %}">Back To Form<span class="sr-only"></span></a></li>
+                <br>
+                <form action="{% url 'survey:surveyResult' survey_type="rent" survey_id=survey.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.as_p }}
+                    </div>
+                    <div class="form-group">
+                        <label for="amountCost">Cost:</label>
+                        <input type="text" id="amountCost" name="amountCost" readonly
+                               style="border:0; color:#f6931f; font-weight:bold;">
+                        <div id="cost"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="amountCommute">Commute:</label>
+                        <input type="text" id="amountCommute" name="amountCommute" readonly
+                               style="border:0; color:#f6931f; font-weight:bold;">
+                        <div id="commute"></div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
+                    </div>
+                </form>
+            </ul>
+        </div>
+        <div class="col-sm-12 main" id="contentSurvey">
+            {% if error_message %}
+                <div class="row" style="text-align:center">
+                    <div style="color:red">
+                        <p><strong>
+                            {% for error in error_message %}
+                                {{ error }}
+                            {% endfor %}
+                        </strong></p>
+                    </div>
+                </div>
+            {% endif %}
+            <button type="button" class="nav navbar-left toggle-sidebar" id="sidebarToggleBut">
+                <span class="glyphicon glyphicon-align-justify"></span>
+            </button>
+            <h1 class="page-header">Your Personal Results</h1>
+            <div id="map"></div>
+            <h2 class="sub-header">Home List</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Select</th>
+                        <th>House Address</th>
+                        <th>Commute Time ({{ commuteMode }})</th>
+                        <th>Price</th>
+                        <th>Home Type</th>
+                        <th>Score</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for home in houseList %}
+                        <tr>
+                            <td><h3>{% if home.eliminated == False %}{{ forloop.counter }} {% else %} None {% endif %}</h3></td>
+                            <td> <button type="button" class="btn btn-primary" onclick="selectAddress({{ forloop.counter }})">Select!</button></td>
+                            <td id="address{{ forloop.counter }}"> {{ home.house.address }}</td>
+                            <td> {{ home.get_commute_times }}</td>
+                            <td> {{ home.house.price }}</td>
+                            <td> {{ home.house.home_type }}</td>
+                            <td> {{ home.get_score }}</td>
+                        </tr>
+                    {% empty %}
+
+                        <!-- TAKES THIS OUT!!!! -->
+                        <tr><td>Congratulations!!!  You are homeless :)</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block endScripts %}
+{{ block.super }}
+<!-- Javascripts -->
+<script src="{% static 'survey/costSlider.js' %}"></script>
+<script src="{% static 'survey/commuteSlider.js' %}"></script>
+<!-- Variables for google map generating with markers -->
+<script>
+    // Deprecating computing commute time and distance in favor of doing in on the server side
+    // Going to keep the portions that create the markers on the map
+    var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
+    var myDestinations = [{% for dest in houseList %}"{{ dest.house.address }}",{% endfor %}];
+    // Manipulated by survey_result.js in selectAddress
+    //var myDestination = "{{ houseList.0.address }}";
+    // Manipulated by costSliderResults.js
+    costSliderMax = {{ survey.maxPrice }};
+    costSliderMin = {{ survey.minPrice }};
+    commuteSliderMin = {{ survey.minCommute }};
+    commuteSliderMax = {{ survey.maxCommute }};
+</script>
+<!-- Loading scripts at the end to increase loading times -->
+<script src="{% static 'survey/survey_result.js' %}"></script>
+<script src="{% static 'survey/addMarkers.js' %}"></script>
+<script src="{% static 'survey/addGoogleMap.js' %}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
+
+<!-- JQuery UI for sliders -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+{% endblock %}

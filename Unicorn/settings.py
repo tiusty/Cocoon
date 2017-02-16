@@ -25,7 +25,7 @@ SECRET_KEY = '#o3k!ghm%yfnscj1bam=p*ml=$ct9b0j00-bkv@-%%=jk&54g('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['52.14.25.81','127.0.0.1']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'homePage',
     'userAuth',
     'survey',
+    'houseDatabase',
 ]
 
 MIDDLEWARE = [
@@ -120,6 +121,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+LOGIN_URL="/userAuth/login/"
 
 
 # Static files (CSS, JavaScript, Images)
