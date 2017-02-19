@@ -111,6 +111,28 @@ class ScoringStruct:
         else:
             return 0
 
+    """
+    Function: get_user_score()
+    Description:
+    Returns a human readable score. Therefore, the user will not see
+        a long float which is meaningless
+    Comments:
+    Currently the scale is to large. Will define to +/- later
+    """
+    def get_user_score(self):
+        currScore = self.get_score()
+        if currScore >= 90:
+            return "A"
+        elif currScore >= 80:
+            return "B"
+        elif currScore >= 70:
+            return "C"
+        elif currScore >= 60:
+            return "D"
+        else:
+            return "F"
+
+
     # Returns a string of the commute times, works with multiple commute times
     def get_commute_times(self):
         endResult=""

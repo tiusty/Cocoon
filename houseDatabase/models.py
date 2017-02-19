@@ -12,3 +12,7 @@ class RentDatabase(models.Model):
 
     def __str__(self):
         return self.address
+
+    def get_price(self):
+        return "$" + str(self.price)
+
