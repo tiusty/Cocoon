@@ -16,8 +16,7 @@
 
 {% block nav-survey %}
     <li class="active"><a>Survey</a></li>{% endblock %}
-{% block container_type %}
-    <div class="container-fluid"> {% endblock %}
+{% block container_type %}container-fluid{% endblock %}
 {% block content %}
     {% for home in houseList %}
         <!-- Modal -->
@@ -135,7 +134,16 @@
                             <td style="vertical-align:middle"> {{ home.house.price }}</td>
                             <td style="vertical-align:middle"> {{ home.house.home_type }}</td>
                             <td style="vertical-align:middle"> {{ home.get_score }}</td>
-                            <td><h3 style="margin-top: 10px;"><span class="	glyphicon glyphicon-heart-empty"></span></h3></td>
+                            <td>
+                                    <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}" onclick="set_favorite({{ home.house.id }});"
+                                                                        {% if home.favorite %}
+                                                                        class="glyphicon glyphicon-heart"
+                                                                        {% else %}
+                                                                        class="glyphicon glyphicon-heart-empty"
+                                                                        {% endif %}
+                                                                        aria-hidden="true"></span>
+                                    </h3>
+                            </td>
                         </tr>
                     {% empty %}
 
@@ -151,6 +159,69 @@
 
 {% block endScripts %}
 {{ block.super }}
+    <script>
+        function set_favorite(num) {
+            console.log("create post is working!");;;;;;;;;;;;;;;;;; // sanity check
+            console.log(num);
+            $.ajax({
+                url : "{% url 'survey:setFavorite' %}",
+                type : "POST", //http method
+                data : { "fav" : num },
+
+                success: function(json) {
+                    console.log(json);
+                    console.log("success");
+                    if(json["result"] == 0)
+                    {
+                        console.log("removed");
+                        $('span#glyph' + num).removeClass("glyphicon-heart").addClass("glyphicon-heart-empty");
+                    }
+                    else if(json["result"] == 1)
+                    {
+                        console.log("Added!");
+                        console.log(num);
+                        $('span#glyph' + num).removeClass("glyphicon-heart-empty").addClass("glyphicon-heart");
+                    }
+                    else
+                    {
+                        console.log("unknown");
+                    }
+                },
+
+                error : function(xhr, errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            })
+        }
+
+    </script>
+    <script>
+        // using jQuery
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    // Only send the token to relative URLs i.e. locally.
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+    </script>
+
 <!-- Javascripts -->
 <script src="{% static 'survey/costSlider.js' %}"></script>
 <script src="{% static 'survey/commuteSlider.js' %}"></script>

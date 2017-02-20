@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 from userAuth.models import UserProfile
@@ -7,6 +7,7 @@ from survey.models import survey_types, RentingSurveyModel, default_rent_survey_
 from houseDatabase.models import RentDatabase
 from django.contrib.auth.decorators import login_required
 import math
+import json
 
 import googlemaps
 
@@ -102,6 +103,7 @@ class ScoringStruct:
         self.scorePossible = 0
         self.commuteTime = []
         self.eliminated = False
+        self.favorite = False
 
     # Generates the actual "score" for the house
     def get_score(self):
@@ -305,10 +307,12 @@ def survey_result(request, survey_type, survey_id="recent"):
                         counter = 0
                         for house in housingList:
                             currHouse = ScoringStruct(house)
+                            if currProf.favorites.filter(id=house.id).exists():
+                                currHouse.favorite = True
                             for commute in matrix["rows"][counter]["elements"]:
                                 print(commute)
                                 # Divide by 60 to get minutes
-                                if(commute['status'] == 'OK'):
+                                if commute['status'] == 'OK':
                                     currHouse.commuteTime.append(commute['duration']["value"]/60)
                                 else:
                                     # Eliminate houses that can't have a commute value
@@ -346,3 +350,28 @@ def survey_result(request, survey_type, survey_id="recent"):
 
     context['form'] = form
     return render(request, 'survey/surveyResultRent.html', context)
+
+
+# This is used for ajax request to set house favorites
+def set_favorite(request):
+    if request.method == 'POST':
+        # Only care if the user is authenicated
+        if request.user.is_authenticated():
+            houseId = request.POST.get('fav')
+            house = RentDatabase.objects.get(id=houseId)
+            currProfile = UserProfile.objects.get(user=request.user)
+            # If the house is already in the database then remove it and return 0
+            # Which means that it is no longer in the favorites
+            if currProfile.favorites.filter(id=houseId).exists():
+                currProfile.favorites.remove(house)
+                return HttpResponse(json.dumps({"result": "0"}),
+                                    content_type="application/json",
+                                    )
+            # If the  house is not in the Many to Many then add it and
+            # return 1 which means it is currently in the favorites
+            else:
+                currProfile.favorites.add(house)
+                return HttpResponse(json.dumps({"result": "1"}),
+                                    content_type="application/json",
+                                    )
+
