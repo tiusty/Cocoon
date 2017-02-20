@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from userAuth.models import UserProfile
 from survey.models import RentingSurveyModel, RentingDesintations
+from django.contrib.auth.decorators import login_required
 
 from .forms import LoginUserForm, RegisterForm, ProfileForm
 # Create your views here.
@@ -59,7 +60,7 @@ def logoutPage(request):
     logout(request)
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
-
+@login_required
 def ProfilePage(request, defaultPage="profile"):
     context = {
         'error_message': [],
@@ -81,10 +82,14 @@ def ProfilePage(request, defaultPage="profile"):
             context['defaultProfile'] = 0
         elif defaultPage == "rentSurvey":
             context['defaultProfile'] = 1
+        # for now since buy survey is not implemented, just have it load the rent survey
         elif defaultPage == "buySurvey":
-            context['defaultProfile'] = 2
+            context['defaultProfile'] = 1
+        elif defaultPage == "favorites":
+            context['defaultProfile'] = 3
         else:
             context['defaultProfile'] = 0
+        context['favorites'] = userProfile.favorites.all()
 
     else:
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
