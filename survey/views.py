@@ -110,6 +110,9 @@ class ScoringStruct:
         # Takes care of divide by 0, also if it is eleminted the score should be zero
         if self.scorePossible != 0 and self.eliminated is False:
             return (self.score/self.scorePossible)*100
+        elif self.eliminated:
+            # If eliminated return negative one so it is sorted to the back
+            return -1
         else:
             return 0
 
