@@ -18,3 +18,6 @@ class RentDatabase(models.Model):
     def get_price(self):
         return "$" + str(self.price)
 
+    def get_moveInday(self):
+        return self.moveInDay
+
