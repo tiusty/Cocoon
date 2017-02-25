@@ -161,6 +161,7 @@ def create_commute_score(houseScore, survey):
     # Currently only scores based on commute times
     # It supports having multiple destinations
     maxCommute = survey.maxCommute
+    minCommute = survey.minCommute
     scaleFactor = survey.commuteWeight
     for house in houseScore:
         # It needs to be made clear that the scale factor only effects the homes that are under the
@@ -176,8 +177,14 @@ def create_commute_score(houseScore, survey):
                 # Make sure that the minimum is 11, so that when it subtracts 10, it doesn't do
                 # a divide by zero
                 rangeCom = 11
-            # If the commute is less than 10 minutes make it perfect
-            if commute <= 10:
+            # First check to see if the commute is less then the minimum commute, if it is then remove it
+            # Second check if the commute time is less than 10 minutes, because if it is it is a perfect score
+            # Third If the commute is less than the max commute time compute a score
+            # Forth if the commute is more than the maxCommute then remove the house
+            if commute < minCommute:
+                # Mark house for deletion
+                house.eliminated = True
+            elif commute <= 10:
                 house.score += (100 * scaleFactor)
                 house.scorePossible += (100 * scaleFactor)
             elif commute <= maxCommute:
@@ -218,6 +225,21 @@ def order_by_house_score(houseScore):
 # If it can't find the most recent survey it redirects back to the survey
 @login_required
 def survey_result(request, survey_type, survey_id="recent"):
+    """
+    Survey result is the heart of the website where the survey is grabbed and the housing list is created
+    Based on the results of the survey.
+    :param request: Http Request
+    :param survey_type: This is the survey_type which currently is one or rent or buy
+    :param survey_id:  This is the survey id that corresponds to the survey that is desired
+        If no id is specified then the latest survey is used
+    :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
+        etc. If something goes wrong then it may redirect back to the survey homePage
+
+    To Do:
+    1. Set a limit on the number of homes that are used for commute times. I would say 50 max, then
+        only return the top 20-30 homes to the user
+    2. Set the moveInDay to a period so people can specify a range of dates to check
+    """
     context = {
         'error_message': [],
     }
@@ -265,7 +287,7 @@ def survey_result(request, survey_type, survey_id="recent"):
 
                 # Filters the Database with all the static elements as the first pass
                 housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))\
-                    .filter(home_type__in=homeTypes)
+                    .filter(home_type__in=homeTypes).filter(moveInDay__year=survey.moveinDate.year, moveInDay__month=survey.moveinDate.month)
 
                 # Retrieves all the destinations that the user recorded
                 locations = survey.rentingdesintations_set.all()

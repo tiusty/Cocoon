@@ -85,15 +85,16 @@
     {{ block.super }}
 <script>
     // Default values for sliders
-    commuteSliderMin = 10;
+    commuteSliderMin = 0;
     commuteSliderMax = 60;
-    costSliderMax = 700;
-    costSliderMin = 1400;
+    costSliderMax = 1400;
+    costSliderMin = 700;
 </script>
+
+<!-- JQuery UI for sliders -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!-- Javascripts -->
 <script src="{% static 'survey/costSlider.js' %}"></script>
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
 <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
-<!-- JQuery UI for sliders -->
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 {% endblock %}

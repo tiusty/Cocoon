@@ -3,4 +3,7 @@
  */
 $( function() {
     $( "#moveInDatePicker" ).datepicker();
+    $( "#anim" ).on( "change", function() {
+      $( "#moveInDatePicker" ).datepicker( "option", "showAnim", $( this ).val() );
+    });
   } );
