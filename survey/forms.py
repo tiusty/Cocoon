@@ -1,5 +1,5 @@
 from django import forms
-from survey.models import RentingSurveyModel, BuyingSurveyModel, RentingDesintations, HomeType
+from survey.models import RentingSurveyModel, BuyingSurveyModel, RentingDesintations, HomeType, default_rent_survey_name
 from django.forms import ModelForm
 from django.db.models import Q
 
@@ -53,6 +53,16 @@ class DestinationForm(ModelForm):
         fields = ['streetAddress', 'city', 'state', 'zip_code']
 
 class RentSurveyBase(ModelForm):
+    #if name is left blank it sets a default name
+    name = forms.CharField(
+        label="Survey Name",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the name of the survey',
+            }),
+        max_length=Max_Text_Input_Length,
+    )
     minPrice = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
@@ -103,28 +113,36 @@ class RentSurveyBase(ModelForm):
             }),
     )
 
-class RentSurvey(RentSurveyBase):
+    moveinDate = forms.DateField(
+        label="Move in Date",
+        widget=forms.DateInput(
+            attrs={
+               'id': "moveInDatePicker",
+            },
+            format='%m/%d/%y',
+    ))
 
+
+class RentSurvey(RentSurveyBase):
+    """
+    Rent Survey is the rent survey on the main survey page
+    """
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ['home_type', 'maxPrice', 'minPrice', 'commuteWeight', 'maxCommute', 'minCommute']
+        fields = ['name', 'moveinDate', 'home_type', 'maxPrice', 'minPrice', 'commuteWeight', 'maxCommute', 'minCommute']
 
 
 class RentSurveyMini(RentSurveyBase):
-    name = forms.CharField(
-        label="Survey Name",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the name of the survey',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
+    """
+    RentSurveyMini is the survey that is on the survey results page and allows the user to create
+    quick changes. This should be mostly a subset of the RentSurvey
+    """
+
 
     class Meta:
         model = RentingSurveyModel
-        fields = ['home_type', 'maxPrice', 'minPrice', 'name', 'commuteWeight',
+        fields = ['name', 'moveinDate', 'home_type', 'maxPrice', 'minPrice', 'commuteWeight',
                   'minCommute', 'maxCommute']
 
 

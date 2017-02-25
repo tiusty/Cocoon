@@ -2,6 +2,7 @@ from django.db import models
 from userAuth.models import UserProfile
 from enum import Enum
 import math
+import datetime
 
 # Global Configurations
 survey_types = Enum('survey_types', 'rent buy')
@@ -34,6 +35,11 @@ class HomeType(models.Model):
 # Default name for rent survey that is used for the last survey created
 # Every user gets a history of one survey
 class RentingSurveyModel(InitialSurveyModel):
+    """
+    Renting Survey Model is the model for storing data from the renting survey model.
+    It takes the Initial Survey model as an input which is data that is true for all surveys
+    The user may take multiple surveys and it is linked to their User Profile
+    """
     userProf = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=200, default=default_rent_survey_name)
     maxPrice = models.IntegerField(default=0)
@@ -41,6 +47,7 @@ class RentingSurveyModel(InitialSurveyModel):
     maxCommute = models.IntegerField(default=0)
     minCommute = models.IntegerField(default=0)
     commuteWeight = models.IntegerField(default=1)
+    moveinDate = models.DateField(default=datetime.date.today)
 
     home_type = models.ManyToManyField(HomeType)
 

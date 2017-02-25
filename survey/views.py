@@ -354,24 +354,49 @@ def survey_result(request, survey_type, survey_id="recent"):
 
 # This is used for ajax request to set house favorites
 def set_favorite(request):
+    """
+    Ajax request that sets a home as a favorite. This function just toggles the homes.
+    Therefore, if the home is requested, if it already existed in the database as a favorite
+    Then it unfavorites it. If it was not in the database as a favorite then it favorites it. The return
+    value is the current state of the house after toggling the home. It returns a 0 if the home is
+    not in the home and returns a 1 if the home is a favorite
+    :param request: The HTTP request
+    :return: An HTTP response which returns a JSON
+        0- house not in favorites
+        1- house in favorites
+        2- could not find user profile
+        3 -
+    """
     if request.method == 'POST':
-        # Only care if the user is authenicated
+        # Only care if the user is authenticated
         if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
             houseId = request.POST.get('fav')
-            house = RentDatabase.objects.get(id=houseId)
-            currProfile = UserProfile.objects.get(user=request.user)
-            # If the house is already in the database then remove it and return 0
-            # Which means that it is no longer in the favorites
-            if currProfile.favorites.filter(id=houseId).exists():
-                currProfile.favorites.remove(house)
-                return HttpResponse(json.dumps({"result": "0"}),
+            # Retrieve the house associated with that id
+            try:
+                house = RentDatabase.objects.get(id=houseId)
+                try:
+                    currProfile = UserProfile.objects.get(user=request.user)
+                    # If the house is already in the database then remove it and return 0
+                    # Which means that it is no longer in the favorites
+                    if currProfile.favorites.filter(id=houseId).exists():
+                        currProfile.favorites.remove(house)
+                        return HttpResponse(json.dumps({"result": "0"}),
+                                            content_type="application/json",
+                                            )
+                    # If the  house is not in the Many to Many then add it and
+                    # return 1 which means it is currently in the favorites
+                    else:
+                        currProfile.favorites.add(house)
+                        return HttpResponse(json.dumps({"result": "1"}),
+                                            content_type="application/json",
+                                            )
+                except UserProfile.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                                        content_type="application/json",
+                                        )
+            # Return an error is the house cannot be found
+            except RentDatabase.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
                                     content_type="application/json",
                                     )
-            # If the  house is not in the Many to Many then add it and
-            # return 1 which means it is currently in the favorites
-            else:
-                currProfile.favorites.add(house)
-                return HttpResponse(json.dumps({"result": "1"}),
-                                    content_type="application/json",
-                                    )
-

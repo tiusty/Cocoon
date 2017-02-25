@@ -159,17 +159,18 @@
 
 {% block endScripts %}
 {{ block.super }}
+    {% comment AjaxRequest %}
+    This Script handles the Ajax request to the setFavorite controller. It adds or removes homes from
+    The favorite list
+    {% endcomment %}
     <script>
         function set_favorite(num) {
-            console.log("create post is working!");;;;;;;;;;;;;;;;;; // sanity check
-            console.log(num);
             $.ajax({
                 url : "{% url 'survey:setFavorite' %}",
                 type : "POST", //http method
                 data : { "fav" : num },
 
                 success: function(json) {
-                    console.log(json);
                     console.log("success");
                     if(json["result"] == 0)
                     {
@@ -179,12 +180,12 @@
                     else if(json["result"] == 1)
                     {
                         console.log("Added!");
-                        console.log(num);
                         $('span#glyph' + num).removeClass("glyphicon-heart-empty").addClass("glyphicon-heart");
                     }
+                    // Need to handle error! Create a div that is meant for errors
                     else
                     {
-                        console.log("unknown");
+                        console.log(json["result"]);
                     }
                 },
 
@@ -227,8 +228,10 @@
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
 <!-- Variables for google map generating with markers -->
 <script>
+    {% comment endScritps %}
     // Deprecating computing commute time and distance in favor of doing in on the server side
     // Going to keep the portions that create the markers on the map
+    {% endcomment %}
     var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
     var myDestinations = [{% for dest in houseList %}"{{ dest.house.address }}",{% endfor %}];
     // Manipulated by survey_result.js in selectAddress
@@ -240,6 +243,7 @@
     commuteSliderMax = {{ survey.maxCommute }};
 </script>
 <!-- Loading scripts at the end to increase loading times -->
+<script src="{% static 'survey/moveInDatePicker.js' %}"></script>
 <script src="{% static 'survey/survey_result.js' %}"></script>
 <script src="{% static 'survey/addMarkers.js' %}"></script>
 <script src="{% static 'survey/addGoogleMap.js' %}"></script>
