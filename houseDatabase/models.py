@@ -11,6 +11,7 @@ class RentDatabase(models.Model):
     price = models.IntegerField(default=-1)
     home_type = models.CharField(max_length=200, default=notSetChar)
     moveInDay = models.DateField(default=datetime.date.today)
+    numBedrooms = models.IntegerField(default=0)
 
     def __str__(self):
         return self.address
@@ -20,4 +21,7 @@ class RentDatabase(models.Model):
 
     def get_moveInday(self):
         return self.moveInDay
+
+    def get_num_bedrooms(self):
+        return self.numBedrooms
 

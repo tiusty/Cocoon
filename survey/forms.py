@@ -4,7 +4,8 @@ from django.forms import ModelForm
 from django.db.models import Q
 
 # Python global configurations
-Commute_Range_Max_Scale = 6 # Remember base 0, so value of 6 is 0-5
+Commute_Range_Max_Scale = 6  # Remember base 0, so value of 6 is 0-5
+Num_Bedrooms_Max = 6  # Base 1, so from 1 bedroom to 6 bedrooms
 Max_Text_Input_Length = 200
 
 
@@ -56,6 +57,7 @@ class RentSurveyBase(ModelForm):
     #if name is left blank it sets a default name
     name = forms.CharField(
         label="Survey Name",
+        initial=default_rent_survey_name,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -117,10 +119,22 @@ class RentSurveyBase(ModelForm):
         label="Move in Date",
         widget=forms.DateInput(
             attrs={
-               'id': "moveInDatePicker",
+                'class': 'form-control',
+                'id': "moveInDatePicker",
+                'placeholder': 'Choose move in day',
             },
-            format='%m/%d/%y',
+            format='%m/%d/%Y',
     ))
+
+    numBedrooms = forms.ChoiceField(
+        choices=[(x, x) for x in range(1, Num_Bedrooms_Max)],
+        label="Number of Bedrooms",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
 
 
 class RentSurvey(RentSurveyBase):
@@ -130,7 +144,7 @@ class RentSurvey(RentSurveyBase):
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ['name', 'moveinDate', 'home_type', 'maxPrice', 'minPrice', 'commuteWeight', 'maxCommute', 'minCommute']
+        fields = ['name', 'moveinDate', 'home_type', 'maxPrice', 'minPrice', 'commuteWeight', 'numBedrooms','maxCommute', 'minCommute']
 
 
 class RentSurveyMini(RentSurveyBase):
@@ -139,11 +153,10 @@ class RentSurveyMini(RentSurveyBase):
     quick changes. This should be mostly a subset of the RentSurvey
     """
 
-
     class Meta:
         model = RentingSurveyModel
         fields = ['name', 'moveinDate', 'home_type', 'maxPrice', 'minPrice', 'commuteWeight',
-                  'minCommute', 'maxCommute']
+                  'numBedrooms', 'minCommute', 'maxCommute']
 
 
 class BuySurvey(ModelForm):

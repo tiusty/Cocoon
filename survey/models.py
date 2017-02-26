@@ -2,7 +2,7 @@ from django.db import models
 from userAuth.models import UserProfile
 from enum import Enum
 import math
-import datetime
+from django.utils import timezone
 
 # Global Configurations
 survey_types = Enum('survey_types', 'rent buy')
@@ -47,7 +47,8 @@ class RentingSurveyModel(InitialSurveyModel):
     maxCommute = models.IntegerField(default=0)
     minCommute = models.IntegerField(default=0)
     commuteWeight = models.IntegerField(default=1)
-    moveinDate = models.DateField(default=datetime.date.today)
+    moveinDate = models.DateField(default=timezone.now())
+    numBedrooms = models.IntegerField(default=0)
 
     home_type = models.ManyToManyField(HomeType)
 

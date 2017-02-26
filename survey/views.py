@@ -289,8 +289,23 @@ def survey_result(request, survey_type, survey_id="recent"):
                     homeTypes.append(home.homeType)
 
                 # Filters the Database with all the static elements as the first pass
-                housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))\
-                    .filter(home_type__in=homeTypes).filter(moveInDay__year=survey.moveinDate.year, moveInDay__month=survey.moveinDate.month)
+                """
+                The item that will filter the list the most should be first to narrow down the number of iterations
+                The database needs to be searched
+                (Right now it isn't order by efficiecy but instead by when it was added. Later it can be switched around
+
+                Current order:
+                1. Filter by price range. The House must be in the correct range to be accepted
+                2. Filter by Home Type. The home must be the correct home type to be accepted
+                3. Filter by Move In day. Currently it filters only by day and month. THe day is ignored
+                    The house move in day must by in that month for it to work. (Maybe switch to range later)
+                4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
+                """
+                housingList = RentDatabase.objects.filter(
+                    price__range=(survey.minPrice, survey.maxPrice))\
+                    .filter(home_type__in=homeTypes)\
+                    .filter(moveInDay__year=survey.moveinDate.year, moveInDay__month=survey.moveinDate.month)\
+                    .filter(numBedrooms=survey.numBedrooms)
 
                 # Retrieves all the destinations that the user recorded
                 locations = survey.rentingdesintations_set.all()
