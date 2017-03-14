@@ -95,9 +95,13 @@ def buying_survey(request):
     return render(request, 'survey/buyingSurvey.html', {'form':form})
 
 
-# This struct allows each home to easily be associated with a score and appropriate data
-# Allows contains member fuctions which allow data to be returned easily
 class ScoringStruct:
+    """
+    Class that stores one home and the corresponding information for that home
+    This is used to rank homes and eliminate them if necessary
+    This also makes sure that the scores are easily associated with the home
+    Contains functions to easily extract information for the given home
+    """
     def __init__(self, newHouse):
         self.house = newHouse
         self.score = 0
@@ -106,9 +110,15 @@ class ScoringStruct:
         self.eliminated = False
         self.favorite = False
 
-    # Generates the actual "score" for the house
     def get_score(self):
-        # Takes care of divide by 0, also if it is eleminted the score should be zero
+        """
+        Generates the actual score based on the possible score and current score.
+        This makes sure that the divide by zero case is handled.
+        :return:
+            Returns the score. If it was eliminated then it returns -1 to indicate that
+                The house should not be used
+        """
+        # Takes care of divide by 0, also if it is eliminated the score should be -1
         if self.scorePossible != 0 and self.eliminated is False:
             return (self.score/self.scorePossible)*100
         elif self.eliminated:
@@ -117,15 +127,15 @@ class ScoringStruct:
         else:
             return 0
 
-    """
-    Function: get_user_score()
-    Description:
-    Returns a human readable score. Therefore, the user will not see
-        a long float which is meaningless
-    Comments:
-    Currently the scale is to large. Will define to +/- later
-    """
     def get_user_score(self):
+        """
+        Function: get_user_score()
+        Description:
+        Returns a human readable score. Therefore, the user will not see
+            a long float which is meaningless
+        Comments:
+        Currently the scale is to large. Will define to +/- later.
+        """
         currScore = self.get_score()
         if currScore >= 90:
             return "A"
@@ -138,7 +148,6 @@ class ScoringStruct:
         else:
             return "F"
 
-    # Returns a string of the commute times, works with multiple commute times
     def get_commute_times(self):
         """
         Returns a formatted string that returns all the commute times for a given home
@@ -168,6 +177,22 @@ class ScoringStruct:
 # The score is multiplied by the scale factor which is user determined
 # This factor determines how much the factor will affect the overall weight
 def create_commute_score(houseScore, survey):
+    """
+    Evaluates a score based on the commute times.
+    Currently if any commute is below the minimum commute time chosen by the user then it is eliminated.
+    Also, if the commute time is above the desired commute time, then it is also eliminated.
+    If it is in the middle, then anything below 10 minutes is always perfect, then the rest of the times
+    are scaled appropriately.
+
+    The User can define a commute weight. If the commute weight is 0, then the scaling factor is 0 so all
+    homes are weighted the same as long as they are within the range. As the scaling factor increases, it
+    gives a large weight to homes that are closer.
+    :param houseScore: ScoringStruct that stores all the homes and the corresponding commute times
+    :param survey: The Survey is passed, but is only really needed to find the max and min commute times
+    :return:
+        Returns the ScoringStruct but with the housing scores updated with the commute times and
+            appropriate homes eliminated
+    """
     # Currently only scores based on commute times
     # It supports having multiple destinations
     maxCommute = survey.maxCommute
