@@ -71,6 +71,12 @@
                             <div id="commute"></div>
                         </div>
                         <div class="form-group">
+                            <label for="amountBathrooms"># Bathrooms:</label>
+                            <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
+                                   style="border:0; color:#f6931f; font-weight:bold;">
+                            <div id="bathrooms"></div>
+                        </div>
+                        <div class="form-group">
                             <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
                         </div>
                     </div>
@@ -89,6 +95,8 @@
     commuteSliderMax = 60;
     costSliderMax = 1400;
     costSliderMin = 400;
+    bathroomsMin = 0;
+    bathroomsMax = 6;
 </script>
 
 <!-- JQuery UI for sliders -->
@@ -97,4 +105,5 @@
 <script src="{% static 'survey/costSlider.js' %}"></script>
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
 <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
+<script src="{% static 'survey/bathroomsSlider.js' %}"></script>
 {% endblock %}
