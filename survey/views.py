@@ -64,7 +64,7 @@ def renting_survey(request):
 
                     # After saving the destination form, retrieve the survey again
                     try:
-                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name=default_rent_survey_name)
+                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=rentingSurvey.id)
                         destinations = formDest.save(commit=False)
                         # Set the foreign field from the destination to the corresponding survey
                         destinations.survey = survey
@@ -72,6 +72,7 @@ def renting_survey(request):
                     except RentingSurveyModel.DoesNotExist:
                         raise "Could not retrieve object to attach destinations"
                     # redirect to new URL:
+                    print(rentingSurvey.id)
                     return HttpResponseRedirect(reverse('survey:surveyResult',
                                                         kwargs={'survey_type':"rent", "survey_id": rentingSurvey.id}))
                 except UserProfile.DoesNotExist:
@@ -137,9 +138,15 @@ class ScoringStruct:
         else:
             return "F"
 
-
     # Returns a string of the commute times, works with multiple commute times
     def get_commute_times(self):
+        """
+        Returns a formatted string that returns all the commute times for a given home
+        Example output:
+        27 Minutes, 27 Minutes, 27 Minutes
+        :return:
+        string -> Formatted to display nicely to the user
+        """
         endResult=""
         counter = 0
         for commute in self.commuteTime:
@@ -404,8 +411,8 @@ def set_favorite(request):
     :return: An HTTP response which returns a JSON
         0- house not in favorites
         1- house in favorites
-        2- could not find user profile
-        3 -
+        else:
+            - the error message
     """
     if request.method == 'POST':
         # Only care if the user is authenticated
