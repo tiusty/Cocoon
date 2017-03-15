@@ -58,7 +58,25 @@ class InteriorAmenities(models.Model):
         abstract = True
 
 
-class RentingSurveyModel(InitialSurveyModel, InteriorAmenities):
+class BuildingExteriorAmenities(models.Model):
+    """
+    Contains all the survey questions regarding the building/Exterior Amenities
+    Any survey can inherit these fields
+    All Questions are hybrid weighted
+    """
+    parkingSpot = models.IntegerField(default=0)
+    washerDryer_inBuilding = models.IntegerField(default=0)
+    elevator = models.IntegerField(default=0)
+    handicapAccess = models.IntegerField(default=0)
+    poolHottub = models.IntegerField(default=0)
+    fitnessCenter = models.IntegerField(default=0)
+    storageUnit = models.IntegerField(default=0)
+
+    class Meta:
+            abstract = True
+
+
+class RentingSurveyModel(InitialSurveyModel, InteriorAmenities, BuildingExteriorAmenities):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
     It takes the Initial Survey model as an input which is data that is true for all surveys

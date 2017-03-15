@@ -197,7 +197,82 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
 
-class RentSurvey(RentSurveyBase, InteriorAmenitiesForm):
+class BuildingExteriorAmenitiesForm(ModelForm):
+    """
+    Class stores all the form fields for the BuildingExteriorAmenities Model
+    """
+    parkingSpot = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Parking Spot",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+    washerDryer_inBuilding = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Washer/Dryer in Building",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+    elevator = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Elevator",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+    handicapAccess = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Handicap Access",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+    poolHottub = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Pool/Hot tub",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+    fitnessCenter = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Fitness Center",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+    storageUnit = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Storage Unit",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+
+class RentSurvey(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -207,7 +282,7 @@ class RentSurvey(RentSurveyBase, InteriorAmenitiesForm):
         exclude = ['userProf', 'survey_type']
 
 
-class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm):
+class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
     """
     RentSurveyMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurvey
