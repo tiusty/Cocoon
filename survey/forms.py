@@ -142,7 +142,7 @@ class InteriorAmenitiesForm(ModelForm):
     """
     Class stores all the form fields in regards to the interior Admenities
     """
-    minBathRooms = forms.IntegerField(
+    minBathrooms = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',

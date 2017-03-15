@@ -52,7 +52,7 @@ class InteriorAmenities(models.Model):
     dishWasher = models.IntegerField(default=0)
     bath = models.IntegerField(default=0)
     maxBathrooms = models.IntegerField(default=max_num_bathrooms)
-    minBathRooms = models.IntegerField(default=0)
+    minBathrooms = models.IntegerField(default=0)
 
     class Meta:
         abstract = True

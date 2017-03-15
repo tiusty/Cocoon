@@ -7,9 +7,9 @@
 $( function() {
     $( "#bathrooms" ).slider({
         range: true,
-        min: 0.0,
-        max: 6.5,
-        step: .5,
+        min: 0,
+        max: 6,
+        //step: .5,
         values: [ bathroomsMin , bathroomsMax ],
         slide: function( event, ui ) {
             $( "#amountBathrooms" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
