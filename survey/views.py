@@ -472,3 +472,48 @@ def set_favorite(request):
                 return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
                                     content_type="application/json",
                                     )
+
+
+
+@login_required
+def delete_survey(request):
+    """
+    Deletes the given Survey passed by the User.
+    It only deletes the survey if the survey corresponds to the given user.
+    Always returns to the profile page of the renting survey
+    :param request: HTTP request object
+    :param survey_id: The id of survey model that needs to be deleted
+    :return:
+        0 if the survey was successfully deleted
+        error message if the survey was not successfully deleted
+    """
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            surveyId = request.POST.get('survey')
+            try:
+                currProfile = UserProfile.objects.get(user=request.user)
+                try:
+                    survey_delete = currProfile.rentingsurveymodel_set.get(id=surveyId)
+                    numDelete = survey_delete.delete()
+                    return HttpResponse(json.dumps({"result": "0"}),
+                                        content_type="application/json",
+                                        )
+
+                except RentingSurveyModel.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve Survey"}),
+                                        content_type="application/json",
+                                        )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "Method Not POST"}),
+                            content_type="application/json",
+                            )

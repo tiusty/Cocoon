@@ -42,7 +42,9 @@
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header">Surveys</li>
                                 <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
+                                {% comment %}
                                 <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
+                                {% endcomment %}
                                 <li><a href="{% url 'userAuth:profilePage' 'favorites' %}">Favorites!</a></li>
                             </ul>
                         </li>

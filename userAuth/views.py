@@ -101,3 +101,4 @@ def ProfilePage(request, defaultPage="profile"):
     form = ProfileForm(instance=userProfile.user)
     context['form'] = form
     return render(request, 'userAuth/profilePage.html', context)
+
