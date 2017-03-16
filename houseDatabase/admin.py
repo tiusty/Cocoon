@@ -6,10 +6,10 @@ from .models import RentDatabase
 class HouseAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,      {'fields': ['address']}),
-        ('House Info', {'fields': ('price', 'home_type'),}),
+        ('House Info', {'fields': ('price', 'home_type', 'numBedrooms'),}),
     ]
 
-    list_display = ('address', 'price', 'home_type')
+    list_display = ('address', 'price', 'home_type', 'numBedrooms',)
     list_filter = ['home_type']
     search_fields = ['address']
 

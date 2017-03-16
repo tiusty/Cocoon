@@ -2,20 +2,31 @@ from django.db import models
 from userAuth.models import UserProfile
 from enum import Enum
 import math
+from django.utils import timezone
 
 # Global Configurations
 survey_types = Enum('survey_types', 'rent buy')
 default_buy_survey_name = "Recent Buy Survey"
 default_rent_survey_name = "Recent Rent Survey"
+max_num_bathrooms = 7
 
 
-# Stores the type of home
 class InitialSurveyModel(models.Model):
+    """
+    Stores the default information across all the surveys
+    Stores survey type and when it was created
+    """
     survey_type = models.IntegerField(default=-1)
     created = models.DateField(auto_now_add=True)
 
 
 class HomeType(models.Model):
+    """
+    Class stores all the different homes types
+    This generates the multiple select field in the survey
+    If another home gets added it needs to be added here in the HOME_TYPE
+    tuples but also allowed past the query in the survey result view.
+    """
     HOME_TYPE = (
         ('house', 'House'),
         ('apartment', 'Apartment'),
@@ -31,9 +42,50 @@ class HomeType(models.Model):
         return self.homeType
 
 
-# Default name for rent survey that is used for the last survey created
-# Every user gets a history of one survey
-class RentingSurveyModel(InitialSurveyModel):
+class InteriorAmenities(models.Model):
+    """
+    Contains all the survey questions regarding the interior amenities
+    Any survey can inherit these fields
+    """
+    airConditioning = models.IntegerField(default=0)
+    washDryer_InHome = models.IntegerField(default=0)
+    dishWasher = models.IntegerField(default=0)
+    bath = models.IntegerField(default=0)
+    maxBathrooms = models.IntegerField(default=max_num_bathrooms)
+    minBathrooms = models.IntegerField(default=0)
+
+    class Meta:
+        abstract = True
+
+
+class BuildingExteriorAmenities(models.Model):
+    """
+    Contains all the survey questions regarding the building/Exterior Amenities
+    Any survey can inherit these fields
+    All Questions are hybrid weighted
+    """
+    parkingSpot = models.IntegerField(default=0)
+    washerDryer_inBuilding = models.IntegerField(default=0)
+    elevator = models.IntegerField(default=0)
+    handicapAccess = models.IntegerField(default=0)
+    poolHottub = models.IntegerField(default=0)
+    fitnessCenter = models.IntegerField(default=0)
+    storageUnit = models.IntegerField(default=0)
+
+    class Meta:
+            abstract = True
+
+
+class RentingSurveyModel(InitialSurveyModel, InteriorAmenities, BuildingExteriorAmenities):
+    """
+    Renting Survey Model is the model for storing data from the renting survey model.
+    It takes the Initial Survey model as an input which is data that is true for all surveys
+    The user may take multiple surveys and it is linked to their User Profile
+
+    Default name is stored unless the User changes it. Everytime a survey is created the past
+    default name is deleted to allow for the new one. Therefore, there is always a history
+    of one survey
+    """
     userProf = models.ForeignKey(UserProfile)
     name = models.CharField(max_length=200, default=default_rent_survey_name)
     maxPrice = models.IntegerField(default=0)
@@ -41,6 +93,8 @@ class RentingSurveyModel(InitialSurveyModel):
     maxCommute = models.IntegerField(default=0)
     minCommute = models.IntegerField(default=0)
     commuteWeight = models.IntegerField(default=1)
+    moveinDate = models.DateField(default=timezone.now)
+    numBedrooms = models.IntegerField(default=0)
 
     home_type = models.ManyToManyField(HomeType)
 

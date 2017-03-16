@@ -1,18 +1,19 @@
+{% extends "bootstrapJQuery.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
+{% block title %}Register{% endblock title %}
+
+{% block head %}
+    {{ block.super }}
     <!-- Register page stylesheet-->
     <link href="{% static "userAuth/register.css" %}" rel="stylesheet">
-    <!-- Bootstrap style sheet -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+{% endblock head %}
 
-</head>
-<body>
-<div class="container">
+{% comment %}
+Leaving empty nav_bar block to prevent the nav bar from showing up
+{% endcomment %}
+{% block nav_bar %}{% endblock nav_bar %}
+
+{% block content %}
     <div class="row">
         <div class="col-sm-offset-3 col-sm-6">
             <form action="{% url 'userAuth:registerPage' %}" method="post" class="form-register form-horizontal">
@@ -43,7 +44,4 @@
     <p style="text-align:center">
         <a href="{% url 'userAuth:loginPage' %}">Return to Login Page</a>
     </p>
-</div>
-
-</body>
-</html>
+{% endblock content %}

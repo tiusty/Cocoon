@@ -5,6 +5,8 @@
     {{ block.super }}
     <!-- JQuery UI style sheet, mostly used for slider ui -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'survey/rentingSurvey.css' %}">
+
    <!-- Smarty Street API -->
     <script type="text/javascript"
             src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
@@ -49,27 +51,186 @@
                 </div>
             {% endif %}
             <div class="row">
-                <form class="form-horizontal" action="{% url 'survey:rentingSurvey' %}" method="post">
+
+                <form class="form-horizontal" id="my_form" action="{% url 'survey:rentingSurvey' %}" method="post">
+                    {{ form.non_field_errors }}
+                    {{ form.errors }}
                     {% csrf_token %}
                     <div class="col-sm-offset-3 col-sm-6">
-                        <div class="form-group">
-                            {{ formDest.as_p }}
+                        <h3>Step 1</h3>
+                        <span class="help-block">All fields are required. Each item will be an important factor which will filter the items</span>
+                        <div class="form-group step_div">
+                            <div class="form-group">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {{ form.name.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.moveinDate.label_tag }}
+                                {{ form.moveinDate }}
+                                {{ form.moveinDate.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.numBedrooms.label_tag }}
+                                {{ form.numBedrooms }}
+                                {{ form.numBedrooms.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.home_type.label_tag }}
+                                {{ form.home_type }}
+                                {{ form.home_type.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="amountCost">Cost Per Month:</label>
+                                <input type="text" id="amountCost" name="amountCost" readonly
+                                       style="border:0; color:#f6931f; font-weight:bold;">
+                                <div id="cost"></div>
+                                {{ form.minPrice }}
+                                {{ form.maxPrice }}
+                            </div>
                         </div>
-                        <div class="form-group">
-                            {{ form.as_p }}
+                        <br>
+
+                        <h3>Step 2</h3>
+                        <span class="help-block">Please enter a work, school or somewhere you need to commute to</span>
+                        <div class="form-group step_div">
+                            <div class="form-group">
+                                {% comment %} Contains form for destination {% endcomment %}
+                                {{ formDest.as_p }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.commuteWeight.label_tag }}
+                                {{ form.commuteWeight }}
+                                {{ form.commuteWeight.errors }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="amountCommute">Commute:</label>
+                                <input type="text" id="amountCommute" name="amountCommute" readonly
+                                       style="border:0; color:#f6931f; font-weight:bold;">
+                                <div id="commute"></div>
+                                {{ form.minCommute }}
+                                {{ form.maxCommute }}
+                            </div>
                         </div>
+                        <br>
+
+                        {% comment %} Accordion ONLY will have questions that do not need to be validated {% endcomment %}
+                        <h3>Step 3</h3>
+                        <span class="help-block">Nothing below is required but it tailors the search to your needs!</span>
                         <div class="form-group">
-                            <label for="amountCost">Cost:</label>
-                            <input type="text" id="amountCost" name="amountCost" readonly
-                                   style="border:0; color:#f6931f; font-weight:bold;">
-                            <div id="cost"></div>
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                                Interior Amenities</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <p>
+                                                {{ form.airConditioning.label_tag }}
+                                                {{ form.airConditioning }}
+                                                {{ form.airConditioning.errors }}
+                                            </p>
+
+                                            <p>
+                                                {{ form.washDryer_InHome.label_tag }}
+                                                {{ form.washDryer_InHome }}
+                                                {{ form.washDryer_InHome.errors }}
+                                            </p>
+
+                                            <p>
+                                                {{ form.dishWasher.label_tag }}
+                                                {{ form.dishWasher }}
+                                                {{ form.dishWasher.errors }}
+                                            </p>
+
+                                            <p>
+                                                {{ form.bath.label_tag }}
+                                                {{ form.bath }}
+                                                {{ form.bath.errors }}
+                                            </p>
+
+                                            <p>
+                                                <label for="amountBathrooms"># Bathrooms:</label>
+                                                <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
+                                                       style="border:0; color:#f6931f; font-weight:bold;">
+                                            <div id="bathrooms"></div>
+                                            {{ form.minBathrooms }}
+                                            {{ form.maxBathrooms }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                                Building/Exterior Amentities</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse2" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <p>
+                                                {{ form.parkingSpot.label_tag }}
+                                                {{ form.parkingSpot }}
+                                                {{ form.parkingSpot.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.washerDryer_inBuilding.label_tag }}
+                                                {{ form.washerDryer_inBuilding }}
+                                                {{ form.washerDryer_inBuilding.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.elevator.label_tag }}
+                                                {{ form.elevator }}
+                                                {{ form.elevator.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.handicapAccess.label_tag }}
+                                                {{ form.handicapAccess }}
+                                                {{ form.handicapAccess.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.poolHottub.label_tag }}
+                                                {{ form.poolHottub }}
+                                                {{ form.poolHottub.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.fitnessCenter.label_tag }}
+                                                {{ form.fitnessCenter }}
+                                                {{ form.fitnessCenter.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.storageUnit.label_tag }}
+                                                {{ form.storageUnit }}
+                                                {{ form.storageUnit.errors }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% comment %}
+                                Not currently needed so commenting out
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                                                Something else 2</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endcomment %}
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="amountCommute">Commute:</label>
-                            <input type="text" id="amountCommute" name="amountCommute" readonly
-                                   style="border:0; color:#f6931f; font-weight:bold;">
-                            <div id="commute"></div>
-                        </div>
+
                         <div class="form-group">
                             <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
                         </div>
@@ -85,14 +246,20 @@
     {{ block.super }}
 <script>
     // Default values for sliders
-    commuteSliderMin = 10;
+    commuteSliderMin = 0;
     commuteSliderMax = 60;
-    costSliderMax = 700;
-    costSliderMin = 1400;
+    costSliderMax = 1400;
+    costSliderMin = 400;
+    bathroomsMin = 0;
+    bathroomsMax = 6;
 </script>
+
+
+<!-- JQuery UI for sliders -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!-- Javascripts -->
 <script src="{% static 'survey/costSlider.js' %}"></script>
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
-<!-- JQuery UI for sliders -->
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{% static 'survey/moveInDatePicker.js' %}"></script>
+<script src="{% static 'survey/bathroomsSlider.js' %}"></script>
 {% endblock %}

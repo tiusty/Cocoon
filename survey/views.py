@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 from userAuth.models import UserProfile
@@ -7,6 +7,7 @@ from survey.models import survey_types, RentingSurveyModel, default_rent_survey_
 from houseDatabase.models import RentDatabase
 from django.contrib.auth.decorators import login_required
 import math
+import json
 
 import googlemaps
 
@@ -63,7 +64,7 @@ def renting_survey(request):
 
                     # After saving the destination form, retrieve the survey again
                     try:
-                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(name=default_rent_survey_name)
+                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=rentingSurvey.id)
                         destinations = formDest.save(commit=False)
                         # Set the foreign field from the destination to the corresponding survey
                         destinations.survey = survey
@@ -71,6 +72,7 @@ def renting_survey(request):
                     except RentingSurveyModel.DoesNotExist:
                         raise "Could not retrieve object to attach destinations"
                     # redirect to new URL:
+                    print(rentingSurvey.id)
                     return HttpResponseRedirect(reverse('survey:surveyResult',
                                                         kwargs={'survey_type':"rent", "survey_id": rentingSurvey.id}))
                 except UserProfile.DoesNotExist:
@@ -93,26 +95,67 @@ def buying_survey(request):
     return render(request, 'survey/buyingSurvey.html', {'form':form})
 
 
-# This struct allows each home to easily be associated with a score and appropriate data
-# Allows contains member fuctions which allow data to be returned easily
 class ScoringStruct:
+    """
+    Class that stores one home and the corresponding information for that home
+    This is used to rank homes and eliminate them if necessary
+    This also makes sure that the scores are easily associated with the home
+    Contains functions to easily extract information for the given home
+    """
     def __init__(self, newHouse):
         self.house = newHouse
         self.score = 0
         self.scorePossible = 0
         self.commuteTime = []
         self.eliminated = False
+        self.favorite = False
 
-    # Generates the actual "score" for the house
     def get_score(self):
-        # Takes care of divide by 0, also if it is eleminted the score should be zero
+        """
+        Generates the actual score based on the possible score and current score.
+        This makes sure that the divide by zero case is handled.
+        :return:
+            Returns the score. If it was eliminated then it returns -1 to indicate that
+                The house should not be used
+        """
+        # Takes care of divide by 0, also if it is eliminated the score should be -1
         if self.scorePossible != 0 and self.eliminated is False:
             return (self.score/self.scorePossible)*100
+        elif self.eliminated:
+            # If eliminated return negative one so it is sorted to the back
+            return -1
         else:
             return 0
 
-    # Returns a string of the commute times, works with multiple commute times
+    def get_user_score(self):
+        """
+        Function: get_user_score()
+        Description:
+        Returns a human readable score. Therefore, the user will not see
+            a long float which is meaningless
+        Comments:
+        Currently the scale is to large. Will define to +/- later.
+        """
+        currScore = self.get_score()
+        if currScore >= 90:
+            return "A"
+        elif currScore >= 80:
+            return "B"
+        elif currScore >= 70:
+            return "C"
+        elif currScore >= 60:
+            return "D"
+        else:
+            return "F"
+
     def get_commute_times(self):
+        """
+        Returns a formatted string that returns all the commute times for a given home
+        Example output:
+        27 Minutes, 27 Minutes, 27 Minutes
+        :return:
+        string -> Formatted to display nicely to the user
+        """
         endResult=""
         counter = 0
         for commute in self.commuteTime:
@@ -134,9 +177,26 @@ class ScoringStruct:
 # The score is multiplied by the scale factor which is user determined
 # This factor determines how much the factor will affect the overall weight
 def create_commute_score(houseScore, survey):
+    """
+    Evaluates a score based on the commute times.
+    Currently if any commute is below the minimum commute time chosen by the user then it is eliminated.
+    Also, if the commute time is above the desired commute time, then it is also eliminated.
+    If it is in the middle, then anything below 10 minutes is always perfect, then the rest of the times
+    are scaled appropriately.
+
+    The User can define a commute weight. If the commute weight is 0, then the scaling factor is 0 so all
+    homes are weighted the same as long as they are within the range. As the scaling factor increases, it
+    gives a large weight to homes that are closer.
+    :param houseScore: ScoringStruct that stores all the homes and the corresponding commute times
+    :param survey: The Survey is passed, but is only really needed to find the max and min commute times
+    :return:
+        Returns the ScoringStruct but with the housing scores updated with the commute times and
+            appropriate homes eliminated
+    """
     # Currently only scores based on commute times
     # It supports having multiple destinations
     maxCommute = survey.maxCommute
+    minCommute = survey.minCommute
     scaleFactor = survey.commuteWeight
     for house in houseScore:
         # It needs to be made clear that the scale factor only effects the homes that are under the
@@ -152,8 +212,14 @@ def create_commute_score(houseScore, survey):
                 # Make sure that the minimum is 11, so that when it subtracts 10, it doesn't do
                 # a divide by zero
                 rangeCom = 11
-            # If the commute is less than 10 minutes make it perfect
-            if commute <= 10:
+            # First check to see if the commute is less then the minimum commute, if it is then remove it
+            # Second check if the commute time is less than 10 minutes, because if it is it is a perfect score
+            # Third If the commute is less than the max commute time compute a score
+            # Forth if the commute is more than the maxCommute then remove the house
+            if commute < minCommute:
+                # Mark house for deletion
+                house.eliminated = True
+            elif commute <= 10:
                 house.score += (100 * scaleFactor)
                 house.scorePossible += (100 * scaleFactor)
             elif commute <= maxCommute:
@@ -194,6 +260,21 @@ def order_by_house_score(houseScore):
 # If it can't find the most recent survey it redirects back to the survey
 @login_required
 def survey_result(request, survey_type, survey_id="recent"):
+    """
+    Survey result is the heart of the website where the survey is grabbed and the housing list is created
+    Based on the results of the survey.
+    :param request: Http Request
+    :param survey_type: This is the survey_type which currently is one or rent or buy
+    :param survey_id:  This is the survey id that corresponds to the survey that is desired
+        If no id is specified then the latest survey is used
+    :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
+        etc. If something goes wrong then it may redirect back to the survey homePage
+
+    To Do:
+    1. Set a limit on the number of homes that are used for commute times. I would say 50 max, then
+        only return the top 20-30 homes to the user
+    2. Set the moveInDay to a period so people can specify a range of dates to check
+    """
     context = {
         'error_message': [],
     }
@@ -240,8 +321,23 @@ def survey_result(request, survey_type, survey_id="recent"):
                     homeTypes.append(home.homeType)
 
                 # Filters the Database with all the static elements as the first pass
-                housingList = RentDatabase.objects.filter(price__range=(survey.minPrice, survey.maxPrice))\
-                    .filter(home_type__in=homeTypes)
+                """
+                The item that will filter the list the most should be first to narrow down the number of iterations
+                The database needs to be searched
+                (Right now it isn't order by efficiecy but instead by when it was added. Later it can be switched around
+
+                Current order:
+                1. Filter by price range. The House must be in the correct range to be accepted
+                2. Filter by Home Type. The home must be the correct home type to be accepted
+                3. Filter by Move In day. Currently it filters only by day and month. THe day is ignored
+                    The house move in day must by in that month for it to work. (Maybe switch to range later)
+                4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
+                """
+                housingList = RentDatabase.objects.filter(
+                    price__range=(survey.minPrice, survey.maxPrice))\
+                    .filter(home_type__in=homeTypes)\
+                    .filter(moveInDay__year=survey.moveinDate.year, moveInDay__month=survey.moveinDate.month)\
+                    .filter(numBedrooms=survey.numBedrooms)
 
                 # Retrieves all the destinations that the user recorded
                 locations = survey.rentingdesintations_set.all()
@@ -283,10 +379,12 @@ def survey_result(request, survey_type, survey_id="recent"):
                         counter = 0
                         for house in housingList:
                             currHouse = ScoringStruct(house)
+                            if currProf.favorites.filter(id=house.id).exists():
+                                currHouse.favorite = True
                             for commute in matrix["rows"][counter]["elements"]:
                                 print(commute)
                                 # Divide by 60 to get minutes
-                                if(commute['status'] == 'OK'):
+                                if commute['status'] == 'OK':
                                     currHouse.commuteTime.append(commute['duration']["value"]/60)
                                 else:
                                     # Eliminate houses that can't have a commute value
@@ -324,3 +422,98 @@ def survey_result(request, survey_type, survey_id="recent"):
 
     context['form'] = form
     return render(request, 'survey/surveyResultRent.html', context)
+
+
+# This is used for ajax request to set house favorites
+def set_favorite(request):
+    """
+    Ajax request that sets a home as a favorite. This function just toggles the homes.
+    Therefore, if the home is requested, if it already existed in the database as a favorite
+    Then it unfavorites it. If it was not in the database as a favorite then it favorites it. The return
+    value is the current state of the house after toggling the home. It returns a 0 if the home is
+    not in the home and returns a 1 if the home is a favorite
+    :param request: The HTTP request
+    :return: An HTTP response which returns a JSON
+        0- house not in favorites
+        1- house in favorites
+        else:
+            - the error message
+    """
+    if request.method == 'POST':
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            houseId = request.POST.get('fav')
+            # Retrieve the house associated with that id
+            try:
+                house = RentDatabase.objects.get(id=houseId)
+                try:
+                    currProfile = UserProfile.objects.get(user=request.user)
+                    # If the house is already in the database then remove it and return 0
+                    # Which means that it is no longer in the favorites
+                    if currProfile.favorites.filter(id=houseId).exists():
+                        currProfile.favorites.remove(house)
+                        return HttpResponse(json.dumps({"result": "0"}),
+                                            content_type="application/json",
+                                            )
+                    # If the  house is not in the Many to Many then add it and
+                    # return 1 which means it is currently in the favorites
+                    else:
+                        currProfile.favorites.add(house)
+                        return HttpResponse(json.dumps({"result": "1"}),
+                                            content_type="application/json",
+                                            )
+                except UserProfile.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                                        content_type="application/json",
+                                        )
+            # Return an error is the house cannot be found
+            except RentDatabase.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
+                                    content_type="application/json",
+                                    )
+
+
+
+@login_required
+def delete_survey(request):
+    """
+    Deletes the given Survey passed by the User.
+    It only deletes the survey if the survey corresponds to the given user.
+    Always returns to the profile page of the renting survey
+    :param request: HTTP request object
+    :param survey_id: The id of survey model that needs to be deleted
+    :return:
+        0 if the survey was successfully deleted
+        error message if the survey was not successfully deleted
+    """
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            surveyId = request.POST.get('survey')
+            try:
+                currProfile = UserProfile.objects.get(user=request.user)
+                try:
+                    survey_delete = currProfile.rentingsurveymodel_set.get(id=surveyId)
+                    numDelete = survey_delete.delete()
+                    return HttpResponse(json.dumps({"result": "0"}),
+                                        content_type="application/json",
+                                        )
+
+                except RentingSurveyModel.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve Survey"}),
+                                        content_type="application/json",
+                                        )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "Method Not POST"}),
+                            content_type="application/json",
+                            )

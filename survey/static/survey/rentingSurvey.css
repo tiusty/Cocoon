@@ -1,0 +1,11 @@
+.step_div {
+    outline-style: dotted;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-right: 30px;
+    padding-bottom: 20px;
+}
+
+body {
+    padding-bottom: 150px;
+}

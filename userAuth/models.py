@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, UserManager, BaseUserMa
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
+from houseDatabase.models import RentDatabase
 # Create your models here.
 
 
@@ -88,9 +89,11 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
+    favorites = models.ManyToManyField(RentDatabase)
 
     def __str__(self):
         return self.user.get_short_name()
+
 
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
