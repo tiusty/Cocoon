@@ -496,7 +496,7 @@ def delete_survey(request):
                 currProfile = UserProfile.objects.get(user=request.user)
                 try:
                     survey_delete = currProfile.rentingsurveymodel_set.get(id=surveyId)
-                    numDelete = survey_delete.delete()
+                    survey_delete.delete()
                     return HttpResponse(json.dumps({"result": "0"}),
                                         content_type="application/json",
                                         )

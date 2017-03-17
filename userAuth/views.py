@@ -19,7 +19,12 @@ def loginPage(request):
     context = {
         'error_message': [],
     }
-    if request.method == 'POST':
+
+    # If the user is already authenticated them redirect to index page
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('homePage:index'))
+
+    elif request.method == 'POST':
         form = LoginUserForm(request, request.POST)
         if form.is_valid():
             if not form.cleaned_data['remember']:
@@ -34,6 +39,7 @@ def loginPage(request):
                 context['error_message'].append('Unable to login in with Email/Password combo')
         else:
             context['error_message'].append('Unable to login in, refill out the form')
+
     context['form'] = form
     return render(request, 'userAuth/login.html', context)
 
