@@ -160,7 +160,7 @@ class RentSurveyBase(ModelForm):
         # Validate the movein fields
 
         if self.cleaned_data['moveinDateStart'] > self.cleaned_data['moveinDateEnd']:
-            self.errors['invalid_range'] = "End date should be before the start date"
+            self.errors['invalid_range'] = " End date should be before the start date"
             valid = False
 
         return valid

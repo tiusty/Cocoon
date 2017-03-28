@@ -12,7 +12,7 @@ $( function() {
         })
         .on( "change", function() {
           to.datepicker( "option", "minDate", getDate( this ) );
-        });;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        });
       to = $( "#moveInDatePickerEnd" )
           .datepicker({
         defaultDate: "+1w",
