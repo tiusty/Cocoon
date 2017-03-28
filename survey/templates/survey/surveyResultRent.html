@@ -61,10 +61,15 @@
                                 {{ form.name }}
                                 {{ form.name.errors }}
                             </div>
+                             <div class="form-group">
+                                {{ form.moveinDateStart.label_tag }}
+                                {{ form.moveinDateStart }}
+                                {{ form.moveinDateStart.errors }}
+                            </div>
                             <div class="form-group">
-                                {{ form.moveinDate.label_tag }}
-                                {{ form.moveinDate }}
-                                {{ form.moveinDate.errors }}
+                                {{ form.moveinDateEnd.label_tag }}
+                                {{ form.moveinDateEnd }}
+                                {{ form.moveinDateEnd.errors }}
                             </div>
                             <div class="form-group">
                                 {{ form.numBedrooms.label_tag }}

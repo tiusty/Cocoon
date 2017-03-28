@@ -85,7 +85,7 @@ def renting_survey(request):
             if not form.is_valid():
                 context['error_message'].append("The normal form is also not valid")
             context['error_message'].append("Destination form is not valid")
-    return render(request, 'survey/rentingSurvey.html', {'form': form, 'formDest':formDest})
+    return render(request, 'survey/rentingSurvey.html', {'form': form, 'formDest': formDest})
 
 
 # Function is not implemented, it will basically be the same as the rent survey but for buying instead
@@ -329,14 +329,14 @@ def survey_result(request, survey_type, survey_id="recent"):
                 Current order:
                 1. Filter by price range. The House must be in the correct range to be accepted
                 2. Filter by Home Type. The home must be the correct home type to be accepted
-                3. Filter by Move In day. Currently it filters only by day and month. THe day is ignored
-                    The house move in day must by in that month for it to work. (Maybe switch to range later)
+                3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
+                    If the house is outside the range it is eliminated
                 4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
                 """
                 housingList = RentDatabase.objects.filter(
                     price__range=(survey.minPrice, survey.maxPrice))\
                     .filter(home_type__in=homeTypes)\
-                    .filter(moveInDay__year=survey.moveinDate.year, moveInDay__month=survey.moveinDate.month)\
+                    .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd))\
                     .filter(numBedrooms=survey.numBedrooms)
 
                 # Retrieves all the destinations that the user recorded

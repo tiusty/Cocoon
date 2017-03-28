@@ -83,7 +83,9 @@ class RequiredInformation(models.Model):
     maxCommute = models.IntegerField(default=0)
     minCommute = models.IntegerField(default=0)
     commuteWeight = models.IntegerField(default=1)
-    moveinDate = models.DateField(default=timezone.now)
+    moveinDateStart = models.DateField(default=timezone.now)
+    moveinDateEnd = models.DateField(default=timezone.now)
+
     numBedrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeType)
 

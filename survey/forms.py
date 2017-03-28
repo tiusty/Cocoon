@@ -116,16 +116,27 @@ class RentSurveyBase(ModelForm):
             }),
     )
 
-    moveinDate = forms.DateField(
-        label="Move in Date",
+    moveinDateStart = forms.DateField(
+        label="Start of move in range",
         widget=forms.DateInput(
             attrs={
                 'class': 'form-control',
-                'id': "moveInDatePicker",
-                'placeholder': 'Choose move in day',
+                'id': "moveInDatePickerStart",
+                'placeholder': 'Choose first day to move in',
             },
             format='%m/%d/%Y',
-    ))
+        ))
+
+    moveinDateEnd = forms.DateField(
+        label="End of movein range",
+        widget=forms.DateInput(
+            attrs={
+                'class': 'form-control',
+                'id': "moveInDatePickerEnd",
+                'placeholder': 'Choose last date to move in',
+            },
+            format='%m/%d/%Y',
+        ))
 
     numBedrooms = forms.ChoiceField(
         choices=[(x, x) for x in range(1, Num_Bedrooms_Max)],
@@ -136,6 +147,23 @@ class RentSurveyBase(ModelForm):
             }
         )
     )
+
+    # Adding validation constraints to form
+    # Need to make sure the move in day is properly set
+    # Aka the start date is before the end date
+    def is_valid(self):
+        valid = super(RentSurveyBase, self).is_valid()
+
+        if not valid:
+            return valid
+
+        # Validate the movein fields
+
+        if self.cleaned_data['moveinDateStart'] > self.cleaned_data['moveinDateEnd']:
+            self.errors['invalid_range'] = "End date should be before the start date"
+            valid = False
+
+        return valid
 
 
 class InteriorAmenitiesForm(ModelForm):
