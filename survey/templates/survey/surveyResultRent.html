@@ -53,31 +53,166 @@
     <div class="row" id="row-main">
         <div class="col-sm-3 sidebar collapsedSide" id="sidebarSurvey">
             <ul class="nav nav-sidebar">
-                <li class="active" style="margin-right: -21px;margin-left: -20px;"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-                <li style="margin-right: -21px;margin-left: -20px;"><a href="{% url 'homePage:index' %}">Back To Form<span class="sr-only"></span></a></li>
-                <br>
                 <form action="{% url 'survey:surveyResult' survey_type="rent" survey_id=survey.id %}" method="post">
                     {% csrf_token %}
-                    <div class="form-group">
-                        {{ form.as_p }}
+                    <div class="form-group step_div">
+                            <div class="form-group">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {{ form.name.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.moveinDate.label_tag }}
+                                {{ form.moveinDate }}
+                                {{ form.moveinDate.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.numBedrooms.label_tag }}
+                                {{ form.numBedrooms }}
+                                {{ form.numBedrooms.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.home_type.label_tag }}
+                                {{ form.home_type }}
+                                {{ form.home_type.errors }}
+                            </div>
+                            <div class="form-group">
+                                <label for="amountCost">Cost Per Month:</label>
+                                <input type="text" id="amountCost" name="amountCost" readonly
+                                       style="border:0; color:#f6931f; font-weight:bold;">
+                                <div id="cost"></div>
+                                {{ form.minPrice }}
+                                {{ form.maxPrice }}
+                            </div>
+                        <br>
+                        <div class="form-group step_div">
+                            <div class="form-group">
+                                {{ form.commuteWeight.label_tag }}
+                                {{ form.commuteWeight }}
+                                {{ form.commuteWeight.errors }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="amountCommute">Commute:</label>
+                                <input type="text" id="amountCommute" name="amountCommute" readonly
+                                       style="border:0; color:#f6931f; font-weight:bold;">
+                                <div id="commute"></div>
+                                {{ form.minCommute }}
+                                {{ form.maxCommute }}
+                            </div>
+                        </div>
+                        <br>
                     </div>
                     <div class="form-group">
-                        <label for="amountCost">Cost Per Month:</label>
-                        <input type="text" id="amountCost" name="amountCost" readonly
-                               style="border:0; color:#f6931f; font-weight:bold;">
-                        <div id="cost"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="amountCommute">Commute:</label>
-                        <input type="text" id="amountCommute" name="amountCommute" readonly
-                               style="border:0; color:#f6931f; font-weight:bold;">
-                        <div id="commute"></div>
-                    </div>
-                    <div class="form-group">
-                            <label for="amountBathrooms"># Bathrooms:</label>
-                            <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
-                                   style="border:0; color:#f6931f; font-weight:bold;">
-                            <div id="bathrooms"></div>
+                            <div class="panel-group" id="accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                                Interior Amenities</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse1" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <p>
+                                                {{ form.airConditioning.label_tag }}
+                                                {{ form.airConditioning }}
+                                                {{ form.airConditioning.errors }}
+                                            </p>
+
+                                            <p>
+                                                {{ form.washDryer_InHome.label_tag }}
+                                                {{ form.washDryer_InHome }}
+                                                {{ form.washDryer_InHome.errors }}
+                                            </p>
+
+                                            <p>
+                                                {{ form.dishWasher.label_tag }}
+                                                {{ form.dishWasher }}
+                                                {{ form.dishWasher.errors }}
+                                            </p>
+
+                                            <p>
+                                                {{ form.bath.label_tag }}
+                                                {{ form.bath }}
+                                                {{ form.bath.errors }}
+                                            </p>
+
+                                            <p>
+                                                <label for="amountBathrooms"># Bathrooms:</label>
+                                                <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
+                                                       style="border:0; color:#f6931f; font-weight:bold;">
+                                            <div id="bathrooms"></div>
+                                            {{ form.minBathrooms }}
+                                            {{ form.maxBathrooms }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                                Building/Exterior Amentities</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse2" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <p>
+                                                {{ form.parkingSpot.label_tag }}
+                                                {{ form.parkingSpot }}
+                                                {{ form.parkingSpot.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.washerDryer_inBuilding.label_tag }}
+                                                {{ form.washerDryer_inBuilding }}
+                                                {{ form.washerDryer_inBuilding.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.elevator.label_tag }}
+                                                {{ form.elevator }}
+                                                {{ form.elevator.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.handicapAccess.label_tag }}
+                                                {{ form.handicapAccess }}
+                                                {{ form.handicapAccess.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.poolHottub.label_tag }}
+                                                {{ form.poolHottub }}
+                                                {{ form.poolHottub.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.fitnessCenter.label_tag }}
+                                                {{ form.fitnessCenter }}
+                                                {{ form.fitnessCenter.errors }}
+                                            </p>
+                                            <p>
+                                                {{ form.storageUnit.label_tag }}
+                                                {{ form.storageUnit }}
+                                                {{ form.storageUnit.errors }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% comment %}
+                                Not currently needed so commenting out
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                                                Something else 2</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {% endcomment %}
+                            </div>
                         </div>
                     <div class="form-group">
                         <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>

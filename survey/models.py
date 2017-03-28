@@ -73,10 +73,25 @@ class BuildingExteriorAmenities(models.Model):
     storageUnit = models.IntegerField(default=0)
 
     class Meta:
-            abstract = True
+        abstract = True
 
 
-class RentingSurveyModel(InitialSurveyModel, InteriorAmenities, BuildingExteriorAmenities):
+class RequiredInformation(models.Model):
+    name = models.CharField(max_length=200, default=default_rent_survey_name)
+    maxPrice = models.IntegerField(default=0)
+    minPrice = models.IntegerField(default=0)
+    maxCommute = models.IntegerField(default=0)
+    minCommute = models.IntegerField(default=0)
+    commuteWeight = models.IntegerField(default=1)
+    moveinDate = models.DateField(default=timezone.now)
+    numBedrooms = models.IntegerField(default=0)
+    home_type = models.ManyToManyField(HomeType)
+
+    class Meta:
+        abstract = True
+
+
+class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenities, BuildingExteriorAmenities):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
     It takes the Initial Survey model as an input which is data that is true for all surveys
@@ -87,16 +102,6 @@ class RentingSurveyModel(InitialSurveyModel, InteriorAmenities, BuildingExterior
     of one survey
     """
     userProf = models.ForeignKey(UserProfile)
-    name = models.CharField(max_length=200, default=default_rent_survey_name)
-    maxPrice = models.IntegerField(default=0)
-    minPrice = models.IntegerField(default=0)
-    maxCommute = models.IntegerField(default=0)
-    minCommute = models.IntegerField(default=0)
-    commuteWeight = models.IntegerField(default=1)
-    moveinDate = models.DateField(default=timezone.now)
-    numBedrooms = models.IntegerField(default=0)
-
-    home_type = models.ManyToManyField(HomeType)
 
     def get_short_name(self):
         nameProf = self.userProf.user.get_short_name()
