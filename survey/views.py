@@ -404,7 +404,8 @@ def survey_result(request, survey_type, survey_id="recent"):
                 # Contains destinations of the user
                 context['locations'] = locations
                 # House list either comes from the scored homes or from the database static list if something went wrong
-                context['houseList'] = housingList
+                # Only put up to 35 house on the list
+                context['houseList'] = housingList[:35]
 
                 # fill form with data from database
                 form = RentSurveyMini(instance=survey)
