@@ -25,3 +25,9 @@ class RentDatabase(models.Model):
     def get_num_bedrooms(self):
         return self.numBedrooms
 
+    def get_home_type(self):
+        return self.home_type
+
+    def get_address(self):
+        return self.address
+
