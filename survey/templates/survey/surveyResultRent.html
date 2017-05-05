@@ -23,7 +23,8 @@
     {% endcomment %}
     {% for home in houseList %}
         <!-- Modal -->
-        <div class="modal fade" id="myModal{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="myModal{{ forloop.counter }}" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -33,13 +34,13 @@
                     </div>
                     <div class="modal-body modalPadding">
                         <div class="row">
-                            <p> <b>Address: </b>{{ home.house.address }}</p>
-                            <p> <b>Commute: </b>{{ home.get_commute_times }}</p>
-                            <p> <b>Price: </b>{{ home.house.get_price}}</p>
-                            <p> <b>Home Type: </b>{{ home.house.home_type }}</p>
-                            <p> <b>Score: </b>{{ home.get_user_score }}</p>
-                            <p> <b>Move In Day: </b>{{ home.house.get_moveInday }}</p>
-                            <p> <b>Number of Bedrooms: </b>{{ home.house.get_num_bedrooms }}</p>
+                            <p><b>Address: </b>{{ home.house.address }}</p>
+                            <p><b>Commute: </b>{{ home.get_commute_times }}</p>
+                            <p><b>Price: </b>{{ home.house.get_price }}</p>
+                            <p><b>Home Type: </b>{{ home.house.home_type }}</p>
+                            <p><b>Score: </b>{{ home.get_user_score }}</p>
+                            <p><b>Move In Day: </b>{{ home.house.get_moveInday }}</p>
+                            <p><b>Number of Bedrooms: </b>{{ home.house.get_num_bedrooms }}</p>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -54,41 +55,43 @@
         <div class="col-sm-3 sidebar collapsedSide" id="sidebarSurvey">
             <ul class="nav nav-sidebar">
                 <form action="{% url 'survey:surveyResult' survey_type="rent" survey_id=survey.id %}" method="post">
+                    {{ form.non_field_errors }}
+                    {{ form.errors }}
                     {% csrf_token %}
                     <div class="form-group step_div">
-                            <div class="form-group">
-                                {{ form.name.label_tag }}
-                                {{ form.name }}
-                                {{ form.name.errors }}
-                            </div>
-                             <div class="form-group">
-                                {{ form.moveinDateStart.label_tag }}
-                                {{ form.moveinDateStart }}
-                                {{ form.moveinDateStart.errors }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.moveinDateEnd.label_tag }}
-                                {{ form.moveinDateEnd }}
-                                {{ form.moveinDateEnd.errors }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.numBedrooms.label_tag }}
-                                {{ form.numBedrooms }}
-                                {{ form.numBedrooms.errors }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.home_type.label_tag }}
-                                {{ form.home_type }}
-                                {{ form.home_type.errors }}
-                            </div>
-                            <div class="form-group">
-                                <label for="amountCost">Cost Per Month:</label>
-                                <input type="text" id="amountCost" name="amountCost" readonly
-                                       style="border:0; color:#f6931f; font-weight:bold;">
-                                <div id="cost"></div>
-                                {{ form.minPrice }}
-                                {{ form.maxPrice }}
-                            </div>
+                        <div class="form-group">
+                            {{ form.name.label_tag }}
+                            {{ form.name }}
+                            {{ form.name.errors }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.moveinDateStart.label_tag }}
+                            {{ form.moveinDateStart }}
+                            {{ form.moveinDateStart.errors }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.moveinDateEnd.label_tag }}
+                            {{ form.moveinDateEnd }}
+                            {{ form.moveinDateEnd.errors }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.numBedrooms.label_tag }}
+                            {{ form.numBedrooms }}
+                            {{ form.numBedrooms.errors }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.home_type.label_tag }}
+                            {{ form.home_type }}
+                            {{ form.home_type.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="amountCost">Cost Per Month:</label>
+                            <input type="text" id="amountCost" name="amountCost" readonly
+                                   style="border:0; color:#f6931f; font-weight:bold;">
+                            <div id="cost"></div>
+                            {{ form.minPrice }}
+                            {{ form.maxPrice }}
+                        </div>
                         <br>
                         <div class="form-group step_div">
                             <div class="form-group">
@@ -109,99 +112,99 @@
                         <br>
                     </div>
                     <div class="form-group">
-                            <div class="panel-group" id="accordion">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-                                                Interior Amenities</a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse1" class="panel-collapse collapse in">
-                                        <div class="panel-body">
-                                            <p>
-                                                {{ form.airConditioning.label_tag }}
-                                                {{ form.airConditioning }}
-                                                {{ form.airConditioning.errors }}
-                                            </p>
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                            Interior Amenities</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse1" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <p>
+                                            {{ form.airConditioning.label_tag }}
+                                            {{ form.airConditioning }}
+                                            {{ form.airConditioning.errors }}
+                                        </p>
 
-                                            <p>
-                                                {{ form.washDryer_InHome.label_tag }}
-                                                {{ form.washDryer_InHome }}
-                                                {{ form.washDryer_InHome.errors }}
-                                            </p>
+                                        <p>
+                                            {{ form.washDryer_InHome.label_tag }}
+                                            {{ form.washDryer_InHome }}
+                                            {{ form.washDryer_InHome.errors }}
+                                        </p>
 
-                                            <p>
-                                                {{ form.dishWasher.label_tag }}
-                                                {{ form.dishWasher }}
-                                                {{ form.dishWasher.errors }}
-                                            </p>
+                                        <p>
+                                            {{ form.dishWasher.label_tag }}
+                                            {{ form.dishWasher }}
+                                            {{ form.dishWasher.errors }}
+                                        </p>
 
-                                            <p>
-                                                {{ form.bath.label_tag }}
-                                                {{ form.bath }}
-                                                {{ form.bath.errors }}
-                                            </p>
+                                        <p>
+                                            {{ form.bath.label_tag }}
+                                            {{ form.bath }}
+                                            {{ form.bath.errors }}
+                                        </p>
 
-                                            <p>
-                                                <label for="amountBathrooms"># Bathrooms:</label>
-                                                <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
-                                                       style="border:0; color:#f6931f; font-weight:bold;">
-                                            <div id="bathrooms"></div>
-                                            {{ form.minBathrooms }}
-                                            {{ form.maxBathrooms }}
-                                            </p>
-                                        </div>
+                                        <p>
+                                            <label for="amountBathrooms"># Bathrooms:</label>
+                                            <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
+                                                   style="border:0; color:#f6931f; font-weight:bold;">
+                                        <div id="bathrooms"></div>
+                                        {{ form.minBathrooms }}
+                                        {{ form.maxBathrooms }}
+                                        </p>
                                     </div>
                                 </div>
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-                                                Building/Exterior Amentities</a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse2" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <p>
-                                                {{ form.parkingSpot.label_tag }}
-                                                {{ form.parkingSpot }}
-                                                {{ form.parkingSpot.errors }}
-                                            </p>
-                                            <p>
-                                                {{ form.washerDryer_inBuilding.label_tag }}
-                                                {{ form.washerDryer_inBuilding }}
-                                                {{ form.washerDryer_inBuilding.errors }}
-                                            </p>
-                                            <p>
-                                                {{ form.elevator.label_tag }}
-                                                {{ form.elevator }}
-                                                {{ form.elevator.errors }}
-                                            </p>
-                                            <p>
-                                                {{ form.handicapAccess.label_tag }}
-                                                {{ form.handicapAccess }}
-                                                {{ form.handicapAccess.errors }}
-                                            </p>
-                                            <p>
-                                                {{ form.poolHottub.label_tag }}
-                                                {{ form.poolHottub }}
-                                                {{ form.poolHottub.errors }}
-                                            </p>
-                                            <p>
-                                                {{ form.fitnessCenter.label_tag }}
-                                                {{ form.fitnessCenter }}
-                                                {{ form.fitnessCenter.errors }}
-                                            </p>
-                                            <p>
-                                                {{ form.storageUnit.label_tag }}
-                                                {{ form.storageUnit }}
-                                                {{ form.storageUnit.errors }}
-                                            </p>
-                                        </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                            Building/Exterior Amentities</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse2" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>
+                                            {{ form.parkingSpot.label_tag }}
+                                            {{ form.parkingSpot }}
+                                            {{ form.parkingSpot.errors }}
+                                        </p>
+                                        <p>
+                                            {{ form.washerDryer_inBuilding.label_tag }}
+                                            {{ form.washerDryer_inBuilding }}
+                                            {{ form.washerDryer_inBuilding.errors }}
+                                        </p>
+                                        <p>
+                                            {{ form.elevator.label_tag }}
+                                            {{ form.elevator }}
+                                            {{ form.elevator.errors }}
+                                        </p>
+                                        <p>
+                                            {{ form.handicapAccess.label_tag }}
+                                            {{ form.handicapAccess }}
+                                            {{ form.handicapAccess.errors }}
+                                        </p>
+                                        <p>
+                                            {{ form.poolHottub.label_tag }}
+                                            {{ form.poolHottub }}
+                                            {{ form.poolHottub.errors }}
+                                        </p>
+                                        <p>
+                                            {{ form.fitnessCenter.label_tag }}
+                                            {{ form.fitnessCenter }}
+                                            {{ form.fitnessCenter.errors }}
+                                        </p>
+                                        <p>
+                                            {{ form.storageUnit.label_tag }}
+                                            {{ form.storageUnit }}
+                                            {{ form.storageUnit.errors }}
+                                        </p>
                                     </div>
                                 </div>
-                                {% comment %}
+                            </div>
+                            {% comment %}
                                 Not currently needed so commenting out
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -217,8 +220,8 @@
                                 </div>
 
                             {% endcomment %}
-                            </div>
                         </div>
+                    </div>
                     <div class="form-group">
                         <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
                     </div>
@@ -239,9 +242,9 @@
             {% endif %}
 
             <h1 class="page-header">
-                    <button type="button" class="toggle-sidebar" id="sidebarToggleBut">
-                        <span class="glyphicon glyphicon-list"></span>
-                    </button>
+                <button type="button" class="toggle-sidebar" id="sidebarToggleBut">
+                    <span class="glyphicon glyphicon-list"></span>
+                </button>
                 Your Personal Results
             </h1>
             <div id="map"></div>
@@ -267,18 +270,19 @@
                             <td style="vertical-align:middle">
                                 <h3 style="margin-top: 10px;">
                                     <span data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
-                                      data-target="#myModal{{ forloop.counter }}" style="padding-right:1em"></span>
-                                    </h3>
+                                          data-target="#myModal{{ forloop.counter }}" style="padding-right:1em"></span>
+                                </h3>
                             </td>
                             <td><h3 style="margin-top: 10px;">
-                                {% if home.eliminated == False %}{{ forloop.counter }} {% else %} Deleted {% endif %}</h3>
+                                {% if home.eliminated == False %}{{ forloop.counter }} {% else %}
+                                    Deleted {% endif %}</h3>
                             </td>
                             <td style="vertical-align:middle">
                                 <button type="button" class="btn btn-primary"
                                         onclick="selectAddress({{ forloop.counter }})">Select!
                                 </button>
                             </td>
-                        <!-- id is used for selecting pin on google maps -->
+                            <!-- id is used for selecting pin on google maps -->
                             <td id="address{{ forloop.counter }}"
                                 style="vertical-align:middle"> {{ home.house.address }}</td>
                             <td style="vertical-align:middle"> {{ home.get_commute_times }}</td>
@@ -286,20 +290,23 @@
                             <td style="vertical-align:middle"> {{ home.house.home_type }}</td>
                             <td style="vertical-align:middle"> {{ home.get_score }}</td>
                             <td>
-                                    <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}" onclick="set_favorite({{ home.house.id }});"
-                                                                        {% if home.favorite %}
-                                                                        class="glyphicon glyphicon-heart"
-                                                                        {% else %}
-                                                                        class="glyphicon glyphicon-heart-empty"
-                                                                        {% endif %}
-                                                                        aria-hidden="true"></span>
-                                    </h3>
+                                <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}"
+                                                                    onclick="set_favorite({{ home.house.id }});"
+                                        {% if home.favorite %}
+                                                                    class="glyphicon glyphicon-heart"
+                                        {% else %}
+                                                                    class="glyphicon glyphicon-heart-empty"
+                                        {% endif %}
+                                                                    aria-hidden="true"></span>
+                                </h3>
                             </td>
                         </tr>
                     {% empty %}
 
                         <!-- TAKES THIS OUT!!!! -->
-                        <tr><td>Congratulations!!!  You are homeless :)</td></tr>
+                        <tr>
+                            <td>Congratulations!!! You are homeless :)</td>
+                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>
@@ -309,7 +316,7 @@
 {% endblock %}
 
 {% block endScripts %}
-{{ block.super }}
+    {{ block.super }}
     {% comment AjaxRequest %}
     This Script handles the Ajax request to the setFavorite controller. It adds or removes homes from
     The favorite list
@@ -317,30 +324,27 @@
     <script>
         function set_favorite(num) {
             $.ajax({
-                url : "{% url 'survey:setFavorite' %}",
-                type : "POST", //http method
-                data : { "fav" : num },
+                url: "{% url 'survey:setFavorite' %}",
+                type: "POST", //http method
+                data: {"fav": num},
 
-                success: function(json) {
+                success: function (json) {
                     console.log("success");
-                    if(json["result"] == 0)
-                    {
+                    if (json["result"] == 0) {
                         console.log("removed");
                         $('span#glyph' + num).removeClass("glyphicon-heart").addClass("glyphicon-heart-empty");
                     }
-                    else if(json["result"] == 1)
-                    {
+                    else if (json["result"] == 1) {
                         console.log("Added!");
                         $('span#glyph' + num).removeClass("glyphicon-heart-empty").addClass("glyphicon-heart");
                     }
                     // Need to handle error! Create a div that is meant for errors
-                    else
-                    {
+                    else {
                         console.log(json["result"]);
                     }
                 },
 
-                error : function(xhr, errmsg,err) {
+                error: function (xhr, errmsg, err) {
                     console.log(xhr.status + ": " + xhr.responseText);
                 }
             })
@@ -374,35 +378,36 @@
         });
     </script>
 
-<!-- Javascripts -->
-<script src="{% static 'survey/costSlider.js' %}"></script>
-<script src="{% static 'survey/commuteSlider.js' %}"></script>
-<script src="{% static 'survey/bathroomsSlider.js' %}"></script>
-<!-- Variables for google map generating with markers -->
-<script>
-    {% comment endScritps %}
-    // Deprecating computing commute time and distance in favor of doing in on the server side
-    // Going to keep the portions that create the markers on the map
-    {% endcomment %}
-    var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
-    var myDestinations = [{% for dest in houseList %}"{{ dest.house.address }}",{% endfor %}];
-    // Manipulated by survey_result.js in selectAddress
-    //var myDestination = "{{ houseList.0.address }}";
-    // Manipulated by costSliderResults.js
-    costSliderMax = {{ survey.maxPrice }};
-    costSliderMin = {{ survey.minPrice }};
-    commuteSliderMin = {{ survey.minCommute }};
-    commuteSliderMax = {{ survey.maxCommute }};
-    bathroomsMin = {{ survey.minBathrooms }};
-    bathroomsMax = {{ survey.maxBathrooms }};
-</script>
-<!-- Loading scripts at the end to increase loading times -->
-<script src="{% static 'survey/moveInDatePicker.js' %}"></script>
-<script src="{% static 'survey/survey_result.js' %}"></script>
-<script src="{% static 'survey/addMarkers.js' %}"></script>
-<script src="{% static 'survey/addGoogleMap.js' %}"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
+    <!-- Javascripts -->
+    <script src="{% static 'survey/costSlider.js' %}"></script>
+    <script src="{% static 'survey/commuteSlider.js' %}"></script>
+    <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
+    <!-- Variables for google map generating with markers -->
+    <script>
+        {% comment endScritps %}
+        // Deprecating computing commute time and distance in favor of doing in on the server side
+        // Going to keep the portions that create the markers on the map
+        {% endcomment %}
+        var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
+        var myDestinations = [{% for dest in houseList %}"{{ dest.house.address }}",{% endfor %}];
+        // Manipulated by survey_result.js in selectAddress
+        //var myDestination = "{{ houseList.0.address }}";
+        // Manipulated by costSliderResults.js
+        costSliderMax = {{ survey.maxPrice }};
+        costSliderMin = {{ survey.minPrice }};
+        commuteSliderMin = {{ survey.minCommute }};
+        commuteSliderMax = {{ survey.maxCommute }};
+        bathroomsMin = {{ survey.minBathrooms }};
+        bathroomsMax = {{ survey.maxBathrooms }};
+    </script>
+    <!-- Loading scripts at the end to increase loading times -->
+    <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
+    <script src="{% static 'survey/survey_result.js' %}"></script>
+    <script src="{% static 'survey/addMarkers.js' %}"></script>
+    <script src="{% static 'survey/addGoogleMap.js' %}"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
 
-<!-- JQuery UI for sliders -->
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- JQuery UI for sliders -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 {% endblock %}

@@ -228,6 +228,7 @@ def create_commute_score(houseScore, survey):
             else:
                 # Mark house for deletion
                 house.eliminated = True
+        print(house.get_score())
     return houseScore
 
 
@@ -279,6 +280,14 @@ def survey_result(request, survey_type, survey_id="recent"):
         'error_message': [],
     }
 
+    # This variable is used to determine whether or not the mini survey should be populated
+    # with data from the database. In the case that there is a POST and the form fails to
+    # POST, then we want to keep the survey the way it is as to not remove the form errors,
+    # otherwise the survey should be populated from the data base
+
+    #!!!!!!!!!!! Restructure this code
+    generateSurvey = True
+
     # If the mini form was posted, then save the results before reloading the page
     if request.method == 'POST':
         try:
@@ -292,7 +301,9 @@ def survey_result(request, survey_type, survey_id="recent"):
                     return HttpResponseRedirect(reverse('survey:surveyResult',
                                                         kwargs={'survey_type': "rent", "survey_id": survey.id}))
                 else:
+                    generateSurvey = False
                     context['error_message'].append("The survey was POSTed incorrectly")
+
             except RentingSurveyModel.DoesNotExist:
                 context['error_message'].append("Survey does not exist")
         except UserProfile.DoesNotExist:
@@ -408,7 +419,8 @@ def survey_result(request, survey_type, survey_id="recent"):
                 context['houseList'] = housingList[:35]
 
                 # fill form with data from database
-                form = RentSurveyMini(instance=survey)
+                if generateSurvey == True:
+                    form = RentSurveyMini(instance=survey)
             except RentingSurveyModel.DoesNotExist:
                 context['error_message'].append("Could not retrieve rent survey")
                 print("Error, could not find survey id, redirecting back to survey")
@@ -426,6 +438,7 @@ def survey_result(request, survey_type, survey_id="recent"):
 
 
 # This is used for ajax request to set house favorites
+@login_required
 def set_favorite(request):
     """
     Ajax request that sets a home as a favorite. This function just toggles the homes.

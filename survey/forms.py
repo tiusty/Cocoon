@@ -3,6 +3,8 @@ from survey.models import RentingSurveyModel, BuyingSurveyModel, RentingDesintat
 from django.forms import ModelForm
 from django.db.models import Q
 
+import datetime
+
 # Python global configurations
 Commute_Range_Max_Scale = 6  # Remember base 0, so value of 6 is 0-5
 Num_Bedrooms_Max = 6  # Base 1, so from 1 bedroom to 6 bedrooms
@@ -158,9 +160,14 @@ class RentSurveyBase(ModelForm):
             return valid
 
         # Validate the movein fields
+        # First the moveinDateStart should be either today or in the future
+        if self.cleaned_data['moveinDateStart'] < datetime.date.today():
+            self.errors['invalid_start_day'] = "Start Day should not be in the past"
+            valid = False
 
+        # Second, the start date should not be after the end date
         if self.cleaned_data['moveinDateStart'] > self.cleaned_data['moveinDateEnd']:
-            self.errors['invalid_range'] = " End date should be before the start date"
+            self.errors['invalid_range'] = "End date should be before the start date"
             valid = False
 
         return valid
