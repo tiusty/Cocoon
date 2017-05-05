@@ -73,8 +73,8 @@ def renting_survey(request):
                         raise "Could not retrieve object to attach destinations"
                     # redirect to new URL:
                     print(rentingSurvey.id)
-                    return HttpResponseRedirect(reverse('survey:surveyResult',
-                                                        kwargs={'survey_type':"rent", "survey_id": rentingSurvey.id}))
+                    return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                        kwargs={"survey_id": rentingSurvey.id}))
                 except UserProfile.DoesNotExist:
                     context['error_message'].append("Could not retrieve the User Profile")
             else:
@@ -260,12 +260,11 @@ def order_by_house_score(houseScore):
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
 # If it can't find the most recent survey it redirects back to the survey
 @login_required
-def survey_result(request, survey_type, survey_id="recent"):
+def survey_result_rent(request, survey_id="recent"):
     """
-    Survey result is the heart of the website where the survey is grabbed and the housing list is created
-    Based on the results of the survey.
+    Survey result rent is the heart of the website where the survey is grabbed and the housing list is created
+    Based on the results of the survey. This is specifically for the rent survey
     :param request: Http Request
-    :param survey_type: This is the survey_type which currently is one or rent or buy
     :param survey_id:  This is the survey id that corresponds to the survey that is desired
         If no id is specified then the latest survey is used
     :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
@@ -274,167 +273,161 @@ def survey_result(request, survey_type, survey_id="recent"):
     To Do:
     1. Set a limit on the number of homes that are used for commute times. I would say 50 max, then
         only return the top 20-30 homes to the user
-    2. Set the moveInDay to a period so people can specify a range of dates to check
     """
     context = {
         'error_message': [],
     }
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
 
-    # This variable is used to determine whether or not the mini survey should be populated
-    # with data from the database. In the case that there is a POST and the form fails to
-    # POST, then we want to keep the survey the way it is as to not remove the form errors,
-    # otherwise the survey should be populated from the data base
-
-    #!!!!!!!!!!! Restructure this code
-    generateSurvey = True
-
-    # If the mini form was posted, then save the results before reloading the page
-    if request.method == 'POST':
-        try:
-            currProf = UserProfile.objects.get(user=request.user)
+        # If no id is specified in the URL, then it attempts to load the recent survey
+        # The recent survey is the last survey to be created
+        form = RentSurveyMini()
+        if survey_id == "recent":
+            # Try to retrieve the most recent survey, but if there are no surveys, then
+            # Redirect back to the homepage
             try:
-                survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=survey_id)
-                form = RentSurveyMini(request.POST, instance=survey)
-                # If the form is valid, then save the updates to that survey and redirect back to survey results
-                if form.is_valid():
-                    form.save()
-                    return HttpResponseRedirect(reverse('survey:surveyResult',
-                                                        kwargs={'survey_type': "rent", "survey_id": survey.id}))
-                else:
-                    generateSurvey = False
-                    context['error_message'].append("The survey was POSTed incorrectly")
-
+                survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
-                context['error_message'].append("Survey does not exist")
-        except UserProfile.DoesNotExist:
-            context['error_message'].append("User profile doesn't exist")
-
-    # If the survey was not successfully posted or if no POST, then populate the page
-    if survey_type == "rent":
-        try:
-            currProf = UserProfile.objects.get(user=request.user)
+                return HttpResponseRedirect(reverse('homePage:index'))
+        else:
+            # If the user did not choose recent, then try to grab the survey by it's id
+            # If it can't find it or it is not associated with the user, just grab the
+            # Recent Survey. If that fails, then redirect back to the home page.
             try:
-                # If no id is specified in the URL, then it attempts to load the recent survey
-                # The recent survey is the last survey to be created
-                if survey_id == "recent":
-                    survey = RentingSurveyModel.objects.filter(userProf=currProf).order_by('-created').first()
-                else:
-                    # If it can't find the survey id, then just get the recent survey
-                    try:
-                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=survey_id)
-                    except RentingSurveyModel.DoesNotExist:
-                        context['error_message'].append("Could not find survey id, getting recent survey")
-                        survey = RentingSurveyModel.objects.filter(userProf=currProf).order_by('-created').first()
-
-                # Creates an array with all the home types indicated by the survey
-                homeTypes = []
-                for home in survey.home_type.all():
-                    homeTypes.append(home.homeType)
-
-                # Filters the Database with all the static elements as the first pass
-                """
-                The item that will filter the list the most should be first to narrow down the number of iterations
-                The database needs to be searched
-                (Right now it isn't order by efficiecy but instead by when it was added. Later it can be switched around
-
-                Current order:
-                1. Filter by price range. The House must be in the correct range to be accepted
-                2. Filter by Home Type. The home must be the correct home type to be accepted
-                3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
-                    If the house is outside the range it is eliminated
-                4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
-                """
-                housingList = RentDatabase.objects.filter(
-                    price__range=(survey.minPrice, survey.maxPrice))\
-                    .filter(home_type__in=homeTypes)\
-                    .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd))\
-                    .filter(numBedrooms=survey.numBedrooms)
-
-                # Retrieves all the destinations that the user recorded
-                locations = survey.rentingdesintations_set.all()
-
-                # Generates matrix of commute times from the origin to the destination
-                gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
-
-                # First put all the origins into an array then the destinations
-                origins = []
-                for house in housingList:
-                    origins.append(house.address)
-
-                destinations = []
-                for location in locations:
-                    destinations.append(location.full_address())
-
-                # Need to better define error cases.
-                # Also, put more try blocks in case of error
-                if not destinations or not origins:
-                    print("No destinations or origins")
-                    context['error_message'].append("No Destination or origin")
-                else:
-                    # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
-                    # Each row contains the origin with each corresponding destination
-                    # The value field of duration is in seconds
-                    modeCommute="driving"
-                    context['commuteMode'] = modeCommute
-                    matrix = gmaps.distance_matrix(origins, destinations,
-                                                   mode=modeCommute,
-                                                   units="imperial",
-                                                   )
-                    # Only if the matrix is defined should the calculations occur, otherwise throw an error
-                    if matrix:
-                        print(matrix)
-                        # While iterating through all the destinations, put homes into a scoring structure to easily
-                        # Keep track of the score for the associated home
-                        houseScore = []
-                        # Try to think of a better way than a simple counter
-                        counter = 0
-                        for house in housingList:
-                            currHouse = ScoringStruct(house)
-                            if currProf.favorites.filter(id=house.id).exists():
-                                currHouse.favorite = True
-                            for commute in matrix["rows"][counter]["elements"]:
-                                print(commute)
-                                # Divide by 60 to get minutes
-                                if commute['status'] == 'OK':
-                                    currHouse.commuteTime.append(commute['duration']["value"]/60)
-                                else:
-                                    # Eliminate houses that can't have a commute value
-                                    currHouse.eliminated = True
-                            houseScore.append(currHouse)
-                            counter += 1
-
-                        # Generate scores for the homes based on the survey results
-                        homesScored = create_house_score(houseScore, survey)
-
-                        # Order the homes based off the score
-                        housingList = order_by_house_score(homesScored)
-                    else:
-                        context['error_message'].append("Couldn't calculate distances, something went wrong")
-
-                context['survey'] = survey
-                # Contains destinations of the user
-                context['locations'] = locations
-                # House list either comes from the scored homes or from the database static list if something went wrong
-                # Only put up to 35 house on the list
-                context['houseList'] = housingList[:35]
-
-                # fill form with data from database
-                if generateSurvey == True:
-                    form = RentSurveyMini(instance=survey)
+                survey = RentingSurveyModel.objects.filter(userProf=user_profile).get(id=survey_id)
+                form = RentSurveyMini(instance=survey)
+            # If the survey ID, does not exist/is not for that user, then return the most recent survey
             except RentingSurveyModel.DoesNotExist:
-                context['error_message'].append("Could not retrieve rent survey")
-                print("Error, could not find survey id, redirecting back to survey")
-                return HttpResponseRedirect(reverse('survey:rentingSurvey'))
-        except UserProfile.DoesNotExist:
-            context['error_message'].append("Could not find User Profile")
-    # For now just return to survey for the buying survey and unknown
-    elif survey_type == "buy":
-        return HttpResponseRedirect(reverse('survey:rentingSurvey'))
-    else:
-        return HttpResponseRedirect(reverse('survey:rentingSurvey'))
+                context['error_message'].append("Could not find survey id, getting recent survey")
+                try:
+                    survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
+                except RentingSurveyModel.DoesNotExist:
+                    return HttpResponseRedirect(reverse('homePage:index'))
 
-    context['form'] = form
+        # If a POST message occurs (They submit the mini form) then process it
+        # If it fails then keep loading survey result and pass the error messages
+        if request.method == 'POST':
+            # If a POST occurs, update the form. In the case of an error, then the survey
+            # Should be populated by the POST data.
+            form = RentSurveyMini(request.POST, instance=survey)
+            # If the survey is valid then redirect back to the page to reload the changes
+            # This will also update the house list
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                    kwargs={"survey_id": survey.id}))
+            else:
+                context['error_message'].append("There are form errors")
+
+        # Now start executing the Algorithm
+        start_algorithm(survey, user_profile, context)
+        context['survey'] = survey
+        context['form'] = form
+
+    except UserProfile.DoesNotExist:
+        context['error_message'].append("User Profile Does Not Exist")
+        return HttpResponseRedirect(reverse('homePage:index'))
+
     return render(request, 'survey/surveyResultRent.html', context)
+
+
+def start_algorithm(survey, user_profile, context):
+
+            # Creates an array with all the home types indicated by the survey
+            homeTypes = []
+            for home in survey.home_type.all():
+                homeTypes.append(home.homeType)
+
+            # Filters the Database with all the static elements as the first pass
+            """
+            The item that will filter the list the most should be first to narrow down the number of iterations
+            The database needs to be searched
+            (Right now it isn't order by efficiecy but instead by when it was added. Later it can be switched around
+
+            Current order:
+            1. Filter by price range. The House must be in the correct range to be accepted
+            2. Filter by Home Type. The home must be the correct home type to be accepted
+            3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
+                If the house is outside the range it is eliminated
+            4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
+            """
+            housingList = RentDatabase.objects.filter(
+                price__range=(survey.minPrice, survey.maxPrice))\
+                .filter(home_type__in=homeTypes)\
+                .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd))\
+                .filter(numBedrooms=survey.numBedrooms)
+
+            # Retrieves all the destinations that the user recorded
+            locations = survey.rentingdesintations_set.all()
+
+            # Generates matrix of commute times from the origin to the destination
+            gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
+
+            # First put all the origins into an array then the destinations
+            origins = []
+            for house in housingList:
+                origins.append(house.address)
+
+            destinations = []
+            for location in locations:
+                destinations.append(location.full_address())
+
+            # Need to better define error cases.
+            # Also, put more try blocks in case of error
+            if not destinations or not origins:
+                print("No destinations or origins")
+                context['error_message'].append("No Destination or origin")
+            else:
+                # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
+                # Each row contains the origin with each corresponding destination
+                # The value field of duration is in seconds
+                modeCommute="driving"
+                context['commuteMode'] = modeCommute
+                matrix = gmaps.distance_matrix(origins, destinations,
+                                               mode=modeCommute,
+                                               units="imperial",
+                                               )
+                # Only if the matrix is defined should the calculations occur, otherwise throw an error
+                if matrix:
+                    print(matrix)
+                    # While iterating through all the destinations, put homes into a scoring structure to easily
+                    # Keep track of the score for the associated home
+                    houseScore = []
+                    # Try to think of a better way than a simple counter
+                    counter = 0
+                    for house in housingList:
+                        currHouse = ScoringStruct(house)
+                        if user_profile.favorites.filter(id=house.id).exists():
+                            currHouse.favorite = True
+                        for commute in matrix["rows"][counter]["elements"]:
+                            print(commute)
+                            # Divide by 60 to get minutes
+                            if commute['status'] == 'OK':
+                                currHouse.commuteTime.append(commute['duration']["value"]/60)
+                            else:
+                                # Eliminate houses that can't have a commute value
+                                currHouse.eliminated = True
+                        houseScore.append(currHouse)
+                        counter += 1
+
+                    # Generate scores for the homes based on the survey results
+                    homesScored = create_house_score(houseScore, survey)
+
+                    # Order the homes based off the score
+                    housingList = order_by_house_score(homesScored)
+                else:
+                    context['error_message'].append("Couldn't calculate distances, something went wrong")
+
+
+            # Contains destinations of the user
+            context['locations'] = locations
+            # House list either comes from the scored homes or from the database static list if something went wrong
+            # Only put up to 35 house on the list
+            context['houseList'] = housingList[:35]
+
+
+
 
 
 # This is used for ajax request to set house favorites

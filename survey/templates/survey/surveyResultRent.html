@@ -54,7 +54,7 @@
     <div class="row" id="row-main">
         <div class="col-sm-3 sidebar collapsedSide" id="sidebarSurvey">
             <ul class="nav nav-sidebar">
-                <form action="{% url 'survey:surveyResult' survey_type="rent" survey_id=survey.id %}" method="post">
+                <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
                     {{ form.non_field_errors }}
                     {{ form.errors }}
                     {% csrf_token %}
