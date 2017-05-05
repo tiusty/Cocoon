@@ -257,6 +257,99 @@ def order_by_house_score(houseScore):
     return houseScore
 
 
+def start_algorithm(survey, user_profile, context):
+    # Creates an array with all the home types indicated by the survey
+    homeTypes = []
+    for home in survey.home_type.all():
+        homeTypes.append(home.homeType)
+
+    # Filters the Database with all the static elements as the first pass
+    """
+    The item that will filter the list the most should be first to narrow down the number of iterations
+    The database needs to be searched
+    (Right now it isn't order by efficiecy but instead by when it was added. Later it can be switched around
+
+    Current order:
+    1. Filter by price range. The House must be in the correct range to be accepted
+    2. Filter by Home Type. The home must be the correct home type to be accepted
+    3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
+        If the house is outside the range it is eliminated
+    4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
+    """
+    housingList = RentDatabase.objects.filter(
+        price__range=(survey.minPrice, survey.maxPrice)) \
+        .filter(home_type__in=homeTypes) \
+        .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
+        .filter(numBedrooms=survey.numBedrooms)
+
+    # Retrieves all the destinations that the user recorded
+    locations = survey.rentingdesintations_set.all()
+
+    # Generates matrix of commute times from the origin to the destination
+    gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
+
+    # First put all the origins into an array then the destinations
+    origins = []
+    for house in housingList:
+        origins.append(house.address)
+
+    destinations = []
+    for location in locations:
+        destinations.append(location.full_address())
+
+    # Need to better define error cases.
+    # Also, put more try blocks in case of error
+    if not destinations or not origins:
+        print("No destinations or origins")
+        context['error_message'].append("No Destination or origin")
+    else:
+        # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
+        # Each row contains the origin with each corresponding destination
+        # The value field of duration is in seconds
+        modeCommute = "driving"
+        context['commuteMode'] = modeCommute
+        matrix = gmaps.distance_matrix(origins, destinations,
+                                       mode=modeCommute,
+                                       units="imperial",
+                                       )
+        # Only if the matrix is defined should the calculations occur, otherwise throw an error
+        if matrix:
+            print(matrix)
+            # While iterating through all the destinations, put homes into a scoring structure to easily
+            # Keep track of the score for the associated home
+            houseScore = []
+            # Try to think of a better way than a simple counter
+            counter = 0
+            for house in housingList:
+                currHouse = ScoringStruct(house)
+                if user_profile.favorites.filter(id=house.id).exists():
+                    currHouse.favorite = True
+                for commute in matrix["rows"][counter]["elements"]:
+                    print(commute)
+                    # Divide by 60 to get minutes
+                    if commute['status'] == 'OK':
+                        currHouse.commuteTime.append(commute['duration']["value"] / 60)
+                    else:
+                        # Eliminate houses that can't have a commute value
+                        currHouse.eliminated = True
+                houseScore.append(currHouse)
+                counter += 1
+
+            # Generate scores for the homes based on the survey results
+            homesScored = create_house_score(houseScore, survey)
+
+            # Order the homes based off the score
+            housingList = order_by_house_score(homesScored)
+        else:
+            context['error_message'].append("Couldn't calculate distances, something went wrong")
+
+    # Contains destinations of the user
+    context['locations'] = locations
+    # House list either comes from the scored homes or from the database static list if something went wrong
+    # Only put up to 35 house on the list
+    context['houseList'] = housingList[:35]
+
+
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
 # If it can't find the most recent survey it redirects back to the survey
 @login_required
@@ -282,7 +375,6 @@ def survey_result_rent(request, survey_id="recent"):
 
         # If no id is specified in the URL, then it attempts to load the recent survey
         # The recent survey is the last survey to be created
-        form = RentSurveyMini()
         if survey_id == "recent":
             # Try to retrieve the most recent survey, but if there are no surveys, then
             # Redirect back to the homepage
@@ -296,7 +388,6 @@ def survey_result_rent(request, survey_id="recent"):
             # Recent Survey. If that fails, then redirect back to the home page.
             try:
                 survey = RentingSurveyModel.objects.filter(userProf=user_profile).get(id=survey_id)
-                form = RentSurveyMini(instance=survey)
             # If the survey ID, does not exist/is not for that user, then return the most recent survey
             except RentingSurveyModel.DoesNotExist:
                 context['error_message'].append("Could not find survey id, getting recent survey")
@@ -304,6 +395,8 @@ def survey_result_rent(request, survey_id="recent"):
                     survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
                 except RentingSurveyModel.DoesNotExist:
                     return HttpResponseRedirect(reverse('homePage:index'))
+        # Populate form with stored data
+        form = RentSurveyMini(instance=survey)
 
         # If a POST message occurs (They submit the mini form) then process it
         # If it fails then keep loading survey result and pass the error messages
@@ -330,104 +423,6 @@ def survey_result_rent(request, survey_id="recent"):
         return HttpResponseRedirect(reverse('homePage:index'))
 
     return render(request, 'survey/surveyResultRent.html', context)
-
-
-def start_algorithm(survey, user_profile, context):
-
-            # Creates an array with all the home types indicated by the survey
-            homeTypes = []
-            for home in survey.home_type.all():
-                homeTypes.append(home.homeType)
-
-            # Filters the Database with all the static elements as the first pass
-            """
-            The item that will filter the list the most should be first to narrow down the number of iterations
-            The database needs to be searched
-            (Right now it isn't order by efficiecy but instead by when it was added. Later it can be switched around
-
-            Current order:
-            1. Filter by price range. The House must be in the correct range to be accepted
-            2. Filter by Home Type. The home must be the correct home type to be accepted
-            3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
-                If the house is outside the range it is eliminated
-            4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
-            """
-            housingList = RentDatabase.objects.filter(
-                price__range=(survey.minPrice, survey.maxPrice))\
-                .filter(home_type__in=homeTypes)\
-                .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd))\
-                .filter(numBedrooms=survey.numBedrooms)
-
-            # Retrieves all the destinations that the user recorded
-            locations = survey.rentingdesintations_set.all()
-
-            # Generates matrix of commute times from the origin to the destination
-            gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
-
-            # First put all the origins into an array then the destinations
-            origins = []
-            for house in housingList:
-                origins.append(house.address)
-
-            destinations = []
-            for location in locations:
-                destinations.append(location.full_address())
-
-            # Need to better define error cases.
-            # Also, put more try blocks in case of error
-            if not destinations or not origins:
-                print("No destinations or origins")
-                context['error_message'].append("No Destination or origin")
-            else:
-                # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
-                # Each row contains the origin with each corresponding destination
-                # The value field of duration is in seconds
-                modeCommute="driving"
-                context['commuteMode'] = modeCommute
-                matrix = gmaps.distance_matrix(origins, destinations,
-                                               mode=modeCommute,
-                                               units="imperial",
-                                               )
-                # Only if the matrix is defined should the calculations occur, otherwise throw an error
-                if matrix:
-                    print(matrix)
-                    # While iterating through all the destinations, put homes into a scoring structure to easily
-                    # Keep track of the score for the associated home
-                    houseScore = []
-                    # Try to think of a better way than a simple counter
-                    counter = 0
-                    for house in housingList:
-                        currHouse = ScoringStruct(house)
-                        if user_profile.favorites.filter(id=house.id).exists():
-                            currHouse.favorite = True
-                        for commute in matrix["rows"][counter]["elements"]:
-                            print(commute)
-                            # Divide by 60 to get minutes
-                            if commute['status'] == 'OK':
-                                currHouse.commuteTime.append(commute['duration']["value"]/60)
-                            else:
-                                # Eliminate houses that can't have a commute value
-                                currHouse.eliminated = True
-                        houseScore.append(currHouse)
-                        counter += 1
-
-                    # Generate scores for the homes based on the survey results
-                    homesScored = create_house_score(houseScore, survey)
-
-                    # Order the homes based off the score
-                    housingList = order_by_house_score(homesScored)
-                else:
-                    context['error_message'].append("Couldn't calculate distances, something went wrong")
-
-
-            # Contains destinations of the user
-            context['locations'] = locations
-            # House list either comes from the scored homes or from the database static list if something went wrong
-            # Only put up to 35 house on the list
-            context['houseList'] = housingList[:35]
-
-
-
 
 
 # This is used for ajax request to set house favorites
@@ -479,7 +474,6 @@ def set_favorite(request):
                 return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
                                     content_type="application/json",
                                     )
-
 
 
 @login_required
