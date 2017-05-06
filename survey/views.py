@@ -92,7 +92,7 @@ def renting_survey(request):
 @login_required
 def buying_survey(request):
     form = BuySurvey()
-    return render(request, 'survey/buyingSurvey.html', {'form':form})
+    return render(request, 'survey/buyingSurvey.html', {'form' : form})
 
 
 class ScoringStruct:
@@ -102,8 +102,8 @@ class ScoringStruct:
     This also makes sure that the scores are easily associated with the home
     Contains functions to easily extract information for the given home
     """
-    def __init__(self, newHouse):
-        self.house = newHouse
+    def __init__(self, new_house):
+        self.house = new_house
         self.score = 0
         self.scorePossible = 0
         self.commuteTime = []
@@ -136,14 +136,14 @@ class ScoringStruct:
         Comments:
         Currently the scale is to large. Will define to +/- later.
         """
-        currScore = self.get_score()
-        if currScore >= 90:
+        current_score = self.get_score()
+        if current_score >= 90:
             return "A"
-        elif currScore >= 80:
+        elif current_score >= 80:
             return "B"
-        elif currScore >= 70:
+        elif current_score >= 70:
             return "C"
-        elif currScore >= 60:
+        elif current_score >= 60:
             return "D"
         else:
             return "F"
@@ -156,27 +156,27 @@ class ScoringStruct:
         :return:
         string -> Formatted to display nicely to the user
         """
-        endResult=""
+        end_result = ""
         counter = 0
         for commute in self.commuteTime:
             if commute > 60:
-                maxOutput = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
+                max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
             else:
-                maxOutput = str(int(commute)) + " Minutes"
+                max_output = str(int(commute)) + " Minutes"
             if counter != 0:
-                endResult = endResult+", "+maxOutput
+                end_result = end_result+", "+max_output
             else:
-                endResult = maxOutput
+                end_result = max_output
             counter = 1
 
-        return endResult
+        return end_result
 
 
 # It will take in the houseMatrix score
 # It will commute the score based on the commute times to the destinations
 # The score is multiplied by the scale factor which is user determined
 # This factor determines how much the factor will affect the overall weight
-def create_commute_score(houseScore, survey):
+def create_commute_score(scored_house_list, survey):
     """
     Evaluates a score based on the commute times.
     Currently if any commute is below the minimum commute time chosen by the user then it is eliminated.
@@ -187,7 +187,7 @@ def create_commute_score(houseScore, survey):
     The User can define a commute weight. If the commute weight is 0, then the scaling factor is 0 so all
     homes are weighted the same as long as they are within the range. As the scaling factor increases, it
     gives a large weight to homes that are closer.
-    :param houseScore: ScoringStruct that stores all the homes and the corresponding commute times
+    :param scored_house_list: ScoringStruct that stores all the homes and the corresponding commute times
     :param survey: The Survey is passed, but is only really needed to find the max and min commute times
     :return:
         Returns the ScoringStruct but with the housing scores updated with the commute times and
@@ -195,10 +195,10 @@ def create_commute_score(houseScore, survey):
     """
     # Currently only scores based on commute times
     # It supports having multiple destinations
-    maxCommute = survey.maxCommute
-    minCommute = survey.minCommute
-    scaleFactor = survey.commuteWeight
-    for house in houseScore:
+    max_commute = survey.maxCommute
+    min_commute = survey.minCommute
+    scale_factor = survey.commuteWeight
+    for house in scored_house_list:
         # It needs to be made clear that the scale factor only effects the homes that are under the
         # Commute time. For example, if the max commute is 12 minutes, then anything over 12 is removed.
         # If the scale factor is 0, then all the homes under 12 are weighted equally at 0. Likewise if
@@ -206,62 +206,118 @@ def create_commute_score(houseScore, survey):
         # a commute of 9 minutes even though in reality it isn't that much.
         for commute in house.commuteTime:
             # Minimum range is always 10
-            if maxCommute > 11:
-                rangeCom = maxCommute
+            if max_commute > 11:
+                range_com = max_commute
             else:
                 # Make sure that the minimum is 11, so that when it subtracts 10, it doesn't do
                 # a divide by zero
-                rangeCom = 11
+                range_com = 11
             # First check to see if the commute is less then the minimum commute, if it is then remove it
             # Second check if the commute time is less than 10 minutes, because if it is it is a perfect score
             # Third If the commute is less than the max commute time compute a score
             # Forth if the commute is more than the maxCommute then remove the house
-            if commute < minCommute:
+            if commute < min_commute:
                 # Mark house for deletion
                 house.eliminated = True
             elif commute <= 10:
-                house.score += (100 * scaleFactor)
-                house.scorePossible += (100 * scaleFactor)
-            elif commute <= maxCommute:
-                house.score += (((1 - (commute-10)/(rangeCom - 10))*100) * scaleFactor)
-                house.scorePossible += (100 * scaleFactor)
+                house.score += (100 * scale_factor)
+                house.scorePossible += (100 * scale_factor)
+            elif commute <= max_commute:
+                house.score += (((1 - (commute-10)/(range_com - 10))*100) * scale_factor)
+                house.scorePossible += (100 * scale_factor)
             else:
                 # Mark house for deletion
                 house.eliminated = True
         print(house.get_score())
-    return houseScore
+    return scored_house_list
 
 
 # Given the houseScore and the survey generate and add the score based
 # On the commute times to the destinations
-def create_house_score(houseScore, survey):
-
+def create_house_score(house_list_scored, survey):
+    """
+    All the functions that perform scoring will be listed here
+    :param house_list_scored: The houses structure that contains all the information regarding each house
+    :param survey: The current survey, since the scoring is based on the result of the survey
+    :return: The house structure with the homes scored
+    """
     # Creates score based on commute
-    create_commute_score(houseScore, survey)
-    return houseScore
+    create_commute_score(house_list_scored, survey)
+    return house_list_scored
 
 
 # Function takes in the ScoringStruct and returns the sorted list
-def order_by_house_score(houseScore):
+def order_by_house_score(scored_house_list):
+    """
+    Orders the homes based on the current score
+    The high scored home will be put at the front of the list
+    Homes that are eliminated have no order
+    :param scored_house_list: The house structure that contains all the information regarding the homes
+    :return: The house structure but sorted based on the home score
+    """
     # Simple insertion sort to sort houses by score
-    for index in range(1, len(houseScore)):
-        currentValue = houseScore[index]
+    for index in range(1, len(scored_house_list)):
+        current_value = scored_house_list[index]
         position = index
 
-        while position > 0 and houseScore[position-1].get_score()<currentValue.get_score():
-            houseScore[position]=houseScore[position-1]
+        while position > 0 and scored_house_list[position-1].get_score() < current_value.get_score():
+            scored_house_list[position] = scored_house_list[position - 1]
             position -= 1
 
-        houseScore[position] = currentValue
+        scored_house_list[position] = current_value
 
-    return houseScore
+    return scored_house_list
+
+
+def google_matrix(origins, destinations, scored_list, context):
+    """
+    Generates the Commute times for all the homes
+    :param origins: All the origin locations, in this case, all the filter_homes
+    :param destinations: All the destinations, what the user puts in as destinations
+    :param scored_list: The structure that stores the homes
+    :param context: Context that will be passed to the template
+    :return: Returns the scored list with all the commute times entered
+    """
+
+    # Generates matrix of commute times from the origin to the destination
+    gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
+
+    # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
+    # Each row contains the origin with each corresponding destination
+    # The value field of duration is in seconds
+    mode_commute = "driving"
+    measure_units = "imperial"
+    matrix = gmaps.distance_matrix(origins, destinations,
+                                   mode=mode_commute,
+                                   units=measure_units,
+                                   )
+    # Only if the matrix is defined should the calculations occur, otherwise throw an error
+    if matrix:
+        print(matrix)
+        # Try to think of a better way than a simple counter
+        counter = 0
+        for house in scored_list:
+            for commute in matrix["rows"][counter]["elements"]:
+                # Divide by 60 to get minutes
+                if commute['status'] == 'OK':
+                    house.commuteTime.append(commute['duration']["value"] / 60)
+                else:
+                    # Eliminate houses that can't have a commute value
+                    house.eliminated = True
+            counter += 1
+            # Only Add the context if the commute is able to be processed
+        context['commuteMode'] = mode_commute
+    else:
+        context['error_message'].append("Couldn't calculate distances, something went wrong")
+
+    return scored_list
 
 
 def start_algorithm(survey, user_profile, context):
     # Creates an array with all the home types indicated by the survey
-    homeTypes = []
+    home_types = []
     for home in survey.home_type.all():
-        homeTypes.append(home.homeType)
+        home_types.append(home.homeType)
 
     # Filters the Database with all the static elements as the first pass
     """
@@ -276,78 +332,49 @@ def start_algorithm(survey, user_profile, context):
         If the house is outside the range it is eliminated
     4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
     """
-    housingList = RentDatabase.objects.filter(
+    filtered_house_list = RentDatabase.objects.filter(
         price__range=(survey.minPrice, survey.maxPrice)) \
-        .filter(home_type__in=homeTypes) \
+        .filter(home_type__in=home_types) \
         .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
         .filter(numBedrooms=survey.numBedrooms)
 
     # Retrieves all the destinations that the user recorded
-    locations = survey.rentingdesintations_set.all()
-
-    # Generates matrix of commute times from the origin to the destination
-    gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
+    destination_set = survey.rentingdesintations_set.all()
 
     # First put all the origins into an array then the destinations
     origins = []
-    for house in housingList:
+    for house in filtered_house_list:
         origins.append(house.address)
 
     destinations = []
-    for location in locations:
+    for location in destination_set:
         destinations.append(location.full_address())
 
-    # Need to better define error cases.
-    # Also, put more try blocks in case of error
+    # This puts all the homes into a scored list and also marks the favorite homes
+    scored_house_list = []
+    for house in filtered_house_list:
+        current_house = ScoringStruct(house)
+        if user_profile.favorites.filter(id=house.id).exists():
+            current_house.favorite = True
+        scored_house_list.append(current_house)
+
+    # First Commute score is calculated if there are origins and destinations
     if not destinations or not origins:
-        print("No destinations or origins")
         context['error_message'].append("No Destination or origin")
     else:
-        # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
-        # Each row contains the origin with each corresponding destination
-        # The value field of duration is in seconds
-        modeCommute = "driving"
-        context['commuteMode'] = modeCommute
-        matrix = gmaps.distance_matrix(origins, destinations,
-                                       mode=modeCommute,
-                                       units="imperial",
-                                       )
-        # Only if the matrix is defined should the calculations occur, otherwise throw an error
-        if matrix:
-            print(matrix)
-            # While iterating through all the destinations, put homes into a scoring structure to easily
-            # Keep track of the score for the associated home
-            houseScore = []
-            # Try to think of a better way than a simple counter
-            counter = 0
-            for house in housingList:
-                currHouse = ScoringStruct(house)
-                if user_profile.favorites.filter(id=house.id).exists():
-                    currHouse.favorite = True
-                for commute in matrix["rows"][counter]["elements"]:
-                    print(commute)
-                    # Divide by 60 to get minutes
-                    if commute['status'] == 'OK':
-                        currHouse.commuteTime.append(commute['duration']["value"] / 60)
-                    else:
-                        # Eliminate houses that can't have a commute value
-                        currHouse.eliminated = True
-                houseScore.append(currHouse)
-                counter += 1
+        scored_house_list = google_matrix(origins, destinations, scored_house_list, context)
 
-            # Generate scores for the homes based on the survey results
-            homesScored = create_house_score(houseScore, survey)
+    # Generate scores for the homes based on the survey results
+    homes_fully_scored = create_house_score(scored_house_list, survey)
 
-            # Order the homes based off the score
-            housingList = order_by_house_score(homesScored)
-        else:
-            context['error_message'].append("Couldn't calculate distances, something went wrong")
+    # Order the homes based off the score
+    scored_house_list_ordered = order_by_house_score(homes_fully_scored)
 
     # Contains destinations of the user
-    context['locations'] = locations
+    context['locations'] = destination_set
     # House list either comes from the scored homes or from the database static list if something went wrong
     # Only put up to 35 house on the list
-    context['houseList'] = housingList[:35]
+    context['houseList'] = scored_house_list_ordered[:35]
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
@@ -445,23 +472,23 @@ def set_favorite(request):
         # Only care if the user is authenticated
         if request.user.is_authenticated():
             # Get the id that is associated with the AJAX request
-            houseId = request.POST.get('fav')
+            house_id = request.POST.get('fav')
             # Retrieve the house associated with that id
             try:
-                house = RentDatabase.objects.get(id=houseId)
+                house = RentDatabase.objects.get(id=house_id)
                 try:
-                    currProfile = UserProfile.objects.get(user=request.user)
+                    user_profile = UserProfile.objects.get(user=request.user)
                     # If the house is already in the database then remove it and return 0
                     # Which means that it is no longer in the favorites
-                    if currProfile.favorites.filter(id=houseId).exists():
-                        currProfile.favorites.remove(house)
+                    if user_profile.favorites.filter(id=house_id).exists():
+                        user_profile.favorites.remove(house)
                         return HttpResponse(json.dumps({"result": "0"}),
                                             content_type="application/json",
                                             )
                     # If the  house is not in the Many to Many then add it and
                     # return 1 which means it is currently in the favorites
                     else:
-                        currProfile.favorites.add(house)
+                        user_profile.favorites.add(house)
                         return HttpResponse(json.dumps({"result": "1"}),
                                             content_type="application/json",
                                             )
@@ -483,7 +510,6 @@ def delete_survey(request):
     It only deletes the survey if the survey corresponds to the given user.
     Always returns to the profile page of the renting survey
     :param request: HTTP request object
-    :param survey_id: The id of survey model that needs to be deleted
     :return:
         0 if the survey was successfully deleted
         error message if the survey was not successfully deleted
@@ -492,11 +518,11 @@ def delete_survey(request):
         # Only care if the user is authenticated
         if request.user.is_authenticated():
             # Get the id that is associated with the AJAX request
-            surveyId = request.POST.get('survey')
+            survey_id = request.POST.get('survey')
             try:
-                currProfile = UserProfile.objects.get(user=request.user)
+                user_profile = UserProfile.objects.get(user=request.user)
                 try:
-                    survey_delete = currProfile.rentingsurveymodel_set.get(id=surveyId)
+                    survey_delete = user_profile.rentingsurveymodel_set.get(id=survey_id)
                     survey_delete.delete()
                     return HttpResponse(json.dumps({"result": "0"}),
                                         content_type="application/json",
