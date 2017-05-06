@@ -4,11 +4,9 @@ from enum import Enum
 import math
 from django.utils import timezone
 
-# Global Configurations
-survey_types = Enum('survey_types', 'rent buy')
-default_buy_survey_name = "Recent Buy Survey"
-default_rent_survey_name = "Recent Rent Survey"
-max_num_bathrooms = 7
+# Import Global Variables
+from Unicorn.settings.Global_Config import Max_Num_Bathrooms, default_rent_survey_name, \
+    default_buy_survey_name
 
 
 class InitialSurveyModel(models.Model):
@@ -51,7 +49,7 @@ class InteriorAmenities(models.Model):
     washDryer_InHome = models.IntegerField(default=0)
     dishWasher = models.IntegerField(default=0)
     bath = models.IntegerField(default=0)
-    maxBathrooms = models.IntegerField(default=max_num_bathrooms)
+    maxBathrooms = models.IntegerField(default=Max_Num_Bathrooms)
     minBathrooms = models.IntegerField(default=0)
 
     class Meta:

@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 from userAuth.models import UserProfile
-from survey.models import survey_types, RentingSurveyModel, default_rent_survey_name
+from survey.models import RentingSurveyModel, default_rent_survey_name
 from houseDatabase.models import RentDatabase
 from django.contrib.auth.decorators import login_required
 import math
@@ -12,8 +12,8 @@ import json
 import googlemaps
 
 # Global Variables for surveys
-from survey.forms import Hybrid_weighted_max
-weight_question_value = 20
+from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, weight_question_value
+
 
 
 # Create your views here.
@@ -264,9 +264,17 @@ def weighted_question_scoring(home, contains_item, scale_factor):
 
 
 def create_interior_amenities_score(scored_house_list, survey):
-
+    """
+    Updates the houes scoresd based on the interior amenities questions
+    :param scored_house_list: The House structure array that contains all the homes
+    :param survey: The user survey that is being used to evaluate the homes
+    """
+    # Loop throuh all the homes and score each one
     for home in scored_house_list:
         weighted_question_scoring(home, home.house.has_air_conditioning(), survey.airConditioning)
+        weighted_question_scoring(home, home.house.has_wash_dryer_in_home(), survey.washDryer_InHome)
+        weighted_question_scoring(home, home.house.has_dish_washer(), survey.dishWasher)
+        weighted_question_scoring(home, home.house.has_bath(), survey.bath)
 
 
 # Given the houseScore and the survey generate and add the score based
@@ -368,12 +376,16 @@ def start_algorithm(survey, user_profile, context):
     3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
         If the house is outside the range it is eliminated
     4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
+    4. Filter by the number of bathrooms
     """
-    filtered_house_list = RentDatabase.objects.filter(
-        price__range=(survey.minPrice, survey.maxPrice)) \
+    filtered_house_list = RentDatabase.objects\
+        .filter(price__range=(survey.minPrice, survey.maxPrice)) \
         .filter(home_type__in=home_types) \
         .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
-        .filter(numBedrooms=survey.numBedrooms)
+        .filter(numBedrooms=survey.numBedrooms) \
+        .filter(numBathrooms__range=(survey.minBathrooms, survey.maxBathrooms))
+    print(survey.minBathrooms)
+    print(survey.maxBathrooms)
 
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdesintations_set.all()

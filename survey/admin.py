@@ -21,7 +21,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     inlines = [ChoiceInline, AddressInLine]
     fieldsets = (
         (None, {'fields': ('name', 'userProf')}),
-        ('Survey', {'fields': ('home_type', 'minPrice', 'maxPrice', 'maxCommute', 'minCommute', 'commuteWeight', 'moveinDate',)}),
+        ('Survey', {'fields': ('home_type', 'minPrice', 'maxPrice', 'maxCommute', 'minCommute', 'commuteWeight','minBathrooms','maxBathrooms', )}),
         ('Created', {'fields': ('created','id',)}),
     )
     list_display = ('name', 'userProf','get_short_name', )

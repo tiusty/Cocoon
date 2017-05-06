@@ -6,10 +6,8 @@ from django.db.models import Q
 import datetime
 
 # Python global configurations
-Commute_Range_Max_Scale = 6  # Remember base 0, so value of 6 is 0-5
-Num_Bedrooms_Max = 6  # Base 1, so from 1 bedroom to 6 bedrooms
-Max_Text_Input_Length = 200
-Hybrid_weighted_max = 7
+from Unicorn.settings.Global_Config import Commute_Range_Max_Scale, \
+    Max_Num_Bathrooms, Max_Text_Input_Length, Num_Bedrooms_Max, Hybrid_weighted_max
 
 
 class DestinationForm(ModelForm):
@@ -57,7 +55,7 @@ class DestinationForm(ModelForm):
 
 
 class RentSurveyBase(ModelForm):
-    #if name is left blank it sets a default name
+    # if name is left blank it sets a default name
     name = forms.CharField(
         label="Survey Name",
         initial=default_rent_survey_name,
@@ -162,12 +160,22 @@ class RentSurveyBase(ModelForm):
         # Validate the movein fields
         # First the moveinDateStart should be either today or in the future
         if self.cleaned_data['moveinDateStart'] < datetime.date.today():
-            self.errors['invalid_start_day'] = "Start Day should not be in the past"
+            self.errors['invalid_start_day'] = " Start Day should not be in the past"
             valid = False
 
         # Second, the start date should not be after the end date
         if self.cleaned_data['moveinDateStart'] > self.cleaned_data['moveinDateEnd']:
-            self.errors['invalid_range'] = "End date should be before the start date"
+            self.errors['invalid_range'] = " End date should be before the start date"
+            valid = False
+
+        # Make sure that the minimum number of bathrooms is not less then 0
+        if self.cleaned_data['minBathrooms'] < 0:
+            self.errors["minBathroom Error:"] = " You can't have less than 0 bathrooms"
+            valid = False
+
+        # make sure that the max number of bathrooms is not greater than the max specified
+        if self.cleaned_data['maxBathrooms'] > Max_Num_Bathrooms:
+            self.errors['maxBathroom Error:'] = " You can't have more bathrooms than " + str(Max_Num_Bathrooms)
             valid = False
 
         return valid
@@ -331,5 +339,4 @@ class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmen
 class BuySurvey(ModelForm):
     class Meta:
         model = BuyingSurveyModel
-        fields = ['maxPrice',]
-
+        fields = ['maxPrice', ]
