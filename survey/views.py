@@ -11,6 +11,10 @@ import json
 
 import googlemaps
 
+# Global Variables for surveys
+from survey.forms import Hybrid_weighted_max
+weight_question_value = 20
+
 
 # Create your views here.
 @login_required
@@ -228,8 +232,41 @@ def create_commute_score(scored_house_list, survey):
             else:
                 # Mark house for deletion
                 house.eliminated = True
-        print(house.get_score())
     return scored_house_list
+
+
+def weighted_question_scoring(home, contains_item, scale_factor):
+    """
+    This is the function that determines the weight of a given weight question
+    This allows a constant method of determining the score and thus makes it
+    Easier to change later
+    :param home: This is a home given as a single house structure
+    :param contains_item: This is a boolean that says whether or not the given home
+        has the item that is being tested for, i.e does it have an airconditioning?
+    :param scale_factor: This is an integer which is the weighted value that the user
+        gave the question. Therefore, the higher the scale factor, the more the question
+        affects the weight
+    """
+
+    # First condition is if the user gave the max weight to the factor then it is a
+    # must have. Therefore, if the home doesn't have it then eliminate the home
+    if scale_factor == Hybrid_weighted_max - 1 and contains_item is False:
+        home.eliminated = True
+    # If the home contains the item then add points torwads this home. This means
+    # The home got a 100% so the score will go up.
+    elif contains_item:
+        home.score += scale_factor * weight_question_value
+    # Regardless of anything else, always increment the possible points depending on the
+    # Scale factor. If the home had the item then the home will benifit more, if the home
+    # didn't have the item, then the higher the scale factor the more negatively it will be
+    # Affected
+    home.scorePossible += scale_factor * weight_question_value
+
+
+def create_interior_amenities_score(scored_house_list, survey):
+
+    for home in scored_house_list:
+        weighted_question_scoring(home, home.house.has_air_conditioning(), survey.airConditioning)
 
 
 # Given the houseScore and the survey generate and add the score based
@@ -243,6 +280,7 @@ def create_house_score(house_list_scored, survey):
     """
     # Creates score based on commute
     create_commute_score(house_list_scored, survey)
+    create_interior_amenities_score(house_list_scored, survey)
     return house_list_scored
 
 
@@ -293,7 +331,6 @@ def google_matrix(origins, destinations, scored_list, context):
                                    )
     # Only if the matrix is defined should the calculations occur, otherwise throw an error
     if matrix:
-        print(matrix)
         # Try to think of a better way than a simple counter
         counter = 0
         for house in scored_list:

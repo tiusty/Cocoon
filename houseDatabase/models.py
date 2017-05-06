@@ -12,6 +12,7 @@ class RentDatabase(models.Model):
     home_type = models.CharField(max_length=200, default=notSetChar)
     moveInDay = models.DateField(default=datetime.date.today)
     numBedrooms = models.IntegerField(default=0)
+    air_conditioning = models.BooleanField(default=False)
 
     def __str__(self):
         return self.address
@@ -30,4 +31,7 @@ class RentDatabase(models.Model):
 
     def get_address(self):
         return self.address
+
+    def has_air_conditioning(self):
+        return self.air_conditioning
 
