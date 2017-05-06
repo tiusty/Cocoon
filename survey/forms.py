@@ -6,8 +6,9 @@ from django.db.models import Q
 import datetime
 
 # Python global configurations
-from Unicorn.settings.Global_Config import Commute_Range_Max_Scale, \
-    Max_Num_Bathrooms, Max_Text_Input_Length, Max_Num_Bedrooms, Hybrid_weighted_max
+from Unicorn.settings.Global_Config import \
+    Max_Num_Bathrooms, Max_Text_Input_Length, \
+    Max_Num_Bedrooms, Hybrid_weighted_max
 
 
 class DestinationForm(ModelForm):
@@ -80,6 +81,15 @@ class RentSurveyBase(ModelForm):
             }),
     )
 
+    price_weight = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        label="Price Weight",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
     minCommute = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
@@ -108,7 +118,7 @@ class RentSurveyBase(ModelForm):
     )
 
     commuteWeight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Commute_Range_Max_Scale)],
+        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
         label="Commute Weight",
         widget=forms.Select(
             attrs={
@@ -197,8 +207,8 @@ class RentSurveyBase(ModelForm):
             valid = False
 
         # Make sure
-        if int(current_form['commuteWeight']) > Commute_Range_Max_Scale:
-            self.add_error('commuteWeight', "Commute weight cant' be greater than " + str(Commute_Range_Max_Scale))
+        if int(current_form['commuteWeight']) > Hybrid_weighted_max:
+            self.add_error('commuteWeight', "Commute weight cant' be greater than " + str(Hybrid_weighted_max))
             valid = False
 
         if int(current_form['commuteWeight']) < 0:

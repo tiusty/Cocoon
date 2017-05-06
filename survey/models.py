@@ -78,6 +78,7 @@ class RequiredInformation(models.Model):
     name = models.CharField(max_length=200, default=default_rent_survey_name)
     maxPrice = models.IntegerField(default=0)
     minPrice = models.IntegerField(default=0)
+    price_weight = models.IntegerField(default=0)
     maxCommute = models.IntegerField(default=0)
     minCommute = models.IntegerField(default=0)
     commuteWeight = models.IntegerField(default=1)
