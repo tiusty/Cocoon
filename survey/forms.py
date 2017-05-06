@@ -7,7 +7,7 @@ import datetime
 
 # Python global configurations
 from Unicorn.settings.Global_Config import Commute_Range_Max_Scale, \
-    Max_Num_Bathrooms, Max_Text_Input_Length, Num_Bedrooms_Max, Hybrid_weighted_max
+    Max_Num_Bathrooms, Max_Text_Input_Length, Max_Num_Bedrooms, Hybrid_weighted_max
 
 
 class DestinationForm(ModelForm):
@@ -139,7 +139,7 @@ class RentSurveyBase(ModelForm):
         ))
 
     numBedrooms = forms.ChoiceField(
-        choices=[(x, x) for x in range(1, Num_Bedrooms_Max)],
+        choices=[(x, x) for x in range(1, Max_Num_Bedrooms)],
         label="Number of Bedrooms",
         widget=forms.Select(
             attrs={
@@ -157,25 +157,52 @@ class RentSurveyBase(ModelForm):
         if not valid:
             return valid
 
-        # Validate the movein fields
-        # First the moveinDateStart should be either today or in the future
-        if self.cleaned_data['moveinDateStart'] < datetime.date.today():
-            self.errors['invalid_start_day'] = " Start Day should not be in the past"
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        # Validate all the form fields
+
+        # Makes sure the start date is either the present day or in the future
+        if current_form['moveinDateStart'] < datetime.date.today():
+            self.add_error('moveinDateStart', "Start Day should not be in the past")
             valid = False
 
-        # Second, the start date should not be after the end date
-        if self.cleaned_data['moveinDateStart'] > self.cleaned_data['moveinDateEnd']:
-            self.errors['invalid_range'] = " End date should be before the start date"
+        # Makes sure that the End day is after the start day
+        if current_form['moveinDateStart'] > current_form['moveinDateEnd']:
+            self.add_error('moveinDateEnd', "End date should not be before the start date")
             valid = False
 
         # Make sure that the minimum number of bathrooms is not less then 0
-        if self.cleaned_data['minBathrooms'] < 0:
-            self.errors["minBathroom Error:"] = " You can't have less than 0 bathrooms"
+        if current_form['minBathrooms'] < 0:
+            self.add_error('minBathrooms', "You can't have less than 0 bathrooms")
             valid = False
 
         # make sure that the max number of bathrooms is not greater than the max specified
-        if self.cleaned_data['maxBathrooms'] > Max_Num_Bathrooms:
-            self.errors['maxBathroom Error:'] = " You can't have more bathrooms than " + str(Max_Num_Bathrooms)
+        if current_form['maxBathrooms'] > Max_Num_Bathrooms:
+            self.add_error('maxBathrooms', "You can't have more bathrooms than " + str(Max_Num_Bathrooms))
+            valid = False
+
+        # Make sure the bedrooms is at least 1
+        # With the choice fields, the field needs to be casted as an int since it
+        # Is stored as a string in cleaned_data
+        if int(current_form['numBedrooms']) < 1:
+            self.add_error('numBedrooms', "There can't be less than 1 bedroom")
+            valid = False
+
+        # Make sure the bedrooms are not more than the max allowed
+        if int(current_form['numBedrooms']) > Max_Num_Bedrooms:
+            self.add_error('numBedrooms', "There can't be more than " + str(Max_Num_Bedrooms))
+            valid = False
+
+        # Make sure
+        if int(current_form['commuteWeight']) > Commute_Range_Max_Scale:
+            self.add_error('commuteWeight', "Commute weight cant' be greater than " + str(Commute_Range_Max_Scale))
+            valid = False
+
+        if int(current_form['commuteWeight']) < 0:
+            self.add_error('commuteWeight', "Commute weight cant' be less than 0")
             valid = False
 
         return valid

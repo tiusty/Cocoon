@@ -66,6 +66,7 @@ def logoutPage(request):
     logout(request)
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
+
 @login_required
 def ProfilePage(request, defaultPage="profile"):
     context = {
@@ -100,11 +101,10 @@ def ProfilePage(request, defaultPage="profile"):
     else:
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
-    rentSurveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:50]
-    context['numRentSurveys'] = rentSurveys.count()
+    rent_surveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:50]
+    context['numRentSurveys'] = rent_surveys.count()
     context['numBuySurveys'] = 0
-    context['surveys'] = rentSurveys
+    context['surveys'] = rent_surveys
     form = ProfileForm(instance=userProfile.user)
     context['form'] = form
     return render(request, 'userAuth/profilePage.html', context)
-

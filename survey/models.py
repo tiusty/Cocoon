@@ -1,6 +1,6 @@
 from django.db import models
 from userAuth.models import UserProfile
-from enum import Enum
+
 import math
 from django.utils import timezone
 
@@ -104,54 +104,54 @@ class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenit
     userProf = models.ForeignKey(UserProfile)
 
     def get_short_name(self):
-        nameProf = self.userProf.user.get_short_name()
-        nameSurvey = self.name
-        output = nameProf + ": " + nameSurvey
+        user_short_name = self.userProf.user.get_short_name()
+        survey_name = self.name
+        output = user_short_name + ": " + survey_name
         return output
 
     def __str__(self):
-        nameProf = self.userProf.user.get_short_name()
-        nameSurvey = self.name
-        output = nameProf + ": " + nameSurvey
+        user_short_name = self.userProf.user.get_short_name()
+        survey_name = self.name
+        output = user_short_name + ": " + survey_name
         return output
 
     def get_cost_range(self):
         if self.maxPrice == 0:
             return "Not set"
         else:
-            priceOutput = "$" + str(self.minPrice) + " - $" + str(self.maxPrice)
-            return priceOutput
+            price_output = "$" + str(self.minPrice) + " - $" + str(self.maxPrice)
+            return price_output
 
     def get_commute_range(self):
         if self.maxCommute == 0:
             return "Not Set"
         else:
             if self.maxCommute > 60:
-                maxOutput = str(math.floor(self.maxCommute/60)) + " hours " + str(self.maxCommute%60) + " Minutes"
+                max_output = str(math.floor(self.maxCommute/60)) + " hours " + str(self.maxCommute % 60) + " Minutes"
             else:
-                maxOutput = str(self.maxCommute) + " Minutes"
+                max_output = str(self.maxCommute) + " Minutes"
             if self.minCommute > 60:
-                minOutput = str(math.floor(self.minCommute/60)) + " hours " + str(self.minCommute%60) + " Minutes"
+                min_output = str(math.floor(self.minCommute/60)) + " hours " + str(self.minCommute % 60) + " Minutes"
             else:
-                minOutput = str(self.minCommute) + " Minutes"
+                min_output = str(self.minCommute) + " Minutes"
 
-        return minOutput + " - " + maxOutput
+        return min_output + " - " + max_output
 
     def get_home_types(self):
-        homeTypeSet = self.home_type.all()
-        if homeTypeSet.count() == 0:
+        home_type_set = self.home_type.all()
+        if home_type_set.count() == 0:
             return "Not set"
         else:
-            typeOutput = ""
+            type_output = ""
             counter = 0
-            for homeType in homeTypeSet:
+            for homeType in home_type_set:
                 if counter == 0:
-                    typeOutput = str(homeType)
+                    type_output = str(homeType)
                     counter += 1
                 else:
-                    typeOutput = str(homeType) + ", " + typeOutput
+                    type_output = str(homeType) + ", " + type_output
 
-        return typeOutput
+        return type_output
 
 
 # Default name for buying survey
@@ -188,7 +188,3 @@ class RentingDesintations(Destinations):
 
 class BuyingDestinations(Destinations):
     survey = models.ForeignKey(BuyingSurveyModel)
-
-
-
-
