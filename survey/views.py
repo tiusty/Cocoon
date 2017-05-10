@@ -15,7 +15,6 @@ import googlemaps
 from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, weight_question_value
 
 
-
 # Create your views here.
 @login_required
 def renting_survey(request):
@@ -58,7 +57,8 @@ def renting_survey(request):
                     # Then delete it. We only want to keep one "recent" survey
                     # The user has the option to change the name of it to save it permanently
                     try:
-                        RentingSurveyModel.objects.filter(userProf=currProf).filter(name=default_rent_survey_name).delete()
+                        RentingSurveyModel.objects.filter(userProf=currProf).filter(
+                            name=default_rent_survey_name).delete()
                     except RentingSurveyModel.DoesNotExist:
                         print("No surveys to delete")
                     rentingSurvey.save()
@@ -96,7 +96,7 @@ def renting_survey(request):
 @login_required
 def buying_survey(request):
     form = BuySurvey()
-    return render(request, 'survey/buyingSurvey.html', {'form' : form})
+    return render(request, 'survey/buyingSurvey.html', {'form': form})
 
 
 class ScoringStruct:
@@ -106,6 +106,7 @@ class ScoringStruct:
     This also makes sure that the scores are easily associated with the home
     Contains functions to easily extract information for the given home
     """
+
     def __init__(self, new_house):
         self.house = new_house
         self.score = 0
@@ -124,7 +125,7 @@ class ScoringStruct:
         """
         # Takes care of divide by 0, also if it is eliminated the score should be -1
         if self.scorePossible != 0 and self.eliminated is False:
-            return (self.score/self.scorePossible)*100
+            return (self.score / self.scorePossible) * 100
         elif self.eliminated:
             # If eliminated return negative one so it is sorted to the back
             return -1
@@ -168,7 +169,7 @@ class ScoringStruct:
             else:
                 max_output = str(int(commute)) + " Minutes"
             if counter != 0:
-                end_result = end_result+", "+max_output
+                end_result = end_result + ", " + max_output
             else:
                 end_result = max_output
             counter = 1
@@ -228,7 +229,7 @@ def create_commute_score(scored_house_list, survey):
                 house.score += (100 * scale_factor)
                 house.scorePossible += (100 * scale_factor)
             elif commute <= max_commute:
-                house.score += (((1 - (commute-10)/(range_com - 10))*100) * scale_factor)
+                house.score += (((1 - (commute - 10) / (range_com - 10)) * 100) * scale_factor)
                 house.scorePossible += (100 * scale_factor)
             else:
                 # Mark house for deletion
@@ -259,7 +260,7 @@ def create_price_score(scored_house_list, survey):
             house_range = max_price - min_price
             # Make sure that the house range is never negative (score should never decrease)
             if house_range > 0:
-                house.score += ((1 - house_price_normalized/house_range) * 100) * scale_factor
+                house.score += ((1 - house_price_normalized / house_range) * 100) * scale_factor
                 house.scorePossible += (100 * scale_factor)
             # This takes care of the divide by zero case
             # If the range is zero, then the max and min price should be the same
@@ -348,7 +349,7 @@ def order_by_house_score(scored_house_list):
         current_value = scored_house_list[index]
         position = index
 
-        while position > 0 and scored_house_list[position-1].get_score() < current_value.get_score():
+        while position > 0 and scored_house_list[position - 1].get_score() < current_value.get_score():
             scored_house_list[position] = scored_house_list[position - 1]
             position -= 1
 
@@ -421,7 +422,7 @@ def start_algorithm(survey, user_profile, context):
     4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
     4. Filter by the number of bathrooms
     """
-    filtered_house_list = RentDatabase.objects\
+    filtered_house_list = RentDatabase.objects \
         .filter(price__range=(survey.minPrice, survey.maxPrice)) \
         .filter(home_type__in=home_types) \
         .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
@@ -541,6 +542,26 @@ def survey_result_rent(request, survey_id="recent"):
 
     return render(request, 'survey/surveyResultRent.html', context)
 
+
+@login_required
+def visit_list(request):
+    context = {
+        'error_message': [],
+    }
+
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+
+    except UserProfile.DoesNotExist:
+        context['error_message'].append("User Profile Does Not Exist")
+        return HttpResponseRedirect(reverse('homePage:index'))
+
+    return render(request,'survey/visitList.html', context)
+
+
+#######################################################
+# Ajax Requests below
+#############################################################
 
 # This is used for ajax request to set house favorites
 @login_required

@@ -29,7 +29,7 @@
                     {% block nav-home %}<li><a href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}
                     {% block nav-mysurvies %}<li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Survey's</a></li>{% endblock %}
                     {% block nav-favorites %}<li><a href="{% url 'userAuth:profilePage' 'favorites' %}">My Favorites</a></li>{% endblock %}
-                    {% block nav-visitlist %}<li><a href="#">My Visit List</a></li>{% endblock %}
+                    {% block nav-visitlist %}<li><a href="{% url 'survey:visitList' %}">My Visit List</a></li>{% endblock %}
                     {% block nav-contact %}<li><a href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -39,12 +39,13 @@
                                aria-haspopup="true"
                                aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
+                                <li class="dropdown-header">Account</li>
                                 <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
                                 <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
+                                {% comment %}
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header">Surveys</li>
                                 <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
-                                {% comment %}
                                 <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
                                 {% endcomment %}
                             </ul>
