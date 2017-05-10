@@ -27,7 +27,9 @@
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     {% block nav-home %}<li><a href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}
-                    {% block nav-survey %}<li><a href="{% url 'homePage:index' %}">Survey</a></li>{% endblock %}
+                    {% block nav-mysurvies %}<li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Survey's</a></li>{% endblock %}
+                    {% block nav-favorites %}<li><a href="{% url 'userAuth:profilePage' 'favorites' %}">My Favorites</a></li>{% endblock %}
+                    {% block nav-visitlist %}<li><a href="#">My Visit List</a></li>{% endblock %}
                     {% block nav-contact %}<li><a href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -45,7 +47,6 @@
                                 {% comment %}
                                 <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
                                 {% endcomment %}
-                                <li><a href="{% url 'userAuth:profilePage' 'favorites' %}">Favorites!</a></li>
                             </ul>
                         </li>
                     {% else %}

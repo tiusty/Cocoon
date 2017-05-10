@@ -191,7 +191,8 @@ def create_commute_score(scored_house_list, survey):
     The User can define a commute weight. If the commute weight is 0, then the scaling factor is 0 so all
     homes are weighted the same as long as they are within the range. As the scaling factor increases, it
     gives a large weight to homes that are closer.
-    :param scored_house_list: ScoringStruct that stores all the homes and the corresponding commute times
+    :param scored_house_list: The array of ScoringStructs which holds all the homes that
+        have already gone past static filtering
     :param survey: The Survey is passed, but is only really needed to find the max and min commute times
     :return:
         Returns the ScoringStruct but with the housing scores updated with the commute times and
@@ -235,6 +236,43 @@ def create_commute_score(scored_house_list, survey):
     return scored_house_list
 
 
+def create_price_score(scored_house_list, survey):
+    """
+    Generates the score according to the price of the home
+    :param scored_house_list: The array of ScoringStructs which holds all the homes that
+        have already gone past static filtering
+    :param survey: The survey that the homes are being filtered by
+    :return:
+    """
+
+    # Retrieve all the constant values
+    max_price = survey.maxPrice
+    min_price = survey.minPrice
+    scale_factor = survey.price_weight
+
+    # Apply price scoring for all the houses
+    for house in scored_house_list:
+        house_price = house.house.get_price()
+        house_price_normalized = house_price - min_price
+        # Guarantee that the house normalized price is not negative, (score should never decrease)
+        if house_price_normalized >= 0:
+            house_range = max_price - min_price
+            # Make sure that the house range is never negative (score should never decrease)
+            if house_range > 0:
+                house.score += ((1 - house_price_normalized/house_range) * 100) * scale_factor
+                house.scorePossible += (100 * scale_factor)
+            # This takes care of the divide by zero case
+            # If the range is zero, then the max and min price should be the same
+            # Therefore assuming that the static filter worked before, the house price
+            # Needs to be between the max and minimum price and therefore, in this case,
+            # The house price should be equal to the min price. Therefore, if this case occurs
+            # Do an extra validation to make sure that the min_price equals the house price to
+            # Prevent an error
+            elif house_range == 0 and house_price == min_price:
+                house.score += 100 * scale_factor
+                house.scorePossible += 100 * scale_factor
+
+
 def weighted_question_scoring(home, contains_item, scale_factor):
     """
     This is the function that determines the weight of a given weight question
@@ -266,7 +304,8 @@ def weighted_question_scoring(home, contains_item, scale_factor):
 def create_interior_amenities_score(scored_house_list, survey):
     """
     Updates the houes scoresd based on the interior amenities questions
-    :param scored_house_list: The House structure array that contains all the homes
+    :param scored_house_list: The array of ScoringStructs which holds all the homes that
+        have already gone past static filtering
     :param survey: The user survey that is being used to evaluate the homes
     """
     # Loop throuh all the homes and score each one
@@ -282,12 +321,14 @@ def create_interior_amenities_score(scored_house_list, survey):
 def create_house_score(house_list_scored, survey):
     """
     All the functions that perform scoring will be listed here
-    :param house_list_scored: The houses structure that contains all the information regarding each house
+    :param house_list_scored: The array of ScoringStructs which holds all the homes that
+        have already gone past static filtering
     :param survey: The current survey, since the scoring is based on the result of the survey
     :return: The house structure with the homes scored
     """
     # Creates score based on commute
     create_commute_score(house_list_scored, survey)
+    create_price_score(house_list_scored, survey)
     create_interior_amenities_score(house_list_scored, survey)
     return house_list_scored
 
@@ -298,7 +339,8 @@ def order_by_house_score(scored_house_list):
     Orders the homes based on the current score
     The high scored home will be put at the front of the list
     Homes that are eliminated have no order
-    :param scored_house_list: The house structure that contains all the information regarding the homes
+    :param scored_house_list: The array of ScoringStructs which holds all the homes that
+        have already gone past static filtering
     :return: The house structure but sorted based on the home score
     """
     # Simple insertion sort to sort houses by score
@@ -320,7 +362,8 @@ def google_matrix(origins, destinations, scored_list, context):
     Generates the Commute times for all the homes
     :param origins: All the origin locations, in this case, all the filter_homes
     :param destinations: All the destinations, what the user puts in as destinations
-    :param scored_list: The structure that stores the homes
+    :param scored_list: The array of ScoringStructs which holds all the homes that
+        have already gone past static filtering
     :param context: Context that will be passed to the template
     :return: Returns the scored list with all the commute times entered
     """
@@ -368,7 +411,7 @@ def start_algorithm(survey, user_profile, context):
     """
     The item that will filter the list the most should be first to narrow down the number of iterations
     The database needs to be searched
-    (Right now it isn't order by efficiecy but instead by when it was added. Later it can be switched around
+    (Right now it isn't order by efficiency but instead by when it was added. Later it can be switched around
 
     Current order:
     1. Filter by price range. The House must be in the correct range to be accepted
@@ -384,8 +427,6 @@ def start_algorithm(survey, user_profile, context):
         .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
         .filter(numBedrooms=survey.numBedrooms) \
         .filter(numBathrooms__range=(survey.minBathrooms, survey.maxBathrooms))
-    print(survey.minBathrooms)
-    print(survey.maxBathrooms)
 
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdesintations_set.all()
