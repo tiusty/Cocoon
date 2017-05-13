@@ -15,6 +15,7 @@ Global variables are listed below
     <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">
     <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
     <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
+    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block nav-survey %}
@@ -31,7 +32,7 @@ Global variables are listed below
     {% for houseStruct in houseList %}
         <!-- Modal -->
         {% with home=houseStruct.house %}
-            {% include "survey/homeModal.html" with modalId="myModal" %}
+            {% include "homes/homeModal.html" with modalId="myModal" %}
         {% endwith %}
     {% endfor %}
     <div class="row" id="row-main">
@@ -311,6 +312,34 @@ Global variables are listed below
     This Script handles the Ajax request to the setFavorite controller. It adds or removes homes from
     The favorite list
     {% endcomment %}
+    <script>
+        function set_visit_home(num) {
+            $.ajax({
+                url: "{% url 'survey:setVisitHome' %}",
+                type: "POST", //http method
+                data: {"visit_id": num},
+
+                success: function (json) {
+                    console.log("success");
+                    if (json["result"] == 0) {
+                        console.log("removed");
+                    }
+                    else if (json["result"] == 1) {
+                        console.log("Added!");
+                    }
+                    // Need to handle error! Create a div that is meant for errors
+                    else {
+                        console.log(json["result"]);
+                    }
+                },
+
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            })
+        }
+
+    </script>
     <script>
         function set_favorite(num) {
             $.ajax({

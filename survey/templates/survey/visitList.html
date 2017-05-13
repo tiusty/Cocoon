@@ -2,9 +2,58 @@
 {% load static %}
 {% block title %}My Visit List{% endblock %}
 
+{% block head %}
+    {{ block.super }}
+
+    <!-- Style sheets for template page -->
+    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
+
+{% endblock %}
+
 {% block content %}
+
+    {% comment %}
+        Modal assumes it is being called within a for loop
+    {% endcomment %}
+    {% for home in visit_list_set %}
+        <!-- Modal -->
+        {% include "homes/homeModal.html" with modalId="myModalVisit" %}
+    {% endfor %}
+
     <div class="jumbotron">
         <h1>Your Visit List!</h1>
         <p>Here is your list of homes that you are currently visiting</p>
     </div>
+
+    <table class="table table-striped table-hover table-responsive">
+        <tbody>
+        <thead>
+        <tr>
+            <th>Toggle</th>
+            <th>Home</th>
+        </tr>
+        </thead>
+        {% for home in user_favorite_homes %}
+            {{ home }}
+        {% endfor %}
+        {% for home in visit_list_set %}
+            <tr>
+                <td style="vertical-align:middle">
+                    <h3 style="margin-top: 10px;">
+                                    <span data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
+                                          data-target="#myModalVisit{{ forloop.counter }}"
+                                          style="padding-right:1em"></span>
+                    </h3>
+                </td>
+                <td style="vertical-align:middle">
+                    {{ home.get_address }}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td>You do not have any homes to visit</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

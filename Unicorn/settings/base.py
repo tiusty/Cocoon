@@ -67,6 +67,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Unicorn.context_processors.global_context_processors.add_favorite_homes_processor',
+                'Unicorn.context_processors.global_context_processors.add_visit_home_list_processor',
             ],
         },
     },
@@ -128,3 +130,8 @@ LOGIN_URL="/userAuth/login/"
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Adds a global static file that isn't linked to a particular app
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "../static"),
+]

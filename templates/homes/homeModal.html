@@ -21,6 +21,8 @@ Also the Modal Expects a home in the context of the foor loop
                     <p><b>Home Type: </b>{{ home.home_type }}</p>
                     <p><b>Move In Day: </b>{{ home.get_move_in_day }}</p>
                     <p><b>Number of Bedrooms: </b>{{ home.get_num_bedrooms }}</p>
+                    <p><button type="button" class="btn btn-primary" onclick="set_visit_home({{ home.id }})">Primary</button></p>
+                    <p>Visit Home? </p>
                 </div>
             </div>
             <div class="modal-footer">

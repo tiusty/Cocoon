@@ -12,4 +12,5 @@ urlpatterns = [
    # Ajax requests
     url(r'^setFavorite/$', views.set_favorite, name="setFavorite"),
     url(r'^deleteSurvey/$', views.delete_survey, name="surveyDelete"),
+    url(r'^setVisitHome/$', views.set_visit_home, name="setVisitHome")
 ]

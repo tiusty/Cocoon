@@ -7,6 +7,9 @@
     {{ block.super }}
     <!-- Custom StyleSheets -->
     <link rel="stylesheet" href="{% static 'userAuth/profilePage.css' %}">
+
+    <!-- Style sheets for template page -->
+    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
 {% endblock %}
 
 
@@ -16,7 +19,7 @@
     {% endcomment %}
     {% for home in favorites %}
         <!-- Modal -->
-        {% include "survey/homeModal.html" with modalId="myModalFav" %}
+        {% include "homes/homeModal.html" with modalId="myModalFav" %}
     {% endfor %}
     <div class="row">
         <div class="col-sm-12">

@@ -1,20 +1,18 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
-from django.urls import reverse
-from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
-from userAuth.models import UserProfile
-from survey.models import RentingSurveyModel, default_rent_survey_name
-from houseDatabase.models import RentDatabase
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-
-import math
 import json
+import math
 
 import googlemaps
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render
+from django.urls import reverse
 
-# Global Variables for surveys
 from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, weight_question_value
+from houseDatabase.models import RentDatabase
+from survey.models import RentingSurveyModel, default_rent_survey_name
+from userAuth.models import UserProfile
+from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
 
 
 # Create your views here.
@@ -542,18 +540,16 @@ def survey_result_rent(request, survey_id="recent"):
 
 @login_required
 def visit_list(request):
+
     context = {
-        'error_message': [],
+        'error_message': []
     }
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    visit_list_set = user_profile.visit_list.all()
 
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
-
-    except UserProfile.DoesNotExist:
-        context['error_message'].append("User Profile Does Not Exist")
-        return HttpResponseRedirect(reverse('homePage:index'))
-
-    return render(request,'survey/visitList.html', context)
+    context['visit_list_set'] = visit_list_set
+    print(context)
+    return render(request, 'survey/visitList.html', context)
 
 
 #######################################################
@@ -638,6 +634,40 @@ def delete_survey(request):
 
                 except RentingSurveyModel.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Survey"}),
+                                        content_type="application/json",
+                                        )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "Method Not POST"}),
+                            content_type="application/json",
+                            )
+
+@login_required
+def set_visit_home(request):
+
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            home_id = request.POST.get('visit_id')
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                try:
+                    home = RentDatabase.objects.get(id=home_id)
+                    user_profile.visit_list.add(home)
+                    return HttpResponse(json.dumps({"result": "0"}),
+                                        content_type="application/json",
+                                        )
+
+                except RentDatabase.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",
                                         )
             except UserProfile.DoesNotExist:
