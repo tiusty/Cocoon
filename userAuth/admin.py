@@ -20,6 +20,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name',)}),
         ('Joined', {'fields': ('joined',)}),
+        #('Houss', {'fields': ('favorites',)}),
         ('Permissions', {'fields': ('is_active', 'is_admin',)}),
     )
     # add_fields sets is not a standard ModelAdmin Attribute. UserAdmin
@@ -42,14 +43,13 @@ class ProfileInline(admin.StackedInline):
      fk_name = 'user'
 
 
-# class CustomUserAdmin(UserAdmin):
-#     inlines = (ProfileInline, )
-#
-#     def get_inline_instances(self, request, obj=None):
-#         if not obj:
-#             return list()
-#         return super(CustomUserAdmin, self).get_inline_instances(request, obj)
+class CustomUserAdmin(UserAdmin):
+    inlines = (ProfileInline, )
 
-admin.site.register(MyUser, UserAdmin)
-#admin.site.register(UserProfile, ProfileInline)
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return list()
+        return super(CustomUserAdmin, self).get_inline_instances(request, obj)
+
+admin.site.register(MyUser, CustomUserAdmin)
 admin.site.unregister(Group)
