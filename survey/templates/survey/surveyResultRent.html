@@ -2,6 +2,9 @@
 {% load static %}
 {% block title %}Survey Result{% endblock %}
 
+{% comment %}
+Global variables are listed below
+{% endcomment %}
 
 {% block head %}
     {{ block.super }}
@@ -22,35 +25,14 @@
     {% comment %}
     <h3>Note all the homes currently have a move in day of Feburary if you are wondering why nothing shows up</h3>
     {% endcomment %}
-    {% for home in houseList %}
+    {% comment %}
+        Modal assumes it is being called within a for loop
+    {% endcomment %}
+    {% for houseStruct in houseList %}
         <!-- Modal -->
-        <div class="modal fade" id="myModal{{ forloop.counter }}" tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h3 class="modal-title" id="myModalLabel">{{ home.house.address }}</h3>
-                    </div>
-                    <div class="modal-body modalPadding">
-                        <div class="row">
-                            <p><b>Address: </b>{{ home.house.address }}</p>
-                            <p><b>Commute: </b>{{ home.get_commute_times }}</p>
-                            <p><b>Price: </b>{{ home.house.get_price_str }}</p>
-                            <p><b>Home Type: </b>{{ home.house.home_type }}</p>
-                            <p><b>Score: </b>{{ home.get_user_score }}</p>
-                            <p><b>Move In Day: </b>{{ home.house.get_moveInday }}</p>
-                            <p><b>Number of Bedrooms: </b>{{ home.house.get_num_bedrooms }}</p>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success">Contact Agent</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% with home=houseStruct.house %}
+            {% include "survey/homeModal.html" with modalId="myModal" %}
+        {% endwith %}
     {% endfor %}
     <div class="row" id="row-main">
         <div class="col-sm-3 sidebar collapsedSide" id="sidebarSurvey">

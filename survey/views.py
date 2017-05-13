@@ -6,6 +6,8 @@ from userAuth.models import UserProfile
 from survey.models import RentingSurveyModel, default_rent_survey_name
 from houseDatabase.models import RentDatabase
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+
 import math
 import json
 
@@ -488,57 +490,52 @@ def survey_result_rent(request, survey_id="recent"):
     context = {
         'error_message': [],
     }
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
 
-        # If no id is specified in the URL, then it attempts to load the recent survey
-        # The recent survey is the last survey to be created
-        if survey_id == "recent":
-            # Try to retrieve the most recent survey, but if there are no surveys, then
-            # Redirect back to the homepage
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    # If no id is specified in the URL, then it attempts to load the recent survey
+    # The recent survey is the last survey to be created
+    if survey_id == "recent":
+        # Try to retrieve the most recent survey, but if there are no surveys, then
+        # Redirect back to the homepage
+        try:
+            survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
+        except RentingSurveyModel.DoesNotExist:
+            return HttpResponseRedirect(reverse('homePage:index'))
+    else:
+        # If the user did not choose recent, then try to grab the survey by it's id
+        # If it can't find it or it is not associated with the user, just grab the
+        # Recent Survey. If that fails, then redirect back to the home page.
+        try:
+            survey = RentingSurveyModel.objects.filter(userProf=user_profile).get(id=survey_id)
+        # If the survey ID, does not exist/is not for that user, then return the most recent survey
+        except RentingSurveyModel.DoesNotExist:
+            context['error_message'].append("Could not find survey id, getting recent survey")
             try:
                 survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
                 return HttpResponseRedirect(reverse('homePage:index'))
+    # Populate form with stored data
+    form = RentSurveyMini(instance=survey)
+
+    # If a POST message occurs (They submit the mini form) then process it
+    # If it fails then keep loading survey result and pass the error messages
+    if request.method == 'POST':
+        # If a POST occurs, update the form. In the case of an error, then the survey
+        # Should be populated by the POST data.
+        form = RentSurveyMini(request.POST, instance=survey)
+        # If the survey is valid then redirect back to the page to reload the changes
+        # This will also update the house list
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                kwargs={"survey_id": survey.id}))
         else:
-            # If the user did not choose recent, then try to grab the survey by it's id
-            # If it can't find it or it is not associated with the user, just grab the
-            # Recent Survey. If that fails, then redirect back to the home page.
-            try:
-                survey = RentingSurveyModel.objects.filter(userProf=user_profile).get(id=survey_id)
-            # If the survey ID, does not exist/is not for that user, then return the most recent survey
-            except RentingSurveyModel.DoesNotExist:
-                context['error_message'].append("Could not find survey id, getting recent survey")
-                try:
-                    survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
-                except RentingSurveyModel.DoesNotExist:
-                    return HttpResponseRedirect(reverse('homePage:index'))
-        # Populate form with stored data
-        form = RentSurveyMini(instance=survey)
+            context['error_message'].append("There are form errors")
 
-        # If a POST message occurs (They submit the mini form) then process it
-        # If it fails then keep loading survey result and pass the error messages
-        if request.method == 'POST':
-            # If a POST occurs, update the form. In the case of an error, then the survey
-            # Should be populated by the POST data.
-            form = RentSurveyMini(request.POST, instance=survey)
-            # If the survey is valid then redirect back to the page to reload the changes
-            # This will also update the house list
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_id": survey.id}))
-            else:
-                context['error_message'].append("There are form errors")
-
-        # Now start executing the Algorithm
-        start_algorithm(survey, user_profile, context)
-        context['survey'] = survey
-        context['form'] = form
-
-    except UserProfile.DoesNotExist:
-        context['error_message'].append("User Profile Does Not Exist")
-        return HttpResponseRedirect(reverse('homePage:index'))
+    # Now start executing the Algorithm
+    start_algorithm(survey, user_profile, context)
+    context['survey'] = survey
+    context['form'] = form
 
     return render(request, 'survey/surveyResultRent.html', context)
 
