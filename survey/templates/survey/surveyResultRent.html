@@ -31,7 +31,7 @@ Global variables are listed below
     {% endcomment %}
     {% for houseStruct in houseList %}
         <!-- Modal -->
-        {% with home=houseStruct.house %}
+        {% with house=houseStruct.house %}
             {% include "homes/homeModal.html" with modalId="myModal" %}
         {% endwith %}
     {% endfor %}
@@ -283,7 +283,7 @@ Global variables are listed below
                             <td>
                                 <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}"
                                                                     onclick="set_favorite({{ home.house.id }});"
-                                        {% if home.favorite %}
+                                        {% if home.house in user_favorite_houses %}
                                                                     class="glyphicon glyphicon-heart"
                                         {% else %}
                                                                     class="glyphicon glyphicon-heart-empty"
@@ -313,9 +313,9 @@ Global variables are listed below
     The favorite list
     {% endcomment %}
     <script>
-        function set_visit_home(num) {
+        function set_visit_house(num) {
             $.ajax({
-                url: "{% url 'survey:setVisitHome' %}",
+                url: "{% url 'survey:setVisitHouse' %}",
                 type: "POST", //http method
                 data: {"visit_id": num},
 

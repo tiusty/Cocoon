@@ -4,6 +4,10 @@ Even if there is ony one home, it should be in a for loop with size 1.
 The modael id is created based on the for loop counter.
 
 Also the Modal Expects a home in the context of the foor loop
+
+This Modal also assumes these two contexts are provided in a context processor globally:
+user_favorite_homes: List of all the homes that the current user has in their favorite list
+user_visit_home_list: List of all the homes that the current user has in their visit list
 {% endcomment %}
 
 <div class="modal fade" id="{{ modalId }}{{ forloop.counter }}" tabindex="-1" role="dialog"
@@ -13,16 +17,19 @@ Also the Modal Expects a home in the context of the foor loop
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title" id="myModalLabel">{{ home.get_address }}</h3>
+                <h3 class="modal-title" id="myModalLabel">{{ house.get_address }}</h3>
             </div>
             <div class="modal-body modalPadding">
                 <div class="row">
-                    <p><b>Price: </b>{{ home.get_price_str }}</p>
-                    <p><b>Home Type: </b>{{ home.home_type }}</p>
-                    <p><b>Move In Day: </b>{{ home.get_move_in_day }}</p>
-                    <p><b>Number of Bedrooms: </b>{{ home.get_num_bedrooms }}</p>
-                    <p><button type="button" class="btn btn-primary" onclick="set_visit_home({{ home.id }})">Primary</button></p>
+                    <p><b>Price: </b>{{ house.get_price_str }}</p>
+                    <p><b>Home Type: </b>{{ house.home_type }}</p>
+                    <p><b>Move In Day: </b>{{ house.get_move_in_day }}</p>
+                    <p><b>Number of Bedrooms: </b>{{ house.get_num_bedrooms }}</p>
+                    <p><button type="button" class="btn btn-primary" onclick="set_visit_house({{ house.id }})">Primary</button></p>
                     <p>Visit Home? </p>
+                    {% if house in user_visit_house_list %}
+                        <p>It is in the visit list!</p>
+                    {% endif %}
                 </div>
             </div>
             <div class="modal-footer">

@@ -13,13 +13,12 @@ def add_favorite_homes_processor(request):
     if request.user.is_authenticated():
         user_profile = get_object_or_404(UserProfile, user=request.user)
         favorite_homes = user_profile.favorites.all()
-        print("hi")
         return {
-            'user_favorite_homes': favorite_homes
+            'user_favorite_houses': favorite_homes
         }
     else:
         return {
-            'user_favorite_homes': None
+            'user_favorite_houses': None
         }
 
 
@@ -33,12 +32,11 @@ def add_visit_home_list_processor(request):
     if request.user.is_authenticated():
         user_profile = get_object_or_404(UserProfile, user=request.user)
         visit_home_list = user_profile.visit_list.all()
-        print("bye")
         return {
-            'user_visit_home_list': visit_home_list
+            'user_visit_house_list': visit_home_list
         }
     else:
         return {
-            'user_favorite_homes': None
+            'user_visit_house_list': None
         }
 

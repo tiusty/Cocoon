@@ -113,7 +113,6 @@ class ScoringStruct:
         self.scorePossible = 0
         self.commuteTime = []
         self.eliminated = False
-        self.favorite = False
 
     def get_score(self):
         """
@@ -441,13 +440,10 @@ def start_algorithm(survey, user_profile, context):
     for location in destination_set:
         destinations.append(location.full_address())
 
-    # This puts all the homes into a scored list and also marks the favorite homes
+    # This puts all the homes into a scored list
     scored_house_list = []
     for house in filtered_house_list:
-        current_house = ScoringStruct(house)
-        if user_profile.favorites.filter(id=house.id).exists():
-            current_house.favorite = True
-        scored_house_list.append(current_house)
+        scored_house_list.append(ScoringStruct(house))
 
     # First Commute score is calculated if there are origins and destinations
     if not destinations or not origins:
@@ -650,7 +646,7 @@ def delete_survey(request):
                             )
 
 @login_required
-def set_visit_home(request):
+def set_visit_house(request):
 
     if request.method == "POST":
         # Only care if the user is authenticated

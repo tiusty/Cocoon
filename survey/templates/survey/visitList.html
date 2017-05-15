@@ -15,7 +15,7 @@
     {% comment %}
         Modal assumes it is being called within a for loop
     {% endcomment %}
-    {% for home in visit_list_set %}
+    {% for house in visit_list_set %}
         <!-- Modal -->
         {% include "homes/homeModal.html" with modalId="myModalVisit" %}
     {% endfor %}
@@ -33,9 +33,6 @@
             <th>Home</th>
         </tr>
         </thead>
-        {% for home in user_favorite_homes %}
-            {{ home }}
-        {% endfor %}
         {% for home in visit_list_set %}
             <tr>
                 <td style="vertical-align:middle">
