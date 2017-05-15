@@ -9,8 +9,9 @@ urlpatterns = [
     url(r'^visits/$', views.visit_list, name="visitList"),
     url(r'^result/rent/$', views.survey_result_rent, name="rentSurveyResult"),
     url(r'^result/rent/(?P<survey_id>[0-9]+)/$', views.survey_result_rent, name="rentSurveyResult"),
-   # Ajax requests
+    # Ajax requests
     url(r'^setFavorite/$', views.set_favorite, name="setFavorite"),
     url(r'^deleteSurvey/$', views.delete_survey, name="surveyDelete"),
-    url(r'^setVisitHome/$', views.set_visit_house, name="setVisitHouse")
+    url(r'^setVisitHome/$', views.set_visit_house, name="setVisitHouse"),
+    url(r'^deleteVisitHome/$', views.delete_visit_house, name="deleteVisitHouse"),
 ]

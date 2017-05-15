@@ -645,8 +645,14 @@ def delete_survey(request):
                             content_type="application/json",
                             )
 
+
 @login_required
 def set_visit_house(request):
+    """
+    This ajax function adds a house to the users visit list
+    :param request: Http request
+    :return: 1 means the home has successfully added
+    """
 
     if request.method == "POST":
         # Only care if the user is authenticated
@@ -658,10 +664,46 @@ def set_visit_house(request):
                 try:
                     home = RentDatabase.objects.get(id=home_id)
                     user_profile.visit_list.add(home)
-                    return HttpResponse(json.dumps({"result": "0"}),
+                    return HttpResponse(json.dumps({"result": "1"}),
+                                        content_type="application/json",)
+                except RentDatabase.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",
                                         )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "Method Not POST"}),
+                            content_type="application/json",
+                            )
 
+
+@login_required
+def delete_visit_house(request):
+    """
+    This ajax function removes a house from the users visit list
+    :param request: Http request
+    :return: 0 means the home was successfully removed
+    """
+
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            home_id = request.POST.get('visit_id')
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                try:
+                    home = RentDatabase.objects.get(id=home_id)
+                    user_profile.visit_list.remove(home)
+                    return HttpResponse(json.dumps({"result": "0"}),
+                                        content_type="application/json", )
                 except RentDatabase.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",

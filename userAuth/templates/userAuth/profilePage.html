@@ -21,36 +21,7 @@
         <!-- Modal -->
         {% include "homes/homeModal.html" with modalId="myModalFav" %}
     {% endfor %}
-    {% comment %}
-       Delete Confirmation Modal for survey
-    {% endcomment %}
-    <!-- Modal -->
-    <div class="modal fade" id="deleteModal{{ forloop.counter }}"
-         tabindex="-1" role="dialog"
-         aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"
-                            aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">
-                        Delete Confirmation</h4>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete {{ survey.name }}?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary"
-                            data-dismiss="modal">No
-                    </button>
-                    <button type="button" class="btn btn-danger"
-                            onclick="delete_survey({{ survey.id }})">Yes
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div class="row">
         <div class="col-sm-12">
             {% if error_message %}
@@ -139,6 +110,36 @@
                     <div class="tab-pane fade in {% if defaultProfile == 1 %}active{% endif %}" id="tab2">
                         <div class="panel-group" id="accordion_rent">
                             {% for survey in surveys %}
+                                {% comment %}
+                                    Delete Confirmation Modal for survey
+                                {% endcomment %}
+                                <!-- Modal -->
+                                <div class="modal fade" id="deleteModal{{ forloop.counter }}"
+                                     tabindex="-1" role="dialog"
+                                     aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">
+                                                    Delete Confirmation</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete {{ survey.name }}?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary"
+                                                        data-dismiss="modal">No
+                                                </button>
+                                                <button type="button" class="btn btn-danger"
+                                                        onclick="delete_survey({{ survey.id }})">Yes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h4 class="panel-title">

@@ -1,4 +1,7 @@
 /**
+ * Created by awagu on 5/15/2017.
+ */
+/**
  * Created by awagu on 5/14/2017.
  */
 
@@ -8,11 +11,12 @@
     Arguments:
     1. num: This is the id of the home that will be operated on
     2. url: This is the url for the ajax request
+    3. return_url: This is the url that the page should refresh to once the house is deleted
 
     Description:
-    This function adds the home to the users visit list
+    This function deletes the home from the users visit list
  */
-function set_visit_house(num, url) {
+function delete_visit_house(num, url, return_url) {
             $.ajax({
                 url: url,
                 type: "POST", //http method
@@ -24,6 +28,7 @@ function set_visit_house(num, url) {
                     console.log("success");
                     if (json["result"] == 0) {
                         console.log("removed");
+                        window.location = return_url;
                     }
                     else if (json["result"] == 1) {
                         console.log("Added!");

@@ -20,6 +20,38 @@
         {% include "homes/homeModal.html" with modalId="myModalVisit" %}
     {% endfor %}
 
+
+    {% for house in visit_list_set %}
+        <div class="modal fade" id="deleteModal{{ forloop.counter }}"
+             tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            Delete Confirmation</h4>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete {{ house.get_address }} from the visit list?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"
+                                data-dismiss="modal">No
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                onclick="delete_visit_house({{ house.id }}, '{% url 'survey:deleteVisitHouse' %}', '{% url 'survey:visitList' %}')">
+                            Yes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+
     <div class="jumbotron">
         <h1>Your Visit List!</h1>
         <p>Here is your list of homes that you are currently visiting</p>
@@ -31,9 +63,11 @@
         <tr>
             <th>Toggle</th>
             <th>Home</th>
+            <th>Remove Home?</th>
         </tr>
         </thead>
-        {% for home in visit_list_set %}
+        {% for house in visit_list_set %}
+
             <tr>
                 <td style="vertical-align:middle">
                     <h3 style="margin-top: 10px;">
@@ -43,7 +77,12 @@
                     </h3>
                 </td>
                 <td style="vertical-align:middle">
-                    {{ home.get_address }}
+                    {{ house.get_address }}
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" data-toggle="modal"
+                            data-target="#deleteModal{{ forloop.counter }}">Remove
+                    </button>
                 </td>
             </tr>
         {% empty %}
@@ -63,5 +102,7 @@
     <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    {% comment %}This script adds the set_visit_house function which enables removing homes from the users visit list{% endcomment %}
+    <script src="{% static 'Unicorn/homes/javascript/delete_visit_house.js' %}"></script>
 
 {% endblock %}
