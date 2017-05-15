@@ -50,4 +50,3 @@ class RentDatabase(models.Model):
 
     def has_bath(self):
         return self.bath
-

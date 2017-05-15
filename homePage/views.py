@@ -3,6 +3,7 @@ from homePage.forms import SurveyType
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+
 def index(request):
     form = SurveyType()
     context = {
