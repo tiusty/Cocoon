@@ -14,13 +14,16 @@
 
     {% comment %}
         Modal assumes it is being called within a for loop
+        This Modal is for the house toggle
     {% endcomment %}
     {% for house in visit_list_set %}
-        <!-- Modal -->
         {% include "homes/homeModal.html" with modalId="myModalVisit" %}
     {% endfor %}
 
-
+    {% comment %}
+        This modal creates the delete confirmation dialog for each house
+        This also allows the user to delete houses from the user visit list
+    {% endcomment %}
     {% for house in visit_list_set %}
         <div class="modal fade" id="deleteModal{{ forloop.counter }}"
              tabindex="-1" role="dialog"
@@ -54,7 +57,7 @@
 
     <div class="jumbotron">
         <h1>Your Visit List!</h1>
-        <p>Here is your list of homes that you are currently visiting</p>
+        <p>Here is your list of homes that you are currently visiting or want to visit</p>
     </div>
 
     <table class="table table-striped table-hover table-responsive">
@@ -71,9 +74,9 @@
             <tr>
                 <td style="vertical-align:middle">
                     <h3 style="margin-top: 10px;">
-                                    <span data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
-                                          data-target="#myModalVisit{{ forloop.counter }}"
-                                          style="padding-right:1em"></span>
+                        <span data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
+                              data-target="#myModalVisit{{ forloop.counter }}"
+                              style="padding-right:1em"></span>
                     </h3>
                 </td>
                 <td style="vertical-align:middle">
