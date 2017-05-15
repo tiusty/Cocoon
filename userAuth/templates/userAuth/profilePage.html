@@ -15,13 +15,42 @@
 
 {% block content %}
     {% comment %}
-        Modal assumes it is being called within a for loop
+        Favorite Modal assumes it is being called within a for loop
     {% endcomment %}
     {% for house in favorites %}
         <!-- Modal -->
         {% include "homes/homeModal.html" with modalId="myModalFav" %}
     {% endfor %}
-
+    {% comment %}
+       Delete Confirmation Modal for survey
+    {% endcomment %}
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal{{ forloop.counter }}"
+         tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Delete Confirmation</h4>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete {{ survey.name }}?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"
+                            data-dismiss="modal">No
+                    </button>
+                    <button type="button" class="btn btn-danger"
+                            onclick="delete_survey({{ survey.id }})">Yes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             {% if error_message %}
@@ -136,33 +165,6 @@
                                                         </button>
                                                     </th>
                                                 </tr>
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="deleteModal{{ forloop.counter }}"
-                                                     tabindex="-1" role="dialog"
-                                                     aria-labelledby="myModalLabel">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <button type="button" class="close" data-dismiss="modal"
-                                                                        aria-label="Close"><span
-                                                                        aria-hidden="true">&times;</span></button>
-                                                                <h4 class="modal-title" id="myModalLabel">
-                                                                    Delete Confirmation</h4>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                Are you sure you want to delete {{ survey.name }}?
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-primary"
-                                                                        data-dismiss="modal">No
-                                                                </button>
-                                                                <button type="button" class="btn btn-danger"
-                                                                        onclick="delete_survey({{ survey.id }})">Yes
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 </thead>
                                                 <tbody>
                                                 {% with survey.rentingdesintations_set.all as destAddresses %}
@@ -205,6 +207,7 @@
                                 <th>Remove</th>
                             </tr>
                             </thead>
+                            <tbody>
                             {% for house in favorites %}
                                 <tr>
                                     <td style="vertical-align:middle">
@@ -280,34 +283,12 @@
         }
 
     </script>
-    <script>
-        // using jQuery
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        $.ajaxSetup({
-            beforeSend: function (xhr, settings) {
-                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                    // Only send the token to relative URLs i.e. locally.
-                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                }
-            }
-        });
-    </script>
     <!-- Custom Javascript -->
+    {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
+    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+    {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    {% comment %}This script adds the set_favorite function which allows the user to toggle a home in their favorites list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
     <script src="{% static 'userAuth/profilePage.js' %}"></script>
 {% endblock %}

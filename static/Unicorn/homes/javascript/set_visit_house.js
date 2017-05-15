@@ -1,6 +1,17 @@
 /**
  * Created by awagu on 5/14/2017.
  */
+
+/*
+    Function: set_visit_house(num, url)
+
+    Arguments:
+    1. num: This is the id of the home that will be operated on
+    2. url: This is the url for the ajax request
+
+    Description:
+    This function adds the home to the users visit list
+ */
 function set_visit_house(num, url) {
             $.ajax({
                 url: url,

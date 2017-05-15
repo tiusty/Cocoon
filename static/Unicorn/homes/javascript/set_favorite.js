@@ -1,6 +1,19 @@
 /**
  * Created by awagu on 5/15/2017.
  */
+/*
+    Function: set_favorite(num, url)
+
+    Arguments:
+    1. num: This is the id of the home that will be added as a favorite
+    2. url: This is the url that the ajax request will be sent to
+
+    Description:
+    This function creates an ajax request that will toggle a home in the users favorite list.
+    If the home is already in the list then it will remove the home from the list,
+    If the home is not in the list, then it will add the home to the list
+
+ */
 function set_favorite(num, url) {
             $.ajax({
                 url: url,
