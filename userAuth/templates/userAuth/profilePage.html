@@ -21,6 +21,7 @@
         <!-- Modal -->
         {% include "homes/homeModal.html" with modalId="myModalFav" %}
     {% endfor %}
+
     <div class="row">
         <div class="col-sm-12">
             {% if error_message %}
@@ -228,7 +229,7 @@
                                     <td>
                                         <h3 style="margin-top: 10px;">
                                             <span id="glyph{{ house.id }}"
-                                                  onclick="set_favorite({{ house.id }});"
+                                                  onclick="set_favorite({{ house.id }}, '{% url 'survey:setFavorite' %}');"
                                                   class="glyphicon glyphicon-heart"
                                                   aria-hidden="true"></span>
                                         </h3>
@@ -247,6 +248,7 @@
 
 {% block endScripts %}
     {{ block.super }}
+
     {% comment AjaxRequest %}
     This Script handles the Ajax request to the surveyDelete controller. It deletes survey
     {% endcomment %}
@@ -268,36 +270,6 @@
                     // Need to handle error! Create a div that is meant for errors
                     else {
                         console.log("error occurred");
-                    }
-                },
-
-                error: function (xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
-                }
-            })
-        }
-
-    </script>
-    <script>
-        function set_favorite(num) {
-            $.ajax({
-                url: "{% url 'survey:setFavorite' %}",
-                type: "POST", //http method
-                data: {"fav": num},
-
-                success: function (json) {
-                    console.log("success");
-                    if (json["result"] == 0) {
-                        console.log("removed");
-                        $('span#glyph' + num).removeClass("glyphicon-heart").addClass("glyphicon-heart-empty");
-                    }
-                    else if (json["result"] == 1) {
-                        console.log("Added!");
-                        $('span#glyph' + num).removeClass("glyphicon-heart-empty").addClass("glyphicon-heart");
-                    }
-                    // Need to handle error! Create a div that is meant for errors
-                    else {
-                        console.log(json["result"]);
                     }
                 },
 
@@ -335,5 +307,7 @@
         });
     </script>
     <!-- Custom Javascript -->
+    <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
     <script src="{% static 'userAuth/profilePage.js' %}"></script>
 {% endblock %}

@@ -6,8 +6,12 @@ The modael id is created based on the for loop counter.
 Also the Modal Expects a home in the context of the foor loop
 
 This Modal also assumes these two contexts are provided in a context processor globally:
-user_favorite_homes: List of all the homes that the current user has in their favorite list
-user_visit_home_list: List of all the homes that the current user has in their visit list
+user_favorite_house: List of all the homes that the current user has in their favorite list
+user_visit_house_list: List of all the homes that the current user has in their visit list
+
+Also, this modal assumes the function:
+set_visit_house
+is declared in the calling template
 {% endcomment %}
 
 <div class="modal fade" id="{{ modalId }}{{ forloop.counter }}" tabindex="-1" role="dialog"
@@ -25,7 +29,7 @@ user_visit_home_list: List of all the homes that the current user has in their v
                     <p><b>Home Type: </b>{{ house.home_type }}</p>
                     <p><b>Move In Day: </b>{{ house.get_move_in_day }}</p>
                     <p><b>Number of Bedrooms: </b>{{ house.get_num_bedrooms }}</p>
-                    <p><button type="button" class="btn btn-primary" onclick="set_visit_house({{ house.id }})">Primary</button></p>
+                    <p><button type="button" class="btn btn-primary" onclick="set_visit_house({{ house.id }}, '{% url 'survey:setVisitHouse' %}')">Primary</button></p>
                     <p>Visit Home? </p>
                     {% if house in user_visit_house_list %}
                         <p>It is in the visit list!</p>

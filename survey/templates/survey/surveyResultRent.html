@@ -282,7 +282,7 @@ Global variables are listed below
                             <td style="vertical-align:middle"> {{ home.get_score }}</td>
                             <td>
                                 <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}"
-                                                                    onclick="set_favorite({{ home.house.id }});"
+                                                                    onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
                                         {% if home.house in user_favorite_houses %}
                                                                     class="glyphicon glyphicon-heart"
                                         {% else %}
@@ -308,68 +308,7 @@ Global variables are listed below
 
 {% block endScripts %}
     {{ block.super }}
-    {% comment AjaxRequest %}
-    This Script handles the Ajax request to the setFavorite controller. It adds or removes homes from
-    The favorite list
-    {% endcomment %}
-    <script>
-        function set_visit_house(num) {
-            $.ajax({
-                url: "{% url 'survey:setVisitHouse' %}",
-                type: "POST", //http method
-                data: {"visit_id": num},
 
-                success: function (json) {
-                    console.log("success");
-                    if (json["result"] == 0) {
-                        console.log("removed");
-                    }
-                    else if (json["result"] == 1) {
-                        console.log("Added!");
-                    }
-                    // Need to handle error! Create a div that is meant for errors
-                    else {
-                        console.log(json["result"]);
-                    }
-                },
-
-                error: function (xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
-                }
-            })
-        }
-
-    </script>
-    <script>
-        function set_favorite(num) {
-            $.ajax({
-                url: "{% url 'survey:setFavorite' %}",
-                type: "POST", //http method
-                data: {"fav": num},
-
-                success: function (json) {
-                    console.log("success");
-                    if (json["result"] == 0) {
-                        console.log("removed");
-                        $('span#glyph' + num).removeClass("glyphicon-heart").addClass("glyphicon-heart-empty");
-                    }
-                    else if (json["result"] == 1) {
-                        console.log("Added!");
-                        $('span#glyph' + num).removeClass("glyphicon-heart-empty").addClass("glyphicon-heart");
-                    }
-                    // Need to handle error! Create a div that is meant for errors
-                    else {
-                        console.log(json["result"]);
-                    }
-                },
-
-                error: function (xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
-                }
-            })
-        }
-
-    </script>
     <script>
         // using jQuery
         function getCookie(name) {
@@ -398,6 +337,8 @@ Global variables are listed below
     </script>
 
     <!-- Javascripts -->
+    <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
     <script src="{% static 'survey/costSlider.js' %}"></script>
     <script src="{% static 'survey/commuteSlider.js' %}"></script>
     <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
