@@ -27,4 +27,4 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'homePage/contactPage.html')
+    return render(request, 'homePage/aboutUs.html')
