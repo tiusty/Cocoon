@@ -16,15 +16,14 @@
         Modal assumes it is being called within a for loop
         This Modal is for the house toggle
     {% endcomment %}
-    {% for house in visit_list_set %}
+    {% for house in user_visit_house_list %}
         {% include "homes/homeModal.html" with modalId="myModalVisit" %}
-    {% endfor %}
 
-    {% comment %}
-        This modal creates the delete confirmation dialog for each house
-        This also allows the user to delete houses from the user visit list
-    {% endcomment %}
-    {% for house in visit_list_set %}
+        {% comment %}
+            This modal creates the delete confirmation dialog for each house
+            This also allows the user to delete houses from the user visit list
+        {% endcomment %}
+
         <div class="modal fade" id="deleteModal{{ forloop.counter }}"
              tabindex="-1" role="dialog"
              aria-labelledby="myModalLabel">
@@ -69,7 +68,7 @@
             <th>Remove Home?</th>
         </tr>
         </thead>
-        {% for house in visit_list_set %}
+        {% for house in user_visit_house_list %}
 
             <tr>
                 <td style="vertical-align:middle">

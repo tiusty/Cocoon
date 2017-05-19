@@ -540,11 +540,6 @@ def visit_list(request):
     context = {
         'error_message': []
     }
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    visit_list_set = user_profile.visit_list.all()
-
-    context['visit_list_set'] = visit_list_set
-    print(context)
     return render(request, 'survey/visitList.html', context)
 
 
