@@ -41,9 +41,6 @@ function set_visit_house(num, url) {
         }
     })
 }
-
-// Assumes that the div surrounding the visit list button uses the format below
-
 /*
     Function: set_visit_house_success(visit_id):
 
