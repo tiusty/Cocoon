@@ -29,11 +29,19 @@ is declared in the calling template
                     <p><b>Home Type: </b>{{ house.home_type }}</p>
                     <p><b>Move In Day: </b>{{ house.get_move_in_day }}</p>
                     <p><b>Number of Bedrooms: </b>{{ house.get_num_bedrooms }}</p>
-                    <p><button type="button" class="btn btn-primary" onclick="set_visit_house({{ house.id }}, '{% url 'survey:setVisitHouse' %}')">Primary</button></p>
-                    <p>Visit Home? </p>
-                    {% if house in user_visit_house_list %}
-                        <p>It is in the visit list!</p>
-                    {% endif %}
+                    <div id="visitHomeSet{{ house.id }}">
+                        {% if house in user_visit_house_list %}
+                            <p><b>Visit List:</b> It is in the list!</p>
+                        {% else %}
+                            <p>
+                                <b>Visit List:</b> <button type="button" class="btn btn-primary btn-sm"
+                                        onclick="set_visit_house({{ house.id }}, '{% url 'survey:setVisitHouse' %}')">
+                                    Add to
+                                    visit list
+                                </button>
+                            </p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

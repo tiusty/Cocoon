@@ -664,7 +664,8 @@ def set_visit_house(request):
                 try:
                     home = RentDatabase.objects.get(id=home_id)
                     user_profile.visit_list.add(home)
-                    return HttpResponse(json.dumps({"result": "1"}),
+                    return HttpResponse(json.dumps({"result": "1",
+                                                    "homeId": home_id}),
                                         content_type="application/json",)
                 except RentDatabase.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
