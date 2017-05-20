@@ -25,7 +25,7 @@ SECRET_KEY = '#o3k!ghm%yfnscj1bam=p*ml=$ct9b0j00-bkv@-%%=jk&54g('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['52.14.25.81', '127.0.0.1']
+ALLOWED_HOSTS = ['52.14.25.81', '127.0.0.1', 'bostoncocoon.com', 'kakun.us', 'cocoonboston.com']
 
 
 # Application definition
@@ -130,6 +130,8 @@ LOGIN_URL= "/userAuth/login/"
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR,"static/")
 
 # Adds a global static file that isn't linked to a particular app
 STATICFILES_DIRS = [
