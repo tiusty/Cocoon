@@ -131,6 +131,13 @@ class ScoringStruct:
         else:
             return 0
 
+    def get_final_score(self):
+        """
+        Returns the score but rounds to the nearest integer to make it human friendly
+        :return: the score rounded to the nearest integer
+        """
+        return round(self.get_score())
+
     def get_user_score(self):
         """
         Function: get_user_score()

@@ -16,6 +16,7 @@ Global variables are listed below
     <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
     <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
     <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block nav-survey %}
@@ -36,9 +37,9 @@ Global variables are listed below
         {% endwith %}
     {% endfor %}
     <div class="row" id="row-main">
-        <div class="col-sm-3 sidebar collapsedSide" id="sidebarSurvey">
-            <ul class="nav nav-sidebar">
-                <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
+        <div id="sidebarSurvey" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
                     {{ form.non_field_errors }}
                     {{ form.errors }}
                     {% csrf_token %}
@@ -217,7 +218,6 @@ Global variables are listed below
                         <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
                     </div>
                 </form>
-            </ul>
         </div>
         <div class="col-sm-12 main" id="contentSurvey">
             {% if error_message %}
@@ -232,75 +232,79 @@ Global variables are listed below
                 </div>
             {% endif %}
 
-            <h1 class="page-header">
-                <button type="button" class="toggle-sidebar" id="sidebarToggleBut">
-                    <span class="glyphicon glyphicon-list"></span>
-                </button>
-                Your Personal Results
-            </h1>
-            <div id="map"></div>
-            <h2 class="sub-header">Home List</h2>
-            <div class="table-responsive">
-                <table class="table table-striped table-hover table-responsive">
-                    <thead>
-                    <tr>
-                        <th>Toggle</th>
-                        <th>Rank</th>
-                        <th>Display</th>
-                        <th>House Address</th>
-                        <th>Commute Time ({{ commuteMode }})</th>
-                        <th>Price</th>
-                        <th>Home Type</th>
-                        <th>Score</th>
-                        <th>Favorite!</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for home in houseList %}
-                        <tr>
-                            <td style="vertical-align:middle">
-                                <h3 style="margin-top: 10px;">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h1 class="page-header">
+                        <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
+                    </h1>
+                    <div id="map"></div>
+
+                </div>
+                <div class="col-sm-6">
+                    <h1 class="page-header" style="text-align: center">Home List</h1>
+                    <div style="max-height:750px;overflow-y:auto;">
+                        <table class="table table-striped table-hover table-responsive">
+                            <thead>
+                            <tr>
+                                <th>Toggle</th>
+                                <th>Rank</th>
+                                <th>Display</th>
+                                <th>House Address</th>
+                                <th>Commute Time ({{ commuteMode }})</th>
+                                <th>Price</th>
+                                <th>Home Type</th>
+                                <th>Score</th>
+                                <th>Favorite!</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for home in houseList %}
+                                <tr>
+                                    <td style="vertical-align:middle">
+                                        <h3 style="margin-top: 10px;">
                                     <span data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
                                           data-target="#myModal{{ forloop.counter }}" style="padding-right:1em"></span>
-                                </h3>
-                            </td>
-                            <td><h3 style="margin-top: 10px;">
-                                {% if home.eliminated == False %}{{ forloop.counter }} {% else %}
-                                    Deleted {% endif %}</h3>
-                            </td>
-                            <td style="vertical-align:middle">
-                                <button type="button" class="btn btn-primary"
-                                        onclick="selectAddress({{ forloop.counter }})">Select!
-                                </button>
-                            </td>
-                            <!-- id is used for selecting pin on google maps -->
-                            <td id="address{{ forloop.counter }}"
-                                style="vertical-align:middle"> {{ home.house.address }}</td>
-                            <td style="vertical-align:middle"> {{ home.get_commute_times }}</td>
-                            <td style="vertical-align:middle"> {{ home.house.price }}</td>
-                            <td style="vertical-align:middle"> {{ home.house.home_type }}</td>
-                            <td style="vertical-align:middle"> {{ home.get_score }}</td>
-                            <td>
-                                <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}"
-                                                                    onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
-                                        {% if home.house in user_favorite_houses %}
-                                                                    class="glyphicon glyphicon-heart"
-                                        {% else %}
-                                                                    class="glyphicon glyphicon-heart-empty"
-                                        {% endif %}
-                                                                    aria-hidden="true"></span>
-                                </h3>
-                            </td>
-                        </tr>
-                    {% empty %}
+                                        </h3>
+                                    </td>
+                                    <td><h3 style="margin-top: 10px;">
+                                        {% if home.eliminated == False %}{{ forloop.counter }} {% else %}
+                                            Deleted {% endif %}</h3>
+                                    </td>
+                                    <td style="vertical-align:middle">
+                                        <button type="button" class="btn btn-primary"
+                                                onclick="selectAddress({{ forloop.counter }})">Select!
+                                        </button>
+                                    </td>
+                                    <!-- id is used for selecting pin on google maps -->
+                                    <td id="address{{ forloop.counter }}"
+                                        style="vertical-align:middle"> {{ home.house.get_address }}</td>
+                                    <td style="vertical-align:middle"> {{ home.get_commute_times }}</td>
+                                    <td style="vertical-align:middle"> {{ home.house.get_price }}</td>
+                                    <td style="vertical-align:middle"> {{ home.house.get_home_type }}</td>
+                                    <td style="vertical-align:middle"> {{ home.get_final_score }}</td>
+                                    <td>
+                                        <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}"
+                                                                            onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
+                                                {% if home.house in user_favorite_houses %}
+                                                                            class="glyphicon glyphicon-heart"
+                                                {% else %}
+                                                                            class="glyphicon glyphicon-heart-empty"
+                                                {% endif %}
+                                                                            aria-hidden="true"></span>
+                                        </h3>
+                                    </td>
+                                </tr>
+                            {% empty %}
 
-                        <!-- TAKES THIS OUT!!!! -->
-                        <tr>
-                            <td>Congratulations!!! You are homeless :)</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                                <!-- TAKES THIS OUT!!!! -->
+                                <tr>
+                                    <td>Congratulations!!! You are homeless :)</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -349,4 +353,18 @@ Global variables are listed below
 
     <!-- JQuery UI for sliders -->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script>
+        /* Set the width of the side navigation to 250px */
+        function openNav() {
+            document.getElementById("sidebarSurvey").classList.add("openNav");
+            document.getElementById("sidebarSurvey").style.width = "30%";
+        }
+
+        /* Set the width of the side navigation to 0 */
+        function closeNav() {
+            document.getElementById("sidebarSurvey").style.width = "0";
+            document.getElementById("sidebarSurvey").classList.remove("openNav")
+        }
+    </script>
 {% endblock %}
