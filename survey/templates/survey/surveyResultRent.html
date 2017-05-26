@@ -320,7 +320,7 @@ Global variables are listed below
         // Going to keep the portions that create the markers on the map
         {% endcomment %}
         var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
-        var myDestinations = [{% for dest in houseList %}"{{ dest.house.address }}",{% endfor %}];
+        var myDestinations = [{% for dest in houseList %}[{{ dest.house.get_lat|safe }}, {{ dest.house.get_lon|safe }}],{% endfor %}];
         // Manipulated by survey_result.js in selectAddress
         //var myDestination = "{{ houseList.0.address }}";
         // Manipulated by costSliderResults.js

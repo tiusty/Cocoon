@@ -17,6 +17,8 @@ class RentDatabase(models.Model):
     washDryer_InHome = models.BooleanField(default=False)
     dishWasher = models.BooleanField(default=False)
     bath = models.BooleanField(default=False)
+    lon = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    lat = models.DecimalField(max_digits=9, decimal_places=6, default=0)
 
     def __str__(self):
         return self.address
@@ -50,3 +52,9 @@ class RentDatabase(models.Model):
 
     def has_bath(self):
         return self.bath
+
+    def get_lat(self):
+        return self.lat
+
+    def get_lon(self):
+        return self.lon

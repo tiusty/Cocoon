@@ -2,7 +2,7 @@
  * Created by awagu on 12/22/2016.
  */
 
-// Theses are markers that mark the desinations that the user wants to work/live at
+// Theses are markers that mark the destinations that the user wants to work/live at
 function addDestMarkers(geocoder, resultsMap, myAddress)
 {
 	var address = myAddress;
@@ -22,7 +22,7 @@ function addDestMarkers(geocoder, resultsMap, myAddress)
             var marker = new google.maps.Marker({
                 map: resultsMap,
                 position: results[0].geometry.location,
-				icon: image,
+				icon: image
             });
 		} else {
 			alert('Geocode was not successful for the following reason: ' + status);
@@ -30,22 +30,16 @@ function addDestMarkers(geocoder, resultsMap, myAddress)
 	});
 }
 //These are markers that mark the locations that the user could live in aka housingList
-function addLocationMarkers(geocoder, resultsMap, myAddress)
+function addLocationMarkers(resultsMap, myAddress)
 {
-	var address = myAddress;
-	geocoder.geocode({'address': address},
-	function(results, status)
-	{
-		if (status=='OK')
-		{
-			var marker = new google.maps.Marker({
+	var latlon = {
+		lat: myAddress[0],
+		lng: myAddress[1]
+	};
+	var marker = new google.maps.Marker({
 				map: resultsMap,
-				position: results[0].geometry.location,
-				icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+				position: latlon,
+				icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
 			});
-		} else {
-			alert('Geocode was not successful for the following reason: ' + status);
-		}
-	});
 }
 

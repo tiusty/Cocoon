@@ -15,9 +15,11 @@ function initMap() {
     {
 	    addDestMarkers(geocoder, map, myStreetAddresses[i]);
     }
+    // The destinations need to have the lat long because
+    // Otherwise the geocoding goes over the limit
 	for(i=0;i<myDestinations.length; i++)
 	{
-        addLocationMarkers(geocoder, map, myDestinations[i]);
+        addLocationMarkers(map, myDestinations[i]);
     }
 }
 
@@ -35,7 +37,7 @@ function addChosenMarker(address) {
                     icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
                     zIndex: google.maps.Marker.MAX_ZINDEX + 1,
                 });
-
+                console.log(results);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                 markers.push(marker);
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);
