@@ -254,7 +254,7 @@ Global variables are listed below
                                 <th>Price</th>
                                 <th>Home Type</th>
                                 <th>Score</th>
-                                <th>Favorite!</th>
+                                <th>Favorite</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -262,7 +262,7 @@ Global variables are listed below
                                 <tr>
                                     <td style="vertical-align:middle">
                                         <h3 style="margin-top: 10px;">
-                                    <span data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
+                                    <span style="cursor:pointer" data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
                                           data-target="#myModal{{ forloop.counter }}" style="padding-right:1em"></span>
                                         </h3>
                                     </td>
@@ -271,15 +271,15 @@ Global variables are listed below
                                             Deleted {% endif %}</h3>
                                     </td>
                                     <td style="vertical-align:middle">
-                                        <button type="button" class="btn btn-primary"
-                                                onclick="selectAddress({{ forloop.counter }})">Select!
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                onclick="selectAddress({{ forloop.counter }})">Select
                                         </button>
                                     </td>
                                     <!-- id is used for selecting pin on google maps -->
                                     <td id="address{{ forloop.counter }}"
                                         style="vertical-align:middle"> {{ home.house.get_address }}</td>
                                     <td style="vertical-align:middle"> {{ home.get_commute_times }}</td>
-                                    <td style="vertical-align:middle"> {{ home.house.get_price }}</td>
+                                    <td style="vertical-align:middle"> {{ home.house.get_price_str }}</td>
                                     <td style="vertical-align:middle"> {{ home.house.get_home_type }}</td>
                                     <td style="vertical-align:middle"> {{ home.get_final_score }}</td>
                                     <td>
@@ -287,8 +287,10 @@ Global variables are listed below
                                                                             onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
                                                 {% if home.house in user_favorite_houses %}
                                                                             class="glyphicon glyphicon-heart"
+                                                                            style="cursor:pointer"
                                                 {% else %}
                                                                             class="glyphicon glyphicon-heart-empty"
+                                                                            style="cursor:pointer"
                                                 {% endif %}
                                                                             aria-hidden="true"></span>
                                         </h3>

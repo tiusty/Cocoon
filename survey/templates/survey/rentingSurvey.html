@@ -64,14 +64,19 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         {{ form.moveinDateStart.label_tag }}
+                                        <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="First Day you can move in"></span>
                                         {{ form.moveinDateStart }}
                                         {{ form.moveinDateStart.errors }}
                                     </div>
                                     <div class="col-sm-6">
                                         {{ form.moveinDateEnd.label_tag }}
+                                        <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="Last Day you can move in"></span>
                                         {{ form.moveinDateEnd }}
                                         {{ form.moveinDateEnd.errors }}
+
+
                                     </div>
+
                                 </div>
                             </div>
 
@@ -82,6 +87,7 @@
                             </div>
                             <div class="form-group">
                                 {{ form.home_type.label_tag }}
+                                <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="Select the types of homes desired"></span>
                                 {{ form.home_type }}
                                 {{ form.home_type.errors }}
                             </div>
@@ -95,6 +101,8 @@
                             </div>
                             <div class="form-group">
                                 {{ form.price_weight.label_tag }}
+                                <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="A Weight of zero means all homes within the price range are weighted equally.
+                                Increasing the weight gives increasing preference to cheaper homes"></span>
                                 {{ form.price_weight }}
                                 {{ form.price_weight.errors }}
                             </div>
@@ -120,6 +128,8 @@
 
                             <div class="form-group">
                                 {{ form.commuteWeight.label_tag }}
+                                <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="A weight of zero means all homes within the commute range are weighted equally.
+                                Increasing the weight gives increasing preferences to closer homes"></span>
                                 {{ form.commuteWeight }}
                                 {{ form.commuteWeight.errors }}
                             </div>
@@ -128,7 +138,14 @@
 
                         {% comment %} Accordion ONLY will have questions that do not need to be validated {% endcomment %}
                         <h3>Step 3</h3>
-                        <span class="help-block">Nothing below is required but it tailors the search to your needs!</span>
+                        <p class="help-block">Nothing below is required but it tailors the search to your needs!
+                            <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip"
+                                  data-placement="left" title="For the following questions, a weight of zero means the question has no effect.
+                                    Increasing weight means homes with that element will be given increasing preference and homes
+                                    without that item will be given decreased preference.
+                                    A weight of the max value means the home must have that item.">
+
+                            </span></p>
                         <div class="form-group">
                             <div class="panel-group" id="accordion">
                                 <div class="panel panel-default">
@@ -262,6 +279,9 @@
     costSliderMin = 400;
     bathroomsMin = 0;
     bathroomsMax = 6;
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 </script>
 
 

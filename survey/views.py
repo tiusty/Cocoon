@@ -457,7 +457,6 @@ def start_algorithm(survey, user_profile, context):
         context['error_message'].append("No Destination or origin")
     else:
         scored_house_list = google_matrix(origins, destinations, scored_house_list, context)
-
     # Generate scores for the homes based on the survey results
     homes_fully_scored = create_house_score(scored_house_list, survey)
 
