@@ -57,16 +57,6 @@ class DestinationForm(ModelForm):
 
 class RentSurveyBase(ModelForm):
     # if name is left blank it sets a default name
-    name = forms.CharField(
-        label="Survey Name",
-        initial=default_rent_survey_name,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the name of the survey',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
     minPrice = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
@@ -137,8 +127,9 @@ class RentSurveyBase(ModelForm):
             format='%m/%d/%Y',
         ))
 
+
     moveinDateEnd = forms.DateField(
-        label="End of movein range",
+        label="End of move in range",
         widget=forms.DateInput(
             attrs={
                 'class': 'form-control',
@@ -359,7 +350,7 @@ class RentSurvey(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitie
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ['userProf', 'survey_type']
+        exclude = ['userProf', 'survey_type', 'name',]
 
 
 class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
@@ -367,7 +358,16 @@ class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmen
     RentSurveyMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurvey
     """
-
+    name = forms.CharField(
+        label="Survey Name",
+        initial=default_rent_survey_name,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the name of the survey',
+            }),
+        max_length=Max_Text_Input_Length,
+    )
     class Meta:
         model = RentingSurveyModel
         exclude = ['userProf', 'survey_type']
