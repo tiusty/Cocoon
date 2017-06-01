@@ -310,7 +310,8 @@ def weighted_question_scoring(home, contains_item, scale_factor):
 
 def create_interior_amenities_score(scored_house_list, survey):
     """
-    Updates the houes scoresd based on the interior amenities questions
+    Updates the house scores based on the interior amenities questions
+    Homes are passed by reference
     :param scored_house_list: The array of ScoringStructs which holds all the homes that
         have already gone past static filtering
     :param survey: The user survey that is being used to evaluate the homes
@@ -323,18 +324,29 @@ def create_interior_amenities_score(scored_house_list, survey):
         weighted_question_scoring(home, home.house.get_bath(), survey.get_bath())
 
 
-"""
-Removing from commit
 def create_exterior_amenities_score(scored_house_list, survey):
+    """
+    Updates the house scores based on the exterior amenities questions.
+    Homes are passed by reference
+    :param scored_house_list: The array of ScoringStructs which holds all the homes that
+        have already gone past static filtering
+    :param survey: The user survey that is being used to evaluate the homes
+    """
     for home in scored_house_list:
         weighted_question_scoring(home, home.house.get_parking_spot(), survey.get_parking_spot())
-"""
+        weighted_question_scoring(home, home.house.get_washer_dryer_in_building(), survey.get_washer_dryer_in_building())
+        weighted_question_scoring(home, home.house.get_elevator(), survey.get_elevator())
+        weighted_question_scoring(home, home.house.get_handicap_access(), survey.get_handicap_access())
+        weighted_question_scoring(home, home.house.get_pool_hot_tub(), survey.get_pool_hot_tub())
+        weighted_question_scoring(home, home.house.get_fitness_center(), survey.get_fitness_center())
+        weighted_question_scoring(home, home.house.get_storage_unit(), survey.get_storage_unit())
+
 
 # Given the houseScore and the survey generate and add the score based
 # On the commute times to the destinations
 def create_house_score(house_list_scored, survey):
     """
-    All the functions that perform scoring will be listed here
+    All the functions that perform dynamic scoring will be listed here
     :param house_list_scored: The array of ScoringStructs which holds all the homes that
         have already gone past static filtering
     :param survey: The current survey, since the scoring is based on the result of the survey
@@ -344,6 +356,7 @@ def create_house_score(house_list_scored, survey):
     create_commute_score(house_list_scored, survey)
     create_price_score(house_list_scored, survey)
     create_interior_amenities_score(house_list_scored, survey)
+    create_exterior_amenities_score(house_list_scored, survey)
     return house_list_scored
 
 
@@ -415,7 +428,7 @@ def google_matrix(origins, destinations, scored_list, context):
     return scored_list
 
 
-def start_algorithm(survey, user_profile, context):
+def start_algorithm(survey, context):
     # Creates an array with all the home types indicated by the survey
     current_home_types = []
     for home in survey.home_type.all():
@@ -521,6 +534,7 @@ def survey_result_rent(request, survey_id="recent"):
                 survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
                 return HttpResponseRedirect(reverse('homePage:index'))
+
     # Populate form with stored data
     form = RentSurveyMini(instance=survey)
 
@@ -540,7 +554,7 @@ def survey_result_rent(request, survey_id="recent"):
             context['error_message'].append("There are form errors")
 
     # Now start executing the Algorithm
-    start_algorithm(survey, user_profile, context)
+    start_algorithm(survey, context)
     context['survey'] = survey
     context['form'] = form
 
