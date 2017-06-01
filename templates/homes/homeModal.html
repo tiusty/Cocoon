@@ -26,7 +26,7 @@ is declared in the calling template
             <div class="modal-body modalPadding">
                 <div class="row">
                     <p><b>Price: </b>{{ house.get_price_str }}</p>
-                    <p><b>Home Type: </b>{{ house.home_type }}</p>
+                    <p><b>Home Type: </b>{{ house.get_home_type }}</p>
                     <p><b>Move In Day: </b>{{ house.get_move_in_day }}</p>
                     <p><b>Number of Bedrooms: </b>{{ house.get_num_bedrooms }}</p>
                     <div id="visitHomeSet{{ house.id }}">

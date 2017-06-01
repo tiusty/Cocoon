@@ -2,21 +2,45 @@ from django.db import models
 import datetime
 
 
-notSetChar = "Not set"
+not_set_char = "Not set"
 
 
-# Create your models here.
-class RentDatabase(models.Model):
-    address = models.CharField(max_length=200, default=notSetChar)
-    price = models.IntegerField(default=-1)
-    home_type = models.CharField(max_length=200, default=notSetChar)
-    moveInDay = models.DateField(default=datetime.date.today)
-    numBedrooms = models.IntegerField(default=0)
-    numBathrooms = models.IntegerField(default=0)
+class InteriorAmenities(models.Model):
+    """
+    Contains all the information for homes about the Interior Amenities
+    """
     air_conditioning = models.BooleanField(default=False)
-    washDryer_InHome = models.BooleanField(default=False)
-    dishWasher = models.BooleanField(default=False)
+    wash_dryer_in_home = models.BooleanField(default=False)
+    dish_washer = models.BooleanField(default=False)
     bath = models.BooleanField(default=False)
+    num_bathrooms = models.IntegerField(default=0)
+    num_bedrooms = models.IntegerField(default=0)
+
+    class Meta:
+        abstract = True
+
+
+class BuildingExteriorAmenities(models.Model):
+    """
+    Contains all the information for homes about the Exterior Amenities
+    """
+    parking_spot = models.BooleanField(default=False)
+    washer_dryer_in_building = models.BooleanField(default=False)
+    elevator = models.BooleanField(default=False)
+    handicap_access = models.BooleanField(default=False)
+    pool_hot_tub = models.BooleanField(default=False)
+    fitness_center = models.BooleanField(default=False)
+    storage_unit = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
+class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
+    address = models.CharField(max_length=200, default=not_set_char)
+    price = models.IntegerField(default=-1)
+    home_type = models.CharField(max_length=200, default=not_set_char)
+    move_in_day = models.DateField(default=datetime.date.today)
     lon = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     lat = models.DecimalField(max_digits=9, decimal_places=6, default=0)
 
@@ -27,13 +51,16 @@ class RentDatabase(models.Model):
         return self.price
 
     def get_price_str(self):
-        return "$" + str(self.price)
+        return "$" + str(self.get_price())
 
     def get_move_in_day(self):
-        return self.moveInDay
+        return self.move_in_day
 
     def get_num_bedrooms(self):
-        return self.numBedrooms
+        return self.num_bedrooms
+
+    def get_num_bathrooms(self):
+        return self.num_bathrooms
 
     def get_home_type(self):
         return self.home_type
@@ -41,16 +68,16 @@ class RentDatabase(models.Model):
     def get_address(self):
         return self.address
 
-    def has_air_conditioning(self):
+    def get_air_conditioning(self):
         return self.air_conditioning
 
-    def has_wash_dryer_in_home(self):
-        return self.washDryer_InHome
+    def get_wash_dryer_in_home(self):
+        return self.wash_dryer_in_home
 
-    def has_dish_washer(self):
-        return self.dishWasher
+    def get_dish_washer(self):
+        return self.dish_washer
 
-    def has_bath(self):
+    def get_bath(self):
         return self.bath
 
     def get_lat(self):
@@ -58,3 +85,24 @@ class RentDatabase(models.Model):
 
     def get_lon(self):
         return self.lon
+
+    def get_parking_spot(self):
+        return self.parking_spot
+
+    def get_washer_dryer_in_building(self):
+        return self.washer_dryer_in_building
+
+    def get_elevator(self):
+        return self.elevator
+
+    def get_handicap_access(self):
+        return self.handicap_access
+
+    def get_pool_hot_tub(self):
+        return self.pool_hot_tub
+
+    def get_fitness_center(self):
+        return self.fitness_center
+
+    def get_storage_unit(self):
+        return self.storage_unit

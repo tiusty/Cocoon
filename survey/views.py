@@ -317,10 +317,10 @@ def create_interior_amenities_score(scored_house_list, survey):
     """
     # Loop throuh all the homes and score each one
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.has_air_conditioning(), survey.airConditioning)
-        weighted_question_scoring(home, home.house.has_wash_dryer_in_home(), survey.washDryer_InHome)
-        weighted_question_scoring(home, home.house.has_dish_washer(), survey.dishWasher)
-        weighted_question_scoring(home, home.house.has_bath(), survey.bath)
+        weighted_question_scoring(home, home.house.get_air_conditioning(), survey.airConditioning)
+        weighted_question_scoring(home, home.house.get_wash_dryer_in_home(), survey.washDryer_InHome)
+        weighted_question_scoring(home, home.house.get_dish_washer(), survey.dishWasher)
+        weighted_question_scoring(home, home.house.get_bath(), survey.bath)
 
 
 # Given the houseScore and the survey generate and add the score based
@@ -431,9 +431,11 @@ def start_algorithm(survey, user_profile, context):
     filtered_house_list = RentDatabase.objects \
         .filter(price__range=(survey.minPrice, survey.maxPrice)) \
         .filter(home_type__in=home_types) \
-        .filter(moveInDay__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
-        .filter(numBedrooms=survey.numBedrooms) \
-        .filter(numBathrooms__range=(survey.minBathrooms, survey.maxBathrooms))
+        .filter(move_in_day__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
+        .filter(num_bedrooms=survey.numBedrooms) \
+        .filter(num_bathrooms__range=(survey.minBathrooms, survey.maxBathrooms))
+
+    print(filtered_house_list)
 
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdesintations_set.all()
