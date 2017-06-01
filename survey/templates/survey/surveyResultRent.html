@@ -50,19 +50,19 @@ Global variables are listed below
                             {{ form.name.errors }}
                         </div>
                         <div class="form-group">
-                            {{ form.moveinDateStart.label_tag }}
-                            {{ form.moveinDateStart }}
-                            {{ form.moveinDateStart.errors }}
+                            {{ form.move_in_date_start.label_tag }}
+                            {{ form.move_in_date_start }}
+                            {{ form.move_in_date_start.errors }}
                         </div>
                         <div class="form-group">
-                            {{ form.moveinDateEnd.label_tag }}
-                            {{ form.moveinDateEnd }}
-                            {{ form.moveinDateEnd.errors }}
+                            {{ form.move_in_date_end.label_tag }}
+                            {{ form.move_in_date_end }}
+                            {{ form.move_in_date_end.errors }}
                         </div>
                         <div class="form-group">
-                            {{ form.numBedrooms.label_tag }}
-                            {{ form.numBedrooms }}
-                            {{ form.numBedrooms.errors }}
+                            {{ form.num_bedrooms.label_tag }}
+                            {{ form.num_bedrooms }}
+                            {{ form.num_bedrooms.errors }}
                         </div>
                         <div class="form-group">
                             {{ form.home_type.label_tag }}
@@ -74,8 +74,8 @@ Global variables are listed below
                             <input type="text" id="amountCost" name="amountCost" readonly
                                    style="border:0; color:#f6931f; font-weight:bold;">
                             <div id="cost"></div>
-                            {{ form.minPrice }}
-                            {{ form.maxPrice }}
+                            {{ form.min_price }}
+                            {{ form.max_price }}
                         </div>
                         <div class="form-group">
                             {{ form.price_weight.label_tag }}
@@ -85,18 +85,17 @@ Global variables are listed below
                         <br>
                         <div class="form-group step_div">
                             <div class="form-group">
-                                {{ form.commuteWeight.label_tag }}
-                                {{ form.commuteWeight }}
-                                {{ form.commuteWeight.errors }}
-                            </div>
-
-                            <div class="form-group">
                                 <label for="amountCommute">Commute:</label>
                                 <input type="text" id="amountCommute" name="amountCommute" readonly
                                        style="border:0; color:#f6931f; font-weight:bold;">
                                 <div id="commute"></div>
-                                {{ form.minCommute }}
-                                {{ form.maxCommute }}
+                                {{ form.min_commute }}
+                                {{ form.max_commute }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.commute_weight.label_tag }}
+                                {{ form.commute_weight }}
+                                {{ form.commute_weight.errors }}
                             </div>
                         </div>
                         <br>
@@ -113,21 +112,21 @@ Global variables are listed below
                                 <div id="collapse1" class="panel-collapse collapse in">
                                     <div class="panel-body">
                                         <p>
-                                            {{ form.airConditioning.label_tag }}
-                                            {{ form.airConditioning }}
-                                            {{ form.airConditioning.errors }}
+                                            {{ form.air_conditioning.label_tag }}
+                                            {{ form.air_conditioning }}
+                                            {{ form.air_conditioning.errors }}
                                         </p>
 
                                         <p>
-                                            {{ form.washDryer_InHome.label_tag }}
-                                            {{ form.washDryer_InHome }}
-                                            {{ form.washDryer_InHome.errors }}
+                                            {{ form.wash_dryer_in_home.label_tag }}
+                                            {{ form.wash_dryer_in_home }}
+                                            {{ form.wash_dryer_in_home.errors }}
                                         </p>
 
                                         <p>
-                                            {{ form.dishWasher.label_tag }}
-                                            {{ form.dishWasher }}
-                                            {{ form.dishWasher.errors }}
+                                            {{ form.dish_washer.label_tag }}
+                                            {{ form.dish_washer }}
+                                            {{ form.dish_washer.errors }}
                                         </p>
 
                                         <p>
@@ -141,10 +140,10 @@ Global variables are listed below
                                             <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
                                                    style="border:0; color:#f6931f; font-weight:bold;">
                                         <div id="bathrooms"></div>
-                                        {{ form.minBathrooms }}
-                                        {{ form.maxBathrooms }}
-                                        {{ form.minBathrooms.errors }}
-                                        {{ form.maxBathrooms.errors }}
+                                        {{ form.min_bathrooms }}
+                                        {{ form.max_bathrooms }}
+                                        {{ form.min_bathrooms.errors }}
+                                        {{ form.max_bathrooms.errors }}
                                         </p>
                                     </div>
                                 </div>
@@ -159,14 +158,14 @@ Global variables are listed below
                                 <div id="collapse2" class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <p>
-                                            {{ form.parkingSpot.label_tag }}
-                                            {{ form.parkingSpot }}
-                                            {{ form.parkingSpot.errors }}
+                                            {{ form.parking_spot.label_tag }}
+                                            {{ form.parking_spot }}
+                                            {{ form.parking_spot.errors }}
                                         </p>
                                         <p>
-                                            {{ form.washerDryer_inBuilding.label_tag }}
-                                            {{ form.washerDryer_inBuilding }}
-                                            {{ form.washerDryer_inBuilding.errors }}
+                                            {{ form.washer_dryer_in_building.label_tag }}
+                                            {{ form.washer_dryer_in_building }}
+                                            {{ form.washer_dryer_in_building.errors }}
                                         </p>
                                         <p>
                                             {{ form.elevator.label_tag }}
@@ -174,24 +173,24 @@ Global variables are listed below
                                             {{ form.elevator.errors }}
                                         </p>
                                         <p>
-                                            {{ form.handicapAccess.label_tag }}
-                                            {{ form.handicapAccess }}
-                                            {{ form.handicapAccess.errors }}
+                                            {{ form.handicap_access.label_tag }}
+                                            {{ form.handicap_access }}
+                                            {{ form.handicap_access.errors }}
                                         </p>
                                         <p>
-                                            {{ form.poolHottub.label_tag }}
-                                            {{ form.poolHottub }}
-                                            {{ form.poolHottub.errors }}
+                                            {{ form.pool_hot_tub.label_tag }}
+                                            {{ form.pool_hot_tub }}
+                                            {{ form.pool_hot_tub.errors }}
                                         </p>
                                         <p>
-                                            {{ form.fitnessCenter.label_tag }}
-                                            {{ form.fitnessCenter }}
-                                            {{ form.fitnessCenter.errors }}
+                                            {{ form.fitness_center.label_tag }}
+                                            {{ form.fitness_center }}
+                                            {{ form.fitness_center.errors }}
                                         </p>
                                         <p>
-                                            {{ form.storageUnit.label_tag }}
-                                            {{ form.storageUnit }}
-                                            {{ form.storageUnit.errors }}
+                                            {{ form.storage_unit.label_tag }}
+                                            {{ form.storage_unit }}
+                                            {{ form.storage_unit.errors }}
                                         </p>
                                     </div>
                                 </div>
@@ -326,12 +325,12 @@ Global variables are listed below
         // Manipulated by survey_result.js in selectAddress
         //var myDestination = "{{ houseList.0.address }}";
         // Manipulated by costSliderResults.js
-        costSliderMax = {{ survey.maxPrice }};
-        costSliderMin = {{ survey.minPrice }};
-        commuteSliderMin = {{ survey.minCommute }};
-        commuteSliderMax = {{ survey.maxCommute }};
-        bathroomsMin = {{ survey.minBathrooms }};
-        bathroomsMax = {{ survey.maxBathrooms }};
+        costSliderMax = {{ survey.get_max_price }};
+        costSliderMin = {{ survey.get_min_price }};
+        commuteSliderMin = {{ survey.get_min_commute }};
+        commuteSliderMax = {{ survey.get_max_commute }};
+        bathroomsMin = {{ survey.get_min_bathrooms }};
+        bathroomsMax = {{ survey.get_max_bathrooms }};
     </script>
 
     <!-- Custom Javascript -->

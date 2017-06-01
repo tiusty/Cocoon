@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from userAuth.models import UserProfile
-from survey.models import RentingSurveyModel, RentingDesintations
+from survey.models import RentingSurveyModel, RentingDestinations
 from django.contrib.auth.decorators import login_required
 
 from .forms import LoginUserForm, RegisterForm, ProfileForm
@@ -75,7 +75,6 @@ def ProfilePage(request, defaultPage="profile"):
 
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=request.user)
-        print(form)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('userAuth:profilePage',

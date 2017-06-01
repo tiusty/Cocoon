@@ -23,8 +23,8 @@ $( function() {
             {
                 $( "#amountCommute" ).val( ui.values[ 0 ] + " Min - " + ui.values[ 1 ] + " Min");
             }
-            $( "#id_minCommute").val(ui.values[0]);
-            $( "#id_maxCommute").val(ui.values[1]);
+            $( "#id_min_commute").val(ui.values[0]);
+            $( "#id_max_commute").val(ui.values[1]);
         }
     });
     // If the ui value goes above 61 then start recording in hours

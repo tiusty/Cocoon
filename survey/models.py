@@ -45,12 +45,30 @@ class InteriorAmenities(models.Model):
     Contains all the survey questions regarding the interior amenities
     Any survey can inherit these fields
     """
-    airConditioning = models.IntegerField(default=0)
-    washDryer_InHome = models.IntegerField(default=0)
-    dishWasher = models.IntegerField(default=0)
+    air_conditioning = models.IntegerField(default=0)
+    wash_dryer_in_home = models.IntegerField(default=0)
+    dish_washer = models.IntegerField(default=0)
     bath = models.IntegerField(default=0)
-    maxBathrooms = models.IntegerField(default=Max_Num_Bathrooms)
-    minBathrooms = models.IntegerField(default=0)
+    max_bathrooms = models.IntegerField(default=Max_Num_Bathrooms)
+    min_bathrooms = models.IntegerField(default=0)
+
+    def get_air_conditioning(self):
+        return self.air_conditioning
+
+    def get_wash_dryer_in_home(self):
+        return self.wash_dryer_in_home
+
+    def get_dish_washer(self):
+        return self.dish_washer
+
+    def get_bath(self):
+        return self.bath
+
+    def get_max_bathrooms(self):
+        return self.max_bathrooms
+
+    def get_min_bathrooms(self):
+        return self.min_bathrooms
 
     class Meta:
         abstract = True
@@ -62,13 +80,34 @@ class BuildingExteriorAmenities(models.Model):
     Any survey can inherit these fields
     All Questions are hybrid weighted
     """
-    parkingSpot = models.IntegerField(default=0)
-    washerDryer_inBuilding = models.IntegerField(default=0)
+    parking_spot = models.IntegerField(default=0)
+    washer_dryer_in_building = models.IntegerField(default=0)
     elevator = models.IntegerField(default=0)
-    handicapAccess = models.IntegerField(default=0)
-    poolHottub = models.IntegerField(default=0)
-    fitnessCenter = models.IntegerField(default=0)
-    storageUnit = models.IntegerField(default=0)
+    handicap_access = models.IntegerField(default=0)
+    pool_hot_tub = models.IntegerField(default=0)
+    fitness_center = models.IntegerField(default=0)
+    storage_unit = models.IntegerField(default=0)
+
+    def get_parking_spot(self):
+        return self.parking_spot
+
+    def get_washer_dryer_in_building(self):
+        return self.washer_dryer_in_building
+
+    def get_elevator(self):
+        return self.elevator
+
+    def get_handicap_access(self):
+        return self.handicap_access
+
+    def get_pool_hot_tub(self):
+        return self.pool_hot_tub
+
+    def get_fitness_center(self):
+        return self.fitness_center
+
+    def get_storage_unit(self):
+        return self.storage_unit
 
     class Meta:
         abstract = True
@@ -76,17 +115,46 @@ class BuildingExteriorAmenities(models.Model):
 
 class RequiredInformation(models.Model):
     name = models.CharField(max_length=200, default=default_rent_survey_name)
-    maxPrice = models.IntegerField(default=0)
-    minPrice = models.IntegerField(default=0)
+    max_price = models.IntegerField(default=0)
+    min_price = models.IntegerField(default=0)
     price_weight = models.IntegerField(default=0)
-    maxCommute = models.IntegerField(default=0)
-    minCommute = models.IntegerField(default=0)
-    commuteWeight = models.IntegerField(default=1)
-    moveinDateStart = models.DateField(default=timezone.now)
-    moveinDateEnd = models.DateField(default=timezone.now)
-
-    numBedrooms = models.IntegerField(default=0)
+    max_commute = models.IntegerField(default=0)
+    min_commute = models.IntegerField(default=0)
+    commute_weight = models.IntegerField(default=1)
+    move_in_date_start = models.DateField(default=timezone.now)
+    move_in_date_end = models.DateField(default=timezone.now)
+    num_bedrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeType)
+
+    def get_name(self):
+        return self.name
+
+    def get_max_price(self):
+        return self.max_price
+
+    def get_min_price(self):
+        return self.min_price
+
+    def get_price_weight(self):
+        return self.price_weight
+
+    def get_max_commute(self):
+        return self.max_commute
+
+    def get_min_commute(self):
+        return self.min_commute
+
+    def get_commute_weight(self):
+        return self.commute_weight
+
+    def get_move_in_date_start(self):
+        return self.move_in_date_start
+
+    def get_move_in_date_end(self):
+        return self.move_in_date_end
+
+    def get_num_bedrooms(self):
+        return self.num_bedrooms
 
     class Meta:
         abstract = True
@@ -106,35 +174,37 @@ class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenit
 
     def get_short_name(self):
         user_short_name = self.userProf.user.get_short_name()
-        survey_name = self.name
+        survey_name = self.get_name()
         output = user_short_name + ": " + survey_name
         return output
 
     def __str__(self):
         user_short_name = self.userProf.user.get_short_name()
-        survey_name = self.name
+        survey_name = self.get_name()
         output = user_short_name + ": " + survey_name
         return output
 
     def get_cost_range(self):
-        if self.maxPrice == 0:
+        if self.get_max_price() == 0:
             return "Not set"
         else:
-            price_output = "$" + str(self.minPrice) + " - $" + str(self.maxPrice)
+            price_output = "$" + str(self.get_min_price()) + " - $" + str(self.get_max_price())
             return price_output
 
     def get_commute_range(self):
-        if self.maxCommute == 0:
+        if self.get_max_commute() == 0:
             return "Not Set"
         else:
-            if self.maxCommute > 60:
-                max_output = str(math.floor(self.maxCommute/60)) + " hours " + str(self.maxCommute % 60) + " Minutes"
+            if self.get_max_commute() > 60:
+                max_output = str(math.floor(self.get_max_commute()/60)) + " hours " + str(self.get_max_commute() % 60) \
+                             + " Minutes"
             else:
-                max_output = str(self.maxCommute) + " Minutes"
-            if self.minCommute > 60:
-                min_output = str(math.floor(self.minCommute/60)) + " hours " + str(self.minCommute % 60) + " Minutes"
+                max_output = str(self.get_max_commute()) + " Minutes"
+            if self.get_min_commute() > 60:
+                min_output = str(math.floor(self.get_min_commute()/60)) + " hours " + str(self.get_min_commute() % 60) \
+                             + " Minutes"
             else:
-                min_output = str(self.minCommute) + " Minutes"
+                min_output = str(self.get_min_commute()) + " Minutes"
 
         return min_output + " - " + max_output
 
@@ -174,7 +244,7 @@ class Destinations(models.Model):
 
 
 # Used for the renting survey
-class RentingDesintations(Destinations):
+class RentingDestinations(Destinations):
     survey = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from survey.models import RentingSurveyModel, RentingDesintations
+from survey.models import RentingSurveyModel, RentingDestinations
 
 # Register your models here.
 
@@ -10,7 +10,7 @@ class ChoiceInline(admin.TabularInline):
 
 
 class AddressInLine(admin.StackedInline):
-    model = RentingDesintations
+    model = RentingDestinations
     extra = 0
 
 

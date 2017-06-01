@@ -207,9 +207,9 @@ def create_commute_score(scored_house_list, survey):
     """
     # Currently only scores based on commute times
     # It supports having multiple destinations
-    max_commute = survey.maxCommute
-    min_commute = survey.minCommute
-    scale_factor = survey.commuteWeight
+    max_commute = survey.get_max_commute()
+    min_commute = survey.get_min_commute()
+    scale_factor = survey.get_commute_weight()
     for house in scored_house_list:
         # It needs to be made clear that the scale factor only effects the homes that are under the
         # Commute time. For example, if the max commute is 12 minutes, then anything over 12 is removed.
@@ -253,9 +253,9 @@ def create_price_score(scored_house_list, survey):
     """
 
     # Retrieve all the constant values
-    max_price = survey.maxPrice
-    min_price = survey.minPrice
-    scale_factor = survey.price_weight
+    max_price = survey.get_max_price()
+    min_price = survey.get_min_price()
+    scale_factor = survey.get_price_weight()
 
     # Apply price scoring for all the houses
     for house in scored_house_list:
@@ -317,11 +317,18 @@ def create_interior_amenities_score(scored_house_list, survey):
     """
     # Loop throuh all the homes and score each one
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.get_air_conditioning(), survey.airConditioning)
-        weighted_question_scoring(home, home.house.get_wash_dryer_in_home(), survey.washDryer_InHome)
-        weighted_question_scoring(home, home.house.get_dish_washer(), survey.dishWasher)
-        weighted_question_scoring(home, home.house.get_bath(), survey.bath)
+        weighted_question_scoring(home, home.house.get_air_conditioning(), survey.get_air_conditioning())
+        weighted_question_scoring(home, home.house.get_wash_dryer_in_home(), survey.get_wash_dryer_in_home())
+        weighted_question_scoring(home, home.house.get_dish_washer(), survey.get_dish_washer())
+        weighted_question_scoring(home, home.house.get_bath(), survey.get_bath())
 
+
+"""
+Removing from commit
+def create_exterior_amenities_score(scored_house_list, survey):
+    for home in scored_house_list:
+        weighted_question_scoring(home, home.house.get_parking_spot(), survey.get_parking_spot())
+"""
 
 # Given the houseScore and the survey generate and add the score based
 # On the commute times to the destinations
@@ -410,9 +417,9 @@ def google_matrix(origins, destinations, scored_list, context):
 
 def start_algorithm(survey, user_profile, context):
     # Creates an array with all the home types indicated by the survey
-    home_types = []
+    current_home_types = []
     for home in survey.home_type.all():
-        home_types.append(home.homeType)
+        current_home_types.append(home.homeType)
 
     # Filters the Database with all the static elements as the first pass
     """
@@ -429,16 +436,14 @@ def start_algorithm(survey, user_profile, context):
     4. Filter by the number of bathrooms
     """
     filtered_house_list = RentDatabase.objects \
-        .filter(price__range=(survey.minPrice, survey.maxPrice)) \
-        .filter(home_type__in=home_types) \
-        .filter(move_in_day__range=(survey.moveinDateStart, survey.moveinDateEnd)) \
-        .filter(num_bedrooms=survey.numBedrooms) \
-        .filter(num_bathrooms__range=(survey.minBathrooms, survey.maxBathrooms))
-
-    print(filtered_house_list)
+        .filter(price__range=(survey.get_min_price(), survey.get_max_price())) \
+        .filter(home_type__in=current_home_types) \
+        .filter(move_in_day__range=(survey.get_move_in_date_start(), survey.get_move_in_date_end())) \
+        .filter(num_bedrooms=survey.get_num_bedrooms()) \
+        .filter(num_bathrooms__range=(survey.get_min_bathrooms(), survey.get_max_bathrooms()))
 
     # Retrieves all the destinations that the user recorded
-    destination_set = survey.rentingdesintations_set.all()
+    destination_set = survey.rentingdestinations_set.all()
 
     # First put all the origins into an array then the destinations
     origins = []

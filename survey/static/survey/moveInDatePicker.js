@@ -3,7 +3,7 @@
  */
 $( function() {
     var dateFormat = "mm/dd/yy",
-      from = $( "#moveInDatePickerStart" )
+      from = $( "#id_move_in_date_start" )
         .datepicker({
           defaultDate: "+1w",
           changeMonth: true,
@@ -13,7 +13,7 @@ $( function() {
         .on( "change", function() {
           to.datepicker( "option", "minDate", getDate( this ) );
         });
-      to = $( "#moveInDatePickerEnd" )
+      to = $( "#id_move_in_date_end" )
           .datepicker({
         defaultDate: "+1w",
         changeMonth: true,
@@ -22,9 +22,9 @@ $( function() {
 
     // If the Start datepicker has a value then set the end date with that date as the default
     // minDate. If the date gets changed from there then it will follow the old method.
-    var attr =  $( "#moveInDatePickerStart" ).attr('value');
+    var attr =  $( "#id_move_in_date_start" ).attr('value');
     if (typeof attr !== typeof undefined && attr !== false) {
-        $( "#moveInDatePickerEnd" ).datepicker( "option", "minDate", attr );
+        $( "#id_move_in_date_end" ).datepicker( "option", "minDate", attr );
     }
 
     function getDate( element ) {
