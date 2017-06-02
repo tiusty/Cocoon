@@ -26,61 +26,57 @@ def renting_survey(request):
     # The reason why this is split is because the destination form can be made into a form factory
     # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
     # Multiple Destinations on the frontend
-    formDest = DestinationForm()
+    form_destination = DestinationForm()
+
+    # Retrieve the current profile or return a 404
+    current_profile = get_object_or_404(UserProfile, user=request.user)
 
     context = {
         'error_message': [],
     }
+
     if request.method == 'POST':
 
         # first validating Destination form
-        formDest = DestinationForm(request.POST)
+        form_destination = DestinationForm(request.POST)
         # create a form instance and populate it with data from the request:
         form = RentSurvey(request.POST)
 
         # Check to see if the designations are valid
-        if formDest.is_valid():
+        if form_destination.is_valid():
             # check whether it is valid
             if form.is_valid():
                 # process the data in form.cleaned_data as required
-                rentingSurvey = form.save(commit=False)
-                currProf = UserProfile.objects.get(user=request.user)
+                rent_survey = form.save(commit=False)
                 # Need to retrieve the current userProfile to link the survey to
-                try:
-                    # Add the current user to the survey
-                    rentingSurvey.userProf = currProf
-                    # Given the enumeration, set the survey to either rent or buy
-                    # This can probably be removed after testing it
-                    rentingSurvey.survey_type = survey_types.rent.value
 
-                    # Try seeing if there is already a recent survey and if there is
-                    # Then delete it. We only want to keep one "recent" survey
-                    # The user has the option to change the name of it to save it permanently
-                    try:
-                        RentingSurveyModel.objects.filter(userProf=currProf).filter(
-                            name=default_rent_survey_name).delete()
-                    except RentingSurveyModel.DoesNotExist:
-                        print("No surveys to delete")
-                    rentingSurvey.save()
-                    # Since commit =False in the save, need to save the many to many fields
-                    # After saving the form
-                    form.save_m2m()
+                # Add the current user to the survey
+                rent_survey.userProf = current_profile
 
-                    # After saving the destination form, retrieve the survey again
-                    try:
-                        survey = RentingSurveyModel.objects.filter(userProf=currProf).get(id=rentingSurvey.id)
-                        destinations = formDest.save(commit=False)
-                        # Set the foreign field from the destination to the corresponding survey
-                        destinations.survey = survey
-                        destinations.save()
-                    except RentingSurveyModel.DoesNotExist:
-                        raise "Could not retrieve object to attach destinations"
-                    # redirect to new URL:
-                    print(rentingSurvey.id)
-                    return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                        kwargs={"survey_id": rentingSurvey.id}))
-                except UserProfile.DoesNotExist:
-                    context['error_message'].append("Could not retrieve the User Profile")
+                # Given the enumeration, set the survey to either rent or buy
+                # This can probably be removed after testing it
+                rent_survey.survey_type = survey_types.rent.value
+
+                # Try seeing if there is already a recent survey and if there is
+                # Then delete it. We only want to keep one "recent" survey
+                # The user has the option to change the name of it to save it permanently
+                RentingSurveyModel.objects.filter(userProf=current_profile).filter(
+                    name=default_rent_survey_name).delete()
+                rent_survey.save()
+
+                # Since commit=False in the save, need to save the many to many fields
+                # After saving the form
+                form.save_m2m()
+
+                # Save the destination forms
+                destinations = form_destination.save(commit=False)
+                # Set the foreign field from the destination to the corresponding survey
+                destinations.survey = rent_survey
+                destinations.save()
+
+                # redirect to survey result on success:
+                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                    kwargs={"survey_id": rent_survey.id}))
             else:
                 context['error_message'].append("The survey form is not valid")
         else:
@@ -89,7 +85,7 @@ def renting_survey(request):
             if not form.is_valid():
                 context['error_message'].append("The normal form is also not valid")
             context['error_message'].append("Destination form is not valid")
-    return render(request, 'survey/rentingSurvey.html', {'form': form, 'formDest': formDest})
+    return render(request, 'survey/rentingSurvey.html', {'form': form, 'formDest': form_destination})
 
 
 # Function is not implemented, it will basically be the same as the rent survey but for buying instead
@@ -334,7 +330,8 @@ def create_exterior_amenities_score(scored_house_list, survey):
     """
     for home in scored_house_list:
         weighted_question_scoring(home, home.house.get_parking_spot(), survey.get_parking_spot())
-        weighted_question_scoring(home, home.house.get_washer_dryer_in_building(), survey.get_washer_dryer_in_building())
+        weighted_question_scoring(home, home.house.get_washer_dryer_in_building(),
+                                  survey.get_washer_dryer_in_building())
         weighted_question_scoring(home, home.house.get_elevator(), survey.get_elevator())
         weighted_question_scoring(home, home.house.get_handicap_access(), survey.get_handicap_access())
         weighted_question_scoring(home, home.house.get_pool_hot_tub(), survey.get_pool_hot_tub())

@@ -120,7 +120,7 @@ class RequiredInformation(models.Model):
     price_weight = models.IntegerField(default=0)
     max_commute = models.IntegerField(default=0)
     min_commute = models.IntegerField(default=0)
-    commute_weight = models.IntegerField(default=1)
+    commute_weight = models.IntegerField(default=0)
     move_in_date_start = models.DateField(default=timezone.now)
     move_in_date_end = models.DateField(default=timezone.now)
     num_bedrooms = models.IntegerField(default=0)

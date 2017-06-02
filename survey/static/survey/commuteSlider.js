@@ -47,6 +47,6 @@ $( function() {
         " Min - " + $( "#commute" ).slider( "values", 1 ) + " Min");
     }
 
-    $( "#id_minCommute").val( $("#commute").slider("values", 0));
-    $( "#id_maxCommute").val( $("#commute").slider("values", 1));
+    $( "#id_min_commute").val( $("#commute").slider("values", 0));
+    $( "#id_max_commute").val( $("#commute").slider("values", 1));
 } );
