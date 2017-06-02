@@ -1,9 +1,8 @@
 from django.contrib import admin
-from userAuth.forms import LoginUserForm, RegisterForm
+from userAuth.forms import RegisterForm
 from .models import MyUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import UserProfile
 
 
@@ -20,7 +19,6 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name',)}),
         ('Joined', {'fields': ('joined',)}),
-        #('Houss', {'fields': ('favorites',)}),
         ('Permissions', {'fields': ('is_active', 'is_admin',)}),
     )
     # add_fields sets is not a standard ModelAdmin Attribute. UserAdmin
@@ -37,10 +35,10 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileInline(admin.StackedInline):
-     model = UserProfile
-     can_delete = False
-     verbose_name_plural = 'Profile'
-     fk_name = 'user'
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'Profile'
+    fk_name = 'user'
 
 
 class CustomUserAdmin(UserAdmin):

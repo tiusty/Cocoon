@@ -17,6 +17,9 @@ class InitialSurveyModel(models.Model):
     survey_type = models.IntegerField(default=-1)
     created = models.DateField(auto_now_add=True)
 
+    class Meta:
+        abstract = True
+
 
 class HomeType(models.Model):
     """
@@ -166,7 +169,7 @@ class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenit
     It takes the Initial Survey model as an input which is data that is true for all surveys
     The user may take multiple surveys and it is linked to their User Profile
 
-    Default name is stored unless the User changes it. Everytime a survey is created the past
+    Default name is stored unless the User changes it. Every time a survey is created the past
     default name is deleted to allow for the new one. Therefore, there is always a history
     of one survey
     """

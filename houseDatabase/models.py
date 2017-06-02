@@ -41,8 +41,8 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
     price = models.IntegerField(default=-1)
     home_type = models.CharField(max_length=200, default=not_set_char)
     move_in_day = models.DateField(default=datetime.date.today)
-    lon = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     lat = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    lon = models.DecimalField(max_digits=9, decimal_places=6, default=0)
 
     def __str__(self):
         return self.address
