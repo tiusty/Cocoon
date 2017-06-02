@@ -1,89 +1,62 @@
+{% extends "bootstrapJQuery.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Unicorn</title>
+{% block title %}Cocoon{% endblock %}
 
-    <!-- JQuery CDN -->
-    <script
-            src="https://code.jquery.com/jquery-2.2.4.js"
-            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
-            crossorigin="anonymous"></script>
-    <!-- Bootstrap style sheet -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Custom styles for this template -->
-    <link href="{% static 'homePage/cover.css' %}" rel="stylesheet">
-</head>
-<body>
-<body>
+{% block head %}
+    {{ block.super }}
+    {% comment %} Domain Verfication{% endcomment %}
+    <meta name="google-site-verification" content="EZpbJ3VrkWORskv6xVg5hoxs3cjmN7UBjbKu6AZW4C8" />
+    <!-- JQuery UI style sheet, mostly used for slider ui -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <div class="site-wrapper">
-      <div class="site-wrapper-inner">
-        <div class="cover-container">
-          <div class="masthead clearfix">
-            <div class="inner">
-              <h3 class="masthead-brand">Start Survey!</h3>
-              <nav>
-                <ul class="nav masthead-nav">
-                  <li class="active"><a href="#">Home</a></li>
-                  <li><a href="{% url 'homePage:contactPage' %}">Contact</a></li>
-                    {% if user.is_authenticated %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li class="dropdown-header">Surveys</li>
-                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li><a href="{% url 'userAuth:loginPage' %}">Login</a></li>
-                    {% endif %}
-                </ul>
-              </nav>
+    <!-- Style sheets for template page -->
+    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
+    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        {% if  user.is_authenticated %}
+            <h1>Hello {{ user.first_name }}</h1>
+        {% else %}
+            <h1>Welcome to Cocoon!</h1>
+        {% endif %}
+        <p class="lead">Here at Cacoon we strive to find your perfect home! </p>
+        {% if not user.is_authenticated %}
+            <p>Please sign in:  <a href="{% url 'userAuth:loginPage' %}"><button class="btn btn-primary">Login</button></a></p>
+            {% else %}
+            <p>Please click below to get started!</p>
+        {% endif %}
+    </div>
+    {% if error_message %}
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-6" style="color:red">
+                <p><strong>{{ error_message }}</strong></p>
             </div>
-          </div>
-
-          <div class="inner cover">
-            <h1 class="cover-heading">Project Unicorn!</h1>
-              <p class="lead">Here at Project Unicorn we strive to find your perfect home! Please click below to get
-                  started!</p>
-              {% if error_message %}
-                  <div class="row">
-                      <div class="col-sm-offset-3 col-sm-6" style="color:red">
-                          <p><strong>{{ error_message }}</strong></p>
-                      </div>
-                  </div>
-              {% endif %}
-              <form class="form-horizontal" action="{% url 'homePage:index' %}" method="post">
-                  {% csrf_token %}
-                  <div class="form-group">
-                      {% for radio in form.survey_type %}
-                          {{ radio }}
-                      {% endfor %}
-                  </div>
-                  <p class="lead">
-                      <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
-                  </p>
-              </form>
-          </div>
         </div>
-      </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4" style="text-align: center">
+            <h2>Please select a survey!</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4" style="text-align: center">
+            <form class="form-horizontal" action="{% url 'homePage:index' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% for radio in form.survey_type %}
+                        {{ radio }}
+                    {% endfor %}
+                </div>
+                <p class="lead">
+                    <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
+                </p>
+            </form>
+        </div>
     </div>
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
-</body>
-</html>
+{% endblock %}

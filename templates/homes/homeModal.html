@@ -1,0 +1,53 @@
+{% comment Header %}
+Note this modal assumes that in the parent template, it is being called in a for loop.
+Even if there is ony one home, it should be in a for loop with size 1.
+The modael id is created based on the for loop counter.
+
+Also the Modal Expects a home in the context of the foor loop
+
+This Modal also assumes these two contexts are provided in a context processor globally:
+user_favorite_house: List of all the homes that the current user has in their favorite list
+user_visit_house_list: List of all the homes that the current user has in their visit list
+
+Also, this modal assumes the function:
+set_visit_house
+is declared in the calling template
+{% endcomment %}
+
+<div class="modal fade" id="{{ modalId }}{{ forloop.counter }}" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" id="myModalLabel">{{ house.get_address }}</h3>
+            </div>
+            <div class="modal-body modalPadding">
+                <div class="row">
+                    <p><b>Price: </b>{{ house.get_price_str }}</p>
+                    <p><b>Home Type: </b>{{ house.get_home_type }}</p>
+                    <p><b>Move In Day: </b>{{ house.get_move_in_day }}</p>
+                    <p><b>Number of Bedrooms: </b>{{ house.get_num_bedrooms }}</p>
+                    <div id="visitHomeSet{{ house.id }}">
+                        {% if house in user_visit_house_list %}
+                            <p><b>Visit List:</b> It is in the list!</p>
+                        {% else %}
+                            <p>
+                                <b>Visit List:</b> <button type="button" class="btn btn-primary btn-sm"
+                                        onclick="set_visit_house({{ house.id }}, '{% url 'survey:setVisitHouse' %}')">
+                                    Add to
+                                    visit list
+                                </button>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success">Contact Agent</button>
+            </div>
+        </div>
+    </div>
+</div>

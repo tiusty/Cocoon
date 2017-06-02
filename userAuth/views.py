@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from userAuth.models import UserProfile
-from survey.models import RentingSurveyModel, RentingDesintations
+from survey.models import RentingSurveyModel, RentingDestinations
 from django.contrib.auth.decorators import login_required
 
 from .forms import LoginUserForm, RegisterForm, ProfileForm
@@ -19,7 +19,12 @@ def loginPage(request):
     context = {
         'error_message': [],
     }
-    if request.method == 'POST':
+
+    # If the user is already authenticated them redirect to index page
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('homePage:index'))
+
+    elif request.method == 'POST':
         form = LoginUserForm(request, request.POST)
         if form.is_valid():
             if not form.cleaned_data['remember']:
@@ -34,6 +39,7 @@ def loginPage(request):
                 context['error_message'].append('Unable to login in with Email/Password combo')
         else:
             context['error_message'].append('Unable to login in, refill out the form')
+
     context['form'] = form
     return render(request, 'userAuth/login.html', context)
 
@@ -60,6 +66,7 @@ def logoutPage(request):
     logout(request)
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
+
 @login_required
 def ProfilePage(request, defaultPage="profile"):
     context = {
@@ -68,7 +75,6 @@ def ProfilePage(request, defaultPage="profile"):
 
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=request.user)
-        print(form)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('userAuth:profilePage',
@@ -94,11 +100,10 @@ def ProfilePage(request, defaultPage="profile"):
     else:
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
-    rentSurveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:50]
-    context['numRentSurveys'] = rentSurveys.count()
+    rent_surveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:50]
+    context['numRentSurveys'] = rent_surveys.count()
     context['numBuySurveys'] = 0
-    context['surveys'] = rentSurveys
+    context['surveys'] = rent_surveys
     form = ProfileForm(instance=userProfile.user)
     context['form'] = form
     return render(request, 'userAuth/profilePage.html', context)
-

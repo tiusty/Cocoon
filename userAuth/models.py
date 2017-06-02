@@ -52,7 +52,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
 
-
     objects = MyUserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -89,7 +88,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
-    favorites = models.ManyToManyField(RentDatabase)
+    favorites = models.ManyToManyField(RentDatabase, related_name="favorite_list", blank=True)
+    visit_list = models.ManyToManyField(RentDatabase, related_name="visit_list", blank=True)
 
     def __str__(self):
         return self.user.get_short_name()

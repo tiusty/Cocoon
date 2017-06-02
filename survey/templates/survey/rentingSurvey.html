@@ -33,7 +33,7 @@
     <!-- Main component for a primary marketing message or call to action -->
     <div class="jumbotron">
         <h1>Find your Perfect Home!</h1>
-        <p>Please fill out the survey below to find your unicorn :)</p>
+        <p>Please fill out the survey below to find your hive</p>
         <p>
             {% if not user.is_authenticated %}
                 <p>Please login to save personalized surveys!</p>
@@ -61,22 +61,33 @@
                         <span class="help-block">All fields are required. Each item will be an important factor which will filter the items</span>
                         <div class="form-group step_div">
                             <div class="form-group">
-                                {{ form.name.label_tag }}
-                                {{ form.name }}
-                                {{ form.name.errors }}
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        {{ form.move_in_date_start.label_tag }}
+                                        <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="First Day you can move in"></span>
+                                        {{ form.move_in_date_start }}
+                                        {{ form.move_in_date_start.errors }}
+                                    </div>
+                                    <div class="col-sm-6">
+                                        {{ form.move_in_date_end.label_tag }}
+                                        <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="Last Day you can move in"></span>
+                                        {{ form.move_in_date_end }}
+                                        {{ form.move_in_date_end.errors }}
+
+
+                                    </div>
+
+                                </div>
                             </div>
+
                             <div class="form-group">
-                                {{ form.moveinDate.label_tag }}
-                                {{ form.moveinDate }}
-                                {{ form.moveinDate.errors }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.numBedrooms.label_tag }}
-                                {{ form.numBedrooms }}
-                                {{ form.numBedrooms.errors }}
+                                {{ form.num_bedrooms.label_tag }}
+                                {{ form.num_bedrooms }}
+                                {{ form.num_bedrooms.errors }}
                             </div>
                             <div class="form-group">
                                 {{ form.home_type.label_tag }}
+                                <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="Select the types of homes desired"></span>
                                 {{ form.home_type }}
                                 {{ form.home_type.errors }}
                             </div>
@@ -85,8 +96,15 @@
                                 <input type="text" id="amountCost" name="amountCost" readonly
                                        style="border:0; color:#f6931f; font-weight:bold;">
                                 <div id="cost"></div>
-                                {{ form.minPrice }}
-                                {{ form.maxPrice }}
+                                {{ form.min_price }}
+                                {{ form.max_price }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.price_weight.label_tag }}
+                                <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="A Weight of zero means all homes within the price range are weighted equally.
+                                Increasing the weight gives increasing preference to cheaper homes"></span>
+                                {{ form.price_weight }}
+                                {{ form.price_weight.errors }}
                             </div>
                         </div>
                         <br>
@@ -100,25 +118,34 @@
                             </div>
 
                             <div class="form-group">
-                                {{ form.commuteWeight.label_tag }}
-                                {{ form.commuteWeight }}
-                                {{ form.commuteWeight.errors }}
-                            </div>
-
-                            <div class="form-group">
                                 <label for="amountCommute">Commute:</label>
                                 <input type="text" id="amountCommute" name="amountCommute" readonly
                                        style="border:0; color:#f6931f; font-weight:bold;">
                                 <div id="commute"></div>
-                                {{ form.minCommute }}
-                                {{ form.maxCommute }}
+                                {{ form.min_commute }}
+                                {{ form.max_commute }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.commute_weight.label_tag }}
+                                <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="A weight of zero means all homes within the commute range are weighted equally.
+                                Increasing the weight gives increasing preferences to closer homes"></span>
+                                {{ form.commute_weight }}
+                                {{ form.commute_weight.errors }}
                             </div>
                         </div>
                         <br>
 
                         {% comment %} Accordion ONLY will have questions that do not need to be validated {% endcomment %}
                         <h3>Step 3</h3>
-                        <span class="help-block">Nothing below is required but it tailors the search to your needs!</span>
+                        <p class="help-block">Nothing below is required but it tailors the search to your needs!
+                            <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip"
+                                  data-placement="left" title="For the following questions, a weight of zero means the question has no effect.
+                                    Increasing weight means homes with that element will be given increasing preference and homes
+                                    without that item will be given decreased preference.
+                                    A weight of the max value means the home must have that item.">
+
+                            </span></p>
                         <div class="form-group">
                             <div class="panel-group" id="accordion">
                                 <div class="panel panel-default">
@@ -131,21 +158,21 @@
                                     <div id="collapse1" class="panel-collapse collapse in">
                                         <div class="panel-body">
                                             <p>
-                                                {{ form.airConditioning.label_tag }}
-                                                {{ form.airConditioning }}
-                                                {{ form.airConditioning.errors }}
+                                                {{ form.air_conditioning.label_tag }}
+                                                {{ form.air_conditioning }}
+                                                {{ form.air_conditioning.errors }}
                                             </p>
 
                                             <p>
-                                                {{ form.washDryer_InHome.label_tag }}
-                                                {{ form.washDryer_InHome }}
-                                                {{ form.washDryer_InHome.errors }}
+                                                {{ form.wash_dryer_in_home.label_tag }}
+                                                {{ form.wash_dryer_in_home }}
+                                                {{ form.wash_dryer_in_home.errors }}
                                             </p>
 
                                             <p>
-                                                {{ form.dishWasher.label_tag }}
-                                                {{ form.dishWasher }}
-                                                {{ form.dishWasher.errors }}
+                                                {{ form.dish_washer.label_tag }}
+                                                {{ form.dish_washer }}
+                                                {{ form.dish_washer.errors }}
                                             </p>
 
                                             <p>
@@ -159,8 +186,8 @@
                                                 <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
                                                        style="border:0; color:#f6931f; font-weight:bold;">
                                             <div id="bathrooms"></div>
-                                            {{ form.minBathrooms }}
-                                            {{ form.maxBathrooms }}
+                                            {{ form.min_bathrooms }}
+                                            {{ form.max_bathrooms }}
                                             </p>
                                         </div>
                                     </div>
@@ -175,14 +202,14 @@
                                     <div id="collapse2" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <p>
-                                                {{ form.parkingSpot.label_tag }}
-                                                {{ form.parkingSpot }}
-                                                {{ form.parkingSpot.errors }}
+                                                {{ form.parking_spot.label_tag }}
+                                                {{ form.parking_spot }}
+                                                {{ form.parking_spot.errors }}
                                             </p>
                                             <p>
-                                                {{ form.washerDryer_inBuilding.label_tag }}
-                                                {{ form.washerDryer_inBuilding }}
-                                                {{ form.washerDryer_inBuilding.errors }}
+                                                {{ form.washer_dryer_in_building.label_tag }}
+                                                {{ form.washer_dryer_in_building }}
+                                                {{ form.washer_dryer_in_building.errors }}
                                             </p>
                                             <p>
                                                 {{ form.elevator.label_tag }}
@@ -190,24 +217,24 @@
                                                 {{ form.elevator.errors }}
                                             </p>
                                             <p>
-                                                {{ form.handicapAccess.label_tag }}
-                                                {{ form.handicapAccess }}
-                                                {{ form.handicapAccess.errors }}
+                                                {{ form.handicap_access.label_tag }}
+                                                {{ form.handicap_access }}
+                                                {{ form.handicap_access.errors }}
                                             </p>
                                             <p>
-                                                {{ form.poolHottub.label_tag }}
-                                                {{ form.poolHottub }}
-                                                {{ form.poolHottub.errors }}
+                                                {{ form.pool_hot_tub.label_tag }}
+                                                {{ form.pool_hot_tub }}
+                                                {{ form.pool_hot_tub.errors }}
                                             </p>
                                             <p>
-                                                {{ form.fitnessCenter.label_tag }}
-                                                {{ form.fitnessCenter }}
-                                                {{ form.fitnessCenter.errors }}
+                                                {{ form.fitness_center.label_tag }}
+                                                {{ form.fitness_center }}
+                                                {{ form.fitness_center.errors }}
                                             </p>
                                             <p>
-                                                {{ form.storageUnit.label_tag }}
-                                                {{ form.storageUnit }}
-                                                {{ form.storageUnit.errors }}
+                                                {{ form.storage_unit.label_tag }}
+                                                {{ form.storage_unit }}
+                                                {{ form.storage_unit.errors }}
                                             </p>
                                         </div>
                                     </div>
@@ -252,6 +279,9 @@
     costSliderMin = 400;
     bathroomsMin = 0;
     bathroomsMax = 6;
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 </script>
 
 

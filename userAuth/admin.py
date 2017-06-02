@@ -1,9 +1,8 @@
 from django.contrib import admin
-from userAuth.forms import LoginUserForm, RegisterForm
+from userAuth.forms import RegisterForm
 from .models import MyUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import UserProfile
 
 
@@ -36,20 +35,19 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileInline(admin.StackedInline):
-     model = UserProfile
-     can_delete = False
-     verbose_name_plural = 'Profile'
-     fk_name = 'user'
+    model = UserProfile
+    can_delete = False
+    verbose_name_plural = 'Profile'
+    fk_name = 'user'
 
 
-# class CustomUserAdmin(UserAdmin):
-#     inlines = (ProfileInline, )
-#
-#     def get_inline_instances(self, request, obj=None):
-#         if not obj:
-#             return list()
-#         return super(CustomUserAdmin, self).get_inline_instances(request, obj)
+class CustomUserAdmin(UserAdmin):
+    inlines = (ProfileInline, )
 
-admin.site.register(MyUser, UserAdmin)
-#admin.site.register(UserProfile, ProfileInline)
+    def get_inline_instances(self, request, obj=None):
+        if not obj:
+            return list()
+        return super(CustomUserAdmin, self).get_inline_instances(request, obj)
+
+admin.site.register(MyUser, CustomUserAdmin)
 admin.site.unregister(Group)
