@@ -136,7 +136,7 @@ class ZipCodeDictionary(models.Model):
      The Base model should not have a commute_time or Commute_distance since it is in
      releation to nothing. Instead the child zip code identifies the relation
     """
-    zip_code = models.CharField(max_length=20)
+    zip_code = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.get_zip_code()
@@ -150,7 +150,7 @@ class ZipCodeDictionaryChild(models.Model):
     This model class serves as an approximation for commute time/distance associated with
     zip_codes. This ZipCodeDictionary should be precomputed or should be populated periodically.
     """
-    zip_code = models.CharField(max_length=20)
+    zip_code = models.CharField(max_length=20, unique=True)
     base_zip_code = models.ForeignKey('ZipCodeDictionary', on_delete=models.CASCADE)
     commute_time = models.IntegerField(default=-1)
     commute_distance = models.IntegerField(default=-1)
@@ -160,5 +160,14 @@ class ZipCodeDictionaryChild(models.Model):
 
     def get_zip_code(self):
         return self.zip_code
+
+    def get_base_zip_code(self):
+        return self.base_zip_code
+
+    def get_commute_time(self):
+        return self.commute_time
+
+    def get_commute_distance(self):
+        return self.commute_distance
 
 
