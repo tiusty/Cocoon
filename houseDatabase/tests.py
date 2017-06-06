@@ -4,6 +4,9 @@ import datetime
 from houseDatabase.models import RentDatabase
 
 default_address = "12 Stony Brook Rd"
+default_city = "Arlington"
+default_state = "MA"
+default_zip_code = "02476"
 default_price = 700
 default_home_type = "Condo"
 default_move_in_day = datetime.date.today() + datetime.timedelta(days=10)
@@ -25,6 +28,9 @@ default_storage_unit = True
 
 
 def create_home(address=default_address,
+                city=default_city,
+                state=default_state,
+                zip_code=default_zip_code,
                 price=default_price,
                 home_type=default_home_type,
                 move_in_day=default_move_in_day,
@@ -50,6 +56,9 @@ def create_home(address=default_address,
     """
     return RentDatabase.objects.create(
         address=address,
+        city=city,
+        state=state,
+        zip_code=zip_code,
         price=price,
         home_type=home_type,
         move_in_day=move_in_day,
@@ -73,9 +82,21 @@ def create_home(address=default_address,
 
 class HouseDataBaseGetters(TestCase):
 
-    def test_all_model_getters(self):
+    @staticmethod
+    def test_all_model_getters():
+        """
+        Tests all the getters associated with the house database class
+        :return:
+        """
         home = create_home()
         assert(home.get_address() == default_address)
+        assert(home.full_address() == home.get_address() + ", " + home.get_city()
+               + ", " + home.get_state() + " " + home.get_zip_code())
+        assert(home.short_address() == home.get_address()
+               + ", " + home.get_city())
+        assert(home.get_city() == default_city)
+        assert(home.get_state() == default_state)
+        assert(home.get_zip_code() == default_zip_code)
         assert(home.get_price() == default_price)
         assert(home.get_price_str() == "$" + str(home.get_price()))
         assert(home.get_move_in_day() == default_move_in_day)

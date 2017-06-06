@@ -6,7 +6,8 @@ from .models import RentDatabase
 class HouseAdmin(admin.ModelAdmin):
     fieldsets = [
         ('House Info',
-         {'fields': ['address', 'price', 'home_type', 'move_in_day', 'lat','lon']}),
+         {'fields': ['address', 'city', 'state', 'zip_code', 'price',
+                     'home_type', 'move_in_day', 'lat', 'lon', ]}),
         ('Interior Amenities',
          {'fields': ('air_conditioning', 'wash_dryer_in_home', 'dish_washer',
                      'bath', 'num_bedrooms', 'num_bathrooms',), }),

@@ -50,6 +50,24 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
     def __str__(self):
         return self.address
 
+    def get_address(self):
+        return self.address
+
+    def full_address(self):
+        return self.get_address() + ", " + self.get_city() + ", " + self.get_state() + " " + self.get_zip_code()
+
+    def short_address(self):
+        return self.get_address() + ", " + self.get_city()
+
+    def get_city(self):
+        return self.city
+
+    def get_state(self):
+        return self.state
+
+    def get_zip_code(self):
+        return self.zip_code
+
     def get_price(self):
         return self.price
 
@@ -67,9 +85,6 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
 
     def get_home_type(self):
         return self.home_type
-
-    def get_address(self):
-        return self.address
 
     def get_air_conditioning(self):
         return self.air_conditioning
