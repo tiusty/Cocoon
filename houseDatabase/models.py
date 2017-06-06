@@ -37,6 +37,9 @@ class BuildingExteriorAmenities(models.Model):
 
 
 class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
+    """
+    This model stores all the information associated with a home
+    """
     address = models.CharField(max_length=200, default=not_set_char)
     city = models.CharField(max_length=200, default=not_set_char)
     state = models.CharField(max_length=200, default=not_set_char)
@@ -124,5 +127,38 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
 
     def get_storage_unit(self):
         return self.storage_unit
+
+
+class ZipCodeDictionary(models.Model):
+    """
+    The base Zip Code, aka 02476, for each base zip_code, there will be
+    a bunch of associated zip codes via foreign key from ZipCodeDictionary model.
+     The Base model should not have a commute_time or Commute_distance since it is in
+     releation to nothing. Instead the child zip code identifies the relation
+    """
+    zip_code = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.get_zip_code()
+
+    def get_zip_code(self):
+        return self.zip_code
+
+
+class ZipCodeDictionaryChild(models.Model):
+    """
+    This model class serves as an approximation for commute time/distance associated with
+    zip_codes. This ZipCodeDictionary should be precomputed or should be populated periodically.
+    """
+    zip_code = models.CharField(max_length=20)
+    base_zip_code = models.ForeignKey('ZipCodeDictionary', on_delete=models.CASCADE)
+    commute_time = models.IntegerField(default=-1)
+    commute_distance = models.IntegerField(default=-1)
+
+    def __str__(self):
+        return self.get_zip_code()
+
+    def get_zip_code(self):
+        return self.zip_code
 
 
