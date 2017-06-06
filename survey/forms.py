@@ -1,5 +1,5 @@
 from django import forms
-from survey.models import RentingSurveyModel, BuyingSurveyModel, RentingDestinations, HomeType, default_rent_survey_name
+from survey.models import RentingSurveyModel, RentingDestinations, HomeType, default_rent_survey_name
 from django.forms import ModelForm
 from django.db.models import Q
 
@@ -12,7 +12,7 @@ from Unicorn.settings.Global_Config import \
 
 
 class DestinationForm(ModelForm):
-    streetAddress = forms.CharField(
+    street_address = forms.CharField(
         label="Destination",
         widget=forms.TextInput(
             attrs={
@@ -52,7 +52,7 @@ class DestinationForm(ModelForm):
 
     class Meta:
         model = RentingDestinations
-        fields = ['streetAddress', 'city', 'state', 'zip_code']
+        fields = ["street_address", 'city', 'state', 'zip_code']
 
 
 class RentSurveyBase(ModelForm):
@@ -348,7 +348,7 @@ class RentSurvey(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitie
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ['userProf', 'survey_type', 'name', ]
+        exclude = ["user_profile", 'survey_type', 'name', ]
 
 
 class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
@@ -369,10 +369,10 @@ class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmen
 
     class Meta:
         model = RentingSurveyModel
-        exclude = ['userProf', 'survey_type']
+        exclude = ["user_profile", 'survey_type']
 
 
-class BuySurvey(ModelForm):
-    class Meta:
-        model = BuyingSurveyModel
-        fields = ['maxPrice', ]
+# class BuySurvey(ModelForm):
+#     class Meta:
+#         model = BuyingSurveyModel
+#         fields = ['maxPrice', ]

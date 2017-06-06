@@ -38,6 +38,9 @@ class BuildingExteriorAmenities(models.Model):
 
 class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
     address = models.CharField(max_length=200, default=not_set_char)
+    city = models.CharField(max_length=200, default=not_set_char)
+    state = models.CharField(max_length=200, default=not_set_char)
+    zip_code = models.CharField(max_length=200, default=not_set_char)
     price = models.IntegerField(default=-1)
     home_type = models.CharField(max_length=200, default=not_set_char)
     move_in_day = models.DateField(default=datetime.date.today)
@@ -106,3 +109,5 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
 
     def get_storage_unit(self):
         return self.storage_unit
+
+

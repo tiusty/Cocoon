@@ -5,8 +5,7 @@ import math
 from django.utils import timezone
 
 # Import Global Variables
-from Unicorn.settings.Global_Config import Max_Num_Bathrooms, default_rent_survey_name, \
-    default_buy_survey_name
+from Unicorn.settings.Global_Config import Max_Num_Bathrooms, default_rent_survey_name
 
 
 class InitialSurveyModel(models.Model):
@@ -173,16 +172,16 @@ class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenit
     default name is deleted to allow for the new one. Therefore, there is always a history
     of one survey
     """
-    userProf = models.ForeignKey(UserProfile)
+    user_profile = models.ForeignKey(UserProfile)
 
     def get_short_name(self):
-        user_short_name = self.userProf.user.get_short_name()
+        user_short_name = self.user_profile.user.get_short_name()
         survey_name = self.get_name()
         output = user_short_name + ": " + survey_name
         return output
 
     def __str__(self):
-        user_short_name = self.userProf.user.get_short_name()
+        user_short_name = self.user_profile.user.get_short_name()
         survey_name = self.get_name()
         output = user_short_name + ": " + survey_name
         return output
@@ -228,21 +227,15 @@ class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenit
         return type_output
 
 
-# Default name for buying survey
-class BuyingSurveyModel(InitialSurveyModel):
-    name = models.CharField(max_length=200, default=default_buy_survey_name)
-    maxPrice = models.IntegerField(default=0)
-
-
 # Stores the destination address since there can be multiple
 class Destinations(models.Model):
-    streetAddress = models.CharField(max_length=200)
+    street_address = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     state = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
 
     def full_address(self):
-        output = str(self.streetAddress) + ", " + str(self.city) + ", " + str(self.state) + ", " + str(self.zip_code)
+        output = str(self.street_address) + ", " + str(self.city) + ", " + str(self.state) + ", " + str(self.zip_code)
         return output
 
 
@@ -251,14 +244,10 @@ class RentingDestinations(Destinations):
     survey = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):
-        return self.streetAddress
+        return self.street_address
 
     def full_address(self):
-        return self.streetAddress + ", " + self.city + ", " + self.state + " " + self.zip_code
+        return self.street_address + ", " + self.city + ", " + self.state + " " + self.zip_code
 
     def short_address(self):
-        return self.streetAddress + ", " + self.city
-
-
-class BuyingDestinations(Destinations):
-    survey = models.ForeignKey(BuyingSurveyModel)
+        return self.street_address + ", " + self.city

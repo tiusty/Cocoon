@@ -12,7 +12,7 @@ from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, we
 from houseDatabase.models import RentDatabase
 from survey.models import RentingSurveyModel, default_rent_survey_name
 from userAuth.models import UserProfile
-from .forms import RentSurvey, BuySurvey, DestinationForm, RentSurveyMini
+from .forms import RentSurvey, DestinationForm, RentSurveyMini
 
 
 # Create your views here.
@@ -51,7 +51,7 @@ def renting_survey(request):
                 # Need to retrieve the current userProfile to link the survey to
 
                 # Add the current user to the survey
-                rent_survey.userProf = current_profile
+                rent_survey.user_profile = current_profile
 
                 # Given the enumeration, set the survey to either rent or buy
                 # This can probably be removed after testing it
@@ -60,7 +60,7 @@ def renting_survey(request):
                 # Try seeing if there is already a recent survey and if there is
                 # Then delete it. We only want to keep one "recent" survey
                 # The user has the option to change the name of it to save it permanently
-                RentingSurveyModel.objects.filter(userProf=current_profile).filter(
+                RentingSurveyModel.objects.filter(user_profile=current_profile).filter(
                     name=default_rent_survey_name).delete()
                 rent_survey.save()
 
@@ -89,10 +89,10 @@ def renting_survey(request):
 
 
 # Function is not implemented, it will basically be the same as the rent survey but for buying instead
-@login_required
-def buying_survey(request):
-    form = BuySurvey()
-    return render(request, 'survey/buyingSurvey.html', {'form': form})
+# @login_required
+# def buying_survey(request):
+#     form = BuySurvey()
+#     return render(request, 'survey/buyingSurvey.html', {'form': form})
 
 
 class ScoringStruct:
@@ -515,7 +515,7 @@ def survey_result_rent(request, survey_id="recent"):
         # Try to retrieve the most recent survey, but if there are no surveys, then
         # Redirect back to the homepage
         try:
-            survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
+            survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
         except RentingSurveyModel.DoesNotExist:
             return HttpResponseRedirect(reverse('homePage:index'))
     else:
@@ -523,12 +523,12 @@ def survey_result_rent(request, survey_id="recent"):
         # If it can't find it or it is not associated with the user, just grab the
         # Recent Survey. If that fails, then redirect back to the home page.
         try:
-            survey = RentingSurveyModel.objects.filter(userProf=user_profile).get(id=survey_id)
+            survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(id=survey_id)
         # If the survey ID, does not exist/is not for that user, then return the most recent survey
         except RentingSurveyModel.DoesNotExist:
             context['error_message'].append("Could not find survey id, getting recent survey")
             try:
-                survey = RentingSurveyModel.objects.filter(userProf=user_profile).order_by('-created').first()
+                survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
                 return HttpResponseRedirect(reverse('homePage:index'))
 
