@@ -238,6 +238,11 @@ class Destinations(models.Model):
         output = str(self.street_address) + ", " + str(self.city) + ", " + str(self.state) + ", " + str(self.zip_code)
         return output
 
+    def get_zip_code(self):
+        if len(self.zip_code) > 5:
+            return self.zip_code[:5]
+        return self.zip_code
+
 
 # Used for the renting survey
 class RentingDestinations(Destinations):

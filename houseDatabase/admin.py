@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RentDatabase
+from .models import RentDatabase, ZipCodeDictionary,ZipCodeDictionaryChild
 
 
 # Register your models here.
@@ -21,4 +21,20 @@ class HouseAdmin(admin.ModelAdmin):
     list_filter = ['home_type']
     search_fields = ['address']
 
+
+class ZipCodeDictionaryChildInLine(admin.StackedInline):
+    model = ZipCodeDictionaryChild
+    extra = 0
+
+
+class ZipCodeDictionaryAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('ZipCodes',
+         {'fields': ['zip_code',]}),
+    ]
+    list_display = ('zip_code',)
+    inlines = [ZipCodeDictionaryChildInLine]
+
+
 admin.site.register(RentDatabase, HouseAdmin)
+admin.site.register(ZipCodeDictionary, ZipCodeDictionaryAdmin)

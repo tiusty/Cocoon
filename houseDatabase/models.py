@@ -69,6 +69,8 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
         return self.state
 
     def get_zip_code(self):
+        if len(self.zip_code) > 5:
+            return self.zip_code[:5]
         return self.zip_code
 
     def get_price(self):
@@ -144,16 +146,27 @@ class ZipCodeDictionary(models.Model):
     def get_zip_code(self):
         return self.zip_code
 
+COMMUTE_TYPES = (
+    ('driving', 'Driving'),
+    ('transit', 'Transit'),
+    ('walking', 'Walking'),
+    ('biking', 'Biking'),
+)
+
 
 class ZipCodeDictionaryChild(models.Model):
     """
     This model class serves as an approximation for commute time/distance associated with
     zip_codes. This ZipCodeDictionary should be precomputed or should be populated periodically.
     """
-    zip_code = models.CharField(max_length=20, unique=True)
+    zip_code = models.CharField(max_length=20)
     base_zip_code = models.ForeignKey('ZipCodeDictionary', on_delete=models.CASCADE)
     commute_time = models.IntegerField(default=-1)
     commute_distance = models.IntegerField(default=-1)
+    commute_type = models.CharField(
+        choices=COMMUTE_TYPES,
+        max_length=15,
+    )
 
     def __str__(self):
         return self.get_zip_code()
@@ -164,10 +177,15 @@ class ZipCodeDictionaryChild(models.Model):
     def get_base_zip_code(self):
         return self.base_zip_code
 
+    # Commute time is stored in seconds so divide by 60 to get number of minutes
     def get_commute_time(self):
-        return self.commute_time
+        return self.commute_time / 60
 
+    # Commute distance is stored in meters so convert to miles
     def get_commute_distance(self):
-        return self.commute_distance
+        return self.commute_distance * 0.000621371
+
+    def get_commute_type(self):
+        return self.commute_type
 
 

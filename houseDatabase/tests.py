@@ -33,6 +33,7 @@ default_ZipCodeDictionary_zip_code = "02476"
 default_ZipCodeDictionaryChild_zip_code = "02474"
 default_ZipCodeDictionaryChild_commute_time = 20
 default_ZipCodeDictionaryChild_commute_distance = 25
+default_ZipCodeDictionaryChild_commute_type = "driving"
 
 
 def create_home(address=default_address,
@@ -100,12 +101,14 @@ def create_zip_code_dictionary_with_child(
         zip_code=default_ZipCodeDictionaryChild_zip_code,
         commute_time=default_ZipCodeDictionaryChild_commute_time,
         commute_distance=default_ZipCodeDictionaryChild_commute_distance,
+        commute_type=default_ZipCodeDictionaryChild_commute_type
     ):
     zip_code_dictionary = create_zip_code_dictionary()
     zip_code_dictionary.zipcodedictionarychild_set.create(
         zip_code=zip_code,
         commute_time=commute_time,
         commute_distance=commute_distance,
+        commute_type=commute_type,
     )
     return zip_code_dictionary
 
@@ -174,6 +177,10 @@ class ZipCodeDictionaryTestCase(TestCase):
             zip_code=default_ZipCodeDictionaryChild_zip_code).get_commute_time()
                 == default_ZipCodeDictionaryChild_commute_time
                 )
+        assert (zip_code_dictionary.zipcodedictionarychild_set.get(
+            zip_code=default_ZipCodeDictionaryChild_zip_code).get_commute_type()
+                == default_ZipCodeDictionaryChild_commute_type
+                )
 
     @staticmethod
     def test_zip_code_dictionary_unique_attribute_same():
@@ -191,27 +198,5 @@ class ZipCodeDictionaryTestCase(TestCase):
             create_zip_code_dictionary(zip_code="02474")
         except IntegrityError:
             raise Exception("Integrity Error should not have been raised")
-
-    @staticmethod
-    def test_zip_code_dictionary_child_unique_attribute_same():
-        zip_code_dictionary = create_zip_code_dictionary_with_child()
-        try:
-            zip_code_dictionary.zipcodedictionarychild_set.create(
-                zip_code=default_ZipCodeDictionaryChild_zip_code
-            )
-            raise Exception("ZipCodeDictionary should be unique")
-        except IntegrityError:
-            pass
-
-    @staticmethod
-    def test_zip_code_dictionary_child_unique_attribute_different():
-        zip_code_dictionary = create_zip_code_dictionary_with_child()
-        try:
-            zip_code_dictionary.zipcodedictionarychild_set.create(
-                zip_code="02476"
-            )
-        except IntegrityError:
-            raise Exception("ZipCodeDictionary should be unique")
-
 
 

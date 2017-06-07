@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, weight_question_value
-from houseDatabase.models import RentDatabase
+from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
 from survey.models import RentingSurveyModel, default_rent_survey_name
 from userAuth.models import UserProfile
 from .forms import RentSurvey, DestinationForm, RentSurveyMini
@@ -108,7 +108,11 @@ class ScoringStruct:
         self.score = 0
         self.scorePossible = 0
         self.commuteTime = []
+        self.approxCommuteTime = []
         self.eliminated = False
+
+    def __str__(self):
+        return self.house.full_address()
 
     def get_score(self):
         """
@@ -166,6 +170,29 @@ class ScoringStruct:
         end_result = ""
         counter = 0
         for commute in self.commuteTime:
+            if commute > 60:
+                max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
+            else:
+                max_output = str(int(commute)) + " Minutes"
+            if counter != 0:
+                end_result = end_result + ", " + max_output
+            else:
+                end_result = max_output
+            counter = 1
+
+        return end_result
+
+    def get_approx_commute_times(self):
+        """
+        Returns a formatted string that returns all the commute times for a given home
+        Example output:
+        27 Minutes, 27 Minutes, 27 Minutes
+        :return:
+        string -> Formatted to display nicely to the user
+        """
+        end_result = ""
+        counter = 0
+        for commute in self.approxCommuteTime:
             if commute > 60:
                 max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
             else:
@@ -381,6 +408,104 @@ def order_by_house_score(scored_house_list):
     return scored_house_list
 
 
+def compute_approximate_commute_times(destinations, scored_list, context):
+    # If the home failed to find an associated zip code cached, mark it as failed
+    # and then we will dynamically get that zip code and store it
+    failed_zip_codes = {}
+
+    # Make this a survey questions soon!!
+    commute_type = "driving"
+    for house in scored_list:
+        for destination in destinations:
+            try:
+                zip_code_dictionary = ZipCodeDictionary.objects.get(
+                    zip_code=house.house.get_zip_code(),
+                )
+                try:
+                    zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
+                        zip_code=destination.get_zip_code(),
+                        commute_type=commute_type,
+                    )
+                    house.commuteTime.append(zip_code_dictionary_child.get_commute_time())
+                except ZipCodeDictionaryChild.DoesNotExist:
+                    if destination.get_zip_code() in failed_zip_codes:
+                        failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
+                    else:
+                        failed_zip_codes[destination.get_zip_code()] = [house.house.get_zip_code()]
+            except ZipCodeDictionary.DoesNotExist:
+                # failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
+                if destination.get_zip_code() in failed_zip_codes:
+                    failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
+                else:
+                    failed_zip_codes[destination.get_zip_code()] = [house.house.get_zip_code()]
+
+    print("Failed homes: ")
+    print(failed_zip_codes)
+    if failed_zip_codes:
+        print("There are failed zip codes, calculating")
+        add_zip_codes_to_database(failed_zip_codes, commute_type)
+
+
+def add_zip_codes_to_database(failed_zip_codes, commute_type):
+    # Generates matrix of commute times from the origin to the destination
+    gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
+
+    # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
+    # Each row contains the origin with each corresponding destination
+    # The value field of duration is in seconds
+    measure_units = "imperial"
+
+    origins = []
+
+    for destination_zip_code in failed_zip_codes:
+        origins.clear()
+        if len(destination_zip_code) >= 5:
+            for origins_zip_code in failed_zip_codes.get(destination_zip_code):
+                if len(origins_zip_code) >= 5:
+                    origins.append(origins_zip_code[:5])
+
+        print(origins)
+        print(destination_zip_code)
+
+        matrix = gmaps.distance_matrix(
+            origins,
+            destination_zip_code,
+            mode=commute_type,
+            units=measure_units,
+        )
+        if matrix:
+            counter = 0
+            for origin in origins:
+                for commute in matrix["rows"][counter]["elements"]:
+                    # Divide by 60 to get minutes
+                    if commute['status'] == 'OK':
+                        print(commute['duration']["value"])
+                        print(commute['distance']['value'])
+                        if ZipCodeDictionary.objects.filter(zip_code=origin).exists():
+                            zip_code_dictionary = ZipCodeDictionary.objects.get(zip_code=origin)
+                            if zip_code_dictionary.zipcodedictionarychild_set.filter(
+                                    zip_code=destination_zip_code,
+                                    commute_type=commute_type).exists():
+                                print("Some error occurred")
+                            else:
+                                zip_code_dictionary.zipcodedictionarychild_set.create(
+                                    zip_code=destination_zip_code,
+                                    commute_type=commute_type,
+                                    commute_distance=commute['distance']['value'],
+                                    commute_time=commute['duration']['value'],
+                                )
+                        else:
+                            ZipCodeDictionary.objects.create(zip_code=origin) \
+                                .zipcodedictionarychild_set.create(
+                                zip_code=destination_zip_code,
+                                commute_type=commute_type,
+                                commute_distance=commute['distance']['value'],
+                                commute_time=commute['duration']['value'],
+                            )
+                    counter += 1
+            print(matrix)
+
+
 def google_matrix(origins, destinations, scored_list, context):
     """
     Generates the Commute times for all the homes
@@ -400,7 +525,12 @@ def google_matrix(origins, destinations, scored_list, context):
     # The value field of duration is in seconds
     mode_commute = "driving"
     measure_units = "imperial"
-    matrix = gmaps.distance_matrix(origins, destinations,
+    destinations_full_address = []
+    # Retrieve only the full address to give to the distance matrix
+    for destination in destinations:
+        destinations_full_address.append(destination.get_full_address())
+
+    matrix = gmaps.distance_matrix(origins, destinations_full_address,
                                    mode=mode_commute,
                                    units=measure_units,
                                    )
@@ -462,7 +592,7 @@ def start_algorithm(survey, context):
 
     destinations = []
     for location in destination_set:
-        destinations.append(location.full_address())
+        destinations.append(location)
 
     # This puts all the homes into a scored list
     scored_house_list = []
@@ -473,7 +603,8 @@ def start_algorithm(survey, context):
     if not destinations or not origins:
         context['error_message'].append("No Destination or origin")
     else:
-        scored_house_list = google_matrix(origins, destinations, scored_house_list, context)
+        # scored_house_list = google_matrix(origins, destinations, scored_house_list, context)
+        compute_approximate_commute_times(destinations, scored_house_list, context)
     # Generate scores for the homes based on the survey results
     homes_fully_scored = create_house_score(scored_house_list, survey)
 
@@ -560,7 +691,6 @@ def survey_result_rent(request, survey_id="recent"):
 
 @login_required
 def visit_list(request):
-
     context = {
         'error_message': []
     }
@@ -685,7 +815,7 @@ def set_visit_house(request):
                     user_profile.visit_list.add(home)
                     return HttpResponse(json.dumps({"result": "1",
                                                     "homeId": home_id}),
-                                        content_type="application/json",)
+                                        content_type="application/json", )
                 except RentDatabase.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",

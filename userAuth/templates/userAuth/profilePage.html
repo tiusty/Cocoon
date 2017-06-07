@@ -172,7 +172,7 @@
                                                     {% for destAddress in destAddresses %}
                                                         <tr>
                                                             <td>
-                                                                {{ destAddress.streetAddress }}, {{ destAddress.city }}, {{ destAddress.state }}, {{ destAddress.zip_code }}
+                                                                {{ destAddress.full_address }}
                                                             </td>
                                                             {% if forloop.counter == 1 %}
                                                                 <td>{{ survey.get_home_types }}</td>

@@ -100,7 +100,7 @@ def ProfilePage(request, defaultPage="profile"):
     else:
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
-    rent_surveys = RentingSurveyModel.objects.filter(userProf=userProfile).order_by('-created')[:50]
+    rent_surveys = RentingSurveyModel.objects.filter(user_profile=userProfile).order_by('-created')[:50]
     context['numRentSurveys'] = rent_surveys.count()
     context['numBuySurveys'] = 0
     context['surveys'] = rent_surveys
