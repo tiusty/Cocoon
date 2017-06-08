@@ -277,7 +277,13 @@ Global variables are listed below
                                     <!-- id is used for selecting pin on google maps -->
                                     <td id="address{{ forloop.counter }}"
                                         style="vertical-align:middle"> {{ home.house.full_address }}</td>
-                                    <td style="vertical-align:middle"> {{ home.get_commute_times }}</td>
+                                    <td style="vertical-align:middle">
+                                        {% if home.get_commute_times %}
+                                            {{ home.get_commute_times }}
+                                        {% else %}
+                                            {{ home.get_approx_commute_times }}
+                                        {% endif %}
+                                    </td>
                                     <td style="vertical-align:middle"> {{ home.house.get_price_str }}</td>
                                     <td style="vertical-align:middle"> {{ home.house.get_home_type }}</td>
                                     <td style="vertical-align:middle"> {{ home.get_final_score }}</td>

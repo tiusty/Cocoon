@@ -408,13 +408,14 @@ def order_by_house_score(scored_house_list):
     return scored_house_list
 
 
-def compute_approximate_commute_times(destinations, scored_list, context):
+def compute_approximate_commute_times(destinations, scored_list, commute_type):
     # If the home failed to find an associated zip code cached, mark it as failed
     # and then we will dynamically get that zip code and store it
+    # Format of dictionary:
+    # { 'destination zip code 1' : [ 'origin zip code 1', 'origin zip code 2' ],
+    #   'destination zip code 2' : [ 'origin zip code 1', 'origin zip code 3' ]}
     failed_zip_codes = {}
 
-    # Make this a survey questions soon!!
-    commute_type = "driving"
     for house in scored_list:
         for destination in destinations:
             try:
@@ -426,24 +427,35 @@ def compute_approximate_commute_times(destinations, scored_list, context):
                         zip_code=destination.get_zip_code(),
                         commute_type=commute_type,
                     )
-                    house.commuteTime.append(zip_code_dictionary_child.get_commute_time())
-                except ZipCodeDictionaryChild.DoesNotExist:
-                    if destination.get_zip_code() in failed_zip_codes:
-                        failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
+                    # If the zip code needs to be refreshed, then delete the zip code
+                    # and add it to the failed list
+                    if zip_code_dictionary_child.test_recompute_date():
+                        zip_code_dictionary_child.delete()
+                        add_home_to_failed_list(failed_zip_codes, destination, house)
+                        # If all the conditions pass, then store the commute time stored for that combination
                     else:
-                        failed_zip_codes[destination.get_zip_code()] = [house.house.get_zip_code()]
+                        house.commuteTime.append(zip_code_dictionary_child.get_commute_time())
+                except ZipCodeDictionaryChild.DoesNotExist:
+                    add_home_to_failed_list(failed_zip_codes, destination, house)
             except ZipCodeDictionary.DoesNotExist:
-                # failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
-                if destination.get_zip_code() in failed_zip_codes:
-                    failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
-                else:
-                    failed_zip_codes[destination.get_zip_code()] = [house.house.get_zip_code()]
+                add_home_to_failed_list(failed_zip_codes, destination, house)
 
-    print("Failed homes: ")
-    print(failed_zip_codes)
     if failed_zip_codes:
-        print("There are failed zip codes, calculating")
         add_zip_codes_to_database(failed_zip_codes, commute_type)
+
+
+def add_home_to_failed_list(failed_zip_codes, destination, house):
+    """
+    This function adds a failed home combination to the failed_zip_codes array
+    It is passed the house and the destination that is is supposed to go to
+    :param failed_zip_codes: A dictionary of failed zip code combination
+    :param destination: The destination stored as a RentDatabase model
+    :param house: The house (origin), stored as a scoring structure
+    """
+    if destination.get_zip_code() in failed_zip_codes:
+        failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
+    else:
+        failed_zip_codes[destination.get_zip_code()] = [house.house.get_zip_code()]
 
 
 def add_zip_codes_to_database(failed_zip_codes, commute_type):
@@ -455,17 +467,12 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
     # The value field of duration is in seconds
     measure_units = "imperial"
 
-    origins = []
-
     for destination_zip_code in failed_zip_codes:
-        origins.clear()
+        origins = []
         if len(destination_zip_code) >= 5:
             for origins_zip_code in failed_zip_codes.get(destination_zip_code):
                 if len(origins_zip_code) >= 5:
                     origins.append(origins_zip_code[:5])
-
-        print(origins)
-        print(destination_zip_code)
 
         matrix = gmaps.distance_matrix(
             origins,
@@ -479,8 +486,6 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
                 for commute in matrix["rows"][counter]["elements"]:
                     # Divide by 60 to get minutes
                     if commute['status'] == 'OK':
-                        print(commute['duration']["value"])
-                        print(commute['distance']['value'])
                         if ZipCodeDictionary.objects.filter(zip_code=origin).exists():
                             zip_code_dictionary = ZipCodeDictionary.objects.get(zip_code=origin)
                             if zip_code_dictionary.zipcodedictionarychild_set.filter(
@@ -503,7 +508,6 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
                                 commute_time=commute['duration']['value'],
                             )
                     counter += 1
-            print(matrix)
 
 
 def google_matrix(origins, destinations, scored_list, context):
@@ -561,8 +565,8 @@ def start_algorithm(survey, context):
     for home in survey.home_type.all():
         current_home_types.append(home.homeType)
 
-    # Filters the Database with all the static elements as the first pass
     """
+    STEP 1: Compute Static Elements
     The item that will filter the list the most should be first to narrow down the number of iterations
     The database needs to be searched
     (Right now it isn't order by efficiency but instead by when it was added. Later it can be switched around
@@ -585,11 +589,14 @@ def start_algorithm(survey, context):
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdestinations_set.all()
 
-    # First put all the origins into an array then the destinations
+    # Origins are defined as all the homes that the person would originate from.
+    # This means where they would live, aka the house
     origins = []
     for house in filtered_house_list:
         origins.append(house.address)
 
+    # The destination is defined as a location the user would commute to.
+    # Aka their job, school etc. Therefore this is the destination they wish to be at
     destinations = []
     for location in destination_set:
         destinations.append(location)
@@ -599,17 +606,29 @@ def start_algorithm(survey, context):
     for house in filtered_house_list:
         scored_house_list.append(ScoringStruct(house))
 
-    # First Commute score is calculated if there are origins and destinations
-    if not destinations or not origins:
+    # Make this a survey questions soon!!
+    commute_type = "driving"
+
+    """
+    STEP 2: Compute the approximate distance using zip codes.
+    This serves as a secondary static filer to eliminate homes that are far away.
+    This also will store how long the commute will take which will be used later for
+    Dynamic filtering/scoring
+    """
+    # If there are no destinations or no homes, then don't bother with algorithm
+    if not destinations or not scored_house_list:
         context['error_message'].append("No Destination or origin")
     else:
         # scored_house_list = google_matrix(origins, destinations, scored_house_list, context)
-        compute_approximate_commute_times(destinations, scored_house_list, context)
-    # Generate scores for the homes based on the survey results
-    homes_fully_scored = create_house_score(scored_house_list, survey)
+        compute_approximate_commute_times(destinations, scored_house_list, commute_type)
 
-    # Order the homes based off the score
-    scored_house_list_ordered = order_by_house_score(homes_fully_scored)
+        # Filter based on approximate commute times
+
+        # Generate scores for the homes based on the survey results
+        homes_fully_scored = create_house_score(scored_house_list, survey)
+
+        # Order the homes based off the score
+        scored_house_list_ordered = order_by_house_score(homes_fully_scored)
 
     # Contains destinations of the user
     context['locations'] = destination_set

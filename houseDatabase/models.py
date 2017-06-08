@@ -1,5 +1,6 @@
 from django.db import models
 import datetime
+from django.utils import timezone
 
 
 not_set_char = "Not set"
@@ -153,6 +154,9 @@ COMMUTE_TYPES = (
     ('biking', 'Biking'),
 )
 
+# This value determines how many days until the zip code value needs to be refreshed
+zip_code_timedelta_value = 60
+
 
 class ZipCodeDictionaryChild(models.Model):
     """
@@ -163,6 +167,7 @@ class ZipCodeDictionaryChild(models.Model):
     base_zip_code = models.ForeignKey('ZipCodeDictionary', on_delete=models.CASCADE)
     commute_time = models.IntegerField(default=-1)
     commute_distance = models.IntegerField(default=-1)
+    last_date_updated = models.DateField(default=timezone.now)
     commute_type = models.CharField(
         choices=COMMUTE_TYPES,
         max_length=15,
@@ -185,7 +190,19 @@ class ZipCodeDictionaryChild(models.Model):
     def get_commute_distance(self):
         return self.commute_distance * 0.000621371
 
+    def get_last_date_updated(self):
+        return self.last_date_updated
+
+    def test_recompute_date(self):
+        """
+        This function tests whether or not the zip code should be recalculated
+        Currently, the zip_code should be recomputed if it is older than 2 months old
+        :return:
+        """
+        if timezone.now().date() > self.get_last_date_updated() + timezone.timedelta(days=zip_code_timedelta_value):
+            return True
+        else:
+            return False
+
     def get_commute_type(self):
         return self.commute_type
-
-

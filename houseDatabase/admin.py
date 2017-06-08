@@ -30,7 +30,7 @@ class ZipCodeDictionaryChildInLine(admin.StackedInline):
 class ZipCodeDictionaryAdmin(admin.ModelAdmin):
     fieldsets = [
         ('ZipCodes',
-         {'fields': ['zip_code',]}),
+         {'fields': ['zip_code', ]}),
     ]
     list_display = ('zip_code',)
     inlines = [ZipCodeDictionaryChildInLine]
