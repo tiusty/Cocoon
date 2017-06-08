@@ -279,9 +279,9 @@ Global variables are listed below
                                         style="vertical-align:middle"> {{ home.house.full_address }}</td>
                                     <td style="vertical-align:middle">
                                         {% if home.get_commute_times %}
-                                            {{ home.get_commute_times }}
+                                            {{ home.get_commute_times_str }}
                                         {% else %}
-                                            {{ home.get_approx_commute_times }}
+                                            {{ home.get_approx_commute_times_str }}
                                         {% endif %}
                                     </td>
                                     <td style="vertical-align:middle"> {{ home.house.get_price_str }}</td>
@@ -331,12 +331,12 @@ Global variables are listed below
         // Manipulated by survey_result.js in selectAddress
         //var myDestination = "{{ houseList.0.address }}";
         // Manipulated by costSliderResults.js
-        costSliderMax = {{ survey.get_max_price }};
-        costSliderMin = {{ survey.get_min_price }};
-        commuteSliderMin = {{ survey.get_min_commute }};
-        commuteSliderMax = {{ survey.get_max_commute }};
-        bathroomsMin = {{ survey.get_min_bathrooms }};
-        bathroomsMax = {{ survey.get_max_bathrooms }};
+        costSliderMax = {{ form.max_price.value }};
+        costSliderMin = {{ form.min_price.value }};
+        commuteSliderMin = {{ form.min_commute.value }};
+        commuteSliderMax = {{ form.max_commute.value }};
+        bathroomsMin = {{ form.min_bathrooms.value }};
+        bathroomsMax = {{ form.max_bathrooms.value }};
     </script>
 
     <!-- Custom Javascript -->

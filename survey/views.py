@@ -8,7 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 
-from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, weight_question_value
+from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
+    weight_question_value, approximate_commute_range
 from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
 from survey.models import RentingSurveyModel, default_rent_survey_name
 from userAuth.models import UserProfile
@@ -161,6 +162,26 @@ class ScoringStruct:
 
     def get_commute_times(self):
         """
+        Returns all the commute times for that home as a list
+        :return: A list with all the commute times
+        """
+        commutes = []
+        for commute in self.commuteTime:
+            commutes.append(commute)
+        return commutes
+
+    def get_approx_commute_times(self):
+        """
+        Returns all the approximate commute times for that home as a list
+        :return: A list with all the approximate commute times
+        """
+        approx_commutes = []
+        for commute in self.approxCommuteTime:
+            approx_commutes.append(commute)
+        return approx_commutes
+
+    def get_commute_times_str(self):
+        """
         Returns a formatted string that returns all the commute times for a given home
         Example output:
         27 Minutes, 27 Minutes, 27 Minutes
@@ -182,7 +203,7 @@ class ScoringStruct:
 
         return end_result
 
-    def get_approx_commute_times(self):
+    def get_approx_commute_times_str(self):
         """
         Returns a formatted string that returns all the commute times for a given home
         Example output:
@@ -204,6 +225,9 @@ class ScoringStruct:
             counter = 1
 
         return end_result
+
+    def eliminate_home(self):
+        self.eliminated = True
 
 
 # It will take in the houseMatrix score
@@ -434,7 +458,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type):
                         add_home_to_failed_list(failed_zip_codes, destination, house)
                         # If all the conditions pass, then store the commute time stored for that combination
                     else:
-                        house.commuteTime.append(zip_code_dictionary_child.get_commute_time())
+                        house.approxCommuteTime.append(zip_code_dictionary_child.get_commute_time())
                 except ZipCodeDictionaryChild.DoesNotExist:
                     add_home_to_failed_list(failed_zip_codes, destination, house)
             except ZipCodeDictionary.DoesNotExist:
@@ -508,6 +532,16 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
                                 commute_time=commute['duration']['value'],
                             )
                     counter += 1
+
+
+def filter_homes_based_on_approximate_commute(survey, scored_list):
+    for home in scored_list:
+        print(home.get_approx_commute_times())
+        for commute in home.get_approx_commute_times():
+            print(commute)
+            if (commute > survey.get_max_commute() + approximate_commute_range) \
+                    or (commute < survey.get_min_commute() - approximate_commute_range):
+                home.eliminate_home()
 
 
 def google_matrix(origins, destinations, scored_list, context):
@@ -608,6 +642,7 @@ def start_algorithm(survey, context):
 
     # Make this a survey questions soon!!
     commute_type = "driving"
+    scored_house_list_ordered = []
 
     """
     STEP 2: Compute the approximate distance using zip codes.
@@ -623,6 +658,7 @@ def start_algorithm(survey, context):
         compute_approximate_commute_times(destinations, scored_house_list, commute_type)
 
         # Filter based on approximate commute times
+        filter_homes_based_on_approximate_commute(survey, scored_house_list)
 
         # Generate scores for the homes based on the survey results
         homes_fully_scored = create_house_score(scored_house_list, survey)
@@ -699,6 +735,12 @@ def survey_result_rent(request, survey_id="recent"):
                                                 kwargs={"survey_id": survey.id}))
         else:
             context['error_message'].append("There are form errors")
+            try:
+                survey = RentingSurveyModel.objects.get(id=survey.id)
+                # Think of better solution for problem
+            except RentingSurveyModel.DoesNotExist:
+                print("Something really went wrong")
+                return HttpResponseRedirect(reverse('survey:rentSurveyResult'))
 
     # Now start executing the Algorithm
     start_algorithm(survey, context)
