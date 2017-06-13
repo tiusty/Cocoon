@@ -184,11 +184,17 @@ class ZipCodeDictionaryChild(models.Model):
 
     # Commute time is stored in seconds so divide by 60 to get number of minutes
     def get_commute_time(self):
-        return self.commute_time / 60
+        return self.get_commute_time_seconds() / 60
+
+    def get_commute_time_seconds(self):
+        return self.commute_time
 
     # Commute distance is stored in meters so convert to miles
     def get_commute_distance(self):
-        return self.commute_distance * 0.000621371
+        return self.get_commute_distance_meters() * 0.000621371
+
+    def get_commute_distance_meters(self):
+        return self.commute_distance
 
     def get_last_date_updated(self):
         return self.last_date_updated

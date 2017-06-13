@@ -31,8 +31,8 @@ default_storage_unit = True
 # defaults for the ZipCodeDictionary
 default_ZipCodeDictionary_zip_code = "02476"
 default_ZipCodeDictionaryChild_zip_code = "02474"
-default_ZipCodeDictionaryChild_commute_time = 20
-default_ZipCodeDictionaryChild_commute_distance = 25
+default_ZipCodeDictionaryChild_commute_time_seconds = 1200
+default_ZipCodeDictionaryChild_commute_distance_meters = 25
 default_ZipCodeDictionaryChild_commute_type = "driving"
 
 
@@ -99,8 +99,8 @@ def create_zip_code_dictionary(
 
 def create_zip_code_dictionary_with_child(
         zip_code=default_ZipCodeDictionaryChild_zip_code,
-        commute_time=default_ZipCodeDictionaryChild_commute_time,
-        commute_distance=default_ZipCodeDictionaryChild_commute_distance,
+        commute_time=default_ZipCodeDictionaryChild_commute_time_seconds,
+        commute_distance=default_ZipCodeDictionaryChild_commute_distance_meters,
         commute_type=default_ZipCodeDictionaryChild_commute_type
     ):
     zip_code_dictionary = create_zip_code_dictionary()
@@ -170,12 +170,12 @@ class ZipCodeDictionaryTestCase(TestCase):
                 == zip_code_dictionary
                 )
         assert(zip_code_dictionary.zipcodedictionarychild_set.get(
-            zip_code=default_ZipCodeDictionaryChild_zip_code).get_commute_distance()
-               == default_ZipCodeDictionaryChild_commute_distance
+            zip_code=default_ZipCodeDictionaryChild_zip_code).get_commute_distance_meters()
+               == default_ZipCodeDictionaryChild_commute_distance_meters
         )
         assert (zip_code_dictionary.zipcodedictionarychild_set.get(
-            zip_code=default_ZipCodeDictionaryChild_zip_code).get_commute_time()
-                == default_ZipCodeDictionaryChild_commute_time
+            zip_code=default_ZipCodeDictionaryChild_zip_code).get_commute_time_seconds()
+                == default_ZipCodeDictionaryChild_commute_time_seconds
                 )
         assert (zip_code_dictionary.zipcodedictionarychild_set.get(
             zip_code=default_ZipCodeDictionaryChild_zip_code).get_commute_type()
