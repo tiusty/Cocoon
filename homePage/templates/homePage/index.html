@@ -24,13 +24,20 @@
         {% else %}
             <h1>Welcome to Cocoon!</h1>
         {% endif %}
-        <p class="lead">Here at Cacoon we strive to find your perfect home! </p>
+        <p class="lead">Here at Cocoon we strive to find your perfect home! </p>
         {% if not user.is_authenticated %}
             <p>Please sign in:  <a href="{% url 'userAuth:loginPage' %}"><button class="btn btn-primary">Login</button></a></p>
             {% else %}
             <p>Please click below to get started!</p>
         {% endif %}
     </div>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     {% if error_message %}
         <div class="row">
             <div class="col-sm-offset-3 col-sm-6" style="color:red">

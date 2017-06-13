@@ -3,8 +3,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from userAuth.models import UserProfile
-from survey.models import RentingSurveyModel, RentingDestinations
+from survey.models import RentingSurveyModel
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .forms import LoginUserForm, RegisterForm, ProfileForm
 # Create your views here.
@@ -55,6 +56,7 @@ def registerPage(request):
             # The email address is used as the username
             form.save()
             # Try to have the user automatically log in but for now go back to login page
+            messages.add_message(request, messages.SUCCESS, 'Successfully registered user')
             return HttpResponseRedirect(reverse('userAuth:loginPage'))
         else:
             context['error_message'].append('Unable to create user')
@@ -64,6 +66,7 @@ def registerPage(request):
 
 def logoutPage(request):
     logout(request)
+    messages.add_message(request, messages.SUCCESS, 'Successfully logged out')
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
 
@@ -77,6 +80,7 @@ def ProfilePage(request, defaultPage="profile"):
         form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            messages.add_message(request, messages.SUCCESS, 'Updated Account')
             return HttpResponseRedirect(reverse('userAuth:profilePage',
                                                 kwargs={'defaultPage': "profile"}))
         else:
@@ -98,6 +102,7 @@ def ProfilePage(request, defaultPage="profile"):
         context['favorites'] = userProfile.favorites.all()
 
     else:
+        messages.add_message(request,messages.ERROR, "User is not authenticated")
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
     rent_surveys = RentingSurveyModel.objects.filter(user_profile=userProfile).order_by('-created')[:50]

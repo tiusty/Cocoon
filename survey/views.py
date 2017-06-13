@@ -4,6 +4,7 @@ from enum import Enum
 
 import googlemaps
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
@@ -701,7 +702,6 @@ def start_algorithm(survey, context):
     # Make this a survey questions soon!!
     # commute_type = "driving"
     commute_type = survey.get_commute_type()
-    print(commute_type)
     scored_house_list_ordered = []
 
     """
@@ -763,6 +763,7 @@ def survey_result_rent(request, survey_id="recent"):
         try:
             survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
         except RentingSurveyModel.DoesNotExist:
+            messages.add_message(request, messages.ERROR, 'Could not find Survey')
             return HttpResponseRedirect(reverse('homePage:index'))
     else:
         # If the user did not choose recent, then try to grab the survey by it's id
@@ -776,6 +777,7 @@ def survey_result_rent(request, survey_id="recent"):
             try:
                 survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
+                messages.add_message(request, messages.ERROR, 'Could not find Survey')
                 return HttpResponseRedirect(reverse('homePage:index'))
 
     # Populate form with stored data
@@ -800,13 +802,13 @@ def survey_result_rent(request, survey_id="recent"):
                 # Think of better solution for problem
             except RentingSurveyModel.DoesNotExist:
                 print("Something really went wrong")
+                messages.add_message(request, messages.ERROR, 'Could not find Survey')
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult'))
 
     # Now start executing the Algorithm
     start_algorithm(survey, context)
     context['survey'] = survey
     context['form'] = form
-
     return render(request, 'survey/surveyResultRent.html', context)
 
 
