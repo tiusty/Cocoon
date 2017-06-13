@@ -101,9 +101,9 @@ class RentSurveyBase(ModelForm):
             }),
         # Prevents other objects from being displayed as choices as a home type,
         # If more hometypes are added then it needs to be added here to the survey
-        queryset=HomeType.objects.filter(Q(homeType__startswith="house")
+        queryset=HomeType.objects.filter(Q(homeType__startswith="House")
                                          | Q(homeType__startswith="Apartment")
-                                         | Q(homeType__startswith="condo")
+                                         | Q(homeType__startswith="Condo")
                                          | Q(homeType__startswith="Town House"))
     )
 

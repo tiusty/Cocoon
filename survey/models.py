@@ -28,10 +28,10 @@ class HomeType(models.Model):
     tuples but also allowed past the query in the survey result view.
     """
     HOME_TYPE = (
-        ('house', 'House'),
-        ('apartment', 'Apartment'),
-        ('condo', 'Condo'),
-        ('town_house', 'Town House'),
+        ('House', 'House'),
+        ('Apartment', 'Apartment'),
+        ('Condo', 'Condo'),
+        ('Town House', 'Town House'),
     )
     homeType = models.CharField(
         choices=HOME_TYPE,

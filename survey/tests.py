@@ -1,92 +1,74 @@
 from django.test import TestCase
 
-from survey.forms import InitialSurvey
+from django.utils import timezone
 
+from survey.forms import RentSurvey
+from survey.models import HomeType
+
+
+# FIX NAMING FOR WASH_dryer_in_home
 # Create your tests here.
+class SurveyFormTest(TestCase):
 
+    def setUp(self):
+        HomeType.objects.create(homeType="Apartment")
+        HomeType.objects.create(homeType="Condo")
+        HomeType.objects.create(homeType="Town House")
+        HomeType.objects.create(homeType="House")
+        self.default_min_price = 500
+        self.default_max_price = 2000
+        self.default_price_weight = 2
+        self.default_min_commute = 20
+        self.default_max_commute = 90
+        self.default_home_type = ['2']
+        self.default_commute_weight = 1
+        self.default_move_in_date_start = timezone.now() + timezone.timedelta(days=20)
+        self.default_move_in_date_end = timezone.now() + timezone.timedelta(days=50)
+        self.default_num_bedrooms = 2
+        self.default_air_conditioning = 3
+        self.default_wash_dryer_in_home = 2
+        self.default_dish_washer = 1
+        self.default_bath = 1
+        self.default_max_bathrooms = 5
+        self.default_min_bathrooms = 1
+        self.default_parking_spot = 2
+        self.default_washer_dryer_in_building = 4
+        self.default_elevator = 0
+        self.default_handicap_access = 1
+        self.default_pool_hot_tub = 0
+        self.default_fitness_center = 4
+        self.default_storage_unit = 3
 
-class HomePageFormTest(TestCase):
-    def test_forms_correct_input(self):
+    def create_form_rent_survey(self):
         form_data = {
-            'survey_type': 'buy',
-            'streetAddress': '12 Stony Brook Rd',
-            'city': 'Arlington',
-            'state': 'MA',
-            'zip_code': '02476-8019',
+            'min_price': self.default_min_price,
+            'max_price': self.default_max_price,
+            'price_weight': self.default_price_weight,
+            'min_commute': self.default_min_commute,
+            'max_commute': self.default_max_commute,
+            'home_type': self.default_home_type,
+            'commute_weight': self.default_commute_weight,
+            'move_in_date_start': self.default_move_in_date_start,
+            'move_in_date_end': self.default_move_in_date_end,
+            'num_bedrooms': self.default_num_bedrooms,
+            'air_conditioning': self.default_air_conditioning,
+            'wash_dryer_in_home': self.default_wash_dryer_in_home,
+            'dish_washer': self.default_dish_washer,
+            'bath': self.default_bath,
+            'max_bathrooms': self.default_max_bathrooms,
+            'min_bathrooms': self.default_min_bathrooms,
+            'parking_spot': self.default_parking_spot,
+            'washer_dryer_in_building': self.default_washer_dryer_in_building,
+            'elevator': self.default_elevator,
+            'handicap_access': self.default_handicap_access,
+            'pool_hot_tub': self.default_pool_hot_tub,
+            'fitness_center': self.default_fitness_center,
+            'storage_unit': self.default_storage_unit,
         }
-        form = InitialSurvey(data=form_data)
+        form = RentSurvey(data=form_data)
+        return form
+
+    def test_forms_correct_input(self):
+        form = self.create_form_rent_survey()
         self.assertTrue(form.is_valid())
 
-    def test_forms_empty_survey_type_field(self):
-        form_data = {
-            'streetAddress': '12 Stony Brook Rd',
-            'city': 'Arlington',
-            'state': 'MA',
-            'zip_code': '02476-8019',
-        }
-        form = InitialSurvey(data=form_data)
-        self.assertFalse(form.is_valid())
-
-    def test_forms_empty_streetAddress_field(self):
-        form_data = {
-            'survey_type': 'buy',
-            'city': 'Arlington',
-            'state': 'MA',
-            'zip_code': '02476-8019',
-        }
-        form = InitialSurvey(data=form_data)
-        self.assertFalse(form.is_valid())
-
-    def test_forms_empty_city_field(self):
-        form_data = {
-            'survey_type': 'buy',
-            'streetAddress': '12 Stony Brook Rd',
-            'state': 'MA',
-            'zip_code': '02476-8019',
-        }
-        form = InitialSurvey(data=form_data)
-        self.assertFalse(form.is_valid())
-
-    def test_forms_empty_state_field(self):
-        form_data = {
-            'survey_type': 'buy',
-            'streetAddress': '12 Stony Brook Rd',
-            'city': 'Arlington',
-            'zip_code': '02476-8019',
-        }
-        form = InitialSurvey(data=form_data)
-        self.assertFalse(form.is_valid())
-
-    def test_forms_empty_zip_code_field(self):
-        form_data = {
-            'survey_type': 'buy',
-            'streetAddress': '12 Stony Brook Rd',
-            'city': 'Arlington',
-            'state': 'MA',
-        }
-        form = InitialSurvey(data=form_data)
-        self.assertFalse(form.is_valid())
-
-    def test_forms_radio_select_buy(self):
-        form_data = {
-            'survey_type': 'buy',
-            'streetAddress': '12 Stony Brook Rd',
-            'city': 'Arlington',
-            'state': 'MA',
-            'zip_code': '02476-8019',
-        }
-        form = InitialSurvey(data=form_data)
-        form.is_valid()
-        self.assertEqual(form.cleaned_data['survey_type'], 'buy')
-
-    def test_forms_radio_select_rent(self):
-        form_data = {
-            'survey_type': 'rent',
-            'streetAddress': '12 Stony Brook Rd',
-            'city': 'Arlington',
-            'state': 'MA',
-            'zip_code': '02476-8019',
-        }
-        form = InitialSurvey(data=form_data)
-        form.is_valid()
-        self.assertEquals(form.cleaned_data['survey_type'], 'rent')

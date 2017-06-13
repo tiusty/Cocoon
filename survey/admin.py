@@ -1,5 +1,5 @@
 from django.contrib import admin
-from survey.models import RentingSurveyModel, RentingDestinations
+from survey.models import RentingSurveyModel, RentingDestinations, HomeType
 
 # Register your models here.
 
@@ -31,4 +31,13 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class HomeTypeModelAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Home Type',
+         {'fields': ['homeType', ]})
+    ]
+    list_display = ('homeType',)
+
+
 admin.site.register(RentingSurveyModel, RentingSurveyModelAdmin)
+admin.site.register(HomeType, HomeTypeModelAdmin)

@@ -1,5 +1,6 @@
 import json
 import math
+from enum import Enum
 
 import googlemaps
 from django.contrib.auth.decorators import login_required
@@ -14,6 +15,11 @@ from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDiction
 from survey.models import RentingSurveyModel, default_rent_survey_name
 from userAuth.models import UserProfile
 from .forms import RentSurvey, DestinationForm, RentSurveyMini
+
+
+class CommuteTypes(Enum):
+    exact = 1
+    approx = 2
 
 
 # Create your views here.
@@ -160,7 +166,19 @@ class ScoringStruct:
         else:
             return "F"
 
-    def get_commute_times(self):
+    def get_commute_times(self, commute_type):
+        """
+        Get commute times gets the commute for the house depending on the argument
+        It will either return the exact or the approximate commute times
+        :param commute_type: Enum type CommuteTypes
+        :return: An array of ints which are all the commute times associated with that house
+        """
+        if commute_type is CommuteTypes.exact:
+            return self.get_commute_times_exact()
+        else:
+            return self.get_commute_times_approx()
+
+    def get_commute_times_exact(self):
         """
         Returns all the commute times for that home as a list
         :return: A list with all the commute times
@@ -170,7 +188,7 @@ class ScoringStruct:
             commutes.append(commute)
         return commutes
 
-    def get_approx_commute_times(self):
+    def get_commute_times_approx(self):
         """
         Returns all the approximate commute times for that home as a list
         :return: A list with all the approximate commute times
@@ -234,7 +252,7 @@ class ScoringStruct:
 # It will commute the score based on the commute times to the destinations
 # The score is multiplied by the scale factor which is user determined
 # This factor determines how much the factor will affect the overall weight
-def create_commute_score(scored_house_list, survey):
+def create_commute_score(scored_house_list, survey, commute_type):
     """
     Evaluates a score based on the commute times.
     Currently if any commute is below the minimum commute time chosen by the user then it is eliminated.
@@ -245,9 +263,13 @@ def create_commute_score(scored_house_list, survey):
     The User can define a commute weight. If the commute weight is 0, then the scaling factor is 0 so all
     homes are weighted the same as long as they are within the range. As the scaling factor increases, it
     gives a large weight to homes that are closer.
+
+    Note: The commute score is calculated for either the approx commute or exact dependent
+        on commute_type argument
     :param scored_house_list: The array of ScoringStructs which holds all the homes that
         have already gone past static filtering
     :param survey: The Survey is passed, but is only really needed to find the max and min commute times
+    :param commute_type: Enum type CommuteTypes
     :return:
         Returns the ScoringStruct but with the housing scores updated with the commute times and
             appropriate homes eliminated
@@ -263,7 +285,7 @@ def create_commute_score(scored_house_list, survey):
         # If the scale factor is 0, then all the homes under 12 are weighted equally at 0. Likewise if
         # the scale factor is 5, then a home with a commute time of 6 minutes will have a much higher score then
         # a commute of 9 minutes even though in reality it isn't that much.
-        for commute in house.commuteTime:
+        for commute in house.get_commute_times(commute_type):
             # Minimum range is always 10
             if max_commute > 11:
                 range_com = max_commute
@@ -401,7 +423,7 @@ def create_house_score(house_list_scored, survey):
     :return: The house structure with the homes scored
     """
     # Creates score based on commute
-    create_commute_score(house_list_scored, survey)
+    create_commute_score(house_list_scored, survey, CommuteTypes.approx)
     create_price_score(house_list_scored, survey)
     create_interior_amenities_score(house_list_scored, survey)
     create_exterior_amenities_score(house_list_scored, survey)
@@ -536,9 +558,7 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
 
 def filter_homes_based_on_approximate_commute(survey, scored_list):
     for home in scored_list:
-        print(home.get_approx_commute_times())
-        for commute in home.get_approx_commute_times():
-            print(commute)
+        for commute in home.get_commute_times_approx():
             if (commute > survey.get_max_commute() + approximate_commute_range) \
                     or (commute < survey.get_min_commute() - approximate_commute_range):
                 home.eliminate_home()
