@@ -505,6 +505,8 @@ def add_home_to_failed_list(failed_zip_codes, destination, house):
 
 
 def add_zip_codes_to_database(failed_zip_codes, commute_type):
+    print("adding new zip codes")
+    print(failed_zip_codes)
     # Generates matrix of commute times from the origin to the destination
     gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
 
@@ -661,7 +663,9 @@ def start_algorithm(survey, context):
         scored_house_list.append(ScoringStruct(house))
 
     # Make this a survey questions soon!!
-    commute_type = "driving"
+    # commute_type = "driving"
+    commute_type = survey.get_commute_type()
+    print(commute_type)
     scored_house_list_ordered = []
 
     """

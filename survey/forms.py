@@ -1,14 +1,13 @@
 from django import forms
-from survey.models import RentingSurveyModel, RentingDestinations, HomeType, default_rent_survey_name
+from survey.models import RentingSurveyModel, RentingDestinations, HomeType, COMMUTE_TYPES
 from django.forms import ModelForm
 from django.db.models import Q
-
 import datetime
 
 # Python global configurations
 from Unicorn.settings.Global_Config import \
     Max_Num_Bathrooms, Max_Text_Input_Length, \
-    Max_Num_Bedrooms, Hybrid_weighted_max
+    Max_Num_Bedrooms, Hybrid_weighted_max, default_rent_survey_name
 
 
 class DestinationForm(ModelForm):
@@ -114,6 +113,16 @@ class RentSurveyBase(ModelForm):
             attrs={
                 'class': 'form-control',
             }),
+    )
+
+    commute_type = forms.ChoiceField(
+        choices=COMMUTE_TYPES,
+        label="Commute Type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
     )
 
     move_in_date_start = forms.DateField(

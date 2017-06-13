@@ -115,6 +115,14 @@ class BuildingExteriorAmenities(models.Model):
         abstract = True
 
 
+COMMUTE_TYPES = (
+    ('driving', 'Driving'),
+    ('transit', 'Transit'),
+    ('bicycling', 'Biking'),
+    ('walking', 'Walking')
+)
+
+
 class RequiredInformation(models.Model):
     name = models.CharField(max_length=200, default=default_rent_survey_name)
     max_price = models.IntegerField(default=0)
@@ -123,6 +131,7 @@ class RequiredInformation(models.Model):
     max_commute = models.IntegerField(default=0)
     min_commute = models.IntegerField(default=0)
     commute_weight = models.IntegerField(default=0)
+    commute_type = models.CharField(max_length=20, choices=COMMUTE_TYPES, default="driving")
     move_in_date_start = models.DateField(default=timezone.now)
     move_in_date_end = models.DateField(default=timezone.now)
     num_bedrooms = models.IntegerField(default=0)
@@ -148,6 +157,9 @@ class RequiredInformation(models.Model):
 
     def get_commute_weight(self):
         return self.commute_weight
+
+    def get_commute_type(self):
+        return self.commute_type
 
     def get_move_in_date_start(self):
         return self.move_in_date_start
