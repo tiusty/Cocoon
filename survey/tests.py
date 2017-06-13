@@ -22,6 +22,7 @@ class SurveyFormTest(TestCase):
         self.default_max_commute = 90
         self.default_home_type = ['2']
         self.default_commute_weight = 1
+        self.default_commute_type = "driving"
         self.default_move_in_date_start = timezone.now() + timezone.timedelta(days=20)
         self.default_move_in_date_end = timezone.now() + timezone.timedelta(days=50)
         self.default_num_bedrooms = 2
@@ -48,6 +49,7 @@ class SurveyFormTest(TestCase):
             'max_commute': self.default_max_commute,
             'home_type': self.default_home_type,
             'commute_weight': self.default_commute_weight,
+            'commute_type': self.default_commute_type,
             'move_in_date_start': self.default_move_in_date_start,
             'move_in_date_end': self.default_move_in_date_end,
             'num_bedrooms': self.default_num_bedrooms,

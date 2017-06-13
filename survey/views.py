@@ -255,10 +255,9 @@ class ScoringStruct:
 def create_commute_score(scored_house_list, survey, commute_type):
     """
     Evaluates a score based on the commute times.
-    Currently if any commute is below the minimum commute time chosen by the user then it is eliminated.
-    Also, if the commute time is above the desired commute time, then it is also eliminated.
-    If it is in the middle, then anything below 10 minutes is always perfect, then the rest of the times
-    are scaled appropriately.
+    This function assumes that commutes have been already eliminated due to being out of range
+    Therefore, if the commute value is out of range, then it will force the value into the range
+    Out of range values should only occur for approximate commutes
 
     The User can define a commute weight. If the commute weight is 0, then the scaling factor is 0 so all
     homes are weighted the same as long as they are within the range. As the scaling factor increases, it
@@ -286,6 +285,10 @@ def create_commute_score(scored_house_list, survey, commute_type):
         # the scale factor is 5, then a home with a commute time of 6 minutes will have a much higher score then
         # a commute of 9 minutes even though in reality it isn't that much.
         for commute in house.get_commute_times(commute_type):
+            if commute < min_commute:
+                commute = min_commute
+            elif commute > max_commute:
+                commute = max_commute
             # Minimum range is always 10
             if max_commute > 11:
                 range_com = max_commute
@@ -297,18 +300,12 @@ def create_commute_score(scored_house_list, survey, commute_type):
             # Second check if the commute time is less than 10 minutes, because if it is it is a perfect score
             # Third If the commute is less than the max commute time compute a score
             # Forth if the commute is more than the maxCommute then remove the house
-            if commute < min_commute:
-                # Mark house for deletion
-                house.eliminated = True
-            elif commute <= 10:
+            if commute <= 10:
                 house.score += (100 * scale_factor)
                 house.scorePossible += (100 * scale_factor)
-            elif commute <= max_commute:
+            else:
                 house.score += (((1 - (commute - 10) / (range_com - 10)) * 100) * scale_factor)
                 house.scorePossible += (100 * scale_factor)
-            else:
-                # Mark house for deletion
-                house.eliminated = True
     return scored_house_list
 
 
@@ -365,7 +362,7 @@ def weighted_question_scoring(home, contains_item, scale_factor):
     # First condition is if the user gave the max weight to the factor then it is a
     # must have. Therefore, if the home doesn't have it then eliminate the home
     if scale_factor == Hybrid_weighted_max - 1 and contains_item is False:
-        home.eliminated = True
+        home.elminated_home()
     # If the home contains the item then add points torwads this home. This means
     # The home got a 100% so the score will go up.
     elif contains_item:
@@ -455,6 +452,16 @@ def order_by_house_score(scored_house_list):
 
 
 def compute_approximate_commute_times(destinations, scored_list, commute_type):
+    """
+    This function takes each home and tries to find the approximate commute times for all the destinations
+    The zip code combination will be checked in the database for the value and if it doesn't exist, it will
+    add the zip code combination to the failed_zip_codes list. That list will eventually be passed to another
+    function which will compute all the zipcode combinations and add them to the database. After the zip codes are
+    added to the database, the commute times will be recomputed
+    :param destinations: A list of all the destinations desired by the user
+    :param scored_list: Array of ScoringStruct that contains all the origins and associated values
+    :param commute_type: Enum type CommuteTypes
+    """
     # If the home failed to find an associated zip code cached, mark it as failed
     # and then we will dynamically get that zip code and store it
     # Format of dictionary:
@@ -463,31 +470,41 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type):
     failed_zip_codes = {}
 
     for house in scored_list:
-        for destination in destinations:
-            try:
-                zip_code_dictionary = ZipCodeDictionary.objects.get(
-                    zip_code=house.house.get_zip_code(),
-                )
+        # Only populate the commute time if the array is empty
+        # This is important when this function is called again after all the failed
+        # zip codes are computed. Then homes with a commute already should not have the
+        # value recomputed
+        if not house.get_commute_times_approx():
+            for destination in destinations:
+                # This searches for the zip code combination and then if it can't find it, it will
+                # add the combination to the failed_zip_code dictionary
                 try:
-                    zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
-                        zip_code=destination.get_zip_code(),
-                        commute_type=commute_type,
+                    zip_code_dictionary = ZipCodeDictionary.objects.get(
+                        zip_code=house.house.get_zip_code(),
                     )
-                    # If the zip code needs to be refreshed, then delete the zip code
-                    # and add it to the failed list
-                    if zip_code_dictionary_child.test_recompute_date():
-                        zip_code_dictionary_child.delete()
+                    try:
+                        zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
+                            zip_code=destination.get_zip_code(),
+                            commute_type=commute_type,
+                        )
+                        # If the zip code needs to be refreshed, then delete the zip code
+                        # and add it to the failed list
+                        if zip_code_dictionary_child.test_recompute_date():
+                            zip_code_dictionary_child.delete()
+                            add_home_to_failed_list(failed_zip_codes, destination, house)
+                            # If all the conditions pass, then store the commute time stored for that combination
+                        else:
+                            house.approxCommuteTime.append(zip_code_dictionary_child.get_commute_time())
+                    except ZipCodeDictionaryChild.DoesNotExist:
                         add_home_to_failed_list(failed_zip_codes, destination, house)
-                        # If all the conditions pass, then store the commute time stored for that combination
-                    else:
-                        house.approxCommuteTime.append(zip_code_dictionary_child.get_commute_time())
-                except ZipCodeDictionaryChild.DoesNotExist:
+                except ZipCodeDictionary.DoesNotExist:
                     add_home_to_failed_list(failed_zip_codes, destination, house)
-            except ZipCodeDictionary.DoesNotExist:
-                add_home_to_failed_list(failed_zip_codes, destination, house)
 
+    # If there are failed zip codes, compute the commute for the zip code and add it to the database
     if failed_zip_codes:
         add_zip_codes_to_database(failed_zip_codes, commute_type)
+        # Call the function again to recompute the commute times for the failed homes
+        compute_approximate_commute_times(destinations, scored_list, commute_type)
 
 
 def add_home_to_failed_list(failed_zip_codes, destination, house):
@@ -499,12 +516,21 @@ def add_home_to_failed_list(failed_zip_codes, destination, house):
     :param house: The house (origin), stored as a scoring structure
     """
     if destination.get_zip_code() in failed_zip_codes:
-        failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
+        # Only add the zip code if the combination is not already in the list
+        if house.house.get_zip_code() not in failed_zip_codes[destination.get_zip_code()]:
+            failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
     else:
         failed_zip_codes[destination.get_zip_code()] = [house.house.get_zip_code()]
 
 
 def add_zip_codes_to_database(failed_zip_codes, commute_type):
+    """
+    This function takes in a dictionary of failed zip code combination and computes
+    the distance and saves it to the database.
+    :param failed_zip_codes: A dictionary of zip code combinations:
+        i.e: {'02474': ['02476', '02474'], '02476': ['02474', '02476']} or {'destination': ['origin1', origin2]}
+    :param commute_type: Enum type CommuteTypes
+    """
     print("adding new zip codes")
     print(failed_zip_codes)
     # Generates matrix of commute times from the origin to the destination
@@ -539,7 +565,7 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
                             if zip_code_dictionary.zipcodedictionarychild_set.filter(
                                     zip_code=destination_zip_code,
                                     commute_type=commute_type).exists():
-                                print("Some error occurred")
+                                print("The combination that was computed already exists")
                             else:
                                 zip_code_dictionary.zipcodedictionarychild_set.create(
                                     zip_code=destination_zip_code,
@@ -559,10 +585,20 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
 
 
 def filter_homes_based_on_approximate_commute(survey, scored_list):
+    """
+    This function computes the approximate commute filter
+    This eliminates any home with an approximate commute that is over the
+    user's max_commute + approximate_commute_range, or user's min - approximate_commute_range
+    The reason why there is a buffer is because the approximate commute range is based off of the
+    zip_code. Within a zip_code the commute time can vary by say 20 minutes.
+    This function only eliminates homes out of range, it does not score
+    :param survey: Passed the user's survey
+    :param scored_list: Array of scoringStruct
+    """
     for home in scored_list:
         for commute in home.get_commute_times_approx():
-            if (commute > survey.get_max_commute() + approximate_commute_range) \
-                    or (commute < survey.get_min_commute() - approximate_commute_range):
+            if (commute >= survey.get_max_commute() + approximate_commute_range) \
+                    or (commute <= survey.get_min_commute() - approximate_commute_range):
                 home.eliminate_home()
 
 
@@ -605,7 +641,7 @@ def google_matrix(origins, destinations, scored_list, context):
                     house.commuteTime.append(commute['duration']["value"] / 60)
                 else:
                     # Eliminate houses that can't have a commute value
-                    house.eliminated = True
+                    house.eliminate_home()
             counter += 1
             # Only Add the context if the commute is able to be processed
         context['commuteMode'] = mode_commute
