@@ -1,6 +1,5 @@
 import json
 import math
-from enum import Enum
 
 import googlemaps
 from django.contrib.auth.decorators import login_required
@@ -11,16 +10,11 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
-    weight_question_value, approximate_commute_range
+    weight_question_value, approximate_commute_range, default_rent_survey_name
 from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
-from survey.models import RentingSurveyModel, default_rent_survey_name
+from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
-from .forms import RentSurvey, DestinationForm, RentSurveyMini
-
-
-class CommuteTypes(Enum):
-    exact = 1
-    approx = 2
+from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
 
 
 # Create your views here.
@@ -174,7 +168,7 @@ class ScoringStruct:
         :param commute_type: Enum type CommuteTypes
         :return: An array of ints which are all the commute times associated with that house
         """
-        if commute_type is CommuteTypes.exact:
+        if commute_type is CommutePrecision.exact:
             return self.get_commute_times_exact()
         else:
             return self.get_commute_times_approx()
@@ -246,6 +240,10 @@ class ScoringStruct:
         return end_result
 
     def eliminate_home(self):
+        """
+        Sets the eliminated flag on a home
+        :return:
+        """
         self.eliminated = True
 
 
@@ -421,7 +419,7 @@ def create_house_score(house_list_scored, survey):
     :return: The house structure with the homes scored
     """
     # Creates score based on commute
-    create_commute_score(house_list_scored, survey, CommuteTypes.approx)
+    create_commute_score(house_list_scored, survey, CommutePrecision.approx)
     create_price_score(house_list_scored, survey)
     create_interior_amenities_score(house_list_scored, survey)
     create_exterior_amenities_score(house_list_scored, survey)
