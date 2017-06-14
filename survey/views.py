@@ -161,14 +161,14 @@ class ScoringStruct:
         else:
             return "F"
 
-    def get_commute_times(self, commute_type):
+    def get_commute_times(self, commute_precision):
         """
         Get commute times gets the commute for the house depending on the argument
         It will either return the exact or the approximate commute times
-        :param commute_type: Enum type CommuteTypes
+        :param commute_precision: Enum type commutePrecision
         :return: An array of ints which are all the commute times associated with that house
         """
-        if commute_type is CommutePrecision.exact:
+        if commute_precision is CommutePrecision.exact:
             return self.get_commute_times_exact()
         else:
             return self.get_commute_times_approx()
@@ -251,7 +251,7 @@ class ScoringStruct:
 # It will commute the score based on the commute times to the destinations
 # The score is multiplied by the scale factor which is user determined
 # This factor determines how much the factor will affect the overall weight
-def create_commute_score(scored_house_list, survey, commute_type):
+def create_commute_score(scored_house_list, survey, commute_precision):
     """
     Evaluates a score based on the commute times.
     This function assumes that commutes have been already eliminated due to being out of range
@@ -263,11 +263,11 @@ def create_commute_score(scored_house_list, survey, commute_type):
     gives a large weight to homes that are closer.
 
     Note: The commute score is calculated for either the approx commute or exact dependent
-        on commute_type argument
+        on commute_precision argument
     :param scored_house_list: The array of ScoringStructs which holds all the homes that
         have already gone past static filtering
     :param survey: The Survey is passed, but is only really needed to find the max and min commute times
-    :param commute_type: Enum type CommuteTypes
+    :param commute_precision: Enum of commutePrecision
     :return:
         Returns the ScoringStruct but with the housing scores updated with the commute times and
             appropriate homes eliminated
@@ -283,7 +283,7 @@ def create_commute_score(scored_house_list, survey, commute_type):
         # If the scale factor is 0, then all the homes under 12 are weighted equally at 0. Likewise if
         # the scale factor is 5, then a home with a commute time of 6 minutes will have a much higher score then
         # a commute of 9 minutes even though in reality it isn't that much.
-        for commute in house.get_commute_times(commute_type):
+        for commute in house.get_commute_times(commute_precision):
             if commute < min_commute:
                 commute = min_commute
             elif commute > max_commute:
@@ -459,7 +459,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type):
     added to the database, the commute times will be recomputed
     :param destinations: A list of all the destinations desired by the user
     :param scored_list: Array of ScoringStruct that contains all the origins and associated values
-    :param commute_type: Enum type CommuteTypes
+    :param commute_type: String, one of driving, walking, transit, bicycling
     """
     # If the home failed to find an associated zip code cached, mark it as failed
     # and then we will dynamically get that zip code and store it
@@ -528,7 +528,7 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
     the distance and saves it to the database.
     :param failed_zip_codes: A dictionary of zip code combinations:
         i.e: {'02474': ['02476', '02474'], '02476': ['02474', '02476']} or {'destination': ['origin1', origin2]}
-    :param commute_type: Enum type CommuteTypes
+    :param commute_type: String, one of driving, walking, bicycling, transit
     """
     print("adding new zip codes")
     print(failed_zip_codes)
@@ -697,8 +697,6 @@ def start_algorithm(survey, context):
     for house in filtered_house_list:
         scored_house_list.append(ScoringStruct(house))
 
-    # Make this a survey questions soon!!
-    # commute_type = "driving"
     commute_type = survey.get_commute_type()
     scored_house_list_ordered = []
 
