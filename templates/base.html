@@ -10,61 +10,85 @@
 <body style="padding-top:70px">
 
 
+
 <div class="{% block container_type %}container{% endblock %}">
+
 {% block nav_bar %}
-     <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                        aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{% url 'homePage:index' %}">Cacoon</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    {% block nav-home %}<li><a href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}
-                    {% block nav-mysurvies %}<li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Surveys</a></li>{% endblock %}
-                    {% block nav-favorites %}<li><a href="{% url 'userAuth:profilePage' 'favorites' %}">My Favorites</a></li>{% endblock %}
-                    {% block nav-visitlist %}<li><a href="{% url 'survey:visitList' %}">My Visit List</a></li>{% endblock %}
-                    {% block nav-contact %}<li><a href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if user.is_authenticated %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-header">Account</li>
-                                <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
-                                {% comment %}
-                                <li role="separator" class="divider"></li>
-                                <li class="dropdown-header">Surveys</li>
-                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
-                                {% endcomment %}
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li><a href="{% url 'userAuth:loginPage' %}">Login <span class="sr-only">(current)</span></a></li>
-                    {% endif %}
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
+    <nav id="navbar-container" class="navbar navbar-default navbar-fixed-top">
+        <div id="flex-logo" class="navbar-item">
+            <img id="nav-logo" alt="logo" src="{% static 'homePage/cocoon_logo.png' %}">
+            <a id="cocoon_link">Cocoon</a>
+        </div>
+        <div id="flex-links" class="navbar-item flex-item-">
+            {% block nav-home %}<li><a class="nav-link" href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}
+            {% block nav-mysurvies %}<li><a class="nav-link" href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Surveys</a></li>{% endblock %}
+            {% block nav-favorites %}<li><a class="nav-link" href="{% url 'userAuth:profilePage' 'favorites' %}">My Favorites</a></li>{% endblock %}
+            {% block nav-visitlist %}<li><a class="nav-link" href="{% url 'survey:visitList' %}">My Visit List</a></li>{% endblock %}
+            {% block nav-contact %}<li><a class="nav-link" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
+        </div>
     </nav>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
 {% endblock nav_bar %}
+
+{#{% block nav_bar %}#}
+{#     <nav class="navbar navbar-default navbar-fixed-top">#}
+{#        <div class="container-fluid">#}
+{#            <div class="navbar-header">#}
+{#                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"#}
+{#                        aria-expanded="false" aria-controls="navbar">#}
+{#                    <span class="sr-only">Toggle navigation</span>#}
+{#                    <span class="icon-bar"></span>#}
+{#                    <span class="icon-bar"></span>#}
+{#                    <span class="icon-bar"></span>#}
+{#                </button>#}
+{#                <a class="navbar-brand" href="{% url 'homePage:index' %}">#}
+{#                    <img id="nav-logo" alt="Brand" src="{% static 'homePage/cocoon_logo.png' %}">#}
+{#                    <span id="cocoon-script">Cocoon</span>#}
+{#                </a>#}
+{##}
+{#            </div>#}
+{#            <div id="navbar" class="navbar-collapse collapse">#}
+{#                <ul class="nav navbar-nav">#}
+{#                    {% block nav-home %}<li><a class="nav-link" href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}#}
+{#                    {% block nav-mysurvies %}<li><a class="nav-link" href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Surveys</a></li>{% endblock %}#}
+{#                    {% block nav-favorites %}<li><a class="nav-link" href="{% url 'userAuth:profilePage' 'favorites' %}">My Favorites</a></li>{% endblock %}#}
+{#                    {% block nav-visitlist %}<li><a class="nav-link" href="{% url 'survey:visitList' %}">My Visit List</a></li>{% endblock %}#}
+{#                    {% block nav-contact %}<li><a class="nav-link" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}#}
+{#                </ul>#}
+{##}
+{#                <ul class="nav navbar-nav navbar-right navbar-collapse collapse">#}
+{##}
+{#                    {% if user.is_authenticated %}#}
+{#                        <li class="dropdown">#}
+{#                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"#}
+{#                               aria-haspopup="true"#}
+{#                               aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>#}
+{#                            <ul class="dropdown-menu">#}
+{#                                <li class="dropdown-header">Account</li>#}
+{#                                <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>#}
+{#                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>#}
+{#                                {% comment %}#}
+{#                                <li role="separator" class="divider"></li>#}
+{#                                <li class="dropdown-header">Surveys</li>#}
+{#                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>#}
+{#                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>#}
+{#                                {% endcomment %}#}
+{#                            </ul>#}
+{#                        </li>#}
+{#                    {% else %}#}
+{#                        <li><a href="{% url 'userAuth:loginPage' %}">Login <span class="sr-only">(current)</span></a></li>#}
+{#                    {% endif %}#}
+{#                </ul>#}
+{#            </div><!--/.nav-collapse -->#}
+{#        </div><!--/.container-fluid -->#}
+{#    </nav>#}
+{#    {% if messages %}#}
+{#        <ul class="messages">#}
+{#            {% for message in messages %}#}
+{#                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+{#    {% endif %}#}
+{#{% endblock nav_bar %}#}
 
 {% block content %}{% endblock %}
 

@@ -1,0 +1,111 @@
+.navbar-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+#nav-logo {
+    width: 50px;
+}
+
+#flex-logo {
+    flex-grow: 1;
+}
+
+#flex-links {
+    flex-grow: 2;
+    list-style-type: none;
+}
+
+#flex-links > li {
+    display: inline;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/*!**/
+
+ /*Overriding bootstrap css*/
+
+
+ /**!*/
+
+/*.navbar-brand {*/
+    /*height: 70px;*/
+    /*margin-left: 5%;*/
+    /*float: left;*/
+    /*padding: 2%;*/
+/*}*/
+
+/*.navbar-header {*/
+    /*width: 20%;*/
+/*}*/
+
+/*.navbar {*/
+    /*padding-left: 1%;*/
+/*}*/
+
+/*!*.dropdown-toggle {*!*/
+    /*!*height: 70px;*!*/
+    /*!*float: right;*!*/
+/*!*}*!*/
+
+/*!*.navbar-nav > li > a {*!*/
+    /*!*height: 70px;*!*/
+    /*!*line-height: 35px;*!*/
+/*!*}*!*/
+
+/*!**/
+
+ /*End Overriding bootstrap css*/
+
+ /**!*/
+
+/*#cocoon-script {*/
+    /*display: inline;*/
+    /*font-size: 2.5em;*/
+    /*font-family: 'Lobster', cursive;*/
+    /*color: #333;*/
+    /*height: 100%;*/
+    /*line-height: 70px;*/
+/*}*/
+
+/*#nav-logo {*/
+    /*padding: 0;*/
+    /*height: 100%;*/
+    /*display: inline-block;*/
+    /*float: left;*/
+/*}*/
+
+/*#navbar {*/
+    /*display: inline-block;*/
+/*}*/
+
+/*@media only screen and (max-width: 768px) {*/
+
+    /*.navbar-brand {*/
+        /*width: 80%;*/
+        /*float: left;*/
+    /*}*/
+
+    /*#nav-logo {*/
+        /*float: left;*/
+    /*}*/
+
+    /*#cocoon-script {*/
+        /*float: left;*/
+    /*}*/
+
+/*}*/
+
+/*@media only screen and (max-width: 930px) {*/
+    /*.navbar-brand {*/
+        /*margin: 0 auto;*/
+    /*}*/
+/*}*/
