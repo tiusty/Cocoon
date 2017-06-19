@@ -293,9 +293,9 @@ class RentScoringStruct(models.Model):
     Class that stores a homes and the associated values with that homes
     This allows homes to be stored with a survey and then the home can
     be loaded at any time. Reduces the computation time for the server
-    NOTE THIS CLASS AS NOT BEEN TESTED ONLY ADDED
+    NOTE THIS CLASS HAS NOT BEEN TESTED ONLY ADDED
     """
-    home = models.ForeignKey(RentDatabase)
+    house = models.ForeignKey(RentDatabase)
     score = models.IntegerField(default=0)
     score_possible = models.IntegerField(default=0)
     eliminated = models.BooleanField(default=False)
@@ -376,7 +376,7 @@ class RentScoringStruct(models.Model):
         :return: A list with all the commute times
         """
         commutes = []
-        for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.approx):
+        for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.approx.value):
             commutes.append(commute)
         return commutes
 
@@ -439,5 +439,5 @@ class CommuteTimes(models.Model):
 
     """
     scoring_struct = models.ForeignKey(RentScoringStruct)
-    commute_type = models.IntegerField(default=CommutePrecision.approx)
+    commute_type = models.IntegerField(default=CommutePrecision.approx.value)
     commute_time = models.IntegerField(default=0)
