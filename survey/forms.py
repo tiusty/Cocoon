@@ -1,5 +1,5 @@
 from django import forms
-from survey.models import RentingSurveyModel, RentingDestinations, HomeType, COMMUTE_TYPES
+from survey.models import RentingSurveyModel, RentingDestinations, HomeType, COMMUTE_TYPES, HYBRID_WEIGHT_CHOICES
 from django.forms import ModelForm
 from django.db.models import Q
 import datetime
@@ -7,7 +7,8 @@ import datetime
 # Python global configurations
 from Unicorn.settings.Global_Config import \
     Max_Num_Bathrooms, Max_Text_Input_Length, \
-    Max_Num_Bedrooms, Hybrid_weighted_max, default_rent_survey_name
+    Max_Num_Bedrooms, default_rent_survey_name, \
+    weight_question_max
 
 
 class DestinationForm(ModelForm):
@@ -71,7 +72,7 @@ class RentSurveyBase(ModelForm):
     )
 
     price_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=[(x, x) for x in range(0, weight_question_max)],
         label="Price Weight",
         widget=forms.Select(
             attrs={
@@ -107,7 +108,7 @@ class RentSurveyBase(ModelForm):
     )
 
     commute_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=[(x, x) for x in range(0, weight_question_max)],
         label="Commute Weight",
         widget=forms.Select(
             attrs={
@@ -204,12 +205,12 @@ class RentSurveyBase(ModelForm):
             valid = False
 
         # Make sure
-        if int(current_form['commute_weight']) > Hybrid_weighted_max:
-            self.add_error('commuteWeight', "Commute weight cant' be greater than " + str(Hybrid_weighted_max))
+        if int(current_form['commute_weight']) > weight_question_max:
+            self.add_error('commute_weight', "Commute weight cant' be greater than " + str(weight_question_max))
             valid = False
 
         if int(current_form['commute_weight']) < 0:
-            self.add_error('commuteWeight', "Commute weight cant' be less than 0")
+            self.add_error('commute_weight', "Commute weight cant' be less than 0")
             valid = False
 
         return valid
@@ -221,7 +222,8 @@ class InteriorAmenitiesForm(ModelForm):
     """
 
     air_conditioning = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Air conditioning",
         widget=forms.Select(
             attrs={
@@ -231,7 +233,8 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     wash_dryer_in_home = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Wash + Dryer in Home",
         widget=forms.Select(
             attrs={
@@ -241,7 +244,8 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     dish_washer = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Dish Washer",
         widget=forms.Select(
             attrs={
@@ -251,7 +255,8 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     bath = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Bath",
         widget=forms.Select(
             attrs={
@@ -280,7 +285,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     Class stores all the form fields for the BuildingExteriorAmenities Model
     """
     parking_spot = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Parking Spot",
         widget=forms.Select(
             attrs={
@@ -290,7 +296,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     )
 
     washer_dryer_in_building = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Washer/Dryer in Building",
         widget=forms.Select(
             attrs={
@@ -300,7 +307,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     )
 
     elevator = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Elevator",
         widget=forms.Select(
             attrs={
@@ -310,7 +318,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     )
 
     handicap_access = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Handicap Access",
         widget=forms.Select(
             attrs={
@@ -320,7 +329,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     )
 
     pool_hot_tub = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Pool/Hot tub",
         widget=forms.Select(
             attrs={
@@ -330,7 +340,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     )
 
     fitness_center = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Fitness Center",
         widget=forms.Select(
             attrs={
@@ -340,7 +351,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     )
 
     storage_unit = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Storage Unit",
         widget=forms.Select(
             attrs={

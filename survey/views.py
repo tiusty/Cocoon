@@ -360,8 +360,8 @@ def weighted_question_scoring(home, contains_item, scale_factor):
 
     # First condition is if the user gave the max weight to the factor then it is a
     # must have. Therefore, if the home doesn't have it then eliminate the home
-    if scale_factor == Hybrid_weighted_max - 1 and contains_item is False:
-        home.elminated_home()
+    if scale_factor == Hybrid_weighted_max and contains_item is False:
+        home.eliminate_home()
     # If the home contains the item then add points torwads this home. This means
     # The home got a 100% so the score will go up.
     elif contains_item:
