@@ -24,6 +24,8 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
         (None, {'fields': ('name', 'user_profile')}),
         ('Survey', {'fields': ('home_type', 'min_price', 'max_price', 'min_commute',
                                'max_commute', 'commute_weight', 'min_bathrooms', 'max_bathrooms', )}),
+        ('Interior Amenities',
+         {'fields': ('air_conditioning',)}),
         ('Created', {'fields': ('created', 'id',)}),
     )
     list_display = ('name', 'user_profile', 'get_short_name', )
@@ -39,5 +41,14 @@ class HomeTypeModelAdmin(admin.ModelAdmin):
     list_display = ('homeType',)
 
 
+class RentDestinationAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Rent Destination',
+         {'fields': ['survey', 'street_address']})
+    ]
+    list_display = ('survey',)
+
+
 admin.site.register(RentingSurveyModel, RentingSurveyModelAdmin)
 admin.site.register(HomeType, HomeTypeModelAdmin)
+admin.site.register(RentingDestinations, RentDestinationAdmin)

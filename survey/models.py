@@ -15,6 +15,17 @@ class CommutePrecision(Enum):
     approx = 2
 
 
+HYBRID_WEIGHT_CHOICES = (
+    (3, "Must have"),
+    (2, "Really want"),
+    (1, "Prefer to have"),
+    (0, "I don't care"),
+    (-1, "Prefer not to have"),
+    (-2, "Really don't want"),
+    (-3, "Don't want"),
+)
+
+
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
@@ -54,7 +65,7 @@ class InteriorAmenities(models.Model):
     Contains all the survey questions regarding the interior amenities
     Any survey can inherit these fields
     """
-    air_conditioning = models.IntegerField(default=0)
+    air_conditioning = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
     wash_dryer_in_home = models.IntegerField(default=0)
     dish_washer = models.IntegerField(default=0)
     bath = models.IntegerField(default=0)
