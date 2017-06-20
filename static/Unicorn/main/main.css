@@ -1,111 +1,205 @@
-.navbar-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-end;
+/**********************************
+    CODE THAT OVERRIDES BOOSTRAP
+ *********************************/
+
+/* NOTE: Jumbotron positioned down because of inline body padding */
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    padding-top: 100px;
 }
 
-#nav-logo {
-    width: 50px;
+.navbar-brand {
+    font-family: 'Lobster', cursive;
+    font-size: 36px;
+    padding: 25px 15px;
+    line-height: 0px;
 }
 
-#flex-logo {
-    flex-grow: 1;
+.nav > li > a {
+    font-size: 14px;
 }
 
-#flex-links {
-    flex-grow: 2;
-    list-style-type: none;
+.nav > li:hover {
+    background-color: #eee;
 }
 
-#flex-links > li {
-    display: inline;
-    text-align: center;
+/*********************************
+    MEDIA QUERIES, ORDER MATTERS
+ ********************************/
+
+@media (max-width: 892px) and (min-width: 768px) {
+    body {
+        padding-top: 200px;
+    }
+
+    .navbar-nav {
+        float: left !important;
+    }
+    
+    #rightmost-nav-item {
+        border-right: 0px;
+    }
 }
 
-a {
-    text-decoration: none;
+@media (min-width: 1280px) {
+
+    .nav > li > a {
+        font-size: 18px;
+    }
+
+    #rightmost-nav-item {
+        border-right: 1px solid #eee !important;
+    }
+
+}
+
+@media (min-width: 768px) {
+
+    .navbar-nav > li > a {
+        padding-top: 25px;
+        padding-bottom: 25px;
+        line-height: 25px;
+    }
+
+    .navbar-brand {
+        padding: 25px 15px;
+        line-height: 25px;
+    }
+    
+    .navbar-nav {
+        float: right;
+    }
+
+    #rightmost-nav-item {
+        border-right: 1px solid #eee;
+    }
 }
 
 
-/*!**/
-
- /*Overriding bootstrap css*/
 
 
- /**!*/
 
-/*.navbar-brand {*/
-    /*height: 70px;*/
-    /*margin-left: 5%;*/
-    /*float: left;*/
-    /*padding: 2%;*/
-/*}*/
-
-/*.navbar-header {*/
-    /*width: 20%;*/
-/*}*/
-
-/*.navbar {*/
-    /*padding-left: 1%;*/
-/*}*/
-
-/*!*.dropdown-toggle {*!*/
-    /*!*height: 70px;*!*/
-    /*!*float: right;*!*/
-/*!*}*!*/
-
-/*!*.navbar-nav > li > a {*!*/
-    /*!*height: 70px;*!*/
-    /*!*line-height: 35px;*!*/
-/*!*}*!*/
-
-/*!**/
-
- /*End Overriding bootstrap css*/
-
- /**!*/
-
-/*#cocoon-script {*/
-    /*display: inline;*/
-    /*font-size: 2.5em;*/
-    /*font-family: 'Lobster', cursive;*/
-    /*color: #333;*/
-    /*height: 100%;*/
-    /*line-height: 70px;*/
+/*.navbar-container {*/
+/*width: 100%;*/
+/*bottom: 100%;*/
+/*display: flex;*/
+/*flex-direction: row;*/
+/*flex-wrap: wrap;*/
+/*justify-content: space-between;*/
+/*align-items: flex-end;*/
 /*}*/
 
 /*#nav-logo {*/
-    /*padding: 0;*/
-    /*height: 100%;*/
-    /*display: inline-block;*/
-    /*float: left;*/
+/*width: 50px;*/
+/*}*/
+
+/*#flex-logo {*/
+/*display: inline;*/
+/*width: 40%;*/
+/*flex-grow: 1;*/
+/*}*/
+
+/*#flex-links {*/
+/*display: inline;*/
+/*width: 40%;*/
+/*flex-grow: 1;*/
+/*list-style-type: none;*/
+/*}*/
+
+/*#flex-links > div {*/
+/*display: inline;*/
+/*width: 5%;*/
+/*}*/
+
+/*.nav-link {*/
+/*position: relative;*/
+/*text-align: center;*/
+/*width: 200px;*/
+/*display: block;*/
+/*margin: 0 auto;*/
+/*text-decoration: none;*/
+/*}*/
+/*.nav-link:hover {*/
+/*text-decoration: none;*/
+/*}*/
+
+/*!**/
+
+/*Overriding bootstrap css*/
+
+/**!*/
+
+/*.navbar-brand {*/
+/*height: 70px;*/
+/*margin-left: 5%;*/
+/*float: left;*/
+/*padding: 2%;*/
+/*}*/
+
+/*.navbar-header {*/
+/*width: 20%;*/
+/*}*/
+
+/*.navbar {*/
+/*padding-left: 1%;*/
+/*}*/
+
+/*!*.dropdown-toggle {*!*/
+/*!*height: 70px;*!*/
+/*!*float: right;*!*/
+/*!*}*!*/
+
+/*!*.navbar-nav > li > a {*!*/
+/*!*height: 70px;*!*/
+/*!*line-height: 35px;*!*/
+/*!*}*!*/
+
+/*!**/
+
+/*End Overriding bootstrap css*/
+
+/**!*/
+
+/*#cocoon-script {*/
+/*display: inline;*/
+/*font-size: 2.5em;*/
+/*font-family: 'Lobster', cursive;*/
+/*color: #333;*/
+/*height: 100%;*/
+/*line-height: 70px;*/
+/*}*/
+
+/*#nav-logo {*/
+/*padding: 0;*/
+/*height: 100%;*/
+/*display: inline-block;*/
+/*float: left;*/
 /*}*/
 
 /*#navbar {*/
-    /*display: inline-block;*/
+/*display: inline-block;*/
 /*}*/
 
 /*@media only screen and (max-width: 768px) {*/
 
-    /*.navbar-brand {*/
-        /*width: 80%;*/
-        /*float: left;*/
-    /*}*/
+/*.navbar-brand {*/
+/*width: 80%;*/
+/*float: left;*/
+/*}*/
 
-    /*#nav-logo {*/
-        /*float: left;*/
-    /*}*/
+/*#nav-logo {*/
+/*float: left;*/
+/*}*/
 
-    /*#cocoon-script {*/
-        /*float: left;*/
-    /*}*/
+/*#cocoon-script {*/
+/*float: left;*/
+/*}*/
 
 /*}*/
 
 /*@media only screen and (max-width: 930px) {*/
-    /*.navbar-brand {*/
-        /*margin: 0 auto;*/
-    /*}*/
+/*.navbar-brand {*/
+/*margin: 0 auto;*/
+/*}*/
 /*}*/
