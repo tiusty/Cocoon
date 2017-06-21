@@ -1,3 +1,25 @@
+/*********************************
+    ANIMATION CLASSES
+ *********************************/
+
+.nav-text-animated {
+    font-size: 14px !important;
+}
+
+.navbar-brand-animated {
+    padding: 15px 15px !important;
+    transition: padding .5s ease-in;
+}
+
+.navbar-nav > li > a {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+    line-height: 15px !important;
+    transition: padding-top .5s ease-in;
+    transition: padding-bottom .5s ease-in;
+    transition: line-height .5s ease-in;
+}
+
 /**********************************
     CODE THAT OVERRIDES BOOSTRAP
  *********************************/
@@ -9,47 +31,33 @@ body {
     padding-top: 100px;
 }
 
+.nav > li:hover {
+    background-color: #eee;
+}
+
 .navbar-brand {
     font-family: 'Lobster', cursive;
     font-size: 36px;
     padding: 25px 15px;
-    line-height: 0px;
-}
-
-.nav > li > a {
-    font-size: 14px;
-}
-
-.nav > li:hover {
-    background-color: #eee;
 }
 
 /*********************************
     MEDIA QUERIES, ORDER MATTERS
  ********************************/
 
-@media (max-width: 892px) and (min-width: 768px) {
-    body {
-        padding-top: 200px;
-    }
+@media (max-width: 768px) {
 
-    .navbar-nav {
-        float: left !important;
-    }
-    
-    #rightmost-nav-item {
-        border-right: 0px;
-    }
-}
+    .navbar-brand {
 
-@media (min-width: 1280px) {
+        line-height: 0px;
+    }
 
     .nav > li > a {
-        font-size: 18px;
+        font-size: 14px;
     }
 
-    #rightmost-nav-item {
-        border-right: 1px solid #eee !important;
+    .nav > li:hover {
+        background-color: #eee;
     }
 
 }
@@ -66,7 +74,7 @@ body {
         padding: 25px 15px;
         line-height: 25px;
     }
-    
+
     .navbar-nav {
         float: right;
     }
@@ -74,11 +82,33 @@ body {
     #rightmost-nav-item {
         border-right: 1px solid #eee;
     }
+
 }
 
+@media (max-width: 892px) and (min-width: 768px) {
+    body {
+        padding-top: 200px;
+    }
 
+    .navbar-nav {
+        float: left;
+    }
 
+    #rightmost-nav-item {
+        border-right: 0px;
+    }
+}
 
+@media (min-width: 1280px) {
+
+    .nav > li > a {
+        font-size: 18px;
+    }
+
+    #rightmost-nav-item {
+        border-right: 1px solid #eee;
+    }
+}
 
 /*.navbar-container {*/
 /*width: 100%;*/
