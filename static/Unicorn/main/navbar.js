@@ -13,5 +13,12 @@ $(document).ready(function () {
             $(".navbar-brand").addClass("nav-brand-animated");
             $(".nav > li > a").addClass("link-animated");
         }
+    });
+
+    $(window).resize(function () {
+        if ($(this).width() <= 768) {
+            $(".navbar-brand").removeClass("nav-brand-animated");
+            $(".nav > li > a").removeClass("link-animated");
+        }
     })
 })

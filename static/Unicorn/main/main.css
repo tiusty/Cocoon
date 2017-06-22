@@ -29,6 +29,8 @@ body {
 
     .navbar-brand {
         line-height: 0px;
+        font-size: 36px;
+        line-height: 20px;
     }
 
     .nav > li > a {
@@ -66,7 +68,7 @@ body {
     a.nav-brand-animated {
         padding: 15px 15px !important;
         line-height: 25px !important;
-        font-size: 36px !important;
+        font-size: 32px !important;
         transition: padding-top .3s ease-in;
         transition: padding-bottom .3s ease-in;
     }
