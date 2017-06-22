@@ -4,11 +4,14 @@
 
 $(document).ready(function () {
     $(window).scroll(function () {
-        if ($(this).scrollTop() <= 0 ) {
+        if ($(this).scrollTop() == 0 ) {
             console.log("scrolled to the top");
-            $(".navbar-brand").addClass("nav-brand-animated")
+            $(".navbar-brand").removeClass("nav-brand-animated");
+            $(".nav > li > a").removeClass("link-animated");
         } else {
-            console.log("scrolled regular")
+            console.log("scrolled regular");
+            $(".navbar-brand").addClass("nav-brand-animated");
+            $(".nav > li > a").addClass("link-animated");
         }
     })
 })
