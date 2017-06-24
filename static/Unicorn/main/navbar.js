@@ -8,10 +8,12 @@ $(document).ready(function () {
             console.log("scrolled to the top");
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");
+            $(".nav-logo").removeClass("nav-logo-animated");
         } else {
             console.log("scrolled regular");
             $(".navbar-brand").addClass("nav-brand-animated");
             $(".nav > li > a").addClass("link-animated");
+            $(".nav-logo").addClass("nav-logo-animated");
         }
     });
 
@@ -19,6 +21,7 @@ $(document).ready(function () {
         if ($(this).width() <= 768) {
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");
+            $(".nav-logo").removeClass("nav-logo-animated");
         }
     })
 })

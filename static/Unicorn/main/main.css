@@ -135,7 +135,7 @@ body {
         border-right: 1px solid #e88f7d;
     }
 
-    div.nav-brand-animated {
+    .nav-brand-animated {
         padding: 12px 15px 15px 15px !important;
         line-height: 25px !important;
         font-size: 32px !important;
@@ -150,6 +150,10 @@ body {
         line-height: 21px !important;
         transition: padding-top .3s ease-in;
         transition: padding-bottom .3s ease-in;
+    }
+
+    .nav-logo-animated {
+        display: none;
     }
 
 }
