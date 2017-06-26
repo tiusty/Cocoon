@@ -72,6 +72,4 @@ class SurveyFormTest(TestCase):
 
     def test_forms_correct_input(self):
         form = self.create_form_rent_survey()
-        print(form.errors)
         self.assertTrue(form.is_valid())
-

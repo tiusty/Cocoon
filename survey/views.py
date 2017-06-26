@@ -1,7 +1,6 @@
 import json
 import math
 
-import googlemaps
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
@@ -10,8 +9,9 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
-    Hybrid_weighted_min, weight_question_value, approximate_commute_range, \
-    default_rent_survey_name
+    Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
+    default_rent_survey_name, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
+    price_question_weight
 from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
 from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
@@ -115,7 +115,7 @@ class ScoringStruct:
         self.eliminated = False
 
     def __str__(self):
-        return self.house.full_address()
+        return self.house.get_full_address()
 
     def get_score(self):
         """
@@ -285,27 +285,28 @@ def create_commute_score(scored_house_list, survey, commute_precision):
         # the scale factor is 5, then a home with a commute time of 6 minutes will have a much higher score then
         # a commute of 9 minutes even though in reality it isn't that much.
         for commute in house.get_commute_times(commute_precision):
-            if commute < min_commute:
-                commute = min_commute
-            elif commute > max_commute:
-                commute = max_commute
-            # Minimum range is always 10
-            if max_commute > 11:
-                range_com = max_commute
-            else:
-                # Make sure that the minimum is 11, so that when it subtracts 10, it doesn't do
-                # a divide by zero
-                range_com = 11
-            # First check to see if the commute is less then the minimum commute, if it is then remove it
-            # Second check if the commute time is less than 10 minutes, because if it is it is a perfect score
-            # Third If the commute is less than the max commute time compute a score
-            # Forth if the commute is more than the maxCommute then remove the house
-            if commute <= 10:
-                house.score += (100 * scale_factor)
-                house.scorePossible += (100 * scale_factor)
-            else:
-                house.score += (((1 - (commute - 10) / (range_com - 10)) * 100) * scale_factor)
-                house.scorePossible += (100 * scale_factor)
+            if commute:
+                if commute < min_commute:
+                    commute = min_commute
+                elif commute > max_commute:
+                    commute = max_commute
+                # Minimum range is always 10
+                if max_commute > 11:
+                    range_com = max_commute
+                else:
+                    # Make sure that the minimum is 11, so that when it subtracts 10, it doesn't do
+                    # a divide by zero
+                    range_com = 11
+                # First check to see if the commute is less then the minimum commute, if it is then remove it
+                # Second check if the commute time is less than 10 minutes, because if it is it is a perfect score
+                # Third If the commute is less than the max commute time compute a score
+                # Forth if the commute is more than the maxCommute then remove the house
+                if commute <= 10:
+                    house.score += (commute_question_weight * scale_factor)
+                    house.scorePossible += (commute_question_weight * scale_factor)
+                else:
+                    house.score += (((1 - (commute - 10) / (range_com - 10)) * commute_question_weight) * scale_factor)
+                    house.scorePossible += (commute_question_weight * scale_factor)
     return scored_house_list
 
 
@@ -332,8 +333,8 @@ def create_price_score(scored_house_list, survey):
             house_range = max_price - min_price
             # Make sure that the house range is never negative (score should never decrease)
             if house_range > 0:
-                house.score += ((1 - house_price_normalized / house_range) * 100) * scale_factor
-                house.scorePossible += (100 * scale_factor)
+                house.score += ((1 - house_price_normalized / house_range) * price_question_weight) * scale_factor
+                house.scorePossible += (price_question_weight * scale_factor)
             # This takes care of the divide by zero case
             # If the range is zero, then the max and min price should be the same
             # Therefore assuming that the static filter worked before, the house price
@@ -342,8 +343,8 @@ def create_price_score(scored_house_list, survey):
             # Do an extra validation to make sure that the min_price equals the house price to
             # Prevent an error
             elif house_range == 0 and house_price == min_price:
-                house.score += 100 * scale_factor
-                house.scorePossible += 100 * scale_factor
+                house.score += price_question_weight * scale_factor
+                house.scorePossible += price_question_weight * scale_factor
 
 
 def weighted_question_scoring(home, contains_item, scale_factor):
@@ -367,13 +368,11 @@ def weighted_question_scoring(home, contains_item, scale_factor):
     # If the item is desired and the item is present the score will go up, or if the
     # item is not desired and it doesn't have the item, then the score will go up.
     # Otherwise the score will go down
-    home.score += (1 if contains_item else -1) * scale_factor * weight_question_value
+    home.score += (1 if contains_item else -1) * scale_factor * hybrid_question_weight
     # Regardless of anything else, always increment the possible points depending on the
     # Scale factor. The factor is added by the absolute value because the maximum value
     # needs to be added
-    home.scorePossible += abs(scale_factor) * weight_question_value
-    print(home.score)
-    print(home.scorePossible)
+    home.scorePossible += abs(scale_factor) * hybrid_question_weight
 
 
 def create_interior_amenities_score(scored_house_list, survey):
@@ -535,8 +534,6 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
     """
     print("adding new zip codes")
     print(failed_zip_codes)
-    # Generates matrix of commute times from the origin to the destination
-    gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
 
     # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
     # Each row contains the origin with each corresponding destination
@@ -584,6 +581,8 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
                                 commute_time=commute['duration']['value'],
                             )
                     counter += 1
+        else:
+            print("something went wrong with zip code matrix")
 
 
 def filter_homes_based_on_approximate_commute(survey, scored_list):
@@ -604,39 +603,41 @@ def filter_homes_based_on_approximate_commute(survey, scored_list):
                 home.eliminate_home()
 
 
-def google_matrix(origins, destinations, scored_list, context):
+def compute_exact_commute(destinations, scored_list, commute_type):
     """
-    Generates the Commute times for all the homes
-    :param origins: All the origin locations, in this case, all the filter_homes
-    :param destinations: All the destinations, what the user puts in as destinations
-    :param scored_list: The array of ScoringStructs which holds all the homes that
-        have already gone past static filtering
-    :param context: Context that will be passed to the template
-    :return: Returns the scored list with all the commute times entered
+    Computes the exact commute for the first so many homes
+    :param destinations: The list of destinations as RentingDestination objects
+    :param scored_list: A list containing ScoreStruct objects.
+    :param commute_type: The commute type the user desires
+    :return:
     """
 
-    # Generates matrix of commute times from the origin to the destination
-    gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')
-
-    # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
+    # Can add things to the arguments, like traffic_model, avoid things, departure_time etc
     # Each row contains the origin with each corresponding destination
     # The value field of duration is in seconds
-    mode_commute = "driving"
     measure_units = "imperial"
     destinations_full_address = []
     # Retrieve only the full address to give to the distance matrix
     for destination in destinations:
         destinations_full_address.append(destination.get_full_address())
 
+    origins = []
+    counter = 0
+    for home in scored_list:
+        origins.append(home.house.get_full_address())
+        counter += 1
+        if counter is number_of_exact_commutes_computed:
+            break
+
     matrix = gmaps.distance_matrix(origins, destinations_full_address,
-                                   mode=mode_commute,
+                                   mode=commute_type,
                                    units=measure_units,
                                    )
     # Only if the matrix is defined should the calculations occur, otherwise throw an error
     if matrix:
         # Try to think of a better way than a simple counter
         counter = 0
-        for house in scored_list:
+        for house in scored_list[:number_of_exact_commutes_computed]:
             for commute in matrix["rows"][counter]["elements"]:
                 # Divide by 60 to get minutes
                 if commute['status'] == 'OK':
@@ -646,9 +647,8 @@ def google_matrix(origins, destinations, scored_list, context):
                     house.eliminate_home()
             counter += 1
             # Only Add the context if the commute is able to be processed
-        context['commuteMode'] = mode_commute
     else:
-        context['error_message'].append("Couldn't calculate distances, something went wrong")
+        print("Couldn't calculate distances, something went wrong")
 
     return scored_list
 
@@ -691,6 +691,7 @@ def start_algorithm(survey, context):
 
     # The destination is defined as a location the user would commute to.
     # Aka their job, school etc. Therefore this is the destination they wish to be at
+    # This just stores the list of destinations as a Survey.RentingDestination object
     destinations = []
     for location in destination_set:
         destinations.append(location)
@@ -702,7 +703,6 @@ def start_algorithm(survey, context):
 
     commute_type = survey.get_commute_type()
     context['commuteType'] = commute_type
-    scored_house_list_ordered = []
 
     """
     STEP 2: Compute the approximate distance using zip codes.
@@ -714,23 +714,36 @@ def start_algorithm(survey, context):
     if not destinations or not scored_house_list:
         context['error_message'].append("No Destination or origin")
     else:
-        # scored_house_list = google_matrix(origins, destinations, scored_house_list, context)
+        # Computes the approximate commute times for the homes in the score_house_list
         compute_approximate_commute_times(destinations, scored_house_list, commute_type)
 
-        # Filter based on approximate commute times
+        # Filters the houses based on the approximate commutes
         filter_homes_based_on_approximate_commute(survey, scored_house_list)
 
         # Generate scores for the homes based on the survey results
-        homes_fully_scored = create_house_score(scored_house_list, survey)
+        create_house_score(scored_house_list, survey)
 
         # Order the homes based off the score
-        scored_house_list_ordered = order_by_house_score(homes_fully_scored)
+        order_by_house_score(scored_house_list)
+
+        """
+        STEP 3:
+        Compute the exact commutes and change the score based on the exact commute.
+        """
+        # Compute the exact commute for the top homes in the list and reorder only the top homes
+        compute_exact_commute(destinations, scored_house_list, commute_type)
+
+        # Now generate the score based on the exact commute
+        create_commute_score(scored_house_list, survey, CommutePrecision.exact)
+
+        # Now reorder all the homes that had their exact commutes calculated
+        order_by_house_score(scored_house_list[:number_of_exact_commutes_computed])
 
     # Contains destinations of the user
     context['locations'] = destination_set
     # House list either comes from the scored homes or from the database static list if something went wrong
-    # Only put up to 35 house on the list
-    context['houseList'] = scored_house_list_ordered[:35]
+    # Only put up to 200 house on the list
+    context['houseList'] = scored_house_list[:200]
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.

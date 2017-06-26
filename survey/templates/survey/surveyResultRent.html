@@ -283,9 +283,9 @@ Global variables are listed below
                                     </td>
                                     <!-- id is used for selecting pin on google maps -->
                                     <td id="address{{ forloop.counter }}"
-                                        style="vertical-align:middle"> {{ home.house.full_address }}</td>
+                                        style="vertical-align:middle"> {{ home.house.get_full_address }}</td>
                                     <td style="vertical-align:middle">
-                                        {% if home.get_commute_times %}
+                                        {% if home.get_commute_times_str %}
                                             {{ home.get_commute_times_str }}
                                         {% else %}
                                             {{ home.get_approx_commute_times_str }}
@@ -333,7 +333,7 @@ Global variables are listed below
         // Deprecating computing commute time and distance in favor of doing in on the server side
         // Going to keep the portions that create the markers on the map
         {% endcomment %}
-        var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
+        var myStreetAddresses = [{% for location in locations %}"{{ location.get_full_address }}",{% endfor %}];
         var myDestinations = [{% for dest in houseList %}[{{ dest.house.get_lat|safe }}, {{ dest.house.get_lon|safe }}],{% endfor %}];
         // Manipulated by survey_result.js in selectAddress
         //var myDestination = "{{ houseList.0.address }}";

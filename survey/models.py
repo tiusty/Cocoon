@@ -264,9 +264,12 @@ class Destinations(models.Model):
     state = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
 
-    def full_address(self):
+    def get_full_address(self):
         output = str(self.street_address) + ", " + str(self.city) + ", " + str(self.state) + ", " + str(self.zip_code)
         return output
+
+    def get_short_address(self):
+        return self.street_address + ", " + self.city
 
     def get_zip_code(self):
         if len(self.zip_code) > 5:
@@ -280,12 +283,6 @@ class RentingDestinations(Destinations):
 
     def __str__(self):
         return self.street_address
-
-    def full_address(self):
-        return self.street_address + ", " + self.city + ", " + self.state + " " + self.zip_code
-
-    def short_address(self):
-        return self.street_address + ", " + self.city
 
 
 class RentScoringStruct(models.Model):
@@ -301,7 +298,7 @@ class RentScoringStruct(models.Model):
     eliminated = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.house.full_address()
+        return self.house.get_full_address()
 
     def get_score_percent(self):
         """
@@ -446,5 +443,4 @@ class CommuteTimes(models.Model):
     """
     scoring_struct = models.ForeignKey(RentScoringStruct)
     commute_type = models.IntegerField(default=CommutePrecision.approx.value)
-    # Stored in seconds
     commute_time = models.IntegerField(default=0)
