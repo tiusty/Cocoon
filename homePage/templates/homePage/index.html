@@ -5,7 +5,7 @@
 {% block head %}
     {{ block.super }}
     {% comment %} Domain Verfication{% endcomment %}
-    <meta name="google-site-verification" content="EZpbJ3VrkWORskv6xVg5hoxs3cjmN7UBjbKu6AZW4C8" />
+    <meta name="google-site-verification" content="EZpbJ3VrkWORskv6xVg5hoxs3cjmN7UBjbKu6AZW4C8"/>
     <!-- JQuery UI style sheet, mostly used for slider ui -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
@@ -20,17 +20,71 @@
 {% block content %}
     <div class="jumbotron">
         {% if  user.is_authenticated %}
-            <h1>Hello {{ user.first_name }}</h1>
+            <h1>Hey {{ user.first_name }}</h1>
         {% else %}
             <h1>Welcome to Cocoon!</h1>
         {% endif %}
         <p class="lead">Here at Cocoon we strive to find your perfect home! </p>
         {% if not user.is_authenticated %}
-            <p>Please sign in:  <a href="{% url 'userAuth:loginPage' %}"><button class="btn btn-primary">Login</button></a></p>
-            {% else %}
+            <p>Please sign in: <a href="{% url 'userAuth:loginPage' %}">
+                <button class="btn btn-primary">Login</button>
+            </a></p>
+        {% else %}
             <p>Please click below to get started!</p>
         {% endif %}
     </div>
+
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="4"></li>
+        </ol>
+
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+            <div class="item active">
+                <img src="{% static 'stockHomes/carousal1.jpeg' %}" alt="...">
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+            <div class="item">
+                <img src="{% static 'stockHomes/carousal2.jpeg' %}" alt="stock apartment">
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+            <div class="item">
+                <img src="{% static 'stockHomes/carousal3.jpg' %}" alt="stock apartment">
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+            <div class="item">
+                <img src="{% static 'stockHomes/carousal4.jpeg' %}" alt="stock apartment">
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+          
+
+        </div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}

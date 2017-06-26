@@ -9,8 +9,20 @@ body {
     padding-top: 100px;
 }
 
-.navbar-default .navbar-nav > li:hover {
-    background-color: #e88f7d;
+.jumbotron {
+    background-color: #26A69A;
+    color: #fff;
+}
+
+.btn, .btn-primary {
+    background-color: #26A69A;
+    border: 1px solid #009688;
+    color: white;
+    border: none;
+}
+
+.btn:hover, .btn-primary:hover {
+    background-color: #009688;
 }
 
 .navbar-default .navbar-nav > li > a {
@@ -18,20 +30,20 @@ body {
 }
 
 .navbar-default .navbar-nav > li > a:hover {
-    color: #fff;
+    color: #eee !important;
 }
 
 .navbar-default .navbar-nav > li > a:active {
-    background-color: #e2725b;
+    background-color: #a13718;
 }
 
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-    background-color: #e2725b;
+    background-color: #a13718;
     color: #fff;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-    color: #fff;
+    color: #efefef;
 }
 
 .navbar-default .navbar-toggle {
@@ -45,30 +57,14 @@ body {
     text-decoration: none;
 }
 
-/*.navbar-brand-link:hover {*/
-    /*text-decoration: none;*/
-    /*color: #eee;*/
-/*}*/
-
-.navbar-fixed-top {
-    background-color: #e2725b;
-    border-color: #e88f7d;
+.navbar-brand:hover {
+    color: #efefef !important;
 }
 
-/*.navbar-default .navbar-brand {*/
-    /*color: #e2725b;*/
-    /*background-color: #fbece9;*/
-    /*z-index: 1000;*/
-/*}*/
-
-/*.navbar-default .navbar-collapse {*/
-    /*background-color: #fbece9;*/
-/*}*/
-
-/*.nav > li {*/
-    /*background-color: #fbece9;*/
-/*}*/
-
+.navbar-fixed-top {
+    background-color: #a13718;
+    border-color: #e88f7d;
+}
 
 /*********************************
     CUSTOM DEFINED CLASSES
@@ -102,6 +98,10 @@ body {
         /*background-color: #e88f7d;*/
     }
 
+    #navbar {
+        background-color: #c67969;
+    }
+
     .nav-logo {
         width: 60px;
         padding: 5px;
@@ -132,7 +132,7 @@ body {
     }
 
     #rightmost-nav-item {
-        border-right: 1px solid #e88f7d;
+        border-right: 1px solid #efefef;
     }
 
     .nav-brand-animated {
@@ -158,7 +158,23 @@ body {
 
 }
 
-@media (max-width: 960px) and (min-width: 768px) {
+@media (max-width: 1004px) and (min-width: 768px) {
+
+    .navbar-nav > li > a {
+        padding: 20px 15px;
+        line-height: 15px;
+    }
+
+    .navbar-brand {
+        padding: 20px 15px;
+        font-size: 36px;
+        line-height: 20px;
+    }
+
+    .nav-logo {
+        width: 65px;
+    }
+
     body {
         padding-top: 200px;
     }
@@ -179,7 +195,7 @@ body {
     }
 
     #rightmost-nav-item {
-        border-right: 1px solid #fbece9;
+        border-right: 1px solid #efefef;
     }
 }
 
@@ -198,127 +214,3 @@ body {
         border: none;
     }
 }
-
-/*.navbar-container {*/
-/*width: 100%;*/
-/*bottom: 100%;*/
-/*display: flex;*/
-/*flex-direction: row;*/
-/*flex-wrap: wrap;*/
-/*justify-content: space-between;*/
-/*align-items: flex-end;*/
-/*}*/
-
-/*#nav-logo {*/
-/*width: 50px;*/
-/*}*/
-
-/*#flex-logo {*/
-/*display: inline;*/
-/*width: 40%;*/
-/*flex-grow: 1;*/
-/*}*/
-
-/*#flex-links {*/
-/*display: inline;*/
-/*width: 40%;*/
-/*flex-grow: 1;*/
-/*list-style-type: none;*/
-/*}*/
-
-/*#flex-links > div {*/
-/*display: inline;*/
-/*width: 5%;*/
-/*}*/
-
-/*.nav-link {*/
-/*position: relative;*/
-/*text-align: center;*/
-/*width: 200px;*/
-/*display: block;*/
-/*margin: 0 auto;*/
-/*text-decoration: none;*/
-/*}*/
-/*.nav-link:hover {*/
-/*text-decoration: none;*/
-/*}*/
-
-/*!**/
-
-/*Overriding bootstrap css*/
-
-/**!*/
-
-/*.navbar-brand {*/
-/*height: 70px;*/
-/*margin-left: 5%;*/
-/*float: left;*/
-/*padding: 2%;*/
-/*}*/
-
-/*.navbar-header {*/
-/*width: 20%;*/
-/*}*/
-
-/*.navbar {*/
-/*padding-left: 1%;*/
-/*}*/
-
-/*!*.dropdown-toggle {*!*/
-/*!*height: 70px;*!*/
-/*!*float: right;*!*/
-/*!*}*!*/
-
-/*!*.navbar-nav > li > a {*!*/
-/*!*height: 70px;*!*/
-/*!*line-height: 35px;*!*/
-/*!*}*!*/
-
-/*!**/
-
-/*End Overriding bootstrap css*/
-
-/**!*/
-
-/*#cocoon-script {*/
-/*display: inline;*/
-/*font-size: 2.5em;*/
-/*font-family: 'Lobster', cursive;*/
-/*color: #333;*/
-/*height: 100%;*/
-/*line-height: 70px;*/
-/*}*/
-
-/*#nav-logo {*/
-/*padding: 0;*/
-/*height: 100%;*/
-/*display: inline-block;*/
-/*float: left;*/
-/*}*/
-
-/*#navbar {*/
-/*display: inline-block;*/
-/*}*/
-
-/*@media only screen and (max-width: 768px) {*/
-
-/*.navbar-brand {*/
-/*width: 80%;*/
-/*float: left;*/
-/*}*/
-
-/*#nav-logo {*/
-/*float: left;*/
-/*}*/
-
-/*#cocoon-script {*/
-/*float: left;*/
-/*}*/
-
-/*}*/
-
-/*@media only screen and (max-width: 930px) {*/
-/*.navbar-brand {*/
-/*margin: 0 auto;*/
-/*}*/
-/*}*/
