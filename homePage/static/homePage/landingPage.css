@@ -1,0 +1,86 @@
+
+/*********************************
+    CAROUSAL STYLING
+ ********************************/
+
+.container {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.jumbotron {
+    background-color: #263238;
+    opacity: .75;
+    border-radius: 0px !important;
+    display: block;
+    position: absolute;
+    z-index: 500;
+    width: 30%;
+    top: 0;
+    padding: 20px 10px;
+
+}
+
+.jumbotron > h1 {
+    font-size: 36px;
+}
+
+.selectSurvey > div > h2 {
+
+}
+
+.jumbotron > p {
+    font-size: 16px;
+}
+
+.selectSurvey {
+    padding: 5%;
+    background-color: #263238;
+    opacity: .75;
+    position: absolute;
+    z-index: 400;
+    display: block;
+    top: 45%;
+    margin: 0 auto;
+    color: white;
+    width: 100%;
+    text-align: center;
+}
+
+.carousel-control {
+    z-index: 2000;
+}
+
+.surveyButton {
+    top: 55%;
+    position: absolute;
+    z-index: 400;
+    display: block;
+    left: 38%;
+}
+
+.submitButton {
+    padding: 15px 25px;
+    font-size: 16px;
+}
+
+.surveyButton > div > form > div {
+    color: #fff;
+}
+
+/*********************************
+    CAROUSAL SCALING
+ ********************************/
+
+@media (max-width: 1004px) {
+
+    .jumbotron {
+        width: 100%;
+        background: none;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+}

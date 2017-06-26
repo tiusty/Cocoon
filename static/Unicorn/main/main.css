@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    padding-top: 100px;
+    padding-top: 80px;
 }
 
 .jumbotron {
@@ -42,6 +42,10 @@ body {
     color: #fff;
 }
 
+.navbar, .navbar-default, navbar-fixed-top {
+    z-index: 3000;
+}
+
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
     color: #efefef;
 }
@@ -64,34 +68,6 @@ body {
 .navbar-fixed-top {
     background-color: #a13718;
     border-color: #e88f7d;
-}
-
-/*********************************
-    CAROUSAL STYLING
- ********************************/
-
-.container {
-    padding: 0;
-}
-
-.jumbotron {
-    border-radius: 0px !important;
-    display: block;
-    position: absolute;
-    margin: 0 auto;
-    z-index: 1000;
-    width: 30%;
-    top: 0;
-    padding: 20px 10px;
-
-}
-
-.jumbotron > h1 {
-    font-size: 36px;
-}
-
-.jumbotron > p {
-    font-size: 16px;
 }
 
 /*********************************
@@ -204,7 +180,7 @@ body {
     }
 
     body {
-        padding-top: 200px;
+        padding-top: 65px;
     }
 
     .navbar-nav {
@@ -240,5 +216,11 @@ body {
 
     #rightmost-nav-item {
         border: none;
+    }
+}
+
+@media (max-width: 956px) {
+    body {
+        padding-top: 110px;
     }
 }

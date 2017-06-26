@@ -15,6 +15,7 @@
     <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
     <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
     <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
+    <link href="{% static 'homePage/landingPage.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -75,6 +76,41 @@
 
         </div>
 
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if error_message %}
+            <div class="row">
+                <div class="col-sm-offset-3 col-sm-6" style="color:red">
+                    <p><strong>{{ error_message }}</strong></p>
+                </div>
+            </div>
+        {% endif %}
+        <div class="selectSurvey row">
+            <div class="col-sm-4 col-sm-offset-4" style="text-align: center">
+                <h2>Take a survey now</h2>
+            </div>
+        </div>
+        <div class="surveyButton row">
+            <div class="col-sm-4 col-sm-offset-4" style="text-align: center">
+                <form class="form-horizontal" action="{% url 'homePage:index' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {% for radio in form.survey_type %}
+                            {{ radio }}
+                        {% endfor %}
+                    </div>
+                    <p class="lead">
+                        <button type="submit" id="Submit" class="btn btn-primary submitButton">Submit Survey</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+
         <!-- Controls -->
         <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
             <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
@@ -86,39 +122,6 @@
         </a>
     </div>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if error_message %}
-        <div class="row">
-            <div class="col-sm-offset-3 col-sm-6" style="color:red">
-                <p><strong>{{ error_message }}</strong></p>
-            </div>
-        </div>
-    {% endif %}
-    <div class="row">
-        <div class="col-sm-4 col-sm-offset-4" style="text-align: center">
-            <h2>Please select a survey!</h2>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-4 col-sm-offset-4" style="text-align: center">
-            <form class="form-horizontal" action="{% url 'homePage:index' %}" method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    {% for radio in form.survey_type %}
-                        {{ radio }}
-                    {% endfor %}
-                </div>
-                <p class="lead">
-                    <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
-                </p>
-            </form>
-        </div>
-    </div>
+
 
 {% endblock %}
