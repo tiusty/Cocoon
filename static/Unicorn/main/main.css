@@ -10,7 +10,7 @@ body {
 }
 
 .jumbotron {
-    background-color: #26A69A;
+    background-color: #4eb7ad;
     color: #fff;
 }
 
@@ -64,6 +64,34 @@ body {
 .navbar-fixed-top {
     background-color: #a13718;
     border-color: #e88f7d;
+}
+
+/*********************************
+    CAROUSAL STYLING
+ ********************************/
+
+.container {
+    padding: 0;
+}
+
+.jumbotron {
+    border-radius: 0px !important;
+    display: block;
+    position: absolute;
+    margin: 0 auto;
+    z-index: 1000;
+    width: 30%;
+    top: 0;
+    padding: 20px 10px;
+
+}
+
+.jumbotron > h1 {
+    font-size: 36px;
+}
+
+.jumbotron > p {
+    font-size: 16px;
 }
 
 /*********************************
@@ -139,8 +167,8 @@ body {
         padding: 12px 15px 15px 15px !important;
         line-height: 25px !important;
         font-size: 32px !important;
-        transition: padding-top .3s ease-in;
-        transition: padding-bottom .3s ease-in;
+        transition: padding-top .2s ease-in;
+        transition: padding-bottom .2s ease-in;
     }
 
     .navbar-nav > li > a.link-animated {
@@ -148,8 +176,8 @@ body {
         padding-top: 15px !important;
         padding-bottom: 15px !important;
         line-height: 21px !important;
-        transition: padding-top .3s ease-in;
-        transition: padding-bottom .3s ease-in;
+        transition: padding-top .2s ease-in;
+        transition: padding-bottom .2s ease-in;
     }
 
     .nav-logo-animated {

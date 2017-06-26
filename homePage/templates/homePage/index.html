@@ -18,21 +18,6 @@
 {% endblock %}
 
 {% block content %}
-    <div class="jumbotron">
-        {% if  user.is_authenticated %}
-            <h1>Hey {{ user.first_name }}</h1>
-        {% else %}
-            <h1>Welcome to Cocoon!</h1>
-        {% endif %}
-        <p class="lead">Here at Cocoon we strive to find your perfect home! </p>
-        {% if not user.is_authenticated %}
-            <p>Please sign in: <a href="{% url 'userAuth:loginPage' %}">
-                <button class="btn btn-primary">Login</button>
-            </a></p>
-        {% else %}
-            <p>Please click below to get started!</p>
-        {% endif %}
-    </div>
 
     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
         <!-- Indicators -->
@@ -43,6 +28,22 @@
             <li data-target="#carousel-example-generic" data-slide-to="3"></li>
             <li data-target="#carousel-example-generic" data-slide-to="4"></li>
         </ol>
+
+        <div class="jumbotron">
+            {% if  user.is_authenticated %}
+                <h1>Hey {{ user.first_name }}</h1>
+            {% else %}
+                <h1>Welcome to Cocoon!</h1>
+            {% endif %}
+            <p class="lead">Here at Cocoon we strive to find your perfect home! </p>
+            {% if not user.is_authenticated %}
+                <p>Please sign in: <a href="{% url 'userAuth:loginPage' %}">
+                    <button class="btn btn-primary">Login</button>
+                </a></p>
+            {% else %}
+                <p>Please click below to get started!</p>
+            {% endif %}
+        </div>
 
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
@@ -70,7 +71,7 @@
 
                 </div>
             </div>
-          
+
 
         </div>
 
