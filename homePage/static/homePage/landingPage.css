@@ -44,7 +44,7 @@
     margin: 0 auto;
     color: white;
     padding: 3% 5%;
-    left: 37%;
+    left: 36%;
 
 }
 
@@ -57,12 +57,12 @@
     position: absolute;
     z-index: 400;
     display: block;
-    left: 45%;
+    left: 44%;
     color: white;
 }
 
 .submitButton {
-    padding: 15px 25px;
+    padding: 10% 22%;
     font-size: 16px;
 }
 
@@ -77,11 +77,16 @@
 @media (max-width: 1004px) {
 
     .jumbotron {
-        width: 100%;
-        background: none;
-        color: white;
         font-size: 24px;
-        font-weight: bold;
+        width: 50%;
+    }
+
+    .jumbotron > h1 {
+        font-size: 16px;
+    }
+
+    .selectSurvey > h2 {
+        font-size: 24px;
     }
 
 }
