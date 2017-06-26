@@ -698,6 +698,7 @@ def start_algorithm(survey, context):
         scored_house_list.append(ScoringStruct(house))
 
     commute_type = survey.get_commute_type()
+    context['commuteType'] = commute_type
     scored_house_list_ordered = []
 
     """

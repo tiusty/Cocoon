@@ -303,7 +303,7 @@ class RentScoringStruct(models.Model):
     def __str__(self):
         return self.house.full_address()
 
-    def get_score(self):
+    def get_score_percent(self):
         """
         Generates the actual score based on the possible score and current score.
         This makes sure that the divide by zero case is handled.
@@ -312,20 +312,26 @@ class RentScoringStruct(models.Model):
                 The house should not be used
         """
         # Takes care of divide by 0, also if it is eliminated the score should be -1
-        if self.scorePossible != 0 and self.eliminated is False:
-            return (self.score / self.scorePossible) * 100
+        if self.get_score_possible() != 0 and self.eliminated is False:
+            return (self.score / self.get_score_possible()) * 100
         elif self.eliminated:
             # If eliminated return negative one so it is sorted to the back
             return -1
         else:
             return 0
 
+    def get_score(self):
+        return self.score
+
+    def get_score_possible(self):
+        return self.score_possible
+
     def get_final_score(self):
         """
         Returns the score but rounds to the nearest integer to make it human friendly
         :return: the score rounded to the nearest integer
         """
-        return round(self.get_score())
+        return round(self.get_score_percent())
 
     def get_user_score(self):
         """
@@ -440,4 +446,5 @@ class CommuteTimes(models.Model):
     """
     scoring_struct = models.ForeignKey(RentScoringStruct)
     commute_type = models.IntegerField(default=CommutePrecision.approx.value)
+    # Stored in seconds
     commute_time = models.IntegerField(default=0)
