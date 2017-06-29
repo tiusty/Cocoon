@@ -34,8 +34,8 @@
                                aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Account</li>
-                                <li><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
+                                <li class="dropdown-header"><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
+                                <li class="dropdown-header"><a href="{% url 'userAuth:profilePage' 'profile' %}">User Profile</a></li>
                                 {% comment %}
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header">Surveys</li>
