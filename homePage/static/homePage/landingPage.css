@@ -9,8 +9,7 @@
 }
 
 .jumbotron {
-    background-color: #263238;
-    opacity: .75;
+    background-color: rgba(38,50,56,.75);
     border-radius: 0px !important;
     display: block;
     position: absolute;
@@ -18,7 +17,6 @@
     width: 30%;
     top: 0;
     padding: 20px 10px;
-
 }
 
 .jumbotron > h1 {
@@ -70,6 +68,11 @@
 
 .surveyButton > div > form > div {
     color: #fff;
+}
+
+.jumbotron > p > a > .login-button {
+    background: rgba(38,166,154,1);
+    z-index: 1000;
 }
 
 /*********************************

@@ -93,6 +93,11 @@ li.dropdown-header {
     border-color: #e88f7d;
 }
 
+.navbar-right > li.login-block {
+    min-width: 150px;
+    text-align: center;
+}
+
 /***********************
 
     BUTTON STYLING
@@ -254,6 +259,11 @@ fieldset[disabled] .btn-danger.focus {
     .navbar-nav > li > a {
         padding: 20px 15px;
         line-height: 15px;
+    }
+
+    .navbar-right > li.login-block {
+        min-width: 300px;
+        text-align: right;
     }
 
     .navbar-brand {
