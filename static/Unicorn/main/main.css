@@ -198,22 +198,6 @@ fieldset[disabled] .btn-danger.focus {
 
  ********************************/
 
-@media (min-width: 2100px) {
-    .nav-container {
-        width: 80% !important;
-        margin: 0 auto !important;
-    }
-
-    .navbar-nav {
-        float: none;
-        margin-left: 350px;
-    }
-
-    #rightmost-nav-item {
-        border: none;
-    }
-}
-
 @media (min-width: 768px) {
 
     .navbar-nav > li > a {
@@ -305,8 +289,6 @@ fieldset[disabled] .btn-danger.focus {
         border-right: 1px solid #efefef;
     }
 }
-
-
 
 @media (max-width: 956px) {
     body {
