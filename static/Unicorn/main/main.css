@@ -9,18 +9,15 @@ body {
     padding-top: 80px;
 }
 
-
-
 /* Preventing modal from being hidden by large navbar */
 .modal-dialog {
-    margin-top: 15% !important;
+    margin-top: 25% !important;
 }
-
-
 
 .jumbotron {
     background-color: #4eb7ad;
     color: #fff;
+    margin-top: 5%;
 }
 
 /***********************
@@ -69,6 +66,7 @@ li.dropdown-header {
 
 .navbar, .navbar-default, navbar-fixed-top {
     z-index: 3000;
+    margin-bottom: 10%;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
