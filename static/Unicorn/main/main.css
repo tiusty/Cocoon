@@ -124,28 +124,32 @@ li.dropdown-header {
 }
 
 .btn-danger {
-  color: #fff;
-  background-color: #d9534f !important;
-  border-color: #d43f3a !important;
+    color: #fff;
+    background-color: #d9534f !important;
+    border-color: #d43f3a !important;
 }
+
 .btn-danger:focus,
 .btn-danger.focus {
-  color: #fff;
-  background-color: #c9302c !important;
-  border-color: #761c19 !important;
+    color: #fff;
+    background-color: #c9302c !important;
+    border-color: #761c19 !important;
 }
+
 .btn-danger:hover {
-  color: #fff;
-  background-color: #c9302c !important;
-  border-color: #ac2925 !important;
+    color: #fff;
+    background-color: #c9302c !important;
+    border-color: #ac2925 !important;
 }
+
 .btn-danger:active,
 .btn-danger.active,
 .open > .dropdown-toggle.btn-danger {
-  color: #fff;
-  background-color: #c9302c !important;
-  border-color: #ac2925 !important;
+    color: #fff;
+    background-color: #c9302c !important;
+    border-color: #ac2925 !important;
 }
+
 .btn-danger:active:hover,
 .btn-danger.active:hover,
 .open > .dropdown-toggle.btn-danger:hover,
@@ -155,15 +159,17 @@ li.dropdown-header {
 .btn-danger:active.focus,
 .btn-danger.active.focus,
 .open > .dropdown-toggle.btn-danger.focus {
-  color: #fff;
-  background-color: #ac2925 !important;
-  border-color: #761c19 !important;
+    color: #fff;
+    background-color: #ac2925 !important;
+    border-color: #761c19 !important;
 }
+
 .btn-danger:active,
 .btn-danger.active,
 .open > .dropdown-toggle.btn-danger {
-  background-image: none;
+    background-image: none;
 }
+
 .btn-danger.disabled:hover,
 .btn-danger[disabled]:hover,
 fieldset[disabled] .btn-danger:hover,
@@ -173,12 +179,13 @@ fieldset[disabled] .btn-danger:focus,
 .btn-danger.disabled.focus,
 .btn-danger[disabled].focus,
 fieldset[disabled] .btn-danger.focus {
-  background-color: #d9534f !important;
-  border-color: #d43f3a !important;
+    background-color: #d9534f !important;
+    border-color: #d43f3a !important;
 }
+
 .btn-danger .badge {
-  color: #d9534f !important;
-  background-color: #fff;
+    color: #d9534f !important;
+    background-color: #fff;
 }
 
 /*********************************
@@ -307,6 +314,10 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 @media (max-width: 768px) {
+
+    .navbar-right > li.login-block {
+        min-width: 150px;
+    }
 
     .navbar-brand {
         line-height: 0px;
