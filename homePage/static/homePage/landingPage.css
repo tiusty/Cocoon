@@ -36,12 +36,12 @@
 }
 
 .selectSurvey {
-    background-color: #263238;
+    background-color: rgba(38,50,56,.75);
     opacity: .75;
     position: absolute;
     z-index: 400;
     display: block;
-    top: 43%;
+    top: 38%;
     margin: 0 auto;
     color: white;
     padding: 3% 5%;
@@ -53,18 +53,27 @@
 }
 
 .surveyButton {
-    top: 70%;
-    position: absolute;
-    z-index: 400;
+    width: 100%;
+    position: relative;
+    z-index: 20000;
     display: block;
-    left: 44%;
     color: white;
+    margin: 0 auto;
+}
+
+.lead {
+    width: 100%;
 }
 
 .submitButton {
+    display: block;
+    margin: 0 auto !important;
     padding: 10% 22%;
     font-size: 16px;
+    z-index: 500;
+    background: rgba(38,166,154,1) !important;
 }
+
 
 .surveyButton > div > form > div {
     color: #fff;

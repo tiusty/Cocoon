@@ -86,8 +86,7 @@
         {% endif %}
         <div class="selectSurvey">
                 <h2>Take a survey now</h2>
-        </div>
-        <div class="surveyButton">
+            <div class="surveyButton">
 
                 <form class="form-horizontal" action="{% url 'homePage:index' %}" method="post">
                     {% csrf_token %}
@@ -102,6 +101,8 @@
                 </form>
 
         </div>
+        </div>
+
 
 {#        <!-- Controls -->#}
 {#        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">#}
