@@ -9,18 +9,15 @@ body {
     padding-top: 80px;
 }
 
-
-
 /* Preventing modal from being hidden by large navbar */
 .modal-dialog {
-    margin-top: 15% !important;
+    margin-top: 25% !important;
 }
-
-
 
 .jumbotron {
     background-color: #4eb7ad;
     color: #fff;
+    margin-top: 5%;
 }
 
 /***********************
@@ -69,6 +66,7 @@ li.dropdown-header {
 
 .navbar, .navbar-default, navbar-fixed-top {
     z-index: 3000;
+    margin-bottom: 10%;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
@@ -93,6 +91,11 @@ li.dropdown-header {
 .navbar-fixed-top {
     background-color: #a13718;
     border-color: #e88f7d;
+}
+
+.navbar-right > li.login-block {
+    min-width: 150px;
+    text-align: center;
 }
 
 /***********************
@@ -121,28 +124,32 @@ li.dropdown-header {
 }
 
 .btn-danger {
-  color: #fff;
-  background-color: #d9534f !important;
-  border-color: #d43f3a !important;
+    color: #fff;
+    background-color: #d9534f !important;
+    border-color: #d43f3a !important;
 }
+
 .btn-danger:focus,
 .btn-danger.focus {
-  color: #fff;
-  background-color: #c9302c !important;
-  border-color: #761c19 !important;
+    color: #fff;
+    background-color: #c9302c !important;
+    border-color: #761c19 !important;
 }
+
 .btn-danger:hover {
-  color: #fff;
-  background-color: #c9302c !important;
-  border-color: #ac2925 !important;
+    color: #fff;
+    background-color: #c9302c !important;
+    border-color: #ac2925 !important;
 }
+
 .btn-danger:active,
 .btn-danger.active,
 .open > .dropdown-toggle.btn-danger {
-  color: #fff;
-  background-color: #c9302c !important;
-  border-color: #ac2925 !important;
+    color: #fff;
+    background-color: #c9302c !important;
+    border-color: #ac2925 !important;
 }
+
 .btn-danger:active:hover,
 .btn-danger.active:hover,
 .open > .dropdown-toggle.btn-danger:hover,
@@ -152,15 +159,17 @@ li.dropdown-header {
 .btn-danger:active.focus,
 .btn-danger.active.focus,
 .open > .dropdown-toggle.btn-danger.focus {
-  color: #fff;
-  background-color: #ac2925 !important;
-  border-color: #761c19 !important;
+    color: #fff;
+    background-color: #ac2925 !important;
+    border-color: #761c19 !important;
 }
+
 .btn-danger:active,
 .btn-danger.active,
 .open > .dropdown-toggle.btn-danger {
-  background-image: none;
+    background-image: none;
 }
+
 .btn-danger.disabled:hover,
 .btn-danger[disabled]:hover,
 fieldset[disabled] .btn-danger:hover,
@@ -170,12 +179,13 @@ fieldset[disabled] .btn-danger:focus,
 .btn-danger.disabled.focus,
 .btn-danger[disabled].focus,
 fieldset[disabled] .btn-danger.focus {
-  background-color: #d9534f !important;
-  border-color: #d43f3a !important;
+    background-color: #d9534f !important;
+    border-color: #d43f3a !important;
 }
+
 .btn-danger .badge {
-  color: #d9534f !important;
-  background-color: #fff;
+    color: #d9534f !important;
+    background-color: #fff;
 }
 
 /*********************************
@@ -199,22 +209,6 @@ fieldset[disabled] .btn-danger.focus {
         - Most specific queries lower down
 
  ********************************/
-
-@media (min-width: 2100px) {
-    .nav-container {
-        width: 80% !important;
-        margin: 0 auto !important;
-    }
-
-    .navbar-nav {
-        float: none;
-        margin-left: 350px;
-    }
-
-    #rightmost-nav-item {
-        border: none;
-    }
-}
 
 @media (min-width: 768px) {
 
@@ -274,6 +268,11 @@ fieldset[disabled] .btn-danger.focus {
         line-height: 15px;
     }
 
+    .navbar-right > li.login-block {
+        min-width: 300px;
+        text-align: right;
+    }
+
     .navbar-brand {
         padding: 20px 15px;
         font-size: 36px;
@@ -308,8 +307,6 @@ fieldset[disabled] .btn-danger.focus {
     }
 }
 
-
-
 @media (max-width: 956px) {
     body {
         padding-top: 110px;
@@ -317,6 +314,10 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 @media (max-width: 768px) {
+
+    .navbar-right > li.login-block {
+        min-width: 150px;
+    }
 
     .navbar-brand {
         line-height: 0px;
