@@ -26,15 +26,111 @@
     transition: width 0.3s ease;
 }
 
-/*
+/*****************************
 
-Styling of new result tiles
+STYLING NEW TILE RESULTS
 
- */
+ ****************************/
 
 /* Pushing old styling down
     TODO: remove this code
 */
 .resultTiles {
     margin-bottom: 50%;
+}
+
+.tileTable {
+    overflow-x: scroll;
+}
+
+/* scrolling on small screens */
+.tile {
+    width: 100%;
+    min-width: 600px;
+    overflow-x: scroll;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    align-content: center;
+    border: 1px solid #a13718;
+    height: 160px;
+    padding: 0;
+    background-color: #f7f7f7;
+}
+
+.tile:hover {
+    background-color: #efefef;
+    cursor: pointer;
+}
+
+.scoreItem {
+    flex-grow: 1;
+    flex-basis: 20%;
+    border-right: 1px dotted #a13718;
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+
+.scoreText {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 24px;
+}
+
+.infoItem {
+    flex-grow: 2;
+    flex-basis: 50%;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
+
+}
+
+.thumbnailItem {
+    vertical-align: middle;
+    flex-grow: 2;
+    flex-basis: 30%;
+    overflow: hidden;
+}
+
+.thumbnailImage {
+    vertical-align: middle;
+    float: right;
+    width: 100%;
+    height: auto;
+    min-width: 200px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.thumbnailImage-hover {
+    max-width: 110%;
+    width: 110%;
+    max-height: 110%;
+    transition: height .1s;
+
+}
+
+.infoBit {
+    width: 80%;
+    font-size: 16px;
+    display: block;
+    text-align: center;
+}
+
+.infoBit-hover {
+    width: 100%;
+    font-size: 18px;
+    transition: width .1s;
+    transition: font-size .1s;
+}
+
+.scoreText-hover {
+    font-size: 28px !important;
+    transition: font-size .1s;
 }

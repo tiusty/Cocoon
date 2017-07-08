@@ -254,17 +254,19 @@ Global variables are listed below
                         {% for home in houseList %}
 
                             <div class="tile">
-                                <div class="scoreItem">{{ home.get_final_score }}</div>
+                                <div class="scoreItem">
+                                    <span class="scoreText">{{ home.get_final_score }}</span>
+                                </div>
                                 <div class="infoItem">
                                     {# Logic to pull high priority item #}
                                     {# Below are placeholder strings    #}
                                     <span class="infoBit">{{ home.house.get_price_str }}</span>
-                                    <span class="infoBit">{{ home.house.get_full_address }}</span>
+                                    <span class="infoBit addressBit">{{ home.house.get_full_address }}</span>
                                     <span class="infoBit"></span>
                                 </div>
                                 <div class="thumbnailItem">
                                     {# Logic to pull image from database should go here #}
-                                    <img class="thumbnail" src="">
+                                    <img class="thumbnailImage" src="{% static 'stockHomes/stock_houses/house1.1.jpg' %}">
                                 </div>
 
                             </div>
@@ -389,6 +391,7 @@ Global variables are listed below
 
     <!-- Loading scripts at the end to increase loading times -->
     <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
+    <script src="{% static 'survey/tileInteraction.js' %}"></script>
     <script src="{% static 'survey/survey_result.js' %}"></script>
     <script src="{% static 'survey/addMarkers.js' %}"></script>
     <script src="{% static 'survey/addGoogleMap.js' %}"></script>
