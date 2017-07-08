@@ -736,8 +736,8 @@ def start_algorithm(survey, context):
         # Now generate the score based on the exact commute
         create_commute_score(scored_house_list, survey, CommutePrecision.exact)
 
-        # Now reorder all the homes that had their exact commutes calculated
-        order_by_house_score(scored_house_list[:number_of_exact_commutes_computed])
+        # Now reorder all the homes with the new information
+        order_by_house_score(scored_house_list)
 
     # Contains destinations of the user
     context['locations'] = destination_set

@@ -23,7 +23,7 @@ Hybrid_weighted_min = -3
 # Homes with a commute of 10-80 will be accepted. This is to account for the difference of commute
 # within a given zip code
 approximate_commute_range = 20
-number_of_exact_commutes_computed = 100
+number_of_exact_commutes_computed = 100 # number of homes that the exact commute is calculated
 
 # Google distance matrix values
 gmaps = googlemaps.Client(key='AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74')

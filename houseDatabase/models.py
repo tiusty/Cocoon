@@ -132,6 +132,15 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
         return self.storage_unit
 
 
+def house_directory_path(instance, filename):
+    return 'houseDatabase_{0}/{1}'.format(instance.house.id, filename)
+
+
+class HousePhotos(models.Model):
+    house = models.ForeignKey('RentDatabase', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=house_directory_path, blank=True)
+
+
 class ZipCodeDictionary(models.Model):
     """
     The base Zip Code, aka 02476, for each base zip_code, there will be
