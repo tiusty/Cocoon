@@ -37,9 +37,8 @@
 
 .selectSurvey {
     background-color: rgba(38,50,56,.75);
-    opacity: .75;
     position: absolute;
-    z-index: 400;
+    z-index: 100;
     display: block;
     top: 38%;
     margin: 0 auto;
@@ -55,7 +54,7 @@
 .surveyButton {
     width: 100%;
     position: relative;
-    z-index: 20000;
+    z-index: 500;
     display: block;
     color: white;
     margin: 0 auto;
@@ -68,7 +67,7 @@
 .submitButton {
     display: block;
     margin: 0 auto !important;
-    padding: 10% 22%;
+    padding: 5% 12%;
     font-size: 16px;
     z-index: 500;
     background: rgba(38,166,154,1) !important;
