@@ -4,7 +4,7 @@
 
 $(document).ready(function () {
     $(window).scroll(function () {
-        if ($(this).scrollTop() == 0 ) {
+        if ($(this).scrollTop() < 30 ) {
             console.log("scrolled to the top");
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");

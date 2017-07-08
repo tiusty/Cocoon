@@ -4,7 +4,7 @@
     width: 0; /* 0 width - change this with JavaScript */
     position: fixed; /* Stay in place */
     z-index: 1; /* Stay on top */
-    top: 50px;
+    top: 75px;
     left: 0;
     background-color: #f8f8f8; /* Greyish*/
     overflow-x: hidden; /* Disable horizontal scroll */
@@ -52,4 +52,16 @@
 .openNav {
     padding-left: 20px;
     padding-right: 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .sidenav {
+        top: 50px;
+    }
+}
+
+@media (max-width: 1004px) and (min-width: 768px) {
+    .sidenav {
+        top: 100px;
+}
 }
