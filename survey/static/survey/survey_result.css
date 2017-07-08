@@ -25,3 +25,16 @@
     /* for the animation */
     transition: width 0.3s ease;
 }
+
+/*
+
+Styling of new result tiles
+
+ */
+
+/* Pushing old styling down
+    TODO: remove this code
+*/
+.resultTiles {
+    margin-bottom: 50%;
+}

@@ -246,6 +246,36 @@ Global variables are listed below
                     </div>
 
                 </div>
+
+                {# Beginning of the new tile survey result list #}
+                <div class="resultTiles col-sm-6">
+                    <h1 class="page-header">Home List</h1>
+                    <div class="tileTable">
+                        {% for home in houseList %}
+
+                            <div class="tile">
+                                <div class="scoreItem">{{ home.get_final_score }}</div>
+                                <div class="infoItem">
+                                    {# Logic to pull high priority item #}
+                                    {# Below are placeholder strings    #}
+                                    <span class="infoBit">{{ home.house.get_price_str }}</span>
+                                    <span class="infoBit">{{ home.house.get_full_address }}</span>
+                                    <span class="infoBit"></span>
+                                </div>
+                                <div class="thumbnailItem">
+                                    {# Logic to pull image from database should go here #}
+                                    <img class="thumbnail" src="">
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+
+
+
+                {# Beginning of the old result survey #}
                 <div class="col-sm-6">
                     <h1 class="page-header" style="text-align: center">Home List</h1>
                     <div style="max-height:750px;overflow-y:auto;">
