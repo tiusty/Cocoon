@@ -6,9 +6,9 @@ $(document).ready(function () {
     // oversize the contents of the tile when hovered to suggest that
     // it can be expanded when clicked
     $('.tile').mouseover(function(){
-        $('.thumbnailImage').addClass('thumbnailImage-hover');
-        $('.scoreText').addClass('scoreText-hover');
-        $('.infoBit').addClass('infoBit-hover');
+        $(this).find('.thumbnailImage').addClass('thumbnailImage-hover');
+        $(this).find('.scoreText').addClass('scoreText-hover');
+        $(this).find('.infoBit').addClass('infoBit-hover');
     });
 
     $('.tile').mouseleave(function () {
