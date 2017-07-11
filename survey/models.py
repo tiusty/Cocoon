@@ -15,6 +15,17 @@ class CommutePrecision(Enum):
     approx = 2
 
 
+HYBRID_WEIGHT_CHOICES = (
+    (3, "Must have"),
+    (2, "Really want"),
+    (1, "Prefer to have"),
+    (0, "I don't care"),
+    (-1, "Prefer not to have"),
+    (-2, "Really don't want"),
+    (-3, "Don't want"),
+)
+
+
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
@@ -54,7 +65,7 @@ class InteriorAmenities(models.Model):
     Contains all the survey questions regarding the interior amenities
     Any survey can inherit these fields
     """
-    air_conditioning = models.IntegerField(default=0)
+    air_conditioning = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
     wash_dryer_in_home = models.IntegerField(default=0)
     dish_washer = models.IntegerField(default=0)
     bath = models.IntegerField(default=0)
@@ -253,9 +264,12 @@ class Destinations(models.Model):
     state = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
 
-    def full_address(self):
+    def get_full_address(self):
         output = str(self.street_address) + ", " + str(self.city) + ", " + str(self.state) + ", " + str(self.zip_code)
         return output
+
+    def get_short_address(self):
+        return self.street_address + ", " + self.city
 
     def get_zip_code(self):
         if len(self.zip_code) > 5:
@@ -270,29 +284,23 @@ class RentingDestinations(Destinations):
     def __str__(self):
         return self.street_address
 
-    def full_address(self):
-        return self.street_address + ", " + self.city + ", " + self.state + " " + self.zip_code
-
-    def short_address(self):
-        return self.street_address + ", " + self.city
-
 
 class RentScoringStruct(models.Model):
     """
     Class that stores a homes and the associated values with that homes
     This allows homes to be stored with a survey and then the home can
     be loaded at any time. Reduces the computation time for the server
-    NOTE THIS CLASS AS NOT BEEN TESTED ONLY ADDED
+    NOTE THIS CLASS HAS NOT BEEN TESTED ONLY ADDED
     """
-    home = models.ForeignKey(RentDatabase)
+    house = models.ForeignKey(RentDatabase)
     score = models.IntegerField(default=0)
     score_possible = models.IntegerField(default=0)
     eliminated = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.house.full_address()
+        return self.house.get_full_address()
 
-    def get_score(self):
+    def get_score_percent(self):
         """
         Generates the actual score based on the possible score and current score.
         This makes sure that the divide by zero case is handled.
@@ -301,20 +309,26 @@ class RentScoringStruct(models.Model):
                 The house should not be used
         """
         # Takes care of divide by 0, also if it is eliminated the score should be -1
-        if self.scorePossible != 0 and self.eliminated is False:
-            return (self.score / self.scorePossible) * 100
+        if self.get_score_possible() != 0 and self.eliminated is False:
+            return (self.score / self.get_score_possible()) * 100
         elif self.eliminated:
             # If eliminated return negative one so it is sorted to the back
             return -1
         else:
             return 0
 
+    def get_score(self):
+        return self.score
+
+    def get_score_possible(self):
+        return self.score_possible
+
     def get_final_score(self):
         """
         Returns the score but rounds to the nearest integer to make it human friendly
         :return: the score rounded to the nearest integer
         """
-        return round(self.get_score())
+        return round(self.get_score_percent())
 
     def get_user_score(self):
         """
@@ -365,7 +379,7 @@ class RentScoringStruct(models.Model):
         :return: A list with all the commute times
         """
         commutes = []
-        for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.approx):
+        for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.approx.value):
             commutes.append(commute)
         return commutes
 
@@ -428,5 +442,5 @@ class CommuteTimes(models.Model):
 
     """
     scoring_struct = models.ForeignKey(RentScoringStruct)
-    commute_type = models.IntegerField(default=CommutePrecision.approx)
+    commute_type = models.IntegerField(default=CommutePrecision.approx.value)
     commute_time = models.IntegerField(default=0)

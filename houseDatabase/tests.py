@@ -123,7 +123,7 @@ class HouseDataBaseTestCase(TestCase):
         """
         home = create_home()
         assert(home.get_address() == default_address)
-        assert(home.full_address() == home.get_address() + ", " + home.get_city()
+        assert(home.get_full_address() == home.get_address() + ", " + home.get_city()
                + ", " + home.get_state() + " " + home.get_zip_code())
         assert(home.short_address() == home.get_address()
                + ", " + home.get_city())

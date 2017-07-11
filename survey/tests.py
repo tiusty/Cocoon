@@ -27,18 +27,18 @@ class SurveyFormTest(TestCase):
         self.default_move_in_date_end = timezone.now() + timezone.timedelta(days=50)
         self.default_num_bedrooms = 2
         self.default_air_conditioning = 3
-        self.default_wash_dryer_in_home = 2
+        self.default_wash_dryer_in_home = -1
         self.default_dish_washer = 1
         self.default_bath = 1
         self.default_max_bathrooms = 5
         self.default_min_bathrooms = 1
-        self.default_parking_spot = 2
-        self.default_washer_dryer_in_building = 4
+        self.default_parking_spot = 0
+        self.default_washer_dryer_in_building = -3
         self.default_elevator = 0
         self.default_handicap_access = 1
         self.default_pool_hot_tub = 0
-        self.default_fitness_center = 4
-        self.default_storage_unit = 3
+        self.default_fitness_center = -1
+        self.default_storage_unit = -2
 
     def create_form_rent_survey(self):
         form_data = {
@@ -73,4 +73,3 @@ class SurveyFormTest(TestCase):
     def test_forms_correct_input(self):
         form = self.create_form_rent_survey()
         self.assertTrue(form.is_valid())
-

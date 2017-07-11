@@ -1,0 +1,7 @@
+*.pyc
+.idea/
+userAuth/migrations
+polls
+houseDatabase/migrations
+homePage/migrations
+survey/migrations

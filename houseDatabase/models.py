@@ -57,7 +57,7 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
     def get_address(self):
         return self.address
 
-    def full_address(self):
+    def get_full_address(self):
         return self.get_address() + ", " + self.get_city() + ", " + self.get_state() + " " + self.get_zip_code()
 
     def short_address(self):
