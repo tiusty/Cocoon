@@ -419,10 +419,18 @@ Global variables are listed below
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <script>
+
         /* Set the width of the side navigation to 250px */
         function openNav() {
             document.getElementById("sidebarSurvey").classList.add("openNav");
-            document.getElementById("sidebarSurvey").style.width = "30%";
+
+            if ($(window).width() < 900) {
+                document.getElementById("sidebarSurvey").style.width = "60%";
+            } else {
+                document.getElementById("sidebarSurvey").style.width = "30%";
+            }
+
+
         }
 
         /* Set the width of the side navigation to 0 */

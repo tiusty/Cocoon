@@ -10,13 +10,13 @@ $(document).ready(function () {
         var scoreValue = parseInt($(this).text())
         console.log(scoreValue)
 
-        if (scoreValue > 92) {
+        if (scoreValue > 86) {
             $(this).addClass('great-match');
-        } else if (scoreValue > 86 ) {
+        } else if (scoreValue > 79 ) {
             $(this).addClass('good-match');
-        } else if (scoreValue > 76) {
+        } else if (scoreValue > 69) {
             $(this).addClass('acceptable-match');
-        } else if (scoreValue > 66) {
+        } else if (scoreValue > 59) {
             $(this).addClass('bad-match');
         } else {
             $(this).addClass('terrible-match');

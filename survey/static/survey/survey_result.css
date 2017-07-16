@@ -41,7 +41,9 @@ STYLING NEW TILE RESULTS
 }
 
 .tileTable {
-      overflow-x: scroll;
+    margin: 0 auto;
+    max-width: 650px;
+    overflow-x: scroll;
 }
 
 /* scrolling on small screens */

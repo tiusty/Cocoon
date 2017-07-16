@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    padding-top: 80px;
+    padding-top: 85px;
 }
 
 /* Preventing modal from being hidden by large navbar */
@@ -261,7 +261,7 @@ fieldset[disabled] .btn-danger.focus {
 
 }
 
-@media (max-width: 1004px) and (min-width: 768px) {
+@media (max-width: 1021px) and (min-width: 768px) {
 
     .navbar-nav > li > a {
         padding: 20px 15px;
@@ -284,7 +284,7 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     body {
-        padding-top: 65px;
+        padding-top: 110px;
     }
 
     .navbar-nav {
