@@ -44,13 +44,10 @@ STYLING NEW TILE RESULTS
     min-height: 750px;
     max-width: 650px;
     overflow-x: scroll;
-    display: flex;
-    flex-direction: column;
 }
 
 /* scrolling on small screens */
 .tile {
-    flex: 0;
     width: 100%;
     min-width: 500px;
     margin-bottom: 2%;
@@ -60,14 +57,21 @@ STYLING NEW TILE RESULTS
     align-items: stretch;
     align-content: center;
     border: 2px solid #c65c3b;
-    height: 100%;
     padding: 0;
     background-color: #f7f7f7;
 }
 
 .tile-expanded {
-    flex-basis: 100%;
-    flex: 1;
+    height: 750px;
+    border: 2px solid #c65c3b;
+    background-color: #f7f7f7;
+
+    transition: height 1s ease;
+}
+
+.tile-expanded:hover {
+    height: 400px;
+    transition: height 1s ease-out;
 }
 
 .tile:hover {
