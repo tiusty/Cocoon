@@ -40,167 +40,167 @@ Global variables are listed below
         <div id="sidebarSurvey" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
-                    {{ form.non_field_errors }}
-                    {{ form.errors }}
-                    {% csrf_token %}
-                    <div class="form-group step_div">
-                        <div class="form-group">
-                            {{ form.name.label_tag }}
-                            {{ form.name }}
-                            {{ form.name.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.move_in_date_start.label_tag }}
-                            {{ form.move_in_date_start }}
-                            {{ form.move_in_date_start.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.move_in_date_end.label_tag }}
-                            {{ form.move_in_date_end }}
-                            {{ form.move_in_date_end.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.num_bedrooms.label_tag }}
-                            {{ form.num_bedrooms }}
-                            {{ form.num_bedrooms.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.home_type.label_tag }}
-                            {{ form.home_type }}
-                            {{ form.home_type.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="amountCost">Cost Per Month:</label>
-                            <input type="text" id="amountCost" name="amountCost" readonly
-                                   style="border:0; color:#f6931f; font-weight:bold;">
-                            <div id="cost"></div>
-                            {{ form.min_price }}
-                            {{ form.max_price }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.price_weight.label_tag }}
-                            {{ form.price_weight }}
-                            {{ form.price_weight.errors }}
-                        </div>
-                        <br>
-                        <div class="form-group step_div">
-                            <div class="form-group">
-                                <label for="amountCommute">Commute:</label>
-                                <input type="text" id="amountCommute" name="amountCommute" readonly
-                                       style="border:0; color:#f6931f; font-weight:bold;">
-                                <div id="commute"></div>
-                                {{ form.min_commute }}
-                                {{ form.max_commute }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.commute_weight.label_tag }}
-                                {{ form.commute_weight }}
-                                {{ form.commute_weight.errors }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.commute_type.label_tag }}
-                                {{ form.commute_type }}
-                                {{ form.commute_type.errors }}
-                            </div>
-                        </div>
-                        <br>
+                {{ form.non_field_errors }}
+                {{ form.errors }}
+                {% csrf_token %}
+                <div class="form-group step_div">
+                    <div class="form-group">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                        {{ form.name.errors }}
                     </div>
                     <div class="form-group">
-                        <div class="panel-group" id="accordion">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-                                            Interior Amenities</a>
-                                    </h4>
-                                </div>
-                                <div id="collapse1" class="panel-collapse collapse in">
-                                    <div class="panel-body">
-                                        <p>
-                                            {{ form.air_conditioning.label_tag }}
-                                            {{ form.air_conditioning }}
-                                            {{ form.air_conditioning.errors }}
-                                        </p>
+                        {{ form.move_in_date_start.label_tag }}
+                        {{ form.move_in_date_start }}
+                        {{ form.move_in_date_start.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.move_in_date_end.label_tag }}
+                        {{ form.move_in_date_end }}
+                        {{ form.move_in_date_end.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.num_bedrooms.label_tag }}
+                        {{ form.num_bedrooms }}
+                        {{ form.num_bedrooms.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.home_type.label_tag }}
+                        {{ form.home_type }}
+                        {{ form.home_type.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="amountCost">Cost Per Month:</label>
+                        <input type="text" id="amountCost" name="amountCost" readonly
+                               style="border:0; color:#f6931f; font-weight:bold;">
+                        <div id="cost"></div>
+                        {{ form.min_price }}
+                        {{ form.max_price }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.price_weight.label_tag }}
+                        {{ form.price_weight }}
+                        {{ form.price_weight.errors }}
+                    </div>
+                    <br>
+                    <div class="form-group step_div">
+                        <div class="form-group">
+                            <label for="amountCommute">Commute:</label>
+                            <input type="text" id="amountCommute" name="amountCommute" readonly
+                                   style="border:0; color:#f6931f; font-weight:bold;">
+                            <div id="commute"></div>
+                            {{ form.min_commute }}
+                            {{ form.max_commute }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.commute_weight.label_tag }}
+                            {{ form.commute_weight }}
+                            {{ form.commute_weight.errors }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.commute_type.label_tag }}
+                            {{ form.commute_type }}
+                            {{ form.commute_type.errors }}
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <div class="form-group">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                        Interior Amenities</a>
+                                </h4>
+                            </div>
+                            <div id="collapse1" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <p>
+                                        {{ form.air_conditioning.label_tag }}
+                                        {{ form.air_conditioning }}
+                                        {{ form.air_conditioning.errors }}
+                                    </p>
 
-                                        <p>
-                                            {{ form.wash_dryer_in_home.label_tag }}
-                                            {{ form.wash_dryer_in_home }}
-                                            {{ form.wash_dryer_in_home.errors }}
-                                        </p>
+                                    <p>
+                                        {{ form.wash_dryer_in_home.label_tag }}
+                                        {{ form.wash_dryer_in_home }}
+                                        {{ form.wash_dryer_in_home.errors }}
+                                    </p>
 
-                                        <p>
-                                            {{ form.dish_washer.label_tag }}
-                                            {{ form.dish_washer }}
-                                            {{ form.dish_washer.errors }}
-                                        </p>
+                                    <p>
+                                        {{ form.dish_washer.label_tag }}
+                                        {{ form.dish_washer }}
+                                        {{ form.dish_washer.errors }}
+                                    </p>
 
-                                        <p>
-                                            {{ form.bath.label_tag }}
-                                            {{ form.bath }}
-                                            {{ form.bath.errors }}
-                                        </p>
+                                    <p>
+                                        {{ form.bath.label_tag }}
+                                        {{ form.bath }}
+                                        {{ form.bath.errors }}
+                                    </p>
 
-                                        <p>
-                                            <label for="amountBathrooms"># Bathrooms:</label>
-                                            <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
-                                                   style="border:0; color:#f6931f; font-weight:bold;">
-                                        <div id="bathrooms"></div>
-                                        {{ form.min_bathrooms }}
-                                        {{ form.max_bathrooms }}
-                                        {{ form.min_bathrooms.errors }}
-                                        {{ form.max_bathrooms.errors }}
-                                        </p>
-                                    </div>
+                                    <p>
+                                        <label for="amountBathrooms"># Bathrooms:</label>
+                                        <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
+                                               style="border:0; color:#f6931f; font-weight:bold;">
+                                    <div id="bathrooms"></div>
+                                    {{ form.min_bathrooms }}
+                                    {{ form.max_bathrooms }}
+                                    {{ form.min_bathrooms.errors }}
+                                    {{ form.max_bathrooms.errors }}
+                                    </p>
                                 </div>
                             </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-                                            Building/Exterior Amentities</a>
-                                    </h4>
-                                </div>
-                                <div id="collapse2" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <p>
-                                            {{ form.parking_spot.label_tag }}
-                                            {{ form.parking_spot }}
-                                            {{ form.parking_spot.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.washer_dryer_in_building.label_tag }}
-                                            {{ form.washer_dryer_in_building }}
-                                            {{ form.washer_dryer_in_building.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.elevator.label_tag }}
-                                            {{ form.elevator }}
-                                            {{ form.elevator.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.handicap_access.label_tag }}
-                                            {{ form.handicap_access }}
-                                            {{ form.handicap_access.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.pool_hot_tub.label_tag }}
-                                            {{ form.pool_hot_tub }}
-                                            {{ form.pool_hot_tub.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.fitness_center.label_tag }}
-                                            {{ form.fitness_center }}
-                                            {{ form.fitness_center.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.storage_unit.label_tag }}
-                                            {{ form.storage_unit }}
-                                            {{ form.storage_unit.errors }}
-                                        </p>
-                                    </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                        Building/Exterior Amentities</a>
+                                </h4>
+                            </div>
+                            <div id="collapse2" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <p>
+                                        {{ form.parking_spot.label_tag }}
+                                        {{ form.parking_spot }}
+                                        {{ form.parking_spot.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.washer_dryer_in_building.label_tag }}
+                                        {{ form.washer_dryer_in_building }}
+                                        {{ form.washer_dryer_in_building.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.elevator.label_tag }}
+                                        {{ form.elevator }}
+                                        {{ form.elevator.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.handicap_access.label_tag }}
+                                        {{ form.handicap_access }}
+                                        {{ form.handicap_access.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.pool_hot_tub.label_tag }}
+                                        {{ form.pool_hot_tub }}
+                                        {{ form.pool_hot_tub.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.fitness_center.label_tag }}
+                                        {{ form.fitness_center }}
+                                        {{ form.fitness_center.errors }}
+                                    </p>
+                                    <p>
+                                        {{ form.storage_unit.label_tag }}
+                                        {{ form.storage_unit }}
+                                        {{ form.storage_unit.errors }}
+                                    </p>
                                 </div>
                             </div>
-                            {% comment %}
+                        </div>
+                        {% comment %}
                                 Not currently needed so commenting out
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -216,12 +216,12 @@ Global variables are listed below
                                 </div>
 
                             {% endcomment %}
-                        </div>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
-                    </div>
-                </form>
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
+                </div>
+            </form>
         </div>
         <div class="col-sm-12 main" id="contentSurvey">
             {% if error_message %}
@@ -237,7 +237,7 @@ Global variables are listed below
             {% endif %}
 
             <div class="row">
-                <div class="col-sm-7">
+                <div class="col-sm-6">
                     <h1 class="page-header">
                         <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
                     </h1>
@@ -248,7 +248,7 @@ Global variables are listed below
                 </div>
 
                 {# Beginning of the new tile survey result list #}
-                <div class="resultTiles col-sm-5">
+                <div class="resultTiles col-sm-6">
                     <h1 class="page-header">Home List</h1>
                     <div class="tileTable">
                         {% for home in houseList %}
@@ -256,6 +256,16 @@ Global variables are listed below
                             <div class="tile">
                                 <div class="scoreItem">
                                     <span class="scoreText">{{ home.get_final_score }}</span>
+                                    <span id="glyph{{ home.house.id }}"
+                                          onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
+                                            {% if home.house in user_favorite_houses %}
+                                          class="glyphicon glyphicon-heart"
+                                          style="cursor:pointer"
+                                            {% else %}
+                                          class="glyphicon glyphicon-heart-empty"
+                                          style="cursor:pointer"
+                                            {% endif %}
+                                          aria-hidden="true"></span>
                                 </div>
                                 <div class="infoItem">
                                     {# Logic to pull high priority item #}
@@ -266,11 +276,13 @@ Global variables are listed below
                                 </div>
                                 <div class="thumbnailItem" id="thumbnailItem1">
                                     {# Logic to pull image from database should go here #}
-                                    <img class="thumbnailImage" src="{% static 'stockHomes/stock_houses/house1.1.jpg' %}">
+                                    <img class="thumbnailImage"
+                                         src="{% static 'stockHomes/stock_houses/house1.1.jpg' %}">
                                 </div>
                                 <div class="thumbnailItem" id="thumbnailItem2">
                                     {# Logic to pull image from database should go here #}
-                                    <img class="thumbnailImage" src="{% static 'stockHomes/stock_houses/house1.2.jpg' %}">
+                                    <img class="thumbnailImage"
+                                         src="{% static 'stockHomes/stock_houses/house1.2.jpg' %}">
                                 </div>
 
                             </div>
@@ -278,7 +290,6 @@ Global variables are listed below
                         {% endfor %}
                     </div>
                 </div>
-
 
 
                 {# Beginning of the old result survey #}
@@ -304,7 +315,8 @@ Global variables are listed below
                                 <tr>
                                     <td style="vertical-align:middle">
                                         <h3 style="margin-top: 10px;">
-                                    <span style="cursor:pointer" data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
+                                    <span style="cursor:pointer" data-toggle="modal"
+                                          class="accordion-toggle glyphicon glyphicon-plus"
                                           data-target="#myModal{{ forloop.counter }}" style="padding-right:1em"></span>
                                         </h3>
                                     </td>
@@ -370,7 +382,8 @@ Global variables are listed below
         // Going to keep the portions that create the markers on the map
         {% endcomment %}
         var myStreetAddresses = [{% for location in locations %}"{{ location.get_full_address }}",{% endfor %}];
-        var myDestinations = [{% for dest in houseList %}[{{ dest.house.get_lat|safe }}, {{ dest.house.get_lon|safe }}],{% endfor %}];
+        var myDestinations = [{% for dest in houseList %}[{{ dest.house.get_lat|safe }}, {{ dest.house.get_lon|safe }}
+            ],{% endfor %}];
         // Manipulated by survey_result.js in selectAddress
         //var myDestination = "{{ houseList.0.address }}";
         // Manipulated by costSliderResults.js
