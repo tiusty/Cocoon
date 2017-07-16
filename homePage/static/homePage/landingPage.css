@@ -17,6 +17,7 @@
     width: 30%;
     top: 0;
     padding: 20px 10px;
+    margin: 0 !important;
 }
 
 .jumbotron > h1 {
@@ -40,7 +41,7 @@
     position: absolute;
     z-index: 100;
     display: block;
-    top: 38%;
+    top: 45%;
     margin: 0 auto;
     color: white;
     padding: 3% 5%;
@@ -108,11 +109,13 @@
     SMALL SCREEN SUPPORT
  ********************************/
 
-@media (max-width: 768px) {
+@media (max-width: 990px) {
     .jumbotron {
         font-size: 16px;
         width: 55%;
         height: auto;
+        left: 22.5%;
+        top: 5%;
     }
 
     .jumbotron > h1 {
@@ -136,7 +139,7 @@
     }
 
     .form-horizontal {
-        color: #263238;
+        color: white;
         display: block;
         margin: 10px auto;
     }

@@ -8,7 +8,6 @@ $(document).ready(function () {
     $('.scoreText').each(function () {
 
         var scoreValue = parseInt($(this).text())
-        console.log(scoreValue)
 
         if (scoreValue > 86) {
             $(this).addClass('great-match');

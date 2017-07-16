@@ -36,20 +36,23 @@ STYLING NEW TILE RESULTS
     TODO: remove this code
 */
 .resultTiles {
-    margin-bottom: 50%;
 
 }
 
 .tileTable {
     margin: 0 auto;
+    min-height: 750px;
     max-width: 650px;
     overflow-x: scroll;
+    display: flex;
+    flex-direction: column;
 }
 
 /* scrolling on small screens */
 .tile {
+    flex: 0;
     width: 100%;
-    min-width: 450px;
+    min-width: 500px;
     margin-bottom: 2%;
     display: flex;
     flex-direction: row;
@@ -57,9 +60,14 @@ STYLING NEW TILE RESULTS
     align-items: stretch;
     align-content: center;
     border: 2px solid #c65c3b;
-    height: auto;
+    height: 100%;
     padding: 0;
     background-color: #f7f7f7;
+}
+
+.tile-expanded {
+    flex-basis: 100%;
+    flex: 1;
 }
 
 .tile:hover {
@@ -98,6 +106,8 @@ STYLING NEW TILE RESULTS
     margin: 0 auto;
     font-size: 28px;
     font-family: 'Lobster', cursive;
+    color: #efefef;
+
 }
 
 .infoItem {
@@ -184,4 +194,10 @@ STYLING NEW TILE RESULTS
 
 .terrible-match {
     color: #DD2C00 !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .tileTable {
+        min-height: 350px;
+    }
 }
