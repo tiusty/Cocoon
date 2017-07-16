@@ -237,7 +237,7 @@ Global variables are listed below
             {% endif %}
 
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-7">
                     <h1 class="page-header">
                         <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
                     </h1>
@@ -248,7 +248,7 @@ Global variables are listed below
                 </div>
 
                 {# Beginning of the new tile survey result list #}
-                <div class="resultTiles col-sm-6">
+                <div class="resultTiles col-sm-5">
                     <h1 class="page-header">Home List</h1>
                     <div class="tileTable">
                         {% for home in houseList %}
@@ -264,9 +264,13 @@ Global variables are listed below
                                     <span class="infoBit addressBit">{{ home.house.get_full_address }}</span>
                                     <span class="infoBit"></span>
                                 </div>
-                                <div class="thumbnailItem">
+                                <div class="thumbnailItem" id="thumbnailItem1">
                                     {# Logic to pull image from database should go here #}
                                     <img class="thumbnailImage" src="{% static 'stockHomes/stock_houses/house1.1.jpg' %}">
+                                </div>
+                                <div class="thumbnailItem" id="thumbnailItem2">
+                                    {# Logic to pull image from database should go here #}
+                                    <img class="thumbnailImage" src="{% static 'stockHomes/stock_houses/house1.2.jpg' %}">
                                 </div>
 
                             </div>

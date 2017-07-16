@@ -55,7 +55,7 @@ STYLING NEW TILE RESULTS
     align-items: stretch;
     align-content: center;
     border: 2px solid #c65c3b;
-    height: 140px;
+    height: auto;
     padding: 0;
     background-color: #f7f7f7;
 }
@@ -84,7 +84,7 @@ STYLING NEW TILE RESULTS
 }
 
 .infoItem {
-    flex-grow: 2;
+    flex-grow: 1;
     flex-basis: 50%;
     display: flex;
     align-content: center;
@@ -95,10 +95,23 @@ STYLING NEW TILE RESULTS
 }
 
 .thumbnailItem {
+    /*padding: 4px;*/
     vertical-align: middle;
-    flex-grow: 2;
+    flex-grow: 3;
     flex-basis: 30%;
     overflow: hidden;
+}
+
+.thumbnailItem-hover {
+    padding: 0 !important;
+}
+
+#thumbnailItem1 {
+    /*margin-right: 4px;*/
+}
+
+.thumbnailItem1-hover {
+    margin-right: 0 !important;
 }
 
 .thumbnailImage {
@@ -106,36 +119,53 @@ STYLING NEW TILE RESULTS
     float: right;
     width: 100%;
     height: auto;
-    min-width: 200px;
+    min-width: 100px;
     max-width: 100%;
-    min-height: 100%;
     max-height: 100%;
 }
 
 .thumbnailImage-hover {
-    max-width: 120%;
-    width: 120%;
-    max-height: 120%;
+    max-width: 110%;
+    width: 110%;
+    max-height: 110%;
     transition: height .1s;
     transition: width .1s;
-
 }
 
 .infoBit {
     width: 80%;
-    font-size: 16px;
+    font-size: 14px;
     display: block;
     text-align: center;
 }
 
 .infoBit-hover {
-    width: 100%;
-    font-size: 17px;
+    width: 80%;
     transition: width .1s;
     transition: font-size .1s;
 }
 
 .scoreText-hover {
-    font-size: 30px !important;
+    font-size: 34px !important;
     transition: font-size .1s;
+}
+
+.great-match {
+    color: green !important;
+}
+
+.good-match {
+    color: #CDDC39 !important;
+}
+
+.acceptable-match {
+    color: #FFC107 !important;
+}
+
+.bad-match {
+    color: #FF6D00 !important;
+}
+
+.terrible-match {
+    color: #DD2C00 !important;
 }
