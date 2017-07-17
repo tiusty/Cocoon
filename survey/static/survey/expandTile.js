@@ -1,8 +1,7 @@
-$('.tile').bind('click', ':not(.glyphicon)',  function (e) {
-    e.stop
+$('.tile').bind('click', ':not(.glyphicon)',  function () {
     $(this).removeClass('tile');
     $(this).addClass('tile-expanded');
-    $(this).empty()
-    $('.tile').hide();
+    $(this).children().hide()
+    //$('.tile').hide();
 
 })

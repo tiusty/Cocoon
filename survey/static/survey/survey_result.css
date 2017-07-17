@@ -48,13 +48,13 @@ STYLING NEW TILE RESULTS
 
 /* scrolling on small screens */
 .tile {
+    height: 115px;
     width: 100%;
-    min-width: 500px;
+    min-width: 450px;
     margin-bottom: 2%;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    align-items: stretch;
     align-content: center;
     border: 2px solid #c65c3b;
     padding: 0;
@@ -63,15 +63,12 @@ STYLING NEW TILE RESULTS
 
 .tile-expanded {
     height: 750px;
+    width: 100%;
+    min-width: 450px;
+    margin-bottom: 2%;
     border: 2px solid #c65c3b;
     background-color: #f7f7f7;
-
-    transition: height 1s ease;
-}
-
-.tile-expanded:hover {
-    height: 400px;
-    transition: height 1s ease-out;
+    transition: height .3s;
 }
 
 .tile:hover {
