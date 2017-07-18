@@ -1,12 +1,15 @@
 $('.tile').bind('click', ':not(.glyphicon)',  function () {
-    //$(this).removeClass('tile');
-    $(this).addClass('tile-expanded');
+
+    console.log(this)
+
     $(this).removeClass('tile');
-    $(this).children().hide()
-    $('.tile').hide();
+    $(this).addClass('tile-expanded');
+    $('.tile-expanded').children().hide();
+    $(this).animate({"height":"750px"}, 150, function() {
 
+        $('.tile').hide();
+    })
 })
-
 
 
 /********************

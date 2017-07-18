@@ -40,11 +40,10 @@ STYLING NEW TILE RESULTS
 }
 
 .tileTable {
-    display: flex;
-    flex-direction: column;
     margin: 0 auto;
     min-height: 750px;
-    max-width: 650px;
+    max-width: 700px;
+    max-height: 950px;
     overflow-x: scroll;
 }
 
@@ -64,13 +63,11 @@ STYLING NEW TILE RESULTS
 }
 
 .tile-expanded {
-    height: 750px;
     width: 100%;
     min-width: 450px;
     margin-bottom: 2%;
     border: 1px dotted #c65c3b;
     background-color: #f7f7f7;
-    transition: height .2s;
 }
 
 .tile:hover {
@@ -199,8 +196,41 @@ STYLING NEW TILE RESULTS
     color: #DD2C00 !important;
 }
 
-@media only screen and (max-width: 768px) {
+
+@media (max-width: 1150px) {
+
+    .tile {
+        height: 100px;
+    }
+
+    .scoreText {
+
+    }
+
+    .infoBit {
+        font-size: 12px;
+    }
+
+}
+
+@media (max-width: 768px) {
     .tileTable {
         min-height: 350px;
+        max-height: 600px;
+    }
+
+    .tile {
+        height: 115px;
+    }
+
+    .infoBit {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 550px) {
+
+    .tile {
+        height: 90px;
     }
 }

@@ -7,6 +7,15 @@
 body {
     font-family: 'Open Sans', sans-serif;
     padding-top: 80px;
+
+    /***********************
+
+      MIN WIDTH OF BODY IS A MAJOR STYLING DECISION
+      PREVENTS THE SCREEN WIDTH FROM BEING COMPATIBLE
+      WHEN NARROWER THAN 550px
+
+     **********************/
+
 }
 
 /* Preventing modal from being hidden by large navbar */
