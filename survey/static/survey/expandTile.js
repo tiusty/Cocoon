@@ -1,5 +1,5 @@
-$('.tile').bind('click', ':not(.glyphicon)',  function () {
-
+$('.tile').not('.glyphicon').bind('click', function (e) {
+    e.stopPropagation()
     console.log(this)
 
     $(this).removeClass('tile');
@@ -11,6 +11,9 @@ $('.tile').bind('click', ':not(.glyphicon)',  function () {
     })
 })
 
+$('.glyphicon').click(function (e) {
+    e.stopPropagation();
+})
 
 /********************
 
