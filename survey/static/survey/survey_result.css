@@ -40,6 +40,8 @@ STYLING NEW TILE RESULTS
 }
 
 .tileTable {
+    display: flex;
+    flex-direction: column;
     margin: 0 auto;
     min-height: 750px;
     max-width: 650px;
@@ -66,9 +68,9 @@ STYLING NEW TILE RESULTS
     width: 100%;
     min-width: 450px;
     margin-bottom: 2%;
-    border: 2px solid #c65c3b;
+    border: 1px dotted #c65c3b;
     background-color: #f7f7f7;
-    transition: height .3s;
+    transition: height .2s;
 }
 
 .tile:hover {

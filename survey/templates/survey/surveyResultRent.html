@@ -439,7 +439,9 @@ Global variables are listed below
         function openNav() {
             document.getElementById("sidebarSurvey").classList.add("openNav");
 
-            if ($(window).width() < 900) {
+            if ($(window).width() < 768) {
+                document.getElementById("sidebarSurvey").style.width = "90%";
+            } else if ($(window).width() < 900) {
                 document.getElementById("sidebarSurvey").style.width = "60%";
             } else {
                 document.getElementById("sidebarSurvey").style.width = "30%";
