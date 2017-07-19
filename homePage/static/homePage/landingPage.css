@@ -45,7 +45,7 @@
     margin: 0 auto;
     color: white;
     padding: 3% 5%;
-    left: 36%;
+    left: 31%;
 }
 
 .carousel-control {
@@ -164,6 +164,15 @@
     .submitButton {
         display: block;
         margin: 2% auto;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .jumbotron {
+        width: 75%;
+        left: 12.5%;
     }
 
 }
