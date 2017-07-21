@@ -108,6 +108,20 @@ li.dropdown-header {
 
 /***********************
 
+    FOOTER STYLING
+
+************************/
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    height: 30px;
+    width: 100%;
+    background: #e88f7d;
+}
+
+/***********************
+
     BUTTON STYLING
 
 ************************/

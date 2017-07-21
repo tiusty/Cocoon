@@ -128,7 +128,9 @@
 
     .selectSurvey {
         left: 0;
-        top: 0;
+        top: auto;
+        float: left;
+        width: 100%;
         background-color: #263238;
         opacity: .75;
         position: relative;
@@ -149,8 +151,8 @@
         position: relative;
         margin-top: 5%;
         color: white;
-        left: 0;
-        top: 0;
+        /*   left: 0;  */
+        /*   top: 0;   */
         margin: 0 auto;
         width: 200px;
         height: 110px;
