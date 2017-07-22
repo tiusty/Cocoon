@@ -1,5 +1,7 @@
 /*********************************
+
     CAROUSAL STYLING
+
  ********************************/
 
 .container {
@@ -38,14 +40,16 @@
 
 .selectSurvey {
     background-color: rgba(38,50,56,.75);
+    text-align: center;
     position: absolute;
     z-index: 100;
     display: block;
     top: 45%;
+    width: 45%;
     margin: 0 auto;
     color: white;
     padding: 3% 5%;
-    left: 31%;
+    left: 27.5%;
 }
 
 .carousel-control {

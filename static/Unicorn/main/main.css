@@ -8,14 +8,6 @@ body {
     font-family: 'Open Sans', sans-serif;
     padding-top: 80px;
 
-    /***********************
-
-      MIN WIDTH OF BODY IS A MAJOR STYLING DECISION
-      PREVENTS THE SCREEN WIDTH FROM BEING COMPATIBLE
-      WHEN NARROWER THAN 550px
-
-     **********************/
-
 }
 
 /* Preventing modal from being hidden by large navbar */
@@ -58,10 +50,6 @@ li.dropdown-header {
 .navbar-default .navbar-nav > li > a:hover {
     color: #eee !important;
 }
-
-/*.navbar-default .navbar-nav > li > a:active {*/
-/*background-color: #a13718;*/
-/*}*/
 
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
     background: none;
@@ -113,11 +101,56 @@ li.dropdown-header {
 ************************/
 
 .footer {
-    position: fixed;
-    bottom: 0;
-    height: 30px;
+    display: block;
+    clear: both;
+    position: relative;
+    z-index: 10;
     width: 100%;
-    background: #e88f7d;
+    background: #26A69A;
+    color: white;
+    padding: 10px;
+    height: 60px;
+    margin-top: 10%;
+}
+
+.left-footer {
+    display: block;
+}
+
+.copyright {
+    text-align: center;
+    line-height: 35px;
+}
+
+.sitemap {
+
+    margin: 0 auto;
+    margin-bottom: 2%;
+
+    width: 50%;
+}
+
+.sitemap-container {
+    display: block;
+    list-style: none;
+    list-style-type: none;
+    padding: 0;
+}
+
+.sitemap-container > li {
+    text-decoration: none;
+}
+
+.footer-link {
+    display: block;
+    text-decoration: none;
+    color: white;
+
+}
+
+.footer-link:hover {
+    text-decoration: none;
+    color: #efefef;
 }
 
 /***********************
@@ -259,6 +292,7 @@ fieldset[disabled] .btn-danger.focus {
         font-size: 32px !important;
 
         /* Uncomment these lines to add animated nav back */
+
         /*transition: padding-top .2s ease-in;*/
         /*transition: padding-bottom .2s ease-in;*/
     }
@@ -268,7 +302,9 @@ fieldset[disabled] .btn-danger.focus {
         padding-top: 15px !important;
         padding-bottom: 15px !important;
         line-height: 21px !important;
+
         /* Uncomment these lines to add animated nav back */
+
         /*transition: padding-top .2s ease-in;*/
         /*transition: padding-bottom .2s ease-in;*/
     }
@@ -305,7 +341,6 @@ fieldset[disabled] .btn-danger.focus {
         width: 65px;
     }
 
-
     body {
         padding-top: 110px;
     }
@@ -324,7 +359,6 @@ fieldset[disabled] .btn-danger.focus {
         padding-top: 50px;
     }
 }
-
 
 @media (min-width: 1280px) {
 
