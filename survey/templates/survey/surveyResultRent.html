@@ -278,28 +278,14 @@ Global variables are listed below
                                     <span class="infoBit addressBit">{{ home.house.get_full_address }}</span>
                                     <span class="infoBit"></span>
                                 </div>
-                                <div class="thumbnailItem" id="thumbnailItem1">
-
-                                    {# TODO: Dynamically retreive image #}
-
-                                    {% with home.house.housephotos_set.all|first as image %}
-                                    <img class="thumbnailImage"
-                                         src="{% static image %}">
-                                    {% endwith %}
-                                </div>
-                                <div class="thumbnailItem" id="thumbnailItem2">
-
-                                    {# TODO: Dynamically retreive image #}
-
-                                    <img class="thumbnailImage"
-                                         src="{% static 'stockHomes/stock_houses/house1.2.jpg' %}">
-
-                                </div>
-
+                                {% for image in home.house.housephotos_set.all|slice:":2" %}
+                                    <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
+                                        <img class="thumbnailImage"
+                                             src="{% static image %}">
+                                    </div>
+                                {% endfor %}
                             </div>
-
                         {% endfor %}
-
                     </div>
                 </div>
 
