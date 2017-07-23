@@ -89,7 +89,9 @@
 }
 
 /*********************************
+
     CAROUSAL SCALING
+
  ********************************/
 
 @media (max-width: 1004px) {
@@ -109,8 +111,26 @@
 
 }
 
+
 /*********************************
+
+    INFOGRAPHIC STYLING
+
+ ********************************/
+
+.text-container, icon-container {
+
+}
+
+.info-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+/*********************************
+
     SMALL SCREEN SUPPORT
+
  ********************************/
 
 @media (max-width: 990px) {
@@ -119,8 +139,9 @@
         width: 55%;
         height: auto;
         left: 22.5%;
-        top: 5%;
+        top: 30px;
     }
+
 
     .jumbotron > h1 {
         font-size: 24px;
