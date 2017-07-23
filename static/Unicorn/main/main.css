@@ -102,15 +102,15 @@ li.dropdown-header {
 
 .footer {
     display: block;
-    clear: both;
     position: relative;
     z-index: 10;
-    width: 100%;
     background: #26A69A;
     color: white;
-    padding: 10px;
     height: 60px;
     margin-top: 10%;
+    text-align: center;
+    font-size: 16px;
+    line-height: 60px;
 }
 
 .left-footer {
@@ -119,14 +119,13 @@ li.dropdown-header {
 
 .copyright {
     text-align: center;
-    line-height: 35px;
+    padding: 0;
+    width: 100%;
 }
 
 .sitemap {
-
     margin: 0 auto;
     margin-bottom: 2%;
-
     width: 50%;
 }
 

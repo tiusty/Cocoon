@@ -118,13 +118,73 @@
 
  ********************************/
 
-.text-container, icon-container {
-
+.info-row {
+    width: 80%;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
-.info-container {
-    width: 100%;
-    overflow: hidden;
+.info-text {
+    flex-basis: 40%;
+    flex-grow: 2;
+    font-size: 24px;
+    font-family: 'Open Sans', sans-serif;
+    min-width: 300px;
+}
+
+.info-text > span {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+    color: #263238;
+}
+
+.icon-container {
+    flex-basis: 40%;
+    flex-grow: 1;
+}
+
+.infographic {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    padding: 15%;
+}
+
+.survey-results {
+    width: 100% !important;
+}
+
+@media (max-width: 768px) {
+    .info-row {
+        width: 90%
+    }
+
+    .info-text {
+        font-size: 24px;
+        padding: 25px 0px;
+    }
+
+
+    .info-text > span {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (min-width: 1200px) {
+    .info-row {
+        width: 60%;
+    }
+
+    .info-text > span {
+        width: 100%;
+    }
 }
 
 /*********************************
