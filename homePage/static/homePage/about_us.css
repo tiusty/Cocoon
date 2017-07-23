@@ -1,0 +1,52 @@
+body {
+    display: block;
+    margin: 0 auto;
+    text-align: left;
+
+}
+
+div.container {
+    width: 80%;
+    max-width: 1000px;
+
+}
+
+span {
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+    font-size: 16px !important;
+}
+
+h1 > span {
+    font-size: 24px !important;
+    text-align: center;
+}
+
+.team-member {
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 2%;
+}
+
+.team-member > p {
+    margin-bottom: 3%;
+}
+
+.the-team {
+    width: 80%;
+    margin: 0 auto;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+
+    .jumbotron {
+        text-align: center;
+    }
+
+    body {
+        width: 100%;
+    }
+
+}

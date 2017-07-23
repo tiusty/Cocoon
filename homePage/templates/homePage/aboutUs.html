@@ -2,42 +2,62 @@
 {% load static %}
 {% block title %}Contact{% endblock %}
 
+{% block head %}
+{{ block.super }}
+
+    <link href="{% static 'homePage/about_us.css' %}" rel="stylesheet">
+
+{% endblock %}
+
 {% block container_type %}container{% endblock %}
 {% block nav-contact %}
     <li class="active"><a>About Us</a></li>{% endblock %}
 {% block content %}
-    <div class="jumbotron">
+    <div class="jumbotron" style="width: 80%; margin: 5% auto;">
         <h1>About Us</h1>
     </div>
     </p>
-    <h1 class="Mission" style="text-align: center"><span style="font-size: xx-large;">MISSION STATEMENT</span></h1>
-    <p><span style="font-size: large;">
-    We are a digital brokerage who help people quickly find ideal homes.
-        We guide our clients through the swamp of old, incomplete, redundant, and often fake
-        information scattered across the internet by giving them an elaborate survey,
-        which we then apply to all homes in market to eliminate and rank viable homes.
-        Because we are a brokerage with the legwork of home-searching automated,
-        we are able to help our users then get these apartments for less than
-        anyone else in a fraction of the time.</span></p>
-    <p><span style="font-size: large;"><strong><br></strong></span></p>
+    <h1 class="Mission" style="text-align: center"><span style="font-size: 24px;">Mission Statement</span></h1>
+    <p><span style="font-size: 16px">
+    Cocoon exists to redefine the apartment-finding process. We strive to raise the bar on quality of service, while simplifying every step of the way to be easier, quicker, and substantially less expensive.
+We achieve this by listening to our clients, working hard, always being open to criticism, thinking critically, researching thoroughly, testing everything, and innovating radically. We use radically new technology to break the glass ceiling that has defined real estate for years.
 
-    <h1 style="text-align: center;"><span style="font-size: xx-large;">WHY WE STARTED</span></h1>
-    <p><span style="font-size: large;">After briefly entering the real estate market, we quickly realized the inefficiencies
-    and the lack of innovation that is evident in the Industry. As giant corporations began to take over the market the
-    desire for innovation dropped and the industry started stagnating. We want to develop a website that will make looking
-        for a home more intuitive, safer and allow people like you to find the perfect match</span></p>
+	Finding a new apartment is a big process. We help our tenants feel confident that they have found the best possible place to live.
+</span style="font-size"></p>
+    <p><span style="font-size: 16px;"><strong><br></strong></span></p>
+
+    <h1 style="text-align: center;"><span style="font-size: 24px;">Why We Started</span></h1>
+    <p><span style="font-size: large;">	The present market is swamped with both limited-utility, expensive brokerages,  and with confusing, overwhelming technology companies that overload people with mostly unuseful information. Finding a place to live takes as long as before the internet, and nobody in real estate seems to care. Brokerages and tech companies alike profit hugely from poor service, and clients have no options for radically better service.
+
+	We wanted to drop a bomb on the industry by doing the unheard of: top-tier service in far less time and for far less money.
+</span></p>
     <p><span style="font-size: large;"><br></span></p>
 
-    <h1 style="text-align: center;"><span style="font-size: xx-large;">WHO WE ARE</span></h1>
-    <p><span style="font-size: large;">
+    <h1 style="text-align: center;"><span style="font-size: 24px;">Who We Are</span></h1>
+    <p><span style="font-size: 16px;">
         We are currently College Students who have struggled in the past with the real estate market in Boston. On top
             of our school assignments, we are working diligently to continue this project forward. We are ecstatic that you
             are visiting our website and hope that you find it an enjoyable and helpful experience!!
     </span></p>
     <p><span style="font-size: large;"><br></span></p>
 
-    <h1 style="text-align: center;"><span style="font-size: xx-large;">OUR SOLUTION</span></h1>
-    <p><span style="font-size: large;">
+    <div class="the-team">
+    <h1><span>The Team</span></h1>
+    <p><span class="team-member">Tomás Jurgensen</span></p>
+    <p class="description">Cocoon’s CEO co-founder, Tomás was born in Boston and raised in Arlington to a Brazilian mother and Danish-American father from MIT. Tomás went to the Belmont Hill School and recently graduated from Bates College with a mathematics major, Russian minor, and a concentration in Psychology and Philosophy. In his free time, Tomás practices Brazilian Jiu-Jitsu and enjoys travelling, painting, and playing piano. At Cocoon, Tomás oversees all non-technical matters.
+</p>
+    <p><span class="team-member">Alex Agudelo</span></p>
+    <p class="description">Cocoon’s CTO and co-founder, Alex was also born in Boston and raised in Arlington. He attended B.C. High and is currently a senior at Northeastern University. He majors in Electrical and Computer Engineering, and has experience working at MIT Lincoln Labs and currently at Doble Engineering. In his free time, he runs and competes in triathlons. At Cocoon, Alex handles all technical matters, including algorithm engineering, full stack platform development, web security, SEO, and database engineering.
+</p>
+    <p><span class="team-member">Sean Rayment</span></p>
+    <p clas="description">
+	Cocoon’s head developer, Sean is from Medfield MA, also studied at the Belmont Hill School, and currently studies at Brown University, where he double majors in Mathematics and Computer Sciences. For fun, he likes to read and writes Dungeons and Dragons campaigns.
+At Cocoon, Sean handles front-end web development including designing our platform’s user interface and experience; he also does all graphic design.
+</p>
+        </div>
+
+    <h1 style="text-align: center;"><span style="font-size: 24px;">Our Solution</span></h1>
+    <p><span style="font-size: 16px;">
         We developed an intricate algorithm to allow you to indicate your desires and we will then match you with the
             home that best meets you needs. The survey will take a few minutes to fill out and in seconds a large list of
             homes ranked from the best match to less ideal matches will be displayed. Homes will be filtered on commute time,
@@ -46,10 +66,10 @@
             When you the home you want to visit, select the home and the options for contacting the agent will be shown!
             It is that easy!
     </span></p>
-    <p><span style="font-size: large;"><br></span></p>
+    <p><span style="font-size: 16px;"><br></span></p>
 
-    <h1 style="text-align: center;"><span style="font-size: xx-large;">WHAT YOU CAN DO</span></h1>
-    <p><span style="font-size: large;">
+    <h1 style="text-align: center;"><span style="font-size: 24px;">What You Can Do</span></h1>
+    <p><span style="font-size: 16px;">
         Please reach out to us if you have any questions or concerns! We strive to best fit your needs and hope that you
             can help us improve! The real estate market is a daunting place and we strive to make the transition to your
             best ideal home that much easier!
