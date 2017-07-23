@@ -282,8 +282,10 @@ Global variables are listed below
 
                                     {# TODO: Dynamically retreive image #}
 
+                                    {% with home.house.housephotos_set.all|first as image %}
                                     <img class="thumbnailImage"
-                                         src="{% static 'stockHomes/stock_houses/house1.1.jpg' %}">
+                                         src="{% static image %}">
+                                    {% endwith %}
                                 </div>
                                 <div class="thumbnailItem" id="thumbnailItem2">
 
