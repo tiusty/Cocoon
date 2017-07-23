@@ -285,162 +285,162 @@ class RentingDestinations(Destinations):
         return self.street_address
 
 
-class RentScoringStruct(models.Model):
-    """
-    Class that stores a homes and the associated values with that homes
-    This allows homes to be stored with a survey and then the home can
-    be loaded at any time. Reduces the computation time for the server
-    NOTE THIS CLASS HAS NOT BEEN TESTED ONLY ADDED
-    """
-    house = models.ForeignKey(RentDatabase)
-    score = models.IntegerField(default=0)
-    score_possible = models.IntegerField(default=0)
-    eliminated = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.house.get_full_address()
-
-    def get_score_percent(self):
-        """
-        Generates the actual score based on the possible score and current score.
-        This makes sure that the divide by zero case is handled.
-        :return:
-            Returns the score. If it was eliminated then it returns -1 to indicate that
-                The house should not be used
-        """
-        # Takes care of divide by 0, also if it is eliminated the score should be -1
-        if self.get_score_possible() != 0 and self.eliminated is False:
-            return (self.score / self.get_score_possible()) * 100
-        elif self.eliminated:
-            # If eliminated return negative one so it is sorted to the back
-            return -1
-        else:
-            return 0
-
-    def get_score(self):
-        return self.score
-
-    def get_score_possible(self):
-        return self.score_possible
-
-    def get_final_score(self):
-        """
-        Returns the score but rounds to the nearest integer to make it human friendly
-        :return: the score rounded to the nearest integer
-        """
-        return round(self.get_score_percent())
-
-    def get_user_score(self):
-        """
-        Function: get_user_score()
-        Description:
-        Returns a human readable score. Therefore, the user will not see
-            a long float which is meaningless
-        Comments:
-        Currently the scale is to large. Will define to +/- later.
-        """
-        current_score = self.get_score()
-        if current_score >= 90:
-            return "A"
-        elif current_score >= 80:
-            return "B"
-        elif current_score >= 70:
-            return "C"
-        elif current_score >= 60:
-            return "D"
-        else:
-            return "F"
-
-    def get_commute_times(self, commute_type):
-        """
-        Get commute times gets the commute for the house depending on the argument
-        It will either return the exact or the approximate commute times
-        :param commute_type: Enum type CommuteTypes
-        :return: An array of ints which are all the commute times associated with that house
-        """
-        if commute_type is CommutePrecision.exact:
-            return self.get_commute_times_exact()
-        else:
-            return self.get_commute_times_approx()
-
-    def get_commute_times_exact(self):
-        """
-        Returns all the commute times for that home as a list
-        :return: A list with all the commute times
-        """
-        commutes = []
-        for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.exact):
-            commutes.append(commute)
-        return commutes
-
-    def get_commute_times_approx(self):
-        """
-        Returns all the commute times for that home as a list
-        :return: A list with all the commute times
-        """
-        commutes = []
-        for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.approx.value):
-            commutes.append(commute)
-        return commutes
-
-    def get_exact_commute_times_str(self):
-        """
-        Returns a formatted string that returns all the commute times for a given home
-        Example output:
-        27 Minutes, 27 Minutes, 27 Minutes
-        :return:
-        string -> Formatted to display nicely to the user
-        """
-        end_result = ""
-        counter = 0
-        for commute in self.get_commute_times_exact():
-            if commute > 60:
-                max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
-            else:
-                max_output = str(int(commute)) + " Minutes"
-            if counter != 0:
-                end_result = end_result + ", " + max_output
-            else:
-                end_result = max_output
-            counter = 1
-
-        return end_result
-
-    def get_approx_commute_times_str(self):
-        """
-        Returns a formatted string that returns all the commute times for a given home
-        Example output:
-        27 Minutes, 27 Minutes, 27 Minutes
-        :return:
-        string -> Formatted to display nicely to the user
-        """
-        end_result = ""
-        counter = 0
-        for commute in self.get_commute_times_approx():
-            if commute > 60:
-                max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
-            else:
-                max_output = str(int(commute)) + " Minutes"
-            if counter != 0:
-                end_result = end_result + ", " + max_output
-            else:
-                end_result = max_output
-            counter = 1
-
-        return end_result
-
-    def eliminate_home(self):
-        """
-        Sets the eliminated flag on a home
-        """
-        self.eliminated = True
-
-
-class CommuteTimes(models.Model):
-    """
-    Stores a commute value and preceision for each RentScoringStruct
-
-    """
-    scoring_struct = models.ForeignKey(RentScoringStruct)
-    commute_type = models.IntegerField(default=CommutePrecision.approx.value)
-    commute_time = models.IntegerField(default=0)
+# class RentScoringStruct(models.Model):
+#     """
+#     Class that stores a homes and the associated values with that homes
+#     This allows homes to be stored with a survey and then the home can
+#     be loaded at any time. Reduces the computation time for the server
+#     NOTE THIS CLASS HAS NOT BEEN TESTED ONLY ADDED
+#     """
+#     house = models.ForeignKey(RentDatabase)
+#     score = models.IntegerField(default=0)
+#     score_possible = models.IntegerField(default=0)
+#     eliminated = models.BooleanField(default=False)
+#
+#     def __str__(self):
+#         return self.house.get_full_address()
+#
+#     def get_score_percent(self):
+#         """
+#         Generates the actual score based on the possible score and current score.
+#         This makes sure that the divide by zero case is handled.
+#         :return:
+#             Returns the score. If it was eliminated then it returns -1 to indicate that
+#                 The house should not be used
+#         """
+#         # Takes care of divide by 0, also if it is eliminated the score should be -1
+#         if self.get_score_possible() != 0 and self.eliminated is False:
+#             return (self.score / self.get_score_possible()) * 100
+#         elif self.eliminated:
+#             # If eliminated return negative one so it is sorted to the back
+#             return -1
+#         else:
+#             return 0
+#
+#     def get_score(self):
+#         return self.score
+#
+#     def get_score_possible(self):
+#         return self.score_possible
+#
+#     def get_final_score(self):
+#         """
+#         Returns the score but rounds to the nearest integer to make it human friendly
+#         :return: the score rounded to the nearest integer
+#         """
+#         return round(self.get_score_percent())
+#
+#     def get_user_score(self):
+#         """
+#         Function: get_user_score()
+#         Description:
+#         Returns a human readable score. Therefore, the user will not see
+#             a long float which is meaningless
+#         Comments:
+#         Currently the scale is to large. Will define to +/- later.
+#         """
+#         current_score = self.get_score()
+#         if current_score >= 90:
+#             return "A"
+#         elif current_score >= 80:
+#             return "B"
+#         elif current_score >= 70:
+#             return "C"
+#         elif current_score >= 60:
+#             return "D"
+#         else:
+#             return "F"
+#
+#     def get_commute_times(self, commute_type):
+#         """
+#         Get commute times gets the commute for the house depending on the argument
+#         It will either return the exact or the approximate commute times
+#         :param commute_type: Enum type CommuteTypes
+#         :return: An array of ints which are all the commute times associated with that house
+#         """
+#         if commute_type is CommutePrecision.exact:
+#             return self.get_commute_times_exact()
+#         else:
+#             return self.get_commute_times_approx()
+#
+#     def get_commute_times_exact(self):
+#         """
+#         Returns all the commute times for that home as a list
+#         :return: A list with all the commute times
+#         """
+#         commutes = []
+#         for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.exact):
+#             commutes.append(commute)
+#         return commutes
+#
+#     def get_commute_times_approx(self):
+#         """
+#         Returns all the commute times for that home as a list
+#         :return: A list with all the commute times
+#         """
+#         commutes = []
+#         for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.approx.value):
+#             commutes.append(commute)
+#         return commutes
+#
+#     def get_exact_commute_times_str(self):
+#         """
+#         Returns a formatted string that returns all the commute times for a given home
+#         Example output:
+#         27 Minutes, 27 Minutes, 27 Minutes
+#         :return:
+#         string -> Formatted to display nicely to the user
+#         """
+#         end_result = ""
+#         counter = 0
+#         for commute in self.get_commute_times_exact():
+#             if commute > 60:
+#                 max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
+#             else:
+#                 max_output = str(int(commute)) + " Minutes"
+#             if counter != 0:
+#                 end_result = end_result + ", " + max_output
+#             else:
+#                 end_result = max_output
+#             counter = 1
+#
+#         return end_result
+#
+#     def get_approx_commute_times_str(self):
+#         """
+#         Returns a formatted string that returns all the commute times for a given home
+#         Example output:
+#         27 Minutes, 27 Minutes, 27 Minutes
+#         :return:
+#         string -> Formatted to display nicely to the user
+#         """
+#         end_result = ""
+#         counter = 0
+#         for commute in self.get_commute_times_approx():
+#             if commute > 60:
+#                 max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
+#             else:
+#                 max_output = str(int(commute)) + " Minutes"
+#             if counter != 0:
+#                 end_result = end_result + ", " + max_output
+#             else:
+#                 end_result = max_output
+#             counter = 1
+#
+#         return end_result
+#
+#     def eliminate_home(self):
+#         """
+#         Sets the eliminated flag on a home
+#         """
+#         self.eliminated = True
+#
+#
+# class CommuteTimes(models.Model):
+#     """
+#     Stores a commute value and preceision for each RentScoringStruct
+#
+#     """
+#     scoring_struct = models.ForeignKey(RentScoringStruct)
+#     commute_type = models.IntegerField(default=CommutePrecision.approx.value)
+#     commute_time = models.IntegerField(default=0)
