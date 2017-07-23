@@ -84,7 +84,7 @@
                 </div>
             </div>
         {% endif %}
-        <div class="selectSurvey">
+        <div class="selectSurvey row">
             <h2>Click to start the survey</h2>
             <div class="surveyButton">
 
@@ -103,17 +103,54 @@
             </div>
         </div>
 
-        <div>
-            <img src="{% static 'infographics/infographic-righthome1.svg' %}">
+        <div class="info-row">
+            <div class="info-text"><span>Cocoon is the best place to find your new apartment!</span></div>
+            <div class="icon-container">
+                <img class="infographic" src="{% static 'infographics/vector_apartment.svg' %}">
+            </div>
         </div>
 
-        <div>
-            <img src="{% static 'infographics/infographic-survey.svg' %}">
+        <div class="info-row">
+            <div class="info-text"><span>Fill out our extensive survey!</span></div>
+            <div class="icon-container">
+                <img class="infographic" src="{% static 'infographics/vector_survey.svg' %}">
+            </div>
         </div>
 
-        <div>
-            <img src="{% static 'infographics/infographic-results.svg' %}">
+        <div class="info-row">
+            <div class="info-text"><span>Let us rank the best rentals based on your needs!</span></div>
+            <div class="icon-container">
+                <img class="infographic survey-results" src="{% static 'infographics/vector_ranking.svg' %}">
+            </div>
         </div>
+
+
+        {#        <div class="info-container">#}
+        {#            <div class="text-container">#}
+        {#                <p class="info-text">Cocoon is the only place you need to find a perfect rental.</p>#}
+        {#            </div>#}
+        {#            <div class="icon-container">#}
+        {#                <img class="infographic" src="{% static 'infographics/vector_apartment.svg' %}">#}
+        {#            </div>#}
+        {#        </div>#}
+        {##}
+        {#        <div class="info-container row">#}
+        {#            <div class="text-container">#}
+        {#                <p class="info-text">Fill out our extensive survey.</p>#}
+        {#            </div>#}
+        {#            <div class="icon-container">#}
+        {#                <img class="infographic" src="{% static 'infographics/vector_survey.svg' %}">#}
+        {#            </div>#}
+        {#        </div>#}
+        {##}
+        {#        <div class="info-container row">#}
+        {#            <div class="text-container">#}
+        {#                <p class="info-text">Let us rank the best rentals based on your needs!</p>#}
+        {#            </div>#}
+        {#            <div class="icon-container">#}
+        {#                <img class="results-graphic infographic" src="{% static 'infographics/vector_ranking.svg' %}">#}
+        {#            </div>#}
+        {#        </div>#}
 
 
         {#        <!-- Controls -->#}

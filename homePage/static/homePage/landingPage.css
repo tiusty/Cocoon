@@ -1,3 +1,7 @@
+body {
+    background-color: #efefef;
+}
+
 /*********************************
 
     CAROUSAL STYLING
@@ -89,7 +93,9 @@
 }
 
 /*********************************
+
     CAROUSAL SCALING
+
  ********************************/
 
 @media (max-width: 1004px) {
@@ -109,8 +115,106 @@
 
 }
 
+
 /*********************************
+
+    INFOGRAPHIC STYLING
+
+ ********************************/
+
+.info-row {
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.info-text {
+    flex-basis: 40%;
+    font-size: 24px;
+    font-family: 'Open Sans', sans-serif;
+    min-width: 300px;
+}
+
+.info-text > span {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+    color: #263238;
+}
+
+.icon-container {
+    flex-basis: 40%;
+}
+
+.infographic {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    padding: 15%;
+}
+
+.survey-results {
+    width: 100% !important;
+}
+
+@media (max-width: 768px) {
+    .info-row {
+        width: 90%
+    }
+
+    .info-text {
+        font-size: 24px;
+        padding: 25px 0px;
+        flex-grow: 2;
+    }
+
+    .icon-container {
+        flex-grow: 1;
+    }
+
+
+    .info-text > span {
+        width: 100%;
+    }
+}
+
+@media (min-width: 550px) and (max-width: 768px) {
+
+    .info-text {
+        font-size: 18px;
+    }
+
+}
+
+@media (min-width: 1200px) {
+
+    .icon-container {
+
+    }
+
+    .infographic {
+        padding: 10%;
+    }
+
+    .info-row {
+        width: 60%;
+        justify-content: center;
+    }
+
+    .info-text > span {
+        width: 100%;
+    }
+}
+
+/*********************************
+
     SMALL SCREEN SUPPORT
+
  ********************************/
 
 @media (max-width: 990px) {
@@ -119,8 +223,9 @@
         width: 55%;
         height: auto;
         left: 22.5%;
-        top: 5%;
+        top: 30px;
     }
+
 
     .jumbotron > h1 {
         font-size: 24px;
