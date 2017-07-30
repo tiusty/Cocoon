@@ -256,9 +256,73 @@ Global variables are listed below
 
                             <div class="tile">
 
+                                {#  Template that holds expanded tile information. #}
+                                {#  Script tag contents read in by  jQuery         #}
+
                                 <script id="expanded-tile-contents" type="text/template">
                                     <div class="expanded-tile-container">
-                                        Loading this html!
+                                        <div class="expanded-row-top">
+                                            <span class="glyphicon glyphicon-resize-small"></span>
+                                            <button class="contact-button">More Info</button>
+                                        </div>
+                                        <div class="expanded-tile-contents">
+
+                                            {#  TODO: Populate this with actual template information   #}
+
+                                            <span class="expanded-tile-text expanded-score">{{ home.get_final_score }}</span>
+
+                                            <span id="glyph{{ home.house.id }}"
+                                                  onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
+                                                    {% if home.house in user_favorite_houses %}
+                                                  class="glyphicon glyphicon-heart"
+                                                  style="cursor:pointer"
+                                                    {% else %}
+                                                  class="glyphicon glyphicon-heart-empty"
+                                                  style="cursor:pointer"
+                                                    {% endif %}
+                                                  aria-hidden="true">
+                                            </span>
+
+                                            <span class="expanded-tile-text expanded-info">{{ home.house.get_full_address }}</span>
+
+                                            <span class="expanded-tile-text expanded-info">{{ home.house.get_price_str }}</span>
+
+                                            <div id="expanded-tile-carousel" class="carousel slide"
+                                                 data-ride="carousel">
+
+
+                                                <script>
+                                                    {% for image in home.house.housephotos_set.all|slice:":2" %}
+
+                                                    {% endfor %}
+
+                                </script>
+
+
+
+                                                <ol id="carouselIndicators" class="carousel-indicators">
+
+                                                </ol>
+
+                                                <div id="carouselItems" class="carousel-inner" role="listbox">
+
+                                                </div>
+
+                                                <a class="carousel-control-prev" href="#carouselExampleIndicators"
+                                                   role="button" data-slide="prev">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Previous</span>
+                                                </a>
+                                                <a class="carousel-control-next" href="#carouselExampleIndicators"
+                                                   role="button" data-slide="next">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Next</span>
+                                                </a>
+
+                                            </div>
+
+
+                                        </div>
                                     </div>
                                 </script>
 
