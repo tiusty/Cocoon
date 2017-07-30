@@ -5,7 +5,7 @@ $('.tile').not('.glyphicon').bind('click', function (e) {
     $(this).removeClass('tile');
     $(this).addClass('tile-expanded');
     $('.tile-expanded').children().hide();
-    $(this).animate({"height":"750px"}, 150, function() {
+    $(this).animate({"height": "750px"}, 150, function () {
 
         $('.tile').hide();
     })
@@ -13,6 +13,14 @@ $('.tile').not('.glyphicon').bind('click', function (e) {
      * Adds the unloaded templated html to the page
      */
     $(this).append($('#expanded-tile-contents').html());
+
+    $(document).ready(function () {
+        console.log("CAROUSEL SCRIPT LOADED");
+        $('.carousel').carousel({
+            interval: 4000
+        })
+    })
+
 })
 
 $('.glyphicon').click(function (e) {
@@ -27,3 +35,4 @@ $('.glyphicon').click(function (e) {
  Jquery slideDown entrance animation\
 
  ********************/
+

@@ -26,6 +26,24 @@
     transition: width 0.3s ease;
 }
 
+.carousel-img {
+    width: 100%;
+}
+
+/*****************************
+
+EXPANDED TILE STYLING
+
+ ****************************/
+
+#expanded-tile-carousel {
+    width: 100%;
+}
+
+.carousel-item {
+    width: 100%;
+}
+
 /*****************************
 
 STYLING NEW TILE RESULTS

@@ -1,7 +1,7 @@
 $(document).ready(function () {
     console.log("CAROUSEL SCRIPT LOADED");
     $('.carousel').carousel({
-  interval: 4000
+  interval: 1000
 })
 })
 
