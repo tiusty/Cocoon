@@ -256,6 +256,12 @@ Global variables are listed below
 
                             <div class="tile">
 
+                                <script id="expanded-tile-contents" type="text/template">
+                                    <div class="expanded-tile-container">
+                                        Loading this html!
+                                    </div>
+                                </script>
+
                                 <div class="scoreItem">
                                     <span class="scoreText">{{ home.get_final_score }}</span>
                                     <span id="glyph{{ home.house.id }}"
@@ -278,19 +284,26 @@ Global variables are listed below
                                     <span class="infoBit addressBit">{{ home.house.get_full_address }}</span>
                                     <span class="infoBit"></span>
                                 </div>
+
                                 {% for image in home.house.housephotos_set.all|slice:":2" %}
                                     <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
                                         <img class="thumbnailImage"
                                              src="{% static image %}">
                                     </div>
+                                    <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
+                                        <img class="thumbnailImage"
+                                             src="{% static 'stockHomes/stock_houses/house1.3.jpg' %}">
+                                    </div>
                                 {% endfor %}
                             </div>
+
                         {% endfor %}
+
                     </div>
                 </div>
 
 
-            {% comment old method of displaying the results %}
+                {% comment old method of displaying the results %}
 
                 {# Beginning of the old result survey #}
                 <div class="col-sm-6">

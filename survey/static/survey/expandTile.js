@@ -9,6 +9,10 @@ $('.tile').not('.glyphicon').bind('click', function (e) {
 
         $('.tile').hide();
     })
+    /*
+     * Adds the unloaded templated html to the page
+     */
+    $(this).append($('#expanded-tile-contents').html());
 })
 
 $('.glyphicon').click(function (e) {

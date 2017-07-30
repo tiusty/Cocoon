@@ -43,7 +43,7 @@ STYLING NEW TILE RESULTS
     margin: 0 auto;
     min-height: 750px;
     max-width: 700px;
-    max-height: 950px;
+    /*max-height: 1200px;*/
     overflow-x: scroll;
 }
 
@@ -56,7 +56,7 @@ STYLING NEW TILE RESULTS
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    align-content: center;
+    align-content: space-around;
     border: 2px solid #c65c3b;
     padding: 0;
     background-color: #f7f7f7;
@@ -86,8 +86,9 @@ STYLING NEW TILE RESULTS
 }
 
 .scoreItem {
-    flex-grow: 1;
-    flex-basis: 15%;
+    flex-grow: 0;
+    flex-basis: 20%;
+    flex-shrink: 0;
     border-right: 1px dotted #a13718;
     display: flex;
     align-content: center;
@@ -111,8 +112,9 @@ STYLING NEW TILE RESULTS
 }
 
 .infoItem {
-    flex-grow: 1;
-    flex-basis: 25%;
+    flex-grow: 0;
+    flex-basis: 30%;
+    flex-shrink: 0;
     display: flex;
     align-content: center;
     align-items: center;
@@ -144,6 +146,7 @@ STYLING NEW TILE RESULTS
     vertical-align: middle;
     float: right;
     width: 100%;
+    min-height: 115px;
     height: auto;
     min-width: 100px;
     max-width: 100%;
@@ -211,6 +214,10 @@ STYLING NEW TILE RESULTS
         font-size: 12px;
     }
 
+    .thumbnailImage {
+        min-height: 100px;
+    }
+
 }
 
 @media (max-width: 768px) {
@@ -226,11 +233,19 @@ STYLING NEW TILE RESULTS
     .infoBit {
         font-size: 11px;
     }
+
+    .thumbnailImage {
+        min-height: 115px;
+    }
 }
 
 @media (max-width: 550px) {
 
     .tile {
         height: 90px;
+    }
+
+    .thumbnailImage {
+        min-height: 90px;
     }
 }
