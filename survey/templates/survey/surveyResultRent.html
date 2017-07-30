@@ -290,22 +290,28 @@ Global variables are listed below
                                             <div id="expanded-tile-carousel" class="carousel slide"
                                                  data-ride="carousel">
 
-
-                                                <script>
-                                                    {% for image in home.house.housephotos_set.all|slice:":2" %}
-
-                                                    {% endfor %}
-
-                                </script>
-
-
+                                                {# TODO: alternative tile template to avoid double for loop #}
 
                                                 <ol id="carouselIndicators" class="carousel-indicators">
+                                                    {% for image in home.house.housephotos_set.all %}
+                                                        <li data-target="#expanded-tile-carousel"
+                                                            data-slide-to="{{ forloop.counter }}"
+                                                                {% if forloop.counter == 0 %}
+                                                            class="active"
+                                                                {% endif %}
 
+                                                        ></li>
+                                                    {% endfor %}
                                                 </ol>
 
                                                 <div id="carouselItems" class="carousel-inner" role="listbox">
-
+                                                    {% for image in home.house.housephotos_set.all %}
+                                                        <div class="carousel-item
+                                                    {% if forloop.counter == 0 %}active{% endif %}">
+                                                            <img class="d-block img-fluid" src="{% static image %}"
+                                                                 alt="Slide {{ forloop.counter }}">
+                                                        </div>
+                                                    {% endfor %}
                                                 </div>
 
                                                 <a class="carousel-control-prev" href="#carouselExampleIndicators"
