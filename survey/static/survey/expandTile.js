@@ -1,11 +1,10 @@
-$('.tile').not('.glyphicon').bind('click', function (e) {
-    e.stopPropagation()
+$('.tile').bind('click', function () {
     console.log(this)
 
     $(this).removeClass('tile');
     $(this).addClass('tile-expanded');
     $('.tile-expanded').children().hide();
-    $(this).animate({"height": "750px"}, 150, function () {
+    $(this).animate({"height": "85vh"}, 150, function () {
 
         $('.tile').hide();
     })
@@ -14,18 +13,17 @@ $('.tile').not('.glyphicon').bind('click', function (e) {
      */
     $(this).append($('#expanded-tile-contents').html());
 
-    $(document).ready(function () {
-        console.log("CAROUSEL SCRIPT LOADED");
-        $('.carousel').carousel({
-            interval: 4000
-        })
-    })
+    $(this).unbind('click');
 
 })
 
-$('.glyphicon').click(function (e) {
+$('.glyphicon-heart, .glyphicon-heart-empty').click(function (e) {
     e.stopPropagation();
 })
+
+function clicked() {
+    console.log('glyphicon clicked!');
+}
 
 /********************
 
