@@ -264,7 +264,7 @@ Global variables are listed below
                                     <div class="expanded-tile-container">
                                         <div class="expanded-row-top">
                                             <span onclick="minimize(this)" class="expanded-close glyphicon glyphicon-resize-small"></span>
-                                            <button type="button" onclick="showContactInformation()" class="contact-button btn btn-primary">More Info</button>
+                                            <button type="button" onclick="set_visit_house({{ home.house.id }}, '{% url 'survey:setVisitHouse' %}')" class="contact-button btn btn-primary">More Info</button>
                                         </div>
                                         <div class="expanded-tile-contents">
 
