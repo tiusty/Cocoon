@@ -28,9 +28,36 @@
 
 /*****************************
 
-EXPANDED TILE CAROUSEL
+EXPANDED TILE STYLING
 
  ****************************/
+
+.expanded-row-top {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2% 2%;
+}
+
+.expanded-close, .contact-button {
+    display: block;
+}
+
+.expanded-close {
+    font-size: 32px;
+    align-self: flex-start;
+    color: #26A69A;
+}
+
+.expanded-close:hover {
+    color: #009688;
+}
+
+.contact-button {
+
+}
 
 #myCarousel {
     width: 300px;
@@ -70,7 +97,7 @@ STYLING NEW TILE RESULTS
     flex-direction: row;
     flex-wrap: nowrap;
     align-content: space-around;
-    border: 2px solid #c65c3b;
+    border: 1px solid #c65c3b;
     padding: 0;
     background-color: #f7f7f7;
 }
@@ -100,7 +127,7 @@ STYLING NEW TILE RESULTS
 
 .scoreItem {
     flex-grow: 0;
-    flex-basis: 20%;
+    flex-basis: 16%;
     flex-shrink: 0;
     border-right: 1px dotted #a13718;
     display: flex;

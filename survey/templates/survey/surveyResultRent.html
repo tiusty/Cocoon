@@ -237,9 +237,6 @@ Global variables are listed below
                 </div>
             {% endif %}
 
-
-
-
             <div class="row">
                 <div class="col-sm-6">
                     <h1 class="page-header">
@@ -251,7 +248,6 @@ Global variables are listed below
 
                 </div>
 
-
                 {# Beginning of the new tile survey result list #}
                 <div class="resultTiles col-sm-6">
                     <h1 class="page-header">Home List</h1>
@@ -259,7 +255,7 @@ Global variables are listed below
                     <div class="tileTable">
                         {% for home in houseList %}
 
-                            <div class="tile">
+                            <div class="tile bound">
 
                                 {#  Template that holds expanded tile information. #}
                                 {#  Script tag contents read in by  jQuery         #}
@@ -267,8 +263,8 @@ Global variables are listed below
                                 <script id="expanded-tile-contents" type="text/template">
                                     <div class="expanded-tile-container">
                                         <div class="expanded-row-top">
-                                            <span class="glyphicon glyphicon-resize-small"></span>
-                                            <button class="contact-button">More Info</button>
+                                            <span onclick="minimize(this)" class="expanded-close glyphicon glyphicon-resize-small"></span>
+                                            <button type="button" onclick="showContactInformation()" class="contact-button btn btn-primary">More Info</button>
                                         </div>
                                         <div class="expanded-tile-contents">
 
@@ -321,7 +317,7 @@ Global variables are listed below
 
                                                 <!-- Left and right controls -->
                                                 <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-                                                    <span class="glyphicon glyphicon-chevron-left" onclick="clicked()"></span>
+                                                    <span class="glyphicon glyphicon-chevron-left"></span>
                                                     <span class="sr-only">Previous</span>
                                                 </a>
                                                 <a class="right carousel-control" href="#myCarousel" data-slide="next">

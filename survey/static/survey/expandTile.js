@@ -1,29 +1,37 @@
-$('.tile').bind('click', function () {
-    console.log(this)
+clickBind = $('.tile').bind('click', function () {
 
-    $(this).removeClass('tile');
+    if ($(this).hasClass('bound')) {
+         $(this).removeClass('tile');
     $(this).addClass('tile-expanded');
     $('.tile-expanded').children().hide();
-    $(this).animate({"height": "85vh"}, 150, function () {
-
+    $(this).animate({"height": "70vh"}, 150, function () {
         $('.tile').hide();
-    })
+    });
     /*
      * Adds the unloaded templated html to the page
      */
     $(this).append($('#expanded-tile-contents').html());
+    $(this).removeClass('bound');
+    }
+});
 
-    $(this).unbind('click');
+function minimize(clickedElement) {
 
-})
+    $('.expanded-tile-container').remove();
+
+     $('.tile-expanded').animate({"height": "115px"}, 150, function() {
+        $('.tile-expanded').addClass('tile');
+        $('.tile').show();
+        $('.tile-expanded').children().show();
+        $('.tile').removeClass('tile-expanded');
+        $('.tile').addClass('bound');
+     })
+}
 
 $('.glyphicon-heart, .glyphicon-heart-empty').click(function (e) {
     e.stopPropagation();
-})
+});
 
-function clicked() {
-    console.log('glyphicon clicked!');
-}
 
 /********************
 
