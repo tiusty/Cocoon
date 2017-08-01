@@ -28,14 +28,14 @@
 
 /*****************************
 
-EXPANDED TILE STYLING
+EXPANDED TILE CAROUSEL
 
  ****************************/
-
 
 #myCarousel {
     width: 300px;
     height: auto;
+    margin: 0 auto;
 }
 
 
