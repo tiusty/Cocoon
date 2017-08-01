@@ -39,6 +39,7 @@ EXPANDED TILE STYLING
     justify-content: space-between;
     align-items: center;
     padding: 2% 2%;
+    height: 50px;
 }
 
 .expanded-close, .contact-button {
@@ -60,9 +61,63 @@ EXPANDED TILE STYLING
 }
 
 #myCarousel {
-    width: 300px;
+    width: 60%;
     height: auto;
     margin: 0 auto;
+}
+
+.expanded-tile-contents {
+    padding-top: 2%;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    height: calc(65vh - 50px);
+    justify-content: space-around;
+    align-content: center;
+}
+
+.expanded-tile-text {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 24px;
+
+}
+
+    /* #############
+
+        FLEX CHILDREN
+
+       ############# */
+
+.expanded-score {
+    flex: 0;
+    flex-basis: 10%;
+    align-self: stretch;
+    padding-left: 10%;
+    font-family: 'Lobster', cursive;
+    font-size: 36px;
+
+}
+
+.expanded-glyph {
+    flex: 0;
+    flex-basis: 10%;
+    padding-left: 10%;
+    align-self: stretch;
+
+}
+
+.expanded-info {
+    flex: 1;
+    flex-basis: 20%;
+    width: 60%;
+    align-self: center;
+
+}
+
+.myCarousel {
+    flex: 1;
+    flex-basis: 40%;
+
 }
 
 

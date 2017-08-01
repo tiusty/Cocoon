@@ -270,15 +270,40 @@ Global variables are listed below
 
                                             {#  TODO: Populate this with actual template information   #}
 
-                                            <span class="expanded-tile-text expanded-score">{{ home.get_final_score }}</span>
+                                            <span class="expanded-tile-text expanded-score
+
+                                            {% if home.get_final_score > 86 %}
+
+                                                great-match
+
+                                            {% elif home.get_final_score > 79 %}
+
+                                                good-match
+
+
+                                            {% elif home.get_final_score > 69 %}
+
+                                                acceptable-match
+
+
+                                            {% elif home.get_final_score > 59 %}
+
+                                                bad-match
+
+
+                                            {% else %}
+
+                                                terrible-match
+
+                                            {% endif %}">{{ home.get_final_score }}</span>
 
                                             <span id="glyph{{ home.house.id }}"
                                                   onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
                                                     {% if home.house in user_favorite_houses %}
-                                                  class="glyphicon glyphicon-heart"
+                                                  class="expanded-glyph glyphicon glyphicon-heart"
                                                   style="cursor:pointer"
                                                     {% else %}
-                                                  class="glyphicon glyphicon-heart-empty"
+                                                  class="expanded-glyph glyphicon glyphicon-heart-empty"
                                                   style="cursor:pointer"
                                                     {% endif %}
                                                   aria-hidden="true">

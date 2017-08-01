@@ -10,7 +10,7 @@ clickBind = $('.tile').bind('click', function () {
     /*
      * Adds the unloaded templated html to the page
      */
-    $(this).append($('#expanded-tile-contents').html());
+    $(this).append($(this).children('#expanded-tile-contents').html());
     $(this).removeClass('bound');
     }
 });
