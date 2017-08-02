@@ -258,9 +258,9 @@ Global variables are listed below
 
 
 
-                            {% include "homes/tiles.html" with homeID=home.house.id homeScore=home.get_final_score homeHouse=home.house favoriteHouses=user_favorite_houses homeAddress=home.house.get_full_address homePrice=home.house.get_price_str housePhotos=home.house.housephotos_set.all%}
+                            {% include "homes/tiles.html" with includeScore=True homeID=home.house.id homeScore=home.get_final_score homeHouse=home.house favoriteHouses=user_favorite_houses homeAddress=home.house.get_full_address homePrice=home.house.get_price_str housePhotos=home.house.housephotos_set.all %}
 
-                                {% comment leaving out %}
+                            {% comment leaving out %}
 
                                 {#  Template that holds expanded tile information. #}
                                 {#  Script tag contents read in by  jQuery         #}

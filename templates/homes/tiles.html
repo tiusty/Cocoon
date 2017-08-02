@@ -33,6 +33,8 @@ context.
 
                 {#  TODO: Populate this with actual template information   #}
 
+                {% if includeScore %}
+
                 <span class="expanded-tile-text expanded-score
                                             {% if homeScore > 86 %}
                                                 great-match
@@ -45,6 +47,7 @@ context.
                                             {% else %}
                                                 terrible-match
                                             {% endif %}">{{ homeScore }}</span>
+                {% endif %}
 
                 <span id="glyph{{ homeID }}"
                       onclick="set_favorite({{ homeID }}, '{% url 'survey:setFavorite' %}');"
@@ -105,7 +108,9 @@ context.
         </div>
     </script>
 
-    <div class="scoreItem">
+    <div class="scoreItem" {% if not includeScore %} style="border-right:none;" {% endif %}>
+
+      {% if includeScore %}
         <span class="scoreText
                 {% if homeScore > 86 %}
                     great-match
@@ -119,6 +124,8 @@ context.
                     terrible-match
                 {% endif %}">{{ homeScore }}
         </span>
+    {% endif %}
+
         <span id="glyph{{ homeID }}"
               onclick="set_favorite({{ homeID }}, '{% url 'survey:setFavorite' %}');"
                 {% if homeHouse in favoriteHouses %}
