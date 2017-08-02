@@ -12,6 +12,7 @@ it adds these tiles in a for loop and has access to a house list
 context.
 
 {% endcomment %}
+{% load static %}
 
 <div class="tile bound">
 
@@ -140,7 +141,7 @@ context.
 
     </div>
 
-    {% for image in housePhotos |slice:":2" %}
+    {% for image in housePhotos|slice:":2" %}
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
             <img class="thumbnailImage"
                  src="{% static image %}">
@@ -157,10 +158,3 @@ context.
     Javascript imports below here:
 
 {% endcomment %}
-
-<script src="{% static 'survey/tileCarousel.js' %}"></script>
-<script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
-<script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
-<script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
-<script src="{% static 'survey/tileInteraction.js' %}"></script>
-<script src="{% static 'survey/expandTile.js' %}"></script>

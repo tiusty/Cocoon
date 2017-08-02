@@ -256,13 +256,11 @@ Global variables are listed below
 
                         {% for home in houseList %}
 
-                            <div class="tile bound">
 
-                            {% comment Not working %}
 
                             {% include "homes/tiles.html" with homeID=home.house.id homeScore=home.get_final_score homeHouse=home.house favoriteHouses=user_favorite_houses homeAddress=home.house.get_full_address homePrice=home.house.get_price_str %}
 
-                            {% endcomment %}
+                                {% comment leaving out %}
 
                                 {#  Template that holds expanded tile information. #}
                                 {#  Script tag contents read in by  jQuery         #}
@@ -398,6 +396,8 @@ Global variables are listed below
                                     </div>
                                 {% endfor %}
                             </div>
+
+                            {% endcomment %}
 
                         {% endfor %}
 
