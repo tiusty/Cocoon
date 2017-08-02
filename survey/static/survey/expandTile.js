@@ -5,7 +5,7 @@ clickBind = $('.tile').bind('click', function () {
     $(this).addClass('tile-expanded');
     $('.tile-expanded').children().hide();
     $(this).animate({"height": "70vh"}, 150, function () {
-        $('.tile').slideUp(200);
+        $(this).siblings('.tile').slideUp(200);
     });
     /*
      * Adds the unloaded templated html to the page

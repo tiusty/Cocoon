@@ -8,7 +8,7 @@
     <!-- Style sheets for template page -->
     <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
     <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">
-{#    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">#}
+    {#    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">#}
 
 {% endblock %}
 
@@ -65,14 +65,24 @@
         <p>Here is your list of homes that you are currently visiting or want to visit</p>
     </div>
 
-    <div class="tileTable">
+    <div class="row">
+        <div class="col-md-6">
+        <p>The Short List (These are homes you plan on visiting)</p>
+            <div class="tileTable">
+                {% for house in user_visit_house_list %}
+                    {% include "homes/tiles.html" with includeScore=False homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all %}
+                {% endfor %}
+            </div>
+        </div>
 
-    {% for house in user_visit_house_list %}
-
-    {% include "homes/tiles.html" with includeScore=False homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all %}
-
-    {% endfor %}
-
+        <div class="col-md-6">
+        <p>Favorites (These are homes you like and want to keep track of)</p>
+            <div class="tileTable">
+                {% for house in user_favorite_houses %}
+                    {% include "homes/tiles.html" with includeScore=False homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     {% comment removing previous table setup %}
@@ -130,11 +140,12 @@
     <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables removing homes from the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/delete_visit_house.js' %}"></script>
     {# Necessary imports for the global tiles #}
     <script src="{% static 'survey/tileCarousel.js' %}"></script>
-        <script src="{% static 'survey/tileInteraction.js' %}"></script>
+    <script src="{% static 'survey/tileInteraction.js' %}"></script>
     <script src="{% static 'survey/survey_result.js' %}"></script>
     <script src="{% static 'survey/expandTile.js' %}"></script>
 
