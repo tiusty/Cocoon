@@ -4,6 +4,10 @@
 
 $(document).ready(function () {
 
+    /************************************************************
+
+    Note: This functionality is now executed with django template
+
     // sets the color of the score based on the value
     $('.scoreText').each(function () {
 
@@ -21,6 +25,8 @@ $(document).ready(function () {
             $(this).addClass('terrible-match');
         }
     });
+
+    ************************************************************/
 
     // oversize the contents of the tile when hovered to suggest that
     // it can be expanded when clicked

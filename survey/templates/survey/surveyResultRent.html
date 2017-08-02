@@ -263,38 +263,28 @@ Global variables are listed below
                                 <script id="expanded-tile-contents" type="text/template">
                                     <div class="expanded-tile-container">
                                         <div class="expanded-row-top">
-                                            <span onclick="minimize(this)" class="expanded-close glyphicon glyphicon-resize-small"></span>
-                                            <button type="button" onclick="set_visit_house({{ home.house.id }}, '{% url 'survey:setVisitHouse' %}')" class="contact-button btn btn-primary">More Info</button>
+                                            <span onclick="minimize(this)"
+                                                  class="expanded-close glyphicon glyphicon-resize-small"></span>
+                                            <button type="button"
+                                                    onclick="set_visit_house({{ home.house.id }}, '{% url 'survey:setVisitHouse' %}')"
+                                                    class="contact-button btn btn-primary">Show Contact
+                                            </button>
                                         </div>
                                         <div class="expanded-tile-contents">
 
                                             {#  TODO: Populate this with actual template information   #}
 
                                             <span class="expanded-tile-text expanded-score
-
                                             {% if home.get_final_score > 86 %}
-
                                                 great-match
-
                                             {% elif home.get_final_score > 79 %}
-
                                                 good-match
-
-
                                             {% elif home.get_final_score > 69 %}
-
                                                 acceptable-match
-
-
                                             {% elif home.get_final_score > 59 %}
-
                                                 bad-match
-
-
                                             {% else %}
-
                                                 terrible-match
-
                                             {% endif %}">{{ home.get_final_score }}</span>
 
                                             <span id="glyph{{ home.house.id }}"
@@ -356,7 +346,18 @@ Global variables are listed below
                                 </script>
 
                                 <div class="scoreItem">
-                                    <span class="scoreText">{{ home.get_final_score }}</span>
+                                    <span class="scoreText
+                                            {% if home.get_final_score > 86 %}
+                                                great-match
+                                            {% elif home.get_final_score > 79 %}
+                                                good-match
+                                            {% elif home.get_final_score > 69 %}
+                                                acceptable-match
+                                            {% elif home.get_final_score > 59 %}
+                                                bad-match
+                                            {% else %}
+                                                terrible-match
+                                            {% endif %}">{{ home.get_final_score }}</span>
                                     <span id="glyph{{ home.house.id }}"
                                           onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
                                             {% if home.house in user_favorite_houses %}

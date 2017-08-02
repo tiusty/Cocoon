@@ -34,12 +34,16 @@ body {
 
 ************************/
 
+.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: white;
+}
+
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-    background-color: #c67969 !important;
+    background-color: #c67969;
 }
 
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {
-    background-color: #c67969 !important;
+    background-color: #c67969;
 }
 
 li.dropdown-header {
@@ -181,6 +185,12 @@ li.dropdown-header {
 
 .btn:hover, .btn-primary:hover {
     background-color: #009688 !important;
+}
+
+.btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background-color: #26A69A;
+    border: none;
+    color: white;
 }
 
 .btn-danger {
@@ -378,6 +388,14 @@ fieldset[disabled] .btn-danger.focus {
 
 @media (max-width: 768px) {
 
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+        background-color: #4eb7ad;
+    }
+
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {
+        background-color: #4eb7ad;
+    }
+
     .navbar-right > li.login-block {
         min-width: 150px;
     }
@@ -397,7 +415,7 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     #navbar {
-        background-color: #c67969;
+        background-color: #4eb7ad;
     }
 
     .nav-logo {

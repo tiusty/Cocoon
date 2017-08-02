@@ -5,7 +5,7 @@ clickBind = $('.tile').bind('click', function () {
     $(this).addClass('tile-expanded');
     $('.tile-expanded').children().hide();
     $(this).animate({"height": "70vh"}, 150, function () {
-        $('.tile').hide();
+        $('.tile').slideUp(200);
     });
     /*
      * Adds the unloaded templated html to the page
@@ -19,7 +19,7 @@ function minimize(clickedElement) {
 
     $('.expanded-tile-container').remove();
 
-     $('.tile-expanded').animate({"height": "115px"}, 150, function() {
+     $('.tile-expanded').animate({"height": "115px"}, 200, function() {
         $('.tile-expanded').addClass('tile');
         $('.tile').show();
         $('.tile-expanded').children().show();
