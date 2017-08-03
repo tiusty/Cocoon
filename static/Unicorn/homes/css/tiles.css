@@ -52,7 +52,7 @@ EXPANDED TILE STYLING
     display: flex;
     width: 100%;
     flex-direction: column;
-    height: calc(65vh - 50px);
+    height: 640px;
     justify-content: space-around;
     align-content: center;
 }

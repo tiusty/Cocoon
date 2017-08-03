@@ -25,7 +25,7 @@ context.
                                             <span onclick="minimize(this)"
                                                   class="expanded-close glyphicon glyphicon-resize-small"></span>
                 <button type="button"
-                        onclick="set_visit_house({{ homeID }}, '{% url 'survey:setVisitHouse' %}')"
+                        onclick="set_visit_house({{ theHouse.id }}, '{% url 'survey:setVisitHouse' %}')"
                         class="contact-button btn btn-primary">Show Contact
                 </button>
             </div>
@@ -49,9 +49,9 @@ context.
                                             {% endif %}">{{ homeScore }}</span>
                 {% endif %}
 
-                <span id="glyph{{ homeID }}"
-                      onclick="set_favorite({{ homeID }}, '{% url 'survey:setFavorite' %}');"
-                        {% if homeHouse in favoriteHouses %}
+                <span id="glyph{{ house.id }}"
+                      onclick="set_favorite({{ house.id }}, '{% url 'survey:setFavorite' %}');"
+                        {% if theHouse in user_favorite_houses %}
                       class="expanded-glyph glyphicon glyphicon-heart"
                       style="cursor:pointer"
                         {% else %}
@@ -61,9 +61,9 @@ context.
                       aria-hidden="true">
                                             </span>
 
-                <span class="expanded-tile-text expanded-info">{{ homeAddress }}</span>
+                <span class="expanded-tile-text expanded-info">{{ theHouse.get_full_address }}</span>
 
-                <span class="expanded-tile-text expanded-info">{{ homePrice }}</span>
+                <span class="expanded-tile-text expanded-info">{{ theHouse.get_price_str }}</span>
 
                 <div id="myCarousel" class="carousel slide" data-ride="carousel">
                     <!-- Indicators -->
@@ -126,9 +126,9 @@ context.
         </span>
     {% endif %}
 
-        <span id="glyph{{ homeID }}"
-              onclick="set_favorite({{ homeID }}, '{% url 'survey:setFavorite' %}');"
-                {% if homeHouse in favoriteHouses %}
+        <span id="glyph{{ house.id }}"
+              onclick="set_favorite({{ house.id }}, '{% url 'survey:setFavorite' %}');"
+                {% if theHouse in user_favorite_houses %}
               class="glyphicon glyphicon-heart"
               style="cursor:pointer"
                 {% else %}
@@ -142,13 +142,13 @@ context.
         {# TODO: Pull high priority items here #}
         {# Below are placeholder strings    #}
 
-        <span class="infoBit">{{ homePrice }}</span>
-        <span class="infoBit addressBit">{{ homeAddress }}</span>
+        <span class="infoBit">{{ theHouse.get_price_str }}</span>
+        <span class="infoBit addressBit">{{ theHouse.get_full_address }}</span>
         <span class="infoBit"></span>
 
     </div>
 
-    {% for image in housePhotos|slice:":2" %}
+    {% for image in theHouse.housephotos_set.all|slice:":2" %}
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
             <img class="thumbnailImage"
                  src="{% static image %}">

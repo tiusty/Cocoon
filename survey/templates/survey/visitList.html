@@ -70,7 +70,14 @@
         <p>The Short List (These are homes you plan on visiting)</p>
             <div class="tileTable">
                 {% for house in user_visit_house_list %}
-                    {% include "homes/tiles.html" with includeScore=False homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all %}
+                    {% include "homes/tiles.html" with includeScore=False theHouse=house %}
+
+                    {% comment unused template variables %}
+
+                    homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all
+
+                    {% endcomment %}
+
                 {% endfor %}
             </div>
         </div>
@@ -79,7 +86,14 @@
         <p>Favorites (These are homes you like and want to keep track of)</p>
             <div class="tileTable">
                 {% for house in user_favorite_houses %}
-                    {% include "homes/tiles.html" with includeScore=False homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all %}
+                    {% include "homes/tiles.html" with includeScore=False  theHouse=house%}
+
+                    {% comment unused template variables %}
+
+                    homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all
+
+                    {% endcomment %}
+
                 {% endfor %}
             </div>
         </div>

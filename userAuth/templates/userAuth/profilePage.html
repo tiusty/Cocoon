@@ -73,6 +73,9 @@
                         <div class="hidden-xs">Rent Surveys</div>
                     </button>
                 </div>
+
+            {% comment FAVORITES TAB %}
+
                 <div class="btn-group" role="group">
                     <button type="button" id="following"
                             {% if defaultProfile == 3 %}
@@ -85,6 +88,9 @@
                         <div class="hidden-xs">Favorites</div>
                     </button>
                 </div>
+
+            {% endcomment %}
+
             </div>
 
             <div class="well">
@@ -195,6 +201,9 @@
                             {% endfor %}
                         </div>
                     </div>
+
+                {% comment FAVORITES PANE - NOW IN VISIT LIST %}
+
                     <div class="tab-pane fade in {% if defaultProfile == 3 %}active{% endif %}" id="tab3">
                     {% for house in favorites %}
                         {% if forloop.first %}
@@ -249,6 +258,9 @@
                             </tbody>
                         </table>
                     </div>
+
+                {% endcomment %}
+
                 </div>
             </div>
         </div>

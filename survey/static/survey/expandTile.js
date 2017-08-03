@@ -4,7 +4,7 @@ clickBind = $('.tile').bind('click', function () {
          $(this).removeClass('tile');
     $(this).addClass('tile-expanded');
     $(this).children().hide();
-    $(this).animate({"height": "60vh"}, 150, function () {
+    $(this).animate({"height": "700"}, 150, function () {
         $(this).siblings('.tile').slideUp(200);
     });
     /*

@@ -57,11 +57,8 @@
                         {% block nav-mysurvies %}
                             <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Surveys</a>
                             </li>{% endblock %}
-                        {% block nav-favorites %}
-                            <li><a href="{% url 'userAuth:profilePage' 'favorites' %}">My Favorites</a>
-                            </li>{% endblock %}
                         {% block nav-visitlist %}
-                            <li><a href="{% url 'survey:visitList' %}">My Visit List</a></li>{% endblock %}
+                            <li><a href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
                         {% block nav-contact %}
                             <li><a id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a>
                             </li>{% endblock %}

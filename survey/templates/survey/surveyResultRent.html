@@ -256,9 +256,13 @@ Global variables are listed below
 
                         {% for home in houseList %}
 
+                            {% include "homes/tiles.html" with includeScore=True theHouse=home.house homeScore=home.get_final_score  %}
 
+                            {% comment unused template variables %}
 
-                            {% include "homes/tiles.html" with includeScore=True homeID=home.house.id homeScore=home.get_final_score homeHouse=home.house favoriteHouses=user_favorite_houses homeAddress=home.house.get_full_address homePrice=home.house.get_price_str housePhotos=home.house.housephotos_set.all %}
+                            homeID=home.house.id homeScore=home.get_final_score homeHouse=home.house favoriteHouses=user_favorite_houses homeAddress=home.house.get_full_address homePrice=home.house.get_price_str housePhotos=home.house.housephotos_set.all
+
+                            {% endcomment %}
 
                             {% comment leaving out %}
 
