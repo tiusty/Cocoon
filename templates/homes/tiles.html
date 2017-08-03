@@ -61,9 +61,58 @@ context.
                       aria-hidden="true">
                                             </span>
 
-                <span class="expanded-tile-text expanded-info">{{ theHouse.get_full_address }}</span>
+                <div class="expanded-info">
+                    <table class="expanded-info-table">
+                        <tr>
+                            <td class="expanded-tile-text category">Address</td>
+                            <td class="expanded-tile-text value">{{ theHouse.get_full_address }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Price</td>
+                            <td class="expanded-tile-text value">{{ theHouse.get_price_str }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Move in</td>
+                            <td class="expanded-tile-text value">{{ theHouse.get_move_in_day }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Beds</td>
+                            <td class="expanded-tile-text value">{{ theHouse.get_num_bedrooms }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Baths</td>
+                            <td class="expanded-tile-text value">{{ theHouse.get_num_bathrooms }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Home type</td>
+                            <td class="expanded-tile-text value">{{ theHouse.get_home_type }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">A/C</td>
+                            <td class="expanded-tile-text value">{{ theHouse.get_air_conditioning }}</td>
+                        </tr>
+                    </table>
 
-                <span class="expanded-tile-text expanded-info">{{ theHouse.get_price_str }}</span>
+                    {% comment old information layout %}
+
+                    <span class="expanded-tile-text"><strong>Address:</strong> {{ theHouse.get_full_address }}</span>
+
+                    <span class="expanded-tile-text"><strong>Price/mo:</strong> {{ theHouse.get_price_str }}</span>
+
+                    <span class="expanded-tile-text"><strong>Move in:</strong> {{ theHouse.get_move_in_day }}</span>
+
+                    <span class="expanded-tile-text"><strong>Beds:</strong> {{ theHouse.get_num_bedrooms }}</span>
+
+                    <span class="expanded-tile-text"><strong>Baths:</strong> {{ theHouse.get_num_bathrooms }}</span>
+
+                    <span class="expanded-tile-text"><strong>Type:</strong> {{ theHouse.get_home_type }}</span>
+
+                    <span class="expanded-tile-text"><strong>A/C:</strong> {{ theHouse.get_air_conditioning }}</span>
+
+                    {% endcomment %}
+                </div>
+
+
 
                 <div id="myCarousel" class="carousel slide" data-ride="carousel">
                     <!-- Indicators -->
