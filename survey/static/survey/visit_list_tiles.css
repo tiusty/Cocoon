@@ -11,3 +11,7 @@
 .glyphicon-heart-empty {
     font-size: 36px !important;
 }
+
+.expanded-info {
+    flex-basis: 30% !important;
+}
