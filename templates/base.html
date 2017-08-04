@@ -42,7 +42,7 @@
                             <li class="login-block dropdown">
                                 <a href="#" class="welcome-text dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-haspopup="true"
-                                   aria-expanded="false">Welcome {{ user.email }} <span class="caret"></span></a>
+                                   aria-expanded="false">{{ user.email }} <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-header">Account</li>
                                     <li class="dropdown-header"><a href="{% url 'userAuth:logoutPage' %}">Logout</a>

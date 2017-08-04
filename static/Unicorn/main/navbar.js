@@ -9,11 +9,13 @@ $(document).ready(function () {
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");
             $(".nav-logo").removeClass("nav-logo-animated");
+            $(".signup-button").removeClass("button-link-animated")
         } else {
             console.log("scrolled regular");
             $(".navbar-brand").addClass("nav-brand-animated");
             $(".nav > li > a").addClass("link-animated");
             $(".nav-logo").addClass("nav-logo-animated");
+            $(".signup-button").addClass("button-link-animated")
         }
     });
 
@@ -22,6 +24,7 @@ $(document).ready(function () {
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");
             $(".nav-logo").removeClass("nav-logo-animated");
+            $(".signup-button").removeClass("button-link-animated")
         }
     })
 })

@@ -334,10 +334,12 @@ fieldset[disabled] .btn-danger.focus {
 
 }
 
+
+
 @media (max-width: 1021px) and (min-width: 768px) {
 
     .navbar-nav > li > a {
-        padding: 20px 15px;
+        padding: 24px 15px;
         line-height: 15px;
     }
 
@@ -357,7 +359,7 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     body {
-        padding-top: 110px;
+        padding-top: 100px;
     }
 
     .navbar-nav {
@@ -375,6 +377,20 @@ fieldset[disabled] .btn-danger.focus {
     }
 }
 
+@media (max-width: 868px) {
+
+    .nav > li > a {
+        font-size: 14px;
+        padding: 24px 12px;
+    }
+
+    .login-block {
+        min-width: 220px !important;
+        width: 220px;
+    }
+
+}
+
 @media (min-width: 1280px) {
 
     .nav > li > a {
@@ -386,9 +402,15 @@ fieldset[disabled] .btn-danger.focus {
     }
 }
 
+@media (min-width: 768px) and (max-width: 974px) {
+    body {
+        padding-top: 50px;
+    }
+}
+
 @media (max-width: 768px) {
 
-    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+        .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
         background-color: #4eb7ad;
     }
 
@@ -414,10 +436,6 @@ fieldset[disabled] .btn-danger.focus {
         /*background-color: #e88f7d;*/
     }
 
-    #navbar {
-        background-color: #4eb7ad;
-    }
-
     .nav-logo {
         width: 60px;
         padding: 5px;
@@ -431,5 +449,10 @@ fieldset[disabled] .btn-danger.focus {
     body {
         padding-top: 50px !important;
     }
+}
 
+@media (max-width: 767px) {
+        #navbar {
+        background-color: #4eb7ad;
+    }
 }
