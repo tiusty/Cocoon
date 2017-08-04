@@ -28,9 +28,11 @@
             {% endif %}
             <p class="lead"></p>
             {% if not user.is_authenticated %}
-                <p>Please sign in: <a href="{% url 'userAuth:loginPage' %}">
+                <p>Please sign in:
+                    <a href="{% url "userAuth:loginPage" %}">
                     <button class="login-button btn btn-primary">Login</button>
-                </a></p>
+                        </a>
+                </p>
             {% else %}
                 <p>Please click below to get started!</p>
             {% endif %}
