@@ -8,6 +8,7 @@
 
     <!-- Login Styling -->
     <link href="{% static "userAuth/signin.css" %}" rel="stylesheet">
+    <link href="{% static "userAuth/general_auth.css" %}" rel="stylesheet">
 {% endblock head %}
 
 {% comment %}
@@ -16,6 +17,16 @@ Leaving empty nav_bar block to prevent the nav bar from showing up
 {% block nav_bar %} {% endblock nav_bar %}
 
 {% block content %}
+
+    <div class="row">
+        <div class="col-sm-2 col-sm-offset-2 header">
+            <img class="logo" src="{% static 'homePage/cocoon_logo.png' %}">
+        </div>
+    <div class="col-sm-4">
+        <p class="welcome_text">Welcome to Cocoon</p>
+    </div>
+
+    </div>
 
     {% if messages %}
         <ul class="messages">
@@ -66,3 +77,8 @@ Leaving empty nav_bar block to prevent the nav bar from showing up
 	</p>
 
 {% endblock content %}
+
+{% block endScripts %}
+
+    {{ block.super }}
+{% endblock %}

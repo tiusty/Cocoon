@@ -66,8 +66,7 @@ def registerPage(request):
 
 def logoutPage(request):
     logout(request)
-    messages.add_message(request, messages.SUCCESS, 'Successfully logged out')
-    return HttpResponseRedirect(reverse('userAuth:loginPage'))
+    return HttpResponseRedirect(reverse('homePage:index'))
 
 
 @login_required
