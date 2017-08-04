@@ -1,0 +1,81 @@
+/*.signup-button {*/
+    /*padding: 5px 10px !important;*/
+    /*font-size: 12px !important;*/
+     /*flex-basis: 50%;*/
+    /*align-self: flex-start;*/
+/*}*/
+
+/*body {*/
+    /*padding-top: 60px !important;*/
+/*}*/
+
+/*.navbar-right {*/
+    /*width: 100px !important;*/
+/*}*/
+
+/*ul {*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*justify-content: flex-end !important;*/
+    /*height: 80px;*/
+/*}*/
+
+/*ul > li {*/
+    /*display: block !important;*/
+    /*flex-basis: 50%;*/
+    /*align-self: flex-start;*/
+/*}*/
+
+/*ul > li > a {*/
+    /*padding: 0 !important;*/
+    /*line-height: 0 !important;*/
+    /*display: block !important;*/
+/*}*/
+
+/*ul > li > a.login-link {*/
+    /*color: #337ab7 !important;*/
+    /*font-size: 12px;*/
+/*}*/
+
+/*ul > li > a.login-link:hover {*/
+    /*color: #337ab7 !important;*/
+/*}*/
+
+
+
+ul > li > a.register-link {
+    padding: 25px 15px !important;
+}
+
+ul > li > a {
+    padding: 30px 8px !important;
+    font-size: 14px !important;
+}
+
+ul > li > a.register-link {
+    padding: 24px 8px !important;
+}
+
+.signup-button-right {
+    margin-right: 15px !important;
+}
+
+@media (max-width: 768px) {
+    .signup-button {
+        border: none;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 974px) {
+    body {
+        padding-top: 50px !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1021px) {
+
+    ul > li > a.register-link {
+    padding: 16px 8px !important;
+}
+
+}

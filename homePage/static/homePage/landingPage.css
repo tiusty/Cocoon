@@ -20,7 +20,7 @@ body {
     display: block;
     position: absolute;
     z-index: 500;
-    width: 30%;
+    width: 40%;
     top: 0;
     padding: 20px 10px;
     margin: 0 !important;
@@ -48,7 +48,7 @@ body {
     position: absolute;
     z-index: 100;
     display: block;
-    top: 300px;
+    top: 400px;
     width: 45%;
     margin: 0 auto;
     color: white;
@@ -213,6 +213,10 @@ body {
 
     .info-text > span {
         width: 100%;
+    }
+
+    .jumbotron {
+        width: 30%;
     }
 }
 
