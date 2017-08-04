@@ -7,22 +7,27 @@
 
     <!-- Style sheets for template page -->
     <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
+    <link href="{% static 'Unicorn/homes/css/tiles.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/visit_list_tiles.css' %}" rel="stylesheet">
+    {#    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">#}
 
 {% endblock %}
 
 {% block content %}
 
+
     {% comment %}
         Modal assumes it is being called within a for loop
         This Modal is for the house toggle
-    {% endcomment %}
+
     {% for house in user_visit_house_list %}
+
         {% include "homes/homeModal.html" with modalId="myModalVisit" %}
 
-        {% comment %}
+
             This modal creates the delete confirmation dialog for each house
             This also allows the user to delete houses from the user visit list
-        {% endcomment %}
+
 
         <div class="modal fade" id="deleteModal{{ forloop.counter }}"
              tabindex="-1" role="dialog"
@@ -53,11 +58,49 @@
         </div>
     {% endfor %}
 
+    {% endcomment %}
+
 
     <div class="jumbotron">
         <h1>Your Visit List!</h1>
         <p>Here is your list of homes that you are currently visiting or want to visit</p>
     </div>
+
+    <div class="row">
+        <div class="col-md-6">
+        <p>The Short List (These are homes you plan on visiting)</p>
+            <div class="tileTable">
+                {% for house in user_visit_house_list %}
+                    {% include "homes/tiles.html" with includeScore=False theHouse=house %}
+
+                    {% comment unused template variables %}
+
+                    homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all
+
+                    {% endcomment %}
+
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+        <p>Favorites (These are homes you like and want to keep track of)</p>
+            <div class="tileTable">
+                {% for house in user_favorite_houses %}
+                    {% include "homes/tiles.html" with includeScore=False  theHouse=house%}
+
+                    {% comment unused template variables %}
+
+                    homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all
+
+                    {% endcomment %}
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% comment removing previous table setup %}
 
     <table class="table table-striped table-hover table-responsive">
         <tbody>
@@ -68,6 +111,12 @@
             <th>Remove Home?</th>
         </tr>
         </thead>
+
+            {% for house in user_visit_house_list %}
+
+            {% endfor %}
+
+
         {% for house in user_visit_house_list %}
 
             <tr>
@@ -94,6 +143,8 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {% endcomment %}
 {% endblock %}
 
 {% block endScripts %}
@@ -104,6 +155,13 @@
     <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables removing homes from the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/delete_visit_house.js' %}"></script>
+    {# Necessary imports for the global tiles #}
+    <script src="{% static 'survey/tileCarousel.js' %}"></script>
+    <script src="{% static 'survey/tileInteraction.js' %}"></script>
+    <script src="{% static 'survey/survey_result.js' %}"></script>
+    <script src="{% static 'survey/expandTile.js' %}"></script>
+
 {% endblock %}

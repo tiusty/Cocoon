@@ -10,11 +10,7 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <!-- Style sheets for template page -->
-    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">
     <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
-    <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
-    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
-    <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
     <link href="{% static 'homePage/landingPage.css' %}" rel="stylesheet">
 {% endblock %}
 
@@ -42,7 +38,7 @@
 
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
-            <div class="item active" data-interval="2000">
+            <div class="item active">
                 <img src="{% static 'stockHomes/carousal1.jpeg' %}" alt="...">
                 <div class="carousel-caption">
 
@@ -84,6 +80,7 @@
                 </div>
             </div>
         {% endif %}
+<<<<<<< HEAD
         <div class="selectSurvey">
                 <h2>Take a survey now</h2>
             <div class="surveyButton">
@@ -93,16 +90,27 @@
         </div>
         </div>
 
+            <div class="info-row">
+            <div class="info-text"><span>Start and end your search for an <span class="inline-emphasis">apartment</span> on Cocoon!</span></div>
+            <div class="icon-container">
+                <img class="infographic" src="{% static 'infographics/vector_apartment.svg' %}">
+            </div>
+        </div>
 
-        {#        <!-- Controls -->#}
-{#        <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">#}
-{#            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>#}
-{#            <span class="sr-only">Previous</span>#}
-{#        </a>#}
-{#        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">#}
-{#            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>#}
-{#            <span class="sr-only">Next</span>#}
-{#        </a>#}
+        <div class="info-row">
+            <div class="info-text"><span>Complete our <span class="inline-emphasis">survey</span> detailing your every need!</span></div>
+            <div class="icon-container">
+                <img class="infographic" src="{% static 'infographics/vector_survey.svg' %}">
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-text"><span>Let us <span class="inline-emphasis">rank</span> the best rentals based on your needs!</span></div>
+            <div class="icon-container">
+                <img class="infographic survey-results" src="{% static 'infographics/vector_ranking.svg' %}">
+            </div>
+        </div>
+
     </div>
 
 

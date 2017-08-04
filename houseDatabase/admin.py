@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import RentDatabase, ZipCodeDictionary,ZipCodeDictionaryChild
+from .models import RentDatabase, ZipCodeDictionary,ZipCodeDictionaryChild, HousePhotos
+
+
+class HousePhotoUrlInLine(admin.StackedInline):
+    model = HousePhotos
+    extra = 0
 
 
 # Register your models here.
@@ -20,6 +25,7 @@ class HouseAdmin(admin.ModelAdmin):
                     'lat', 'lon',)
     list_filter = ['home_type']
     search_fields = ['address']
+    inlines = [HousePhotoUrlInLine]
 
 
 class ZipCodeDictionaryChildInLine(admin.StackedInline):

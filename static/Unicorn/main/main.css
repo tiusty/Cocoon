@@ -7,6 +7,14 @@
 body {
     font-family: 'Open Sans', sans-serif;
     padding-top: 80px;
+
+}
+
+#siteWrapper {
+    /*
+    Assures that footer stays on bottom of viewport
+    */
+    min-height: calc(100vh - 60px);
 }
 
 /* Preventing modal from being hidden by large navbar */
@@ -26,12 +34,16 @@ body {
 
 ************************/
 
+.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: black;
+}
+
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-    background-color: #c67969 !important;
+    background-color: #c67969;
 }
 
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {
-    background-color: #c67969 !important;
+    background-color: #c67969;
 }
 
 li.dropdown-header {
@@ -50,10 +62,6 @@ li.dropdown-header {
     color: #eee !important;
 }
 
-/*.navbar-default .navbar-nav > li > a:active {*/
-/*background-color: #a13718;*/
-/*}*/
-
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
     background: none;
     color: white;
@@ -66,7 +74,6 @@ li.dropdown-header {
 
 .navbar, .navbar-default, navbar-fixed-top {
     z-index: 3000;
-    margin-bottom: 10%;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
@@ -100,6 +107,63 @@ li.dropdown-header {
 
 /***********************
 
+    FOOTER STYLING
+
+************************/
+
+.footer {
+    display: block;
+    position: relative;
+    z-index: 10;
+    background: #26A69A;
+    color: white;
+    height: 60px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 60px;
+}
+
+.left-footer {
+    display: block;
+}
+
+.copyright {
+    text-align: center;
+    padding: 0;
+    width: 100%;
+}
+
+.sitemap {
+    margin: 0 auto;
+    margin-bottom: 2%;
+    width: 50%;
+}
+
+.sitemap-container {
+    display: block;
+    list-style: none;
+    list-style-type: none;
+    padding: 0;
+}
+
+.sitemap-container > li {
+    text-decoration: none;
+}
+
+.footer-link {
+    display: block;
+    text-decoration: none;
+    color: white;
+
+}
+
+.footer-link:hover {
+    text-decoration: none;
+    color: #efefef;
+}
+
+/***********************
+
     BUTTON STYLING
 
 ************************/
@@ -121,6 +185,12 @@ li.dropdown-header {
 
 .btn:hover, .btn-primary:hover {
     background-color: #009688 !important;
+}
+
+.btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
+    background-color: #26A69A;
+    border: none;
+    color: white;
 }
 
 .btn-danger {
@@ -237,6 +307,7 @@ fieldset[disabled] .btn-danger.focus {
         font-size: 32px !important;
 
         /* Uncomment these lines to add animated nav back */
+
         /*transition: padding-top .2s ease-in;*/
         /*transition: padding-bottom .2s ease-in;*/
     }
@@ -246,7 +317,9 @@ fieldset[disabled] .btn-danger.focus {
         padding-top: 15px !important;
         padding-bottom: 15px !important;
         line-height: 21px !important;
+
         /* Uncomment these lines to add animated nav back */
+
         /*transition: padding-top .2s ease-in;*/
         /*transition: padding-bottom .2s ease-in;*/
     }
@@ -261,7 +334,7 @@ fieldset[disabled] .btn-danger.focus {
 
 }
 
-@media (max-width: 1004px) and (min-width: 768px) {
+@media (max-width: 1021px) and (min-width: 768px) {
 
     .navbar-nav > li > a {
         padding: 20px 15px;
@@ -284,7 +357,7 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     body {
-        padding-top: 65px;
+        padding-top: 110px;
     }
 
     .navbar-nav {
@@ -293,6 +366,12 @@ fieldset[disabled] .btn-danger.focus {
 
     #rightmost-nav-item {
         border-right: 0px;
+    }
+}
+
+@media (max-width: 1021px) and (min-width: 974px) {
+    body {
+        padding-top: 50px;
     }
 }
 
@@ -307,13 +386,15 @@ fieldset[disabled] .btn-danger.focus {
     }
 }
 
-@media (max-width: 956px) {
-    body {
-        padding-top: 110px;
-    }
-}
-
 @media (max-width: 768px) {
+
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+        background-color: #4eb7ad;
+    }
+
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {
+        background-color: #4eb7ad;
+    }
 
     .navbar-right > li.login-block {
         min-width: 150px;
@@ -334,7 +415,7 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     #navbar {
-        background-color: #c67969;
+        background-color: #4eb7ad;
     }
 
     .nav-logo {

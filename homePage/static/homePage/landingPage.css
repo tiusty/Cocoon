@@ -1,5 +1,11 @@
+body {
+    background-color: #efefef;
+}
+
 /*********************************
-    CAROUSAL STYLING
+
+    CAROUSEL STYLING
+
  ********************************/
 
 .container {
@@ -17,6 +23,7 @@
     width: 30%;
     top: 0;
     padding: 20px 10px;
+    margin: 0 !important;
 }
 
 .jumbotron > h1 {
@@ -36,16 +43,17 @@
 }
 
 .selectSurvey {
-    background-color: #263238;
-    opacity: .75;
+    background-color: rgba(38,50,56,.75);
+    text-align: center;
     position: absolute;
-    z-index: 400;
+    z-index: 100;
     display: block;
-    top: 43%;
+    top: 300px;
+    width: 45%;
     margin: 0 auto;
     color: white;
     padding: 3% 5%;
-    left: 36%;
+    left: 27.5%;
 }
 
 .carousel-control {
@@ -53,18 +61,27 @@
 }
 
 .surveyButton {
-    top: 70%;
-    position: absolute;
-    z-index: 400;
+    width: 100%;
+    position: relative;
+    z-index: 500;
     display: block;
-    left: 44%;
     color: white;
+    margin: 0 auto;
+}
+
+.lead {
+    width: 100%;
 }
 
 .submitButton {
-    padding: 10% 22%;
+    display: block;
+    margin: 0 auto !important;
+    padding: 5% 12%;
     font-size: 16px;
+    z-index: 500;
+    background: rgba(38,166,154,1) !important;
 }
+
 
 .surveyButton > div > form > div {
     color: #fff;
@@ -76,7 +93,9 @@
 }
 
 /*********************************
+
     CAROUSAL SCALING
+
  ********************************/
 
 @media (max-width: 1004px) {
@@ -96,16 +115,122 @@
 
 }
 
+
 /*********************************
-    SMALL SCREEN SUPPORT
+
+    INFOGRAPHIC STYLING
+
  ********************************/
 
+.info-row {
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.info-text {
+    flex-basis: 40%;
+    font-size: 24px;
+    font-family: 'Open Sans', sans-serif;
+    min-width: 300px;
+}
+
+.info-text > span {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+    color: #263238;
+}
+
+.icon-container {
+    flex-basis: 40%;
+}
+
+.infographic {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    padding: 15%;
+}
+
+.survey-results {
+    width: 100% !important;
+}
+
+.inline-emphasis {
+    color: #4eb7ad;
+    font-weight: bold;
+}
+
 @media (max-width: 768px) {
+    .info-row {
+        width: 90%
+    }
+
+    .info-text {
+        font-size: 24px;
+        padding: 25px 0px;
+        flex-grow: 2;
+    }
+
+    .icon-container {
+        flex-grow: 1;
+    }
+
+
+    .info-text > span {
+        width: 100%;
+    }
+}
+
+@media (min-width: 550px) and (max-width: 768px) {
+
+    .info-text {
+        font-size: 18px;
+    }
+
+}
+
+@media (min-width: 1200px) {
+
+    .icon-container {
+
+    }
+
+    .infographic {
+        padding: 10%;
+    }
+
+    .info-row {
+        width: 60%;
+        justify-content: center;
+    }
+
+    .info-text > span {
+        width: 100%;
+    }
+}
+
+/*********************************
+
+    SMALL SCREEN SUPPORT
+
+ ********************************/
+
+@media (max-width: 990px) {
     .jumbotron {
         font-size: 16px;
         width: 55%;
         height: auto;
+        left: 22.5%;
+        top: 30px;
     }
+
 
     .jumbotron > h1 {
         font-size: 24px;
@@ -117,7 +242,9 @@
 
     .selectSurvey {
         left: 0;
-        top: 0;
+        top: auto;
+        float: left;
+        width: 100%;
         background-color: #263238;
         opacity: .75;
         position: relative;
@@ -128,7 +255,7 @@
     }
 
     .form-horizontal {
-        color: #263238;
+        color: white;
         display: block;
         margin: 10px auto;
     }
@@ -138,8 +265,8 @@
         position: relative;
         margin-top: 5%;
         color: white;
-        left: 0;
-        top: 0;
+        /*   left: 0;  */
+        /*   top: 0;   */
         margin: 0 auto;
         width: 200px;
         height: 110px;
@@ -153,6 +280,15 @@
     .submitButton {
         display: block;
         margin: 2% auto;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .jumbotron {
+        width: 75%;
+        left: 12.5%;
     }
 
 }
