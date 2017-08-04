@@ -429,8 +429,24 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     .nav > li > a {
-        font-size: 14px;
+        font-size: 18px;
+        padding-top: 10px !important;
+        width: 100%;
     }
+
+     .login-block {
+         text-align: left;
+        width: 100%;
+    }
+
+     .welcome-text, .dropdown-toggle {
+         text-align: left;
+     }
+
+     li.dropdown-header > a {
+         color: white !important;
+         font-size: 12px;
+     }
 
     .nav > li:hover {
         /*background-color: #e88f7d;*/
