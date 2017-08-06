@@ -15,3 +15,7 @@
 .expanded-info {
     flex-basis: 30% !important;
 }
+
+.expanded-tile-contents {
+    height: calc(65vh - 50px);
+}

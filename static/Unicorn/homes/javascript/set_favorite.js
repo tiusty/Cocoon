@@ -15,6 +15,7 @@
 
  */
 function set_favorite(num, url) {
+    console.log("favorited");
             $.ajax({
                 url: url,
                 type: "POST", //http method

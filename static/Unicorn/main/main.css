@@ -170,7 +170,7 @@ li.dropdown-header {
 
 .btn, .btn-primary {
     background-color: #26A69A;
-    border: 1px solid #;
+    border: 1px solid #009688;
     color: white;
     border: none;
 }
@@ -282,7 +282,7 @@ fieldset[disabled] .btn-danger.focus {
 
 @media (min-width: 768px) {
 
-    .navbar-nav > li > a {
+    .navbar-nav > li > a.link {
         padding: 35px 15px;
         line-height: 10px;
     }
@@ -302,9 +302,9 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     .nav-brand-animated {
-        padding: 12px 15px 15px 15px !important;
-        line-height: 25px !important;
-        font-size: 32px !important;
+        padding: 18px 15px 0px 15px !important;
+        line-height: 12px !important;
+        font-size: 36px !important;
 
         /* Uncomment these lines to add animated nav back */
 
@@ -334,11 +334,9 @@ fieldset[disabled] .btn-danger.focus {
 
 }
 
-
-
 @media (max-width: 1021px) and (min-width: 768px) {
 
-    .navbar-nav > li > a {
+    .navbar-nav > li > a.link {
         padding: 24px 15px;
         line-height: 15px;
     }
@@ -379,7 +377,7 @@ fieldset[disabled] .btn-danger.focus {
 
 @media (max-width: 868px) {
 
-    .nav > li > a {
+    .nav > li > a.link {
         font-size: 14px;
         padding: 24px 12px;
     }
@@ -393,7 +391,7 @@ fieldset[disabled] .btn-danger.focus {
 
 @media (min-width: 1280px) {
 
-    .nav > li > a {
+    .nav > li > a.link {
         font-size: 18px;
     }
 
@@ -410,7 +408,7 @@ fieldset[disabled] .btn-danger.focus {
 
 @media (max-width: 768px) {
 
-        .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
         background-color: #4eb7ad;
     }
 
@@ -428,25 +426,25 @@ fieldset[disabled] .btn-danger.focus {
         line-height: 25px;
     }
 
-    .nav > li > a {
+    .nav > li > a.link {
         font-size: 18px;
         padding-top: 10px !important;
         width: 100%;
     }
 
-     .login-block {
-         text-align: left;
+    .login-block {
+        text-align: left;
         width: 100%;
     }
 
-     .welcome-text, .dropdown-toggle {
-         text-align: left;
-     }
+    .welcome-text, .dropdown-toggle {
+        text-align: left;
+    }
 
-     li.dropdown-header > a {
-         color: white !important;
-         font-size: 12px;
-     }
+    li.dropdown-header > a {
+        color: white !important;
+        font-size: 12px;
+    }
 
     .nav > li:hover {
         /*background-color: #e88f7d;*/
@@ -468,7 +466,7 @@ fieldset[disabled] .btn-danger.focus {
 }
 
 @media (max-width: 767px) {
-        #navbar {
+    #navbar {
         background-color: #4eb7ad;
     }
 }

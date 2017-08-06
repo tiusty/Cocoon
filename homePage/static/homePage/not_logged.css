@@ -1,14 +1,6 @@
 ul > li > a.register-link {
-    padding: 25px 15px !important;
-}
-
-ul > li > a {
-    padding: 30px 8px !important;
-    font-size: 14px !important;
-}
-
-ul > li > a.register-link {
-    padding: 24px 8px !important;
+    padding: 24px 8px;
+    font-size: 14px;
 }
 
 .signup-button {
@@ -16,7 +8,7 @@ ul > li > a.register-link {
 }
 
 .signup-button-right {
-    margin-right: 15px !important;
+    margin-right: 15px;
 }
 
 /*****************************
@@ -26,25 +18,34 @@ ul > li > a.register-link {
  ****************************/
 
 .button-link-animated {
-    font-size: 12px !important;
+    font-size: 10px;
+}
+
+.register-link-animated {
+    padding: 0px 15px;
 }
 
 @media (max-width: 768px) {
     .signup-button {
         border: none;
     }
+
+    .register-link {
+        width: 50px;
+        padding: 0;
+    }
 }
 
 @media (min-width: 768px) and (max-width: 974px) {
     body {
-        padding-top: 50px !important;
+        padding-top: 50px;
     }
 }
 
 @media (min-width: 768px) and (max-width: 1021px) {
 
     ul > li > a.register-link {
-    padding: 16px 8px !important;
+    padding: 16px 8px;
 }
 
 }

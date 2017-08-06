@@ -51,8 +51,8 @@ context.
                                             {% endif %}">{{ homeScore }}</span>
                 {% endif %}
 
-                <span id="glyph{{ house.id }}"
-                      onclick="set_favorite({{ house.id }}, '{% url 'survey:setFavorite' %}');"
+                <span id="glyph{{ theHouse.id }}"
+                      onclick="set_favorite({{ theHouse.id }}, '{% url 'survey:setFavorite' %}');"
                         {% if theHouse in user_favorite_houses %}
                       class="expanded-glyph glyphicon glyphicon-heart"
                       style="cursor:pointer"
@@ -179,8 +179,8 @@ context.
         </span>
     {% endif %}
 
-        <span id="glyph{{ house.id }}"
-              onclick="set_favorite({{ house.id }}, '{% url 'survey:setFavorite' %}');"
+        <span id="glyph{{ theHouse.id }}"
+              onclick="set_favorite({{ theHouse.id }}, '{% url 'survey:setFavorite' %}');"
                 {% if theHouse in user_favorite_houses %}
               class="glyphicon glyphicon-heart"
               style="cursor:pointer"

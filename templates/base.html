@@ -40,7 +40,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
                             <li class="login-block dropdown">
-                                <a href="#" class="welcome-text dropdown-toggle" data-toggle="dropdown" role="button"
+                                <a href="#" class="welcome-text dropdown-toggle link" data-toggle="dropdown" role="button"
                                    aria-haspopup="true"
                                    aria-expanded="false">{{ user.email }} <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
@@ -64,10 +64,10 @@
                 </ul>
                 <ul class="nav navbar-nav">
                     {% if user.is_authenticated %}
-                        {% block nav-home %}<li><a href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}
-                        {% block nav-mysurvies %}<li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Surveys</a></li>{% endblock %}
-                        {% block nav-visitlist %}<li><a href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
-                        {% block nav-contact %}<li><a id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
+                        {% block nav-home %}<li><a class="link" href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}
+                        {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Surveys</a></li>{% endblock %}
+                        {% block nav-visitlist %}<li><a class="link" href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
+                        {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
                     {% endif %}
                 </ul>
 
