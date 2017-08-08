@@ -40,6 +40,18 @@ class LoginUserForm(AuthenticationForm):
 
 
 class RegisterForm(UserCreationForm):
+
+    creation_key = forms.CharField(
+        required=True,
+        label="Please enter the key",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'key',
+            }
+        )
+    )
+
     email = forms.EmailField(
         required=True,
         label="Email Address",

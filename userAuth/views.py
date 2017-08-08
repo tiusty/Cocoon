@@ -10,6 +10,9 @@ from django.contrib import messages
 from .forms import LoginUserForm, RegisterForm, ProfileForm
 # Create your views here.
 
+#import global config values
+from Unicorn.settings.Global_Config import creation_key_value
+
 
 def index(request):
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
@@ -53,11 +56,15 @@ def registerPage(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # The email address is used as the username
-            form.save()
-            # Try to have the user automatically log in but for now go back to login page
-            messages.add_message(request, messages.SUCCESS, 'Successfully registered user')
-            return HttpResponseRedirect(reverse('userAuth:loginPage'))
+            if form.cleaned_data['creation_key'] == creation_key_value:
+                # The email address is used as the username
+                form.save()
+                # Try to have the user automatically log in but for now go back to login page
+                messages.add_message(request, messages.SUCCESS, 'Successfully registered user')
+                return HttpResponseRedirect(reverse('userAuth:loginPage'))
+            else:
+                form.add_error('creation_key', 'Creation key wrong')
+                context['error_message'].append("Creation key wrong")
         else:
             context['error_message'].append('Unable to create user')
     context['form'] = form
