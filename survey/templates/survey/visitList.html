@@ -24,10 +24,9 @@
 
         {% include "homes/homeModal.html" with modalId="myModalVisit" %}
 
-
-            This modal creates the delete confirmation dialog for each house
-            This also allows the user to delete houses from the user visit list
-
+            ## This modal creates the delete confirmation dialog for each house
+            ## This also allows the user to delete houses from the user visit list
+            ## SAVING FOR REFERENCE IN CASE WE WANT TO BRING BACK MODALS
 
         <div class="modal fade" id="deleteModal{{ forloop.counter }}"
              tabindex="-1" role="dialog"
@@ -100,51 +99,6 @@
         </div>
     </div>
 
-    {% comment removing previous table setup %}
-
-    <table class="table table-striped table-hover table-responsive">
-        <tbody>
-        <thead>
-        <tr>
-            <th>Toggle</th>
-            <th>Home</th>
-            <th>Remove Home?</th>
-        </tr>
-        </thead>
-
-            {% for house in user_visit_house_list %}
-
-            {% endfor %}
-
-
-        {% for house in user_visit_house_list %}
-
-            <tr>
-                <td style="vertical-align:middle">
-                    <h3 style="margin-top: 10px;">
-                        <span data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
-                              data-target="#myModalVisit{{ forloop.counter }}"
-                              style="padding-right:1em"></span>
-                    </h3>
-                </td>
-                <td style="vertical-align:middle">
-                    {{ house.get_address }}
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger" data-toggle="modal"
-                            data-target="#deleteModal{{ forloop.counter }}">Remove
-                    </button>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td>You do not have any homes to visit</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    {% endcomment %}
 {% endblock %}
 
 {% block endScripts %}
