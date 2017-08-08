@@ -28,7 +28,7 @@ context.
                                                   class="expanded-close glyphicon glyphicon-resize-small"></span>
                 <button type="button"
                         onclick="set_visit_house({{ theHouse.id }}, '{% url 'survey:setVisitHouse' %}')"
-                        class="contact-button btn btn-primary">Show Contact
+                        class="contact-button btn btn-primary">Visit Here
                 </button>
             </div>
             <div class="expanded-tile-contents">
@@ -182,10 +182,10 @@ context.
         <span id="glyph{{ theHouse.id }}"
               onclick="set_favorite({{ theHouse.id }}, '{% url 'survey:setFavorite' %}');"
                 {% if theHouse in user_favorite_houses %}
-              class="glyphicon glyphicon-heart"
+              class="heartGlyph glyphicon glyphicon-heart"
               style="cursor:pointer"
                 {% else %}
-              class="glyphicon glyphicon-heart-empty"
+              class="heartGlyph glyphicon glyphicon-heart-empty"
               style="cursor:pointer"
                 {% endif %}
               aria-hidden="true"></span>

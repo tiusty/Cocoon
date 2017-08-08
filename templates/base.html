@@ -64,7 +64,6 @@
                 </ul>
                 <ul class="nav navbar-nav">
                     {% if user.is_authenticated %}
-                        {% block nav-home %}<li><a class="link" href="{% url 'homePage:index' %}">Home</a></li>{% endblock %}
                         {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:profilePage' 'rentSurvey' %}">My Surveys</a></li>{% endblock %}
                         {% block nav-visitlist %}<li><a class="link" href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
                         {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
