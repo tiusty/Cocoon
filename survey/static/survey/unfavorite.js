@@ -18,12 +18,12 @@ $(document).ready(function () {
 
         if ($(this).hasClass('glyphicon-heart')) {
             console.log("favorited!");
-            $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').fadeOut();
+            $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').addClass('toRemove').fadeOut();
         } else {
             console.log("not favorited");
 
             if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-                $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').fadeIn();
+                $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').removeClass('toRemove').fadeIn();
             } else {
                 console.log("ADDING HTML AGAIN");
                 $('.favoriteTiles').append($(this).parents('.tile').clone(true, true));
@@ -37,12 +37,12 @@ $(document).ready(function () {
 
         if ($(this).hasClass('glyphicon-heart')) {
             console.log("favorited!");
-            $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').fadeOut();
+            $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').addClass('toRemove').fadeOut();
         } else {
             console.log("not favorited");
 
             if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-                $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').fadeIn();
+                $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').removeClass('toRemove').fadeIn();
             } else {
                 console.log("ADDING HTML AGAIN");
                 $('.favoriteTiles').append($(this).parents('.tile').clone(true, true));

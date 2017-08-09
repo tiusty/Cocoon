@@ -25,9 +25,12 @@ clickBind = $('.tile').on('click', function () {
             console.log("favorited!");
 
             if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-                 $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').fadeOut();
+                 $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').addClass('toRemove').fadeOut();
             } else {
-                $(this).parents('.tile-expanded').addClass("remove");
+
+                // If the tile is not there (Meaning it was clicked from the visit list side)
+                $(this).parents('.tile-expanded').addClass("toRemove");
+
             }
 
 
@@ -35,7 +38,7 @@ clickBind = $('.tile').on('click', function () {
             console.log("not favorited");
 
             if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-                $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').fadeIn();
+                $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').removeClass('toRemove').fadeIn();
             } else {
 
                 console.log("ADDING HTML AGAIN");
@@ -68,16 +71,14 @@ function minimize(clickedElement) {
     $(clickedElement).parents('.tile-expanded').animate({"height": "115px"}, 200, function () {
 
         $(clickedElement).parents('.tile-expanded').addClass('tile');
-        $(clickedElement).parents('.tile').siblings('.tile').slideDown(200);
+        !$(clickedElement).parents('.tile').siblings('.tile').not('.toRemove').slideDown(200);
         $(clickedElement).parents('.tile').children().show();
         $(clickedElement).parents('.tile').removeClass('tile-expanded');
         $(clickedElement).parents('.tile').addClass('bound');
 
         $(clickedElement).closest('.expanded-tile-container').remove();
 
-        $('.remove').fadeOut(300);
-
-
+        $('.toRemove').fadeOut();
 
     })
 }
