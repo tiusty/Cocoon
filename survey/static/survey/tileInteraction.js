@@ -4,30 +4,6 @@
 
 $(document).ready(function () {
 
-    /************************************************************
-
-    Note: This functionality is now executed with django template
-
-    // sets the color of the score based on the value
-    $('.scoreText').each(function () {
-
-        var scoreValue = parseInt($(this).text())
-
-        if (scoreValue > 86) {
-            $(this).addClass('great-match');
-        } else if (scoreValue > 79 ) {
-            $(this).addClass('good-match');
-        } else if (scoreValue > 69) {
-            $(this).addClass('acceptable-match');
-        } else if (scoreValue > 59) {
-            $(this).addClass('bad-match');
-        } else {
-            $(this).addClass('terrible-match');
-        }
-    });
-
-    ************************************************************/
-
     // oversize the contents of the tile when hovered to suggest that
     // it can be expanded when clicked
     $('.tile').mouseover(function(){
@@ -47,6 +23,6 @@ $(document).ready(function () {
     });
 
     $('.tile').click(function() {
-        addChosenMarker($(this).data().address);
+        selectMarker($(this).data().count);
     })
 })

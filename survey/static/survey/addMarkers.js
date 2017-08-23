@@ -30,16 +30,25 @@ function addDestMarkers(geocoder, resultsMap, myAddress)
 	});
 }
 //These are markers that mark the locations that the user could live in aka housingList
-function addLocationMarkers(resultsMap, myAddress)
+function addLocationMarkers(resultsMap, pin)
 {
 	var latlon = {
-		lat: myAddress[0],
-		lng: myAddress[1]
+		lat: pin.latitude,
+		lng: pin.longitude
 	};
+
 	var marker = new google.maps.Marker({
 				map: resultsMap,
 				position: latlon,
-				icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+				//icon: "http://maps.google.com/mapfiles/ms/icons/red.png",
+				id: pin.pinID,
+				label: pin.label
 			});
+
+
+    marker.addListener('click', function() {
+        console.log(marker.label);
+
+    })
 }
 

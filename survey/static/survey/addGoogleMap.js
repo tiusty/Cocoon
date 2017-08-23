@@ -17,9 +17,9 @@ function initMap() {
     }
     // The destinations need to have the lat long because
     // Otherwise the geocoding goes over the limit
-	for(i=0;i<myDestinations.length; i++)
+	for(i=0;i<myLocations.length; i++)
 	{
-        addLocationMarkers(map, myDestinations[i]);
+        addLocationMarkers(map, myLocations[i]);
     }
 }
 
