@@ -5,3 +5,4 @@ polls
 houseDatabase/migrations
 homePage/migrations
 survey/migrations
+db.sqlite3
