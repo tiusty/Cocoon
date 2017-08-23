@@ -14,7 +14,7 @@ context.
 {% endcomment %}
 {% load static %}
 
-<div class="tile bound">
+<div class="tile bound" data-count="{{ forloop.counter }}" data-address="{{ theHouse.get_full_address }}">
 
     {#  Template that holds expanded tile information. #}
     {#  Script tag contents read in by  jQuery         #}

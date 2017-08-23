@@ -37,7 +37,7 @@ function addChosenMarker(address) {
                     icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
                     zIndex: google.maps.Marker.MAX_ZINDEX + 1,
                 });
-                console.log(results);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                console.log(results);
                 markers.push(marker);
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);

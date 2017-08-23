@@ -45,4 +45,8 @@ $(document).ready(function () {
         $('.scoreText').removeClass('scoreText-hover');
         $('.infoBit').removeClass('infoBit-hover');
     });
+
+    $('.tile').click(function() {
+        addChosenMarker($(this).data().address);
+    })
 })
