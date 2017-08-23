@@ -15,39 +15,39 @@ clickBind = $('.tile').on('click', function () {
         $(this).append($(this).children('#expanded-tile-contents').html());
 
         /*
-         *  Adds the event listener for removing tile if unfavorited within the expanded tile
-         *
-         */
+           Adds the event listener for removing tile if unfavorited within the expanded tile
 
-        $(".expanded-glyph").click(function () {
+                    $(".expanded-glyph").click(function () {
 
-        if ($(this).hasClass('glyphicon-heart')) {
-            console.log("favorited!");
+                    if ($(this).hasClass('glyphicon-heart')) {
+                        console.log("favorited!");
 
-            if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-                 $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').addClass('toRemove').fadeOut();
-            } else {
+                        if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
+                             $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').addClass('toRemove').fadeOut();
+                        } else {
 
-                // If the tile is not there (Meaning it was clicked from the visit list side)
-                $(this).parents('.tile-expanded').addClass("toRemove");
+                            // If the tile is not there (Meaning it was clicked from the visit list side)
+                            $(this).parents('.tile-expanded').addClass("toRemove");
 
-            }
+                        }
 
 
-        } else {
-            console.log("not favorited");
+                    } else {
+                        console.log("not favorited");
 
-            if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-                $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').removeClass('toRemove').fadeIn();
-            } else {
+                        if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
+                            $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').removeClass('toRemove').fadeIn();
+                        } else {
 
-                console.log("ADDING HTML AGAIN");
-                $('.favoriteTiles').append($(this).parents('.tile').clone(true, true));
+                            console.log("ADDING HTML AGAIN");
+                            $('.favoriteTiles').append($(this).parents('.tile').clone(true, true));
 
-            }
-        }
+                        }
+                    }
 
-    });
+                });
+
+        */
 
 
         /*

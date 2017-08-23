@@ -6,11 +6,12 @@
  If the tile is not in the actual html due to a page refresh, the DOM is
  augmented. Otherwise, it is just redisplayed block.
 
- Problems: Unfavoriting from expanded tiles is not implemented.
-
- Visit list tiles unfavorited do not update glyphs on expanding action after page reload
-
  */
+
+/*
+
+Note: This code is currently not used in production because it could result in
+the loss of a home if a user unintentionally clicks unfavorite.
 
 $(document).ready(function () {
 
@@ -33,8 +34,6 @@ $(document).ready(function () {
 
     $(".expanded-glyph").click(function () {
 
-        console.log("CLICKED MEEE");
-
         if ($(this).hasClass('glyphicon-heart')) {
             console.log("favorited!");
             $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').addClass('toRemove').fadeOut();
@@ -53,3 +52,5 @@ $(document).ready(function () {
     });
 
 })
+
+*/
