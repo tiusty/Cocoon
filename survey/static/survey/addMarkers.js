@@ -46,8 +46,8 @@ function addLocationMarkers(resultsMap, pin)
 				//icon: "http://maps.google.com/mapfiles/ms/icons/red.png",
                 icon: {
 				    path: google.maps.SymbolPath.CIRCLE,
-                    scale: 12,
-                    strokeWeight: 3,
+                    scale: 10,
+                    strokeWeight: 2,
                     fillOpacity: 0.6,
                     fillColor: pin.color,
                     strokeColor: pin.color
@@ -55,7 +55,7 @@ function addLocationMarkers(resultsMap, pin)
                 id: pin.pinID,
 
 				label: {
-                   fontSize: '12px',
+                   fontSize: '11px',
                    fontWeight: '900',
                    text: pin.label
                 }
