@@ -360,8 +360,7 @@ Global variables are listed below
   <script src="{% static 'survey/addMarkers.js' %}"></script>
   <script src="{% static 'survey/addGoogleMap.js' %}"></script>
   <script src="{% static 'survey/expandTile.js' %}"></script>
-  <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-  </script>
+  <script src="{% static 'survey/markerclusterer.js' %}"></script>
   <script async defer
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
 
@@ -388,6 +387,10 @@ Global variables are listed below
         document.getElementById("sidebarSurvey").style.width = "0";
         document.getElementById("sidebarSurvey").classList.remove("openNav")
     }
+
+       var markerCluster = new MarkerClusterer(map, markers, {
+        imagePath: "{% static 'survey/images/m' %}"
+    });
 
   </script>
 

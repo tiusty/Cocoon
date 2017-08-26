@@ -21,6 +21,7 @@ function initMap() {
 	{
         addLocationMarkers(map, myLocations[i]);
     }
+
 }
 
 // Adds a marker to the map and push to the array.
