@@ -24,6 +24,7 @@ function addDestMarkers(geocoder, resultsMap, myAddress)
                 position: results[0].geometry.location,
 				icon: image
             });
+
 		} else {
 			alert('Geocode was not successful for the following reason: ' + status);
 		}
@@ -37,14 +38,30 @@ function addLocationMarkers(resultsMap, pin)
 		lng: pin.longitude
 	};
 
+	console.log(pin.color);
+
 	var marker = new google.maps.Marker({
 				map: resultsMap,
 				position: latlon,
 				//icon: "http://maps.google.com/mapfiles/ms/icons/red.png",
-				id: pin.pinID,
-				label: pin.label
+                icon: {
+				    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 12,
+                    strokeWeight: 3,
+                    fillOpacity: 0.6,
+                    fillColor: pin.color,
+                    strokeColor: pin.color
+                },
+                id: pin.pinID,
+
+				label: {
+                   fontSize: '12px',
+                   fontWeight: '900',
+                   text: pin.label
+                }
 			});
 
+	markers.push(marker);
 
     marker.addListener('click', function() {
         console.log(marker.label);
