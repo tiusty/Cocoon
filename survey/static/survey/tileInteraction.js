@@ -2,10 +2,16 @@
  * Created by srayment on 7/8/17.
  */
 
+
+/*
+
+ Hover event listeners that expand and shrink
+ tile contents and expand/shrink corresponding
+ map pins
+
+ */
 $(document).ready(function () {
 
-    // oversize the contents of the tile when hovered to suggest that
-    // it can be expanded when clicked
     $('.tile').mouseover(function(){
         $(this).find('#thumbnailItem1').addClass('thumbnailItem1-hover');
         $(this).find('.thumbnailItem').addClass('thumbnailItem-hover');
@@ -16,7 +22,6 @@ $(document).ready(function () {
         if (!locationMarkers[$(this).data('count')]["expanded"]) {
             hoverExpandMarker($(this).data('count'))
         }
-
     });
 
     $('.tile').mouseleave(function () {

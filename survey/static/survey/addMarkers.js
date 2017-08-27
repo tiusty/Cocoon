@@ -32,6 +32,7 @@ function addDestMarkers(geocoder, resultsMap, myAddress) {
             }
         });
 }
+
 //These are markers that mark the locations that the user could live in aka housingList
 function addLocationMarkers(resultsMap, pin) {
     var latlon = {
@@ -65,7 +66,6 @@ function addLocationMarkers(resultsMap, pin) {
 
     // adds the marker as the value where the
     // key is its ID. This makes it easily accessible.
-
     locationMarkers[marker.id] = marker;
 
     marker.addListener('mouseover', function () {
@@ -122,9 +122,6 @@ function addLocationMarkers(resultsMap, pin) {
         } else {
              expand(corrTile);
         }
-
-        //minimize($('.tile-expanded > .expanded-tile-contents > expanded-row-top > expanded-close'));
-
 
     })
 }

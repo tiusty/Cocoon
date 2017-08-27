@@ -1,10 +1,14 @@
 /**
  * Created by awagu on 12/22/2016.
  */
+
 var map;
 var markers = [];
 var MAPZOOM = 10;
 
+/**
+ * function required by google maps api for initialization
+ */
 function initMap() {
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
@@ -27,6 +31,13 @@ function initMap() {
 }
 
 // Adds a marker to the map and push to the array.
+/**
+ * Adds a marker to the map after initialization
+ *
+ * Note: Deprecated.
+ *
+ * @param address - location to add the new pin
+ */
 function addChosenMarker(address) {
     deleteMarkers();
     var geocoder = new google.maps.Geocoder();

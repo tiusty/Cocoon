@@ -7,40 +7,60 @@ clickBind = $('.tile').on('click', function () {
     }
 });
 
+/**
+ * Centers the map on a marker and zooms in
+ *
+ * @param id - the ID property value of the marker
+ * that corresponds with a tile
+ */
 function zoomInMarker(id) {
      map.setCenter(locationMarkers[id].getPosition());
      map.setZoom(map.zoom + 3);
 }
 
+/**
+ * Re-centers the map on Boston and zooms out
+ * to the default
+ */
 function zoomOutMarker() {
     map.setCenter(map.center);
     map.setZoom(MAPZOOM);
 }
 
+/**
+ * Expands the marker circle
+ *
+ * @param id - the ID property value of the marker
+ * that corresponds with a tile
+ */
 function hoverExpandMarker(id) {
-    console.log(locationMarkers[id].icon['scale']);
-
     var currMarker = locationMarkers[id];
     var currIcon = currMarker.icon;
     currIcon.scale = 13;
-
-
     locationMarkers[id].setIcon(currIcon);
 }
 
+/**
+ * Shrinks the marker circle
+ *
+ * @param id - the ID property value of the marker
+ * that corresponds with a tile
+ */
 function hoverShrinkMarker(id) {
     var currMarker = locationMarkers[id];
     var icon = currMarker.getIcon();
     icon.scale = 10;
-
-
     locationMarkers[id].setIcon(icon);
 }
 
+/**
+ * Expands the marker circle and sets its 'expanded' value
+ * to true so that 'mouseoff' doesn't shrink it
+ *
+ * @param id - the ID property value of the marker
+ * that corresponds with a tile
+ */
 function expandMarker(id) {
-
-    console.log(locationMarkers[id].icon['scale']);
-
     var currMarker = locationMarkers[id];
     var currIcon = currMarker.icon;
     currIcon.scale = 13;
@@ -49,6 +69,13 @@ function expandMarker(id) {
     locationMarkers[id].setIcon(currIcon);
 }
 
+/**
+ * Shrinks the marker circle and sets its 'expanded' value
+ * to false so that 'mouseoff' can shrink it
+ *
+ * @param id - the ID property value of the marker
+ * that corresponds with a tile
+ */
 function shrinkMarker(id) {
 
     var currMarker = locationMarkers[id];
@@ -60,6 +87,13 @@ function shrinkMarker(id) {
 
 }
 
+/**
+ * Function that converts a tile into an expanded tile
+ * with the necessary animations. Also expands the corresponding
+ * map pin
+ *
+ * @param aTile - the tile to be expanded
+ */
 function expand(aTile) {
 
     zoomInMarker($(aTile).data('count'));
@@ -74,15 +108,11 @@ function expand(aTile) {
         $(aTile).animate({"height": "65vh"}, 200, function () {
             $(aTile).siblings('.tile').slideUp(150);
         });
-        /*
-         * Adds the unloaded templated html to the page
-         */
+
+        // Adds the templated HTML to the page
         $(aTile).append($(aTile).children('#expanded-tile-contents').html());
 
-
-        /*
-         Updates the heart glyph when tile expanded
-         */
+        // Updated the heart glyph on expansion
         if (isFavorite) {
             $(".expanded-tile-container").find(".expanded-glyph").removeClass("glyphicon-heart-empty").addClass('glyphicon-heart');
         } else {
@@ -94,6 +124,13 @@ function expand(aTile) {
     }
 }
 
+/**
+ * Function that converts an expanded tile to a regular tile
+ * and adds back removed tiles, with animations. Also shrinks
+ * the map pin back down.
+ *
+ * @param clickedElement - the clicked minimize button
+ */
 function minimize(clickedElement) {
 
     zoomOutMarker($(clickedElement).parents('.tile-expanded').data('count'));
@@ -115,41 +152,35 @@ function minimize(clickedElement) {
     })
 }
 
-// to be called when a second function should execute after
+/**
+ * Same functionality as minimize, but runs a callback on completion.
+ *
+ * Note: This is typically used when expansion of another tile should
+ * occur directly after a tile is minimized.
+ *
+ * @param clickedElement - the clicked minimize button
+ * @param callback - the function to execute after
+ * @param argument - argument to pass to the callback
+ */
 function minimizeWithCallback(clickedElement, callback, argument) {
 
     shrinkMarker($(clickedElement).parents('.tile-expanded').data('count'));
 
     $(clickedElement).closest('.expanded-tile-container').hide();
-
     $(clickedElement).parents('.tile-expanded').animate({"height": "115px"}, 100, function () {
-
         $(clickedElement).parents('.tile-expanded').addClass('tile');
         !$(clickedElement).parents('.tile').siblings('.tile').not('.toRemove').show();
         $(clickedElement).parents('.tile').children().show();
         $(clickedElement).parents('.tile').removeClass('tile-expanded');
         $(clickedElement).parents('.tile').addClass('bound');
-
         $(clickedElement).closest('.expanded-tile-container').remove();
-
         $('.toRemove').fadeOut();
 
         callback(argument);
     })
-
 }
 
+// Prevents container element from triggering click event
 $('.glyphicon-heart, .glyphicon-heart-empty, .expanded-close').click(function (e) {
     e.stopPropagation();
 });
-
-
-/********************
-
- Other  options to achieve a similar effect
-
- flexbox, animate flex-grow, flex-basis
- Jquery slideDown entrance animation\
-
- ********************/
-
