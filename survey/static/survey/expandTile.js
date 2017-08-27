@@ -15,7 +15,10 @@ clickBind = $('.tile').on('click', function () {
  */
 function zoomInMarker(id) {
      map.setCenter(locationMarkers[id].getPosition());
-     map.setZoom(map.zoom + 3);
+
+     if ((map.zoom + 2) < 14) {
+         map.setZoom(map.zoom + 2);
+     }
 }
 
 /**

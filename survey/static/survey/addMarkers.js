@@ -116,7 +116,7 @@ function addLocationMarkers(resultsMap, pin) {
 
                 minimizeWithCallback($('.expanded-close'), expand, corrTile);
             } else {
-                map.setZoom(map.zoom + 1);
+                map.setZoom(Math.min(map.zoom + 1, map.maxZoom));
                 map.setCenter(marker.getPosition());
             }
         } else {

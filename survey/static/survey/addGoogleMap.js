@@ -13,7 +13,8 @@ function initMap() {
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
 		center: {lat:42.3601, lng: -71.0589},
-		zoom: MAPZOOM
+		zoom: MAPZOOM,
+        maxZoom: 18
 	});
 	//distanceMatrix();
 	var geocoder = new google.maps.Geocoder();
