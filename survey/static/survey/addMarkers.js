@@ -62,10 +62,10 @@ function addLocationMarkers(resultsMap, pin) {
 
     marker.addListener('click', function () {
 
-
-
         var corrTile = $('.tile#' + marker.id);
         //console.log(corrTile.html());
+
+
 
         if ($('.tile-expanded').length) {
             if ($('.tile-expanded').attr('id') != marker.id) {
