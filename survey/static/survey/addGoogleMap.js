@@ -3,6 +3,7 @@
  */
 var map;
 var markers = [];
+
 function initMap() {
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {

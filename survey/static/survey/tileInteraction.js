@@ -12,6 +12,7 @@ $(document).ready(function () {
         $(this).find('.thumbnailImage').addClass('thumbnailImage-hover');
         $(this).find('.scoreText').addClass('scoreText-hover');
         $(this).find('.infoBit').addClass('infoBit-hover');
+        expandMarker($(this).data('count'))
     });
 
     $('.tile').mouseleave(function () {
@@ -20,9 +21,7 @@ $(document).ready(function () {
         $('.thumbnailImage').removeClass('thumbnailImage-hover');
         $('.scoreText').removeClass('scoreText-hover');
         $('.infoBit').removeClass('infoBit-hover');
+        shrinkMarker($(this).data('count'));
     });
 
-    $('.tile').click(function() {
-        selectMarker($(this).data().count);
-    })
 })

@@ -2,6 +2,10 @@
  * Created by awagu on 12/22/2016.
  */
 
+// stores the location markers as key, value pairs
+var locationMarkers = {};
+
+
 // Theses are markers that mark the destinations that the user wants to work/live at
 function addDestMarkers(geocoder, resultsMap, myAddress) {
     var address = myAddress;
@@ -35,8 +39,6 @@ function addLocationMarkers(resultsMap, pin) {
         lng: pin.longitude
     };
 
-    console.log(pin.color);
-
     var marker = new google.maps.Marker({
         map: resultsMap,
         position: latlon,
@@ -60,11 +62,24 @@ function addLocationMarkers(resultsMap, pin) {
 
     markers.push(marker);
 
+    // adds the marker as the value where the
+    // key is its ID. This makes it easily accessible.
+
+    locationMarkers[marker.id] = marker;
+
     marker.addListener('click', function () {
 
         var corrTile = $('.tile#' + marker.id);
         //console.log(corrTile.html());
 
+        marker.setIcon({
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 13,
+            strokeWeight: 2,
+            fillOpacity: 0.6,
+            fillColor: pin.color,
+            strokeColor: pin.color
+        })
 
 
         if ($('.tile-expanded').length) {
