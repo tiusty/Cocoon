@@ -8,7 +8,7 @@ clickBind = $('.tile').on('click', function () {
 
 /**
  * Function that converts a tile into an expanded tile
- * with the necessary animations. 
+ * with the necessary animations.
  *
  * @param aTile - the tile to be expanded
  */

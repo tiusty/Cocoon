@@ -48,20 +48,21 @@
                 <div class="card-info"><span class="card-title">{{ userProfile.user.get_full_name }}</span>
                 </div>
             </div>
+
             <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
-                <div class="btn-group" role="group">
-                    <button type="button" id="stars"
-                            {% if defaultProfile == 0 %}
+
+                <div class="btn-pref btn-group" role="group">
+                    <button type="button" id="favorites"
+                            {% if defaultProfile == 1 %}
                             class="btn btn-primary"
                             {% else %}
                             class="btn btn-default"
                             {% endif %}
-                            href="#tab1" data-toggle="tab"><span
-                            class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                        <div class="hidden-xs">Profile</div>
+                            href="#tab2" data-toggle="tab"><span
+                            class="glyphicon glyphicon-home" aria-hidden="true"></span>
+                        <div class="hidden-xs">Rent Surveys</div>
                     </button>
                 </div>
-
 
             {% comment FAVORITES TAB %}
 
@@ -84,26 +85,93 @@
 
             <div class="well">
                 <div class="tab-content">
-                    <div class="tab-pane fade in {% if defaultProfile == 0 %}active{% endif %}" id="tab1">
-                        <div class="row">
-                            <h3 class="col-sm-12">Account Setting</h3>
-                            <div class="col-sm-9 col-sm-offset-3">
-                                <form class="form-horizontal" action="{% url 'userAuth:profilePage' 'profile' %}"
-                                      method="POST">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        {{ form.as_p }}
+                    <div class="tab-pane fade in {% if defaultProfile == 1 %}active{% endif %}" id="tab2">
+                        <div class="panel-group" id="accordion_rent">
+                            {% for survey in surveys %}
+                                {% comment %}
+                                    Delete Confirmation Modal for survey
+                                {% endcomment %}
+                                <!-- Modal -->
+                                <div class="modal fade" id="deleteModal{{ forloop.counter }}"
+                                     tabindex="-1" role="dialog"
+                                     aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close"><span
+                                                        aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">
+                                                    Delete Confirmation</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete {{ survey.name }}?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary"
+                                                        data-dismiss="modal">No
+                                                </button>
+                                                <button type="button" class="btn btn-danger"
+                                                        onclick="delete_survey({{ survey.id }})">Yes
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <p>Number of Rent Surveys: {{ numRentSurveys }}</p>
-                                    <p>Number of Buy Surveys: {{ numBuySurveys }}</p>
-                                    <div class="form-group">
-                                        <button type="submit" id="Submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion_rent"
+                                               href="#collapse{{ forloop.counter }}">
+                                                <h4><b>Survey Name: {{ survey.name }}</b></h4></a>
+                                        </h4>
                                     </div>
-                                </form>
-                            </div>
+                                    <div id="collapse{{ forloop.counter }}"
+                                         class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}">
+                                        <div class="panel-body">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>Addresses</th>
+                                                    <th>Home_Types</th>
+                                                    <th>Price Range</th>
+                                                    <th>Commute Range</th>
+                                                    <th>
+                                                        <button type="button" class="btn btn-danger"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteModal{{ forloop.counter }}">
+                                                            Delete
+                                                        </button>
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% with survey.rentingdestinations_set.all as destAddresses %}
+                                                    {% for destAddress in destAddresses %}
+                                                        <tr>
+                                                            <td>
+                                                                {{ destAddress.full_address }}
+                                                            </td>
+                                                            {% if forloop.counter == 1 %}
+                                                                <td>{{ survey.get_home_types }}</td>
+                                                                <td>{{ survey.get_cost_range }}</td>
+                                                                <td>{{ survey.get_commute_range }}</td>
+                                                            {% endif %}
+                                                        </tr>
+                                                    {% endfor %}
+                                                {% endwith %}
+                                                </tbody>
+                                            </table>
+                                            <a href="{% url 'survey:rentSurveyResult' survey_id=survey.id %}"
+                                               class="btn btn-primary active" role="button">Load!</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <h2>Take a survey!</h2>
+                            {% endfor %}
                         </div>
                     </div>
-
 
                 {% comment FAVORITES PANE - NOW IN VISIT LIST %}
 
