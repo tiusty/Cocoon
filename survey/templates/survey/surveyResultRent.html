@@ -268,15 +268,15 @@ Global variables are listed below
 
                 function colorFromScore(score) {
                     if (score > 86) {
-                      return 'green';
+                        return 'green';
                     } else if (score > 79) {
-                      return '#CDDC39';
+                        return '#CDDC39';
                     } else if (score > 69) {
-                      return '#FFC107';
+                        return '#FFC107';
                     } else if (score > 59) {
-                      return '#FF6D00';
+                        return '#FF6D00';
                     } else {
-                      return '#DD2C00';
+                        return '#DD2C00';
                     }
                 }
 
@@ -361,7 +361,8 @@ Global variables are listed below
   <script src="{% static 'survey/addGoogleMap.js' %}"></script>
   <script src="{% static 'survey/expandTile.js' %}"></script>
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
+  <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
 
   <!-- JQuery UI for sliders -->
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -375,7 +376,7 @@ Global variables are listed below
         document.getElementById("sidebarSurvey").classList.add("openNav");
 
         if ($(window).width() < 768) {
-            document.getElementById("sidebarSurvey").style.width = "90%";
+            document.getElementById("sidebarSurvey").style.width = "100%";
         } else if ($(window).width() < 900) {
             document.getElementById("sidebarSurvey").style.width = "60%";
         } else {
@@ -383,13 +384,23 @@ Global variables are listed below
         }
     }
 
+    $(window).resize(function () {
+        if ($(this).width() <= 768) {
+            document.getElementById("sidebarSurvey").style.width = "100%";
+        } else if ($(window).width() < 900) {
+            document.getElementById("sidebarSurvey").style.width = "60%";
+        } else {
+            document.getElementById("sidebarSurvey").style.width = "30%";
+        }
+    })
+
     /* Set the width of the side navigation to 0 */
     function closeNav() {
         document.getElementById("sidebarSurvey").style.width = "0";
         document.getElementById("sidebarSurvey").classList.remove("openNav")
     }
 
-       var markerCluster = new MarkerClusterer(map, markers, {
+    var markerCluster = new MarkerClusterer(map, markers, {
         imagePath: "{% static 'survey/images/m' %}"
     });
 

@@ -160,14 +160,12 @@ function minimize(clickedElement) {
 // to be called when a second function should execute after
 function minimizeWithCallback(clickedElement, callback, argument) {
 
-    console.log("CALLED MINIMIZE WITH CALLBACK");
-
     $(clickedElement).closest('.expanded-tile-container').hide();
 
-    $(clickedElement).parents('.tile-expanded').animate({"height": "115px"}, 200, function () {
+    $(clickedElement).parents('.tile-expanded').animate({"height": "115px"}, 100, function () {
 
         $(clickedElement).parents('.tile-expanded').addClass('tile');
-        !$(clickedElement).parents('.tile').siblings('.tile').not('.toRemove').slideDown(150);
+        !$(clickedElement).parents('.tile').siblings('.tile').not('.toRemove').show();
         $(clickedElement).parents('.tile').children().show();
         $(clickedElement).parents('.tile').removeClass('tile-expanded');
         $(clickedElement).parents('.tile').addClass('bound');
@@ -177,7 +175,6 @@ function minimizeWithCallback(clickedElement, callback, argument) {
         $('.toRemove').fadeOut();
 
         callback(argument);
-
     })
 
 }

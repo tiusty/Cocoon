@@ -62,8 +62,7 @@ function addLocationMarkers(resultsMap, pin) {
 
     marker.addListener('click', function () {
 
-        //map.setZoom(map.zoom + 2);
-        //map.setCenter(marker.getPosition());
+
 
         var corrTile = $('.tile#' + marker.id);
         //console.log(corrTile.html());
@@ -74,6 +73,9 @@ function addLocationMarkers(resultsMap, pin) {
                 console.log($('.expanded-close'));
 
                 minimizeWithCallback($('.expanded-close'), expand, corrTile);
+            } else {
+                map.setZoom(map.zoom + 1);
+                map.setCenter(marker.getPosition());
             }
         } else {
              expand(corrTile);

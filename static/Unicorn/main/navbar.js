@@ -5,14 +5,16 @@
 $(document).ready(function () {
     $(window).scroll(function () {
         if ($(this).scrollTop() < 35 ) {
-            console.log("scrolled to the top");
+
+            $(".sidenav").removeClass("sidenav-down");
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");
             $(".nav-logo").removeClass("nav-logo-animated");
             $(".signup-button").removeClass("button-link-animated")
             $(".register-link").removeClass("register-link-animated");
         } else {
-            console.log("scrolled regular");
+
+            $(".sidenav").addClass("sidenav-down");
             $(".navbar-brand").addClass("nav-brand-animated");
             $(".nav > li > a").addClass("link-animated");
             $(".nav-logo").addClass("nav-logo-animated");
@@ -23,6 +25,10 @@ $(document).ready(function () {
 
     $(window).resize(function () {
         if ($(this).width() <= 768) {
+
+            // Also moves the sidenav down
+            $(".sidenav").removeClass("sidenav-down");
+
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");
             $(".nav-logo").removeClass("nav-logo-animated");
