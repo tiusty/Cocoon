@@ -7,6 +7,16 @@ clickBind = $('.tile').on('click', function () {
     }
 });
 
+function zoomInMarker(id) {
+     map.setCenter(locationMarkers[id].getPosition());
+     map.setZoom(map.zoom + 3);
+}
+
+function zoomOutMarker() {
+    map.setCenter(map.center);
+    map.setZoom(MAPZOOM);
+}
+
 function hoverExpandMarker(id) {
     console.log(locationMarkers[id].icon['scale']);
 
@@ -52,6 +62,7 @@ function shrinkMarker(id) {
 
 function expand(aTile) {
 
+    zoomInMarker($(aTile).data('count'));
     expandMarker($(aTile).data('count'));
 
     if ($(aTile).hasClass('bound')) {
@@ -85,6 +96,7 @@ function expand(aTile) {
 
 function minimize(clickedElement) {
 
+    zoomOutMarker($(clickedElement).parents('.tile-expanded').data('count'));
     shrinkMarker($(clickedElement).parents('.tile-expanded').data('count'));
 
     $(clickedElement).closest('.expanded-tile-container').hide();

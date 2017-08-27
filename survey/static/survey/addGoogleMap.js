@@ -3,12 +3,13 @@
  */
 var map;
 var markers = [];
+var MAPZOOM = 10;
 
 function initMap() {
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
 		center: {lat:42.3601, lng: -71.0589},
-		zoom: 10
+		zoom: MAPZOOM
 	});
 	//distanceMatrix();
 	var geocoder = new google.maps.Geocoder();
