@@ -5,76 +5,27 @@ clickBind = $('.tile').on('click', function () {
 
         console.log("Clicked on Tile");
     }
-
-    // contains the body of the expand function
-    /*
-
-     if ($(this).hasClass('bound')) {
-     var isFavorite = $(this).find('.heartGlyph').hasClass("glyphicon-heart");
-     console.log(isFavorite);
-     $(this).removeClass('tile');
-     $(this).addClass('tile-expanded');
-     $(this).children().hide();
-     $(this).animate({"height": "65vh"}, 200, function () {
-     $(this).siblings('.tile').slideUp(200);
-     });
-
-     //  Adds the unloaded templated html to the page
-
-     $(this).append($(this).children('#expanded-tile-contents').html());
-
-
-     Adds the event listener for removing tile if unfavorited within the expanded tile
-
-     $(".expanded-glyph").click(function () {
-
-     if ($(this).hasClass('glyphicon-heart')) {
-     console.log("favorited!");
-
-     if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-     $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').addClass('toRemove').fadeOut();
-     } else {
-
-     // If the tile is not there (Meaning it was clicked from the visit list side)
-     $(this).parents('.tile-expanded').addClass("toRemove");
-
-     }
-
-
-     } else {
-     console.log("not favorited");
-
-     if ($('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').length) {
-     $('.favoriteTiles > .tile > .scoreItem > #' + $(this).prop('id')).parents('.tile').removeClass('toRemove').fadeIn();
-     } else {
-
-     console.log("ADDING HTML AGAIN");
-     $('.favoriteTiles').append($(this).parents('.tile').clone(true, true));
-
-     }
-     }
-
-     });
-
-
-
-
-     //   Updates the heart glyph when tile expanded
-
-     if (isFavorite) {
-     $(".expanded-tile-container").find(".expanded-glyph").removeClass("glyphicon-heart-empty").addClass('glyphicon-heart');
-     } else {
-     console.log("not here");
-     $(".expanded-tile-container").find(".expanded-glyph").removeClass("glyphicon-heart").addClass('glyphicon-heart-empty');
-     }
-
-     $(this).removeClass('bound');
-     }
-
-     */
-
 });
 
+function hoverExpandMarker(id) {
+    console.log(locationMarkers[id].icon['scale']);
+
+    var currMarker = locationMarkers[id];
+    var currIcon = currMarker.icon;
+    currIcon.scale = 13;
+
+
+    locationMarkers[id].setIcon(currIcon);
+}
+
+function hoverShrinkMarker(id) {
+    var currMarker = locationMarkers[id];
+    var icon = currMarker.getIcon();
+    icon.scale = 10;
+
+
+    locationMarkers[id].setIcon(icon);
+}
 
 function expandMarker(id) {
 
@@ -84,6 +35,7 @@ function expandMarker(id) {
     var currIcon = currMarker.icon;
     currIcon.scale = 13;
 
+    locationMarkers[id]["expanded"] = true;
     locationMarkers[id].setIcon(currIcon);
 }
 
@@ -93,6 +45,7 @@ function shrinkMarker(id) {
     var icon = currMarker.getIcon();
     icon.scale = 10;
 
+    locationMarkers[id]["expanded"] = false;
     locationMarkers[id].setIcon(icon);
 
 }

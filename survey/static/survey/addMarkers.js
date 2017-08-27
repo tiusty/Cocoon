@@ -57,7 +57,8 @@ function addLocationMarkers(resultsMap, pin) {
             fontSize: '11px',
             fontWeight: '900',
             text: pin.label
-        }
+        },
+        expanded: false
     });
 
     markers.push(marker);
@@ -66,6 +67,31 @@ function addLocationMarkers(resultsMap, pin) {
     // key is its ID. This makes it easily accessible.
 
     locationMarkers[marker.id] = marker;
+
+    marker.addListener('mouseover', function () {
+         marker.setIcon({
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 13,
+            strokeWeight: 2,
+            fillOpacity: 0.6,
+            fillColor: pin.color,
+            strokeColor: pin.color
+        })
+    });
+
+    marker.addListener('mouseout', function () {
+
+        if (!(marker.expanded)) {
+             marker.setIcon({
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 10,
+            strokeWeight: 2,
+            fillOpacity: 0.6,
+            fillColor: pin.color,
+            strokeColor: pin.color
+        })
+        }
+    });
 
     marker.addListener('click', function () {
 
@@ -79,8 +105,9 @@ function addLocationMarkers(resultsMap, pin) {
             fillOpacity: 0.6,
             fillColor: pin.color,
             strokeColor: pin.color
-        })
+        });
 
+        marker.expanded = true;
 
         if ($('.tile-expanded').length) {
             if ($('.tile-expanded').attr('id') != marker.id) {
