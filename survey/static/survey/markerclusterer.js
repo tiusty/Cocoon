@@ -105,7 +105,7 @@ function MarkerClusterer(map, opt_markers, opt_options) {
    * @type {number}
    * @private
    */
-  this.gridSize_ = options['gridSize'] || 4;
+  this.gridSize_ = options['gridSize'] || 2;
 
   /**
    * @private

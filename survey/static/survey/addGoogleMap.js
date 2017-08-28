@@ -5,6 +5,7 @@
 var map;
 var markers = [];
 var MAPZOOM = 10;
+var MAXZOOM = 18;
 
 /**
  * function required by google maps api for initialization
@@ -14,7 +15,7 @@ function initMap() {
 	map = new google.maps.Map(mapDiv, {
 		center: {lat:42.3601, lng: -71.0589},
 		zoom: MAPZOOM,
-        maxZoom: 18
+        maxZoom: MAXZOOM
 	});
 	//distanceMatrix();
 	var geocoder = new google.maps.Geocoder();
