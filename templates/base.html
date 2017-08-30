@@ -7,8 +7,6 @@
     <title>{% block title %} Current Page {% endblock %}</title>
     <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
 
-
-
     {% if not user.is_authenticated %}
 
         <link rel="stylesheet" href="{% static 'homePage/not_logged.css' %}">
@@ -26,7 +24,7 @@
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid nav-container">
                 <div class="navbar-header">
-                    <img class="nav-logo" src="{% static 'homePage/cocoon_logo_white.png' %}">
+                    <a href="{% url 'homePage:index' %}"><img class="nav-logo" src="{% static 'homePage/cocoon_logo_white.png' %}"></a>
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
                             aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>

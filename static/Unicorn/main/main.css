@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    padding-top: 80px;
+    padding-top: 60px;
 
 }
 
@@ -264,10 +264,22 @@ fieldset[disabled] .btn-danger.focus {
  ********************************/
 
 .nav-logo {
-    width: 80px;
+    width: 60px;
+    padding: 5px;
     height: auto;
     display: inline-block;
     float: left;
+}
+
+.nav-logo:hover {
+    padding: 0px;
+    transition: .2s padding;
+    cursor: pointer;
+}
+
+.navbar-brand {
+    height: 60px;
+    margin-left: 0px !important;
 }
 
 /*********************************
@@ -282,14 +294,18 @@ fieldset[disabled] .btn-danger.focus {
 @media (min-width: 768px) {
 
     .navbar-nav > li > a.link {
-        padding: 35px 15px;
-        line-height: 10px;
+        padding: auto 15px;
+        height: 60px;
+        line-height: normal;
+        /*line-height: 10px;*/
     }
 
     .navbar-brand {
-        padding: 35px 15px;
-        font-size: 48px;
-        line-height: 0px;
+        padding: 0px 15px;
+        font-size: 42px;
+        height: 60px;
+        margin-left: 0px !important;
+        line-height: 55px;
     }
 
     .navbar-nav {
@@ -395,7 +411,7 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     #rightmost-nav-item {
-        border-right: 1px solid #efefef;
+        border-right: 1px solid white;
     }
 }
 
