@@ -374,6 +374,7 @@ Global variables are listed below
     /* Set the width of the side navigation to 250px */
     function openNav() {
         document.getElementById("sidebarSurvey").classList.add("openNav");
+        $('.sidenav').css("height", $(document).height() - $('.navbar').height() - $('.footer').height());
 
         if ($(window).width() < 768) {
             document.getElementById("sidebarSurvey").style.width = "100%";
@@ -389,6 +390,7 @@ Global variables are listed below
 
             if ($('.openNav').length) {
                 document.getElementById("sidebarSurvey").style.width = "100%";
+
             }
 
 
@@ -396,12 +398,14 @@ Global variables are listed below
 
             if ($('.openNav').length) {
                 document.getElementById("sidebarSurvey").style.width = "60%";
+
             }
 
         } else {
 
             if ($('.openNav').length) {
                 document.getElementById("sidebarSurvey").style.width = "40%";
+
             }
 
         }

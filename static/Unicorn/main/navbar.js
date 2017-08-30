@@ -3,18 +3,56 @@
  */
 
 $(document).ready(function () {
-    $(window).scroll(function () {
-        if ($(this).scrollTop() < 35 ) {
 
-            $(".sidenav").removeClass("sidenav-down");
+    if ($(window).scrollTop() < 60) {
+
+        $('.navbar').show();
+
+        $('.navbar').removeClass("navbar-animated");
+
+        $(".navbar-brand").removeClass("nav-brand-animated");
+        $(".nav > li > a").removeClass("link-animated");
+        $(".nav-logo").removeClass("nav-logo-animated");
+        $(".signup-button").removeClass("button-link-animated")
+        $(".register-link").removeClass("register-link-animated");
+    } else if ($(this).scrollTop() < 100) {
+        $('.navbar').hide();
+
+
+    } else {
+        $('.navbar').addClass('navbar-animated');
+
+        $(".navbar-brand").addClass("nav-brand-animated");
+        $(".nav > li > a").addClass("link-animated");
+        $(".nav-logo").addClass("nav-logo-animated");
+        $(".signup-button").addClass("button-link-animated")
+        $(".register-link").addClass("register-link-animated");
+        $('.navbar').show();
+    }
+
+    $(window).scroll(function () {
+
+         $(".sidenav").css("top", $('.navbar').height() - $(this).scrollTop());
+
+        if ($(this).scrollTop() < 60) {
+
+            $('.navbar').show();
+
+            $('.navbar').removeClass("navbar-animated");
+
             $(".navbar-brand").removeClass("nav-brand-animated");
             $(".nav > li > a").removeClass("link-animated");
             $(".nav-logo").removeClass("nav-logo-animated");
             $(".signup-button").removeClass("button-link-animated")
             $(".register-link").removeClass("register-link-animated");
-        } else {
+        } else if ($(this).scrollTop() < 100) {
+            $('.navbar').hide();
 
-            $(".sidenav").addClass("sidenav-down");
+
+        } else {
+            $('.navbar').show();
+            $('.navbar').addClass('navbar-animated');
+
             $(".navbar-brand").addClass("nav-brand-animated");
             $(".nav > li > a").addClass("link-animated");
             $(".nav-logo").addClass("nav-logo-animated");

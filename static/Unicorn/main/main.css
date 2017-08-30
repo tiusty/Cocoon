@@ -34,6 +34,17 @@ body {
 
 ************************/
 
+.navbar {
+    position: absolute;
+    z-index: 7;
+}
+
+.navbar-animated {
+    position: fixed !important;
+    border: none;
+    box-shadow: 0px 1px 2px 0px black;
+}
+
 .navbar-default .navbar-nav .open .dropdown-menu > li > a {
     color: black;
 }
@@ -113,7 +124,7 @@ li.dropdown-header {
 .footer {
     display: block;
     position: relative;
-    z-index: 10;
+    z-index: 5;
     background: #26A69A;
     color: white;
     height: 60px;
@@ -294,14 +305,15 @@ fieldset[disabled] .btn-danger.focus {
 @media (min-width: 768px) {
 
     .navbar-nav > li > a.link {
+        font-size: 16px;
         padding: auto 15px;
         height: 60px;
-        line-height: normal;
+        line-height: 28px;
         /*line-height: 10px;*/
     }
 
     .navbar-brand {
-        padding: 0px 15px;
+        padding: 0px 1px;
         font-size: 42px;
         height: 60px;
         margin-left: 0px !important;
@@ -317,9 +329,10 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     .nav-brand-animated {
-        padding: 18px 15px 0px 15px !important;
-        line-height: 12px !important;
+        padding-left: 15px;
+        line-height: 45px !important;
         font-size: 36px !important;
+        height: 45px;
 
         /* Uncomment these lines to add animated nav back */
 
@@ -327,11 +340,15 @@ fieldset[disabled] .btn-danger.focus {
         /*transition: padding-bottom .2s ease-in;*/
     }
 
+    .navbar {
+        min-height: 45px !important;
+    }
+
     .navbar-nav > li > a.link-animated {
         font-size: 14px !important;
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
-        line-height: 21px !important;
+        padding: 0px 10px !important;
+        line-height: 40px !important;
+        height: 45px;
 
         /* Uncomment these lines to add animated nav back */
 
@@ -352,8 +369,8 @@ fieldset[disabled] .btn-danger.focus {
 @media (max-width: 1021px) and (min-width: 768px) {
 
     .navbar-nav > li > a.link {
-        padding: 24px 15px;
-        line-height: 15px;
+        padding: 0px 15px;
+        line-height: 60px;
     }
 
     .navbar-right > li.login-block {
@@ -362,17 +379,13 @@ fieldset[disabled] .btn-danger.focus {
     }
 
     .navbar-brand {
-        padding: 20px 15px;
         font-size: 36px;
-        line-height: 20px;
-    }
-
-    .nav-logo {
-        width: 65px;
+        line-height: 60px;
+        padding-right: 25px;
     }
 
     body {
-        padding-top: 100px;
+        padding-top: 60px;
     }
 
     .navbar-nav {
@@ -386,20 +399,20 @@ fieldset[disabled] .btn-danger.focus {
 
 @media (max-width: 1021px) and (min-width: 974px) {
     body {
-        padding-top: 50px;
+        padding-top: 60px;
     }
+
 }
 
 @media (max-width: 868px) {
 
-    .nav > li > a.link {
-        font-size: 14px;
-        padding: 24px 12px;
-    }
-
     .login-block {
         min-width: 220px !important;
         width: 220px;
+    }
+
+    .login-block > a {
+        font-size: 14px !important;
     }
 
 }
@@ -407,7 +420,7 @@ fieldset[disabled] .btn-danger.focus {
 @media (min-width: 1280px) {
 
     .nav > li > a.link {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     #rightmost-nav-item {

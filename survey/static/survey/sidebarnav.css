@@ -3,8 +3,8 @@
     height: 100%; /* 100% Full-height */
     width: 0; /* 0 width - change this with JavaScript */
     position: fixed; /* Stay in place */
-    z-index: 10000; /* Stay on top */
-    top: 80px;
+    z-index: 6; /* Stay on top */
+    top: 60px;
     left: 0;
     background-color: #f8f8f8; /* Greyish*/
     overflow-x: hidden; /* Disable horizontal scroll */
@@ -44,9 +44,9 @@
 }
 
 @media screen and (min-height: 768px) {
-    .sidenav-down {
-        top: 51px !important;
-    }
+    /*.sidenav-down {*/
+        /*top: 0px !important;*/
+    /*}*/
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
