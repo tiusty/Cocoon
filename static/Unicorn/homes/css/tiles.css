@@ -50,8 +50,8 @@ EXPANDED TILE STYLING
     width: 100%;
     min-width: 450px;
     flex-direction: column;
-    height: calc(65vh - 50px);
-    max-height: 900px;
+    height: calc(100vh - 50px);
+    /*max-height: 900px;*/
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-content: center;
@@ -172,7 +172,7 @@ STYLING NEW TILE RESULTS
 .tile-expanded {
     width: 100%;
     min-width: 450px;
-    max-height: 900px;
+    /*max-height: 900px;*/
     margin-bottom: 2%;
     border: 1px solid #c65c3b;
     background-color: #f7f7f7;

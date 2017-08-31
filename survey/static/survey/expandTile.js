@@ -113,7 +113,7 @@ function expand(aTile) {
         $(aTile).removeClass('tile');
         $(aTile).addClass('tile-expanded');
         $(aTile).children().hide();
-        $(aTile).animate({"height": "65vh"}, 200, function () {
+        $(aTile).animate({"height": "100vh"}, 200, function () {
             $(aTile).siblings('.tile').slideUp(150);
         });
 
