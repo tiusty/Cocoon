@@ -1,3 +1,9 @@
+/************************
+
+    Overriding bootstrap
+
+ ***********************/
+
 #sidebar {
     /* for the animation */
     transition: margin 0.3s ease;

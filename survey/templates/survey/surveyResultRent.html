@@ -224,9 +224,9 @@ Global variables are listed below
         </div>
       </form>
     </div>
-    <div class="col-sm-12 main" id="contentSurvey">
+    <div class="nopadding-row row main" id="contentSurvey">
       {% if error_message %}
-        <div class="row" style="text-align:center">
+        <div class="col-sm-12" style="text-align:center">
           <div style="color:red">
             <p><strong>
               {% for error in error_message %}
@@ -237,10 +237,10 @@ Global variables are listed below
         </div>
       {% endif %}
 
-      <div class="row">
-        <div class="col-sm-6">
+      <div class="nopadding-row row">
+        <div class="nopadding col-sm-6">
           <h1 class="page-header">
-            <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
+            <span style="margin-left:10px;font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
           </h1>
           <div class="map_wrapper">
             <div id="map"></div>

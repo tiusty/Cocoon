@@ -19,6 +19,5 @@ $(document).ready(function () {
 
     $(window).scroll(function () {
         $('.sidenav').css("height", $(document).height() - $('.navbar').height() - $('.footer').height());
-        console.log($('.navbar').height());
     })
 })
