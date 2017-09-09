@@ -138,7 +138,7 @@ def house_directory_path(instance, filename):
 
 class HousePhotos(models.Model):
     house = models.ForeignKey('RentDatabase', on_delete=models.CASCADE)
-    image_path = models.CharField(max_length=200)
+    image_path = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
 
     def __str__(self):
         return self.get_image_path()
