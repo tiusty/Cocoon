@@ -830,6 +830,9 @@ def visit_list(request):
     context = {
         'error_message': []
     }
+
+    print("Got here")
+
     return render(request, 'survey/visitList.html', context)
 
 
