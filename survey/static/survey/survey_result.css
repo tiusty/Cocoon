@@ -279,7 +279,7 @@ STYLING NEW TILE RESULTS
     transition: font-size .1s;
 }
 
-.scoreText-hover {
+.scoreText {
     font-size: 34px !important;
     transition: font-size .1s;
 }

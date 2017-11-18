@@ -8,6 +8,16 @@ from django.core.management.base import BaseCommand, CommandError
 from houseDatabase.models import HousePhotos, RentDatabase, InteriorAmenities, BuildingExteriorAmenities
 from django.utils import timezone
 
+'''
+
+This script is used to automate integration of manually
+generated apartment data, complying with the column
+labels defined below. 
+
+Note: Error checking has not been implemented so 
+data must fit the correct format
+
+'''
 
 # A command that can be executed by hooking into manage.py
 # and operates on a file within this directory
