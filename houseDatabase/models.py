@@ -45,6 +45,7 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
     city = models.CharField(max_length=200, default=not_set_char)
     state = models.CharField(max_length=200, default=not_set_char)
     zip_code = models.CharField(max_length=200, default=not_set_char)
+    apartment_no = models.CharField(max_length=200, default=not_set_char)
     price = models.IntegerField(default=-1)
     home_type = models.CharField(max_length=200, default=not_set_char)
     move_in_day = models.DateField(default=datetime.date.today)
@@ -73,6 +74,9 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
         if len(self.zip_code) > 5:
             return self.zip_code[:5]
         return self.zip_code
+
+    def get_apartment_no(self):
+        return self.apartment_no
 
     def get_price(self):
         return self.price
