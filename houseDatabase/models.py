@@ -60,6 +60,21 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
     def __str__(self):
         return self.address
 
+    def get_remarks(self):
+        return self.remarks
+
+    def get_listing_no(self):
+        return self.listing_no
+
+    def get_listing_provider(self):
+        return self.listing_provider
+
+    def get_listing_agent(self):
+        return self.listing_agent
+
+    def get_listing_office(self):
+        return self.listing_office
+
     def get_address(self):
         return self.address
 
