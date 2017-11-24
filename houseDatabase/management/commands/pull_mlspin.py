@@ -1,5 +1,7 @@
+# noinspection PyPackageRequirements
 from subprocess import check_output, call
 import urllib.request
+import urllib.error
 import houseDatabase.management.commands.maps_requester as geolocator
 import shutil
 import re
@@ -34,8 +36,8 @@ class Command(BaseCommand):
 
         try:
             urllib.request.urlretrieve(URL, os.path.join(os.path.dirname(__file__),"idx_feed.txt"))
-        except (urllib.error):
-            print(e)
+        except (urllib.error.HTTPError,urllib.error.URLError):
+            print("Error")
             call(["curl", "-s", URL, "-o", "idx_feed.txt"])
 
         idx_file = open(os.path.join(os.path.dirname(__file__),"idx_feed.txt"), "rb")
@@ -109,13 +111,12 @@ class Command(BaseCommand):
                 first_row = False
             else:
                 cells = line.split('|')
-                found_location = True
-
                 cells[STREET_NAME].replace(',','')
                 split_address = cells[STREET_NAME].split()
-
+                apartment_no = split_address[len(split_address)-1]
                 clean_address = " ".join(split_address[:-1])
 
+                # combining address components
                 town = (towns[str(cells[TOWN_NUM])]["town"])
                 state = (towns[str(cells[TOWN_NUM])]["state"])
                 address = ((cells[STREET_NO]) + ' ' + clean_address)
@@ -124,6 +125,49 @@ class Command(BaseCommand):
 
                 # Pulls lat/lon based on address
                 locator = geolocator.maps_requester("AIzaSyBuecmo6t0vxQDhC7dn_XbYqOu0ieNmO74")
-
                 latlng = locator.get_lat_lon_from_address(full_add)
-                print(latlng)
+
+                if (latlng == -1):
+                    continue
+                else:
+                    lat = latlng[0]
+                    lng = latlng[1]
+
+                if RentDatabase.objects.filter(lat=lat,lon=lng).exists():
+                    # this house already exists
+                    continue
+                else:
+
+                    new_listing = RentDatabase()
+                    new_listing.lat = lat
+                    new_listing.lon = lng
+                    new_listing.address = address
+                    new_listing.city = town
+                    new_listing.zip_code = zip
+                    new_listing.state = state
+                    new_listing.price = cells[LIST_PRICE]
+
+                    list_type = cells[PROP_TYPE]
+                    if (list_type == "RN"):
+                        new_listing.home_type = "Apartment"
+                    else:
+                        print("listing not a rental")
+                        continue
+
+                    new_listing.move_in_day = datetime.now()
+                    new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
+                    no_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
+                    new_listing.num_bathrooms = no_baths
+                    new_listing.bath = True if no_baths > 0 else False
+                    new_listing.remarks = cells[REMARKS]
+                    new_listing.listing_no = int(cells[LIST_NO])
+                    new_listing.listing_provider = "MLSPIN"
+                    new_listing.listing_agent = cells[LIST_AGENT]
+                    new_listing.listing_office = cells[LIST_OFFICE]
+                    new_listing.apartment_no = apartment_no
+
+                    #TODO: Actually get photos based on ftp url and AWS S3
+                    new_listing.save()
+                    newPhotos = HousePhotos(house=new_listing)
+                    newPhotos.save()
+                    new_listing.save()

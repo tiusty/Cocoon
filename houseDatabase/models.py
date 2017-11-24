@@ -51,6 +51,11 @@ class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
     move_in_day = models.DateField(default=datetime.date.today)
     lat = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     lon = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    remarks = models.TextField(default="")
+    listing_no = models.IntegerField(default=-1)
+    listing_provider = models.CharField(max_length=200, default=not_set_char)
+    listing_agent = models.CharField(max_length=200, default=not_set_char)
+    listing_office = models.CharField(max_length=200, default=not_set_char)
 
     def __str__(self):
         return self.address
