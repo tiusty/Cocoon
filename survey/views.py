@@ -453,6 +453,9 @@ def order_by_house_score(scored_house_list):
 
 
 def compute_approximate_commute_times(destinations, scored_list, commute_type):
+
+    #TODO: Pass the town along with the zip code
+
     """
     This function takes each home and tries to find the approximate commute times for all the destinations
     The zip code combination will be checked in the database for the value and if it doesn't exist, it will
@@ -533,7 +536,6 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
     :param commute_type: String, one of driving, walking, bicycling, transit
     """
     print("adding new zip codes")
-    print(failed_zip_codes)
 
     # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
     # Each row contains the origin with each corresponding destination
@@ -544,8 +546,13 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
         origins = []
         if len(destination_zip_code) >= 5:
             for origins_zip_code in failed_zip_codes.get(destination_zip_code):
+                print(origins_zip_code)
+                print(destination_zip_code)
                 if len(origins_zip_code) >= 5:
                     origins.append(origins_zip_code[:5])
+
+        print(origins)
+        print(destination_zip_code)
 
         matrix = gmaps.distance_matrix(
             origins,
@@ -553,6 +560,7 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
             mode=commute_type,
             units=measure_units,
         )
+
         if matrix:
             counter = 0
             for origin in origins:
@@ -580,6 +588,8 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
                                 commute_distance=commute['distance']['value'],
                                 commute_time=commute['duration']['value'],
                             )
+                    else:
+                        print("distance not found")
                     counter += 1
         else:
             print("something went wrong with zip code matrix")
