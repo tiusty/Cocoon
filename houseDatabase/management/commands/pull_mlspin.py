@@ -16,9 +16,7 @@ from django.utils import timezone
 
 
 class Command(BaseCommand):
-    help: '''Parses the mlspin idx feed, validates rentals and 
-	incorporates them into the database
-	'''
+    help = 'Ingests IDX feed into database'
 
     def add_arguments(self, parser):
         # add args here
@@ -106,15 +104,29 @@ class Command(BaseCommand):
         NO_BATHS = 28
 
         first_row = True
+        count = 1
         for line in lines[:-1]:
+            count += 1
             if (first_row):
                 first_row = False
             else:
                 cells = line.split('|')
                 cells[STREET_NAME].replace(',','')
                 split_address = cells[STREET_NAME].split()
-                apartment_no = split_address[len(split_address)-1]
-                clean_address = " ".join(split_address[:-1])
+                apartment_no = ""
+                has_apartment_no = False
+                clean_address = ""
+
+                try:
+                    int(cells[STREET_NAME][len(cells[STREET_NAME])-1])
+                    apartment_no = split_address[len(split_address)-1]
+                    clean_address = " ".join(split_address[:-1])
+                    has_apartment_no = True
+                except ValueError:
+                    clean_address = " ".join(split_address)
+                    has_apartment_no = False
+
+
 
                 # combining address components
                 town = (towns[str(cells[TOWN_NUM])]["town"])
@@ -123,20 +135,25 @@ class Command(BaseCommand):
                 zip = cells[ZIP_CODE]
                 full_add = address + ' ' + town + ' ' + state + ' ' + zip
 
-                # Pulls lat/lon based on address
-                locator = geolocator.maps_requester("AIzaSyAM2vo0Iop11XHGfuaYG4u1unhl6roMckk")
-                latlng = locator.get_lat_lon_from_address(full_add)
+                print("waiting on database filter")
+                print(count)
 
-                if (latlng == -1):
-                    continue
-                else:
-                    lat = latlng[0]
-                    lng = latlng[1]
-
-                if RentDatabase.objects.filter(lat=lat,lon=lng).exists():
+                if RentDatabase.objects.filter(listing_no=int(cells[LIST_NO])).exists():
                     # this house already exists
+                    print("ayooo")
+                    print(full_add + " exists")
                     continue
                 else:
+
+                    # Pulls lat/lon based on address
+                    locator = geolocator.maps_requester("AIzaSyAM2vo0Iop11XHGfuaYG4u1unhl6roMckk")
+                    latlng = locator.get_lat_lon_from_address(full_add)
+
+                    if (latlng == -1):
+                        continue
+                    else:
+                        lat = latlng[0]
+                        lng = latlng[1]
 
                     new_listing = RentDatabase()
                     new_listing.lat = lat
@@ -171,3 +188,6 @@ class Command(BaseCommand):
                     newPhotos = HousePhotos(house=new_listing)
                     newPhotos.save()
                     new_listing.save()
+                    print(full_add + " added")
+
+        print(len(lines))

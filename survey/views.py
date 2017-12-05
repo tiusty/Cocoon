@@ -17,6 +17,27 @@ from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
 from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
 
+class RequestCounter:
+    def __init__(self):
+        self.count = 0
+    def incr_count(self):
+        self.count += 1
+    def can_request(self):
+        if (self.count < 5):
+            return True
+        else:
+            return False
+
+class BlackList:
+    def __init__(self):
+        self.black_list = set()
+
+    def blacklist(self, zip):
+        self.black_list.add(int(zip))
+        print(zip)
+
+    def blacklisted(self, zip):
+        return (int(zip) in self.black_list)
 
 # Create your views here.
 @login_required
@@ -452,7 +473,7 @@ def order_by_house_score(scored_house_list):
     return scored_house_list
 
 
-def compute_approximate_commute_times(destinations, scored_list, commute_type):
+def compute_approximate_commute_times(destinations, scored_list, commute_type, blacklist):
 
     #TODO: Pass the town along with the zip code
 
@@ -471,7 +492,9 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type):
     # Format of dictionary:
     # { 'destination zip code 1' : [ 'origin zip code 1', 'origin zip code 2' ],
     #   'destination zip code 2' : [ 'origin zip code 1', 'origin zip code 3' ]}
-    failed_zip_codes = {}
+    # failed_zip_codes = {}
+    request_count = RequestCounter()
+    failed_zip_dict = {}
 
     for house in scored_list:
         # Only populate the commute time if the array is empty
@@ -495,39 +518,57 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type):
                         # and add it to the failed list
                         if zip_code_dictionary_child.test_recompute_date():
                             zip_code_dictionary_child.delete()
-                            add_home_to_failed_list(failed_zip_codes, destination, house)
+                            # add_home_to_failed_list(failed_zip_codes, destination, house)
+                            add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
                             # If all the conditions pass, then store the commute time stored for that combination
                         else:
                             house.approxCommuteTime.append(zip_code_dictionary_child.get_commute_time())
                     except ZipCodeDictionaryChild.DoesNotExist:
-                        add_home_to_failed_list(failed_zip_codes, destination, house)
+                        # add_home_to_failed_list(failed_zip_codes, destination, house)
+                        add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
                 except ZipCodeDictionary.DoesNotExist:
-                    add_home_to_failed_list(failed_zip_codes, destination, house)
+                    # add_home_to_failed_list(failed_zip_codes, destination, house)
+                    add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
+
 
     # If there are failed zip codes, compute the commute for the zip code and add it to the database
-    if failed_zip_codes:
-        add_zip_codes_to_database(failed_zip_codes, commute_type)
+    if failed_zip_dict:
+        add_zip_codes_to_database(failed_zip_dict, commute_type, request_count, blacklist)
         # Call the function again to recompute the commute times for the failed homes
-        compute_approximate_commute_times(destinations, scored_list, commute_type)
+        compute_approximate_commute_times(destinations, scored_list, commute_type, blacklist)
 
-
-def add_home_to_failed_list(failed_zip_codes, destination, house):
+def add_home_to_failed_list(failed_zip_dict, destination, house, blacklist):
     """
     This function adds a failed home combination to the failed_zip_codes array
     It is passed the house and the destination that is is supposed to go to
     :param failed_zip_codes: A dictionary of failed zip code combination
     :param destination: The destination stored as a RentDatabase model
     :param house: The house (origin), stored as a scoring structure
+
+
+    zip_code:
+
     """
-    if destination.get_zip_code() in failed_zip_codes:
-        # Only add the zip code if the combination is not already in the list
-        if house.house.get_zip_code() not in failed_zip_codes[destination.get_zip_code()]:
-            failed_zip_codes[destination.get_zip_code()].append(house.house.get_zip_code())
-    else:
-        failed_zip_codes[destination.get_zip_code()] = [house.house.get_zip_code()]
+
+    dest_zip = destination.get_zip_code()
+    dest_city = destination.get_city()
+
+    house_zip = house.house.get_zip_code()
+    house_city = house.house.get_city()
+
+    if (not blacklist.blacklisted(house_zip)):
+        if dest_zip in failed_zip_dict:
+            # Only add the zip code if the combination is not already in the list
+            if house_zip not in failed_zip_dict[dest_zip]["origins"]:
+                failed_zip_dict[dest_zip]["origins"][house_zip] = house_city
+        else:
+            failed_zip_dict[dest_zip] = {}
+            failed_zip_dict[dest_zip]["zip_city"] = dest_city
+            failed_zip_dict[dest_zip]["origins"] = {}
+            failed_zip_dict[dest_zip]["origins"][house_zip] = house_city
 
 
-def add_zip_codes_to_database(failed_zip_codes, commute_type):
+def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blacklist):
     """
     This function takes in a dictionary of failed zip code combination and computes
     the distance and saves it to the database.
@@ -542,57 +583,70 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type):
     # The value field of duration is in seconds
     measure_units = "imperial"
 
-    for destination_zip_code in failed_zip_codes:
-        origins = []
-        if len(destination_zip_code) >= 5:
-            for origins_zip_code in failed_zip_codes.get(destination_zip_code):
-                print(origins_zip_code)
-                print(destination_zip_code)
-                if len(origins_zip_code) >= 5:
-                    origins.append(origins_zip_code[:5])
+    for dest_zip in failed_zip_codes:
+        if (req_count.can_request()):
+            origins = []
+            origins_dict = {}
+            if len(dest_zip) >= 5:
+                for origins_zip_code in failed_zip_codes[dest_zip]["origins"]:
+                    print(blacklist.blacklisted(origins_zip_code))
+                    print("checking " + origins_zip_code)
+                    if len(origins_zip_code) >= 5 and not blacklist.blacklisted(origins_zip_code):
+                        zip_city = failed_zip_codes[dest_zip]["origins"][origins_zip_code]
+                        origins.append(origins_zip_code[:5] + "+" + zip_city)
+                        origins_dict[origins_zip_code[:5]] = zip_city
 
-        print(origins)
-        print(destination_zip_code)
+            dest_param = dest_zip + "+" + failed_zip_codes[dest_zip]["zip_city"]
 
-        matrix = gmaps.distance_matrix(
-            origins,
-            destination_zip_code,
-            mode=commute_type,
-            units=measure_units,
-        )
+            print(origins)
+            print(dest_param)
 
-        if matrix:
-            counter = 0
-            for origin in origins:
-                for commute in matrix["rows"][counter]["elements"]:
-                    # Divide by 60 to get minutes
-                    if commute['status'] == 'OK':
-                        if ZipCodeDictionary.objects.filter(zip_code=origin).exists():
-                            zip_code_dictionary = ZipCodeDictionary.objects.get(zip_code=origin)
-                            if zip_code_dictionary.zipcodedictionarychild_set.filter(
-                                    zip_code=destination_zip_code,
-                                    commute_type=commute_type).exists():
-                                print("The combination that was computed already exists")
+            if (len(origins) != 0):
+                matrix = gmaps.distance_matrix(
+                    origins,
+                    dest_param,
+                    mode=commute_type,
+                    units=measure_units,
+                )
+                req_count.incr_count()
+
+                if matrix:
+                    counter = 0
+                    for origin in origins_dict:
+                        for commute in matrix["rows"][counter]["elements"]:
+                            # Divide by 60 to get minutes
+                            if commute['status'] == 'OK':
+                                if ZipCodeDictionary.objects.filter(zip_code=origin).exists():
+                                    zip_code_dictionary = ZipCodeDictionary.objects.get(zip_code=origin)
+                                    if zip_code_dictionary.zipcodedictionarychild_set.filter(
+                                            zip_code=dest_zip,
+                                            commute_type=commute_type).exists():
+                                        print("The combination that was computed already exists")
+                                    else:
+                                        zip_code_dictionary.zipcodedictionarychild_set.create(
+                                            zip_code=dest_zip,
+                                            commute_type=commute_type,
+                                            commute_distance=commute['distance']['value'],
+                                            commute_time=commute['duration']['value'],
+                                        )
+                                        print(commute['duration']['value'])
+                                else:
+                                    ZipCodeDictionary.objects.create(zip_code=origin) \
+                                        .zipcodedictionarychild_set.create(
+                                        zip_code=dest_zip,
+                                        commute_type=commute_type,
+                                        commute_distance=commute['distance']['value'],
+                                        commute_time=commute['duration']['value'],
+                                    )
                             else:
-                                zip_code_dictionary.zipcodedictionarychild_set.create(
-                                    zip_code=destination_zip_code,
-                                    commute_type=commute_type,
-                                    commute_distance=commute['distance']['value'],
-                                    commute_time=commute['duration']['value'],
-                                )
-                        else:
-                            ZipCodeDictionary.objects.create(zip_code=origin) \
-                                .zipcodedictionarychild_set.create(
-                                zip_code=destination_zip_code,
-                                commute_type=commute_type,
-                                commute_distance=commute['distance']['value'],
-                                commute_time=commute['duration']['value'],
-                            )
-                    else:
-                        print("distance not found")
-                    counter += 1
+                                print("distance not found")
+                                blacklist.blacklist(origin)
+                                print("added " + origin + " to blacklist")
+                            counter += 1
+                else:
+                    print("something went wrong with zip code matrix")
         else:
-            print("something went wrong with zip code matrix")
+            print("OVER MAX TESTING")
 
 
 def filter_homes_based_on_approximate_commute(survey, scored_list):
@@ -664,6 +718,7 @@ def compute_exact_commute(destinations, scored_list, commute_type):
 
 
 def start_algorithm(survey, context):
+    blacklist = BlackList()
     # Creates an array with all the home types indicated by the survey
     current_home_types = []
     for home in survey.home_type.all():
@@ -725,7 +780,7 @@ def start_algorithm(survey, context):
         context['error_message'].append("No Destination or origin")
     else:
         # Computes the approximate commute times for the homes in the score_house_list
-        compute_approximate_commute_times(destinations, scored_house_list, commute_type)
+        compute_approximate_commute_times(destinations, scored_house_list, commute_type, blacklist)
 
         # Filters the houses based on the approximate commutes
         filter_homes_based_on_approximate_commute(survey, scored_house_list)

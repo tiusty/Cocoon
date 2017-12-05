@@ -276,6 +276,9 @@ class Destinations(models.Model):
             return self.zip_code[:5]
         return self.zip_code
 
+    def get_city(self):
+        return self.city
+
 
 # Used for the renting survey
 class RentingDestinations(Destinations):

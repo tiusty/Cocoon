@@ -18,6 +18,7 @@ class maps_requester:
     def get_lat_lon_from_address(self, address):
 
         param_address = address.replace(' ','+')
+        #print(param_address)
 
         # TODO: Error check this request
         with request.urlopen(self.maps + param_address + self.key) as response:
