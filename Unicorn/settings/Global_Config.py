@@ -28,5 +28,8 @@ number_of_exact_commutes_computed = 100 # number of homes that the exact commute
 # Google distance matrix values
 gmaps = googlemaps.Client(key='AIzaSyAM2vo0Iop11XHGfuaYG4u1unhl6roMckk')
 
+
+# Key:
+
 # User Registration Data
 creation_key_value = "cocoon2017usercreation"

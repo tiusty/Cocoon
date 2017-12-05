@@ -126,8 +126,6 @@ class Command(BaseCommand):
                     clean_address = " ".join(split_address)
                     has_apartment_no = False
 
-
-
                 # combining address components
                 town = (towns[str(cells[TOWN_NUM])]["town"])
                 state = (towns[str(cells[TOWN_NUM])]["state"])
@@ -135,16 +133,11 @@ class Command(BaseCommand):
                 zip = cells[ZIP_CODE]
                 full_add = address + ' ' + town + ' ' + state + ' ' + zip
 
-                print("waiting on database filter")
-                print(count)
-
-                if RentDatabase.objects.filter(listing_no=int(cells[LIST_NO])).exists():
+                if (RentDatabase.objects.filter(listing_no=cells[LIST_NO]).exists()):
                     # this house already exists
-                    print("ayooo")
-                    print(full_add + " exists")
+                    print("[DUPLICATE]" + full_add)
                     continue
                 else:
-
                     # Pulls lat/lon based on address
                     locator = geolocator.maps_requester("AIzaSyAM2vo0Iop11XHGfuaYG4u1unhl6roMckk")
                     latlng = locator.get_lat_lon_from_address(full_add)
