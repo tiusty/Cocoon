@@ -1,8 +1,8 @@
 
 class HomeScore(object):
 
-    def __init__(self, new_house=None):
-        self._house = new_house
+    def __init__(self, new_home=None):
+        self._home = new_home
         self._accumulated_points = 0
         self._total_possible_points = 0
         self._eliminated = False
@@ -40,3 +40,11 @@ class HomeScore(object):
 
     def eliminate_home(self):
         self.eliminated = True
+
+    @property
+    def home(self):
+        return self._home
+
+    @home.setter
+    def home(self, new_home):
+        self._home = new_home
