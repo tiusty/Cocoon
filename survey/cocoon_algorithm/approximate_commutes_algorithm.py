@@ -1,30 +1,11 @@
 class ApproximateCommutes(object):
 
     def __init__(self):
-        self._approx_commute_times_minutes = []
         self._approx_commute_range_minutes = 0
         self._max_user_commute_minutes = 0
         self._min_user_commute_minutes = 0
         # Need super to allow calling each classes constructor
         super(ApproximateCommutes, self).__init__()
-
-    @property
-    def approx_commute_times(self):
-        """
-        Returns the list of approximate commute times
-        Approximate commute times stored as minutes
-        :return: List of approximate times i.e (27, 27, 27)
-        """
-        return self._approx_commute_times_minutes
-
-    @approx_commute_times.setter
-    def approx_commute_times(self, new_approx_commute_minutes):
-        """
-        Appends a new approximate time to the list
-        Times should be added as minutes
-        :param new_approx_commute: Commute time in minutes
-        """
-        self._approx_commute_times_minutes.append(new_approx_commute_minutes)
 
     @property
     def approx_commute_range(self):
@@ -85,14 +66,16 @@ class ApproximateCommutes(object):
         """
         self._min_user_commute_minutes = new_min_user_commute
 
-    def compute_approximate_commute_score(self):
+    def compute_approximate_commute_score(self, approx_commute_times):
         """
         Returns whether or not the approximate commute times are within the
         user acceptable range. If any of the commutes are not within the acceptable
         range, then False is returned
+        :param approx_commute_times: Must be a list of ints that correspond to the commute times.
+            Currently the approx commute is done in minutes, i.e [20, 40 , 56]
         :return: True if the home is inside the range, False otherwise
         """
-        for commute in self.approx_commute_times:
+        for commute in approx_commute_times:
             if (commute > self.max_user_commute + self.approx_commute_range) \
                             or (commute < self.min_user_commute - self.approx_commute_range):
                 return False

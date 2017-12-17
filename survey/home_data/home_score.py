@@ -5,7 +5,36 @@ class HomeScore(object):
         self._home = new_home
         self._accumulated_points = 0
         self._total_possible_points = 0
+        self._approx_commute_times_minutes = []
         self._eliminated = False
+
+    @property
+    def eliminated(self):
+        return self._eliminated
+
+    @eliminated.setter
+    def eliminated(self, is_eliminated):
+        self._eliminated = is_eliminated
+
+    def eliminate_home(self):
+        self.eliminated = True
+
+    @property
+    def home(self):
+        return self._home
+
+    @home.setter
+    def home(self, new_home):
+        self._home = new_home
+
+    @property
+    def approx_commute_times(self):
+        return self._approx_commute_times_minutes
+
+    @approx_commute_times.setter
+    def approx_commute_times(self, new_approx_commute_time):
+        # TODO If the setter is a list then set instead of append
+        self._approx_commute_times_minutes.append(new_approx_commute_time)
 
     def percent_score(self):
         """
@@ -30,21 +59,3 @@ class HomeScore(object):
         """
         return round(self.percent_score())
 
-    @property
-    def eliminated(self):
-        return self._eliminated
-
-    @eliminated.setter
-    def eliminated(self, is_eliminated):
-        self._eliminated = is_eliminated
-
-    def eliminate_home(self):
-        self.eliminated = True
-
-    @property
-    def home(self):
-        return self._home
-
-    @home.setter
-    def home(self, new_home):
-        self._home = new_home
