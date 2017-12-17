@@ -12,10 +12,14 @@ class HomeScore(object):
         Generates the score percentage
         :return:
         """
-        if self._total_possible_points != 0 and self.eliminated is False:
-            return (self._accumulated_points / self._total_possible_points) * 100
-        elif self.eliminated:
+        if self.eliminated:
             return -1
+        elif self._accumulated_points < 0 or self._total_possible_points < 0:
+            print("Error: _total_possible_points (" + str(self._total_possible_points)
+                  + ") or _accumulated_points (" + str(self._accumulated_points) + " are 0)")
+            return -1
+        elif self._total_possible_points != 0:
+            return (self._accumulated_points / self._total_possible_points) * 100
         else:
             return 0
 
