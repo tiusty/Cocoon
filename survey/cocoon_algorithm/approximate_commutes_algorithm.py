@@ -26,8 +26,8 @@ class ApproximateCommutes(object):
         :return:
         """
         if new_approx_commute_range_minutes < 0:
-            print("Error: Approx commute range less than zero\n")
-            print("Setting to zero\n")
+            print("Error: Approx commute range less than zero")
+            print("Setting to zero")
             self._approx_commute_range_minutes = 0
         else:
             self._approx_commute_range_minutes = new_approx_commute_range_minutes
