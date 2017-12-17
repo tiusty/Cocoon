@@ -18,7 +18,7 @@ class TestScoringMethods(unittest.TestCase):
         total_possible_points = 30
         home._accumulated_points = accumulated_points
         home._total_possible_points = total_possible_points
-        home.eliminated = True
+        home.eliminate_home()
         self.assertEqual(-1, home.percent_score())
 
     def test_percent_score_accumulated_points_negative(self):
@@ -35,7 +35,7 @@ class TestScoringMethods(unittest.TestCase):
         total_possible_points = 30
         home._accumulated_points = accumulated_points
         home._total_possible_points = total_possible_points
-        home.eliminated = True
+        home.eliminate_home()
         self.assertEqual(-1, home.percent_score())
 
     def test_percent_score_total_possible_points_negative(self):
@@ -52,7 +52,7 @@ class TestScoringMethods(unittest.TestCase):
         total_possible_points = -30
         home._accumulated_points = accumulated_points
         home._total_possible_points = total_possible_points
-        home.eliminated = True
+        home.eliminate_home()
         self.assertEqual(-1, home.percent_score())
 
     def test_percent_score_accumulated_points_zero(self):
@@ -69,7 +69,7 @@ class TestScoringMethods(unittest.TestCase):
         total_possible_points = 30
         home._accumulated_points = accumulated_points
         home._total_possible_points = total_possible_points
-        home.eliminated = True
+        home.eliminate_home()
         self.assertEqual(-1, home.percent_score())
 
     def test_percent_score_total_possible_points_zero(self):
@@ -86,8 +86,14 @@ class TestScoringMethods(unittest.TestCase):
         total_possible_points = 0
         home._accumulated_points = accumulated_points
         home._total_possible_points = total_possible_points
-        home.eliminated = True
+        home.eliminate_home()
         self.assertEqual(-1, home.percent_score())
+
+    def test_eliminate_home(self):
+        home = HomeScore()
+        self.assertFalse(home.eliminated)
+        home.eliminate_home()
+        self.assertTrue(home.eliminated)
 
     def test_user_friendly_score(self):
         home = HomeScore()

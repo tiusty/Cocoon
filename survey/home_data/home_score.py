@@ -37,3 +37,6 @@ class HomeScore(object):
     @eliminated.setter
     def eliminated(self, is_eliminated):
         self._eliminated = is_eliminated
+
+    def eliminate_home(self):
+        self.eliminated = True
