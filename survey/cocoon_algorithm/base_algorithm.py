@@ -2,6 +2,8 @@ class CocoonAlgorithm(object):
 
     def __init__(self):
         self._homes = []
+        # Need super to allow calling each classes constructor
+        super(CocoonAlgorithm, self).__init__()
 
     @property
     def homes(self):
