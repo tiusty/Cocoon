@@ -44,7 +44,12 @@ class ApproximateCommutes(object):
         :param new_approx_commute_range_minutes:
         :return:
         """
-        self._approx_commute_range_minutes = new_approx_commute_range_minutes
+        if new_approx_commute_range_minutes < 0:
+            print("Error: Approx commute range less than zero\n")
+            print("Setting to zero\n")
+            self._approx_commute_range_minutes = 0
+        else:
+            self._approx_commute_range_minutes = new_approx_commute_range_minutes
 
     @property
     def max_user_commute(self):
@@ -88,7 +93,7 @@ class ApproximateCommutes(object):
         :return: True if the home is inside the range, False otherwise
         """
         for commute in self.approx_commute_times:
-            if (commute >= self.max_user_commute + self.approx_commute_range) \
-                            or (commute <= self.min_user_commute - self.approx_commute_range):
+            if (commute > self.max_user_commute + self.approx_commute_range) \
+                            or (commute < self.min_user_commute - self.approx_commute_range):
                 return False
         return True
