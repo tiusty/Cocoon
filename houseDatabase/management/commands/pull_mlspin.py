@@ -135,6 +135,9 @@ class Command(BaseCommand):
 
                 if (RentDatabase.objects.filter(listing_no=cells[LIST_NO]).exists()):
                     # this house already exists
+                    existing_apartment = RentDatabase.objects.get(listing_no=cells[LIST_NO])
+                    existing_apartment.move_in_day = datetime.now()
+                    existing_apartment.save()
                     print("[DUPLICATE]" + full_add)
                     continue
                 else:
