@@ -142,7 +142,7 @@ class Command(BaseCommand):
                     continue
                 else:
                     # Pulls lat/lon based on address
-                    locator = geolocator.maps_requester("AIzaSyAM2vo0Iop11XHGfuaYG4u1unhl6roMckk")
+                    locator = geolocator.maps_requester("AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw")
                     latlng = locator.get_lat_lon_from_address(full_add)
 
                     if (latlng == -1):
