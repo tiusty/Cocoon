@@ -1,11 +1,43 @@
-class ApproximateCommutes(object):
+from Unicorn.settings.Global_Config import commute_question_weight
+
+
+class CommuteAlgorithm(object):
 
     def __init__(self):
         self._approx_commute_range_minutes = 0
         self._max_user_commute_minutes = 0
         self._min_user_commute_minutes = 0
+        self._commute_user_scale_factor = 1
+        self._commute_question_weight = commute_question_weight
+        # TODO: Set the min_possible_commute from global config file
+        self._min_possible_commute = 11
         # Need super to allow calling each classes constructor
-        super(ApproximateCommutes, self).__init__()
+        super(CommuteAlgorithm, self).__init__()
+
+    @property
+    def min_possible_commute(self):
+        return self._min_possible_commute
+
+    @min_possible_commute.setter
+    def min_possible_commute(self, new_min_possible_commute):
+        self._min_possible_commute = new_min_possible_commute
+
+    @property
+    def commute_user_scale_factor(self):
+        """
+        Gets the commute user scale factor.
+        This increases or decreases the weight that the commute has to the survey
+        :return: THe commute user scale factor
+        """
+        return self._commute_user_scale_factor
+
+    @commute_user_scale_factor.setter
+    def commute_user_scale_factor(self, new_commute_user_scale_factor):
+        """
+        Sets the commute user scale factor
+        :param new_commute_user_scale_factor: The new scale factor as an int
+        """
+        self._commute_user_scale_factor = new_commute_user_scale_factor
 
     @property
     def approx_commute_range(self):
@@ -66,7 +98,7 @@ class ApproximateCommutes(object):
         """
         self._min_user_commute_minutes = new_min_user_commute
 
-    def compute_approximate_commute_score(self, approx_commute_times):
+    def compute_approximate_commute_filter(self, approx_commute_times):
         """
         Returns whether or not the approximate commute times are within the
         user acceptable range. If any of the commutes are not within the acceptable
@@ -80,3 +112,32 @@ class ApproximateCommutes(object):
                             or (commute < self.min_user_commute - self.approx_commute_range):
                 return False
         return True
+
+    def compute_commute_score(self, commute_minutes):
+        """
+        Compute the score based off the commute. A percent value of the fit of the home is returned.
+        I.E, .67, .47, etc will be returned. The scaling will be done in the parent class
+        Note: Since the eliminating filter should have been done first, this computation
+            does not mark any home for elimination
+        :param commute_minutes: The commute time in minutes.
+        :return: THe percent fit the home is or -1 if the home should be eliminated
+        """
+
+        # Because the commute is allowed to be less or more depending on the approx_commute_range
+        #   the homes are allowed to be past the user bounds. Therefore if the commute is past the bounds,
+        #   just set the home to the max or min
+        if commute_minutes < self.min_user_commute:
+            commute_minutes = self.min_user_commute
+        elif commute_minutes > self.max_user_commute:
+            commute_minutes = self.max_user_commute
+
+        commute_time_normalized = commute_minutes - self.min_user_commute
+        commute_range = self.max_user_commute - self.min_user_commute
+
+        if commute_range <= 0:
+            if commute_minutes == self.min_user_commute:
+                return 1
+            else:
+                return 0
+
+        return 1 - (commute_time_normalized / commute_range)

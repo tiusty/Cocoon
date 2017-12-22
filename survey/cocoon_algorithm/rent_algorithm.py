@@ -1,17 +1,17 @@
-from survey.cocoon_algorithm.approximate_commutes_algorithm import ApproximateCommutes
+from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
 from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 
 
-class RentAlgorithm(PriceAlgorithm, ApproximateCommutes, CocoonAlgorithm):
+class RentAlgorithm(PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
 
-    def run_compute_approximate_commute_score(self):
+    def run_compute_approximate_commute_filter(self):
         """
-        Runs the approximate commute algorithm which will eliminate homes outside
+        Runs the approximate commute filter which will eliminate homes outside
         of the users commute radius
         """
         for home in self.homes:
-            if not self.compute_approximate_commute_score(home.approx_commute_times):
+            if not self.compute_approximate_commute_filter(home.approx_commute_times):
                 home.eliminate_home()
 
     def run_compute_price_score(self):

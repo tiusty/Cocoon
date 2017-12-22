@@ -32,7 +32,7 @@ class TestRentAlgorithmJustApproximateCommute(TestCase):
         rent_algorithm.approx_commute_range = 20
 
         # Act
-        rent_algorithm.run_compute_approximate_commute_score()
+        rent_algorithm.run_compute_approximate_commute_filter()
 
         # Assert
         self.assertFalse(rent_algorithm.homes[0].eliminated)
@@ -50,7 +50,7 @@ class TestRentAlgorithmJustApproximateCommute(TestCase):
         rent_algorithm.approx_commute_range = 10
 
         # Act
-        rent_algorithm.run_compute_approximate_commute_score()
+        rent_algorithm.run_compute_approximate_commute_filter()
 
         # Assert
         self.assertFalse(rent_algorithm.homes[0].eliminated)
@@ -68,7 +68,7 @@ class TestRentAlgorithmJustApproximateCommute(TestCase):
         rent_algorithm.approx_commute_range = 0
 
         # Act
-        rent_algorithm.run_compute_approximate_commute_score()
+        rent_algorithm.run_compute_approximate_commute_filter()
 
         # Assert
         self.assertTrue(rent_algorithm.homes[0].eliminated)
@@ -80,7 +80,7 @@ class TestRentAlgorithmJustApproximateCommute(TestCase):
         rent_algorithm = RentAlgorithm()
 
         # Act
-        rent_algorithm.run_compute_approximate_commute_score()
+        rent_algorithm.run_compute_approximate_commute_filter()
 
         # Assert
         self.assertEqual(0, len(rent_algorithm.homes))

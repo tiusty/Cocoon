@@ -82,7 +82,7 @@ class PriceAlgorithm(object):
 
     def compute_price_score(self, home_price):
         """
-        Compute the score based off the price. A percent value of how fit the home is returned
+        Compute the score based off the price. A percent value of the fit of the home is returned
         I.E, .67 or .47, etc will be returned. The scaling will be done in the parent class
         :param home_price: The price as an int for the home.
         :return: The percent fit the home is or -1 if the home should be eliminated
