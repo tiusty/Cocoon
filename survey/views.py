@@ -8,8 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 
-from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
-    Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
+from Unicorn.settings.Global_Config import survey_types, HYBRID_WEIGHT_MAX, \
+    HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT, approximate_commute_range, \
     default_rent_survey_name, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight
 from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
@@ -382,18 +382,18 @@ def weighted_question_scoring(home, contains_item, scale_factor):
     """
 
     # First remove the factor if the user marked it as must have, or must not have.
-    if scale_factor == Hybrid_weighted_max and contains_item is False:
+    if scale_factor == HYBRID_WEIGHT_MAX and contains_item is False:
         home.eliminate_home()
-    elif scale_factor == Hybrid_weighted_min and contains_item is True:
+    elif scale_factor == HYBRID_WEIGHT_MIN and contains_item is True:
         home.eliminate_home()
     # If the item is desired and the item is present the score will go up, or if the
     # item is not desired and it doesn't have the item, then the score will go up.
     # Otherwise the score will go down
-    home.score += (1 if contains_item else -1) * scale_factor * hybrid_question_weight
+    home.score += (1 if contains_item else -1) * scale_factor * HYBRID_QUESTION_WEIGHT
     # Regardless of anything else, always increment the possible points depending on the
     # Scale factor. The factor is added by the absolute value because the maximum value
     # needs to be added
-    home.scorePossible += abs(scale_factor) * hybrid_question_weight
+    home.scorePossible += abs(scale_factor) * HYBRID_QUESTION_WEIGHT
 
 
 def create_interior_amenities_score(scored_house_list, survey):

@@ -9,7 +9,7 @@ class CommuteAlgorithm(object):
         self._min_user_commute_minutes = 0
         self._commute_user_scale_factor = 1
         self._commute_question_weight = commute_question_weight
-        # TODO: Set the min_possible_commute from global config file
+        # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
         self._min_possible_commute = 11
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()

@@ -8,15 +8,15 @@ default_rent_survey_name = "Recent Rent Survey"
 survey_types = Enum('survey_types', 'rent buy')
 
 # Default Survey Max Values
-hybrid_question_weight = 20
+HYBRID_QUESTION_WEIGHT = 20
 commute_question_weight = 100
 price_question_weight = 100
 weight_question_max = 7
 Max_Num_Bathrooms = 7  # Base 0, I guess should be base 1
 Max_Num_Bedrooms = 6  # Base 1, so from 1 bedroom to 6 bedrooms
 Max_Text_Input_Length = 200
-Hybrid_weighted_max = 3
-Hybrid_weighted_min = -3
+HYBRID_WEIGHT_MAX = 3
+HYBRID_WEIGHT_MIN = -3
 
 # Survey preferences
 # This is the acceptable range for an apartment. So if the user selected a commute of 30 - 60 minutes
