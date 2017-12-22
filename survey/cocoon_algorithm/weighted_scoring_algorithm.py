@@ -7,6 +7,7 @@ class WeightScoringAlgorithm(object):
         self._hybrid_weight_global_min = HYBRID_WEIGHT_MIN
         self._hybrid_weight_global_max = HYBRID_WEIGHT_MAX
         self._hybrid_question_weight = HYBRID_QUESTION_WEIGHT
+        super(WeightScoringAlgorithm, self).__init__()
 
     @property
     def hybrid_weight_global_min(self):

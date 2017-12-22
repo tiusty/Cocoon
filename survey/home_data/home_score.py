@@ -59,12 +59,12 @@ class HomeScore(object):
         """
         if self.eliminated:
             return -1
-        elif self._accumulated_points < 0 or self._total_possible_points < 0:
-            print("Error: _total_possible_points (" + str(self._total_possible_points)
-                  + ") or _accumulated_points (" + str(self._accumulated_points) + " are 0)")
+        elif self.accumulated_points < 0 or self.total_possible_points < 0:
+            print("Error: _total_possible_points (" + str(self.total_possible_points)
+                  + ") or _accumulated_points (" + str(self.accumulated_points) + " are 0)")
             return -1
-        elif self._total_possible_points != 0:
-            return (self._accumulated_points / self._total_possible_points) * 100
+        elif self.total_possible_points != 0:
+            return (self.accumulated_points / self.total_possible_points) * 100
         else:
             return 0
 
