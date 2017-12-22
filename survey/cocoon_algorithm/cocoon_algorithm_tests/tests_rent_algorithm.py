@@ -8,7 +8,7 @@ from survey.home_data.home_score import HomeScore
 from houseDatabase.models import RentDatabase
 
 
-class TestRentAlgorithm(TestCase):
+class TestRentAlgorithmJustApproximateCommute(TestCase):
 
     def setUp(self):
         self.home = HomeScore(RentDatabase.objects.create())
@@ -84,3 +84,273 @@ class TestRentAlgorithm(TestCase):
 
         # Assert
         self.assertEqual(0, len(rent_algorithm.homes))
+
+
+class TestRentAlgorithmJustPrice(TestCase):
+
+    def setUp(self):
+        self.home = HomeScore(RentDatabase.objects.create(price=1000))
+        self.home1 = HomeScore(RentDatabase.objects.create(price=1500))
+        self.home2 = HomeScore(RentDatabase.objects.create(price=2000))
+
+    def test_run_compute_price_score_working(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_price = 1000
+        rent_algorithm.max_price = 2500
+
+        # Set the user scale
+        price_user_scale_factor = 1
+        rent_algorithm.price_user_scale_factor = price_user_scale_factor
+        # Overriding in case the config file changes
+        price_question_weight = 100
+        rent_algorithm.price_question_weight = price_question_weight
+
+        # Act
+        rent_algorithm.run_compute_price_score()
+
+        # Assert
+        self.assertEqual((1 - (0/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[0].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[0].eliminated)
+        self.assertEqual((1 - (500/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[1].eliminated)
+        self.assertEqual((1 - (1000/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[2].eliminated)
+
+    def test_run_compute_price_score_one_elimination_min_price(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_price = 1100
+        rent_algorithm.max_price = 2500
+
+        # Set the user scale
+        price_user_scale_factor = 1
+        rent_algorithm.price_user_scale_factor = price_user_scale_factor
+        # Overriding in case the config file changes
+        price_question_weight = 100
+        rent_algorithm.price_question_weight = price_question_weight
+
+        # Act
+        rent_algorithm.run_compute_price_score()
+
+        # Assert
+
+        # Home 0
+        self.assertEqual(-100, rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[0].total_possible_points)
+        self.assertTrue(rent_algorithm.homes[0].eliminated)
+
+        # Home 1
+        self.assertEqual((1 - (400/1400)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[1].eliminated)
+
+        # Home 2
+        self.assertEqual((1 - (900/1400)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[2].eliminated)
+
+    def test_run_compute_price_score_two_eliminations_min_price(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_price = 1600
+        rent_algorithm.max_price = 2500
+
+        # Set the user scale
+        price_user_scale_factor = 1
+        rent_algorithm.price_user_scale_factor = price_user_scale_factor
+        # Overriding in case the config file changes
+        price_question_weight = 100
+        rent_algorithm.price_question_weight = price_question_weight
+
+        # Act
+        rent_algorithm.run_compute_price_score()
+
+        # Assert
+
+        # Home 0
+        self.assertEqual(-100, rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[0].total_possible_points)
+        self.assertTrue(rent_algorithm.homes[0].eliminated)
+
+        # Home 1
+        self.assertEqual(-100, rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
+        self.assertTrue(rent_algorithm.homes[1].eliminated)
+
+        # Home 2
+        self.assertEqual((1 - (400/900)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[2].eliminated)
+
+    def test_run_compute_price_score_one_elimination_max_price(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_price = 1000
+        rent_algorithm.max_price = 1900
+
+        # Set the user scale
+        price_user_scale_factor = 1
+        rent_algorithm.price_user_scale_factor = price_user_scale_factor
+        # Overriding in case the config file changes
+        price_question_weight = 100
+        rent_algorithm.price_question_weight = price_question_weight
+
+        # Act
+        rent_algorithm.run_compute_price_score()
+
+        # Assert
+
+        # Home 0
+        self.assertEqual((1 - (0/900)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[0].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[0].eliminated)
+
+        # Home 1
+        self.assertEqual((1 - (500/900)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[1].eliminated)
+
+        # Home 2
+        self.assertEqual(-100, rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[2].total_possible_points)
+        self.assertTrue(rent_algorithm.homes[2].eliminated)
+
+    def test_run_compute_price_score_two_elimination_max_price(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_price = 1000
+        rent_algorithm.max_price = 1400
+
+        # Set the user scale
+        price_user_scale_factor = 1
+        rent_algorithm.price_user_scale_factor = price_user_scale_factor
+        # Overriding in case the config file changes
+        price_question_weight = 100
+        rent_algorithm.price_question_weight = price_question_weight
+
+        # Act
+        rent_algorithm.run_compute_price_score()
+
+        # Assert
+
+        # Home 0
+        self.assertEqual((1 - (0/400)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[0].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[0].eliminated)
+
+        # Home 1
+        self.assertEqual(-100, rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
+        self.assertTrue(rent_algorithm.homes[1].eliminated)
+
+        # Home 2
+        self.assertEqual(-100, rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
+        self.assertTrue(rent_algorithm.homes[2].eliminated)
+
+    def test_run_compute_price_score_working_varied_user_scale_positive(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_price = 1000
+        rent_algorithm.max_price = 2500
+
+        # Set the user scale
+        price_user_scale_factor = 5
+        rent_algorithm.price_user_scale_factor = price_user_scale_factor
+        # Overriding in case the config file changes
+        price_question_weight = 100
+        rent_algorithm.price_question_weight = price_question_weight
+
+        # Act
+        rent_algorithm.run_compute_price_score()
+
+        # Assert
+
+        # Home 0
+        self.assertEqual((1 - (0/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[0].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[0].eliminated)
+
+        # Home 1
+        self.assertEqual((1 - (500/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[1].eliminated)
+
+        # Home 2
+        self.assertEqual((1 - (1000/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[2].eliminated)
+
+    def test_run_compute_price_score_working_varied_user_scale_negative(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_price = 1000
+        rent_algorithm.max_price = 2500
+
+        # Set the user scale
+        price_user_scale_factor = -5
+        rent_algorithm.price_user_scale_factor = price_user_scale_factor
+        # Overriding in case the config file changes
+        price_question_weight = 100
+        rent_algorithm.price_question_weight = price_question_weight
+
+        # Act
+        rent_algorithm.run_compute_price_score()
+
+        # Assert
+
+        # Home 0
+        self.assertEqual((1 - (0/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[0].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[0].eliminated)
+
+        # Home 1
+        self.assertEqual((1 - (500/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[1].eliminated)
+
+        # Home 2
+        self.assertEqual((1 - (1000/1500)) * price_question_weight * price_user_scale_factor,
+                         rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
+        self.assertFalse(rent_algorithm.homes[2].eliminated)

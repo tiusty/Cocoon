@@ -36,6 +36,22 @@ class HomeScore(object):
         # TODO If the setter is a list then set instead of append
         self._approx_commute_times_minutes.append(new_approx_commute_time)
 
+    @property
+    def accumulated_points(self):
+        return self._accumulated_points
+
+    @accumulated_points.setter
+    def accumulated_points(self, new_points):
+        self._accumulated_points += new_points
+
+    @property
+    def total_possible_points(self):
+        return self._total_possible_points
+
+    @total_possible_points.setter
+    def total_possible_points(self, new_possible_points):
+        self._total_possible_points += new_possible_points
+
     def percent_score(self):
         """
         Generates the score percentage
