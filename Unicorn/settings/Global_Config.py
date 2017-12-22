@@ -26,7 +26,7 @@ approximate_commute_range = 20
 number_of_exact_commutes_computed = 100 # number of homes that the exact commute is calculated
 
 # Google distance matrix values
-gmaps = googlemaps.Client(key='AIzaSyAM2vo0Iop11XHGfuaYG4u1unhl6roMckk')
+gmaps = googlemaps.Client(key='AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw')
 
 
 # Key:

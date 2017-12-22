@@ -135,11 +135,14 @@ class Command(BaseCommand):
 
                 if (RentDatabase.objects.filter(listing_no=cells[LIST_NO]).exists()):
                     # this house already exists
+                    existing_apartment = RentDatabase.objects.get(listing_no=cells[LIST_NO])
+                    existing_apartment.move_in_day = datetime.now()
+                    existing_apartment.save()
                     print("[DUPLICATE]" + full_add)
                     continue
                 else:
                     # Pulls lat/lon based on address
-                    locator = geolocator.maps_requester("AIzaSyAM2vo0Iop11XHGfuaYG4u1unhl6roMckk")
+                    locator = geolocator.maps_requester("AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw")
                     latlng = locator.get_lat_lon_from_address(full_add)
 
                     if (latlng == -1):
