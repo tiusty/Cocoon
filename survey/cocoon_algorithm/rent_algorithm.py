@@ -10,9 +10,16 @@ class RentAlgorithm(PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
         Runs the approximate commute filter which will eliminate homes outside
         of the users commute radius
         """
-        for home in self.homes:
-            if not self.compute_approximate_commute_filter(home.approx_commute_times):
-                home.eliminate_home()
+        for home_data in self.homes:
+            if not self.compute_approximate_commute_filter(home_data.approx_commute_times):
+                home_data.eliminate_home()
+
+    def run_compute_commute_score_approximate(self):
+        for home_data in self.homes:
+            for commute in home_data.approx_commute_times:
+                score_result = self.compute_commute_score(commute)
+                home_data.accumulated_points = score_result * self.commute_user_scale_factor * self.commute_question_weight
+                home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
 
     def run_compute_price_score(self):
         for home_data in self.homes:

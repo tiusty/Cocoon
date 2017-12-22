@@ -15,6 +15,14 @@ class CommuteAlgorithm(object):
         super(CommuteAlgorithm, self).__init__()
 
     @property
+    def commute_question_weight(self):
+        return self._commute_question_weight
+
+    @commute_question_weight.setter
+    def commute_question_weight(self, new_commute_question_weight):
+        self._commute_question_weight = new_commute_question_weight
+
+    @property
     def min_possible_commute(self):
         return self._min_possible_commute
 
