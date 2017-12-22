@@ -17,6 +17,9 @@ from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
 from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
 
+# Import Survey algorithm modules
+from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
+
 class RequestCounter:
     def __init__(self):
         self.count = 0
@@ -738,6 +741,8 @@ def start_algorithm(survey, context):
     4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
     4. Filter by the number of bathrooms
     """
+    rent_algorithm = RentAlgorithm()
+
     filtered_house_list = RentDatabase.objects \
         .filter(price__range=(survey.get_min_price(), survey.get_max_price())) \
         .filter(home_type__in=current_home_types) \
@@ -763,8 +768,9 @@ def start_algorithm(survey, context):
 
     # This puts all the homes into a scored list
     scored_house_list = []
-    for house in filtered_house_list:
-        scored_house_list.append(ScoringStruct(house))
+    for home in filtered_house_list:
+        rent_algorithm = home
+        # scored_house_list.append(ScoringStruct(house))
 
     commute_type = survey.get_commute_type()
     context['commuteType'] = commute_type
@@ -776,20 +782,33 @@ def start_algorithm(survey, context):
     Dynamic filtering/scoring
     """
     # If there are no destinations or no homes, then don't bother with algorithm
-    if not destinations or not scored_house_list:
+    if not destinations or not rent_algorithm.homes:
         context['error_message'].append("No Destination or origin")
     else:
         # Computes the approximate commute times for the homes in the score_house_list
-        compute_approximate_commute_times(destinations, scored_house_list, commute_type, blacklist)
+        # compute_approximate_commute_times(destinations, rent_algorithm.homes, commute_type, blacklist)
+        # TODO Implement Function
+        # rent_algorithm.retrieve_all_approximate_commutes()
 
         # Filters the houses based on the approximate commutes
-        filter_homes_based_on_approximate_commute(survey, scored_house_list)
+        # filter_homes_based_on_approximate_commute(survey, scored_house_list)
+        rent_algorithm.run_compute_approximate_commute_filter()
 
         # Generate scores for the homes based on the survey results
-        create_house_score(scored_house_list, survey)
+        # create_house_score(scored_house_list, survey)
+        # create_commute_score(house_list_scored, survey, CommutePrecision.approx)
+        # create_price_score(house_list_scored, survey)
+        # create_interior_amenities_score(house_list_scored, survey)
+        # create_exterior_amenities_score(house_list_scored, survey)
+        rent_algorithm.run_compute_commute_score_approximate()
+        rent_algorithm.run_compute_price_score()
+        rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
+                                                                     survey.get_washer_dryer_in_home(), survey.get_dish_washer_scale(), survey.get_bash())
 
         # Order the homes based off the score
-        order_by_house_score(scored_house_list)
+        # order_by_house_score(scored_house_list)
+        # TODO Implement function
+        # rent_algorithm.sort_home_by_score()
 
         """
         STEP 3:
@@ -797,18 +816,24 @@ def start_algorithm(survey, context):
         """
         # Compute the exact commute for the top homes in the list and reorder only the top homes
         compute_exact_commute(destinations, scored_house_list, commute_type)
+        # TODO Implement function
+        # rent_algorithm.retrieve_exact_commutes()
 
         # Now generate the score based on the exact commute
         create_commute_score(scored_house_list, survey, CommutePrecision.exact)
+        # TODO Implement Function
+        # rent_algorithm.run_compute_commute_score_exact()
 
         # Now reorder all the homes with the new information
         order_by_house_score(scored_house_list)
+        # TODO Implement function
+        # rent_algorithm.sort_home_by_score()
 
     # Contains destinations of the user
     context['locations'] = destination_set
     # House list either comes from the scored homes or from the database static list if something went wrong
     # Only put up to 200 house on the list
-    context['houseList'] = scored_house_list[:200]
+    context['houseList'] = rent_algorithm.homes[:200]
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
