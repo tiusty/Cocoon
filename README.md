@@ -1,6 +1,6 @@
-# Unicorn
+# Cocoon
 
-This is the new iteration of the HomeMe project, now called Project Unicorn that
+This is the new iteration of the HomeMe project, now called Cocoon that
 Uses the Django framework instead of using Revel Golang framework
 
 To start the sever on the EC2 instance:
