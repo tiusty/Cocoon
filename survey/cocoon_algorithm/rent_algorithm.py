@@ -1,9 +1,11 @@
+# Import survey modules
 from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
 from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
+from survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 
-class RentAlgorithm(PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
+class RentAlgorithm(WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
 
     def run_compute_approximate_commute_filter(self):
         """
@@ -28,3 +30,31 @@ class RentAlgorithm(PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
                 home_data.eliminate_home()
             home_data.accumulated_points = score_result * self.price_user_scale_factor * self.price_question_weight
             home_data.total_possible_points = self.price_user_scale_factor * self.price_question_weight
+
+    def run_compute_weighted_score_interior_amenities(self, air_conditioning_scale, washer_dryer_in_home_scale, dish_washer_scale, bath_scale):
+        for home_data in self.homes:
+            if self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.get_air_conditioning()):
+                home_data.eliminate_home()
+            home_data.accumulated_points = self.compute_weighted_question_score(air_conditioning_scale,
+                                                                                home_data.home.get_air_conditioning())
+            home_data.total_possible_points = abs(air_conditioning_scale) * self.hybrid_question_weight
+
+            if self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.get_wash_dryer_in_home()):
+                home_data.eliminate_home()
+
+            home_data.accumulated_points = self.compute_weighted_question_score(washer_dryer_in_home_scale,
+                                                                                home_data.home.get_wash_dryer_in_home())
+            home_data.total_possible_points = abs(washer_dryer_in_home_scale) * self.hybrid_question_weight
+
+            if self.compute_weighted_question_filter(dish_washer_scale, home_data.home.get_dish_washer()):
+                home_data.eliminate_home()
+
+            home_data.accumulated_points = self.compute_weighted_question_score(dish_washer_scale,
+                                                                                home_data.home.get_dish_washer())
+            home_data.total_possible_points = abs(dish_washer_scale) * self.hybrid_question_weight
+
+            if self.compute_weighted_question_filter(bath_scale, home_data.home.get_bath()):
+                home_data.eliminate_home()
+
+            home_data.accumulated_points = self.compute_weighted_question_score(bath_scale, home_data.home.get_bath())
+            home_data.total_possible_points = abs(bath_scale) * self.hybrid_question_weight
