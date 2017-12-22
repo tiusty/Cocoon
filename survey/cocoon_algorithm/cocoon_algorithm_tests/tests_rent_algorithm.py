@@ -372,3 +372,46 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
                          rent_algorithm.homes[2].accumulated_points)
         self.assertEqual(len(rent_algorithm.homes[2].approx_commute_times) * (commute_question_weight * commute_user_scale_factor),
                          rent_algorithm.homes[2].total_possible_points)
+
+    def test_run_compute_commute_score_approximate_working_large_user_scale_factor(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+        rent_algorithm.min_user_commute = 30
+        rent_algorithm.max_user_commute = 100
+
+        # Set user scale factor
+        commute_user_scale_factor = 5
+        rent_algorithm.commute_user_scale_factor = commute_user_scale_factor
+
+        # Overriding in case the config file changes
+        commute_question_weight = 100
+        rent_algorithm.price_question_weight = commute_question_weight
+
+        # Act
+        rent_algorithm.run_compute_commute_score_approximate()
+
+        # Assert
+
+        # Home 0
+        self.assertEqual(((1 - (20/70)) * commute_user_scale_factor * commute_question_weight)
+                         + ((1 - (40/70)) * commute_user_scale_factor * commute_question_weight),
+                         rent_algorithm.homes[0].accumulated_points)
+        self.assertEqual(len(rent_algorithm.homes[0].approx_commute_times) * (commute_question_weight * commute_user_scale_factor),
+                         rent_algorithm.homes[0].total_possible_points)
+
+        # Home 1
+        self.assertEqual(((1 - (0/70)) * commute_question_weight * commute_user_scale_factor)
+                         + ((1 - (50/70)) * commute_user_scale_factor * commute_question_weight)
+                         + ((1 - (70/70)) * commute_user_scale_factor * commute_question_weight),
+                         rent_algorithm.homes[1].accumulated_points)
+        self.assertEqual(len(rent_algorithm.homes[1].approx_commute_times) * (commute_question_weight * commute_user_scale_factor),
+                         rent_algorithm.homes[1].total_possible_points)
+
+        # Home 2
+        self.assertEqual(((1 - (30/70)) * commute_question_weight * commute_user_scale_factor),
+                         rent_algorithm.homes[2].accumulated_points)
+        self.assertEqual(len(rent_algorithm.homes[2].approx_commute_times) * (commute_question_weight * commute_user_scale_factor),
+                         rent_algorithm.homes[2].total_possible_points)
