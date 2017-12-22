@@ -11,8 +11,17 @@ class CommuteAlgorithm(object):
         self._commute_question_weight = commute_question_weight
         # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
         self._min_possible_commute = 11
+        self._commute_type = None
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()
+
+    @property
+    def commute_type(self):
+        return self._commute_type
+
+    @commute_type.setter
+    def commute_type(self, new_commute_type):
+        self._commute_type = new_commute_type
 
     @property
     def commute_question_weight(self):
