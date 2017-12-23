@@ -184,7 +184,7 @@ class RentDatabase(MLSpinData, BuildingExteriorAmenities, InteriorAmenities, Hom
     _move_in_day = models.DateField(default=datetime.date.today)
 
     def __str__(self):
-        return self.address
+        return self.full_address
 
     @property
     def move_in_day(self):
