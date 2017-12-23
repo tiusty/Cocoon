@@ -6,16 +6,89 @@ from django.utils import timezone
 not_set_char = "Not set"
 
 
+class HomeBase(models.Model):
+    """
+    Contains all the base information for a home
+    """
+    _street_address_home = models.CharField(max_length=200, default=not_set_char)
+    _city_home = models.CharField(max_length=200, default=not_set_char)
+    _state_home = models.CharField(max_length=200, default=not_set_char)
+    _zip_code_home = models.CharField(max_length=200, default=not_set_char)
+    _price_home = models.IntegerField(default=-1)
+    _latitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    _longitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+
+    @property
+    def full_address(self):
+        return self.street_address + ", " + self.city + ", " \
+               + self.state + " " + self.zip_code
+
+    @property
+    def street_address(self):
+        return self._street_address_home
+
+    @property
+    def city(self):
+        return self._city_home
+
+    @property
+    def state(self):
+        return self._state_home
+
+    @property
+    def zip_code(self):
+        return self._zip_code_home
+
+    @property
+    def price(self):
+        return self._price_home
+
+    @property
+    def latitude(self):
+        return self._latitude_home
+
+    @property
+    def longitude(self):
+        return self._longitude_home
+
+    class Meta:
+        abstract = True
+
+
 class InteriorAmenities(models.Model):
     """
     Contains all the information for homes about the Interior Amenities
     """
-    air_conditioning = models.BooleanField(default=False)
-    wash_dryer_in_home = models.BooleanField(default=False)
-    dish_washer = models.BooleanField(default=False)
-    bath = models.BooleanField(default=False)
-    num_bathrooms = models.IntegerField(default=0)
-    num_bedrooms = models.IntegerField(default=0)
+    _air_conditioning = models.BooleanField(default=False)
+    _wash_dryer_in_home = models.BooleanField(default=False)
+    _dish_washer = models.BooleanField(default=False)
+    _bath = models.BooleanField(default=False)
+    _num_bathrooms = models.IntegerField(default=0)
+    _num_bedrooms = models.IntegerField(default=0)
+
+    @property
+    def air_conditioning(self):
+        return self._air_conditioning
+
+    @property
+    def washer_dryer_in_home(self):
+        return self._wash_dryer_in_home
+
+    @property
+    def dish_washer(self):
+        return self._dish_washer
+
+    @property
+    def bath(self):
+        return self._bath
+
+    @property
+    def num_bathrooms(self):
+        return self._num_bathrooms
+
+    @property
+    def num_bedrooms(self):
+        return self._num_bedrooms
 
     class Meta:
         abstract = True
@@ -25,55 +98,90 @@ class BuildingExteriorAmenities(models.Model):
     """
     Contains all the information for homes about the Exterior Amenities
     """
-    parking_spot = models.BooleanField(default=False)
-    washer_dryer_in_building = models.BooleanField(default=False)
-    elevator = models.BooleanField(default=False)
-    handicap_access = models.BooleanField(default=False)
-    pool_hot_tub = models.BooleanField(default=False)
-    fitness_center = models.BooleanField(default=False)
-    storage_unit = models.BooleanField(default=False)
+    _parking_spot = models.BooleanField(default=False)
+    _washer_dryer_in_building = models.BooleanField(default=False)
+    _elevator = models.BooleanField(default=False)
+    _handicap_access = models.BooleanField(default=False)
+    _pool_hot_tub = models.BooleanField(default=False)
+    _fitness_center = models.BooleanField(default=False)
+    _storage_unit = models.BooleanField(default=False)
+
+    @property
+    def parking_spot(self):
+        return self._parking_spot
+
+    @property
+    def washer_dryer_in_building(self):
+        return self._washer_dryer_in_building
+
+    @property
+    def elevator(self):
+        return self._elevator
+
+    @property
+    def handicap_access(self):
+        return self._handicap_access
+
+    @property
+    def pool_hot_tub(self):
+        return self._pool_hot_tub
+
+    @property
+    def fitness_center(self):
+        return self._fitness_center
+
+    @property
+    def storage_unit(self):
+        return self._storage_unit
 
     class Meta:
         abstract = True
 
 
-class RentDatabase(BuildingExteriorAmenities, InteriorAmenities):
+class MLSpinData(models.Model):
+    """
+    Contains all the data related to the MLS pin
+    """
+    _remarks = models.TextField(default="")
+    _listing_number = models.IntegerField(default=-1)
+    _listing_provider = models.CharField(max_length=200, default=not_set_char)
+    _listing_agent = models.CharField(max_length=200, default=not_set_char)
+    _listing_office = models.CharField(max_length=200, default=not_set_char)
+
+    @property
+    def remarks(self):
+        return self._remarks
+
+    @property
+    def listing_number(self):
+        return self._listing_number
+
+    @property
+    def listing_provider(self):
+        return self._listing_provider
+
+    @property
+    def listing_agent(self):
+        return self._listing_agent
+
+    @property
+    def listing_office(self):
+        return self._listing_office
+
+    class Meta:
+        abstract = True
+
+
+class RentDatabase(MLSpinData, BuildingExteriorAmenities, InteriorAmenities, HomeBase):
     """
     This model stores all the information associated with a home
     """
-    address = models.CharField(max_length=200, default=not_set_char)
-    city = models.CharField(max_length=200, default=not_set_char)
-    state = models.CharField(max_length=200, default=not_set_char)
-    zip_code = models.CharField(max_length=200, default=not_set_char)
-    apartment_no = models.CharField(max_length=200, default=not_set_char)
-    price = models.IntegerField(default=-1)
-    home_type = models.CharField(max_length=200, default=not_set_char)
-    move_in_day = models.DateField(default=datetime.date.today)
-    lat = models.DecimalField(max_digits=9, decimal_places=6, default=0)
-    lon = models.DecimalField(max_digits=9, decimal_places=6, default=0)
-    remarks = models.TextField(default="")
-    listing_no = models.IntegerField(default=-1)
-    listing_provider = models.CharField(max_length=200, default=not_set_char)
-    listing_agent = models.CharField(max_length=200, default=not_set_char)
-    listing_office = models.CharField(max_length=200, default=not_set_char)
+    _apartment_number = models.CharField(max_length=200, default=not_set_char)
+    _home_type = models.CharField(max_length=200, default=not_set_char)
+    _move_in_day = models.DateField(default=datetime.date.today)
 
     def __str__(self):
         return self.address
-
-    def get_remarks(self):
-        return self.remarks
-
-    def get_listing_no(self):
-        return self.listing_no
-
-    def get_listing_provider(self):
-        return self.listing_provider
-
-    def get_listing_agent(self):
-        return self.listing_agent
-
-    def get_listing_office(self):
-        return self.listing_office
 
     def get_address(self):
         return self.address
