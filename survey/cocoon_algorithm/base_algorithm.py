@@ -17,10 +17,15 @@ class CocoonAlgorithm(object):
     @homes.setter
     def homes(self, new_home):
         """
-        Add home to homes list
+        Add home to homes list.
+        If the variable is a list, then set the lists equal,
+        else append the home to the list
         :param new_home: New home to add to the list
         """
-        self._homes.append(new_home)
+        if isinstance(new_home, list):
+            self._homes = new_home
+        else:
+            self._homes.append(new_home)
 
     @property
     def destinations(self):
