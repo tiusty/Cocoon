@@ -745,6 +745,7 @@ def start_algorithm(survey, context):
     4. Filter by the number of bathrooms
     """
 
+    # TODO Maybe move querying to rent algorithm class?
     filtered_house_list = RentDatabase.objects \
         .filter(price__range=(survey.get_min_price(), survey.get_max_price())) \
         .filter(home_type__in=current_home_types) \
@@ -752,6 +753,7 @@ def start_algorithm(survey, context):
         .filter(num_bedrooms=survey.get_num_bedrooms()) \
         .filter(num_bathrooms__range=(survey.get_min_bathrooms(), survey.get_max_bathrooms()))
 
+    # TODO Maybe move this to the rent algorithm class?
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdestinations_set.all()
 
@@ -784,7 +786,8 @@ def start_algorithm(survey, context):
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
     rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
-                                                                 survey.get_washer_dryer_in_home(), survey.get_dish_washer_scale(), survey.get_bash())
+                                                                 survey.get_washer_dryer_in_home(),
+                                                                 survey.get_dish_washer_scale(), survey.get_bash())
 
     # Order the homes based off the score
     rent_algorithm.run_sort_home_by_score()
