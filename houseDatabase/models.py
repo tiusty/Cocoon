@@ -3,17 +3,14 @@ import datetime
 from django.utils import timezone
 
 
-not_set_char = "Not set"
-
-
 class HomeBase(models.Model):
     """
     Contains all the base information for a home
     """
-    _street_address_home = models.CharField(max_length=200, default=not_set_char)
-    _city_home = models.CharField(max_length=200, default=not_set_char)
-    _state_home = models.CharField(max_length=200, default=not_set_char)
-    _zip_code_home = models.CharField(max_length=200, default=not_set_char)
+    _street_address_home = models.CharField(max_length=200)
+    _city_home = models.CharField(max_length=200)
+    _state_home = models.CharField(max_length=200)
+    _zip_code_home = models.CharField(max_length=200)
     _price_home = models.IntegerField(default=-1)
     _latitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     _longitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
@@ -37,11 +34,17 @@ class HomeBase(models.Model):
 
     @property
     def zip_code(self):
+        if len(self._zip_code_home) > 5:
+            return self._zip_code_home[:5]
         return self._zip_code_home
 
     @property
     def price(self):
         return self._price_home
+
+    @property
+    def price_string(self):
+        return "$" + str(self.price)
 
     @property
     def latitude(self):
@@ -144,9 +147,9 @@ class MLSpinData(models.Model):
     """
     _remarks = models.TextField(default="")
     _listing_number = models.IntegerField(default=-1)
-    _listing_provider = models.CharField(max_length=200, default=not_set_char)
-    _listing_agent = models.CharField(max_length=200, default=not_set_char)
-    _listing_office = models.CharField(max_length=200, default=not_set_char)
+    _listing_provider = models.CharField(max_length=200)
+    _listing_agent = models.CharField(max_length=200)
+    _listing_office = models.CharField(max_length=200)
 
     @property
     def remarks(self):
@@ -176,92 +179,24 @@ class RentDatabase(MLSpinData, BuildingExteriorAmenities, InteriorAmenities, Hom
     """
     This model stores all the information associated with a home
     """
-    _apartment_number = models.CharField(max_length=200, default=not_set_char)
-    _home_type = models.CharField(max_length=200, default=not_set_char)
+    _apartment_number = models.CharField(max_length=200)
+    _home_type = models.CharField(max_length=200)
     _move_in_day = models.DateField(default=datetime.date.today)
 
     def __str__(self):
         return self.address
 
-    def get_address(self):
-        return self.address
+    @property
+    def move_in_day(self):
+        return self._move_in_day
 
-    def get_full_address(self):
-        return self.get_address() + ", " + self.get_city() + ", " + self.get_state() + " " + self.get_zip_code()
+    @property
+    def home_type(self):
+        return self._home_type
 
-    def short_address(self):
-        return self.get_address() + ", " + self.get_city()
-
-    def get_city(self):
-        return self.city
-
-    def get_state(self):
-        return self.state
-
-    def get_zip_code(self):
-        if len(self.zip_code) > 5:
-            return self.zip_code[:5]
-        return self.zip_code
-
-    def get_apartment_no(self):
-        return self.apartment_no
-
-    def get_price(self):
-        return self.price
-
-    def get_price_str(self):
-        return "$" + str(self.get_price())
-
-    def get_move_in_day(self):
-        return self.move_in_day
-
-    def get_num_bedrooms(self):
-        return self.num_bedrooms
-
-    def get_num_bathrooms(self):
-        return self.num_bathrooms
-
-    def get_home_type(self):
-        return self.home_type
-
-    def get_air_conditioning(self):
-        return self.air_conditioning
-
-    def get_wash_dryer_in_home(self):
-        return self.wash_dryer_in_home
-
-    def get_dish_washer(self):
-        return self.dish_washer
-
-    def get_bath(self):
-        return self.bath
-
-    def get_lat(self):
-        return self.lat
-
-    def get_lon(self):
-        return self.lon
-
-    def get_parking_spot(self):
-        return self.parking_spot
-
-    def get_washer_dryer_in_building(self):
-        return self.washer_dryer_in_building
-
-    def get_elevator(self):
-        return self.elevator
-
-    def get_handicap_access(self):
-        return self.handicap_access
-
-    def get_pool_hot_tub(self):
-        return self.pool_hot_tub
-
-    def get_fitness_center(self):
-        return self.fitness_center
-
-    def get_storage_unit(self):
-        return self.storage_unit
+    @property
+    def apartment_number(self):
+        return self._apartment_number
 
 
 def house_directory_path(instance, filename):

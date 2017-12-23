@@ -301,7 +301,7 @@ class RentingDestinations(Destinations):
 #     eliminated = models.BooleanField(default=False)
 #
 #     def __str__(self):
-#         return self.house.get_full_address()
+#         return self.house.full_address()
 #
 #     def get_score_percent(self):
 #         """

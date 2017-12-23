@@ -136,7 +136,7 @@ class ScoringStruct:
         self.eliminated = False
 
     def __str__(self):
-        return self.house.get_full_address()
+        return self.house.full_address()
 
     def get_score(self):
         """
@@ -347,7 +347,7 @@ def create_price_score(scored_house_list, survey):
 
     # Apply price scoring for all the houses
     for house in scored_house_list:
-        house_price = house.house.get_price()
+        house_price = house.house.price()
         house_price_normalized = house_price - min_price
         # Guarantee that the house normalized price is not negative, (score should never decrease)
         if house_price_normalized >= 0:
@@ -406,10 +406,10 @@ def create_interior_amenities_score(scored_house_list, survey):
     """
     # Loop throuh all the homes and score each one
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.get_air_conditioning(), survey.get_air_conditioning())
-        weighted_question_scoring(home, home.house.get_wash_dryer_in_home(), survey.get_wash_dryer_in_home())
-        weighted_question_scoring(home, home.house.get_dish_washer(), survey.get_dish_washer())
-        weighted_question_scoring(home, home.house.get_bath(), survey.get_bath())
+        weighted_question_scoring(home, home.house.air_conditioning(), survey.air_conditioning())
+        weighted_question_scoring(home, home.house.washer_dryer_in_home(), survey.washer_dryer_in_home())
+        weighted_question_scoring(home, home.house.dish_washer(), survey.dish_washer())
+        weighted_question_scoring(home, home.house.bath(), survey.bath())
 
 
 def create_exterior_amenities_score(scored_house_list, survey):
@@ -421,14 +421,14 @@ def create_exterior_amenities_score(scored_house_list, survey):
     :param survey: The user survey that is being used to evaluate the homes
     """
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.get_parking_spot(), survey.get_parking_spot())
-        weighted_question_scoring(home, home.house.get_washer_dryer_in_building(),
-                                  survey.get_washer_dryer_in_building())
-        weighted_question_scoring(home, home.house.get_elevator(), survey.get_elevator())
-        weighted_question_scoring(home, home.house.get_handicap_access(), survey.get_handicap_access())
-        weighted_question_scoring(home, home.house.get_pool_hot_tub(), survey.get_pool_hot_tub())
-        weighted_question_scoring(home, home.house.get_fitness_center(), survey.get_fitness_center())
-        weighted_question_scoring(home, home.house.get_storage_unit(), survey.get_storage_unit())
+        weighted_question_scoring(home, home.house.parking_spot(), survey.parking_spot())
+        weighted_question_scoring(home, home.house.washer_dryer_in_building(),
+                                  survey.washer_dryer_in_building())
+        weighted_question_scoring(home, home.house.elevator(), survey.elevator())
+        weighted_question_scoring(home, home.house.handicap_access(), survey.handicap_access())
+        weighted_question_scoring(home, home.house.pool_hot_tub(), survey.pool_hot_tub())
+        weighted_question_scoring(home, home.house.fitness_center(), survey.fitness_center())
+        weighted_question_scoring(home, home.house.storage_unit(), survey.storage_unit())
 
 
 # Given the houseScore and the survey generate and add the score based
@@ -507,11 +507,11 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                 # add the combination to the failed_zip_code dictionary
                 try:
                     zip_code_dictionary = ZipCodeDictionary.objects.get(
-                        zip_code=house.house.get_zip_code(),
+                        zip_code=house.house.zip_code(),
                     )
                     try:
                         zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
-                            zip_code=destination.get_zip_code(),
+                            zip_code=destination.zip_code(),
                             commute_type=commute_type,
                         )
                         # If the zip code needs to be refreshed, then delete the zip code
@@ -550,11 +550,11 @@ def add_home_to_failed_list(failed_zip_dict, destination, house, blacklist):
 
     """
 
-    dest_zip = destination.get_zip_code()
-    dest_city = destination.get_city()
+    dest_zip = destination.zip_code()
+    dest_city = destination.city()
 
-    house_zip = house.house.get_zip_code()
-    house_city = house.house.get_city()
+    house_zip = house.house.zip_code()
+    house_city = house.house.city()
 
     if (not blacklist.blacklisted(house_zip)):
         if dest_zip in failed_zip_dict:
@@ -683,12 +683,12 @@ def compute_exact_commute(destinations, scored_list, commute_type):
     destinations_full_address = []
     # Retrieve only the full address to give to the distance matrix
     for destination in destinations:
-        destinations_full_address.append(destination.get_full_address())
+        destinations_full_address.append(destination.full_address())
 
     origins = []
     counter = 0
     for home in scored_list:
-        origins.append(home.house.get_full_address())
+        origins.append(home.house.full_address())
         counter += 1
         if counter is number_of_exact_commutes_computed:
             break
