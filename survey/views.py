@@ -787,8 +787,7 @@ def start_algorithm(survey, context):
                                                                  survey.get_washer_dryer_in_home(), survey.get_dish_washer_scale(), survey.get_bash())
 
     # Order the homes based off the score
-    # TODO Implement function
-    # rent_algorithm.sort_home_by_score()
+    rent_algorithm.run_sort_home_by_score()
 
     """
     STEP 3:
@@ -805,9 +804,7 @@ def start_algorithm(survey, context):
     # rent_algorithm.run_compute_commute_score_exact()
 
     # Now reorder all the homes with the new information
-    # order_by_house_score(scored_house_list)
-    # TODO Implement function
-    # rent_algorithm.sort_home_by_score()
+    rent_algorithm.run_sort_home_by_score()
 
     # Contains destinations of the user
     context['locations'] = destination_set
