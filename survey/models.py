@@ -318,7 +318,7 @@ class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceIn
 class Destinations(models.Model):
     _street_address = models.CharField(max_length=200)
     _city = models.CharField(max_length=200)
-    _state = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
     _zip_code = models.CharField(max_length=200)
 
     @property
@@ -330,39 +330,21 @@ class Destinations(models.Model):
         return self._city
 
     @property
-    def state(self):
-        return self._state
-
-    @property
     def zip_code(self):
-        """
-        Only return the first 5 digits of the zip_code
-        :return:
-        """
         return self._zip_code[:5]
 
     @property
-    def full_address(self):
-        """
-        Return the full address as a string
-        :return: String -> Full address
-        """
-        return "{0}, {1}, {2}, {3}".format(self.street_address, self.city, self.state, self.zip_code)
-
-    @property
     def short_address(self):
-        """
-        Return the short address as a string
-        :return: String -> Short address
-        """
         return "{0}, {1}".format(self.street_address, self.city)
 
     class Meta:
         abstract = True
 
 
+# Used for the renting survey
 class RentingDestinations(Destinations):
     survey = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):
-        return self.street_address
+        return self._street_address
+

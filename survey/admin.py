@@ -44,7 +44,7 @@ class HomeTypeModelAdmin(admin.ModelAdmin):
 class RentDestinationAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Rent Destination',
-         {'fields': ['survey', 'street_address']})
+         {'fields': ['survey', '_street_address']})
     ]
     list_display = ('survey',)
 
