@@ -316,22 +316,26 @@ class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceIn
 
 
 class Destinations(models.Model):
-    _street_address = models.CharField(max_length=200)
-    _city = models.CharField(max_length=200)
-    state = models.CharField(max_length=200)
-    _zip_code = models.CharField(max_length=200)
+    _street_address_destination = models.CharField(max_length=200)
+    _city_destination = models.CharField(max_length=200)
+    _state_destination = models.CharField(max_length=200)
+    _zip_code_destination = models.CharField(max_length=200)
 
     @property
     def street_address(self):
-        return self._street_address
+        return self._street_address_destination
 
     @property
     def city(self):
-        return self._city
+        return self._city_destination
+
+    @property
+    def state(self):
+        return self._state_destination
 
     @property
     def zip_code(self):
-        return self._zip_code[:5]
+        return self._zip_code_destination[:5]
 
     @property
     def short_address(self):
@@ -341,10 +345,9 @@ class Destinations(models.Model):
         abstract = True
 
 
-# Used for the renting survey
 class RentingDestinations(Destinations):
     survey = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):
-        return self._street_address
+        return self.street_address
 
