@@ -446,4 +446,4 @@ class RentingDestinations(Destinations):
 #     """
 #     scoring_struct = models.ForeignKey(RentScoringStruct)
 #     commute_type = models.IntegerField(default=CommutePrecision.approx.value)
-#     commute_time = models.IntegerField(default=0)
+#     commute_time_minutes = models.IntegerField(default=0)

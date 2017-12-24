@@ -507,12 +507,12 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                 # add the combination to the failed_zip_code dictionary
                 try:
                     zip_code_dictionary = ZipCodeDictionary.objects.get(
-                        zip_code=house.house.zip_code
+                        _zip_code=house.house.zip_code
                     )
                     try:
                         zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
-                            zip_code=destination.get_zip_code(),
-                            commute_type=commute_type,
+                            _zip_code=destination.zip_code,
+                            _commute_type=commute_type,
                         )
                         # If the zip code needs to be refreshed, then delete the zip code
                         # and add it to the failed list
@@ -522,7 +522,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                             add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
                             # If all the conditions pass, then store the commute time stored for that combination
                         else:
-                            house.approxCommuteTime.append(zip_code_dictionary_child.get_commute_time())
+                            house.approxCommuteTime.append(zip_code_dictionary_child.commute_time_minutes)
                     except ZipCodeDictionaryChild.DoesNotExist:
                         # add_home_to_failed_list(failed_zip_codes, destination, house)
                         add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
@@ -616,27 +616,27 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blackli
                         for commute in matrix["rows"][counter]["elements"]:
                             # Divide by 60 to get minutes
                             if commute['status'] == 'OK':
-                                if ZipCodeDictionary.objects.filter(zip_code=origin).exists():
-                                    zip_code_dictionary = ZipCodeDictionary.objects.get(zip_code=origin)
+                                if ZipCodeDictionary.objects.filter(_zip_code=origin).exists():
+                                    zip_code_dictionary = ZipCodeDictionary.objects.get(_zip_code=origin)
                                     if zip_code_dictionary.zipcodedictionarychild_set.filter(
-                                            zip_code=dest_zip,
-                                            commute_type=commute_type).exists():
+                                            _zip_code=dest_zip,
+                                            _commute_type=commute_type).exists():
                                         print("The combination that was computed already exists")
                                     else:
                                         zip_code_dictionary.zipcodedictionarychild_set.create(
-                                            zip_code=dest_zip,
-                                            commute_type=commute_type,
-                                            commute_distance=commute['distance']['value'],
-                                            commute_time=commute['duration']['value'],
+                                            _zip_code=dest_zip,
+                                            _commute_type=commute_type,
+                                            _commute_distance=commute['distance']['value'],
+                                            _commute_time=commute['duration']['value'],
                                         )
                                         print(commute['duration']['value'])
                                 else:
-                                    ZipCodeDictionary.objects.create(zip_code=origin) \
+                                    ZipCodeDictionary.objects.create(_zip_code=origin) \
                                         .zipcodedictionarychild_set.create(
-                                        zip_code=dest_zip,
-                                        commute_type=commute_type,
-                                        commute_distance=commute['distance']['value'],
-                                        commute_time=commute['duration']['value'],
+                                        _zip_code=dest_zip,
+                                        _commute_type=commute_type,
+                                        _commute_distance=commute['distance']['value'],
+                                        _commute_time=commute['duration']['value'],
                                     )
                             else:
                                 print("distance not found")
