@@ -210,14 +210,15 @@ def house_directory_path(instance, filename):
 
 
 class HousePhotos(models.Model):
-    house = models.ForeignKey('RentDatabase', on_delete=models.CASCADE)
-    image_path = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
+    _house = models.ForeignKey('RentDatabase', on_delete=models.CASCADE)
+    _image_path = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
 
     def __str__(self):
-        return self.get_image_path()
-
-    def get_image_path(self):
         return self.image_path
+
+    @property
+    def image_path(self):
+        return self._image_path
 
 
 class ZipCodeDictionaryParent(models.Model):
