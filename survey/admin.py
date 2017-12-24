@@ -21,15 +21,15 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     readonly_fields = ("created", 'id',)
     inlines = [AddressInLine]
     fieldsets = (
-        (None, {'fields': ('name', 'user_profile')}),
-        ('Survey', {'fields': ('home_type', 'min_price', 'max_price', 'min_commute',
-                               'max_commute', 'commute_weight', 'min_bathrooms', 'max_bathrooms', )}),
+        (None, {'fields': ('_name', '_user_profile')}),
+        ('Survey', {'fields': ('_home_type', '_min_price', '_max_price', '_min_commute',
+                               '_max_commute', '_commute_weight', '_min_bathrooms', '_max_bathrooms', )}),
         ('Interior Amenities',
-         {'fields': ('air_conditioning',)}),
+         {'fields': ('_air_conditioning',)}),
         ('Created', {'fields': ('created', 'id',)}),
     )
-    list_display = ('name', 'user_profile', 'get_short_name', )
-    list_filter = ['user_profile']
+    list_display = ('name', '_user_profile', )
+    list_filter = ['_user_profile']
     search_fields = ('name',)
 
 

@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
     Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
-    default_rent_survey_name, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
+    DEFAULT_RENT_SURVEY_NAME, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight
 from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
 from survey.models import RentingSurveyModel, CommutePrecision
@@ -85,7 +85,7 @@ def renting_survey(request):
                 # Then delete it. We only want to keep one "recent" survey
                 # The user has the option to change the name of it to save it permanently
                 RentingSurveyModel.objects.filter(user_profile=current_profile).filter(
-                    name=default_rent_survey_name).delete()
+                    name=DEFAULT_RENT_SURVEY_NAME).delete()
                 rent_survey.save()
 
                 # Since commit=False in the save, need to save the many to many fields
@@ -296,9 +296,9 @@ def create_commute_score(scored_house_list, survey, commute_precision):
     """
     # Currently only scores based on commute times
     # It supports having multiple destinations
-    max_commute = survey.max_commute()
-    min_commute = survey.min_commute()
-    scale_factor = survey.commute_weight()
+    max_commute = survey.max_commute
+    min_commute = survey.min_commute
+    scale_factor = survey.commute_weight
     for house in scored_house_list:
         # It needs to be made clear that the scale factor only effects the homes that are under the
         # Commute time. For example, if the max commute is 12 minutes, then anything over 12 is removed.
@@ -406,10 +406,10 @@ def create_interior_amenities_score(scored_house_list, survey):
     """
     # Loop throuh all the homes and score each one
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.air_conditioning, survey.air_conditioning())
-        weighted_question_scoring(home, home.house.washer_dryer_in_home, survey.washer_dryer_in_home())
-        weighted_question_scoring(home, home.house.dish_washer, survey.dish_washer())
-        weighted_question_scoring(home, home.house.bath, survey.bath())
+        weighted_question_scoring(home, home.house.air_conditioning, survey.air_conditioning)
+        weighted_question_scoring(home, home.house.washer_dryer_in_home, survey.washer_dryer_in_home)
+        weighted_question_scoring(home, home.house.dish_washer, survey.dish_washer)
+        weighted_question_scoring(home, home.house.bath, survey.bath)
 
 
 def create_exterior_amenities_score(scored_house_list, survey):
@@ -421,14 +421,14 @@ def create_exterior_amenities_score(scored_house_list, survey):
     :param survey: The user survey that is being used to evaluate the homes
     """
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.parking_spot, survey.parking_spot())
+        weighted_question_scoring(home, home.house.parking_spot, survey.parking_spot)
         weighted_question_scoring(home, home.house.washer_dryer_in_building,
-                                  survey.washer_dryer_in_buiding())
-        weighted_question_scoring(home, home.house.elevator, survey.elevator())
-        weighted_question_scoring(home, home.house.handicap_access, survey.handicap_access())
-        weighted_question_scoring(home, home.house.pool_hot_tub, survey.pool_hot_tub())
-        weighted_question_scoring(home, home.house.fitness_center, survey.fitness_center())
-        weighted_question_scoring(home, home.house.storage_unit, survey.storage_unit())
+                                  survey.washer_dryer_in_buiding)
+        weighted_question_scoring(home, home.house.elevator, survey.elevator)
+        weighted_question_scoring(home, home.house.handicap_access, survey.handicap_access)
+        weighted_question_scoring(home, home.house.pool_hot_tub, survey.pool_hot_tub)
+        weighted_question_scoring(home, home.house.fitness_center, survey.fitness_center)
+        weighted_question_scoring(home, home.house.storage_unit, survey.storage_unit)
 
 
 # Given the houseScore and the survey generate and add the score based
@@ -511,7 +511,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                     )
                     try:
                         zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
-                            zip_code=destination.zip_code(),
+                            zip_code=destination.zip_code,
                             commute_type=commute_type,
                         )
                         # If the zip code needs to be refreshed, then delete the zip code
@@ -683,7 +683,7 @@ def compute_exact_commute(destinations, scored_list, commute_type):
     destinations_full_address = []
     # Retrieve only the full address to give to the distance matrix
     for destination in destinations:
-        destinations_full_address.append(destination.full_address())
+        destinations_full_address.append(destination.full_address)
 
     origins = []
     counter = 0

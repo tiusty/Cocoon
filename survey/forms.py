@@ -6,8 +6,8 @@ import datetime
 
 # Python global configurations
 from Unicorn.settings.Global_Config import \
-    Max_Num_Bathrooms, Max_Text_Input_Length, \
-    Max_Num_Bedrooms, default_rent_survey_name, \
+    Max_Text_Input_Length, \
+    Max_Num_Bedrooms, DEFAULT_RENT_SURVEY_NAME, \
     weight_question_max
 
 
@@ -379,7 +379,7 @@ class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmen
     """
     name = forms.CharField(
         label="Survey Name",
-        initial=default_rent_survey_name,
+        initial=DEFAULT_RENT_SURVEY_NAME,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',

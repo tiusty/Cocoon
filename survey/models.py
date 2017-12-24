@@ -322,22 +322,6 @@ class Destinations(models.Model):
     _zip_code = models.CharField(max_length=200)
 
     @property
-    def full_address(self):
-        """
-        Return the full address as a string
-        :return: String -> Full address
-        """
-        return "{0}, {1}, {2}, {3}".format(self.street_address, self.city, self.state, self.zip_code)
-
-    @property
-    def short_address(self):
-        """
-        Return the short address as a string
-        :return: String -> Short address
-        """
-        return "{0}, {1}".format(self.street_address, self.city)
-
-    @property
     def street_address(self):
         return self._street_address
 
@@ -356,6 +340,25 @@ class Destinations(models.Model):
         :return:
         """
         return self._zip_code[:5]
+
+    @property
+    def full_address(self):
+        """
+        Return the full address as a string
+        :return: String -> Full address
+        """
+        return "{0}, {1}, {2}, {3}".format(self.street_address, self.city, self.state, self.zip_code)
+
+    @property
+    def short_address(self):
+        """
+        Return the short address as a string
+        :return: String -> Short address
+        """
+        return "{0}, {1}".format(self.street_address, self.city)
+
+    class Meta:
+        abstract = True
 
 
 class RentingDestinations(Destinations):
