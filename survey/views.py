@@ -625,8 +625,8 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blackli
                                         zip_code_dictionary.zipcodedictionarychild_set.create(
                                             _zip_code=dest_zip,
                                             _commute_type=commute_type,
-                                            _commute_distance=commute['distance']['value'],
-                                            _commute_time=commute['duration']['value'],
+                                            _commute_distance_meters=commute['distance']['value'],
+                                            _commute_time_seconds=commute['duration']['value'],
                                         )
                                         print(commute['duration']['value'])
                                 else:
@@ -634,8 +634,8 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blackli
                                         .zipcodedictionarychild_set.create(
                                         _zip_code=dest_zip,
                                         _commute_type=commute_type,
-                                        _commute_distance=commute['distance']['value'],
-                                        _commute_time=commute['duration']['value'],
+                                        _commute_distance_meters=commute['distance']['value'],
+                                        _commute_time_seconds=commute['duration']['value'],
                                     )
                             else:
                                 print("distance not found")
