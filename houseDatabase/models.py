@@ -63,7 +63,7 @@ class InteriorAmenities(models.Model):
     Contains all the information for homes about the Interior Amenities
     """
     _air_conditioning = models.BooleanField(default=False)
-    _wash_dryer_in_home = models.BooleanField(default=False)
+    _washer_dryer_in_home = models.BooleanField(default=False)
     _dish_washer = models.BooleanField(default=False)
     _bath = models.BooleanField(default=False)
     _num_bathrooms = models.IntegerField(default=0)
@@ -75,7 +75,7 @@ class InteriorAmenities(models.Model):
 
     @property
     def washer_dryer_in_home(self):
-        return self._wash_dryer_in_home
+        return self._washer_dryer_in_home
 
     @property
     def dish_washer(self):
