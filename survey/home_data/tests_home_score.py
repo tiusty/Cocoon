@@ -116,3 +116,15 @@ class TestScoringMethods(TestCase):
         self.assertIsNone(home_score.home)
         home_score.home = self.home
         self.assertIsNotNone(home_score.home)
+
+    def test_approx_commute_times_setter(self):
+        home_score = HomeScore()
+        self.assertIsEqual(home_score.approx_commute_times, [])
+        self.approx_commute_times = 5
+        self.approx_commute_times = 10
+        self.assertIsEqual(home_score.approx_commute_times, [5,10])
+        self.approx_commute_times = [1,2,3]
+        self.assertIsEqual(home_score.approx_commute_times, [1,2,3])
+        self.approx_commute_times = []
+        self.assertIsEqual(home_score.approx_commute_times, [])
+

@@ -33,8 +33,11 @@ class HomeScore(object):
 
     @approx_commute_times.setter
     def approx_commute_times(self, new_approx_commute_time):
-        # TODO If the setter is a list then set instead of append
-        self._approx_commute_times_minutes.append(new_approx_commute_time)
+        # If the setter is a list then set instead of append
+        if isinstance(new_approx_commute_time, list):
+            self._approx_commute_times_minutes = new_approx_commute_time
+        else:
+            self._approx_commute_times_minutes.append(new_approx_commute_time)
 
     def percent_score(self):
         """
