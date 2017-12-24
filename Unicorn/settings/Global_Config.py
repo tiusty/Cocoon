@@ -3,7 +3,7 @@ import googlemaps
 
 # Survey Global Variables
 default_buy_survey_name = "Recent Buy Survey"
-default_rent_survey_name = "Recent Rent Survey"
+DEFAULT_RENT_SURVEY_NAME = "Recent Rent Survey"
 
 survey_types = Enum('survey_types', 'rent buy')
 
@@ -12,7 +12,7 @@ hybrid_question_weight = 20
 commute_question_weight = 100
 price_question_weight = 100
 weight_question_max = 7
-Max_Num_Bathrooms = 7  # Base 0, I guess should be base 1
+MAX_NUM_BATHROOMS = 7  # Base 0, I guess should be base 1
 Max_Num_Bedrooms = 6  # Base 1, so from 1 bedroom to 6 bedrooms
 Max_Text_Input_Length = 200
 Hybrid_weighted_max = 3

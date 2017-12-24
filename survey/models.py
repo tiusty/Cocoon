@@ -1,13 +1,17 @@
+# Import django python modules
 from django.db import models
-from userAuth.models import UserProfile
-from houseDatabase.models import RentDatabase
-from enum import Enum
-
-import math
 from django.utils import timezone
 
+# Import python modules
+from enum import Enum
+import math
+
 # Import Global Variables
-from Unicorn.settings.Global_Config import Max_Num_Bathrooms, default_rent_survey_name
+from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME
+
+# Import other models
+from userAuth.models import UserProfile
+from houseDatabase.models import RentDatabase
 
 
 class CommutePrecision(Enum):
@@ -24,18 +28,6 @@ HYBRID_WEIGHT_CHOICES = (
     (-2, "Really don't want"),
     (-3, "Don't want"),
 )
-
-
-class InitialSurveyModel(models.Model):
-    """
-    Stores the default information across all the surveys
-    Stores survey type and when it was created
-    """
-    survey_type = models.IntegerField(default=-1)
-    created = models.DateField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
 
 
 class HomeType(models.Model):
@@ -60,74 +52,64 @@ class HomeType(models.Model):
         return self.homeType
 
 
-class InteriorAmenities(models.Model):
+class InitialSurveyModel(models.Model):
     """
-    Contains all the survey questions regarding the interior amenities
-    Any survey can inherit these fields
+    Stores the default information across all the surveys
     """
-    air_conditioning = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    wash_dryer_in_home = models.IntegerField(default=0)
-    dish_washer = models.IntegerField(default=0)
-    bath = models.IntegerField(default=0)
-    max_bathrooms = models.IntegerField(default=Max_Num_Bathrooms)
-    min_bathrooms = models.IntegerField(default=0)
+    _name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
+    _survey_type = models.IntegerField(default=-1)
+    _created = models.DateField(auto_now_add=True)
 
-    def get_air_conditioning(self):
-        return self.air_conditioning
+    @property
+    def name(self):
+        return self._name
 
-    def get_wash_dryer_in_home(self):
-        return self.wash_dryer_in_home
+    @property
+    def survey_type(self):
+        return self._survey_type
 
-    def get_dish_washer(self):
-        return self.dish_washer
-
-    def get_bath(self):
-        return self.bath
-
-    def get_max_bathrooms(self):
-        return self.max_bathrooms
-
-    def get_min_bathrooms(self):
-        return self.min_bathrooms
+    @property
+    def created(self):
+        return self._created
 
     class Meta:
         abstract = True
 
 
-class BuildingExteriorAmenities(models.Model):
+class HomeInformationModel(models.Model):
     """
-    Contains all the survey questions regarding the building/Exterior Amenities
-    Any survey can inherit these fields
-    All Questions are hybrid weighted
+    Contains basic information about a home
     """
-    parking_spot = models.IntegerField(default=0)
-    washer_dryer_in_building = models.IntegerField(default=0)
-    elevator = models.IntegerField(default=0)
-    handicap_access = models.IntegerField(default=0)
-    pool_hot_tub = models.IntegerField(default=0)
-    fitness_center = models.IntegerField(default=0)
-    storage_unit = models.IntegerField(default=0)
+    _move_in_date_start = models.DateField(default=timezone.now)
+    _move_in_date_end = models.DateField(default=timezone.now)
+    _num_bedrooms = models.IntegerField(default=0)
+    _max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
+    _min_bathrooms = models.IntegerField(default=0)
+    _home_type = models.ManyToManyField(HomeType)
 
-    def get_parking_spot(self):
-        return self.parking_spot
+    @property
+    def move_in_date_start(self):
+        return self._move_in_date_start
 
-    def get_washer_dryer_in_building(self):
-        return self.washer_dryer_in_building
+    @property
+    def move_in_date_end(self):
+        return self._move_in_date_end
 
-    def get_elevator(self):
-        return self.elevator
+    @property
+    def num_bedrooms(self):
+        return self._num_bedrooms
 
-    def get_handicap_access(self):
-        return self.handicap_access
+    @property
+    def max_bathrooms(self):
+        return self._max_bathrooms
 
-    def get_pool_hot_tub(self):
-        return self.pool_hot_tub
+    @property
+    def min_bathrooms(self):
+        return self._min_bathrooms
 
-    def get_fitness_center(self):
-        return self.fitness_center
-
-    def get_storage_unit(self):
-        return self.storage_unit
+    @property
+    def home_type(self):
+        return self._home_type
 
     class Meta:
         abstract = True
@@ -141,58 +123,134 @@ COMMUTE_TYPES = (
 )
 
 
-class RequiredInformation(models.Model):
-    name = models.CharField(max_length=200, default=default_rent_survey_name)
-    max_price = models.IntegerField(default=0)
-    min_price = models.IntegerField(default=0)
-    price_weight = models.IntegerField(default=0)
-    max_commute = models.IntegerField(default=0)
-    min_commute = models.IntegerField(default=0)
-    commute_weight = models.IntegerField(default=0)
-    commute_type = models.CharField(max_length=20, choices=COMMUTE_TYPES, default="driving")
-    move_in_date_start = models.DateField(default=timezone.now)
-    move_in_date_end = models.DateField(default=timezone.now)
-    num_bedrooms = models.IntegerField(default=0)
-    home_type = models.ManyToManyField(HomeType)
+class CommuteInformationModel(models.Model):
+    """
+    Contains all the commute information for a given home
+    """
+    _max_commute = models.IntegerField(default=0)
+    _min_commute = models.IntegerField(default=0)
+    _commute_weight = models.IntegerField(default=0)
+    _commute_type = models.CharField(max_length=20, choices=COMMUTE_TYPES, default="driving")
 
-    def get_name(self):
-        return self.name
+    @property
+    def max_commute(self):
+        return self._max_commute
 
-    def get_max_price(self):
-        return self.max_price
+    @property
+    def min_commute(self):
+        return self._min_commute
 
-    def get_min_price(self):
-        return self.min_price
+    @property
+    def commute_weight(self):
+        return self._commute_weight
 
-    def get_price_weight(self):
-        return self.price_weight
-
-    def get_max_commute(self):
-        return self.max_commute
-
-    def get_min_commute(self):
-        return self.min_commute
-
-    def get_commute_weight(self):
-        return self.commute_weight
-
-    def get_commute_type(self):
-        return self.commute_type
-
-    def get_move_in_date_start(self):
-        return self.move_in_date_start
-
-    def get_move_in_date_end(self):
-        return self.move_in_date_end
-
-    def get_num_bedrooms(self):
-        return self.num_bedrooms
+    @property
+    def commute_type(self):
+        return self._commute_type
 
     class Meta:
         abstract = True
 
 
-class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenities, BuildingExteriorAmenities):
+class PriceInformationModel(models.Model):
+    """
+    Contains all the price information for a given home
+    """
+    _max_price = models.IntegerField(default=0)
+    _min_price = models.IntegerField(default=0)
+    _price_weight = models.IntegerField(default=0)
+
+    @property
+    def max_price(self):
+        return self._max_price
+
+    @property
+    def min_price(self):
+        return self._min_price
+
+    @property
+    def price_weight(self):
+        return self._price_weight
+
+    class Meta:
+        abstract = True
+
+
+class InteriorAmenitiesModel(models.Model):
+    """
+    Contains all the survey questions regarding the interior amenities
+    """
+    _air_conditioning = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    _washer_dryer_in_home = models.IntegerField(default=0)
+    _dish_washer = models.IntegerField(default=0)
+    _bath = models.IntegerField(default=0)
+
+    @property
+    def air_conditioning(self):
+        return self._air_conditioning
+
+    @property
+    def washer_dryer_in_home(self):
+        return self._washer_dryer_in_home
+
+    @property
+    def dish_washer(self):
+        return self._dish_washer
+
+    @property
+    def bath(self):
+        return self._bath
+
+    class Meta:
+        abstract = True
+
+
+class ExteriorAmenitiesModel(models.Model):
+    """
+    Contains all the survey questions regarding the building/Exterior Amenities
+    All Questions are hybrid weighted
+    """
+    _parking_spot = models.IntegerField(default=0)
+    _washer_dryer_in_building = models.IntegerField(default=0)
+    _elevator = models.IntegerField(default=0)
+    _handicap_access = models.IntegerField(default=0)
+    _pool_hot_tub = models.IntegerField(default=0)
+    _fitness_center = models.IntegerField(default=0)
+    _storage_unit = models.IntegerField(default=0)
+
+    @property
+    def parking_spot(self):
+        return self.parking_spot
+
+    @property
+    def washer_dryer_in_buiding(self):
+        return self._washer_dryer_in_building
+
+    @property
+    def elevator(self):
+        return self._elevator
+
+    @property
+    def handicap_access(self):
+        return self._handicap_access
+
+    @property
+    def pool_hot_tub(self):
+        return self._pool_hot_tub
+
+    @property
+    def fitness_center(self):
+        return self._fitness_center
+
+    @property
+    def storage_unit(self):
+        return self._storage_unit
+
+    class Meta:
+        abstract = True
+
+
+class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceInformationModel, CommuteInformationModel, HomeInformationModel, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
     It takes the Initial Survey model as an input which is data that is true for all surveys
@@ -206,37 +264,37 @@ class RentingSurveyModel(InitialSurveyModel, RequiredInformation, InteriorAmenit
 
     def get_short_name(self):
         user_short_name = self.user_profile.user.get_short_name()
-        survey_name = self.get_name()
+        survey_name = self.name()
         output = user_short_name + ": " + survey_name
         return output
 
     def __str__(self):
         user_short_name = self.user_profile.user.get_short_name()
-        survey_name = self.get_name()
+        survey_name = self.name()
         output = user_short_name + ": " + survey_name
         return output
 
     def get_cost_range(self):
-        if self.get_max_price() == 0:
+        if self.max_price() == 0:
             return "Not set"
         else:
-            price_output = "$" + str(self.get_min_price()) + " - $" + str(self.get_max_price())
+            price_output = "$" + str(self.min_price()) + " - $" + str(self.max_price())
             return price_output
 
     def get_commute_range(self):
-        if self.get_max_commute() == 0:
+        if self.max_commute() == 0:
             return "Not Set"
         else:
-            if self.get_max_commute() > 60:
-                max_output = str(math.floor(self.get_max_commute()/60)) + " hours " + str(self.get_max_commute() % 60) \
+            if self.max_commute() > 60:
+                max_output = str(math.floor(self.max_commute() / 60)) + " hours " + str(self.max_commute() % 60) \
                              + " Minutes"
             else:
-                max_output = str(self.get_max_commute()) + " Minutes"
-            if self.get_min_commute() > 60:
-                min_output = str(math.floor(self.get_min_commute()/60)) + " hours " + str(self.get_min_commute() % 60) \
+                max_output = str(self.max_commute()) + " Minutes"
+            if self.min_commute() > 60:
+                min_output = str(math.floor(self.min_commute() / 60)) + " hours " + str(self.min_commute() % 60) \
                              + " Minutes"
             else:
-                min_output = str(self.get_min_commute()) + " Minutes"
+                min_output = str(self.min_commute()) + " Minutes"
 
         return min_output + " - " + max_output
 
@@ -288,162 +346,3 @@ class RentingDestinations(Destinations):
         return self.street_address
 
 
-# class RentScoringStruct(models.Model):
-#     """
-#     Class that stores a homes and the associated values with that homes
-#     This allows homes to be stored with a survey and then the home can
-#     be loaded at any time. Reduces the computation time for the server
-#     NOTE THIS CLASS HAS NOT BEEN TESTED ONLY ADDED
-#     """
-#     house = models.ForeignKey(RentDatabase)
-#     score = models.IntegerField(default=0)
-#     score_possible = models.IntegerField(default=0)
-#     eliminated = models.BooleanField(default=False)
-#
-#     def __str__(self):
-#         return self.house.full_address()
-#
-#     def get_score_percent(self):
-#         """
-#         Generates the actual score based on the possible score and current score.
-#         This makes sure that the divide by zero case is handled.
-#         :return:
-#             Returns the score. If it was eliminated then it returns -1 to indicate that
-#                 The house should not be used
-#         """
-#         # Takes care of divide by 0, also if it is eliminated the score should be -1
-#         if self.get_score_possible() != 0 and self.eliminated is False:
-#             return (self.score / self.get_score_possible()) * 100
-#         elif self.eliminated:
-#             # If eliminated return negative one so it is sorted to the back
-#             return -1
-#         else:
-#             return 0
-#
-#     def get_score(self):
-#         return self.score
-#
-#     def get_score_possible(self):
-#         return self.score_possible
-#
-#     def get_final_score(self):
-#         """
-#         Returns the score but rounds to the nearest integer to make it human friendly
-#         :return: the score rounded to the nearest integer
-#         """
-#         return round(self.get_score_percent())
-#
-#     def get_user_score(self):
-#         """
-#         Function: get_user_score()
-#         Description:
-#         Returns a human readable score. Therefore, the user will not see
-#             a long float which is meaningless
-#         Comments:
-#         Currently the scale is to large. Will define to +/- later.
-#         """
-#         current_score = self.get_score()
-#         if current_score >= 90:
-#             return "A"
-#         elif current_score >= 80:
-#             return "B"
-#         elif current_score >= 70:
-#             return "C"
-#         elif current_score >= 60:
-#             return "D"
-#         else:
-#             return "F"
-#
-#     def get_commute_times(self, commute_type):
-#         """
-#         Get commute times gets the commute for the house depending on the argument
-#         It will either return the exact or the approximate commute times
-#         :param commute_type: Enum type CommuteTypes
-#         :return: An array of ints which are all the commute times associated with that house
-#         """
-#         if commute_type is CommutePrecision.exact:
-#             return self.get_commute_times_exact()
-#         else:
-#             return self.get_commute_times_approx()
-#
-#     def get_commute_times_exact(self):
-#         """
-#         Returns all the commute times for that home as a list
-#         :return: A list with all the commute times
-#         """
-#         commutes = []
-#         for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.exact):
-#             commutes.append(commute)
-#         return commutes
-#
-#     def get_commute_times_approx(self):
-#         """
-#         Returns all the commute times for that home as a list
-#         :return: A list with all the commute times
-#         """
-#         commutes = []
-#         for commute in self.commutetimes_set.filter(commute_type=CommutePrecision.approx.value):
-#             commutes.append(commute)
-#         return commutes
-#
-#     def get_exact_commute_times_str(self):
-#         """
-#         Returns a formatted string that returns all the commute times for a given home
-#         Example output:
-#         27 Minutes, 27 Minutes, 27 Minutes
-#         :return:
-#         string -> Formatted to display nicely to the user
-#         """
-#         end_result = ""
-#         counter = 0
-#         for commute in self.get_commute_times_exact():
-#             if commute > 60:
-#                 max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
-#             else:
-#                 max_output = str(int(commute)) + " Minutes"
-#             if counter != 0:
-#                 end_result = end_result + ", " + max_output
-#             else:
-#                 end_result = max_output
-#             counter = 1
-#
-#         return end_result
-#
-#     def get_approx_commute_times_str(self):
-#         """
-#         Returns a formatted string that returns all the commute times for a given home
-#         Example output:
-#         27 Minutes, 27 Minutes, 27 Minutes
-#         :return:
-#         string -> Formatted to display nicely to the user
-#         """
-#         end_result = ""
-#         counter = 0
-#         for commute in self.get_commute_times_approx():
-#             if commute > 60:
-#                 max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
-#             else:
-#                 max_output = str(int(commute)) + " Minutes"
-#             if counter != 0:
-#                 end_result = end_result + ", " + max_output
-#             else:
-#                 end_result = max_output
-#             counter = 1
-#
-#         return end_result
-#
-#     def eliminate_home(self):
-#         """
-#         Sets the eliminated flag on a home
-#         """
-#         self.eliminated = True
-#
-#
-# class CommuteTimes(models.Model):
-#     """
-#     Stores a commute value and preceision for each RentScoringStruct
-#
-#     """
-#     scoring_struct = models.ForeignKey(RentScoringStruct)
-#     commute_type = models.IntegerField(default=CommutePrecision.approx.value)
-#     commute_time = models.IntegerField(default=0)

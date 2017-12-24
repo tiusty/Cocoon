@@ -296,9 +296,9 @@ def create_commute_score(scored_house_list, survey, commute_precision):
     """
     # Currently only scores based on commute times
     # It supports having multiple destinations
-    max_commute = survey.get_max_commute()
-    min_commute = survey.get_min_commute()
-    scale_factor = survey.get_commute_weight()
+    max_commute = survey.max_commute()
+    min_commute = survey.min_commute()
+    scale_factor = survey.commute_weight()
     for house in scored_house_list:
         # It needs to be made clear that the scale factor only effects the homes that are under the
         # Commute time. For example, if the max commute is 12 minutes, then anything over 12 is removed.
@@ -341,9 +341,9 @@ def create_price_score(scored_house_list, survey):
     """
 
     # Retrieve all the constant values
-    max_price = survey.get_max_price()
-    min_price = survey.get_min_price()
-    scale_factor = survey.get_price_weight()
+    max_price = survey.max_price()
+    min_price = survey.min_price()
+    scale_factor = survey.price_weight()
 
     # Apply price scoring for all the houses
     for house in scored_house_list:
@@ -406,10 +406,10 @@ def create_interior_amenities_score(scored_house_list, survey):
     """
     # Loop throuh all the homes and score each one
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.air_conditioning, survey.get_air_conditioning())
-        weighted_question_scoring(home, home.house.washer_dryer_in_home, survey.get_wash_dryer_in_home())
-        weighted_question_scoring(home, home.house.dish_washer, survey.get_dish_washer())
-        weighted_question_scoring(home, home.house.bath, survey.get_bath())
+        weighted_question_scoring(home, home.house.air_conditioning, survey.air_conditioning())
+        weighted_question_scoring(home, home.house.washer_dryer_in_home, survey.washer_dryer_in_home())
+        weighted_question_scoring(home, home.house.dish_washer, survey.dish_washer())
+        weighted_question_scoring(home, home.house.bath, survey.bath())
 
 
 def create_exterior_amenities_score(scored_house_list, survey):
@@ -421,14 +421,14 @@ def create_exterior_amenities_score(scored_house_list, survey):
     :param survey: The user survey that is being used to evaluate the homes
     """
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.parking_spot, survey.get_parking_spot())
+        weighted_question_scoring(home, home.house.parking_spot, survey.parking_spot())
         weighted_question_scoring(home, home.house.washer_dryer_in_building,
-                                  survey.get_washer_dryer_in_building())
-        weighted_question_scoring(home, home.house.elevator, survey.get_elevator())
-        weighted_question_scoring(home, home.house.handicap_access, survey.get_handicap_access())
-        weighted_question_scoring(home, home.house.pool_hot_tub, survey.get_pool_hot_tub())
-        weighted_question_scoring(home, home.house.fitness_center, survey.get_fitness_center())
-        weighted_question_scoring(home, home.house.storage_unit, survey.get_storage_unit())
+                                  survey.washer_dryer_in_buiding())
+        weighted_question_scoring(home, home.house.elevator, survey.elevator())
+        weighted_question_scoring(home, home.house.handicap_access, survey.handicap_access())
+        weighted_question_scoring(home, home.house.pool_hot_tub, survey.pool_hot_tub())
+        weighted_question_scoring(home, home.house.fitness_center, survey.fitness_center())
+        weighted_question_scoring(home, home.house.storage_unit, survey.storage_unit())
 
 
 # Given the houseScore and the survey generate and add the score based
