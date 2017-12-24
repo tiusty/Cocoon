@@ -8,14 +8,17 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 
-from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
-    Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
+from Unicorn.settings.Global_Config import survey_types, HYBRID_WEIGHT_MAX, \
+    HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT, approximate_commute_range, \
     default_rent_survey_name, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight
 from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
 from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
 from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
+
+# Import Survey algorithm modules
+from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 
 class RequestCounter:
     def __init__(self):
@@ -382,18 +385,18 @@ def weighted_question_scoring(home, contains_item, scale_factor):
     """
 
     # First remove the factor if the user marked it as must have, or must not have.
-    if scale_factor == Hybrid_weighted_max and contains_item is False:
+    if scale_factor == HYBRID_WEIGHT_MAX and contains_item is False:
         home.eliminate_home()
-    elif scale_factor == Hybrid_weighted_min and contains_item is True:
+    elif scale_factor == HYBRID_WEIGHT_MIN and contains_item is True:
         home.eliminate_home()
     # If the item is desired and the item is present the score will go up, or if the
     # item is not desired and it doesn't have the item, then the score will go up.
     # Otherwise the score will go down
-    home.score += (1 if contains_item else -1) * scale_factor * hybrid_question_weight
+    home.score += (1 if contains_item else -1) * scale_factor * HYBRID_QUESTION_WEIGHT
     # Regardless of anything else, always increment the possible points depending on the
     # Scale factor. The factor is added by the absolute value because the maximum value
     # needs to be added
-    home.scorePossible += abs(scale_factor) * hybrid_question_weight
+    home.scorePossible += abs(scale_factor) * HYBRID_QUESTION_WEIGHT
 
 
 def create_interior_amenities_score(scored_house_list, survey):
@@ -719,10 +722,13 @@ def compute_exact_commute(destinations, scored_list, commute_type):
 
 def start_algorithm(survey, context):
     blacklist = BlackList()
+
     # Creates an array with all the home types indicated by the survey
     current_home_types = []
     for home in survey.home_type.all():
         current_home_types.append(home.homeType)
+
+    rent_algorithm = RentAlgorithm()
 
     """
     STEP 1: Compute Static Elements
@@ -738,6 +744,8 @@ def start_algorithm(survey, context):
     4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
     4. Filter by the number of bathrooms
     """
+
+    # TODO Maybe move querying to rent algorithm class?
     filtered_house_list = RentDatabase.objects \
         .filter(price__range=(survey.get_min_price(), survey.get_max_price())) \
         .filter(home_type__in=current_home_types) \
@@ -745,29 +753,20 @@ def start_algorithm(survey, context):
         .filter(num_bedrooms=survey.get_num_bedrooms()) \
         .filter(num_bathrooms__range=(survey.get_min_bathrooms(), survey.get_max_bathrooms()))
 
+    # TODO Maybe move this to the rent algorithm class?
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdestinations_set.all()
 
-    # Origins are defined as all the homes that the person would originate from.
-    # This means where they would live, aka the house
-    origins = []
-    for house in filtered_house_list:
-        origins.append(house.address)
+    # Add the destinations to the rent_algorithm
+    for destination in destination_set:
+        rent_algorithm.destinations = destination
 
-    # The destination is defined as a location the user would commute to.
-    # Aka their job, school etc. Therefore this is the destination they wish to be at
-    # This just stores the list of destinations as a Survey.RentingDestination object
-    destinations = []
-    for location in destination_set:
-        destinations.append(location)
+    # Add the homes to the rent_algorithm
+    for home in filtered_house_list:
+        rent_algorithm = home
 
-    # This puts all the homes into a scored list
-    scored_house_list = []
-    for house in filtered_house_list:
-        scored_house_list.append(ScoringStruct(house))
-
-    commute_type = survey.get_commute_type()
-    context['commuteType'] = commute_type
+    # Determine the commute type, driving is currently the only type supported
+    rent_algorithm.commute_type = survey.get_commute_type()
 
     """
     STEP 2: Compute the approximate distance using zip codes.
@@ -776,39 +775,46 @@ def start_algorithm(survey, context):
     Dynamic filtering/scoring
     """
     # If there are no destinations or no homes, then don't bother with algorithm
-    if not destinations or not scored_house_list:
-        context['error_message'].append("No Destination or origin")
-    else:
-        # Computes the approximate commute times for the homes in the score_house_list
-        compute_approximate_commute_times(destinations, scored_house_list, commute_type, blacklist)
+    # Computes the approximate commute times for the homes in the score_house_list
+    # TODO Implement Function
+    # rent_algorithm.retrieve_all_approximate_commutes()
 
-        # Filters the houses based on the approximate commutes
-        filter_homes_based_on_approximate_commute(survey, scored_house_list)
+    # Filters the houses based on the approximate commutes
+    rent_algorithm.run_compute_approximate_commute_filter()
 
-        # Generate scores for the homes based on the survey results
-        create_house_score(scored_house_list, survey)
+    # Generate scores for the homes based on the survey results
+    rent_algorithm.run_compute_commute_score_approximate()
+    rent_algorithm.run_compute_price_score()
+    rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
+                                                                 survey.get_washer_dryer_in_home(),
+                                                                 survey.get_dish_washer_scale(), survey.get_bash())
 
-        # Order the homes based off the score
-        order_by_house_score(scored_house_list)
+    # Order the homes based off the score
+    rent_algorithm.run_sort_home_by_score()
 
-        """
-        STEP 3:
-        Compute the exact commutes and change the score based on the exact commute.
-        """
-        # Compute the exact commute for the top homes in the list and reorder only the top homes
-        compute_exact_commute(destinations, scored_house_list, commute_type)
+    """
+    STEP 3:
+    Compute the exact commutes and change the score based on the exact commute.
+    """
+    # Compute the exact commute for the top homes in the list and reorder only the top homes
+    # compute_exact_commute(destinations, scored_house_list, commute_type)
+    # TODO Implement function
+    # rent_algorithm.retrieve_exact_commutes()
 
-        # Now generate the score based on the exact commute
-        create_commute_score(scored_house_list, survey, CommutePrecision.exact)
+    # Now generate the score based on the exact commute
+    # create_commute_score(scored_house_list, survey, CommutePrecision.exact)
+    # TODO Implement Function
+    # rent_algorithm.run_compute_commute_score_exact()
 
-        # Now reorder all the homes with the new information
-        order_by_house_score(scored_house_list)
+    # Now reorder all the homes with the new information
+    rent_algorithm.run_sort_home_by_score()
 
     # Contains destinations of the user
     context['locations'] = destination_set
     # House list either comes from the scored homes or from the database static list if something went wrong
     # Only put up to 200 house on the list
-    context['houseList'] = scored_house_list[:200]
+    context['houseList'] = rent_algorithm.homes[:200]
+    context['commuteType'] = rent_algorithm.commute_type
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.

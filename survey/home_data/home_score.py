@@ -39,6 +39,22 @@ class HomeScore(object):
         else:
             self._approx_commute_times_minutes.append(new_approx_commute_time)
 
+    @property
+    def accumulated_points(self):
+        return self._accumulated_points
+
+    @accumulated_points.setter
+    def accumulated_points(self, new_points):
+        self._accumulated_points += new_points
+
+    @property
+    def total_possible_points(self):
+        return self._total_possible_points
+
+    @total_possible_points.setter
+    def total_possible_points(self, new_possible_points):
+        self._total_possible_points += new_possible_points
+
     def percent_score(self):
         """
         Generates the score percentage
@@ -46,12 +62,12 @@ class HomeScore(object):
         """
         if self.eliminated:
             return -1
-        elif self._accumulated_points < 0 or self._total_possible_points < 0:
-            print("Error: _total_possible_points (" + str(self._total_possible_points)
-                  + ") or _accumulated_points (" + str(self._accumulated_points) + " are 0)")
+        elif self.accumulated_points < 0 or self.total_possible_points < 0:
+            print("Error: _total_possible_points (" + str(self.total_possible_points)
+                  + ") or _accumulated_points (" + str(self.accumulated_points) + ") is less than 0")
             return -1
-        elif self._total_possible_points != 0:
-            return (self._accumulated_points / self._total_possible_points) * 100
+        elif self.total_possible_points != 0:
+            return (self.accumulated_points / self.total_possible_points) * 100
         else:
             return 0
 
