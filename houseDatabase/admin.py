@@ -14,7 +14,7 @@ class HouseAdmin(admin.ModelAdmin):
          {'fields': ['_street_address_home', '_city_home', '_state_home', '_zip_code_home', '_price_home',
                      '_home_type', '_move_in_day', '_latitude_home', '_longitude_home', ]}),
         ('Interior Amenities',
-         {'fields': ('_air_conditioning', '_wash_dryer_in_home', '_dish_washer',
+         {'fields': ('_air_conditioning', '_washer_dryer_in_home', '_dish_washer',
                      '_bath', '_num_bedrooms', '_num_bathrooms',), }),
         ('Exterior Amenities',
          {'fields': ('_parking_spot', '_washer_dryer_in_building', '_elevator',
