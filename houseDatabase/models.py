@@ -260,6 +260,10 @@ class ZipCodeDictionaryChild(models.Model):
         return self._zip_code
 
     @property
+    def base_zip_code(self):
+        return self._base_zip_code
+
+    @property
     def zip_code_parent(self):
         return self._base_zip_code
 
