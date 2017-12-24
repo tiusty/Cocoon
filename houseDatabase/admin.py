@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RentDatabase, ZipCodeDictionary,ZipCodeDictionaryChild, HousePhotos
+from .models import RentDatabase, ZipCodeDictionaryParent, ZipCodeDictionaryChild, HousePhotos
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
@@ -43,4 +43,4 @@ class ZipCodeDictionaryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(RentDatabase, HouseAdmin)
-admin.site.register(ZipCodeDictionary, ZipCodeDictionaryAdmin)
+admin.site.register(ZipCodeDictionaryParent, ZipCodeDictionaryAdmin)

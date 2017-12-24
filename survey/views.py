@@ -12,7 +12,7 @@ from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
     Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
     default_rent_survey_name, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight
-from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
+from houseDatabase.models import RentDatabase, ZipCodeDictionaryParent, ZipCodeDictionaryChild
 from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
 from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
@@ -506,7 +506,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                 # This searches for the zip code combination and then if it can't find it, it will
                 # add the combination to the failed_zip_code dictionary
                 try:
-                    zip_code_dictionary = ZipCodeDictionary.objects.get(
+                    zip_code_dictionary = ZipCodeDictionaryParent.objects.get(
                         _zip_code=house.house.zip_code
                     )
                     try:
@@ -526,7 +526,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                     except ZipCodeDictionaryChild.DoesNotExist:
                         # add_home_to_failed_list(failed_zip_codes, destination, house)
                         add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-                except ZipCodeDictionary.DoesNotExist:
+                except ZipCodeDictionaryParent.DoesNotExist:
                     # add_home_to_failed_list(failed_zip_codes, destination, house)
                     add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
 
@@ -616,8 +616,8 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blackli
                         for commute in matrix["rows"][counter]["elements"]:
                             # Divide by 60 to get minutes
                             if commute['status'] == 'OK':
-                                if ZipCodeDictionary.objects.filter(_zip_code=origin).exists():
-                                    zip_code_dictionary = ZipCodeDictionary.objects.get(_zip_code=origin)
+                                if ZipCodeDictionaryParent.objects.filter(_zip_code=origin).exists():
+                                    zip_code_dictionary = ZipCodeDictionaryParent.objects.get(_zip_code=origin)
                                     if zip_code_dictionary.zipcodedictionarychild_set.filter(
                                             _zip_code=dest_zip,
                                             _commute_type=commute_type).exists():
@@ -631,7 +631,7 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blackli
                                         )
                                         print(commute['duration']['value'])
                                 else:
-                                    ZipCodeDictionary.objects.create(_zip_code=origin) \
+                                    ZipCodeDictionaryParent.objects.create(_zip_code=origin) \
                                         .zipcodedictionarychild_set.create(
                                         _zip_code=dest_zip,
                                         _commute_type=commute_type,

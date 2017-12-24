@@ -220,10 +220,10 @@ class HousePhotos(models.Model):
         return self.image_path
 
 
-class ZipCodeDictionary(models.Model):
+class ZipCodeDictionaryParent(models.Model):
     """
     The base Zip Code, aka 02476, for each base zip_code, there will be
-    a bunch of associated zip codes via foreign key from ZipCodeDictionary model.
+    a bunch of associated zip codes via foreign key from ZipCodeDictionaryParent model.
      The Base model should not have a commute_time_minutes or Commute_distance since it is in
      releation to nothing. Instead the child zip code identifies the relation
     """
@@ -240,10 +240,10 @@ class ZipCodeDictionary(models.Model):
 class ZipCodeDictionaryChild(models.Model):
     """
     This model class serves as an approximation for commute time/distance associated with
-    zip_codes. This ZipCodeDictionary should be precomputed or should be populated periodically.
+    zip_codes. This ZipCodeDictionaryParent should be precomputed or should be populated periodically.
     """
     _zip_code = models.CharField(max_length=20)
-    _base_zip_code = models.ForeignKey('ZipCodeDictionary', on_delete=models.CASCADE)
+    _base_zip_code = models.ForeignKey('ZipCodeDictionaryParent', on_delete=models.CASCADE)
     _commute_time = models.IntegerField(default=-1)  # In seconds
     _commute_distance = models.IntegerField(default=-1)  # In Meters
     _last_date_updated = models.DateField(default=timezone.now)
@@ -263,7 +263,6 @@ class ZipCodeDictionaryChild(models.Model):
     def zip_code_parent(self):
         return self._base_zip_code
 
-    # Commute time is stored in seconds so divide by 60 to get number of minutes
     @property
     def commute_time_minutes(self):
         return self.commute_time_seconds / 60
@@ -273,7 +272,6 @@ class ZipCodeDictionaryChild(models.Model):
         return self._commute_time
 
     @property
-    # Commute distance is stored in meters so convert to miles
     def commute_distance_miles(self):
         return self.commute_distance_meters * 0.000621371
 
