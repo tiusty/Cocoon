@@ -1,6 +1,12 @@
+# Import Django modules
 from django.db import models
-import datetime
 from django.utils import timezone
+
+# Import python modules
+import datetime
+
+# Import Config file information
+from Unicorn.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
 
 
 class HomeBase(models.Model):
@@ -231,19 +237,6 @@ class ZipCodeDictionary(models.Model):
         return self._zip_code
 
 
-# TODO Move these to config file
-COMMUTE_TYPES = (
-    ('driving', 'Driving'),
-    ('transit', 'Transit'),
-    ('walking', 'Walking'),
-    ('biking', 'Biking'),
-)
-
-# TODO: Move this to config file
-# This value determines how many days until the zip code value needs to be refreshed
-zip_code_timedelta_value = 60
-
-
 class ZipCodeDictionaryChild(models.Model):
     """
     This model class serves as an approximation for commute time/distance associated with
@@ -251,8 +244,8 @@ class ZipCodeDictionaryChild(models.Model):
     """
     _zip_code = models.CharField(max_length=20)
     _base_zip_code = models.ForeignKey('ZipCodeDictionary', on_delete=models.CASCADE)
-    _commute_time = models.IntegerField(default=-1) # In seconds
-    _commute_distance = models.IntegerField(default=-1) # In Meters
+    _commute_time = models.IntegerField(default=-1)  # In seconds
+    _commute_distance = models.IntegerField(default=-1)  # In Meters
     _last_date_updated = models.DateField(default=timezone.now)
     _commute_type = models.CharField(
         choices=COMMUTE_TYPES,
@@ -296,13 +289,13 @@ class ZipCodeDictionaryChild(models.Model):
     def commute_type(self):
         return self._commute_type
 
-    def test_recompute_date(self):
+    def zip_code_cache_still_valid(self):
         """
         This function tests whether or not the zip code should be recalculated
         Currently, the zip_code should be recomputed if it is older than 2 months old
         :return:
         """
-        if timezone.now().date() > self.last_date_updated + timezone.timedelta(days=zip_code_timedelta_value):
+        if timezone.now().date() > self.last_date_updated + timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE):
             return True
         else:
             return False
