@@ -113,44 +113,6 @@ def create_zip_code_dictionary_with_child(
     return zip_code_dictionary
 
 
-class HouseDataBaseTestCase(TestCase):
-
-    @staticmethod
-    def test_all_model_getters():
-        """
-        Tests all the getters associated with the house database class
-        :return:
-        """
-        home = create_home()
-        assert(home.street_address() == default_address)
-        assert(home.full_address() == home.street_address() + ", " + home.city()
-               + ", " + home.state() + " " + home.zip_code())
-        assert(home.short_address() == home.street_address()
-               + ", " + home.city())
-        assert(home.city() == default_city)
-        assert(home.state() == default_state)
-        assert(home.zip_code() == default_zip_code)
-        assert(home.price() == default_price)
-        assert(home.price_string() == "$" + str(home.price()))
-        assert(home.move_in_day() == default_move_in_day)
-        assert(home.num_bedrooms() == default_num_bedrooms)
-        assert(home.num_bathrooms() == default_num_bathrooms)
-        assert(home.home_type() == default_home_type)
-        assert(home.air_conditioning() == default_air_conditioning)
-        assert(home.washer_dryer_in_home() == default_wash_dryer_in_home)
-        assert(home.dish_washer() == default_dish_washer)
-        assert(home.bath() == default_bath)
-        assert(home.latitude() == default_lat)
-        assert(home.longitude() == default_lon)
-        assert(home.parking_spot() == default_parking_spot)
-        assert(home.washer_dryer_in_building() == default_washer_dryer_in_building)
-        assert(home.elevator() == default_elevator)
-        assert(home.handicap_access() == default_handicap_access)
-        assert(home.pool_hot_tub() == default_pool_hot_tub)
-        assert(home.fitness_center() == default_fitness_center)
-        assert(home.storage_unit() == default_storage_unit)
-
-
 class ZipCodeDictionaryTestCase(TestCase):
 
     @staticmethod
