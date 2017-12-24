@@ -60,19 +60,19 @@ class ZipCodeDictionaryTest(TestCase):
         try:
             self.create_zip_code_dictionary(self.zip_code)
         except IntegrityError:
-            self.assertTrue(False, "Integrity exception should not have been raise")
+            self.assertTrue(False, "Integrity exception should not have been raised")
 
         # Adding zip code 1
         try:
             self.create_zip_code_dictionary(self.zip_code1)
         except IntegrityError:
-            self.assertTrue(False, "Integrity exception should not have been raise")
+            self.assertTrue(False, "Integrity exception should not have been raised")
 
         # Adding zip code 1
         try:
             self.create_zip_code_dictionary(self.zip_code2)
         except IntegrityError:
-            self.assertTrue(False, "Integrity exception should not have been raise")
+            self.assertTrue(False, "Integrity exception should not have been raised")
 
         # All the adding should pass and finish successfully
         self.assertTrue(True)
@@ -83,7 +83,7 @@ class ZipCodeDictionaryTest(TestCase):
         try:
             self.create_zip_code_dictionary(self.zip_code)
         except IntegrityError:
-            self.assertTrue(False, "Integrity exception should not have been raise")
+            self.assertTrue(False, "Integrity exception should not have been raised")
 
         # Act
         try:
@@ -99,13 +99,13 @@ class ZipCodeDictionaryTest(TestCase):
         try:
             self.create_zip_code_dictionary(self.zip_code)
         except IntegrityError:
-            self.assertTrue(False, "Integrity exception should not have been raise")
+            self.assertTrue(False, "Integrity exception should not have been raised")
 
         # Adding zip code 2
         try:
             self.create_zip_code_dictionary(self.zip_code1)
         except IntegrityError:
-            self.assertTrue(False, "Integrity exception should not have been raise")
+            self.assertTrue(False, "Integrity exception should not have been raised")
 
         # Adding zip code 3, should fail
         try:

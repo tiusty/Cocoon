@@ -244,8 +244,8 @@ class ZipCodeDictionaryChild(models.Model):
     """
     _zip_code = models.CharField(max_length=20)
     _base_zip_code = models.ForeignKey('ZipCodeDictionaryParent', on_delete=models.CASCADE)
-    _commute_time = models.IntegerField(default=-1)  # In seconds
-    _commute_distance = models.IntegerField(default=-1)  # In Meters
+    _commute_time_seconds = models.IntegerField(default=-1)
+    _commute_distance_meters = models.IntegerField(default=-1)
     _last_date_updated = models.DateField(default=timezone.now)
     _commute_type = models.CharField(
         choices=COMMUTE_TYPES,
@@ -273,7 +273,7 @@ class ZipCodeDictionaryChild(models.Model):
 
     @property
     def commute_time_seconds(self):
-        return self._commute_time
+        return self._commute_time_seconds
 
     @property
     def commute_distance_miles(self):
@@ -281,7 +281,7 @@ class ZipCodeDictionaryChild(models.Model):
 
     @property
     def commute_distance_meters(self):
-        return self._commute_distance
+        return self._commute_distance_meters
 
     @property
     def last_date_updated(self):
