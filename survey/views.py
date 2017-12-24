@@ -516,7 +516,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                         )
                         # If the zip code needs to be refreshed, then delete the zip code
                         # and add it to the failed list
-                        if zip_code_dictionary_child.zip_code_cache_still_valid():
+                        if not zip_code_dictionary_child.zip_code_cache_still_valid():
                             zip_code_dictionary_child.delete()
                             # add_home_to_failed_list(failed_zip_codes, destination, house)
                             add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
@@ -529,7 +529,6 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                 except ZipCodeDictionaryParent.DoesNotExist:
                     # add_home_to_failed_list(failed_zip_codes, destination, house)
                     add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-
 
     # If there are failed zip codes, compute the commute for the zip code and add it to the database
     if failed_zip_dict:

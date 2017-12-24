@@ -291,9 +291,9 @@ class ZipCodeDictionaryChild(models.Model):
         """
         This function tests whether or not the zip code should be recalculated
         Currently, the zip_code should be recomputed if it is older than 2 months old
-        :return:
+        :return: Boolean: True -> The cache is still valid, False -> The cache is no longer valid
         """
         if timezone.now().date() > self.last_date_updated + timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE):
-            return True
-        else:
             return False
+        else:
+            return True
