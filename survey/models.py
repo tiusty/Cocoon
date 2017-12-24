@@ -218,8 +218,7 @@ class PriceInformationModel(models.Model):
         Returns the price range
         :return: String -> Price range
         """
-        price_output = "$" + str(self.min_price) + " - $" + str(self.max_price)
-        return price_output
+        return "${0} - ${1} ".format(self.min_price, self.max_price)
 
     class Meta:
         abstract = True
@@ -313,37 +312,54 @@ class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceIn
     def __str__(self):
         user_short_name = self.user_profile.user.get_short_name()
         survey_name = self.name
-        output = user_short_name + ": " + survey_name
-        return output
+        return "{0}: {1}".format(user_short_name, survey_name)
 
 
 class Destinations(models.Model):
-    street_address = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    state = models.CharField(max_length=200)
-    zip_code = models.CharField(max_length=200)
+    _street_address = models.CharField(max_length=200)
+    _city = models.CharField(max_length=200)
+    _state = models.CharField(max_length=200)
+    _zip_code = models.CharField(max_length=200)
 
-    def get_full_address(self):
-        output = str(self.street_address) + ", " + str(self.city) + ", " + str(self.state) + ", " + str(self.zip_code)
-        return output
+    @property
+    def full_address(self):
+        """
+        Return the full address as a string
+        :return: String -> Full address
+        """
+        return "{0}, {1}, {2}, {3}".format(self.street_address, self.city, self.state, self.zip_code)
 
-    def get_short_address(self):
-        return self.street_address + ", " + self.city
+    @property
+    def short_address(self):
+        """
+        Return the short address as a string
+        :return: String -> Short address
+        """
+        return "{0}, {1}".format(self.street_address, self.city)
 
-    def get_zip_code(self):
-        if len(self.zip_code) > 5:
-            return self.zip_code[:5]
-        return self.zip_code
+    @property
+    def street_address(self):
+        return self._street_address
 
-    def get_city(self):
-        return self.city
+    @property
+    def city(self):
+        return self._city
+
+    @property
+    def state(self):
+        return self._state
+
+    @property
+    def zip_code(self):
+        """
+        Only return the first 5 digits of the zip_code
+        :return:
+        """
+        return self._zip_code[:5]
 
 
-# Used for the renting survey
 class RentingDestinations(Destinations):
     survey = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):
         return self.street_address
-
-

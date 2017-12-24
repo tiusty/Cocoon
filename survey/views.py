@@ -511,7 +511,7 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                     )
                     try:
                         zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
-                            zip_code=destination.get_zip_code(),
+                            zip_code=destination.zip_code(),
                             commute_type=commute_type,
                         )
                         # If the zip code needs to be refreshed, then delete the zip code
@@ -683,7 +683,7 @@ def compute_exact_commute(destinations, scored_list, commute_type):
     destinations_full_address = []
     # Retrieve only the full address to give to the distance matrix
     for destination in destinations:
-        destinations_full_address.append(destination.get_full_address())
+        destinations_full_address.append(destination.full_address())
 
     origins = []
     counter = 0
