@@ -42,8 +42,8 @@ class ZipCodeDictionaryTest(TestCase):
         """
         parent_zip_code_dictionary.zipcodedictionarychild_set.create(
             _zip_code=zip_code,
-            _commute_time=commute_time,
-            _commute_distance=commute_distance,
+            _commute_time_seconds=commute_time,
+            _commute_distance_meters=commute_distance,
             _commute_type=commute_type,
         )
 
