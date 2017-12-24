@@ -226,7 +226,7 @@ class ZipCodeDictionaryParent(models.Model):
     The base Zip Code, aka 02476, for each base zip_code, there will be
     a bunch of associated zip codes via foreign key from ZipCodeDictionaryParent model.
      The Base model should not have a commute_time_minutes or Commute_distance since it is in
-     releation to nothing. Instead the child zip code identifies the relation
+     relation to nothing. Instead the child zip code identifies the relation
     """
     _zip_code = models.CharField(max_length=20, unique=True)
 
