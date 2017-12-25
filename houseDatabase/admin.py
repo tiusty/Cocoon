@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RentDatabase, ZipCodeDictionary,ZipCodeDictionaryChild, HousePhotos
+from .models import RentDatabase, ZipCodeDictionaryParent, ZipCodeDictionaryChild, HousePhotos
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
@@ -11,19 +11,19 @@ class HousePhotoUrlInLine(admin.StackedInline):
 class HouseAdmin(admin.ModelAdmin):
     fieldsets = [
         ('House Info',
-         {'fields': ['address', 'city', 'state', 'zip_code', 'price',
-                     'home_type', 'move_in_day', 'lat', 'lon', ]}),
+         {'fields': ['_street_address_home', '_city_home', '_state_home', '_zip_code_home', '_price_home',
+                     '_home_type', '_move_in_day', '_latitude_home', '_longitude_home', ]}),
         ('Interior Amenities',
-         {'fields': ('air_conditioning', 'wash_dryer_in_home', 'dish_washer',
-                     'bath', 'num_bedrooms', 'num_bathrooms',), }),
+         {'fields': ('_air_conditioning', '_washer_dryer_in_home', '_dish_washer',
+                     '_bath', '_num_bedrooms', '_num_bathrooms',), }),
         ('Exterior Amenities',
-         {'fields': ('parking_spot', 'washer_dryer_in_building', 'elevator',
-                     'handicap_access', 'pool_hot_tub', 'fitness_center', 'storage_unit',), }),
+         {'fields': ('_parking_spot', '_washer_dryer_in_building', '_elevator',
+                     '_handicap_access', '_pool_hot_tub', '_fitness_center', '_storage_unit',), }),
     ]
 
-    list_display = ('address', 'price', 'home_type', 'move_in_day', 'num_bedrooms',
-                    'lat', 'lon',)
-    list_filter = ['home_type']
+    list_display = ('street_address', 'price', 'home_type', 'move_in_day', 'num_bedrooms',
+                    'latitude', 'longitude',)
+    list_filter = ['_home_type']
     search_fields = ['address']
     inlines = [HousePhotoUrlInLine]
 
@@ -36,11 +36,11 @@ class ZipCodeDictionaryChildInLine(admin.StackedInline):
 class ZipCodeDictionaryAdmin(admin.ModelAdmin):
     fieldsets = [
         ('ZipCodes',
-         {'fields': ['zip_code', ]}),
+         {'fields': ['_zip_code', ]}),
     ]
-    list_display = ('zip_code',)
+    list_display = ('_zip_code',)
     inlines = [ZipCodeDictionaryChildInLine]
 
 
 admin.site.register(RentDatabase, HouseAdmin)
-admin.site.register(ZipCodeDictionary, ZipCodeDictionaryAdmin)
+admin.site.register(ZipCodeDictionaryParent, ZipCodeDictionaryAdmin)
