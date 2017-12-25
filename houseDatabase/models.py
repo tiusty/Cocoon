@@ -288,6 +288,10 @@ class ZipCodeDictionaryChild(models.Model):
     def last_date_updated(self):
         return self._last_date_updated
 
+    @last_date_updated.setter
+    def last_date_updated(self, new_last_date_updated):
+        self._last_date_updated = new_last_date_updated
+
     @property
     def commute_type(self):
         return self._commute_type
