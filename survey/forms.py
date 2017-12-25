@@ -8,7 +8,7 @@ import datetime
 from Unicorn.settings.Global_Config import \
     Max_Text_Input_Length, \
     Max_Num_Bedrooms, DEFAULT_RENT_SURVEY_NAME, \
-    weight_question_max
+    weight_question_max, MAX_NUM_BATHROOMS
 
 
 class DestinationForm(ModelForm):
@@ -188,8 +188,8 @@ class RentSurveyBase(ModelForm):
             valid = False
 
         # make sure that the max number of bathrooms is not greater than the max specified
-        if current_form['max_bathrooms'] > Max_Num_Bathrooms:
-            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(Max_Num_Bathrooms))
+        if current_form['max_bathrooms'] > MAX_NUM_BATHROOMS:
+            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
             valid = False
 
         # Make sure the bedrooms is at least 1
