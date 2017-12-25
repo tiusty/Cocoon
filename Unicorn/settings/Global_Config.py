@@ -26,6 +26,15 @@ Max_Num_Bedrooms = 6  # Base 1, so from 1 bedroom to 6 bedrooms
 Max_Text_Input_Length = 200
 Hybrid_weighted_max = 3
 Hybrid_weighted_min = -3
+HYBRID_WEIGHT_CHOICES = (
+    (3, "Must have"),
+    (2, "Really want"),
+    (1, "Prefer to have"),
+    (0, "I don't care"),
+    (-1, "Prefer not to have"),
+    (-2, "Really don't want"),
+    (-3, "Don't want"),
+)
 
 # Survey preferences
 # This is the acceptable range for an apartment. So if the user selected a commute of 30 - 60 minutes

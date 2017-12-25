@@ -7,7 +7,8 @@ from enum import Enum
 import math
 
 # Import Global Variables
-from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES
+from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES, \
+    HYBRID_WEIGHT_CHOICES
 
 # Import other models
 from userAuth.models import UserProfile
@@ -16,17 +17,6 @@ from userAuth.models import UserProfile
 class CommutePrecision(Enum):
     exact = 1
     approx = 2
-
-
-HYBRID_WEIGHT_CHOICES = (
-    (3, "Must have"),
-    (2, "Really want"),
-    (1, "Prefer to have"),
-    (0, "I don't care"),
-    (-1, "Prefer not to have"),
-    (-2, "Really don't want"),
-    (-3, "Don't want"),
-)
 
 
 class HomeType(models.Model):

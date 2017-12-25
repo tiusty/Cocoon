@@ -1,14 +1,17 @@
+# Django modules
 from django import forms
-from survey.models import RentingSurveyModel, RentingDestinations, HomeType, COMMUTE_TYPES, HYBRID_WEIGHT_CHOICES
 from django.forms import ModelForm
 from django.db.models import Q
+
+# Python Modules
 import datetime
 
+# Survey models
+from survey.models import RentingSurveyModel, RentingDestinations, HomeType
+
 # Python global configurations
-from Unicorn.settings.Global_Config import \
-    Max_Text_Input_Length, \
-    Max_Num_Bedrooms, DEFAULT_RENT_SURVEY_NAME, \
-    weight_question_max, MAX_NUM_BATHROOMS
+from Unicorn.settings.Global_Config import Max_Text_Input_Length, Max_Num_Bedrooms, DEFAULT_RENT_SURVEY_NAME, \
+    weight_question_max, MAX_NUM_BATHROOMS, COMMUTE_TYPES, HYBRID_WEIGHT_CHOICES
 
 
 class DestinationForm(ModelForm):
@@ -55,76 +58,7 @@ class DestinationForm(ModelForm):
         fields = ["street_address", 'city', 'state', 'zip_code']
 
 
-class RentSurveyBase(ModelForm):
-    # if name is left blank it sets a default name
-    min_price = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    max_price = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    price_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, weight_question_max)],
-        label="Price Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    min_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    max_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    home_type = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
-        # Prevents other objects from being displayed as choices as a home type,
-        # If more hometypes are added then it needs to be added here to the survey
-        queryset=HomeType.objects.filter(Q(homeType__startswith="House")
-                                         | Q(homeType__startswith="Apartment")
-                                         | Q(homeType__startswith="Condo")
-                                         | Q(homeType__startswith="Town House"))
-    )
-
-    commute_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, weight_question_max)],
-        label="Commute Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    commute_type = forms.ChoiceField(
-        choices=COMMUTE_TYPES,
-        label="Commute Type",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
-    )
+class HomeInformationForm(ModelForm):
 
     move_in_date_start = forms.DateField(
         label="Start of move in range",
@@ -156,6 +90,135 @@ class RentSurveyBase(ModelForm):
         )
     )
 
+    max_bathrooms = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_bathrooms = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    home_type = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control',
+            }),
+        # Prevents other objects from being displayed as choices as a home type,
+        # If more home_types are added then it needs to be added here to the survey
+        queryset=HomeType.objects.filter(Q(homeType__startswith="House")
+                                         | Q(homeType__startswith="Apartment")
+                                         | Q(homeType__startswith="Condo")
+                                         | Q(homeType__startswith="Town House"))
+    )
+
+    def is_valid(self):
+        valid = super(HomeInformationForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        current_form = self.cleaned_data.copy()
+
+        # Validate move-in field
+        if current_form['move_in_date_start'] < datetime.date.today():
+            self.add_error('move_in_date_start', "Start Day should not be in the past")
+            valid = False
+
+        # Makes sure that the End day is after the start day
+        if current_form['move_in_date_start'] > current_form['move_in_date_end']:
+            self.add_error('move_in_date_end', "End date should not be before the start date")
+            valid = False
+
+        if int(current_form['num_bedrooms']) < 1:
+            self.add_error('num_bedrooms', "There can't be less than 1 bedroom")
+            valid = False
+
+        # Make sure the bedrooms are not more than the max allowed
+        if int(current_form['num_bedrooms']) > Max_Num_Bedrooms:
+            self.add_error('num_bedrooms', "There can't be more than " + str(Max_Num_Bedrooms))
+            valid = False
+
+        # make sure that the max number of bathrooms is not greater than the max specified
+        if current_form['max_bathrooms'] > MAX_NUM_BATHROOMS:
+            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
+            valid = False
+
+        if current_form['min_bathrooms'] < 0:
+            self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
+            valid = False
+
+
+class CommuteInformationForm(ModelForm):
+
+    max_commute = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_commute = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    commute_weight = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, weight_question_max)],
+        label="Commute Weight",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    commute_type = forms.ChoiceField(
+        choices=COMMUTE_TYPES,
+        label="Commute Type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
+
+class PriceInformationForm(ModelForm):
+
+    max_price = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_price = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    price_weight = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, weight_question_max)],
+        label="Price Weight",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+
+class RentSurveyBase(ModelForm):
+    # if name is left blank it sets a default name
+
     # Adding validation constraints to form
     # Need to make sure the move in day is properly set
     # Aka the start date is before the end date
@@ -173,36 +236,13 @@ class RentSurveyBase(ModelForm):
         # Validate all the form fields
 
         # Makes sure the start date is either the present day or in the future
-        if current_form['move_in_date_start'] < datetime.date.today():
-            self.add_error('move_in_date_start', "Start Day should not be in the past")
-            valid = False
-
-        # Makes sure that the End day is after the start day
-        if current_form['move_in_date_start'] > current_form['move_in_date_end']:
-            self.add_error('move_in_date_end', "End date should not be before the start date")
-            valid = False
 
         # Make sure that the minimum number of bathrooms is not less then 0
-        if current_form['min_bathrooms'] < 0:
-            self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
-            valid = False
 
-        # make sure that the max number of bathrooms is not greater than the max specified
-        if current_form['max_bathrooms'] > MAX_NUM_BATHROOMS:
-            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
-            valid = False
 
         # Make sure the bedrooms is at least 1
         # With the choice fields, the field needs to be casted as an int since it
         # Is stored as a string in cleaned_data
-        if int(current_form['num_bedrooms']) < 1:
-            self.add_error('num_bedrooms', "There can't be less than 1 bedroom")
-            valid = False
-
-        # Make sure the bedrooms are not more than the max allowed
-        if int(current_form['num_bedrooms']) > Max_Num_Bedrooms:
-            self.add_error('num_bedrooms', "There can't be more than " + str(Max_Num_Bedrooms))
-            valid = False
 
         # Make sure
         if int(current_form['commute_weight']) > weight_question_max:
@@ -218,7 +258,7 @@ class RentSurveyBase(ModelForm):
 
 class InteriorAmenitiesForm(ModelForm):
     """
-    Class stores all the form fields in regards to the interior Admenities
+    Class stores all the form fields in regards to the interior Amenities
     """
 
     air_conditioning = forms.ChoiceField(
@@ -263,20 +303,6 @@ class InteriorAmenitiesForm(ModelForm):
                 'class': 'form-control',
             }
         )
-    )
-
-    max_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    min_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
 
