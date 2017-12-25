@@ -7,7 +7,7 @@ from enum import Enum
 import math
 
 # Import Global Variables
-from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME
+from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES
 
 # Import other models
 from userAuth.models import UserProfile
@@ -134,14 +134,6 @@ class HomeInformationModel(models.Model):
 
     class Meta:
         abstract = True
-
-
-COMMUTE_TYPES = (
-    ('driving', 'Driving'),
-    ('transit', 'Transit'),
-    ('bicycling', 'Biking'),
-    ('walking', 'Walking')
-)
 
 
 class CommuteInformationModel(models.Model):

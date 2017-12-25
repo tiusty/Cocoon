@@ -1,6 +1,12 @@
+# Import Django modules
 from django.db import models
-import datetime
 from django.utils import timezone
+
+# Import python modules
+import datetime
+
+# Import Config file information
+from Unicorn.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
 
 
 class HomeBase(models.Model):
@@ -204,93 +210,99 @@ def house_directory_path(instance, filename):
 
 
 class HousePhotos(models.Model):
-    house = models.ForeignKey('RentDatabase', on_delete=models.CASCADE)
-    image_path = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
+    _house = models.ForeignKey('RentDatabase', on_delete=models.CASCADE)
+    _image_path = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
 
     def __str__(self):
-        return self.get_image_path()
-
-    def get_image_path(self):
         return self.image_path
 
+    @property
+    def image_path(self):
+        return self._image_path
 
-class ZipCodeDictionary(models.Model):
+
+class ZipCodeDictionaryParent(models.Model):
     """
     The base Zip Code, aka 02476, for each base zip_code, there will be
-    a bunch of associated zip codes via foreign key from ZipCodeDictionary model.
-     The Base model should not have a commute_time or Commute_distance since it is in
-     releation to nothing. Instead the child zip code identifies the relation
+    a bunch of associated zip codes via foreign key from ZipCodeDictionaryParent model.
+     The Base model should not have a commute_time_minutes or Commute_distance since it is in
+     relation to nothing. Instead the child zip code identifies the relation
     """
-    zip_code = models.CharField(max_length=20, unique=True)
+    _zip_code = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
-        return self.get_zip_code()
-
-    def get_zip_code(self):
         return self.zip_code
 
-COMMUTE_TYPES = (
-    ('driving', 'Driving'),
-    ('transit', 'Transit'),
-    ('walking', 'Walking'),
-    ('biking', 'Biking'),
-)
-
-# This value determines how many days until the zip code value needs to be refreshed
-zip_code_timedelta_value = 60
+    @property
+    def zip_code(self):
+        return self._zip_code
 
 
 class ZipCodeDictionaryChild(models.Model):
     """
     This model class serves as an approximation for commute time/distance associated with
-    zip_codes. This ZipCodeDictionary should be precomputed or should be populated periodically.
+    zip_codes. This ZipCodeDictionaryParent should be precomputed or should be populated periodically.
     """
-    zip_code = models.CharField(max_length=20)
-    base_zip_code = models.ForeignKey('ZipCodeDictionary', on_delete=models.CASCADE)
-    commute_time = models.IntegerField(default=-1)
-    commute_distance = models.IntegerField(default=-1)
-    last_date_updated = models.DateField(default=timezone.now)
-    commute_type = models.CharField(
+    _zip_code = models.CharField(max_length=20)
+    _base_zip_code = models.ForeignKey('ZipCodeDictionaryParent', on_delete=models.CASCADE)
+    _commute_time_seconds = models.IntegerField(default=-1)
+    _commute_distance_meters = models.IntegerField(default=-1)
+    _last_date_updated = models.DateField(default=timezone.now)
+    _commute_type = models.CharField(
         choices=COMMUTE_TYPES,
         max_length=15,
     )
 
     def __str__(self):
-        return self.get_zip_code()
-
-    def get_zip_code(self):
         return self.zip_code
 
-    def get_base_zip_code(self):
-        return self.base_zip_code
+    @property
+    def zip_code(self):
+        return self._zip_code
 
-    # Commute time is stored in seconds so divide by 60 to get number of minutes
-    def get_commute_time(self):
-        return self.get_commute_time_seconds() / 60
+    @property
+    def base_zip_code(self):
+        return self._base_zip_code
 
-    def get_commute_time_seconds(self):
-        return self.commute_time
+    @property
+    def zip_code_parent(self):
+        return self._base_zip_code
 
-    # Commute distance is stored in meters so convert to miles
-    def get_commute_distance(self):
-        return self.get_commute_distance_meters() * 0.000621371
+    @property
+    def commute_time_minutes(self):
+        return self.commute_time_seconds / 60
 
-    def get_commute_distance_meters(self):
-        return self.commute_distance
+    @property
+    def commute_time_seconds(self):
+        return self._commute_time_seconds
 
-    def get_last_date_updated(self):
-        return self.last_date_updated
+    @property
+    def commute_distance_miles(self):
+        return self.commute_distance_meters * 0.000621371
 
-    def test_recompute_date(self):
+    @property
+    def commute_distance_meters(self):
+        return self._commute_distance_meters
+
+    @property
+    def last_date_updated(self):
+        return self._last_date_updated
+
+    @last_date_updated.setter
+    def last_date_updated(self, new_last_date_updated):
+        self._last_date_updated = new_last_date_updated
+
+    @property
+    def commute_type(self):
+        return self._commute_type
+
+    def zip_code_cache_still_valid(self):
         """
         This function tests whether or not the zip code should be recalculated
         Currently, the zip_code should be recomputed if it is older than 2 months old
-        :return:
+        :return: Boolean: True -> The cache is still valid, False -> The cache is no longer valid
         """
-        if timezone.now().date() > self.get_last_date_updated() + timezone.timedelta(days=zip_code_timedelta_value):
-            return True
-        else:
+        if timezone.now().date() > self.last_date_updated + timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE):
             return False
-
-    def get_commute_type(self):
-        return self.commute_type
+        else:
+            return True
