@@ -10,52 +10,8 @@ import datetime
 from survey.models import RentingSurveyModel, RentingDestinations, HomeType
 
 # Python global configurations
-from Unicorn.settings.Global_Config import Max_Text_Input_Length, Max_Num_Bedrooms, DEFAULT_RENT_SURVEY_NAME, \
-    weight_question_max, MAX_NUM_BATHROOMS, COMMUTE_TYPES, HYBRID_WEIGHT_CHOICES
-
-
-class DestinationForm(ModelForm):
-    street_address = forms.CharField(
-        label="Destination",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter in a Destination',
-                'autocomplete': 'off',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
-
-    city = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the city',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
-
-    state = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the State',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
-
-    zip_code = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the Zip Code',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
-
-    class Meta:
-        model = RentingDestinations
-        fields = ["street_address", 'city', 'state', 'zip_code']
+from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
+    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, COMMUTE_TYPES, HYBRID_WEIGHT_CHOICES
 
 
 class HomeInformationForm(ModelForm):
@@ -81,7 +37,7 @@ class HomeInformationForm(ModelForm):
         ))
 
     num_bedrooms = forms.ChoiceField(
-        choices=[(x, x) for x in range(1, Max_Num_Bedrooms)],
+        choices=[(x, x) for x in range(1, MAX_NUM_BEDROOMS)],
         label="Number of Bedrooms",
         widget=forms.Select(
             attrs={
@@ -123,6 +79,9 @@ class HomeInformationForm(ModelForm):
         if not valid:
             return valid
 
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
         current_form = self.cleaned_data.copy()
 
         # Validate move-in field
@@ -140,8 +99,8 @@ class HomeInformationForm(ModelForm):
             valid = False
 
         # Make sure the bedrooms are not more than the max allowed
-        if int(current_form['num_bedrooms']) > Max_Num_Bedrooms:
-            self.add_error('num_bedrooms', "There can't be more than " + str(Max_Num_Bedrooms))
+        if int(current_form['num_bedrooms']) > MAX_NUM_BEDROOMS:
+            self.add_error('num_bedrooms', "There can't be more than " + str(MAX_NUM_BEDROOMS))
             valid = False
 
         # make sure that the max number of bathrooms is not greater than the max specified
@@ -152,6 +111,8 @@ class HomeInformationForm(ModelForm):
         if current_form['min_bathrooms'] < 0:
             self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
             valid = False
+
+        return valid
 
 
 class CommuteInformationForm(ModelForm):
@@ -171,7 +132,7 @@ class CommuteInformationForm(ModelForm):
     )
 
     commute_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, weight_question_max)],
+        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
         label="Commute Weight",
         widget=forms.Select(
             attrs={
@@ -188,6 +149,27 @@ class CommuteInformationForm(ModelForm):
             }
         )
     )
+
+    def is_valid(self):
+        valid = super(CommuteInformationForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        if int(current_form['commute_weight']) > WEIGHT_QUESTION_MAX:
+            self.add_error('commute_weight', "Commute weight cant' be greater than " + str(WEIGHT_QUESTION_MAX))
+            valid = False
+
+        if int(current_form['commute_weight']) < 0:
+            self.add_error('commute_weight', "Commute weight cant' be less than 0")
+            valid = False
+
+        return valid
 
 
 class PriceInformationForm(ModelForm):
@@ -207,53 +189,13 @@ class PriceInformationForm(ModelForm):
     )
 
     price_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, weight_question_max)],
+        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
         label="Price Weight",
         widget=forms.Select(
             attrs={
                 'class': 'form-control',
             }),
     )
-
-
-class RentSurveyBase(ModelForm):
-    # if name is left blank it sets a default name
-
-    # Adding validation constraints to form
-    # Need to make sure the move in day is properly set
-    # Aka the start date is before the end date
-    def is_valid(self):
-        valid = super(RentSurveyBase, self).is_valid()
-
-        if not valid:
-            return valid
-
-        # Need to make a copy because otherwise when an error is added, that field
-        # is removed from the cleaned_data, then any subsequent checks of that field
-        # will cause a key error
-        current_form = self.cleaned_data.copy()
-
-        # Validate all the form fields
-
-        # Makes sure the start date is either the present day or in the future
-
-        # Make sure that the minimum number of bathrooms is not less then 0
-
-
-        # Make sure the bedrooms is at least 1
-        # With the choice fields, the field needs to be casted as an int since it
-        # Is stored as a string in cleaned_data
-
-        # Make sure
-        if int(current_form['commute_weight']) > weight_question_max:
-            self.add_error('commute_weight', "Commute weight cant' be greater than " + str(weight_question_max))
-            valid = False
-
-        if int(current_form['commute_weight']) < 0:
-            self.add_error('commute_weight', "Commute weight cant' be less than 0")
-            valid = False
-
-        return valid
 
 
 class InteriorAmenitiesForm(ModelForm):
@@ -306,7 +248,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
 
-class BuildingExteriorAmenitiesForm(ModelForm):
+class ExteriorAmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the BuildingExteriorAmenities Model
     """
@@ -388,7 +330,8 @@ class BuildingExteriorAmenitiesForm(ModelForm):
     )
 
 
-class RentSurvey(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
+class RentSurvey(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
+                 CommuteInformationForm, HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -398,7 +341,8 @@ class RentSurvey(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitie
         exclude = ["user_profile", 'survey_type', 'name', ]
 
 
-class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
+class RentSurveyMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
+                     CommuteInformationForm, HomeInformationForm):
     """
     RentSurveyMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurvey
@@ -411,7 +355,7 @@ class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmen
                 'class': 'form-control',
                 'placeholder': 'Enter the name of the survey',
             }),
-        max_length=Max_Text_Input_Length,
+        max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
     class Meta:
@@ -419,7 +363,45 @@ class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmen
         exclude = ["user_profile", 'survey_type']
 
 
-# class BuySurvey(ModelForm):
-#     class Meta:
-#         model = BuyingSurveyModel
-#         fields = ['maxPrice', ]
+class DestinationForm(ModelForm):
+    street_address = forms.CharField(
+        label="Destination",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter in a Destination',
+                'autocomplete': 'off',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    city = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the city',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    state = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the State',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    zip_code = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the Zip Code',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    class Meta:
+        model = RentingDestinations
+        fields = '__all__'
