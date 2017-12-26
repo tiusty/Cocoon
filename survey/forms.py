@@ -73,11 +73,6 @@ class HomeInformationForm(ModelForm):
                                               | Q(home_type_survey__startswith="Town House"))
     )
 
-    class Meta:
-        model = HomeInformationModel
-        # Make sure to set the name later, in the survey result if they want to save the result
-        fields = '__all__'
-
     def is_valid(self):
         valid = super(HomeInformationForm, self).is_valid()
 
@@ -122,6 +117,11 @@ class HomeInformationForm(ModelForm):
     @property
     def move_in_data_start(self):
         return self._move_in_date_start
+
+    class Meta:
+        model = HomeInformationModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = '__all__'
 
 
 class CommuteInformationForm(ModelForm):
