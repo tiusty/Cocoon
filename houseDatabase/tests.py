@@ -127,7 +127,8 @@ class ZipCodeDictionaryTest(TestCase):
                                               self.commute_distance, self.commute_type1)
 
         # Assert
-        self.assertEqual(2, parent_zip_code.zipcodedictionarychildmodel_set.filter(zip_code_child=self.zip_code).count())
+        self.assertEqual(2, parent_zip_code.zipcodedictionarychildmodel_set.
+                         filter(zip_code_child=self.zip_code).count())
         self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychildmodel_set
                          .get(zip_code_child=self.zip_code, commute_type_child=self.commute_type).zip_code)
         self.assertEqual(self.commute_type, parent_zip_code.zipcodedictionarychildmodel_set
