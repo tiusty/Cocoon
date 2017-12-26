@@ -7,7 +7,7 @@ from django.db.models import Q
 import datetime
 
 # Survey models
-from survey.models import RentingSurveyModel, RentingDestinations, HomeTypeModel
+from survey.models import RentingSurveyModel, HomeInformationModel, RentingDestinations, HomeTypeModel
 
 # Python global configurations
 from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -16,7 +16,7 @@ from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROO
 
 class HomeInformationForm(ModelForm):
 
-    move_in_date_start = forms.DateField(
+    move_in_date_start_survey = forms.DateField(
         label="Start of move in range",
         widget=forms.DateInput(
             attrs={
@@ -26,7 +26,7 @@ class HomeInformationForm(ModelForm):
             format='%m/%d/%Y',
         ))
 
-    move_in_date_end = forms.DateField(
+    move_in_date_end_survey = forms.DateField(
         label="End of move in range",
         widget=forms.DateInput(
             attrs={
@@ -36,7 +36,7 @@ class HomeInformationForm(ModelForm):
             format='%m/%d/%Y',
         ))
 
-    num_bedrooms = forms.ChoiceField(
+    num_bedrooms_survey = forms.ChoiceField(
         choices=[(x, x) for x in range(1, MAX_NUM_BEDROOMS)],
         label="Number of Bedrooms",
         widget=forms.Select(
@@ -46,21 +46,21 @@ class HomeInformationForm(ModelForm):
         )
     )
 
-    max_bathrooms = forms.IntegerField(
+    max_bathrooms_survey = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    min_bathrooms = forms.IntegerField(
+    min_bathrooms_survey = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    home_type = forms.ModelMultipleChoiceField(
+    home_type_survey = forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control',
@@ -72,6 +72,11 @@ class HomeInformationForm(ModelForm):
                                               | Q(home_type_survey__startswith="Condo")
                                               | Q(home_type_survey__startswith="Town House"))
     )
+
+    class Meta:
+        model = HomeInformationModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = '__all__'
 
     def is_valid(self):
         valid = super(HomeInformationForm, self).is_valid()
@@ -85,34 +90,38 @@ class HomeInformationForm(ModelForm):
         current_form = self.cleaned_data.copy()
 
         # Validate move-in field
-        if current_form['move_in_date_start'] < datetime.date.today():
-            self.add_error('move_in_date_start', "Start Day should not be in the past")
+        if current_form['move_in_date_start_survey'] < datetime.date.today():
+            self.add_error('move_in_date_start_survey', "Start Day should not be in the past")
             valid = False
 
         # Makes sure that the End day is after the start day
-        if current_form['move_in_date_start'] > current_form['move_in_date_end']:
-            self.add_error('move_in_date_end', "End date should not be before the start date")
+        if current_form['move_in_date_start_survey'] > current_form['move_in_date_end_survey']:
+            self.add_error('move_in_date_end_survey', "End date should not be before the start date")
             valid = False
 
-        if int(current_form['num_bedrooms']) < 1:
-            self.add_error('num_bedrooms', "There can't be less than 1 bedroom")
+        if int(current_form['num_bedrooms_survey']) < 1:
+            self.add_error('num_bedrooms_survey', "There can't be less than 1 bedroom")
             valid = False
 
         # Make sure the bedrooms are not more than the max allowed
-        if int(current_form['num_bedrooms']) > MAX_NUM_BEDROOMS:
-            self.add_error('num_bedrooms', "There can't be more than " + str(MAX_NUM_BEDROOMS))
+        if int(current_form['num_bedrooms_survey']) > MAX_NUM_BEDROOMS:
+            self.add_error('num_bedrooms_survey', "There can't be more than " + str(MAX_NUM_BEDROOMS))
             valid = False
 
         # make sure that the max number of bathrooms is not greater than the max specified
-        if current_form['max_bathrooms'] > MAX_NUM_BATHROOMS:
-            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
+        if current_form['max_bathrooms_survey'] > MAX_NUM_BATHROOMS:
+            self.add_error('max_bathrooms_survey', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
             valid = False
 
-        if current_form['min_bathrooms'] < 0:
-            self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
+        if current_form['min_bathrooms_survey'] < 0:
+            self.add_error('min_bathrooms_survey', "You can't have less than 0 bathrooms")
             valid = False
 
         return valid
+
+    @property
+    def move_in_data_start(self):
+        return self._move_in_date_start
 
 
 class CommuteInformationForm(ModelForm):
