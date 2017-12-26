@@ -1,6 +1,6 @@
 from django.db import models
 from userAuth.models import UserProfile
-from houseDatabase.models import RentDatabase
+from houseDatabase.models import RentDatabaseModel
 from enum import Enum
 
 import math
@@ -287,7 +287,7 @@ class RentingDestinations(Destinations):
 #     be loaded at any time. Reduces the computation time for the server
 #     NOTE THIS CLASS HAS NOT BEEN TESTED ONLY ADDED
 #     """
-#     house = models.ForeignKey(RentDatabase)
+#     house = models.ForeignKey(RentDatabaseModel)
 #     score = models.IntegerField(default=0)
 #     score_possible = models.IntegerField(default=0)
 #     eliminated = models.BooleanField(default=False)

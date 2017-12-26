@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import RentDatabase, ZipCodeDictionaryParent, ZipCodeDictionaryChild, HousePhotos
+from .models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, HousePhotosModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
-    model = HousePhotos
+    model = HousePhotosModel
     extra = 0
 
 
@@ -11,36 +11,38 @@ class HousePhotoUrlInLine(admin.StackedInline):
 class HouseAdmin(admin.ModelAdmin):
     fieldsets = [
         ('House Info',
-         {'fields': ['_street_address_home', '_city_home', '_state_home', '_zip_code_home', '_price_home',
-                     '_home_type', '_move_in_day', '_latitude_home', '_longitude_home', ]}),
+         {'fields': ['street_address_home', 'city_home', 'state_home', 'zip_code_home', 'price_home',
+                     'home_type_home', 'move_in_day_home', 'latitude_home', 'longitude_home', ]}),
         ('Interior Amenities',
-         {'fields': ('_air_conditioning', '_washer_dryer_in_home', '_dish_washer',
-                     '_bath', '_num_bedrooms', '_num_bathrooms',), }),
+         {'fields': ('air_conditioning_home', 'interior_washer_dryer_home', 'dish_washer_home',
+                     'bath_home', 'num_bedrooms_home', 'num_bathrooms_home',), }),
         ('Exterior Amenities',
-         {'fields': ('_parking_spot', '_washer_dryer_in_building', '_elevator',
-                     '_handicap_access', '_pool_hot_tub', '_fitness_center', '_storage_unit',), }),
+         {'fields': ('parking_spot_home', 'building_washer_dryer_home', 'elevator_home',
+                     'handicap_access_home', 'pool_hot_tub_home', 'fitness_center_home', 'storage_unit_home',), }),
     ]
 
-    list_display = ('street_address', 'price', 'home_type', 'move_in_day', 'num_bedrooms',
-                    'latitude', 'longitude',)
-    list_filter = ['_home_type']
-    search_fields = ['address']
+    list_display = ('street_address_home', 'price_home', 'home_type_home', 'move_in_day_home', 'num_bedrooms_home',
+                    'latitude_home', 'longitude_home',)
+    list_filter = ['home_type_home']
+    search_fields = ['street_address_home']
+    # noinspection SpellCheckingInspection
     inlines = [HousePhotoUrlInLine]
 
 
 class ZipCodeDictionaryChildInLine(admin.StackedInline):
-    model = ZipCodeDictionaryChild
+    model = ZipCodeDictionaryChildModel
     extra = 0
 
 
 class ZipCodeDictionaryAdmin(admin.ModelAdmin):
     fieldsets = [
         ('ZipCodes',
-         {'fields': ['_zip_code', ]}),
+         {'fields': ['zip_code_parent', ]}),
     ]
-    list_display = ('_zip_code',)
+    list_display = ('zip_code_parent',)
+    # noinspection SpellCheckingInspection
     inlines = [ZipCodeDictionaryChildInLine]
 
 
-admin.site.register(RentDatabase, HouseAdmin)
-admin.site.register(ZipCodeDictionaryParent, ZipCodeDictionaryAdmin)
+admin.site.register(RentDatabaseModel, HouseAdmin)
+admin.site.register(ZipCodeDictionaryParentModel, ZipCodeDictionaryAdmin)

@@ -5,7 +5,7 @@ import os
 import string
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
-from houseDatabase.models import HousePhotos, RentDatabase, InteriorAmenities, BuildingExteriorAmenities
+from houseDatabase.models import HousePhotosModel, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
 from django.utils import timezone
 
 '''
@@ -26,7 +26,7 @@ data must fit the correct format
 # TODO: Add support for checking if addresses already exist
 
 class Command(BaseCommand):
-    help = 'Adds RentDatabase models to the database by parsing csv files\n' \
+    help = 'Adds RentDatabaseModel models to the database by parsing csv files\n' \
            'in the following format:\n\n' \
            'Uses: \'python manage.py addHouses <csv file in script directory>\''
 
@@ -96,7 +96,7 @@ class Command(BaseCommand):
 
                     if (foundLocation):
 
-                        newHouse = RentDatabase()
+                        newHouse = RentDatabaseModel()
                         newHouse.address = row[0]
                         newHouse.city = row[1]
                         newHouse.zip_code = row[2]
@@ -137,7 +137,7 @@ class Command(BaseCommand):
 
                         newHouse.save()
 
-                        newPhotos = HousePhotos(house=newHouse)
+                        newPhotos = HousePhotosModel(house=newHouse)
                         newPhotos.save()
                         newHouse.save()
 
