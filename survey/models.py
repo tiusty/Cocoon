@@ -19,7 +19,7 @@ class CommutePrecision(Enum):
     approx = 2
 
 
-class HomeType(models.Model):
+class HomeTypeModel(models.Model):
     """
     Class stores all the different homes types
     This generates the multiple select field in the survey
@@ -32,39 +32,43 @@ class HomeType(models.Model):
         ('Condo', 'Condo'),
         ('Town House', 'Town House'),
     )
-    homeType = models.CharField(
+    home_type_survey = models.CharField(
         choices=HOME_TYPE,
         max_length=200,
     )
 
     def __str__(self):
-        return self.homeType
+        return self.home_type
+
+    @property
+    def home_type(self):
+        return self.home_type_survey
 
 
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
     """
-    _name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
-    _survey_type = models.IntegerField(default=-1)
-    _created = models.DateField(auto_now_add=True)
-    _user_profile = models.ForeignKey(UserProfile)
+    name_survey = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
+    survey_type_survey = models.IntegerField(default=-1)
+    created_survey = models.DateField(auto_now_add=True)
+    user_profile_survey = models.ForeignKey(UserProfile)
 
     @property
     def name(self):
-        return self._name
+        return self.name_survey
 
     @property
     def survey_type(self):
-        return self._survey_type
+        return self.survey_type_survey
 
     @property
     def created(self):
-        return self._created
+        return self.created_survey
 
     @property
     def user_profile(self):
-        return self._user_profile
+        return self.user_profile_survey
 
     class Meta:
         abstract = True
@@ -74,36 +78,36 @@ class HomeInformationModel(models.Model):
     """
     Contains basic information about a home
     """
-    _move_in_date_start = models.DateField(default=timezone.now)
-    _move_in_date_end = models.DateField(default=timezone.now)
-    _num_bedrooms = models.IntegerField(default=0)
-    _max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
-    _min_bathrooms = models.IntegerField(default=0)
-    _home_type = models.ManyToManyField(HomeType)
+    move_in_date_start_survey = models.DateField(default=timezone.now)
+    move_in_date_end_survey = models.DateField(default=timezone.now)
+    num_bedrooms_survey = models.IntegerField(default=0)
+    max_bathrooms_survey = models.IntegerField(default=MAX_NUM_BATHROOMS)
+    min_bathrooms_survey = models.IntegerField(default=0)
+    home_type_survey = models.ManyToManyField(HomeTypeModel)
 
     @property
     def move_in_date_start(self):
-        return self._move_in_date_start
+        return self.move_in_date_start_survey
 
     @property
     def move_in_date_end(self):
-        return self._move_in_date_end
+        return self.move_in_date_end_survey
 
     @property
     def num_bedrooms(self):
-        return self._num_bedrooms
+        return self.num_bedrooms_survey
 
     @property
     def max_bathrooms(self):
-        return self._max_bathrooms
+        return self.max_bathrooms_survey
 
     @property
     def min_bathrooms(self):
-        return self._min_bathrooms
+        return self.min_bathrooms_survey
 
     @property
     def home_type(self):
-        return self._home_type
+        return self.home_type_survey
 
     @property
     def home_types(self):
@@ -130,26 +134,26 @@ class CommuteInformationModel(models.Model):
     """
     Contains all the commute information for a given home
     """
-    _max_commute = models.IntegerField(default=0)
-    _min_commute = models.IntegerField(default=0)
-    _commute_weight = models.IntegerField(default=0)
-    _commute_type = models.CharField(max_length=20, choices=COMMUTE_TYPES, default="driving")
+    max_commute_survey = models.IntegerField(default=0)
+    min_commute_survey = models.IntegerField(default=0)
+    commute_weight_survey = models.IntegerField(default=0)
+    commute_type_survey = models.CharField(max_length=20, choices=COMMUTE_TYPES, default="driving")
 
     @property
     def max_commute(self):
-        return self._max_commute
+        return self.max_commute_survey
 
     @property
     def min_commute(self):
-        return self._min_commute
+        return self.min_commute_survey
 
     @property
     def commute_weight(self):
-        return self._commute_weight
+        return self.commute_weight_survey
 
     @property
     def commute_type(self):
-        return self._commute_type
+        return self.commute_type_survey
 
     @property
     def commute_range(self):
@@ -178,21 +182,21 @@ class PriceInformationModel(models.Model):
     """
     Contains all the price information for a given home
     """
-    _max_price = models.IntegerField(default=0)
-    _min_price = models.IntegerField(default=0)
-    _price_weight = models.IntegerField(default=0)
+    max_price_survey = models.IntegerField(default=0)
+    min_price_survey = models.IntegerField(default=0)
+    price_weight_survey = models.IntegerField(default=0)
 
     @property
     def max_price(self):
-        return self._max_price
+        return self.max_price_survey
 
     @property
     def min_price(self):
-        return self._min_price
+        return self.min_price_survey
 
     @property
     def price_weight(self):
-        return self._price_weight
+        return self.price_weight_survey
 
     @property
     def price_range(self):
@@ -210,26 +214,26 @@ class InteriorAmenitiesModel(models.Model):
     """
     Contains all the survey questions regarding the interior amenities
     """
-    _air_conditioning = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    _washer_dryer_in_home = models.IntegerField(default=0)
-    _dish_washer = models.IntegerField(default=0)
-    _bath = models.IntegerField(default=0)
+    air_conditioning_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    washer_dryer_in_home_survey = models.IntegerField(default=0)
+    dish_washer_survey = models.IntegerField(default=0)
+    bath_survey = models.IntegerField(default=0)
 
     @property
     def air_conditioning(self):
-        return self._air_conditioning
+        return self.air_conditioning_survey
 
     @property
     def washer_dryer_in_home(self):
-        return self._washer_dryer_in_home
+        return self.washer_dryer_in_home_survey
 
     @property
     def dish_washer(self):
-        return self._dish_washer
+        return self.dish_washer_survey
 
     @property
     def bath(self):
-        return self._bath
+        return self.bath_survey
 
     class Meta:
         abstract = True
@@ -240,41 +244,41 @@ class ExteriorAmenitiesModel(models.Model):
     Contains all the survey questions regarding the building/Exterior Amenities
     All Questions are hybrid weighted
     """
-    _parking_spot = models.IntegerField(default=0)
-    _washer_dryer_in_building = models.IntegerField(default=0)
-    _elevator = models.IntegerField(default=0)
-    _handicap_access = models.IntegerField(default=0)
-    _pool_hot_tub = models.IntegerField(default=0)
-    _fitness_center = models.IntegerField(default=0)
-    _storage_unit = models.IntegerField(default=0)
+    parking_spot_survey = models.IntegerField(default=0)
+    washer_dryer_in_building_survey = models.IntegerField(default=0)
+    elevator_survey = models.IntegerField(default=0)
+    handicap_access_survey = models.IntegerField(default=0)
+    pool_hot_tub_survey = models.IntegerField(default=0)
+    fitness_center_survey = models.IntegerField(default=0)
+    storage_unit_survey = models.IntegerField(default=0)
 
     @property
     def parking_spot(self):
         return self.parking_spot
 
     @property
-    def washer_dryer_in_buiding(self):
-        return self._washer_dryer_in_building
+    def washer_dryer_in_building(self):
+        return self.washer_dryer_in_building_survey
 
     @property
     def elevator(self):
-        return self._elevator
+        return self.elevator_survey
 
     @property
     def handicap_access(self):
-        return self._handicap_access
+        return self.handicap_access_survey
 
     @property
     def pool_hot_tub(self):
-        return self._pool_hot_tub
+        return self.pool_hot_tub_survey
 
     @property
     def fitness_center(self):
-        return self._fitness_center
+        return self.fitness_center_survey
 
     @property
     def storage_unit(self):
-        return self._storage_unit
+        return self.storage_unit_survey
 
     class Meta:
         abstract = True
@@ -298,26 +302,26 @@ class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceIn
 
 
 class Destinations(models.Model):
-    _street_address_destination = models.CharField(max_length=200)
-    _city_destination = models.CharField(max_length=200)
-    _state_destination = models.CharField(max_length=200)
-    _zip_code_destination = models.CharField(max_length=200)
+    street_address_destination = models.CharField(max_length=200)
+    city_destination = models.CharField(max_length=200)
+    state_destination = models.CharField(max_length=200)
+    zip_code_destination = models.CharField(max_length=200)
 
     @property
     def street_address(self):
-        return self._street_address_destination
+        return self.street_address_destination
 
     @property
     def city(self):
-        return self._city_destination
+        return self.city_destination
 
     @property
     def state(self):
-        return self._state_destination
+        return self.state_destination
 
     @property
     def zip_code(self):
-        return self._zip_code_destination[:5]
+        return self.zip_code_destination[:5]
 
     @property
     def short_address(self):
@@ -328,8 +332,11 @@ class Destinations(models.Model):
 
 
 class RentingDestinations(Destinations):
-    survey = models.ForeignKey(RentingSurveyModel)
+    survey_destinations = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):
         return self.street_address
 
+    @property
+    def survey(self):
+        return self.survey_destinations

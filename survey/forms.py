@@ -7,7 +7,7 @@ from django.db.models import Q
 import datetime
 
 # Survey models
-from survey.models import RentingSurveyModel, RentingDestinations, HomeType
+from survey.models import RentingSurveyModel, RentingDestinations, HomeTypeModel
 
 # Python global configurations
 from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -67,10 +67,10 @@ class HomeInformationForm(ModelForm):
             }),
         # Prevents other objects from being displayed as choices as a home type,
         # If more home_types are added then it needs to be added here to the survey
-        queryset=HomeType.objects.filter(Q(homeType__startswith="House")
-                                         | Q(homeType__startswith="Apartment")
-                                         | Q(homeType__startswith="Condo")
-                                         | Q(homeType__startswith="Town House"))
+        queryset=HomeTypeModel.objects.filter(Q(home_type_survey__startswith="House")
+                                              | Q(home_type_survey__startswith="Apartment")
+                                              | Q(home_type_survey__startswith="Condo")
+                                              | Q(home_type_survey__startswith="Town House"))
     )
 
     def is_valid(self):

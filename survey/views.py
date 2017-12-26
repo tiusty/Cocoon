@@ -423,7 +423,7 @@ def create_exterior_amenities_score(scored_house_list, survey):
     for home in scored_house_list:
         weighted_question_scoring(home, home.house.parking_spot, survey.parking_spot)
         weighted_question_scoring(home, home.house.washer_dryer_in_building,
-                                  survey.washer_dryer_in_buiding)
+                                  survey.washer_dryer_in_building)
         weighted_question_scoring(home, home.house.elevator, survey.elevator)
         weighted_question_scoring(home, home.house.handicap_access, survey.handicap_access)
         weighted_question_scoring(home, home.house.pool_hot_tub, survey.pool_hot_tub)

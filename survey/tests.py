@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from survey.forms import RentSurvey
-from survey.models import HomeType
+from survey.models import HomeTypeModel
 
 
 # FIX NAMING FOR WASH_dryer_in_home
@@ -11,10 +11,10 @@ from survey.models import HomeType
 class SurveyFormTest(TestCase):
 
     def setUp(self):
-        HomeType.objects.create(homeType="Apartment")
-        HomeType.objects.create(homeType="Condo")
-        HomeType.objects.create(homeType="Town House")
-        HomeType.objects.create(homeType="House")
+        HomeTypeModel.objects.create(home_type_survey="Apartment")
+        HomeTypeModel.objects.create(home_type_survey="Condo")
+        HomeTypeModel.objects.create(home_type_survey="Town House")
+        HomeTypeModel.objects.create(home_type_survey="House")
         self.default_min_price = 500
         self.default_max_price = 2000
         self.default_price_weight = 2
