@@ -189,7 +189,7 @@ class ZipCodeDictionaryTest(TestCase):
                                               self.commute_distance, self.commute_type)
 
         # Assert
-        self.assertEqual(parent_zip_code, parent_zip_code.zipcodedictionarychildmodel_set.first().base_zip_code)
+        self.assertEqual(parent_zip_code, parent_zip_code.zipcodedictionarychildmodel_set.first().parent_zip_code)
         self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code)
         self.assertEqual(self.commute_time, parent_zip_code.zipcodedictionarychildmodel_set.first()
                          .commute_time_seconds)
