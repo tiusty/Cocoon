@@ -13,6 +13,10 @@ class distance_wrapper:
         self.mode = mode
         self.units = units
 
+    """
+    handles any errors thrown by the distance_matrix API
+    :param error_code, the error code returned from distance_matrix
+    """
     def handle_exception(error_code):
         if (error_code == "INVALID_REQUEST"):
             raise Invalid_Request_Exception()

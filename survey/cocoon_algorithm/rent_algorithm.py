@@ -28,6 +28,18 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 home_data.accumulated_points = score_result * self.commute_user_scale_factor * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
 
+    #TODO: implement this with the distance_wrapper
+    # update approx_commute_times property with these values
+    def retrieve_all_approximate_commutes(self):
+        return
+
+    #TODO: implement this with the distance_wrapper
+    #update an exact commute_times property with these values?
+    def retrieve_exact_commutes(self):
+        return
+
+
+
     def run_compute_price_score(self):
         """
         Runs the price scoring which will generate a score based on the price of the home. If the home
