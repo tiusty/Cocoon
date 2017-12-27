@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 
 # House Database models
-from houseDatabase.models import ZipCodeDictionaryParent
+from houseDatabase.models import ZipCodeDictionaryParentModel
 
 # Import Global Config
 from Unicorn.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
@@ -26,27 +26,27 @@ class ZipCodeDictionaryTest(TestCase):
         """
         Creates a parent zip_code_dictionary object
         :param zip_code: String -> Zip code for parent zip_code
-        :return: ZipCodeDictionaryParent -> An object instance
+        :return: ZipCodeDictionaryParentModel -> An object instance
         """
-        return ZipCodeDictionaryParent.objects.create(_zip_code=zip_code)
+        return ZipCodeDictionaryParentModel.objects.create(zip_code_parent=zip_code)
 
     @staticmethod
     def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,
                                          commute_distance, commute_type):
         """
         Creates a child zip code dictionary for the parent zip code object
-        :param parent_zip_code_dictionary: ZipCodeDictionaryParent -> An object instance
+        :param parent_zip_code_dictionary: ZipCodeDictionaryParentModel -> An object instance
         :param zip_code: String -> zip_code for the child dictionary
         :param commute_time: Int -> The commute time for the child dictionary in seconds
         :param commute_distance: Int -> The commute distance for the child dictionary in meters
         :param commute_type: Commute Type Enum -> Enum for the different commute types
         :return:
         """
-        parent_zip_code_dictionary.zipcodedictionarychild_set.create(
-            _zip_code=zip_code,
-            _commute_time_seconds=commute_time,
-            _commute_distance_meters=commute_distance,
-            _commute_type=commute_type,
+        parent_zip_code_dictionary.zipcodedictionarychildmodel_set.create(
+            zip_code_child=zip_code,
+            commute_time_seconds_child=commute_time,
+            commute_distance_meters_child=commute_distance,
+            commute_type_child=commute_type,
         )
 
     def test_zip_code_dictionary_parent_working(self):
@@ -127,13 +127,14 @@ class ZipCodeDictionaryTest(TestCase):
                                               self.commute_distance, self.commute_type1)
 
         # Assert
-        self.assertEqual(2, parent_zip_code.zipcodedictionarychild_set.filter(_zip_code=self.zip_code).count())
-        self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychild_set
-                         .get(_zip_code=self.zip_code, _commute_type=self.commute_type).zip_code)
-        self.assertEqual(self.commute_type, parent_zip_code.zipcodedictionarychild_set
-                         .get(_zip_code=self.zip_code, _commute_type=self.commute_type).commute_type)
-        self.assertEqual(self.commute_type1, parent_zip_code.zipcodedictionarychild_set
-                         .get(_zip_code=self.zip_code, _commute_type=self.commute_type1).commute_type)
+        self.assertEqual(2, parent_zip_code.zipcodedictionarychildmodel_set.
+                         filter(zip_code_child=self.zip_code).count())
+        self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychildmodel_set
+                         .get(zip_code_child=self.zip_code, commute_type_child=self.commute_type).zip_code)
+        self.assertEqual(self.commute_type, parent_zip_code.zipcodedictionarychildmodel_set
+                         .get(zip_code_child=self.zip_code, commute_type_child=self.commute_type).commute_type)
+        self.assertEqual(self.commute_type1, parent_zip_code.zipcodedictionarychildmodel_set
+                         .get(zip_code_child=self.zip_code, commute_type_child=self.commute_type1).commute_type)
 
     def test_zip_code_dictionary_child_cache_still_valid(self):
         # Arrange
@@ -144,7 +145,7 @@ class ZipCodeDictionaryTest(TestCase):
                                               self.commute_distance, self.commute_type)
 
         # Assert
-        self.assertTrue(parent_zip_code.zipcodedictionarychild_set.first().zip_code_cache_still_valid())
+        self.assertTrue(parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code_cache_still_valid())
 
     def test_zip_code_dictionary_child_cache_still_valid_on_day(self):
         # Arrange
@@ -156,12 +157,12 @@ class ZipCodeDictionaryTest(TestCase):
 
         # Set the last_date_updated in the past to simulate an old zip_code entry
         time = timezone.now().date() + timezone.timedelta(days=-ZIP_CODE_TIMEDELTA_VALUE)
-        child_zip_code = parent_zip_code.zipcodedictionarychild_set.first()
+        child_zip_code = parent_zip_code.zipcodedictionarychildmodel_set.first()
         child_zip_code.last_date_updated = time
         child_zip_code.save()
 
         # Assert
-        self.assertTrue(parent_zip_code.zipcodedictionarychild_set.first().zip_code_cache_still_valid())
+        self.assertTrue(parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code_cache_still_valid())
 
     def test_zip_code_dictionary_child_cache_not_still_valid(self):
         # Arrange
@@ -173,12 +174,12 @@ class ZipCodeDictionaryTest(TestCase):
 
         # Set the last_date_updated in the past to simulate an old zip_code entry
         time = timezone.now().date() + timezone.timedelta(days=-ZIP_CODE_TIMEDELTA_VALUE-1)
-        child_zip_code = parent_zip_code.zipcodedictionarychild_set.first()
+        child_zip_code = parent_zip_code.zipcodedictionarychildmodel_set.first()
         child_zip_code.last_date_updated = time
         child_zip_code.save()
 
         # Assert
-        self.assertFalse(parent_zip_code.zipcodedictionarychild_set.first().zip_code_cache_still_valid())
+        self.assertFalse(parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code_cache_still_valid())
 
     def test_zip_code_dictionary_child_name(self):
         # Arrange
@@ -189,12 +190,14 @@ class ZipCodeDictionaryTest(TestCase):
                                               self.commute_distance, self.commute_type)
 
         # Assert
-        self.assertEqual(parent_zip_code, parent_zip_code.zipcodedictionarychild_set.first().base_zip_code)
-        self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychild_set.first().zip_code)
-        self.assertEqual(self.commute_time, parent_zip_code.zipcodedictionarychild_set.first().commute_time_seconds)
-        self.assertEqual(self.commute_time/60, parent_zip_code.zipcodedictionarychild_set.first().commute_time_minutes)
-        self.assertEqual(self.commute_distance, parent_zip_code.zipcodedictionarychild_set.first()
+        self.assertEqual(parent_zip_code, parent_zip_code.zipcodedictionarychildmodel_set.first().parent_zip_code)
+        self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code)
+        self.assertEqual(self.commute_time, parent_zip_code.zipcodedictionarychildmodel_set.first()
+                         .commute_time_seconds)
+        self.assertEqual(self.commute_time/60, parent_zip_code.zipcodedictionarychildmodel_set.first()
+                         .commute_time_minutes)
+        self.assertEqual(self.commute_distance, parent_zip_code.zipcodedictionarychildmodel_set.first()
                          .commute_distance_meters)
-        self.assertEqual(self.commute_distance * 0.000621371, parent_zip_code.zipcodedictionarychild_set.first()
+        self.assertEqual(self.commute_distance * 0.000621371, parent_zip_code.zipcodedictionarychildmodel_set.first()
                          .commute_distance_miles)
-        self.assertEqual(self.commute_type, parent_zip_code.zipcodedictionarychild_set.first().commute_type)
+        self.assertEqual(self.commute_type, parent_zip_code.zipcodedictionarychildmodel_set.first().commute_type)
