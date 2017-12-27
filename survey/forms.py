@@ -8,7 +8,7 @@ import datetime
 
 # Survey models
 from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinations, \
-    HomeTypeModel, PriceInformationModel
+    HomeTypeModel, PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
 
 # Python global configurations
 from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -223,7 +223,7 @@ class InteriorAmenitiesForm(ModelForm):
     Class stores all the form fields in regards to the interior Amenities
     """
 
-    air_conditioning = forms.ChoiceField(
+    air_conditioning_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Air conditioning",
@@ -234,7 +234,7 @@ class InteriorAmenitiesForm(ModelForm):
         )
     )
 
-    wash_dryer_in_home = forms.ChoiceField(
+    interior_washer_dryer_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Wash + Dryer in Home",
@@ -245,7 +245,7 @@ class InteriorAmenitiesForm(ModelForm):
         )
     )
 
-    dish_washer = forms.ChoiceField(
+    dish_washer_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Dish Washer",
@@ -256,7 +256,7 @@ class InteriorAmenitiesForm(ModelForm):
         )
     )
 
-    bath = forms.ChoiceField(
+    bath_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Bath",
@@ -266,6 +266,11 @@ class InteriorAmenitiesForm(ModelForm):
             }
         )
     )
+
+    class Meta:
+        model = InteriorAmenitiesModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = '__all__'
 
 
 class ExteriorAmenitiesForm(ModelForm):

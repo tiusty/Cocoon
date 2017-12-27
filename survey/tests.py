@@ -3,7 +3,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Import Survey Models and forms
-from survey.forms import RentSurvey, HomeInformationForm, CommuteInformationForm, PriceInformationForm
+from survey.forms import RentSurvey, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
+    InteriorAmenitiesForm
 from survey.models import HomeTypeModel
 
 # Import cocoon global config values
@@ -428,6 +429,91 @@ class TestPriceInformationForm(TestCase):
 
         # Act
         result = price_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+
+class TestInteriorAmenitiesForm(TestCase):
+
+    def setUp(self):
+        self.air_conditioning = 0
+        self.interior_washer_dryer = 0
+        self.dish_washer = 0
+        self.bath = 0
+
+    def tests_interior_amenities_valid(self):
+        # Arrange
+        form_data = {
+            'air_conditioning_survey': self.air_conditioning,
+            'interior_washer_dryer_survey': self.interior_washer_dryer,
+            'dish_washer_survey': self.dish_washer,
+            'bath_survey': self.bath
+        }
+        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = interior_amenities_form.is_valid()
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_interior_amenities_air_conditioning_missing(self):
+        # Arrange
+        form_data = {
+            'interior_washer_dryer_survey': self.interior_washer_dryer,
+            'dish_washer_survey': self.dish_washer,
+            'bath_survey': self.bath
+        }
+        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = interior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_interior_amenities_interior_washer_dryer_missing(self):
+        # Arrange
+        form_data = {
+            'air_conditioning_survey': self.air_conditioning,
+            'dish_washer_survey': self.dish_washer,
+            'bath_survey': self.bath
+        }
+        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = interior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_interior_amenities_dish_washer_missing(self):
+        # Arrange
+        form_data = {
+            'air_conditioning_survey': self.air_conditioning,
+            'interior_washer_dryer_survey': self.interior_washer_dryer,
+            'bath_survey': self.bath
+        }
+        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = interior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_interior_amenities_bath_missing(self):
+        # Arrange
+        form_data = {
+            'air_conditioning_survey': self.air_conditioning,
+            'interior_washer_dryer_survey': self.interior_washer_dryer,
+            'bath_survey': self.bath
+        }
+        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = interior_amenities_form.is_valid()
 
         # Assert
         self.assertFalse(result)

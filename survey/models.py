@@ -215,7 +215,7 @@ class InteriorAmenitiesModel(models.Model):
     Contains all the survey questions regarding the interior amenities
     """
     air_conditioning_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    washer_dryer_in_home_survey = models.IntegerField(default=0)
+    interior_washer_dryer_survey = models.IntegerField(default=0)
     dish_washer_survey = models.IntegerField(default=0)
     bath_survey = models.IntegerField(default=0)
 
@@ -224,8 +224,8 @@ class InteriorAmenitiesModel(models.Model):
         return self.air_conditioning_survey
 
     @property
-    def washer_dryer_in_home(self):
-        return self.washer_dryer_in_home_survey
+    def interior_washer_dryer(self):
+        return self.interior_washer_dryer_survey
 
     @property
     def dish_washer(self):
@@ -245,7 +245,7 @@ class ExteriorAmenitiesModel(models.Model):
     All Questions are hybrid weighted
     """
     parking_spot_survey = models.IntegerField(default=0)
-    washer_dryer_in_building_survey = models.IntegerField(default=0)
+    building_washer_dryer_survey = models.IntegerField(default=0)
     elevator_survey = models.IntegerField(default=0)
     handicap_access_survey = models.IntegerField(default=0)
     pool_hot_tub_survey = models.IntegerField(default=0)
@@ -258,7 +258,7 @@ class ExteriorAmenitiesModel(models.Model):
 
     @property
     def washer_dryer_in_building(self):
-        return self.washer_dryer_in_building_survey
+        return self.building_washer_dryer_survey
 
     @property
     def elevator(self):

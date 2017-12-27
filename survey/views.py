@@ -407,7 +407,7 @@ def create_interior_amenities_score(scored_house_list, survey):
     # Loop throuh all the homes and score each one
     for home in scored_house_list:
         weighted_question_scoring(home, home.house.air_conditioning, survey.air_conditioning)
-        weighted_question_scoring(home, home.house.washer_dryer_in_home, survey.washer_dryer_in_home)
+        weighted_question_scoring(home, home.house.interior_washer_dryer, survey.interior_washer_dryer)
         weighted_question_scoring(home, home.house.dish_washer, survey.dish_washer)
         weighted_question_scoring(home, home.house.bath, survey.bath)
 
