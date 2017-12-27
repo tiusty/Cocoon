@@ -3,22 +3,23 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Import Survey Models and forms
-from survey.forms import RentSurvey, HomeInformationForm
+from survey.forms import RentSurvey, HomeInformationForm, CommuteInformationForm
 from survey.models import HomeTypeModel
 
 # Import cocoon global config values
-from Unicorn.settings.Global_Config import MAX_NUM_BEDROOMS
+from Unicorn.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX
 
 
 class TestHomeInformationForm(TestCase):
 
     def setUp(self):
+
+        # Create home type objects
         HomeTypeModel.objects.create(home_type_survey="Apartment")
         HomeTypeModel.objects.create(home_type_survey="Condo")
         HomeTypeModel.objects.create(home_type_survey="Town House")
         HomeTypeModel.objects.create(home_type_survey="House")
-        self.default_home_type = ['2']
-        self.commute_type = "driving"
+
         # Home Information form fields
         self.move_in_date_start = timezone.now()
         self.move_in_date_end = timezone.now()
@@ -245,6 +246,123 @@ class TestHomeInformationForm(TestCase):
 
         # Act
         result = home_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+
+class TestCommuteInformationForm(TestCase):
+
+    def setUp(self):
+        self.max_commute = 0
+        self.min_commute = 0
+        self.commute_weight = 0
+        self.commute_type = 'driving'
+
+    def tests_commute_information_valid(self):
+        # Arrange
+        form_data = {
+            'max_commute_survey': self.max_commute,
+            'min_commute_survey': self.min_commute,
+            'commute_weight_survey': self.commute_weight,
+            'commute_type_survey': self.commute_type
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_commute_information_max_commute_missing(self):
+        # Arrange
+        form_data = {
+            'min_commute_survey': self.min_commute,
+            'commute_weight_survey': self.commute_weight,
+            'commute_type_survey': self.commute_type
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_min_commute_missing(self):
+        # Arrange
+        form_data = {
+            'max_commute_survey': self.max_commute,
+            'commute_weight_survey': self.commute_weight,
+            'commute_type_survey': self.commute_type
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_commute_weight_missing(self):
+        # Arrange
+        form_data = {
+            'max_commute_survey': self.max_commute,
+            'min_commute_survey': self.min_commute,
+            'commute_type_survey': self.commute_type
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_commute_weight_over_weight_question_max(self):
+        # Arrange
+        form_data = {
+            'max_commute_survey': self.max_commute,
+            'min_commute_survey': self.min_commute,
+            'commute_weight_survey': WEIGHT_QUESTION_MAX + 1,
+            'commute_type_survey': self.commute_type
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_commute_weight_under_zero(self):
+        # Arrange
+        form_data = {
+            'max_commute_survey': self.max_commute,
+            'min_commute_survey': self.min_commute,
+            'commute_weight_survey': -1,
+            'commute_type_survey': self.commute_type
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_commute_type_missing(self):
+        # Arrange
+        form_data = {
+            'max_commute_survey': self.max_commute,
+            'min_commute_survey': self.min_commute,
+            'commute_weight_survey': -1,
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
 
         # Assert
         self.assertFalse(result)

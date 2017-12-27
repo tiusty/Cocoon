@@ -7,7 +7,7 @@ from django.db.models import Q
 import datetime
 
 # Survey models
-from survey.models import RentingSurveyModel, HomeInformationModel, RentingDestinations, HomeTypeModel
+from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinations, HomeTypeModel
 
 # Python global configurations
 from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -126,21 +126,21 @@ class HomeInformationForm(ModelForm):
 
 class CommuteInformationForm(ModelForm):
 
-    max_commute = forms.IntegerField(
+    max_commute_survey = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    min_commute = forms.IntegerField(
+    min_commute_survey = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    commute_weight = forms.ChoiceField(
+    commute_weight_survey = forms.ChoiceField(
         choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
         label="Commute Weight",
         widget=forms.Select(
@@ -149,7 +149,7 @@ class CommuteInformationForm(ModelForm):
             }),
     )
 
-    commute_type = forms.ChoiceField(
+    commute_type_survey = forms.ChoiceField(
         choices=COMMUTE_TYPES,
         label="Commute Type",
         widget=forms.Select(
@@ -170,15 +170,20 @@ class CommuteInformationForm(ModelForm):
         # will cause a key error
         current_form = self.cleaned_data.copy()
 
-        if int(current_form['commute_weight']) > WEIGHT_QUESTION_MAX:
-            self.add_error('commute_weight', "Commute weight cant' be greater than " + str(WEIGHT_QUESTION_MAX))
+        if int(current_form['commute_weight_survey']) > WEIGHT_QUESTION_MAX:
+            self.add_error('commute_weight_survey', "Commute weight cant' be greater than " + str(WEIGHT_QUESTION_MAX))
             valid = False
 
-        if int(current_form['commute_weight']) < 0:
-            self.add_error('commute_weight', "Commute weight cant' be less than 0")
+        if int(current_form['commute_weight_survey']) < 0:
+            self.add_error('commute_weight_survey', "Commute weight cant' be less than 0")
             valid = False
 
         return valid
+
+    class Meta:
+        model = CommuteInformationModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = '__all__'
 
 
 class PriceInformationForm(ModelForm):
