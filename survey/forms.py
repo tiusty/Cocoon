@@ -277,7 +277,7 @@ class ExteriorAmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the BuildingExteriorAmenities Model
     """
-    parking_spot = forms.ChoiceField(
+    parking_spot_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Parking Spot",
@@ -288,7 +288,7 @@ class ExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    washer_dryer_in_building = forms.ChoiceField(
+    building_washer_dryer_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Washer/Dryer in Building",
@@ -299,7 +299,7 @@ class ExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    elevator = forms.ChoiceField(
+    elevator_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Elevator",
@@ -310,7 +310,7 @@ class ExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    handicap_access = forms.ChoiceField(
+    handicap_access_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Handicap Access",
@@ -321,7 +321,7 @@ class ExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    pool_hot_tub = forms.ChoiceField(
+    pool_hot_tub_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Pool/Hot tub",
@@ -332,7 +332,7 @@ class ExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    fitness_center = forms.ChoiceField(
+    fitness_center_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Fitness Center",
@@ -343,7 +343,7 @@ class ExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    storage_unit = forms.ChoiceField(
+    storage_unit_survey = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Storage Unit",
@@ -353,6 +353,11 @@ class ExteriorAmenitiesForm(ModelForm):
             }
         )
     )
+
+    class Meta:
+        model = ExteriorAmenitiesModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = '__all__'
 
 
 class RentSurvey(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,

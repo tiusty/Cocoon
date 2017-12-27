@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from survey.forms import RentSurvey, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    InteriorAmenitiesForm
+    InteriorAmenitiesForm, ExteriorAmenitiesForm
 from survey.models import HomeTypeModel
 
 # Import cocoon global config values
@@ -514,6 +514,163 @@ class TestInteriorAmenitiesForm(TestCase):
 
         # Act
         result = interior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+
+class TestExteriorAmenitiesForm(TestCase):
+
+    def setUp(self):
+        self.parking_spot = 0
+        self.building_washer_dryer = 0
+        self.elevator = 0
+        self.handicap_access = 0
+        self.pool_hot_tub = 0
+        self.fitness_center = 0
+        self.storage_unit = 0
+
+    def tests_exterior_amenities_valid(self):
+        # Arrange
+        form_data = {
+            'parking_spot_survey': self.parking_spot,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'fitness_center_survey': self.fitness_center,
+            'storage_unit_survey': self.storage_unit
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_exterior_amenities_parking_spot_missing(self):
+        # Arrange
+        form_data = {
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'fitness_center_survey': self.fitness_center,
+            'storage_unit_survey': self.storage_unit
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_exterior_amenities_building_washer_dryer_missing(self):
+        # Arrange
+        form_data = {
+            'parking_spot_survey': self.parking_spot,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'fitness_center_survey': self.fitness_center,
+            'storage_unit_survey': self.storage_unit
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_exterior_amenities_elevator_missing(self):
+        # Arrange
+        form_data = {
+            'parking_spot_survey': self.parking_spot,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'handicap_access_survey': self.handicap_access,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'fitness_center_survey': self.fitness_center,
+            'storage_unit_survey': self.storage_unit
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_exterior_amenities_handicap_access_missing(self):
+        # Arrange
+        form_data = {
+            'parking_spot_survey': self.parking_spot,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'elevator_survey': self.elevator,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'fitness_center_survey': self.fitness_center,
+            'storage_unit_survey': self.storage_unit
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_exterior_amenities_pool_hot_tub_missing(self):
+        # Arrange
+        form_data = {
+            'parking_spot_survey': self.parking_spot,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'fitness_center_survey': self.fitness_center,
+            'storage_unit_survey': self.storage_unit
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_exterior_amenities_fitness_center_missing(self):
+        # Arrange
+        form_data = {
+            'parking_spot_survey': self.parking_spot,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'storage_unit_survey': self.storage_unit
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_exterior_amenities_storage_unit_missing(self):
+        # Arrange
+        form_data = {
+            'parking_spot_survey': self.parking_spot,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'fitness_center_survey': self.fitness_center,
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
 
         # Assert
         self.assertFalse(result)
