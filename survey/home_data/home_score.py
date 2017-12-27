@@ -77,7 +77,9 @@ class HomeScore(object):
     """
     def calculate_approx_commute(self, home_zip, home_address, destination_zip, destination_address, commute_type):
         #First check if already in the database
-        zip_code_dictionary = ZipCodeDictionaryChild.objects.filter(_base_zip_code=home_zip, _zip_code=destination_zip)
+        zip_code_dictionary = ZipCodeDictionaryChild.objects.filter(_base_zip_code=home_zip, 
+                                                                    _zip_code=destination_zip
+                                                                   )
         if zip_code_dictionary.exists():
             for match in zip_code_dictionary:
                 if match.zip_code_cache_still_valid():
@@ -85,7 +87,11 @@ class HomeScore(object):
                     self.approx_commute_times = match.commute_time_minutes
                 else:
                     #Not sure if this is correct at all, will review
-                    match.commute_time_minutes = calculate_exact_commute(self, home_address, destination_address, commute_type)
+                    match.commute_time_minutes = calculate_exact_commute(self, 
+                                                                         home_address, 
+                                                                         destination_address, 
+                                                                         commute_type
+                                                                        )
         else: 
             #TODO: Error checking, is this even how we do the commute computation?
             if not ZipCodeDictionaryParent.objects.filter(_zip_code=home_zip).exists():
