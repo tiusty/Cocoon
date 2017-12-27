@@ -368,7 +368,7 @@ class RentSurvey(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationF
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ["user_profile", 'survey_type', 'name', ]
+        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", ]
 
 
 class RentSurveyMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
@@ -377,7 +377,7 @@ class RentSurveyMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
     RentSurveyMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurvey
     """
-    name = forms.CharField(
+    name_survey = forms.CharField(
         label="Survey Name",
         initial=DEFAULT_RENT_SURVEY_NAME,
         widget=forms.TextInput(
@@ -390,11 +390,11 @@ class RentSurveyMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
 
     class Meta:
         model = RentingSurveyModel
-        exclude = ["user_profile", 'survey_type']
+        exclude = ["user_profile_survey", 'survey_type_survey']
 
 
 class DestinationForm(ModelForm):
-    street_address = forms.CharField(
+    street_address_destination = forms.CharField(
         label="Destination",
         widget=forms.TextInput(
             attrs={
@@ -405,7 +405,7 @@ class DestinationForm(ModelForm):
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
-    city = forms.CharField(
+    city_destination = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -414,7 +414,7 @@ class DestinationForm(ModelForm):
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
-    state = forms.CharField(
+    state_destination = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -423,7 +423,7 @@ class DestinationForm(ModelForm):
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
-    zip_code = forms.CharField(
+    zip_code_destination = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
