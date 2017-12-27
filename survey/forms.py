@@ -8,7 +8,8 @@ import datetime
 
 # Survey models
 from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinations, \
-    HomeTypeModel, PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
+    PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
+from houseDatabase.models import HomeTypeModel
 
 # Python global configurations
 from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \

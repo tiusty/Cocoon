@@ -5,7 +5,7 @@ from django.utils import timezone
 # Import Survey Models and forms
 from survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
     InteriorAmenitiesForm, ExteriorAmenitiesForm
-from survey.models import HomeTypeModel
+from houseDatabase.models import HomeTypeModel
 
 # Import cocoon global config values
 from Unicorn.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX

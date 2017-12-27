@@ -8,7 +8,7 @@ from django.utils import timezone
 
 # Import cocoon models
 from userAuth.models import UserProfile
-from houseDatabase.models import RentDatabaseModel
+from houseDatabase.models import HomeTypeModel
 
 # Import Global Variables
 from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES, \
@@ -18,32 +18,6 @@ from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVE
 class CommutePrecision(Enum):
     exact = 1
     approx = 2
-
-
-class HomeTypeModel(models.Model):
-    """
-    Class stores all the different homes types
-    This generates the multiple select field in the survey
-    If another home gets added it needs to be added here in the HOME_TYPE
-    tuples but also allowed past the query in the survey result view.
-    """
-    HOME_TYPE = (
-        ('House', 'House'),
-        ('Apartment', 'Apartment'),
-        ('Condo', 'Condo'),
-        ('Town House', 'Town House'),
-    )
-    home_type_survey = models.CharField(
-        choices=HOME_TYPE,
-        max_length=200,
-    )
-
-    def __str__(self):
-        return self.home_type
-
-    @property
-    def home_type(self):
-        return self.home_type_survey
 
 
 class InitialSurveyModel(models.Model):

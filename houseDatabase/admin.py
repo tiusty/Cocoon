@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, HousePhotosModel
+from .models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, HousePhotosModel, \
+    HomeTypeModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
@@ -44,5 +45,14 @@ class ZipCodeDictionaryAdmin(admin.ModelAdmin):
     inlines = [ZipCodeDictionaryChildInLine]
 
 
+class HomeTypeModelAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Home Type',
+         {'fields': ['home_type_survey', ]})
+    ]
+    list_display = ('home_type_survey',)
+
+
 admin.site.register(RentDatabaseModel, HouseAdmin)
 admin.site.register(ZipCodeDictionaryParentModel, ZipCodeDictionaryAdmin)
+admin.site.register(HomeTypeModel, HomeTypeModelAdmin)
