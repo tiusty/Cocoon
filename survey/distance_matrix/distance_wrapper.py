@@ -13,33 +13,53 @@ class distance_wrapper:
         self.mode = mode
         self.units = units
 
+    def handle_exception(error_code):
+        if (error_code == "INVALID_REQUEST"):
+            raise Invalid_Request_Exception()
+        elif (error_code == "MAX_ELEMENTS_EXCEEDED"):
+            raise Max_Elements_Exceeded_Exception()
+        elif (error_code == "OVER_QUERY_LIMIT"):
+            raise Over_Query_Limit_Exception()
+        elif (error_code == "REQUEST_DENIED"):
+            raise Request_Denied_Exception("Check API key")
+        elif (error_code == "UNKNOWN_ERROR"):
+            raise Unknown_Error_Exception
+        else:
+            raise Exception("Unidentifiable error in distance_matrix_response")
+
 
     """
     Interprets the json response dict from the googlemaps distance_matrix request.
     Handles all errors and combines distances into a list
     :param response_obj, the json response as a dictionary
     :returns a list of lists with distances between origins and their destination(s)
+    :raises Distance_Matrix_Exception
     """
     def interpret_distance_matrix_response(self, response_obj):
         # check the status
         response_status = response_obj["status"]
         if (response_status == "OK"):
+            distance_list = []
 
+            # each row is an origin
+            for row in response_obj["rows"]:
+                origin_distance_list = []
 
+                # each element is the origin-destination pairing
+                for element in row["elements"]:
+                    element_status = element["status"]
+                    if (element_status == "OK"):
+                        # retrieve the duration from origin to destination
+                        duration_in_minutes = int(element["duration"]["value"] / 60)
+                        origin_distance_list.append(duration_in_minutes)
+                    else:
+                        self.handle_exception(element_status)
+                distance_list.append(origin_distance_list)
+        else:
+            self.handle_exception(response_status)
 
-
-        elif (response_status == "INVALID_REQUEST"):
-            raise Invalid_Request_Exception()
-        elif (response_status == "MAX_ELEMENTS_EXCEEDED"):
-            raise Max_Elements_Exceeded_Exception()
-        elif (response_status == "OVER_QUERY_LIMIT"):
-            raise Over_Query_Limit_Exception()
-        elif (response_status == "REQUEST_DENIED"):
-            raise Request_Denied_Exception("Check API key")
-        elif (response_status == "UNKNOWN_ERROR"):
-            raise Unknown_Error_Exception
-
-
+        # list of lists of durations from origin to destinations
+        return distance_list
 
     """
     Computes a distance matrix using the origins and destinations, doing multiple
@@ -67,7 +87,8 @@ class distance_wrapper:
                                                            mode=self.mode)
                 response_dict = json.loads(response_json)
                 response_list = self.interpret_distance_matrix_response(response_dict)
-                distance_matrix_list.append(response_list)
+                for origin_list in response_list:
+                    distance_matrix_list.append(origin_list)
                 origin_list = origin_list[25:]
             else:
                 response_json = googlemaps.distance_matrix(self.key,
@@ -77,9 +98,13 @@ class distance_wrapper:
                                                            mode=self.mode)
                 response_dict = json.loads(response_json)
                 response_list = self.interpret_distance_matrix_response(response_dict)
-                distance_matrix_list.append(response_list)
+                for origin_list in response_list:
+                    distance_matrix_list.append(origin_list)
                 # no origins remaining
                 origin_list = []
+
+        # consolidated list containing an inner list for each origin with the duration
+        # in minutes to all of its destinations
         return distance_matrix_list
 
 class Distance_Matrix_Exception(Exception):
