@@ -162,6 +162,23 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
+    def tests_home_information_form_max_num_bedrooms_missing(self):
+        # Arrange
+        form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'min_bathrooms_survey': self.min_num_bathrooms,
+            'home_type_survey': self.home_type_survey
+        }
+        home_information_form = HomeInformationForm(data=form_data)
+
+        # Act
+        result = home_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
     def tests_home_information_form_num_bedrooms_more_than_max_num_bedrooms(self):
         # Arrange
         form_data = {
@@ -180,3 +197,54 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
+    def tests_home_information_form_missing_min_num_bedrooms(self):
+        # Arrange
+        form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'max_bathrooms_survey': self.max_num_bathrooms,
+            'home_type_survey': self.home_type_survey
+        }
+        home_information_form = HomeInformationForm(data=form_data)
+
+        # Act
+        result = home_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_home_information_form_min_bedrooms_less_than_zero(self):
+        # Arrange
+        form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'max_bathrooms_survey': self.max_num_bathrooms,
+            'min_bathrooms_survey': -1,
+            'home_type_survey': self.home_type_survey
+        }
+        home_information_form = HomeInformationForm(data=form_data)
+
+        # Act
+        result = home_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_home_information_form_home_type_missing(self):
+        # Arrange
+        form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'max_bathrooms_survey': self.max_num_bathrooms,
+            'min_bathrooms_survey': -1,
+        }
+        home_information_form = HomeInformationForm(data=form_data)
+
+        # Act
+        result = home_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
