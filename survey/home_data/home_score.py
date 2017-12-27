@@ -60,7 +60,7 @@ class HomeScore(object):
         origins.append(destination)
         matrix = gmaps.distance_matrix(origins, destinations, mode=commute_type, units=measure_units)
         #Check for error in receiving matrix
-        #TODO: Robust error checking, better solution than returning -1s
+        #TODO: Robust error checking
         if matrix:
             commute = matrix["rows"][0]["elements"]
             if commute['status'] == 'OK':
