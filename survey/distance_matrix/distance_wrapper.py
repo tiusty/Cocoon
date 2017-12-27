@@ -21,7 +21,25 @@ class distance_wrapper:
     :returns a list of lists with distances between origins and their destination(s)
     """
     def interpret_distance_matrix_response(self, response_obj):
-        return
+        # check the status
+        response_status = response_obj["status"]
+        if (response_status == "OK"):
+
+
+
+
+        elif (response_status == "INVALID_REQUEST"):
+            raise Invalid_Request_Exception()
+        elif (response_status == "MAX_ELEMENTS_EXCEEDED"):
+            raise Max_Elements_Exceeded_Exception()
+        elif (response_status == "OVER_QUERY_LIMIT"):
+            raise Over_Query_Limit_Exception()
+        elif (response_status == "REQUEST_DENIED"):
+            raise Request_Denied_Exception("Check API key")
+        elif (response_status == "UNKNOWN_ERROR"):
+            raise Unknown_Error_Exception
+
+
 
     """
     Computes a distance matrix using the origins and destinations, doing multiple
@@ -29,6 +47,7 @@ class distance_wrapper:
     :params origins, list of origins in legal format
     :params destinations, a list of destinations in a legal format
     :returns a list of lists containing the distances between each origin and its destination(s)
+    :raises DistanceMatrixException on invalid request
     """
     def calculate_distances(self, origins, destinations):
 
@@ -62,3 +81,30 @@ class distance_wrapper:
                 # no origins remaining
                 origin_list = []
         return distance_matrix_list
+
+class Distance_Matrix_Exception(Exception):
+    pass
+
+class Invalid_Request_Exception(Distance_Matrix_Exception):
+    pass
+
+class Max_Elements_Exceeded_Exception(Distance_Matrix_Exception):
+    pass
+
+class Over_Query_Limit_Exception(Distance_Matrix_Exception):
+    pass
+
+class Request_Denied_Exception(Distance_Matrix_Exception):
+    pass
+
+class Unknown_Error_Exception(Distance_Matrix_Exception):
+    pass
+
+class Not_Found_Exception(Distance_Matrix_Exception):
+    pass
+
+class Zero_Results_Exception(Distance_Matrix_Exception):
+    pass
+
+class Max_Route_Length_Exception(Distance_Matrix_Exception):
+    pass
