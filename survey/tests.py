@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Import Survey Models and forms
-from survey.forms import RentSurvey, HomeInformationForm, CommuteInformationForm
+from survey.forms import RentSurvey, HomeInformationForm, CommuteInformationForm, PriceInformationForm
 from survey.models import HomeTypeModel
 
 # Import cocoon global config values
@@ -363,6 +363,71 @@ class TestCommuteInformationForm(TestCase):
 
         # Act
         result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+
+class TestPriceInformationForm(TestCase):
+
+    def setUp(self):
+        self.max_price = 0
+        self.min_price = 0
+        self.price_weight = 0
+
+    def tests_price_information_valid(self):
+        # Arrange
+        form_data = {
+            'max_price_survey': self.max_price,
+            'min_price_survey': self.min_price,
+            'price_weight_survey': self.price_weight,
+        }
+        price_information_form = PriceInformationForm(data=form_data)
+
+        # Act
+        result = price_information_form.is_valid()
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_price_information_max_price_missing(self):
+        # Arrange
+        form_data = {
+            'min_price_survey': self.min_price,
+            'price_weight_survey': self.price_weight,
+        }
+        price_information_form = PriceInformationForm(data=form_data)
+
+        # Act
+        result = price_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_price_information_min_price_missing(self):
+        # Arrange
+        form_data = {
+            'max_price_survey': self.max_price,
+            'price_weight_survey': self.price_weight,
+        }
+        price_information_form = PriceInformationForm(data=form_data)
+
+        # Act
+        result = price_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_price_information_price_weight_missing(self):
+        # Arrange
+        form_data = {
+            'max_price_survey': self.max_price,
+            'min_price_survey': self.min_price,
+        }
+        price_information_form = PriceInformationForm(data=form_data)
+
+        # Act
+        result = price_information_form.is_valid()
 
         # Assert
         self.assertFalse(result)

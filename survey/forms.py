@@ -7,7 +7,8 @@ from django.db.models import Q
 import datetime
 
 # Survey models
-from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinations, HomeTypeModel
+from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinations, \
+    HomeTypeModel, PriceInformationModel
 
 # Python global configurations
 from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -188,21 +189,21 @@ class CommuteInformationForm(ModelForm):
 
 class PriceInformationForm(ModelForm):
 
-    max_price = forms.IntegerField(
+    max_price_survey = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    min_price = forms.IntegerField(
+    min_price_survey = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    price_weight = forms.ChoiceField(
+    price_weight_survey = forms.ChoiceField(
         choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
         label="Price Weight",
         widget=forms.Select(
@@ -210,6 +211,11 @@ class PriceInformationForm(ModelForm):
                 'class': 'form-control',
             }),
     )
+
+    class Meta:
+        model = PriceInformationModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = '__all__'
 
 
 class InteriorAmenitiesForm(ModelForm):
