@@ -199,7 +199,7 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_home_information_form_missing_min_num_bedrooms(self):
+    def tests_home_information_form_missing_min_num_bathrooms(self):
         # Arrange
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
@@ -216,7 +216,7 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_home_information_form_min_bedrooms_less_than_zero(self):
+    def tests_home_information_form_min_bathrooms_less_than_zero(self):
         # Arrange
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
