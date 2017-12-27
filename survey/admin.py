@@ -24,7 +24,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
                                'max_commute_survey', 'commute_weight_survey', 'min_bathrooms_survey',
                                'max_bathrooms_survey', )}),
         ('Interior Amenities',
-         {'fields': ('air_conditioning_survey',)}),
+         {'fields': ('air_conditioning_survey', 'interior_washer_dryer_survey',)}),
         ('Created', {'fields': ('created_survey', 'id',)}),
     )
     list_display = ('name', 'user_profile_survey', )

@@ -74,6 +74,26 @@ class HomeInformationForm(ModelForm):
                                               | Q(home_type_survey__startswith="Town House"))
     )
 
+    @property
+    def move_in_date_start(self):
+        return self.move_in_date_start_survey
+
+    @property
+    def move_in_date_end(self):
+        return self.move_in_date_end_survey
+
+    @property
+    def num_bedrooms(self):
+        return self.num_bedrooms_survey
+
+    @property
+    def min_bathrooms(self):
+        return self.min_bathrooms_survey
+
+    @property
+    def max_bathrooms(self):
+        return self.max_bathrooms_survey
+
     def is_valid(self):
         valid = super(HomeInformationForm, self).is_valid()
 
@@ -160,6 +180,10 @@ class CommuteInformationForm(ModelForm):
         )
     )
 
+    @property
+    def commute_type(self):
+        return self.commute_type_survey
+
     def is_valid(self):
         valid = super(CommuteInformationForm, self).is_valid()
 
@@ -211,6 +235,14 @@ class PriceInformationForm(ModelForm):
                 'class': 'form-control',
             }),
     )
+
+    @property
+    def min_price(self):
+        return self.min_price_survey
+
+    @property
+    def max_price(self):
+        return self.max_price_survey
 
     class Meta:
         model = PriceInformationModel
@@ -360,8 +392,8 @@ class ExteriorAmenitiesForm(ModelForm):
         fields = '__all__'
 
 
-class RentSurvey(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
-                 CommuteInformationForm, HomeInformationForm):
+class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
+                     CommuteInformationForm, HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -371,11 +403,11 @@ class RentSurvey(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationF
         exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", ]
 
 
-class RentSurveyMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
-                     CommuteInformationForm, HomeInformationForm):
+class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
+                         CommuteInformationForm, HomeInformationForm):
     """
-    RentSurveyMini is the survey that is on the survey results page and allows the user to create
-    quick changes. This should be mostly a subset of the RentSurvey
+    RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
+    quick changes. This should be mostly a subset of the RentSurveyForm
     """
     name_survey = forms.CharField(
         label="Survey Name",
@@ -434,4 +466,4 @@ class DestinationForm(ModelForm):
 
     class Meta:
         model = RentingDestinations
-        fields = '__all__'
+        exclude = ['survey_destinations']

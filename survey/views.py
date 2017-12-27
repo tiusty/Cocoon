@@ -15,7 +15,7 @@ from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
 from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
-from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
+from survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
 
 class RequestCounter:
     def __init__(self):
@@ -43,8 +43,8 @@ class BlackList:
 @login_required
 def renting_survey(request):
     # Create the two forms,
-    # RentSurvey contains everything except for destinations
-    form = RentSurvey()
+    # RentSurveyForm contains everything except for destinations
+    form = RentSurveyForm()
 
     # DestinationFrom contains the destination
     # The reason why this is split is because the destination form can be made into a form factory
@@ -64,7 +64,7 @@ def renting_survey(request):
         # first validating Destination form
         form_destination = DestinationForm(request.POST)
         # create a form instance and populate it with data from the request:
-        form = RentSurvey(request.POST)
+        form = RentSurveyForm(request.POST)
 
         # Check to see if the designations are valid
         if form_destination.is_valid():
@@ -84,8 +84,8 @@ def renting_survey(request):
                 # Try seeing if there is already a recent survey and if there is
                 # Then delete it. We only want to keep one "recent" survey
                 # The user has the option to change the name of it to save it permanently
-                RentingSurveyModel.objects.filter(user_profile=current_profile).filter(
-                    name=DEFAULT_RENT_SURVEY_NAME).delete()
+                RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
+                    name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
                 rent_survey.save()
 
                 # Since commit=False in the save, need to save the many to many fields
@@ -341,9 +341,9 @@ def create_price_score(scored_house_list, survey):
     """
 
     # Retrieve all the constant values
-    max_price = survey.max_price()
-    min_price = survey.min_price()
-    scale_factor = survey.price_weight()
+    max_price = survey.max_price
+    min_price = survey.min_price
+    scale_factor = survey.price_weight
 
     # Apply price scoring for all the houses
     for house in scored_house_list:
@@ -662,8 +662,8 @@ def filter_homes_based_on_approximate_commute(survey, scored_list):
     """
     for home in scored_list:
         for commute in home.get_commute_times_approx():
-            if (commute >= survey.get_max_commute() + approximate_commute_range) \
-                    or (commute <= survey.get_min_commute() - approximate_commute_range):
+            if (commute >= survey.max_commute + approximate_commute_range) \
+                    or (commute <= survey.min_commute - approximate_commute_range):
                 home.eliminate_home()
 
 
@@ -722,7 +722,7 @@ def start_algorithm(survey, context):
     # Creates an array with all the home types indicated by the survey
     current_home_types = []
     for home in survey.home_type.all():
-        current_home_types.append(home.homeType)
+        current_home_types.append(home.home_type)
 
     """
     STEP 1: Compute Static Elements
@@ -739,11 +739,11 @@ def start_algorithm(survey, context):
     4. Filter by the number of bathrooms
     """
     filtered_house_list = RentDatabaseModel.objects \
-        .filter(price_home__range=(survey.get_min_price(), survey.get_max_price())) \
+        .filter(price_home__range=(survey.min_price, survey.max_price)) \
         .filter(home_type_home__in=current_home_types) \
-        .filter(move_in_day_home__range=(survey.get_move_in_date_start(), survey.get_move_in_date_end())) \
-        .filter(num_bedrooms_home=survey.get_num_bedrooms()) \
-        .filter(num_bathrooms_home__range=(survey.get_min_bathrooms(), survey.get_max_bathrooms()))
+        .filter(move_in_day_home__range=(survey.move_in_date_start, survey.move_in_date_end)) \
+        .filter(num_bedrooms_home=survey.num_bedrooms) \
+        .filter(num_bathrooms_home__range=(survey.min_bathrooms, survey.max_bathrooms))
 
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdestinations_set.all()
@@ -766,7 +766,7 @@ def start_algorithm(survey, context):
     for house in filtered_house_list:
         scored_house_list.append(ScoringStruct(house))
 
-    commute_type = survey.get_commute_type()
+    commute_type = survey.commute_type
     context['commuteType'] = commute_type
 
     """
@@ -839,7 +839,7 @@ def survey_result_rent(request, survey_id="recent"):
         # Try to retrieve the most recent survey, but if there are no surveys, then
         # Redirect back to the homepage
         try:
-            survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
+            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).order_by('-created').first()
         except RentingSurveyModel.DoesNotExist:
             messages.add_message(request, messages.ERROR, 'Could not find Survey')
             return HttpResponseRedirect(reverse('homePage:index'))
@@ -848,25 +848,25 @@ def survey_result_rent(request, survey_id="recent"):
         # If it can't find it or it is not associated with the user, just grab the
         # Recent Survey. If that fails, then redirect back to the home page.
         try:
-            survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(id=survey_id)
+            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).get(id=survey_id)
         # If the survey ID, does not exist/is not for that user, then return the most recent survey
         except RentingSurveyModel.DoesNotExist:
             context['error_message'].append("Could not find survey id, getting recent survey")
             try:
-                survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
+                survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
                 messages.add_message(request, messages.ERROR, 'Could not find Survey')
                 return HttpResponseRedirect(reverse('homePage:index'))
 
     # Populate form with stored data
-    form = RentSurveyMini(instance=survey)
+    form = RentSurveyFormMini(instance=survey)
 
     # If a POST message occurs (They submit the mini form) then process it
     # If it fails then keep loading survey result and pass the error messages
     if request.method == 'POST':
         # If a POST occurs, update the form. In the case of an error, then the survey
         # Should be populated by the POST data.
-        form = RentSurveyMini(request.POST, instance=survey)
+        form = RentSurveyFormMini(request.POST, instance=survey)
         # If the survey is valid then redirect back to the page to reload the changes
         # This will also update the house list
         if form.is_valid():

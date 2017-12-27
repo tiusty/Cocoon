@@ -1,16 +1,18 @@
-# Import django python modules
+# Import Django modules
 from django.db import models
-from userAuth.models import UserProfile
-from houseDatabase.models import RentDatabaseModel
+
+# Python Modules
 from enum import Enum
 import math
+from django.utils import timezone
+
+# Import cocoon models
+from userAuth.models import UserProfile
+from houseDatabase.models import RentDatabaseModel
 
 # Import Global Variables
 from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES, \
     HYBRID_WEIGHT_CHOICES
-
-# Import other models
-from userAuth.models import UserProfile
 
 
 class CommutePrecision(Enum):
@@ -61,6 +63,10 @@ class InitialSurveyModel(models.Model):
     def survey_type(self):
         return self.survey_type_survey
 
+    @survey_type.setter
+    def survey_type(self, new_survey_type):
+        self.survey_type_survey = new_survey_type
+
     @property
     def created(self):
         return self.created_survey
@@ -68,6 +74,10 @@ class InitialSurveyModel(models.Model):
     @property
     def user_profile(self):
         return self.user_profile_survey
+
+    @user_profile.setter
+    def user_profile(self, new_user_profile):
+        self.user_profile_survey = new_user_profile
 
     class Meta:
         abstract = True
@@ -253,7 +263,7 @@ class ExteriorAmenitiesModel(models.Model):
 
     @property
     def parking_spot(self):
-        return self.parking_spot
+        return self.parking_spot_survey
 
     @property
     def washer_dryer_in_building(self):
@@ -323,6 +333,10 @@ class Destinations(models.Model):
         return self.zip_code_destination[:5]
 
     @property
+    def full_address(self):
+        return "{0}, {1}, {2}, {3}".format(self.street_address, self.city, self.state, self.zip_code)
+
+    @property
     def short_address(self):
         return "{0}, {1}".format(self.street_address, self.city)
 
@@ -339,3 +353,7 @@ class RentingDestinations(Destinations):
     @property
     def survey(self):
         return self.survey_destinations
+
+    @survey.setter
+    def survey(self, new_survey):
+        self.survey_destinations = new_survey

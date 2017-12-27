@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Import Survey Models and forms
-from survey.forms import RentSurvey, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
+from survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
     InteriorAmenitiesForm, ExteriorAmenitiesForm
 from survey.models import HomeTypeModel
 
