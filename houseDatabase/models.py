@@ -9,17 +9,17 @@ import datetime
 from Unicorn.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
 
 
-class HomeBase(models.Model):
+class HomeBaseModel(models.Model):
     """
     Contains all the base information for a home
     """
-    _street_address_home = models.CharField(max_length=200)
-    _city_home = models.CharField(max_length=200)
-    _state_home = models.CharField(max_length=200)
-    _zip_code_home = models.CharField(max_length=200)
-    _price_home = models.IntegerField(default=-1)
-    _latitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
-    _longitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    street_address_home = models.CharField(max_length=200)
+    city_home = models.CharField(max_length=200)
+    state_home = models.CharField(max_length=200)
+    zip_code_home = models.CharField(max_length=200)
+    price_home = models.IntegerField(default=-1)
+    latitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    longitude_home = models.DecimalField(max_digits=9, decimal_places=6, default=0)
 
     @property
     def full_address(self):
@@ -28,25 +28,25 @@ class HomeBase(models.Model):
 
     @property
     def street_address(self):
-        return self._street_address_home
+        return self.street_address_home
 
     @property
     def city(self):
-        return self._city_home
+        return self.city_home
 
     @property
     def state(self):
-        return self._state_home
+        return self.state_home
 
     @property
     def zip_code(self):
-        if len(self._zip_code_home) > 5:
-            return self._zip_code_home[:5]
-        return self._zip_code_home
+        if len(self.zip_code_home) > 5:
+            return self.zip_code_home[:5]
+        return self.zip_code_home
 
     @property
     def price(self):
-        return self._price_home
+        return self.price_home
 
     @property
     def price_string(self):
@@ -54,201 +54,205 @@ class HomeBase(models.Model):
 
     @property
     def latitude(self):
-        return self._latitude_home
+        return self.latitude_home
 
     @property
     def longitude(self):
-        return self._longitude_home
+        return self.longitude_home
 
     class Meta:
         abstract = True
 
 
-class InteriorAmenities(models.Model):
+class InteriorAmenitiesModel(models.Model):
     """
     Contains all the information for homes about the Interior Amenities
     """
-    _air_conditioning = models.BooleanField(default=False)
-    _washer_dryer_in_home = models.BooleanField(default=False)
-    _dish_washer = models.BooleanField(default=False)
-    _bath = models.BooleanField(default=False)
-    _num_bathrooms = models.IntegerField(default=0)
-    _num_bedrooms = models.IntegerField(default=0)
+    air_conditioning_home = models.BooleanField(default=False)
+    interior_washer_dryer_home = models.BooleanField(default=False)
+    dish_washer_home = models.BooleanField(default=False)
+    bath_home = models.BooleanField(default=False)
+    num_bathrooms_home = models.IntegerField(default=0)
+    num_bedrooms_home = models.IntegerField(default=0)
 
     @property
     def air_conditioning(self):
-        return self._air_conditioning
+        return self.air_conditioning_home
 
     @property
-    def washer_dryer_in_home(self):
-        return self._washer_dryer_in_home
+    def interior_washer_dryer(self):
+        return self.interior_washer_dryer_home
 
     @property
     def dish_washer(self):
-        return self._dish_washer
+        return self.dish_washer_home
 
     @property
     def bath(self):
-        return self._bath
+        return self.bath_home
 
     @property
     def num_bathrooms(self):
-        return self._num_bathrooms
+        return self.num_bathrooms_home
 
     @property
     def num_bedrooms(self):
-        return self._num_bedrooms
+        return self.num_bedrooms_home
 
     class Meta:
         abstract = True
 
 
-class BuildingExteriorAmenities(models.Model):
+class BuildingExteriorAmenitiesModel(models.Model):
     """
     Contains all the information for homes about the Exterior Amenities
     """
-    _parking_spot = models.BooleanField(default=False)
-    _washer_dryer_in_building = models.BooleanField(default=False)
-    _elevator = models.BooleanField(default=False)
-    _handicap_access = models.BooleanField(default=False)
-    _pool_hot_tub = models.BooleanField(default=False)
-    _fitness_center = models.BooleanField(default=False)
-    _storage_unit = models.BooleanField(default=False)
+    parking_spot_home = models.BooleanField(default=False)
+    building_washer_dryer_home = models.BooleanField(default=False)
+    elevator_home = models.BooleanField(default=False)
+    handicap_access_home = models.BooleanField(default=False)
+    pool_hot_tub_home = models.BooleanField(default=False)
+    fitness_center_home = models.BooleanField(default=False)
+    storage_unit_home = models.BooleanField(default=False)
 
     @property
     def parking_spot(self):
-        return self._parking_spot
+        return self.parking_spot_home
 
     @property
-    def washer_dryer_in_building(self):
-        return self._washer_dryer_in_building
+    def building_washer_dryer(self):
+        return self.building_washer_dryer_home
 
     @property
     def elevator(self):
-        return self._elevator
+        return self.elevator_home
 
     @property
     def handicap_access(self):
-        return self._handicap_access
+        return self.handicap_access_home
 
     @property
     def pool_hot_tub(self):
-        return self._pool_hot_tub
+        return self.pool_hot_tub_home
 
     @property
     def fitness_center(self):
-        return self._fitness_center
+        return self.fitness_center_home
 
     @property
     def storage_unit(self):
-        return self._storage_unit
+        return self.storage_unit_home
 
     class Meta:
         abstract = True
 
 
-class MLSpinData(models.Model):
+class MLSpinDataModel(models.Model):
     """
     Contains all the data related to the MLS pin
     """
-    _remarks = models.TextField(default="")
-    _listing_number = models.IntegerField(default=-1)
-    _listing_provider = models.CharField(max_length=200)
-    _listing_agent = models.CharField(max_length=200)
-    _listing_office = models.CharField(max_length=200)
+    remarks_home = models.TextField(default="")
+    listing_number_home = models.IntegerField(default=-1)
+    listing_provider_home = models.CharField(max_length=200)
+    listing_agent_home = models.CharField(max_length=200)
+    listing_office_home = models.CharField(max_length=200)
 
     @property
     def remarks(self):
-        return self._remarks
+        return self.remarks_home
 
     @property
     def listing_number(self):
-        return self._listing_number
+        return self.listing_number_home
 
     @property
     def listing_provider(self):
-        return self._listing_provider
+        return self.listing_provider_home
 
     @property
     def listing_agent(self):
-        return self._listing_agent
+        return self.listing_agent_home
 
     @property
     def listing_office(self):
-        return self._listing_office
+        return self.listing_office_home
 
     class Meta:
         abstract = True
 
 
-class RentDatabase(MLSpinData, BuildingExteriorAmenities, InteriorAmenities, HomeBase):
+class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, InteriorAmenitiesModel, HomeBaseModel):
     """
     This model stores all the information associated with a home
     """
-    _apartment_number = models.CharField(max_length=200)
-    _home_type = models.CharField(max_length=200)
-    _move_in_day = models.DateField(default=datetime.date.today)
+    apartment_number_home = models.CharField(max_length=200)
+    home_type_home = models.CharField(max_length=200)
+    move_in_day_home = models.DateField(default=datetime.date.today)
 
     def __str__(self):
         return self.full_address
 
     @property
     def move_in_day(self):
-        return self._move_in_day
+        return self.move_in_day_home
 
     @property
     def home_type(self):
-        return self._home_type
+        return self.home_type_home
 
     @property
     def apartment_number(self):
-        return self._apartment_number
+        return self.apartment_number_home
 
 
 def house_directory_path(instance, filename):
     return 'houseDatabase_{0}/{1}'.format(instance.house.id, filename)
 
 
-class HousePhotos(models.Model):
-    _house = models.ForeignKey('RentDatabase', on_delete=models.CASCADE)
-    _image_path = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
+class HousePhotosModel(models.Model):
+    house_photo = models.ForeignKey('RentDatabaseModel', on_delete=models.CASCADE)
+    image_path_photo = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
 
     def __str__(self):
         return self.image_path
 
     @property
+    def house(self):
+        return self.house_photo
+
+    @property
     def image_path(self):
-        return self._image_path
+        return self.image_path_photo
 
 
-class ZipCodeDictionaryParent(models.Model):
+class ZipCodeDictionaryParentModel(models.Model):
     """
     The base Zip Code, aka 02476, for each base zip_code, there will be
-    a bunch of associated zip codes via foreign key from ZipCodeDictionaryParent model.
+    a bunch of associated zip codes via foreign key from ZipCodeDictionaryParentModel model.
      The Base model should not have a commute_time_minutes or Commute_distance since it is in
      relation to nothing. Instead the child zip code identifies the relation
     """
-    _zip_code = models.CharField(max_length=20, unique=True)
+    zip_code_parent = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.zip_code
 
     @property
     def zip_code(self):
-        return self._zip_code
+        return self.zip_code_parent
 
 
-class ZipCodeDictionaryChild(models.Model):
+class ZipCodeDictionaryChildModel(models.Model):
     """
     This model class serves as an approximation for commute time/distance associated with
-    zip_codes. This ZipCodeDictionaryParent should be precomputed or should be populated periodically.
+    zip_codes. This ZipCodeDictionaryParentModel should be precomputed or should be populated periodically.
     """
-    _zip_code = models.CharField(max_length=20)
-    _base_zip_code = models.ForeignKey('ZipCodeDictionaryParent', on_delete=models.CASCADE)
-    _commute_time_seconds = models.IntegerField(default=-1)
-    _commute_distance_meters = models.IntegerField(default=-1)
-    _last_date_updated = models.DateField(default=timezone.now)
-    _commute_type = models.CharField(
+    zip_code_child = models.CharField(max_length=20)
+    parent_zip_code_child = models.ForeignKey('ZipCodeDictionaryParentModel', on_delete=models.CASCADE)
+    commute_time_seconds_child = models.IntegerField(default=-1)
+    commute_distance_meters_child = models.IntegerField(default=-1)
+    last_date_updated_child = models.DateField(default=timezone.now)
+    commute_type_child = models.CharField(
         choices=COMMUTE_TYPES,
         max_length=15,
     )
@@ -258,15 +262,15 @@ class ZipCodeDictionaryChild(models.Model):
 
     @property
     def zip_code(self):
-        return self._zip_code
+        return self.zip_code_child
 
     @property
-    def base_zip_code(self):
-        return self._base_zip_code
+    def parent_zip_code(self):
+        return self.parent_zip_code_child
 
     @property
     def zip_code_parent(self):
-        return self._base_zip_code
+        return self.parent_zip_code_child
 
     @property
     def commute_time_minutes(self):
@@ -274,7 +278,7 @@ class ZipCodeDictionaryChild(models.Model):
 
     @property
     def commute_time_seconds(self):
-        return self._commute_time_seconds
+        return self.commute_time_seconds_child
 
     @property
     def commute_distance_miles(self):
@@ -282,19 +286,19 @@ class ZipCodeDictionaryChild(models.Model):
 
     @property
     def commute_distance_meters(self):
-        return self._commute_distance_meters
+        return self.commute_distance_meters_child
 
     @property
     def last_date_updated(self):
-        return self._last_date_updated
+        return self.last_date_updated_child
 
     @last_date_updated.setter
     def last_date_updated(self, new_last_date_updated):
-        self._last_date_updated = new_last_date_updated
+        self.last_date_updated_child = new_last_date_updated
 
     @property
     def commute_type(self):
-        return self._commute_type
+        return self.commute_type_child
 
     def zip_code_cache_still_valid(self):
         """

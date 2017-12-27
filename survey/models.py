@@ -1,8 +1,7 @@
 # Import django python modules
 from django.db import models
-from django.utils import timezone
-
-# Import python modules
+from userAuth.models import UserProfile
+from houseDatabase.models import RentDatabaseModel
 from enum import Enum
 import math
 

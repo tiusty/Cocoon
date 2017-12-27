@@ -12,7 +12,7 @@ from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
     Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
     DEFAULT_RENT_SURVEY_NAME, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight
-from houseDatabase.models import RentDatabase, ZipCodeDictionaryParent, ZipCodeDictionaryChild
+from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
 from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
@@ -422,7 +422,7 @@ def create_exterior_amenities_score(scored_house_list, survey):
     """
     for home in scored_house_list:
         weighted_question_scoring(home, home.house.parking_spot, survey.parking_spot)
-        weighted_question_scoring(home, home.house.washer_dryer_in_building,
+        weighted_question_scoring(home, home.house.building_washer_dryer,
                                   survey.washer_dryer_in_building)
         weighted_question_scoring(home, home.house.elevator, survey.elevator)
         weighted_question_scoring(home, home.house.handicap_access, survey.handicap_access)
@@ -506,13 +506,13 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                 # This searches for the zip code combination and then if it can't find it, it will
                 # add the combination to the failed_zip_code dictionary
                 try:
-                    zip_code_dictionary = ZipCodeDictionaryParent.objects.get(
-                        _zip_code=house.house.zip_code
+                    zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(
+                        zip_code_parent=house.house.zip_code
                     )
                     try:
-                        zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
-                            _zip_code=destination.zip_code,
-                            _commute_type=commute_type,
+                        zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychildmodel_set.get(
+                            zip_code_child=destination.zip_code,
+                            commute_type_child=commute_type,
                         )
                         # If the zip code needs to be refreshed, then delete the zip code
                         # and add it to the failed list
@@ -523,10 +523,10 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                             # If all the conditions pass, then store the commute time stored for that combination
                         else:
                             house.approxCommuteTime.append(zip_code_dictionary_child.commute_time_minutes)
-                    except ZipCodeDictionaryChild.DoesNotExist:
+                    except ZipCodeDictionaryChildModel.DoesNotExist:
                         # add_home_to_failed_list(failed_zip_codes, destination, house)
                         add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-                except ZipCodeDictionaryParent.DoesNotExist:
+                except ZipCodeDictionaryParentModel.DoesNotExist:
                     # add_home_to_failed_list(failed_zip_codes, destination, house)
                     add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
 
@@ -542,7 +542,7 @@ def add_home_to_failed_list(failed_zip_dict, destination, house, blacklist):
     This function adds a failed home combination to the failed_zip_codes array
     It is passed the house and the destination that is is supposed to go to
     :param failed_zip_codes: A dictionary of failed zip code combination
-    :param destination: The destination stored as a RentDatabase model
+    :param destination: The destination stored as a RentDatabaseModel model
     :param house: The house (origin), stored as a scoring structure
 
 
@@ -616,27 +616,27 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blackli
                         for commute in matrix["rows"][counter]["elements"]:
                             # Divide by 60 to get minutes
                             if commute['status'] == 'OK':
-                                if ZipCodeDictionaryParent.objects.filter(_zip_code=origin).exists():
-                                    zip_code_dictionary = ZipCodeDictionaryParent.objects.get(_zip_code=origin)
-                                    if zip_code_dictionary.zipcodedictionarychild_set.filter(
-                                            _zip_code=dest_zip,
-                                            _commute_type=commute_type).exists():
+                                if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin).exists():
+                                    zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin)
+                                    if zip_code_dictionary.zipcodedictionarychildmodel_set.filter(
+                                            zip_code_child=dest_zip,
+                                            commute_type_child=commute_type).exists():
                                         print("The combination that was computed already exists")
                                     else:
-                                        zip_code_dictionary.zipcodedictionarychild_set.create(
-                                            _zip_code=dest_zip,
-                                            _commute_type=commute_type,
-                                            _commute_distance_meters=commute['distance']['value'],
-                                            _commute_time_seconds=commute['duration']['value'],
+                                        zip_code_dictionary.zipcodedictionarychildmodel_set.create(
+                                            zip_code_child=dest_zip,
+                                            commute_type_child=commute_type,
+                                            commute_distance_meters_child=commute['distance']['value'],
+                                            commute_time_seconds_child=commute['duration']['value'],
                                         )
                                         print(commute['duration']['value'])
                                 else:
-                                    ZipCodeDictionaryParent.objects.create(_zip_code=origin) \
-                                        .zipcodedictionarychild_set.create(
-                                        _zip_code=dest_zip,
-                                        _commute_type=commute_type,
-                                        _commute_distance_meters=commute['distance']['value'],
-                                        _commute_time_seconds=commute['duration']['value'],
+                                    ZipCodeDictionaryParentModel.objects.create(zip_code_parent=origin) \
+                                        .zipcodedictionarychildmodel_set.create(
+                                        zip_code_child=dest_zip,
+                                        commute_type_child=commute_type,
+                                        commute_distance_meters_child=commute['distance']['value'],
+                                        commute_time_seconds_child=commute['duration']['value'],
                                     )
                             else:
                                 print("distance not found")
@@ -738,12 +738,12 @@ def start_algorithm(survey, context):
     4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
     4. Filter by the number of bathrooms
     """
-    filtered_house_list = RentDatabase.objects \
-        .filter(_price_home__range=(survey.get_min_price(), survey.get_max_price())) \
-        .filter(_home_type__in=current_home_types) \
-        .filter(_move_in_day__range=(survey.get_move_in_date_start(), survey.get_move_in_date_end())) \
-        .filter(_num_bedrooms=survey.get_num_bedrooms()) \
-        .filter(_num_bathrooms__range=(survey.get_min_bathrooms(), survey.get_max_bathrooms()))
+    filtered_house_list = RentDatabaseModel.objects \
+        .filter(price_home__range=(survey.get_min_price(), survey.get_max_price())) \
+        .filter(home_type_home__in=current_home_types) \
+        .filter(move_in_day_home__range=(survey.get_move_in_date_start(), survey.get_move_in_date_end())) \
+        .filter(num_bedrooms_home=survey.get_num_bedrooms()) \
+        .filter(num_bathrooms_home__range=(survey.get_min_bathrooms(), survey.get_max_bathrooms()))
 
     # Retrieves all the destinations that the user recorded
     destination_set = survey.rentingdestinations_set.all()
@@ -928,7 +928,7 @@ def set_favorite(request):
             house_id = request.POST.get('fav')
             # Retrieve the house associated with that id
             try:
-                house = RentDatabase.objects.get(id=house_id)
+                house = RentDatabaseModel.objects.get(id=house_id)
                 try:
                     user_profile = UserProfile.objects.get(user=request.user)
                     # If the house is already in the database then remove it and return 0
@@ -950,7 +950,7 @@ def set_favorite(request):
                                         content_type="application/json",
                                         )
             # Return an error is the house cannot be found
-            except RentDatabase.DoesNotExist:
+            except RentDatabaseModel.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
                                     content_type="application/json",
                                     )
@@ -1015,12 +1015,12 @@ def set_visit_house(request):
             try:
                 user_profile = UserProfile.objects.get(user=request.user)
                 try:
-                    home = RentDatabase.objects.get(id=home_id)
+                    home = RentDatabaseModel.objects.get(id=home_id)
                     user_profile.visit_list.add(home)
                     return HttpResponse(json.dumps({"result": "1",
                                                     "homeId": home_id}),
                                         content_type="application/json", )
-                except RentDatabase.DoesNotExist:
+                except RentDatabaseModel.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",
                                         )
@@ -1054,11 +1054,11 @@ def delete_visit_house(request):
             try:
                 user_profile = UserProfile.objects.get(user=request.user)
                 try:
-                    home = RentDatabase.objects.get(id=home_id)
+                    home = RentDatabaseModel.objects.get(id=home_id)
                     user_profile.visit_list.remove(home)
                     return HttpResponse(json.dumps({"result": "0"}),
                                         content_type="application/json", )
-                except RentDatabase.DoesNotExist:
+                except RentDatabaseModel.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",
                                         )
