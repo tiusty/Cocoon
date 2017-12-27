@@ -2,7 +2,10 @@ from Unicorn.settings.Global_Config import price_question_weight
 
 
 class PriceAlgorithm(object):
-
+    """
+    Class computes the score based on the price of a home.
+    This class is meant to be used as a child class for an algorithm class
+    """
     def __init__(self):
         self._max_price = 0
         self._min_price = 0
@@ -45,7 +48,7 @@ class PriceAlgorithm(object):
     @property
     def price_user_scale_factor(self):
         """
-        Gets the price scale factor. (Aka, how much weight the price has)
+        Gets the price scale factor that the user set. (Aka, how much weight the price has)
         :return: An int that is the scale factor
         """
         return self._price_user_scale_factor
@@ -58,24 +61,46 @@ class PriceAlgorithm(object):
         """
         self._price_user_scale_factor = new_price_scale_factor
 
+    @property
+    def price_question_weight(self):
+        """
+        Get the price_question weight that is determined by the config file
+        :return: THe price quesiton weight as an int
+        """
+        return self._price_question_weight
+
+    @price_question_weight.setter
+    def price_question_weight(self, new_price_question_weight):
+        """
+        This Function might get deprecated because it shouldn't be changed
+        from the config files value
+        :param new_price_question_weight:
+        :return:
+        """
+        #TODO determine if this function should not be allowed to be called
+        self._price_question_weight = new_price_question_weight
+
     def compute_price_score(self, home_price):
         """
-        Compute the score based off the price. A percent value of how fit the home is returned
+        Compute the score based off the price. A percent value of the fit of the home is returned
         I.E, .67 or .47, etc will be returned. The scaling will be done in the parent class
         :param home_price: The price as an int for the home.
-        :return: The percent fit the home is
+        :return: The percent fit the home is or -1 if the home should be eliminated
         """
-        home_price_normalized = home_price - self.min_price
+        if home_price < self.min_price:
+            return -1
+        elif home_price > self.max_price:
+            return -1
+        else:
+            home_price_normalized = home_price - self.min_price
+            home_range = self.max_price - self.min_price
 
-        # If the normalized price is less than 0, then return 0 which has no effect
-        # The price eliminator should have already marked the home as eliminated since home_price < min_price
-        if home_price_normalized < 0:
-            return 0
+            if home_range <= 0:
+                # If the home_range is zero and the max_price equals the home
+                # price then the home is in the range
+                if home_price == self.min_price:
+                    return 1
+                else:
+                    return -1
 
-        home_range = self.max_price - self.min_price
-        # If the home_range is less than 0, then something went wrong so
-        # return 0 to have no effect on the score
-        if home_range <= 0:
-            return 0
-
-        return 1 - (home_price_normalized / home_range)
+            return 1 - (home_price_normalized / home_range)
