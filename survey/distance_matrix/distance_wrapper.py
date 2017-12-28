@@ -6,7 +6,7 @@ import json
 Class that acts as a wrapper for distance matrix requests. Splits requests into 
 legal sizes and consolidates results
 """
-class distance_wrapper:
+class DistanceWrapper:
 
     def __init__(self, key=gmaps_api_key, mode="driving", units="imperial"):
         self.key = key
