@@ -2,9 +2,6 @@
 from django.db import models
 from django.utils import timezone
 
-# Import python modules
-import datetime
-
 # Import Config file information
 from Unicorn.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
 
@@ -214,7 +211,7 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     """
     apartment_number_home = models.CharField(max_length=200)
     home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
-    move_in_day_home = models.DateField(default=datetime.date.today)
+    move_in_day_home = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.full_address
