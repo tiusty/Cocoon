@@ -1,7 +1,6 @@
 # Django modules
 from django import forms
 from django.forms import ModelForm
-from django.db.models import Q
 from django.utils import timezone
 
 # Survey models
@@ -133,7 +132,7 @@ class HomeInformationForm(ModelForm):
 
     @property
     def move_in_data_start(self):
-        return self._move_in_date_start
+        return self.move_in_date_start_survey
 
     class Meta:
         model = HomeInformationModel
