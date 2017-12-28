@@ -15,6 +15,7 @@ from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVE
     HYBRID_WEIGHT_CHOICES
 
 
+# TODO: Deprecate with new algorithm
 class CommutePrecision(Enum):
     exact = 1
     approx = 2
