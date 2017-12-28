@@ -189,6 +189,8 @@ class TestScoringMethods(TestCase):
         home_score.approx_commute_times = []
         self.assertEqual(home_score.approx_commute_times, [])
 
+class TestApproxCommute(TestCase):
+
     def setUp(self):
         self.zip_code = "12345"
         self.zip_code1 = "01234"
@@ -229,8 +231,6 @@ class TestScoringMethods(TestCase):
         self.assertEqual(home_score.approx_commute_times_minutes, [100])
         self.assertEqual(ret2, [1, self.zip_code, self.zip_code2])
         self.assertEqual(ret3, [1, "00000", self.zip_code])
-
-
 
 
 
