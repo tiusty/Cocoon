@@ -1,10 +1,10 @@
 # Import Django modules
 from django.db import models
+from django.utils import timezone
 
 # Python Modules
 from enum import Enum
 import math
-from django.utils import timezone
 
 # Import cocoon models
 from userAuth.models import UserProfile
