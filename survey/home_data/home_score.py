@@ -1,4 +1,4 @@
-from houseDatabase.models import ZipCodeDictionaryParent, ZipCodeDictionaryChild
+from houseDatabase.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 
 class HomeScore(object):
 
@@ -42,69 +42,27 @@ class HomeScore(object):
             self._approx_commute_times_minutes.append(new_approx_commute_time)
 
     """
-    Uses GoogleMaps API to compute exact commute time from this house's address to an
-    input destination address. If there is no commute time, this house is marked as 
-    eliminated.
-    Paramters: full_address - the home's full address
-               destination - the destination's full address
-               commute_type - the type of commute (eg. biking, transit)
-    Returns: The exact commute time, in seconds, and the distance, in the given units, as a list.
-    Only returns if there is not an error.
-    """
-    def calculate_exact_commute(self, full_address, destination, commute_type):
-        #Are we still using Imperial, despite commute distances being in meters?
-        measure_units = "metric"
-        origins = []
-        destinations = []
-        origins.append(full_address)
-        origins.append(destination)
-        matrix = gmaps.distance_matrix(origins, destinations, mode=commute_type, units=measure_units)
-        #Check for error in receiving matrix
-        #TODO: Robust error checking
-        if matrix:
-            commute = matrix["rows"][0]["elements"]
-            if commute['status'] == 'OK':
-                return [commute['duration']["value"], commute['distance']["value"]]
-            else:
-                self.eliminated = True
-        else:
-            print("Error parsing API response")
-
-    """
     Computes an approximate commute time for this house to an input destination. First checks
     the zipcode database to see if the commute time is already stored; if it's not, it then
-    computes an exact commute time and adds this to the database.
+    returns the pair of failed zips, along with an error code as a 3 element list. The first 
+    entry of the list is 0 if the pair was in the database, and 1 if the pair wasn't in the database 
+    or if the pair wasn't valid. The last 2 entries are the origin and destination zip respectively.
     """
-    def calculate_approx_commute(self, home_zip, home_address, destination_zip, destination_address, commute_type):
+    def calculate_approx_commute(self, origin_zip, destination_zip, commute_type):
         #First check if already in the database
-        zip_code_dictionary = ZipCodeDictionaryChild.objects.filter(_base_zip_code=home_zip, 
+        zip_code_dictionary = ZipCodeDictionaryChild.objects.filter(_base_zip_code=origin_zip
                                                                     _zip_code=destination_zip
                                                                    )
         if zip_code_dictionary.exists():
             for match in zip_code_dictionary:
                 if match.zip_code_cache_still_valid():
-                    #TODO: Make this a dictionary, or include zips?
                     self.approx_commute_times = match.commute_time_minutes
+                    return [0, origin_zip, destination_zip]
                 else:
-                    #Not sure if this is correct at all, will review
-                    match.commute_time_minutes = calculate_exact_commute(self, 
-                                                                         home_address, 
-                                                                         destination_address, 
-                                                                         commute_type
-                                                                        )
+                    return [1, origin_zip, destination_zip]
         else: 
-            #TODO: Error checking, is this even how we do the commute computation?
-            if not ZipCodeDictionaryParent.objects.filter(_zip_code=home_zip).exists():
-                ZipCodeDictionaryParent.objects.create(_zip_code=home_zip)
-            #Create ZipCodeChildObject
-            commute = calculate_exact_commute(self, home_address, destination_address, commute_type)
-            ZipCodeDictionaryChild.objects.create(_zip_code=destination_zip,
-                                                      _base_zip_code=home_zip,
-                                                      _commute_time_seconds=commute[0],
-                                                      _commute_distance_meters=commute[1],
-                                                      _late_date_updated=timezone.now().date(),
-                                                      _commute_type=commute_type,
-                                                      )
+            return [1, origin_zip, destination_zip]
+
 
     @property
     def accumulated_points(self):
