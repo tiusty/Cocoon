@@ -228,7 +228,7 @@ class TestScoringMethods(TestCase):
         self.assertEqual(ret1, [0, self.zip_code, self.zip_code1])
         self.assertEqual(home_score.approx_commute_times_minutes, [100])
         self.assertEqual(ret2, [1, self.zip_code, self.zip_code2])
-        self.assertEqual(ret3, [2, "00000", self.zip_code])
+        self.assertEqual(ret3, [1, "00000", self.zip_code])
 
 
 
