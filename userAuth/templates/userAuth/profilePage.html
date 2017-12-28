@@ -45,7 +45,7 @@
                 <div class="useravatar">
                     <img alt="" src="{% static 'userAuth/unicornProfilePic.jpeg' %}">
                 </div>
-                <div class="card-info"><span class="card-title">{{ userProfile.user.full_name }}</span>
+                <div class="card-info"><span class="card-title">{{ userProfile.user.get_full_name }}</span>
                 </div>
             </div>
             <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">

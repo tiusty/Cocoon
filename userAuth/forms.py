@@ -1,11 +1,15 @@
-# Import django modules
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from .models import MyUser, UserProfile
 from django import forms
 
-# Import userAuth models
-from .models import MyUser
 
+####################################################
+# Notes: The username is set as the current email address
+#
+#
+####################################################
 
+# If you don't do this you cannot use Bootstrap CSS
 class LoginUserForm(AuthenticationForm):
     username = forms.EmailField(
         label="Username",
@@ -105,7 +109,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = MyUser
-        fields = ["email_user", "first_name_user", "last_name_user", 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
 
 class ProfileForm(forms.ModelForm):
@@ -140,7 +144,6 @@ class ProfileForm(forms.ModelForm):
             }
         )
     )
-
     class Meta:
         model = MyUser
-        fields = ["email_user", "first_name_user", "last_name_user"]
+        fields = ['email', 'first_name', 'last_name']
