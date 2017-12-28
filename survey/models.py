@@ -280,9 +280,9 @@ class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceIn
     """
 
     def __str__(self):
-        user_short_name = self.user_profile.user.get_short_name()
+        user_email = self.user_profile.user.email
         survey_name = self.name
-        return "{0}: {1}".format(user_short_name, survey_name)
+        return "{0}: {1}".format(user_email, survey_name)
 
 
 class Destinations(models.Model):

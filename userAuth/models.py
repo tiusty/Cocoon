@@ -1,15 +1,14 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, UserManager, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
 from houseDatabase.models import RentDatabaseModel
-# Create your models here.
 
 
 class MyUserManager(BaseUserManager):
 
-    def _create_user(self, email, password, is_superuser, is_admin,**extra_fields):
+    def _create_user(self, email, password, is_superuser, is_admin, **extra_fields):
         """
         Creates and saves a User with the given email and password
         :param email:
@@ -40,50 +39,49 @@ class MyUserManager(BaseUserManager):
         return self._create_user(email, password, True, True, **extra_fields)
 
 
+# noinspection PyAbstractClass
 class MyUser(AbstractBaseUser, PermissionsMixin):
     """
     Custom user class
     """
-    email = models.EmailField('email address', unique=True, db_index=True)
-    joined = models.DateField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
+    email_user = models.EmailField('email address', unique=True, db_index=True)
+    joined_user = models.DateField(auto_now_add=True)
+    is_active_user = models.BooleanField(default=True)
+    is_admin_user = models.BooleanField(default=False)
+    is_superuser_user = models.BooleanField(default=False)
+    first_name_user = models.CharField(max_length=200)
+    last_name_user = models.CharField(max_length=200)
 
     objects = MyUserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return self.email_user
 
-    def get_full_name(self):
-        # The user is identified by their email address
-        return self.first_name + " " + self.last_name
+    @property
+    def full_name(self):
+        return "{0} {1}".format(self.first_name_user, self.last_name_user)
 
-    def get_short_name(self):
-        # The user is identified by their email address
-        return self.email
+    @property
+    def email(self):
+        return self.email_user
 
     def has_perm(self, perm, obj=None):
-        "Does the user have a spcific premission?"
-        # Simpliest possible answer: yes, always
+        """Does the user have a specific permission?"""
+        # Simplest possible answer: yes, always
         return True
 
     def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
+        """Does the user have permissions to view the app `app_label`?"""
         # Simplest possible answer: Yes, always
         return True
 
     @property
     def is_staff(self):
-        "Is the user a member of staff?"
+        """Is the user a member of staff?"""
         # Simplest possible answer: All admins are staff
-        return self.is_admin
-
-# Defines the Manager for the custom User model
+        return self.is_admin_user
 
 
 class UserProfile(models.Model):
@@ -92,9 +90,10 @@ class UserProfile(models.Model):
     visit_list = models.ManyToManyField(RentDatabaseModel, related_name="visit_list", blank=True)
 
     def __str__(self):
-        return self.user.get_short_name()
+        return self.user.email
 
 
+# noinspection PyUnusedLocal
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
             UserProfile.objects.create(user=instance)
