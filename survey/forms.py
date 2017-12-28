@@ -67,10 +67,7 @@ class HomeInformationForm(ModelForm):
             }),
         # Prevents other objects from being displayed as choices as a home type,
         # If more home_types are added then it needs to be added here to the survey
-        queryset=HomeTypeModel.objects.filter(Q(home_type_survey__startswith="House")
-                                              | Q(home_type_survey__startswith="Apartment")
-                                              | Q(home_type_survey__startswith="Condo")
-                                              | Q(home_type_survey__startswith="Town House"))
+        queryset=HomeTypeModel.objects.all()
     )
 
     @property
