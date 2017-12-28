@@ -8,7 +8,7 @@ from survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformation
 from houseDatabase.models import HomeTypeModel
 
 # Import cocoon global config values
-from Unicorn.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX
+from Unicorn.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
 
 
 class TestHomeInformationForm(TestCase):
@@ -164,7 +164,7 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_home_information_form_max_num_bedrooms_missing(self):
+    def tests_home_information_form_max_num_bathrooms_missing(self):
         # Arrange
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
@@ -181,13 +181,13 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_home_information_form_num_bedrooms_more_than_max_num_bedrooms(self):
+    def tests_home_information_form_num_bedrooms_more_than_max_num_bathrooms(self):
         # Arrange
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': MAX_NUM_BEDROOMS + 1,
-            'max_bathrooms_survey': self.max_num_bathrooms,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'max_bathrooms_survey': MAX_NUM_BATHROOMS + 1,
             'min_bathrooms_survey': self.min_num_bathrooms,
             'home_type_survey': self.home_type_survey
         }

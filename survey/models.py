@@ -198,9 +198,9 @@ class InteriorAmenitiesModel(models.Model):
     Contains all the survey questions regarding the interior amenities
     """
     air_conditioning_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    interior_washer_dryer_survey = models.IntegerField(default=0)
-    dish_washer_survey = models.IntegerField(default=0)
-    bath_survey = models.IntegerField(default=0)
+    interior_washer_dryer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    dish_washer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    bath_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
 
     @property
     def air_conditioning(self):
@@ -227,13 +227,13 @@ class ExteriorAmenitiesModel(models.Model):
     Contains all the survey questions regarding the building/Exterior Amenities
     All Questions are hybrid weighted
     """
-    parking_spot_survey = models.IntegerField(default=0)
-    building_washer_dryer_survey = models.IntegerField(default=0)
-    elevator_survey = models.IntegerField(default=0)
-    handicap_access_survey = models.IntegerField(default=0)
-    pool_hot_tub_survey = models.IntegerField(default=0)
-    fitness_center_survey = models.IntegerField(default=0)
-    storage_unit_survey = models.IntegerField(default=0)
+    parking_spot_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    building_washer_dryer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    elevator_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    handicap_access_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    pool_hot_tub_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    fitness_center_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    storage_unit_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
 
     @property
     def parking_spot(self):

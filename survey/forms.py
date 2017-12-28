@@ -179,27 +179,6 @@ class CommuteInformationForm(ModelForm):
     def commute_type(self):
         return self.commute_type_survey
 
-    def is_valid(self):
-        valid = super(CommuteInformationForm, self).is_valid()
-
-        if not valid:
-            return valid
-
-        # Need to make a copy because otherwise when an error is added, that field
-        # is removed from the cleaned_data, then any subsequent checks of that field
-        # will cause a key error
-        current_form = self.cleaned_data.copy()
-
-        if int(current_form['commute_weight_survey']) > WEIGHT_QUESTION_MAX:
-            self.add_error('commute_weight_survey', "Commute weight cant' be greater than " + str(WEIGHT_QUESTION_MAX))
-            valid = False
-
-        if int(current_form['commute_weight_survey']) < 0:
-            self.add_error('commute_weight_survey', "Commute weight cant' be less than 0")
-            valid = False
-
-        return valid
-
     class Meta:
         model = CommuteInformationModel
         # Make sure to set the name later, in the survey result if they want to save the result
