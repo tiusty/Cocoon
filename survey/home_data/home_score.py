@@ -45,9 +45,8 @@ class HomeScore(object):
     Computes an approximate commute time for this house to an input destination. First checks
     the zipcode database to see if the commute time is already stored; if it's not, it then
     returns the pair of failed zips, along with an error code as a 3 element list. The first 
-    entry of the list is 0 if the pair was in the database, 1 if the parent was but the child
-    didn't link to the parent, and 2 if the parent wasn't in the database. The last 2 entries 
-    of the last are the origin and destination zip respectively.
+    entry of the list is 0 if the pair was in the database, and 1 if the pair wasn't in the database 
+    or if the pair wasn't valid. The last 2 entries are the origin and destination zip respectively.
     """
     def calculate_approx_commute(self, origin_zip, destination_zip, commute_type):
         #First check if already in the database
@@ -62,7 +61,7 @@ class HomeScore(object):
                 else:
                     return [1, origin_zip, destination_zip]
         else: 
-            return [2, origin_zip, destination_zip]
+            return [1, origin_zip, destination_zip]
 
 
     @property
