@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 from userAuth.forms import RegisterForm,LoginUserForm
-from userAuth.models import MyUser, UserProfile
 
 # Import cocoon global config
 from Unicorn.settings.Global_Config import creation_key_value
@@ -38,14 +37,32 @@ class TestRegisterForm(TestCase):
 class TestLoginUserForm(TestCase):
 
     def setUp(self):
+        # Login form data
         self.username = 'email@text.com'
         self.password = 'somePassword'
         self.remember = True
-        MyUser.objects.create(email=self.username, password=self.password)
-        print(MyUser.objects.all())
+
+        # Register form data
+        self.first_name = 'Alex'
+        self.last_name = 'Agudelo'
+        self.creation_key = creation_key_value
 
     def tests_login_user_form_valid(self):
         # Arrange
+
+        # First create a user so that it can be logged into later
+        register_data = {
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.username,
+            'password1': self.password,
+            'password2': self.password,
+            'creation_key': self.creation_key
+        }
+        register_form = RegisterForm(data=register_data)
+        register_form.is_valid()
+        register_form.save()
+
         form_data = {
             'username': self.username,
             'password': self.password,
@@ -54,8 +71,6 @@ class TestLoginUserForm(TestCase):
 
         # Act
         form = LoginUserForm(data=form_data)
-        form.is_valid()
-        print(form.errors)
 
         # Assert
         self.assertTrue(form.is_valid())
