@@ -7,6 +7,15 @@ default_rent_survey_name = "Recent Rent Survey"
 
 survey_types = Enum('survey_types', 'rent buy')
 
+# House Database config values
+COMMUTE_TYPES = (
+    ('driving', 'Driving'),
+    ('transit', 'Transit'),
+    ('walking', 'Walking'),
+    ('biking', 'Biking'),
+)
+ZIP_CODE_TIMEDELTA_VALUE = 60
+
 # Default Survey Max Values
 HYBRID_QUESTION_WEIGHT = 20
 commute_question_weight = 100

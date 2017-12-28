@@ -282,7 +282,7 @@ class InteriorAmenitiesForm(ModelForm):
 
 class BuildingExteriorAmenitiesForm(ModelForm):
     """
-    Class stores all the form fields for the BuildingExteriorAmenities Model
+    Class stores all the form fields for the BuildingExteriorAmenitiesModel Model
     """
     parking_spot = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,

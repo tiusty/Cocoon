@@ -1,13 +1,13 @@
 from django.db import models
 from userAuth.models import UserProfile
-from houseDatabase.models import RentDatabase
+from houseDatabase.models import RentDatabaseModel
 from enum import Enum
 
 import math
 from django.utils import timezone
 
 # Import Global Variables
-from Unicorn.settings.Global_Config import Max_Num_Bathrooms, default_rent_survey_name
+from Unicorn.settings.Global_Config import Max_Num_Bathrooms, default_rent_survey_name, COMMUTE_TYPES
 
 
 class CommutePrecision(Enum):
@@ -131,14 +131,6 @@ class BuildingExteriorAmenities(models.Model):
 
     class Meta:
         abstract = True
-
-
-COMMUTE_TYPES = (
-    ('driving', 'Driving'),
-    ('transit', 'Transit'),
-    ('bicycling', 'Biking'),
-    ('walking', 'Walking')
-)
 
 
 class RequiredInformation(models.Model):
@@ -295,13 +287,13 @@ class RentingDestinations(Destinations):
 #     be loaded at any time. Reduces the computation time for the server
 #     NOTE THIS CLASS HAS NOT BEEN TESTED ONLY ADDED
 #     """
-#     house = models.ForeignKey(RentDatabase)
+#     house = models.ForeignKey(RentDatabaseModel)
 #     score = models.IntegerField(default=0)
 #     score_possible = models.IntegerField(default=0)
 #     eliminated = models.BooleanField(default=False)
 #
 #     def __str__(self):
-#         return self.house.get_full_address()
+#         return self.house.full_address()
 #
 #     def get_score_percent(self):
 #         """
@@ -446,4 +438,4 @@ class RentingDestinations(Destinations):
 #     """
 #     scoring_struct = models.ForeignKey(RentScoringStruct)
 #     commute_type = models.IntegerField(default=CommutePrecision.approx.value)
-#     commute_time = models.IntegerField(default=0)
+#     commute_time_minutes = models.IntegerField(default=0)

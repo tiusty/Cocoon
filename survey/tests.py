@@ -60,7 +60,7 @@ class SurveyFormTest(TestCase):
             'max_bathrooms': self.default_max_bathrooms,
             'min_bathrooms': self.default_min_bathrooms,
             'parking_spot': self.default_parking_spot,
-            'washer_dryer_in_building': self.default_washer_dryer_in_building,
+            'building_washer_dryer': self.default_washer_dryer_in_building,
             'elevator': self.default_elevator,
             'handicap_access': self.default_handicap_access,
             'pool_hot_tub': self.default_pool_hot_tub,

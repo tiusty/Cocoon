@@ -11,7 +11,7 @@ import os
 import string
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
-from houseDatabase.models import HousePhotos, RentDatabase, InteriorAmenities, BuildingExteriorAmenities
+from houseDatabase.models import HousePhotosModel, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
 from django.utils import timezone
 
 
@@ -133,9 +133,9 @@ class Command(BaseCommand):
                 zip = cells[ZIP_CODE]
                 full_add = address + ' ' + town + ' ' + state + ' ' + zip
 
-                if (RentDatabase.objects.filter(listing_no=cells[LIST_NO]).exists()):
+                if (RentDatabaseModel.objects.filter(listing_no=cells[LIST_NO]).exists()):
                     # this house already exists
-                    existing_apartment = RentDatabase.objects.get(listing_no=cells[LIST_NO])
+                    existing_apartment = RentDatabaseModel.objects.get(listing_no=cells[LIST_NO])
                     existing_apartment.move_in_day = datetime.now()
                     existing_apartment.save()
                     print("[DUPLICATE]" + full_add)
@@ -151,7 +151,7 @@ class Command(BaseCommand):
                         lat = latlng[0]
                         lng = latlng[1]
 
-                    new_listing = RentDatabase()
+                    new_listing = RentDatabaseModel()
                     new_listing.lat = lat
                     new_listing.lon = lng
                     new_listing.address = address
@@ -181,7 +181,7 @@ class Command(BaseCommand):
 
                     #TODO: Actually get photos based on ftp url and AWS S3
                     new_listing.save()
-                    newPhotos = HousePhotos(house=new_listing)
+                    newPhotos = HousePhotosModel(house=new_listing)
                     newPhotos.save()
                     new_listing.save()
                     print(full_add + " added")
