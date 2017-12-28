@@ -38,8 +38,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
     def retrieve_exact_commutes(self):
         return
 
-
-
     def run_compute_price_score(self):
         """
         Runs the price scoring which will generate a score based on the price of the home. If the home
