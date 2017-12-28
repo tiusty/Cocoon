@@ -7,12 +7,14 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
+from django.db.models import Q
 
 from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
     Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
     DEFAULT_RENT_SURVEY_NAME, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight
-from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
+    HomeTypeModel
 from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
 from survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
@@ -738,9 +740,18 @@ def start_algorithm(survey, context):
     4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
     4. Filter by the number of bathrooms
     """
+
+    # First filter homes based on home type
+    home_type_queries = [Q(home_type_home=value) for value in HomeTypeModel.objects.filter(home_type_survey__in=current_home_types)]
+
+    # Or all the queries together
+    query_home_type = home_type_queries.pop()
+    for item in home_type_queries:
+        query_home_type |= item
+
     filtered_house_list = RentDatabaseModel.objects \
         .filter(price_home__range=(survey.min_price, survey.max_price)) \
-        .filter(home_type_home__in=current_home_types) \
+        .filter(query_home_type) \
         .filter(move_in_day_home__range=(survey.move_in_date_start, survey.move_in_date_end)) \
         .filter(num_bedrooms_home=survey.num_bedrooms) \
         .filter(num_bathrooms_home__range=(survey.min_bathrooms, survey.max_bathrooms))
