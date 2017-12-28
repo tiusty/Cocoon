@@ -2,9 +2,7 @@
 from django import forms
 from django.forms import ModelForm
 from django.db.models import Q
-
-# Python Modules
-import datetime
+from django.utils import timezone
 
 # Survey models
 from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinations, \
@@ -107,7 +105,7 @@ class HomeInformationForm(ModelForm):
         current_form = self.cleaned_data.copy()
 
         # Validate move-in field
-        if current_form['move_in_date_start_survey'] < datetime.date.today():
+        if current_form['move_in_date_start_survey'] < timezone.now().date():
             self.add_error('move_in_date_start_survey', "Start Day should not be in the past")
             valid = False
 
