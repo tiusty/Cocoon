@@ -64,8 +64,6 @@ class HomeInformationForm(ModelForm):
             attrs={
                 'class': 'form-control',
             }),
-        # Prevents other objects from being displayed as choices as a home type,
-        # If more home_types are added then it needs to be added here to the survey
         queryset=HomeTypeModel.objects.all()
     )
 
@@ -136,7 +134,6 @@ class HomeInformationForm(ModelForm):
 
     class Meta:
         model = HomeInformationModel
-        # Make sure to set the name later, in the survey result if they want to save the result
         fields = '__all__'
 
 
@@ -181,7 +178,6 @@ class CommuteInformationForm(ModelForm):
 
     class Meta:
         model = CommuteInformationModel
-        # Make sure to set the name later, in the survey result if they want to save the result
         fields = '__all__'
 
 
@@ -220,7 +216,6 @@ class PriceInformationForm(ModelForm):
 
     class Meta:
         model = PriceInformationModel
-        # Make sure to set the name later, in the survey result if they want to save the result
         fields = '__all__'
 
 
@@ -275,7 +270,6 @@ class InteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = InteriorAmenitiesModel
-        # Make sure to set the name later, in the survey result if they want to save the result
         fields = '__all__'
 
 
@@ -362,7 +356,6 @@ class ExteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = ExteriorAmenitiesModel
-        # Make sure to set the name later, in the survey result if they want to save the result
         fields = '__all__'
 
 
