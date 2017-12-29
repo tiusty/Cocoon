@@ -722,67 +722,18 @@ def compute_exact_commute(destinations, scored_list, commute_type):
     return scored_list
 
 
-def start_algorithm(survey, context):
-    blacklist = BlackList()
+def run_rent_algorithm(survey, context):
 
     # Creates an array with all the home types indicated by the survey
     current_home_types = []
     for home in survey.home_type.all():
         current_home_types.append(home.home_type)
 
+    # Initialize the rent_algorithm class with empty data
     rent_algorithm = RentAlgorithm()
 
-    """
-    STEP 1: Compute Static Elements
-    The item that will filter the list the most should be first to narrow down the number of iterations
-    The database needs to be searched
-    (Right now it isn't order by efficiency but instead by when it was added. Later it can be switched around
+    rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
 
-    Current order:
-    1. Filter by price range. The House must be in the correct range to be accepted
-    2. Filter by Home Type. The home must be the correct home type to be accepted
-    3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
-        If the house is outside the range it is eliminated
-    4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
-    4. Filter by the number of bathrooms
-    """
-
-    # First filter homes based on home type
-    home_type_queries = [Q(home_type_home=value) for value in HomeTypeModel.objects.filter(home_type_survey__in=current_home_types)]
-
-    # Or all the queries together
-    query_home_type = home_type_queries.pop()
-    for item in home_type_queries:
-        query_home_type |= item
-
-
-    # TODO Maybe move querying to rent algorithm class?
-    filtered_house_list = RentDatabaseModel.objects \
-        .filter(price_home__range=(survey.min_price, survey.max_price)) \
-        .filter(query_home_type) \
-        .filter(move_in_day_home__range=(survey.move_in_date_start, survey.move_in_date_end)) \
-        .filter(num_bedrooms_home=survey.num_bedrooms) \
-        .filter(num_bathrooms_home__range=(survey.min_bathrooms, survey.max_bathrooms))
-
-    # TODO Maybe move this to the rent algorithm class?
-    # Retrieves all the destinations that the user recorded
-    destination_set = survey.rentingdestinations_set.all()
-
-    # Add the destinations to the rent_algorithm
-    for destination in destination_set:
-        rent_algorithm.destinations = destination
-
-    # Add the homes to the rent_algorithm
-    for home in filtered_house_list:
-        rent_algorithm = home
-
-    # This puts all the homes into a scored list
-    scored_house_list = []
-    for house in filtered_house_list:
-        scored_house_list.append(ScoringStruct(house))
-
-    commute_type = survey.commute_type
-    context['commuteType'] = commute_type
 
     """
     STEP 2: Compute the approximate distance using zip codes.
@@ -826,11 +777,12 @@ def start_algorithm(survey, context):
     rent_algorithm.run_sort_home_by_score()
 
     # Contains destinations of the user
-    context['locations'] = destination_set
+    context['locations'] = rent_algorithm.destinations
     # House list either comes from the scored homes or from the database static list if something went wrong
     # Only put up to 200 house on the list
     context['houseList'] = rent_algorithm.homes[:200]
     context['commuteType'] = rent_algorithm.commute_type
+    context['commuteType'] = survey.commute_type
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
@@ -906,7 +858,7 @@ def survey_result_rent(request, survey_id="recent"):
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult'))
 
     # Now start executing the Algorithm
-    start_algorithm(survey, context)
+    run_rent_algorithm(survey, context)
     context['survey'] = survey
     context['form'] = form
     return render(request, 'survey/surveyResultRent.html', context)
