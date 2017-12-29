@@ -732,54 +732,57 @@ def run_rent_algorithm(survey, context):
     # Initialize the rent_algorithm class with empty data
     rent_algorithm = RentAlgorithm()
 
+    """
+    STEP 1: Populate the rent_algorithm with all the desired destinations
+    and all the possible homes based on static filtering
+    """
     rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
 
-
     """
-    STEP 2: Compute the approximate distance using zip codes.
-    This serves as a secondary static filer to eliminate homes that are far away.
-    This also will store how long the commute will take which will be used later for
-    Dynamic filtering/scoring
+    STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
+    This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
     """
-    # If there are no destinations or no homes, then don't bother with algorithm
-    # Computes the approximate commute times for the homes in the score_house_list
-    # TODO Implement Function
     # rent_algorithm.retrieve_all_approximate_commutes()
 
+    """
+    STEP 3: Remove homes that are too far away using approximate commutes
+    """
     # Filters the houses based on the approximate commutes
     rent_algorithm.run_compute_approximate_commute_filter()
 
+    """
+    STEP 4: Generate scores based on hybrid questions
+    """
     # Generate scores for the homes based on the survey results
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
     rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
                                                                  survey.get_washer_dryer_in_home(),
                                                                  survey.get_dish_washer_scale(), survey.get_bash())
-
+    """
+    STEP 5: Now sort all the homes from best homes to worst home
+    """
     # Order the homes based off the score
     rent_algorithm.run_sort_home_by_score()
 
     """
-    STEP 3:
-    Compute the exact commutes and change the score based on the exact commute.
+    STEP 6: Compute the exact commute time/distance for best homes
     """
-    # Compute the exact commute for the top homes in the list and reorder only the top homes
-    # compute_exact_commute(destinations, scored_house_list, commute_type)
-    # TODO Implement function
     # rent_algorithm.retrieve_exact_commutes()
 
-    # Now generate the score based on the exact commute
-    # create_commute_score(scored_house_list, survey, CommutePrecision.exact)
-    # TODO Implement Function
+    """
+    STEP 7: Score the top homes based on the exact commute time/distance
+    """
     # rent_algorithm.run_compute_commute_score_exact()
 
+    """
+    STEP 8: Reorder homes again now with the full data
+    """
     # Now reorder all the homes with the new information
     rent_algorithm.run_sort_home_by_score()
 
-    # Contains destinations of the user
+    # Set template variables
     context['locations'] = rent_algorithm.destinations
-    # House list either comes from the scored homes or from the database static list if something went wrong
-    # Only put up to 200 house on the list
     context['houseList'] = rent_algorithm.homes[:200]
     context['commuteType'] = rent_algorithm.commute_type
     context['commuteType'] = survey.commute_type
