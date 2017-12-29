@@ -1,14 +1,15 @@
 from django.test import TestCase
 
-from houseDatabase.models import RentDatabase
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel
 from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 
 
 class TestAddingHomes(TestCase):
 
     def setUp(self):
-        self.home = RentDatabase.objects.create()
-        self.home1 = RentDatabase.objects.create()
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = RentDatabaseModel.objects.create(home_type_home=self.home_type)
+        self.home1 = RentDatabaseModel.objects.create(home_type_home=self.home_type)
 
     def test_adding_home(self):
         base_algorithm = CocoonAlgorithm()

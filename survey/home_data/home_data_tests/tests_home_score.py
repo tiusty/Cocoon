@@ -1,12 +1,13 @@
 from django.test import TestCase
 from survey.home_data.home_score import HomeScore
-from houseDatabase.models import RentDatabase
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel
 
 
 class TestScoringMethods(TestCase):
 
     def setUp(self):
-        self.home = RentDatabase.objects.create()
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = RentDatabaseModel.objects.create(home_type_home=self.home_type)
 
     def test_percent_score_positive(self):
         # Arrange
