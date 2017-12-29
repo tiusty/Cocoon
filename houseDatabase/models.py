@@ -2,11 +2,35 @@
 from django.db import models
 from django.utils import timezone
 
-# Import python modules
-import datetime
-
 # Import Config file information
 from Unicorn.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
+
+
+class HomeTypeModel(models.Model):
+    """
+    Class stores all the different homes types
+    This generates the multiple select field in the survey
+    If another home gets added it needs to be added here in the HOME_TYPE
+    tuples but also allowed past the query in the survey result view.
+    """
+    HOME_TYPE = (
+        ('House', 'House'),
+        ('Apartment', 'Apartment'),
+        ('Condo', 'Condo'),
+        ('Town House', 'Town House'),
+    )
+    home_type_survey = models.CharField(
+        unique=True,
+        choices=HOME_TYPE,
+        max_length=200,
+    )
+
+    def __str__(self):
+        return self.home_type
+
+    @property
+    def home_type(self):
+        return self.home_type_survey
 
 
 class HomeBaseModel(models.Model):
@@ -186,8 +210,8 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     This model stores all the information associated with a home
     """
     apartment_number_home = models.CharField(max_length=200)
-    home_type_home = models.CharField(max_length=200)
-    move_in_day_home = models.DateField(default=datetime.date.today)
+    home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
+    move_in_day_home = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.full_address
