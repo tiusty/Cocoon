@@ -724,11 +724,6 @@ def compute_exact_commute(destinations, scored_list, commute_type):
 
 def run_rent_algorithm(survey, context):
 
-    # Creates an array with all the home types indicated by the survey
-    current_home_types = []
-    for home in survey.home_type.all():
-        current_home_types.append(home.home_type)
-
     # Initialize the rent_algorithm class with empty data
     rent_algorithm = RentAlgorithm()
 
