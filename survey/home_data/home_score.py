@@ -3,7 +3,6 @@ from houseDatabase.models import ZipCodeDictionaryParentModel, ZipCodeDictionary
 class HomeScore(object):
 
     def __init__(self, new_home=None):
-        #Note: What kind of object is home? 
         self._home = new_home
         self._accumulated_points = 0
         self._total_possible_points = 0
@@ -41,18 +40,22 @@ class HomeScore(object):
         else:
             self._approx_commute_times_minutes.append(new_approx_commute_time)
 
-    """
-    Computes an approximate commute time for this house to an input destination. First checks
-    the zipcode database to see if the commute time is already stored; if it's not, it then
-    returns the pair of failed zips, along with an error code as a 3 element list. The first 
-    entry of the list is 0 if the pair was in the database, and 1 if the pair wasn't in the database 
-    or if the pair wasn't valid. The last 2 entries are the origin and destination zip respectively.
-    """
+
     def calculate_approx_commute(self, origin_zip, destination_zip, commute_type):
-        #First check if already in the database
-        zip_code_dictionary = ZipCodeDictionaryChild.objects.filter(_base_zip_code=origin_zip
-                                                                    _zip_code=destination_zip
-                                                                   )
+        """
+        Computes an approximate commute time for this house to an input destination. First checks
+        the zipcode database to see if the commute time is already stored; if it's not, it then
+        returns the pair of failed zips, along with an error code as a 3 element list. The first
+        entry of the list is 0 if the pair was in the database, and 1 if the pair wasn't in the database
+        or if the pair wasn't valid. The last 2 entries are the origin and destination zip respectively.
+        :param origin_zip: The home's zip code, eg. "12345"
+        :param destination_zip: The destination's zip code, eg. "12345"
+        :param commute_type: commute_type enum, eg. "Driving"
+        :return A 3 element list containing the result, and the zip code pair. The result will be
+            0 on successful lookup, and 1 on failed lookup.
+        """
+        zip_code_dictionary = ZipCodeDictionaryChildModel.objects.filter(
+            _base_zip_code=origin_zip, _zip_code=destination_zip)
         if zip_code_dictionary.exists():
             for match in zip_code_dictionary:
                 if match.zip_code_cache_still_valid():
@@ -62,7 +65,6 @@ class HomeScore(object):
                     return [1, origin_zip, destination_zip]
         else: 
             return [1, origin_zip, destination_zip]
-
 
     @property
     def accumulated_points(self):
