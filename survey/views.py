@@ -747,13 +747,11 @@ def run_rent_algorithm(survey, context):
     """
     STEP 3: Remove homes that are too far away using approximate commutes
     """
-    # Filters the houses based on the approximate commutes
     rent_algorithm.run_compute_approximate_commute_filter()
 
     """
     STEP 4: Generate scores based on hybrid questions
     """
-    # Generate scores for the homes based on the survey results
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
     rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
@@ -762,7 +760,6 @@ def run_rent_algorithm(survey, context):
     """
     STEP 5: Now sort all the homes from best homes to worst home
     """
-    # Order the homes based off the score
     rent_algorithm.run_sort_home_by_score()
 
     """
