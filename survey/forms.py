@@ -4,7 +4,7 @@ from django.forms import ModelForm
 from django.utils import timezone
 
 # Survey models
-from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinations, \
+from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
     PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
 from houseDatabase.models import HomeTypeModel
 
@@ -432,5 +432,5 @@ class DestinationForm(ModelForm):
     )
 
     class Meta:
-        model = RentingDestinations
+        model = RentingDestinationsModel
         exclude = ['survey_destinations']

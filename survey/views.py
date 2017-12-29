@@ -51,7 +51,7 @@ def renting_survey(request):
     # DestinationFrom contains the destination
     # The reason why this is split is because the destination form can be made into a form factory
     # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
-    # Multiple Destinations on the frontend
+    # Multiple DestinationsModel on the frontend
     form_destination = DestinationForm()
 
     # Retrieve the current profile or return a 404

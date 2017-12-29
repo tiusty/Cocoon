@@ -285,7 +285,7 @@ class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceIn
         return "{0}: {1}".format(user_short_name, survey_name)
 
 
-class Destinations(models.Model):
+class DestinationsModel(models.Model):
     street_address_destination = models.CharField(max_length=200)
     city_destination = models.CharField(max_length=200)
     state_destination = models.CharField(max_length=200)
@@ -319,7 +319,7 @@ class Destinations(models.Model):
         abstract = True
 
 
-class RentingDestinations(Destinations):
+class RentingDestinationsModel(DestinationsModel):
     survey_destinations = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):
