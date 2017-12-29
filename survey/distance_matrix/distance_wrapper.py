@@ -1,4 +1,4 @@
-import googlemaps
+from googlemaps import distance_matrix, client
 from Unicorn.settings.Global_Config import gmaps_api_key
 import json
 
@@ -12,12 +12,13 @@ class DistanceWrapper:
         self.key = key
         self.mode = mode
         self.units = units
+        self.client = client.Client(self.key)
 
     """
     handles any errors thrown by the distance_matrix API
     :param error_code, the error code returned from distance_matrix
     """
-    def handle_exception(error_code):
+    def handle_exception(self, error_code):
         if (error_code == "INVALID_REQUEST"):
             raise Invalid_Request_Exception()
         elif (error_code == "MAX_ELEMENTS_EXCEEDED"):
@@ -25,9 +26,11 @@ class DistanceWrapper:
         elif (error_code == "OVER_QUERY_LIMIT"):
             raise Over_Query_Limit_Exception()
         elif (error_code == "REQUEST_DENIED"):
-            raise Request_Denied_Exception("Check API key")
+            raise Request_Denied_Exception()
         elif (error_code == "UNKNOWN_ERROR"):
             raise Unknown_Error_Exception
+        elif (error_code == "ZERO_RESULTS"):
+            raise Zero_Results_Exception
         else:
             raise Exception("Unidentifiable error in distance_matrix_response")
 
@@ -84,24 +87,26 @@ class DistanceWrapper:
         origin_list = origins
         while origin_list:
             if (len(origin_list) > 25):
-                response_json = googlemaps.distance_matrix(self.key,
-                                                           origins[:25],
-                                                           destinations,
-                                                           units=self.units,
-                                                           mode=self.mode)
+                response_json = distance_matrix.distance_matrix(self.client,
+                                                                origins[:25],
+                                                                destinations,
+                                                                units=self.units,
+                                                                mode=self.mode)
+                print(type(response_json))
                 response_dict = json.loads(response_json)
                 response_list = self.interpret_distance_matrix_response(response_dict)
                 for origin_list in response_list:
                     distance_matrix_list.append(origin_list)
                 origin_list = origin_list[25:]
             else:
-                response_json = googlemaps.distance_matrix(self.key,
-                                                           origins,
-                                                           destinations,
-                                                           units=self.units,
-                                                           mode=self.mode)
-                response_dict = json.loads(response_json)
-                response_list = self.interpret_distance_matrix_response(response_dict)
+                response_json = distance_matrix.distance_matrix(self.client,
+                                                                origins,
+                                                                destinations,
+                                                                units=self.units,
+                                                                mode=self.mode)
+                # response_dict = json.loads(response_json)
+
+                response_list = self.interpret_distance_matrix_response(response_json)
                 for origin_list in response_list:
                     distance_matrix_list.append(origin_list)
                 # no origins remaining
