@@ -88,27 +88,25 @@ class DistanceWrapper:
         while origin_list:
             if (len(origin_list) > 25):
                 response_json = distance_matrix.distance_matrix(self.client,
-                                                                origins[:25],
+                                                                origin_list[:25],
                                                                 destinations,
                                                                 units=self.units,
                                                                 mode=self.mode)
-                print(type(response_json))
-                response_dict = json.loads(response_json)
-                response_list = self.interpret_distance_matrix_response(response_dict)
-                for origin_list in response_list:
-                    distance_matrix_list.append(origin_list)
+                response_list = self.interpret_distance_matrix_response(response_json)
+                for res in response_list:
+                    distance_matrix_list.append(res)
                 origin_list = origin_list[25:]
             else:
                 response_json = distance_matrix.distance_matrix(self.client,
-                                                                origins,
+                                                                origin_list,
                                                                 destinations,
                                                                 units=self.units,
                                                                 mode=self.mode)
                 # response_dict = json.loads(response_json)
 
                 response_list = self.interpret_distance_matrix_response(response_json)
-                for origin_list in response_list:
-                    distance_matrix_list.append(origin_list)
+                for res in response_list:
+                    distance_matrix_list.append(res)
                 # no origins remaining
                 origin_list = []
 

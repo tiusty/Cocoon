@@ -113,3 +113,20 @@ class TestDistanceWrapper(unittest.TestCase):
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 2)
             self.assertEqual(type(duration_list[0][0]), int)
+
+
+    '''
+    The following test makes many requests to the API
+    
+    def test_exceeding_origins(self):
+        destinations = []
+        for i in range(50):
+            destinations.append("2 Snow Hill Lane, Medfield MA")
+        origins = ["350 Prospect Street, Belmont MA", "159 Brattle Street, Arlington MA"]
+        duration_list = self.wrapper.calculate_distances(destinations, origins)
+        print(duration_list)
+        self.assertEqual(len(duration_list), 50)
+        for o in duration_list:
+            self.assertEqual(len(duration_list[0]), 2)
+            self.assertEqual(type(duration_list[0][0]), int)
+    '''
