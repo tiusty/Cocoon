@@ -20,6 +20,13 @@ class HouseAdmin(admin.ModelAdmin):
         ('Exterior Amenities',
          {'fields': ('parking_spot_home', 'building_washer_dryer_home', 'elevator_home',
                      'handicap_access_home', 'pool_hot_tub_home', 'fitness_center_home', 'storage_unit_home',), }),
+        ('MLS Pin Data',
+         {'fields': (
+             'listing_provider_home',
+             'listing_agent_home',
+             'listing_office_home'
+         )}
+        )
     ]
 
     list_display = ('street_address_home', 'price_home', 'home_type_home', 'move_in_day_home', 'num_bedrooms_home',
