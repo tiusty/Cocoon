@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
 from houseDatabase.models import RentDatabaseModel
-# Create your models here.
 
 
 class MyUserManager(BaseUserManager):
