@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils import timezone
 
 # Import survey python modules
 from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
@@ -6,6 +7,8 @@ from survey.home_data.home_score import HomeScore
 
 # Import external models
 from houseDatabase.models import RentDatabaseModel, HomeTypeModel
+from survey.models import RentingSurveyModel
+from userAuth.models import MyUser, UserProfile
 
 
 class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
@@ -614,13 +617,91 @@ class TestRentAlgorithmJustSortHomeByScore(TestCase):
         self.assertEqual(self.home2, rent_algorithm.homes[1])
 
 
-class TestRentAlgorithmIntegratingMultipleScoringFunctions(TestCase):
+class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
     def setUp(self):
+        # Create possible home types
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.home_type1 = HomeTypeModel.objects.create(home_type_survey='Apartment')
 
-    def tests_something(self):
-        pass
+        # Some house values
+        self.price_min = 1000
+        self.price_middle = 1500
+        self.price_max = 2000
+        self.move_in_day_home = timezone.now()
+        self.move_in_day_home1 = timezone.now() + timezone.timedelta(days=1)
+        self.num_bedrooms_min = 2
+        self.num_bedrooms_max = 3
+        self.num_bathrooms_min = 2
+        self.num_bathrooms_middle = 3
+        self.num_bathrooms_max = 4
+
+        # Create a user so the survey form can validate
+        self.user = MyUser.objects.create(email="test@email.com")
+        self.user_profile = UserProfile.objects.get(user=self.user)
+
+        # Survey values
+        self.move_in_day_start = timezone.now()
+        self.move_in_day_start1 = timezone.now() + timezone.timedelta(days=1)
+        self.move_in_day_end = timezone.now()
+        self.move_in_day_end1 = timezone.now() + timezone.timedelta(days=1)
+        self.max_bathrooms = 2
+        self.max_bathrooms1 = 3
+        self.min_bathrooms = 2
+        self.min_bathrooms1 = 3
+
+        # Make some homes
+        self.home = RentDatabaseModel.objects.create(home_type_home=self.home_type,
+                                                     price_home=self.price_min,
+                                                     move_in_day_home=self.move_in_day_home,
+                                                     num_bathrooms_home=self.num_bathrooms_min,
+                                                     num_bedrooms_home=self.num_bedrooms_min)
+
+        self.home1 = RentDatabaseModel.objects.create(home_type_home=self.home_type,
+                                                      price_home=self.price_middle,
+                                                      move_in_day_home=self.move_in_day_home1,
+                                                      num_bathrooms_home=self.num_bathrooms_middle,
+                                                      num_bedrooms_home=self.num_bedrooms_max)
+        self.home2 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
+                                                      price_home=self.price_max,
+                                                      move_in_day_home=self.move_in_day_home,
+                                                      num_bathrooms_home=self.num_bathrooms_min,
+                                                      num_bedrooms_home=self.num_bedrooms_min)
+        self.home3 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
+                                                      price_home=self.price_min,
+                                                      move_in_day_home=self.move_in_day_home1,
+                                                      num_bathrooms_home=self.num_bathrooms_max,
+                                                      num_bedrooms_home=self.num_bedrooms_max)
+
+        # Create some destination variables
+        self.street_address = "12 Stony Brook Rd"
+        self.city = "Arlington"
+        self.state = "MA"
+        self.zip_code = '02476'
+
+    def tests_populate_survey_destinations_and_possible_homes_query_all_2_bedrooms_with_destination(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        # Create the survey
+        survey = RentingSurveyModel.objects.create(
+                                                   user_profile_survey=self.user_profile,
+                                                   max_price_survey=self.price_max,
+                                                   min_price_survey=self.price_min,
+                                                   max_bathrooms_survey=self.max_bathrooms,
+                                                   min_bathrooms_survey=self.min_bathrooms,
+                                                   num_bedrooms_survey=self.num_bedrooms_min)
+        survey.home_type_survey.set([self.home_type, self.home_type1])
+        # Create a destination for the survey
+        survey.rentingdestinationsmodel_set.create(street_address_destination=self.street_address,
+                                                   city_destination=self.city,
+                                                   state_destination=self.state,
+                                                   zip_code_destination=self.zip_code)
+
+        # Act
+        rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
+
+        # Assert
+        self.assertEqual(2, len(rent_algorithm.homes))
+        self.assertEqual(1, len(rent_algorithm.destinations))
+        self.assertEqual(self.home, rent_algorithm.homes[0].home)
+        self.assertEqual(self.home2, rent_algorithm.homes[1].home)

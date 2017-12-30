@@ -27,7 +27,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             self.homes = HomeScore(home)
 
         # Retrieves all the destinations that the user recorded
-        self.destinations = user_survey.rentingdestinations_set.all()
+        self.destinations = user_survey.rentingdestinationsmodel_set.all()
 
     @staticmethod
     def generate_static_filter_home_list(user_survey):
