@@ -765,7 +765,7 @@ def run_rent_algorithm(survey, context):
     """
     STEP 7: Score the top homes based on the exact commute time/distance
     """
-    # rent_algorithm.run_compute_commute_score_exact()
+    rent_algorithm.run_compute_commute_score_exact()
 
     """
     STEP 8: Reorder homes again now with the full data

@@ -20,7 +20,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
     def populate_survey_destinations_and_possible_homes(self, user_survey):
 
         # Find all the possible homes that fit the static filter
-        filtered_home_list = self.generate_static_filter_home_list()
+        filtered_home_list = self.generate_static_filter_home_list(user_survey)
 
         # Add homes to rent_algorithm
         for home in filtered_home_list:
@@ -85,7 +85,21 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         for home_data in self.homes:
             for commute in home_data.approx_commute_times:
                 score_result = self.compute_commute_score(commute)
-                home_data.accumulated_points = score_result * self.commute_user_scale_factor * self.commute_question_weight
+                home_data.accumulated_points = score_result * self.commute_user_scale_factor \
+                    * self.commute_question_weight
+                home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
+
+    def run_compute_commute_score_exact(self):
+        """
+        Runs the exact commute scoring on any homes that have exact commutes populated. Homes are never marked for
+        deletion, it will only score based on a more accurate number
+        :return:
+        """
+        for home_data in self.homes:
+            for commute in home_data.exact_commute_times:
+                score_result = self.compute_commute_score(commute)
+                home_data.accumulated_points = score_result * self.commute_user_scale_factor \
+                    * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
 
     def run_compute_price_score(self):
@@ -100,7 +114,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             home_data.accumulated_points = score_result * self.price_user_scale_factor * self.price_question_weight
             home_data.total_possible_points = self.price_user_scale_factor * self.price_question_weight
 
-    def run_compute_weighted_score_interior_amenities(self, air_conditioning_scale, washer_dryer_in_home_scale, dish_washer_scale, bath_scale):
+    def run_compute_weighted_score_interior_amenities(self, air_conditioning_scale, washer_dryer_in_home_scale,
+                                                      dish_washer_scale, bath_scale):
         """
         Runs the interior amenities scoring.
         TODO Think of better way to run this function since it is kinda messy

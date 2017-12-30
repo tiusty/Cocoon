@@ -65,7 +65,7 @@ class PriceAlgorithm(object):
     def price_question_weight(self):
         """
         Get the price_question weight that is determined by the config file
-        :return: THe price quesiton weight as an int
+        :return: THe price question weight as an int
         """
         return self._price_question_weight
 
@@ -77,7 +77,7 @@ class PriceAlgorithm(object):
         :param new_price_question_weight:
         :return:
         """
-        #TODO determine if this function should not be allowed to be called
+        # TODO determine if this function should not be allowed to be called
         self._price_question_weight = new_price_question_weight
 
     def compute_price_score(self, home_price):

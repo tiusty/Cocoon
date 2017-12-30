@@ -102,7 +102,7 @@ class CommuteAlgorithm(object):
     def min_user_commute(self):
         """
         Get the min_user_commute as minutes
-        This is the minimum commute that uesr is willing to have
+        This is the minimum commute that user is willing to have
         :return: The min commute time in minutes
         """
         return self._min_user_commute_minutes

@@ -6,6 +6,7 @@ class HomeScore(object):
         self._accumulated_points = 0
         self._total_possible_points = 0
         self._approx_commute_times_minutes = []
+        self._exact_commute_times_minutes = []
         self._eliminated = False
 
     @property
@@ -35,6 +36,10 @@ class HomeScore(object):
     def approx_commute_times(self, new_approx_commute_time):
         # TODO If the setter is a list then set instead of append
         self._approx_commute_times_minutes.append(new_approx_commute_time)
+
+    @property
+    def exact_commute_times(self):
+        return self._exact_commute_times_minutes
 
     @property
     def accumulated_points(self):
