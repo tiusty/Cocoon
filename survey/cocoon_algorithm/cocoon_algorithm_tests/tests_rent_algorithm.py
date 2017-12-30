@@ -5,19 +5,20 @@ from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from survey.home_data.home_score import HomeScore
 
 # Import external models
-from houseDatabase.models import RentDatabase
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel
 
 
 class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 
     def setUp(self):
-        self.home = HomeScore(RentDatabase.objects.create())
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home.approx_commute_times = 50
         self.home.approx_commute_times = 70
-        self.home1 = HomeScore(RentDatabase.objects.create())
+        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home1.approx_commute_times = 10
         self.home1.approx_commute_times = 70
-        self.home2 = HomeScore(RentDatabase.objects.create())
+        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home2.approx_commute_times = 40
         self.home2.approx_commute_times = 100
 
@@ -89,9 +90,10 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 class TestRentAlgorithmJustPrice(TestCase):
 
     def setUp(self):
-        self.home = HomeScore(RentDatabase.objects.create(price=1000))
-        self.home1 = HomeScore(RentDatabase.objects.create(price=1500))
-        self.home2 = HomeScore(RentDatabase.objects.create(price=2000))
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = HomeScore(RentDatabaseModel.objects.create(price_home=1000, home_type_home=self.home_type))
+        self.home1 = HomeScore(RentDatabaseModel.objects.create(price_home=1500, home_type_home=self.home_type))
+        self.home2 = HomeScore(RentDatabaseModel.objects.create(price_home=2000, home_type_home=self.home_type))
 
     def test_run_compute_price_score_working(self):
         # Arrange
@@ -320,14 +322,15 @@ class TestRentAlgorithmJustPrice(TestCase):
 class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 
     def setUp(self):
-        self.home = HomeScore(RentDatabase.objects.create())
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home.approx_commute_times = 50
         self.home.approx_commute_times = 70
-        self.home1 = HomeScore(RentDatabase.objects.create())
+        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home1.approx_commute_times = 10
         self.home1.approx_commute_times = 80
         self.home1.approx_commute_times = 100
-        self.home2 = HomeScore(RentDatabase.objects.create())
+        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home2.approx_commute_times = 60
 
     def test_run_compute_commute_score_approximate_working(self):
@@ -420,9 +423,10 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 class TestRentAlgorithmJustSortHomeByScore(TestCase):
 
     def setUp(self):
-        self.home = HomeScore(RentDatabase.objects.create())
-        self.home1 = HomeScore(RentDatabase.objects.create())
-        self.home2 = HomeScore(RentDatabase.objects.create())
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
 
     def test_run_sort_home_by_score(self):
         # Arrange

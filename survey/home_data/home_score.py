@@ -102,4 +102,3 @@ class HomeScore(object):
         :return: The score percent rounded
         """
         return round(self.percent_score())
-

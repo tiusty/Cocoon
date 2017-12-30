@@ -7,15 +7,17 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
+from django.db.models import Q
 
 from Unicorn.settings.Global_Config import survey_types, HYBRID_WEIGHT_MAX, \
     HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT, approximate_commute_range, \
-    default_rent_survey_name, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
+    DEFAULT_RENT_SURVEY_NAME, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight
-from houseDatabase.models import RentDatabase, ZipCodeDictionary, ZipCodeDictionaryChild
+from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
+    HomeTypeModel
 from survey.models import RentingSurveyModel, CommutePrecision
 from userAuth.models import UserProfile
-from survey.forms import RentSurvey, DestinationForm, RentSurveyMini
+from survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
 
 # Import Survey algorithm modules
 from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
@@ -46,13 +48,13 @@ class BlackList:
 @login_required
 def renting_survey(request):
     # Create the two forms,
-    # RentSurvey contains everything except for destinations
-    form = RentSurvey()
+    # RentSurveyForm contains everything except for destinations
+    form = RentSurveyForm()
 
     # DestinationFrom contains the destination
     # The reason why this is split is because the destination form can be made into a form factory
     # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
-    # Multiple Destinations on the frontend
+    # Multiple DestinationsModel on the frontend
     form_destination = DestinationForm()
 
     # Retrieve the current profile or return a 404
@@ -67,7 +69,7 @@ def renting_survey(request):
         # first validating Destination form
         form_destination = DestinationForm(request.POST)
         # create a form instance and populate it with data from the request:
-        form = RentSurvey(request.POST)
+        form = RentSurveyForm(request.POST)
 
         # Check to see if the designations are valid
         if form_destination.is_valid():
@@ -87,8 +89,8 @@ def renting_survey(request):
                 # Try seeing if there is already a recent survey and if there is
                 # Then delete it. We only want to keep one "recent" survey
                 # The user has the option to change the name of it to save it permanently
-                RentingSurveyModel.objects.filter(user_profile=current_profile).filter(
-                    name=default_rent_survey_name).delete()
+                RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
+                    name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
                 rent_survey.save()
 
                 # Since commit=False in the save, need to save the many to many fields
@@ -139,7 +141,7 @@ class ScoringStruct:
         self.eliminated = False
 
     def __str__(self):
-        return self.house.get_full_address()
+        return self.house.full_address
 
     def get_score(self):
         """
@@ -299,9 +301,9 @@ def create_commute_score(scored_house_list, survey, commute_precision):
     """
     # Currently only scores based on commute times
     # It supports having multiple destinations
-    max_commute = survey.get_max_commute()
-    min_commute = survey.get_min_commute()
-    scale_factor = survey.get_commute_weight()
+    max_commute = survey.max_commute
+    min_commute = survey.min_commute
+    scale_factor = survey.commute_weight
     for house in scored_house_list:
         # It needs to be made clear that the scale factor only effects the homes that are under the
         # Commute time. For example, if the max commute is 12 minutes, then anything over 12 is removed.
@@ -344,13 +346,13 @@ def create_price_score(scored_house_list, survey):
     """
 
     # Retrieve all the constant values
-    max_price = survey.get_max_price()
-    min_price = survey.get_min_price()
-    scale_factor = survey.get_price_weight()
+    max_price = survey.max_price
+    min_price = survey.min_price
+    scale_factor = survey.price_weight
 
     # Apply price scoring for all the houses
     for house in scored_house_list:
-        house_price = house.house.get_price()
+        house_price = house.house.price
         house_price_normalized = house_price - min_price
         # Guarantee that the house normalized price is not negative, (score should never decrease)
         if house_price_normalized >= 0:
@@ -409,10 +411,10 @@ def create_interior_amenities_score(scored_house_list, survey):
     """
     # Loop throuh all the homes and score each one
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.get_air_conditioning(), survey.get_air_conditioning())
-        weighted_question_scoring(home, home.house.get_wash_dryer_in_home(), survey.get_wash_dryer_in_home())
-        weighted_question_scoring(home, home.house.get_dish_washer(), survey.get_dish_washer())
-        weighted_question_scoring(home, home.house.get_bath(), survey.get_bath())
+        weighted_question_scoring(home, home.house.air_conditioning, survey.air_conditioning)
+        weighted_question_scoring(home, home.house.interior_washer_dryer, survey.interior_washer_dryer)
+        weighted_question_scoring(home, home.house.dish_washer, survey.dish_washer)
+        weighted_question_scoring(home, home.house.bath, survey.bath)
 
 
 def create_exterior_amenities_score(scored_house_list, survey):
@@ -424,14 +426,14 @@ def create_exterior_amenities_score(scored_house_list, survey):
     :param survey: The user survey that is being used to evaluate the homes
     """
     for home in scored_house_list:
-        weighted_question_scoring(home, home.house.get_parking_spot(), survey.get_parking_spot())
-        weighted_question_scoring(home, home.house.get_washer_dryer_in_building(),
-                                  survey.get_washer_dryer_in_building())
-        weighted_question_scoring(home, home.house.get_elevator(), survey.get_elevator())
-        weighted_question_scoring(home, home.house.get_handicap_access(), survey.get_handicap_access())
-        weighted_question_scoring(home, home.house.get_pool_hot_tub(), survey.get_pool_hot_tub())
-        weighted_question_scoring(home, home.house.get_fitness_center(), survey.get_fitness_center())
-        weighted_question_scoring(home, home.house.get_storage_unit(), survey.get_storage_unit())
+        weighted_question_scoring(home, home.house.parking_spot, survey.parking_spot)
+        weighted_question_scoring(home, home.house.building_washer_dryer,
+                                  survey.washer_dryer_in_building)
+        weighted_question_scoring(home, home.house.elevator, survey.elevator)
+        weighted_question_scoring(home, home.house.handicap_access, survey.handicap_access)
+        weighted_question_scoring(home, home.house.pool_hot_tub, survey.pool_hot_tub)
+        weighted_question_scoring(home, home.house.fitness_center, survey.fitness_center)
+        weighted_question_scoring(home, home.house.storage_unit, survey.storage_unit)
 
 
 # Given the houseScore and the survey generate and add the score based
@@ -509,30 +511,29 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
                 # This searches for the zip code combination and then if it can't find it, it will
                 # add the combination to the failed_zip_code dictionary
                 try:
-                    zip_code_dictionary = ZipCodeDictionary.objects.get(
-                        zip_code=house.house.get_zip_code(),
+                    zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(
+                        zip_code_parent=house.house.zip_code
                     )
                     try:
-                        zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychild_set.get(
-                            zip_code=destination.get_zip_code(),
-                            commute_type=commute_type,
+                        zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychildmodel_set.get(
+                            zip_code_child=destination.zip_code,
+                            commute_type_child=commute_type,
                         )
                         # If the zip code needs to be refreshed, then delete the zip code
                         # and add it to the failed list
-                        if zip_code_dictionary_child.test_recompute_date():
+                        if not zip_code_dictionary_child.zip_code_cache_still_valid():
                             zip_code_dictionary_child.delete()
                             # add_home_to_failed_list(failed_zip_codes, destination, house)
                             add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
                             # If all the conditions pass, then store the commute time stored for that combination
                         else:
-                            house.approxCommuteTime.append(zip_code_dictionary_child.get_commute_time())
-                    except ZipCodeDictionaryChild.DoesNotExist:
+                            house.approxCommuteTime.append(zip_code_dictionary_child.commute_time_minutes)
+                    except ZipCodeDictionaryChildModel.DoesNotExist:
                         # add_home_to_failed_list(failed_zip_codes, destination, house)
                         add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-                except ZipCodeDictionary.DoesNotExist:
+                except ZipCodeDictionaryParentModel.DoesNotExist:
                     # add_home_to_failed_list(failed_zip_codes, destination, house)
                     add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-
 
     # If there are failed zip codes, compute the commute for the zip code and add it to the database
     if failed_zip_dict:
@@ -540,12 +541,13 @@ def compute_approximate_commute_times(destinations, scored_list, commute_type, b
         # Call the function again to recompute the commute times for the failed homes
         compute_approximate_commute_times(destinations, scored_list, commute_type, blacklist)
 
+
 def add_home_to_failed_list(failed_zip_dict, destination, house, blacklist):
     """
     This function adds a failed home combination to the failed_zip_codes array
     It is passed the house and the destination that is is supposed to go to
     :param failed_zip_codes: A dictionary of failed zip code combination
-    :param destination: The destination stored as a RentDatabase model
+    :param destination: The destination stored as a RentDatabaseModel model
     :param house: The house (origin), stored as a scoring structure
 
 
@@ -553,11 +555,11 @@ def add_home_to_failed_list(failed_zip_dict, destination, house, blacklist):
 
     """
 
-    dest_zip = destination.get_zip_code()
-    dest_city = destination.get_city()
+    dest_zip = destination.zip_code
+    dest_city = destination.city
 
-    house_zip = house.house.get_zip_code()
-    house_city = house.house.get_city()
+    house_zip = house.house.zip_code
+    house_city = house.house.city
 
     if (not blacklist.blacklisted(house_zip)):
         if dest_zip in failed_zip_dict:
@@ -619,27 +621,27 @@ def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blackli
                         for commute in matrix["rows"][counter]["elements"]:
                             # Divide by 60 to get minutes
                             if commute['status'] == 'OK':
-                                if ZipCodeDictionary.objects.filter(zip_code=origin).exists():
-                                    zip_code_dictionary = ZipCodeDictionary.objects.get(zip_code=origin)
-                                    if zip_code_dictionary.zipcodedictionarychild_set.filter(
-                                            zip_code=dest_zip,
-                                            commute_type=commute_type).exists():
+                                if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin).exists():
+                                    zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin)
+                                    if zip_code_dictionary.zipcodedictionarychildmodel_set.filter(
+                                            zip_code_child=dest_zip,
+                                            commute_type_child=commute_type).exists():
                                         print("The combination that was computed already exists")
                                     else:
-                                        zip_code_dictionary.zipcodedictionarychild_set.create(
-                                            zip_code=dest_zip,
-                                            commute_type=commute_type,
-                                            commute_distance=commute['distance']['value'],
-                                            commute_time=commute['duration']['value'],
+                                        zip_code_dictionary.zipcodedictionarychildmodel_set.create(
+                                            zip_code_child=dest_zip,
+                                            commute_type_child=commute_type,
+                                            commute_distance_meters_child=commute['distance']['value'],
+                                            commute_time_seconds_child=commute['duration']['value'],
                                         )
                                         print(commute['duration']['value'])
                                 else:
-                                    ZipCodeDictionary.objects.create(zip_code=origin) \
-                                        .zipcodedictionarychild_set.create(
-                                        zip_code=dest_zip,
-                                        commute_type=commute_type,
-                                        commute_distance=commute['distance']['value'],
-                                        commute_time=commute['duration']['value'],
+                                    ZipCodeDictionaryParentModel.objects.create(zip_code_parent=origin) \
+                                        .zipcodedictionarychildmodel_set.create(
+                                        zip_code_child=dest_zip,
+                                        commute_type_child=commute_type,
+                                        commute_distance_meters_child=commute['distance']['value'],
+                                        commute_time_seconds_child=commute['duration']['value'],
                                     )
                             else:
                                 print("distance not found")
@@ -665,8 +667,8 @@ def filter_homes_based_on_approximate_commute(survey, scored_list):
     """
     for home in scored_list:
         for commute in home.get_commute_times_approx():
-            if (commute >= survey.get_max_commute() + approximate_commute_range) \
-                    or (commute <= survey.get_min_commute() - approximate_commute_range):
+            if (commute >= survey.max_commute + approximate_commute_range) \
+                    or (commute <= survey.min_commute - approximate_commute_range):
                 home.eliminate_home()
 
 
@@ -686,12 +688,12 @@ def compute_exact_commute(destinations, scored_list, commute_type):
     destinations_full_address = []
     # Retrieve only the full address to give to the distance matrix
     for destination in destinations:
-        destinations_full_address.append(destination.get_full_address())
+        destinations_full_address.append(destination.full_address)
 
     origins = []
     counter = 0
     for home in scored_list:
-        origins.append(home.house.get_full_address())
+        origins.append(home.house.full_address)
         counter += 1
         if counter is number_of_exact_commutes_computed:
             break
@@ -720,101 +722,62 @@ def compute_exact_commute(destinations, scored_list, commute_type):
     return scored_list
 
 
-def start_algorithm(survey, context):
-    blacklist = BlackList()
+def run_rent_algorithm(survey, context):
 
-    # Creates an array with all the home types indicated by the survey
-    current_home_types = []
-    for home in survey.home_type.all():
-        current_home_types.append(home.homeType)
-
+    # Initialize the rent_algorithm class with empty data
     rent_algorithm = RentAlgorithm()
 
     """
-    STEP 1: Compute Static Elements
-    The item that will filter the list the most should be first to narrow down the number of iterations
-    The database needs to be searched
-    (Right now it isn't order by efficiency but instead by when it was added. Later it can be switched around
-
-    Current order:
-    1. Filter by price range. The House must be in the correct range to be accepted
-    2. Filter by Home Type. The home must be the correct home type to be accepted
-    3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
-        If the house is outside the range it is eliminated
-    4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
-    4. Filter by the number of bathrooms
+    STEP 1: Populate the rent_algorithm with all the desired destinations
+    and all the possible homes based on static filtering
     """
-
-    # TODO Maybe move querying to rent algorithm class?
-    filtered_house_list = RentDatabase.objects \
-        .filter(price__range=(survey.get_min_price(), survey.get_max_price())) \
-        .filter(home_type__in=current_home_types) \
-        .filter(move_in_day__range=(survey.get_move_in_date_start(), survey.get_move_in_date_end())) \
-        .filter(num_bedrooms=survey.get_num_bedrooms()) \
-        .filter(num_bathrooms__range=(survey.get_min_bathrooms(), survey.get_max_bathrooms()))
-
-    # TODO Maybe move this to the rent algorithm class?
-    # Retrieves all the destinations that the user recorded
-    destination_set = survey.rentingdestinations_set.all()
-
-    # Add the destinations to the rent_algorithm
-    for destination in destination_set:
-        rent_algorithm.destinations = destination
-
-    # Add the homes to the rent_algorithm
-    for home in filtered_house_list:
-        rent_algorithm = home
-
-    # Determine the commute type, driving is currently the only type supported
-    rent_algorithm.commute_type = survey.get_commute_type()
+    rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
 
     """
-    STEP 2: Compute the approximate distance using zip codes.
-    This serves as a secondary static filer to eliminate homes that are far away.
-    This also will store how long the commute will take which will be used later for
-    Dynamic filtering/scoring
+    STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
+    This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
     """
-    # If there are no destinations or no homes, then don't bother with algorithm
-    # Computes the approximate commute times for the homes in the score_house_list
-    # TODO Implement Function
     # rent_algorithm.retrieve_all_approximate_commutes()
 
-    # Filters the houses based on the approximate commutes
+    """
+    STEP 3: Remove homes that are too far away using approximate commutes
+    """
     rent_algorithm.run_compute_approximate_commute_filter()
 
-    # Generate scores for the homes based on the survey results
+    """
+    STEP 4: Generate scores based on hybrid questions
+    """
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
     rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
                                                                  survey.get_washer_dryer_in_home(),
                                                                  survey.get_dish_washer_scale(), survey.get_bash())
-
-    # Order the homes based off the score
+    """
+    STEP 5: Now sort all the homes from best homes to worst home
+    """
     rent_algorithm.run_sort_home_by_score()
 
     """
-    STEP 3:
-    Compute the exact commutes and change the score based on the exact commute.
+    STEP 6: Compute the exact commute time/distance for best homes
     """
-    # Compute the exact commute for the top homes in the list and reorder only the top homes
-    # compute_exact_commute(destinations, scored_house_list, commute_type)
-    # TODO Implement function
     # rent_algorithm.retrieve_exact_commutes()
 
-    # Now generate the score based on the exact commute
-    # create_commute_score(scored_house_list, survey, CommutePrecision.exact)
-    # TODO Implement Function
+    """
+    STEP 7: Score the top homes based on the exact commute time/distance
+    """
     # rent_algorithm.run_compute_commute_score_exact()
 
+    """
+    STEP 8: Reorder homes again now with the full data
+    """
     # Now reorder all the homes with the new information
     rent_algorithm.run_sort_home_by_score()
 
-    # Contains destinations of the user
-    context['locations'] = destination_set
-    # House list either comes from the scored homes or from the database static list if something went wrong
-    # Only put up to 200 house on the list
+    # Set template variables
+    context['locations'] = rent_algorithm.destinations
     context['houseList'] = rent_algorithm.homes[:200]
     context['commuteType'] = rent_algorithm.commute_type
+    context['commuteType'] = survey.commute_type
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
@@ -845,7 +808,7 @@ def survey_result_rent(request, survey_id="recent"):
         # Try to retrieve the most recent survey, but if there are no surveys, then
         # Redirect back to the homepage
         try:
-            survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
+            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).order_by('-created').first()
         except RentingSurveyModel.DoesNotExist:
             messages.add_message(request, messages.ERROR, 'Could not find Survey')
             return HttpResponseRedirect(reverse('homePage:index'))
@@ -854,25 +817,25 @@ def survey_result_rent(request, survey_id="recent"):
         # If it can't find it or it is not associated with the user, just grab the
         # Recent Survey. If that fails, then redirect back to the home page.
         try:
-            survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(id=survey_id)
+            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).get(id=survey_id)
         # If the survey ID, does not exist/is not for that user, then return the most recent survey
         except RentingSurveyModel.DoesNotExist:
             context['error_message'].append("Could not find survey id, getting recent survey")
             try:
-                survey = RentingSurveyModel.objects.filter(user_profile=user_profile).order_by('-created').first()
+                survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
                 messages.add_message(request, messages.ERROR, 'Could not find Survey')
                 return HttpResponseRedirect(reverse('homePage:index'))
 
     # Populate form with stored data
-    form = RentSurveyMini(instance=survey)
+    form = RentSurveyFormMini(instance=survey)
 
     # If a POST message occurs (They submit the mini form) then process it
     # If it fails then keep loading survey result and pass the error messages
     if request.method == 'POST':
         # If a POST occurs, update the form. In the case of an error, then the survey
         # Should be populated by the POST data.
-        form = RentSurveyMini(request.POST, instance=survey)
+        form = RentSurveyFormMini(request.POST, instance=survey)
         # If the survey is valid then redirect back to the page to reload the changes
         # This will also update the house list
         if form.is_valid():
@@ -890,7 +853,7 @@ def survey_result_rent(request, survey_id="recent"):
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult'))
 
     # Now start executing the Algorithm
-    start_algorithm(survey, context)
+    run_rent_algorithm(survey, context)
     context['survey'] = survey
     context['form'] = form
     return render(request, 'survey/surveyResultRent.html', context)
@@ -934,7 +897,7 @@ def set_favorite(request):
             house_id = request.POST.get('fav')
             # Retrieve the house associated with that id
             try:
-                house = RentDatabase.objects.get(id=house_id)
+                house = RentDatabaseModel.objects.get(id=house_id)
                 try:
                     user_profile = UserProfile.objects.get(user=request.user)
                     # If the house is already in the database then remove it and return 0
@@ -956,7 +919,7 @@ def set_favorite(request):
                                         content_type="application/json",
                                         )
             # Return an error is the house cannot be found
-            except RentDatabase.DoesNotExist:
+            except RentDatabaseModel.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
                                     content_type="application/json",
                                     )
@@ -1021,12 +984,12 @@ def set_visit_house(request):
             try:
                 user_profile = UserProfile.objects.get(user=request.user)
                 try:
-                    home = RentDatabase.objects.get(id=home_id)
+                    home = RentDatabaseModel.objects.get(id=home_id)
                     user_profile.visit_list.add(home)
                     return HttpResponse(json.dumps({"result": "1",
                                                     "homeId": home_id}),
                                         content_type="application/json", )
-                except RentDatabase.DoesNotExist:
+                except RentDatabaseModel.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",
                                         )
@@ -1060,11 +1023,11 @@ def delete_visit_house(request):
             try:
                 user_profile = UserProfile.objects.get(user=request.user)
                 try:
-                    home = RentDatabase.objects.get(id=home_id)
+                    home = RentDatabaseModel.objects.get(id=home_id)
                     user_profile.visit_list.remove(home)
                     return HttpResponse(json.dumps({"result": "0"}),
                                         content_type="application/json", )
-                except RentDatabase.DoesNotExist:
+                except RentDatabaseModel.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
                                         content_type="application/json",
                                         )
