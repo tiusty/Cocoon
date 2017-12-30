@@ -58,8 +58,8 @@ class DistanceWrapper:
                     if (element_status == "OK"):
                         # retrieve the duration from origin to destination
                         duration_in_minutes = int(element["duration"]["value"] / 60)
-                        distance_in_miles = int(element["distance"]["value"])
-                        origin_distance_list.append((duration_in_minutes, distance_in_miles))
+                        distance_in_feet = int(element["distance"]["value"])
+                        origin_distance_list.append((duration_in_minutes, distance_in_feet))
                     else:
                         self.handle_exception(element_status)
                 distance_list.append(origin_distance_list)
