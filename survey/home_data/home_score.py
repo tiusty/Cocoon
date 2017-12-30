@@ -55,14 +55,11 @@ class HomeScore(object):
             0 on successful lookup, 1 if parent not in database, 2 if child not in database, and 3
             if database cache is invalid.
         """
-        print(ZipCodeDictionaryParentModel.objects.all())
-        print(ZipCodeDictionaryChildModel.objects.all())
         parent_zip_code_dictionary = ZipCodeDictionaryParentModel.objects.filter(zip_code_parent__exact=origin_zip)
         if parent_zip_code_dictionary.exists():
             for parent in parent_zip_code_dictionary:
                 zip_code_dictionary = ZipCodeDictionaryChildModel.objects.filter(
                     parent_zip_code_child_id=parent).filter(zip_code_child__exact=destination_zip)
-                print(zip_code_dictionary)
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():
