@@ -3,7 +3,6 @@ from survey.home_data.home_score import HomeScore
 from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
     HomeTypeModel
 
-
 class TestScoringMethods(TestCase):
 
     def setUp(self):
@@ -190,6 +189,7 @@ class TestScoringMethods(TestCase):
         self.assertEqual(home_score.approx_commute_times, [1,2,3])
         home_score.approx_commute_times = []
         self.assertEqual(home_score.approx_commute_times, [])
+
 
 class TestApproxCommute(TestCase):
 
