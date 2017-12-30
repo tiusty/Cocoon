@@ -1,6 +1,8 @@
 from django.test import TestCase
 from survey.home_data.home_score import HomeScore
-from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
+    HomeTypeModel
+
 
 class TestScoringMethods(TestCase):
 
@@ -215,10 +217,10 @@ class TestApproxCommute(TestCase):
 
     def test_compute_approx_commute_times(self):
         # Arrange
-        home_score=HomeScore()
+        home_score = HomeScore()
         parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
-        child_zip_code = self.create_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time, 
-                                                           self.commute_distance, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time,
+                                              self.commute_distance, self.commute_type)
 
         # Act
         ret1 = home_score.calculate_approx_commute(self.zip_code, self.zip_code1, self.commute_type)
@@ -226,10 +228,9 @@ class TestApproxCommute(TestCase):
         ret3 = home_score.calculate_approx_commute("00000", self.zip_code, self.commute_type)
 
         # Assert
-
         self.assertEqual(ret1, [0, self.zip_code, self.zip_code1])
-        self.assertEqual(home_score.approx_commute_times_minutes, [100])
-        self.assertEqual(ret2, [1, self.zip_code, self.zip_code2])
+        self.assertEqual(home_score.approx_commute_times, [100])
+        self.assertEqual(ret2, [2, self.zip_code, self.zip_code2])
         self.assertEqual(ret3, [1, "00000", self.zip_code])
 
 

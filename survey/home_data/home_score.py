@@ -52,18 +52,27 @@ class HomeScore(object):
         :param destination_zip: The destination's zip code, eg. "12345"
         :param commute_type: commute_type enum, eg. "Driving"
         :return A 3 element list containing the result, and the zip code pair. The result will be
-            0 on successful lookup, and 1 on failed lookup.
+            0 on successful lookup, 1 if parent not in database, 2 if child not in database, and 3
+            if database cache is invalid.
         """
-        zip_code_dictionary = ZipCodeDictionaryChildModel.objects.filter(
-            _base_zip_code=origin_zip, _zip_code=destination_zip)
-        if zip_code_dictionary.exists():
-            for match in zip_code_dictionary:
-                if match.zip_code_cache_still_valid():
-                    self.approx_commute_times = match.commute_time_minutes
-                    return [0, origin_zip, destination_zip]
+        print(ZipCodeDictionaryParentModel.objects.all())
+        print(ZipCodeDictionaryChildModel.objects.all())
+        parent_zip_code_dictionary = ZipCodeDictionaryParentModel.objects.filter(zip_code_parent__exact=origin_zip)
+        if parent_zip_code_dictionary.exists():
+            for parent in parent_zip_code_dictionary:
+                zip_code_dictionary = ZipCodeDictionaryChildModel.objects.filter(
+                    parent_zip_code_child_id=parent).filter(zip_code_child__exact=destination_zip)
+                print(zip_code_dictionary)
+                if zip_code_dictionary.exists():
+                    for match in zip_code_dictionary:
+                        if match.zip_code_cache_still_valid():
+                            self.approx_commute_times = match.commute_time_minutes
+                            return [0, origin_zip, destination_zip]
+                        else:
+                            return [3, origin_zip, destination_zip]
                 else:
-                    return [1, origin_zip, destination_zip]
-        else: 
+                    return [2, origin_zip, destination_zip]
+        else:
             return [1, origin_zip, destination_zip]
 
     @property
