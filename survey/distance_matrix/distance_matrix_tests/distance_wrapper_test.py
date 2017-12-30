@@ -94,7 +94,7 @@ class TestDistanceWrapper(unittest.TestCase):
         duration_list = self.wrapper.calculate_distances(destination, origin)
         self.assertEqual(len(duration_list), 1)
         self.assertEqual(len(duration_list[0]), 1)
-        self.assertEqual(type(duration_list[0][0]), int)
+        self.assertEqual(type(duration_list[0][0][0]), int)
 
     def test_multiple_origin(self):
         destinations = ["2 Snow Hill Lane, Medfield MA", "1 Dewing Path, Welleslsey MA"]
@@ -103,7 +103,8 @@ class TestDistanceWrapper(unittest.TestCase):
         self.assertEqual(len(duration_list), 2)
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 1)
-            self.assertEqual(type(duration_list[0][0]), int)
+            self.assertEqual(type(duration_list[0][0][0]), int)
+            self.assertEqual(type(duration_list[0][0][1]), int)
 
     def test_multiple_destination(self):
         destinations = ["2 Snow Hill Lane, Medfield MA", "1 Dewing Path, Welleslsey MA"]
@@ -112,11 +113,11 @@ class TestDistanceWrapper(unittest.TestCase):
         self.assertEqual(len(duration_list), 2)
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 2)
-            self.assertEqual(type(duration_list[0][0]), int)
+            self.assertEqual(type(duration_list[0][0][0]), int)
 
 
     # The following test makes many requests to the API
-    
+
     def test_exceeding_origins(self):
         destinations = []
         for i in range(50):
@@ -127,4 +128,5 @@ class TestDistanceWrapper(unittest.TestCase):
         self.assertEqual(len(duration_list), 50)
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 2)
-            self.assertEqual(type(duration_list[0][0]), int)
+            self.assertEqual(type(duration_list[0][0][0]), int)
+            self.assertEqual(type(duration_list[0][0][1]), int)
