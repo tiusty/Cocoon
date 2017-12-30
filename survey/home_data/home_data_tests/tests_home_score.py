@@ -1,6 +1,6 @@
 from django.test import TestCase
 from survey.home_data.home_score import HomeScore
-from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 
 class TestScoringMethods(TestCase):
 
@@ -188,6 +188,7 @@ class TestScoringMethods(TestCase):
         self.assertEqual(home_score.approx_commute_times, [1,2,3])
         home_score.approx_commute_times = []
         self.assertEqual(home_score.approx_commute_times, [])
+
 
 class TestApproxCommute(TestCase):
 
