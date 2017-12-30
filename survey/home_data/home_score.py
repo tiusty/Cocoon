@@ -41,6 +41,10 @@ class HomeScore(object):
     def exact_commute_times(self):
         return self._exact_commute_times_minutes
 
+    @exact_commute_times.setter
+    def exact_commute_times(self, new_exact_commute_time):
+        self._exact_commute_times_minutes.append(new_exact_commute_time)
+
     @property
     def accumulated_points(self):
         return self._accumulated_points
