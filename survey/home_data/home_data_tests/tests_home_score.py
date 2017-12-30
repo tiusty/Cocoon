@@ -205,7 +205,7 @@ class TestApproxCommute(TestCase):
 
     @staticmethod
     def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time, 
-                                            commute_distance, commute_type):
+                                         commute_distance, commute_type):
         parent_zip_code_dictionary.zipcodedictionarychildmodel_set.create(
                 zip_code_child=zip_code,
                 commute_time_seconds_child=commute_time,
@@ -218,7 +218,7 @@ class TestApproxCommute(TestCase):
         home_score=HomeScore()
         parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
         child_zip_code = self.create_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time, 
-                                                            self.commute_distance, self.commute_type)
+                                                           self.commute_distance, self.commute_type)
 
         # Act
         ret1 = home_score.calculate_approx_commute(self.zip_code, self.zip_code1, self.commute_type)
