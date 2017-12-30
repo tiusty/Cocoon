@@ -115,8 +115,7 @@ class TestDistanceWrapper(unittest.TestCase):
             self.assertEqual(type(duration_list[0][0]), int)
 
 
-    '''
-    The following test makes many requests to the API
+    # The following test makes many requests to the API
     
     def test_exceeding_origins(self):
         destinations = []
@@ -129,4 +128,3 @@ class TestDistanceWrapper(unittest.TestCase):
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 2)
             self.assertEqual(type(duration_list[0][0]), int)
-    '''

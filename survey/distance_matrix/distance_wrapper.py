@@ -39,7 +39,7 @@ class DistanceWrapper:
     Interprets the json response dict from the googlemaps distance_matrix request.
     Handles all errors and combines distances into a list
     :param response_obj, the json response as a dictionary
-    :returns a list of lists with distances between origins and their destination(s)
+    :returns a list of lists with tuples (duration, distance) between origins and their destination(s)
     :raises Distance_Matrix_Exception
     """
     def interpret_distance_matrix_response(self, response_obj):
@@ -58,7 +58,8 @@ class DistanceWrapper:
                     if (element_status == "OK"):
                         # retrieve the duration from origin to destination
                         duration_in_minutes = int(element["duration"]["value"] / 60)
-                        origin_distance_list.append(duration_in_minutes)
+                        distance_in_miles = int(element["distance"]["value"])
+                        origin_distance_list.append((duration_in_minutes, distance_in_miles))
                     else:
                         self.handle_exception(element_status)
                 distance_list.append(origin_distance_list)
