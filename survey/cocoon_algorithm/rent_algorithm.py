@@ -91,7 +91,9 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
     #TODO: implement this with the distance_wrapper
     # update approx_commute_times property with these values
     def retrieve_all_approximate_commutes(self):
-        return
+
+        for home in self.homes:
+
 
     #TODO: implement this with the distance_wrapper
     #update an exact commute_times property with these values?
