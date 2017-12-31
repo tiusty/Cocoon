@@ -73,7 +73,9 @@ class HomeScore(object):
         """
         self._exact_commute_times_minutes.update(new_exact_commute_time)
 
-
+    # TODO: Move to rent_algorithm (?)
+    # This should probably be moved into the rent_algorithm file as a helper method, as it doesn't
+    # actually interact with the object in any meaningful way.
     def calculate_approx_commute(self, origin_zip, destination_zip, commute_type):
         """
         Computes an approximate commute time for this house to an input destination. First checks
@@ -95,14 +97,14 @@ class HomeScore(object):
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():
-                            self.approx_commute_times = {destination_zip: match.commute_time_minutes}
-                            return 0
+                            # self.approx_commute_times = {destination_zip: match.commute_time_minutes}
+                            return [0, match.commute_time_minutes]
                         else:
-                            return 3
+                            return [3, match.commute_time_minutes]
                 else:
-                    return 2
+                    return [2, -1]
         else:
-            return 1
+            return [1, -1]
 
     @property
     def accumulated_points(self):

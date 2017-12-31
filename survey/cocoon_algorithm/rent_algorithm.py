@@ -14,6 +14,9 @@ from survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 # Import HomeScore class
 from survey.home_data.home_score import HomeScore
 
+# Import DistanceWrapper
+from survey.distance_matrix.distance_wrapper import DistanceWrapper
+
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
 
@@ -102,12 +105,45 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
 
-    #TODO: implement this with the distance_wrapper
+    # TODO: Fix distance wrapper to update database rather than just return values
+    # TODO: Check syntax
     # update approx_commute_times property with these values
     def retrieve_all_approximate_commutes(self):
+        failed_home_dict = {}
+        # destination will be a DestinationsModel object
+        for destination in self.destinations:
+            failed_list = []
+            # home will be a HomeScore object
+            for home in self.homes:
+                code_and_distance = home.calculate_approx_commute(home.home.zip_code, destination.zip_code, "")
+                # Case we have a match
+                # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
+                if code_and_distance[0] == 0:
+                    home.approx_commute_times[destination.destination_key] = code_and_distance[1]
+                # Case we don't have a match
+                else:
+                    failed_list.append(home.home.zip_code)
+            # Add to the dictionary of failed homes
+            failed_home_dict[destination.zip_code] = failed_list
+
+        wrapper = DistanceWrapper()
+        for destination, origin_list in failed_home_dict:
+            # TODO: Use distance matrix wrapper to update database
+            # Currently we don't updated the database. If the wrapper could be updated/rewritten
+            # to automatically update the database, this would simplify this function.
+            wrapper.calculate_distances(origin_list, [destination])
 
         for home in self.homes:
-            return
+            if len(home.approx_commute_times) < len(self.destinations):
+                # Recompute missing destinations
+                for destination in self.destinations:
+                    if destination not in home.approx_commute_times:
+                        code_and_distance = home.approx_commute_times(home.home.zip_code, destination.zip_code)
+                        if code_and_distance[0] != 0:
+                            # Error: For some reason, the database was not updated, so we mark home for deletion
+                            home.eliminate_home()
+                        else:
+                            home.approx_commute_times[destination.destination_key] = code_and_distance[1]
 
 
     #TODO: implement this with the distance_wrapper

@@ -241,7 +241,6 @@ class TestApproxCommute(TestCase):
         ret3 = home_score.calculate_approx_commute("00000", self.zip_code, self.commute_type)
 
         # Assert
-        self.assertEqual(ret1, 0)
-        self.assertEqual(home_score.approx_commute_times, {"01234": 100})
-        self.assertEqual(ret2, 2)
-        self.assertEqual(ret3, 1)
+        self.assertEqual(ret1, [0, 100])
+        self.assertEqual(ret2, [2, -1])
+        self.assertEqual(ret3, [1, -1])
