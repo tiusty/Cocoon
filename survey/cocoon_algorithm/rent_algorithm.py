@@ -109,6 +109,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
     # TODO: Check syntax
     # update approx_commute_times property with these values
     def retrieve_all_approximate_commutes(self):
+        # 1: Query DB and update when info is there
         failed_home_dict = {}
         # destination will be a DestinationsModel object
         for destination in self.destinations:
@@ -125,14 +126,14 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     failed_list.append(home.home.zip_code)
             # Add to the dictionary of failed homes
             failed_home_dict[destination.zip_code] = failed_list
-
+        # 2: Use DistanceWrapper to compute the failed homes
         wrapper = DistanceWrapper()
         for destination, origin_list in failed_home_dict:
             # TODO: Use distance matrix wrapper to update database
             # Currently we don't updated the database. If the wrapper could be updated/rewritten
             # to automatically update the database, this would simplify this function.
             wrapper.calculate_distances(origin_list, [destination])
-
+        # 3: Recompute failed homes using new DB data.
         for home in self.homes:
             if len(home.approx_commute_times) < len(self.destinations):
                 # Recompute missing destinations
