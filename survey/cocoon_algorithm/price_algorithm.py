@@ -5,6 +5,13 @@ class PriceAlgorithm(object):
     """
     Class computes the score based on the price of a home.
     This class is meant to be used as a child class for an algorithm class
+
+      Attributes:
+        self._max_price (int): The max price the user is willing to spend
+        self._min_price (int): The minimum price the user is willing to spend
+        self._price_user_scale_factor (int): The user defined scale factor
+        self._price_question_weight (int): The cocoon specified scale factor from global config
+
     """
     def __init__(self):
         self._max_price = 0

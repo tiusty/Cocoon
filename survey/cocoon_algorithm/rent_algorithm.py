@@ -84,7 +84,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         for home_data in self.homes:
             for commute in home_data.approx_commute_times:
-                score_result = self.compute_commute_score(commute)
+                score_result = self.compute_commute_score(home_data.approx_commute_times[commute])
                 home_data.accumulated_points = score_result * self.commute_user_scale_factor \
                     * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
@@ -97,7 +97,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         for home_data in self.homes:
             for commute in home_data.exact_commute_times:
-                score_result = self.compute_commute_score(commute)
+                score_result = self.compute_commute_score(home_data.exact_commute_times[commute])
                 home_data.accumulated_points = score_result * self.commute_user_scale_factor \
                     * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight

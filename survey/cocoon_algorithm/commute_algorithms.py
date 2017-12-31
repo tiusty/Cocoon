@@ -2,8 +2,27 @@ from Unicorn.settings.Global_Config import commute_question_weight
 
 
 class CommuteAlgorithm(object):
+    """
+    Class includes important commute variables and supporting functions.
+    Meant to be used in conjunction with a base algorithm class.
+
+     Attributes:
+        self._approx_commute_range_minutes (int): The amount of minutes from the commute time which is acceptable for
+            the approximation.
+        self._max_user_commute_minutes (int): The max # of minutes allowed for a commute (not including range)
+        self._min_user_commute_minutes (int): The min # of minutes allowed for a commute (not including range)
+        self._commute_user_scale_factor (int): The user defined scale for the commute factor
+        self._commute_question_weight (int): The cocoon defined scale for the commute factor, should be loaded from
+            global config file
+        self._min_possible_commute (int): The amount of minutes which everything below will be 100% match
+        self._commute_type (str): The type of commute specified by the user
+
+     """
 
     def __init__(self):
+        """
+        Sets the values to default values. Calls the super function so all parent init functions are called.
+        """
         self._approx_commute_range_minutes = 0
         self._max_user_commute_minutes = 0
         self._min_user_commute_minutes = 0
@@ -125,8 +144,8 @@ class CommuteAlgorithm(object):
         :return: True if the home is inside the range, False otherwise
         """
         for commute in approx_commute_times:
-            if (commute > self.max_user_commute + self.approx_commute_range) \
-                            or (commute < self.min_user_commute - self.approx_commute_range):
+            if (approx_commute_times[commute] > self.max_user_commute + self.approx_commute_range) \
+                            or (approx_commute_times[commute] < self.min_user_commute - self.approx_commute_range):
                 return False
         return True
 

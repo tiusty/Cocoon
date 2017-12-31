@@ -14,16 +14,45 @@ from userAuth.models import MyUser, UserProfile
 class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 
     def setUp(self):
+
+        # Create a user and survey so we can create renting destination models
+        self.user = MyUser.objects.create(email="test@email.com")
+        self.user_profile = UserProfile.objects.get(user=self.user)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+
+        # Add renting destination
+        self.street_address = '12 Stony Brook Rd'
+        self.city = 'Arlington'
+        self.state = 'MA'
+        self.zip_code = '02476'
+        self.destination = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address,
+            city_destination=self.city,
+            state_destination=self.state,
+            zip_code_destination=self.zip_code
+        )
+
+        self.street_address1 = '8 Stony Brook Rd'
+        self.city1 = 'Arlington'
+        self.state1 = 'MA'
+        self.zip_code1 = '02476'
+        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address1,
+            city_destination=self.city1,
+            state_destination=self.state1,
+            zip_code_destination=self.zip_code1
+        )
+
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home.approx_commute_times = 50
-        self.home.approx_commute_times = 70
+        self.home.approx_commute_times = {self.destination.destination_key: 50}
+        self.home.approx_commute_times = {self.destination1.destination_key: 70}
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1.approx_commute_times = 10
-        self.home1.approx_commute_times = 70
+        self.home1.approx_commute_times = {self.destination.destination_key: 10}
+        self.home1.approx_commute_times = {self.destination1.destination_key: 70}
         self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2.approx_commute_times = 40
-        self.home2.approx_commute_times = 100
+        self.home2.approx_commute_times = {self.destination.destination_key: 40}
+        self.home2.approx_commute_times = {self.destination1.destination_key: 100}
 
     def test_run_compute_approximate_commute_filter_no_eliminations(self):
         # Arrange
@@ -325,16 +354,55 @@ class TestRentAlgorithmJustPrice(TestCase):
 class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 
     def setUp(self):
+        # Create a user and survey so we can create renting destination models
+        self.user = MyUser.objects.create(email="test@email.com")
+        self.user_profile = UserProfile.objects.get(user=self.user)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+
+        # Add renting destination
+        self.street_address = '12 Stony Brook Rd'
+        self.city = 'Arlington'
+        self.state = 'MA'
+        self.zip_code = '02476'
+        self.destination = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address,
+            city_destination=self.city,
+            state_destination=self.state,
+            zip_code_destination=self.zip_code
+        )
+
+        self.street_address1 = '8 Stony Brook Rd'
+        self.city1 = 'Arlington'
+        self.state1 = 'MA'
+        self.zip_code1 = '02476'
+        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address1,
+            city_destination=self.city1,
+            state_destination=self.state1,
+            zip_code_destination=self.zip_code1
+        )
+
+        self.street_address2 = '360 Huntington Ave'
+        self.city2 = 'Boston'
+        self.state2 = 'MA'
+        self.zip_code2 = '02115'
+        self.destination2 = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address2,
+            city_destination=self.city2,
+            state_destination=self.state2,
+            zip_code_destination=self.zip_code2
+        )
+
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home.approx_commute_times = 50
-        self.home.approx_commute_times = 70
+        self.home.approx_commute_times = {self.destination.destination_key: 50}
+        self.home.approx_commute_times = {self.destination1.destination_key: 70}
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1.approx_commute_times = 10
-        self.home1.approx_commute_times = 80
-        self.home1.approx_commute_times = 100
+        self.home1.approx_commute_times = {self.destination.destination_key: 10}
+        self.home1.approx_commute_times = {self.destination1.destination_key: 80}
+        self.home1.approx_commute_times = {self.destination2.destination_key: 100}
         self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2.approx_commute_times = 60
+        self.home2.approx_commute_times = {self.destination.destination_key: 60}
 
     def test_run_compute_commute_score_approximate_working(self):
         # Arrange
@@ -432,16 +500,55 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 class TestRentAlgorithmJustExactCommuteScore(TestCase):
 
     def setUp(self):
+        # Create a user and survey so we can create renting destination models
+        self.user = MyUser.objects.create(email="test@email.com")
+        self.user_profile = UserProfile.objects.get(user=self.user)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+
+        # Add renting destination
+        self.street_address = '12 Stony Brook Rd'
+        self.city = 'Arlington'
+        self.state = 'MA'
+        self.zip_code = '02476'
+        self.destination = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address,
+            city_destination=self.city,
+            state_destination=self.state,
+            zip_code_destination=self.zip_code
+        )
+
+        self.street_address1 = '8 Stony Brook Rd'
+        self.city1 = 'Arlington'
+        self.state1 = 'MA'
+        self.zip_code1 = '02476'
+        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address1,
+            city_destination=self.city1,
+            state_destination=self.state1,
+            zip_code_destination=self.zip_code1
+        )
+
+        self.street_address2 = '360 Huntington Ave'
+        self.city2 = 'Boston'
+        self.state2 = 'MA'
+        self.zip_code2 = '02115'
+        self.destination2 = self.survey.rentingdestinationsmodel_set.create(
+            street_address_destination=self.street_address2,
+            city_destination=self.city2,
+            state_destination=self.state2,
+            zip_code_destination=self.zip_code2
+        )
+
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home.exact_commute_times = 50
-        self.home.exact_commute_times = 70
+        self.home.exact_commute_times = {self.destination.destination_key: 50}
+        self.home.exact_commute_times = {self.destination1.destination_key: 70}
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1.exact_commute_times = 10
-        self.home1.exact_commute_times = 80
-        self.home1.exact_commute_times = 100
+        self.home1.exact_commute_times = {self.destination.destination_key: 10}
+        self.home1.exact_commute_times = {self.destination1.destination_key: 80}
+        self.home1.exact_commute_times = {self.destination2.destination_key: 100}
         self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2.exact_commute_times = 60
+        self.home2.exact_commute_times = {self.destination.destination_key: 60}
 
     def test_run_compute_commute_score_exact_working(self):
         # Arrange

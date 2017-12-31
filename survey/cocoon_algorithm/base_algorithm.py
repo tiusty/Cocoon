@@ -1,4 +1,13 @@
 class CocoonAlgorithm(object):
+    """
+    Class included the base values for any algorithm.
+
+      Attributes:
+        self._homes (List[HomeScore]): Stores a list of homes as a HomeScore
+        self._destinations (List[anything that inherits survey.models.DestinationsModel]): The desired destinations
+            specified by the user. These locations are the work, schools that the user needs to go to.
+
+    """
 
     def __init__(self):
         self._homes = []

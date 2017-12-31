@@ -1,12 +1,28 @@
 
 class HomeScore(object):
+    # noinspection SpellCheckingInspection
+    """
+        Class stores a home with supporting information regarding the home. Keeps track of data
+            while the algorithm is being computed
+
+          Attributes:
+            self._home (housedata.model): The actual home specified from the house database models.
+            self._accumulated_points (int): The total amount of points this home has earned
+            self._total_possible_points (int): The total amount of points this home could have earned
+            self._approx_commute_times_minutes (dict{'(survey.model.destinations)', (int)}: A dictionary with the key being
+                the destination and the value is the approximate commute time to that destination in minutes
+            self._exact_commute_times_minutes (dict{'(survey.model.destinations)', (int)}: A dictionary with the key being
+                the destination and the value is the exact commute time to that destination in minutes
+            self._eliminated (boolean): Indicates whether or not the home has been eliminated already
+
+        """
 
     def __init__(self, new_home=None):
         self._home = new_home
         self._accumulated_points = 0
         self._total_possible_points = 0
-        self._approx_commute_times_minutes = []
-        self._exact_commute_times_minutes = []
+        self._approx_commute_times_minutes = {}
+        self._exact_commute_times_minutes = {}
         self._eliminated = False
 
     @property
@@ -34,8 +50,7 @@ class HomeScore(object):
 
     @approx_commute_times.setter
     def approx_commute_times(self, new_approx_commute_time):
-        # TODO If the setter is a list then set instead of append
-        self._approx_commute_times_minutes.append(new_approx_commute_time)
+        self._approx_commute_times_minutes.update(new_approx_commute_time)
 
     @property
     def exact_commute_times(self):
@@ -43,7 +58,7 @@ class HomeScore(object):
 
     @exact_commute_times.setter
     def exact_commute_times(self, new_exact_commute_time):
-        self._exact_commute_times_minutes.append(new_exact_commute_time)
+        self._exact_commute_times_minutes.update(new_exact_commute_time)
 
     @property
     def accumulated_points(self):
