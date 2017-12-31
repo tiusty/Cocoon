@@ -139,8 +139,8 @@ class CommuteAlgorithm(object):
         Returns whether or not the approximate commute times are within the
         user acceptable range. If any of the commutes are not within the acceptable
         range, then False is returned
-        :param approx_commute_times: Must be a list of ints that correspond to the commute times.
-            Currently the approx commute is done in minutes, i.e [20, 40 , 56]
+        :param approx_commute_times: (dict{(Destination):(int)}): A dictionary containing the destinationModel as the
+            and the value as the commute time in minutes to that destination
         :return: True if the home is inside the range, False otherwise
         """
         for commute in approx_commute_times:

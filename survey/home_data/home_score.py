@@ -50,6 +50,12 @@ class HomeScore(object):
 
     @approx_commute_times.setter
     def approx_commute_times(self, new_approx_commute_time):
+        """
+        Takes in a dictionary of commutes and adds the ones that do not exist
+            to the member dictionary
+        :param new_approx_commute_time (dict{Destination: (int)}): Dictionary of Destinations and commute times in
+            in minutes to be added to the home
+        """
         self._approx_commute_times_minutes.update(new_approx_commute_time)
 
     @property
@@ -58,6 +64,12 @@ class HomeScore(object):
 
     @exact_commute_times.setter
     def exact_commute_times(self, new_exact_commute_time):
+        """
+        Takes in a dictionary of commutes and adds the ones that do not exist
+            to the member dictionary
+        :param new_approx_commute_time (dict{Destination: (int)}): Dictionary of Destinations and commute times in
+            in minutes to be added to the home
+        """
         self._exact_commute_times_minutes.update(new_exact_commute_time)
 
     @property
