@@ -2,6 +2,15 @@ from Unicorn.settings.Global_Config import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN,
 
 
 class WeightScoringAlgorithm(object):
+    """
+    Class adds the weighted scoring functionality
+
+      Attributes:
+        self._hybrid_weight_global_min (int): The hybrid weight min from the global config file
+        self._hybrid_weight_global_max (int): The hybrid weight max from the global config file
+        self._hybrid_question_weight (int): The cocoon hybrid question weight from the global config file
+
+    """
 
     def __init__(self):
         self._hybrid_weight_global_min = HYBRID_WEIGHT_MIN

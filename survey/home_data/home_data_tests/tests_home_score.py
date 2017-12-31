@@ -178,18 +178,31 @@ class TestScoringMethods(TestCase):
         home_score.home = self.home
         self.assertIsNotNone(home_score.home)
 
-    def test_approx_commute_times_setter(self):
-        # This test doesn't fit methodology and is probably bad
+    def test_approx_commute_times_setter_basic(self):
+        # Arrange
         home_score = HomeScore()
-        self.assertEqual(home_score.approx_commute_times, [])
-        home_score.approx_commute_times = 5
-        home_score.approx_commute_times = 10
-        self.assertEqual(home_score.approx_commute_times, [5,10])
-        home_score.approx_commute_times = [1,2,3]
-        self.assertEqual(home_score.approx_commute_times, [1,2,3])
-        home_score.approx_commute_times = []
-        self.assertEqual(home_score.approx_commute_times, [])
+        self.assertEqual(home_score.approx_commute_times, {})
 
+        # Act
+        home_score.approx_commute_times = {"12345": 10}
+        home_score.approx_commute_times = {"01234": 20}
+
+        # Assert
+        self.assertEqual(home_score.approx_commute_times, {"12345": 10, "01234": 20})
+
+    def test_approx_commute_times_setter_overwriting(self):
+        # Arrange
+        home_score = HomeScore()
+        self.assertEqual(home_score.approx_commute_times, {})
+
+        # Act
+        home_score.approx_commute_times = {"12345": 10}
+        home_score.approx_commute_times = {"01234": 20}
+        home_score.approx_commute_times = {}
+        home_score.approx_commute_times = {"12345": 50}
+
+        # Assert
+        self.assertEqual(home_score.approx_commute_times, {"12345": 50, "01234": 20})
 
 class TestApproxCommute(TestCase):
 
@@ -228,10 +241,7 @@ class TestApproxCommute(TestCase):
         ret3 = home_score.calculate_approx_commute("00000", self.zip_code, self.commute_type)
 
         # Assert
-        self.assertEqual(ret1, [0, self.zip_code, self.zip_code1])
-        self.assertEqual(home_score.approx_commute_times, [100])
-        self.assertEqual(ret2, [2, self.zip_code, self.zip_code2])
-        self.assertEqual(ret3, [1, "00000", self.zip_code])
-
-
-
+        self.assertEqual(ret1, 0)
+        self.assertEqual(home_score.approx_commute_times, {"01234": 100})
+        self.assertEqual(ret2, 2)
+        self.assertEqual(ret3, 1)

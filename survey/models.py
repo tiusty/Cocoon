@@ -315,6 +315,10 @@ class DestinationsModel(models.Model):
     def short_address(self):
         return "{0}, {1}".format(self.street_address, self.city)
 
+    @property
+    def destination_key(self):
+        return "{0}-{1}-{2}-{3}".format(self.street_address, self.city, self.state, self.zip_code)
+
     class Meta:
         abstract = True
 

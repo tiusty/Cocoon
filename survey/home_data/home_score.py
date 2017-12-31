@@ -1,12 +1,29 @@
 from houseDatabase.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 
 class HomeScore(object):
+    # noinspection SpellCheckingInspection
+    """
+        Class stores a home with supporting information regarding the home. Keeps track of data
+            while the algorithm is being computed
+
+          Attributes:
+            self._home (housedata.model): The actual home specified from the house database models.
+            self._accumulated_points (int): The total amount of points this home has earned
+            self._total_possible_points (int): The total amount of points this home could have earned
+            self._approx_commute_times_minutes (dict{'(survey.model.destinations)', (int)}: A dictionary with the key being
+                the destination and the value is the approximate commute time to that destination in minutes
+            self._exact_commute_times_minutes (dict{'(survey.model.destinations)', (int)}: A dictionary with the key being
+                the destination and the value is the exact commute time to that destination in minutes
+            self._eliminated (boolean): Indicates whether or not the home has been eliminated already
+
+        """
 
     def __init__(self, new_home=None):
         self._home = new_home
         self._accumulated_points = 0
         self._total_possible_points = 0
-        self._approx_commute_times_minutes = []
+        self._approx_commute_times_minutes = {}
+        self._exact_commute_times_minutes = {}
         self._eliminated = False
 
     @property
@@ -34,11 +51,27 @@ class HomeScore(object):
 
     @approx_commute_times.setter
     def approx_commute_times(self, new_approx_commute_time):
-        # If the setter is a list then set instead of append
-        if isinstance(new_approx_commute_time, list):
-            self._approx_commute_times_minutes = new_approx_commute_time
-        else:
-            self._approx_commute_times_minutes.append(new_approx_commute_time)
+        """
+        Takes in a dictionary of commutes and adds the ones that do not exist
+            to the member dictionary
+        :param new_approx_commute_time (dict{Destination: (int)}): Dictionary of Destinations and commute times in
+            in minutes to be added to the home
+        """
+        self._approx_commute_times_minutes.update(new_approx_commute_time)
+
+    @property
+    def exact_commute_times(self):
+        return self._exact_commute_times_minutes
+
+    @exact_commute_times.setter
+    def exact_commute_times(self, new_exact_commute_time):
+        """
+        Takes in a dictionary of commutes and adds the ones that do not exist
+            to the member dictionary
+        :param new_approx_commute_time (dict{Destination: (int)}): Dictionary of Destinations and commute times in
+            in minutes to be added to the home
+        """
+        self._exact_commute_times_minutes.update(new_exact_commute_time)
 
 
     def calculate_approx_commute(self, origin_zip, destination_zip, commute_type):
@@ -51,8 +84,7 @@ class HomeScore(object):
         :param origin_zip: The home's zip code, eg. "12345"
         :param destination_zip: The destination's zip code, eg. "12345"
         :param commute_type: commute_type enum, eg. "Driving"
-        :return A 3 element list containing the result, and the zip code pair. The result will be
-            0 on successful lookup, 1 if parent not in database, 2 if child not in database, and 3
+        :return 0 on success, 1 if parent zip is not in database, 2 if child zip is not in database, and 3
             if database cache is invalid.
         """
         parent_zip_code_dictionary = ZipCodeDictionaryParentModel.objects.filter(zip_code_parent__exact=origin_zip)
@@ -63,14 +95,14 @@ class HomeScore(object):
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():
-                            self.approx_commute_times = match.commute_time_minutes
-                            return [0, origin_zip, destination_zip]
+                            self.approx_commute_times = {destination_zip: match.commute_time_minutes}
+                            return 0
                         else:
-                            return [3, origin_zip, destination_zip]
+                            return 3
                 else:
-                    return [2, origin_zip, destination_zip]
+                    return 2
         else:
-            return [1, origin_zip, destination_zip]
+            return 1
 
     @property
     def accumulated_points(self):
