@@ -60,8 +60,8 @@ class DistanceWrapper:
                     if element_status == "OK":
                         # retrieve the duration from origin to destination
                         duration_in_seconds = int(element["duration"]["value"])
-                        distance_in_feet = int(element["distance"]["value"])
-                        origin_distance_list.append((duration_in_seconds, distance_in_feet))
+                        distance_in_meters = int(element["distance"]["value"])
+                        origin_distance_list.append((duration_in_seconds, distance_in_meters))
                     # otherwise we skip this origin-destination pairing
 
                 distance_list.append(origin_distance_list)
@@ -81,7 +81,7 @@ class DistanceWrapper:
     destination(s).
     :raises DistanceMatrixException on invalid request
     """
-    def calculate_distances(self, origins, destination):
+    def calculate_distances(self, origins, destinations):
 
         distance_matrix_list = []
 
@@ -90,7 +90,7 @@ class DistanceWrapper:
             if (len(origin_list) > 25):
                 response_json = distance_matrix.distance_matrix(self.client,
                                                                 origin_list[:25],
-                                                                destination,
+                                                                destinations[:25],
                                                                 units=self.units,
                                                                 mode=self.mode)
                 response_list = self.interpret_distance_matrix_response(response_json)
@@ -100,7 +100,7 @@ class DistanceWrapper:
             else:
                 response_json = distance_matrix.distance_matrix(self.client,
                                                                 origin_list,
-                                                                destination,
+                                                                destinations[:25],
                                                                 units=self.units,
                                                                 mode=self.mode)
                 # response_dict = json.loads(response_json)

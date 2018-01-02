@@ -15,7 +15,8 @@ from survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 from survey.home_data.home_score import HomeScore
 
 # Import DistanceWrapper
-from survey.distance_matrix.distance_wrapper import DistanceWrapper
+from survey.distance_matrix.distance_wrapper import *
+from survey.approximate_commute_handler import compute_approximates
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
@@ -126,13 +127,24 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     failed_list.append(home.home.zip_code)
             # Add to the dictionary of failed homes
             failed_home_dict[destination.zip_code] = failed_list
-        # 2: Use DistanceWrapper to compute the failed homes
+
+        # 2: Use approx handler to compute the failed home distances and update db
+        for destination, origin_list in failed_home_dict:
+            try:
+                compute_approximates.approximate_compute_handler(origin_list, destination, "driving")
+            except Distance_Matrix_Exception as e:
+                print("Caught: " + e.__class__.__name__)
+            except Exception:
+                print("Unknown error returned by request")
+        '''
         wrapper = DistanceWrapper()
         for destination, origin_list in failed_home_dict:
             # TODO: Use distance matrix wrapper to update database
             # Currently we don't updated the database. If the wrapper could be updated/rewritten
             # to automatically update the database, this would simplify this function.
             wrapper.calculate_distances(origin_list, [destination])
+        '''
+
         # 3: Recompute failed homes using new DB data.
         for home in self.homes:
             if len(home.approx_commute_times) < len(self.destinations):
