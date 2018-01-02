@@ -6,6 +6,8 @@ import json
 Class that acts as a wrapper for distance matrix requests. Splits requests into 
 legal sizes and consolidates results
 """
+
+
 class DistanceWrapper:
 
     def __init__(self, key=gmaps_api_key, mode="driving", units="imperial"):
@@ -45,7 +47,7 @@ class DistanceWrapper:
     def interpret_distance_matrix_response(self, response_obj):
         # check the status
         response_status = response_obj["status"]
-        if (response_status == "OK"):
+        if response_status == "OK":
             distance_list = []
 
             # each row is an origin
@@ -55,13 +57,13 @@ class DistanceWrapper:
                 # each element is the origin-destination pairing
                 for element in row["elements"]:
                     element_status = element["status"]
-                    if (element_status == "OK"):
+                    if element_status == "OK":
                         # retrieve the duration from origin to destination
-                        duration_in_minutes = int(element["duration"]["value"])
+                        duration_in_seconds = int(element["duration"]["value"])
                         distance_in_feet = int(element["distance"]["value"])
-                        origin_distance_list.append((duration_in_minutes, distance_in_feet))
-                    else:
-                        self.handle_exception(element_status)
+                        origin_distance_list.append((duration_in_seconds, distance_in_feet))
+                    # otherwise we skip this origin-destination pairing
+
                 distance_list.append(origin_distance_list)
         else:
             self.handle_exception(response_status)
@@ -70,27 +72,25 @@ class DistanceWrapper:
         return distance_list
 
     """
-    Computes a distance matrix using the origins and destinations, doing multiple
-    requests when origins or destinations exceed 25
-    :params origins, list of origins in legal format
-    :params destinations, a list of destinations in a legal format
-    :returns a list of lists containing the distances between each origin and its destination(s)
+    Gets the distance matrix corresponding to a destination and an arbitrary number of origins.
+    Segments requests to the distance matrix API to include a maximum of 25 origins and returns
+    the consolidated results.
+    :params origins, list of origins in a distance matrix accepted format
+    :params destinations, the destination in a distance matrix accepted format
+    :returns a list of lists of tuples containing the duration and distance between the origins and the 
+    destination(s).
     :raises DistanceMatrixException on invalid request
     """
-    def calculate_distances(self, origins, destinations):
+    def calculate_distances(self, origins, destination):
 
         distance_matrix_list = []
-
-        if len(destinations) > 25:
-            #TODO: handle exceeding destinations and merge inner response lists
-            return []
 
         origin_list = origins
         while origin_list:
             if (len(origin_list) > 25):
                 response_json = distance_matrix.distance_matrix(self.client,
                                                                 origin_list[:25],
-                                                                destinations,
+                                                                destination,
                                                                 units=self.units,
                                                                 mode=self.mode)
                 response_list = self.interpret_distance_matrix_response(response_json)
@@ -100,7 +100,7 @@ class DistanceWrapper:
             else:
                 response_json = distance_matrix.distance_matrix(self.client,
                                                                 origin_list,
-                                                                destinations,
+                                                                destination,
                                                                 units=self.units,
                                                                 mode=self.mode)
                 # response_dict = json.loads(response_json)
