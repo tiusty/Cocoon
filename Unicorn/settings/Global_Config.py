@@ -3,20 +3,38 @@ import googlemaps
 
 # Survey Global Variables
 default_buy_survey_name = "Recent Buy Survey"
-default_rent_survey_name = "Recent Rent Survey"
+DEFAULT_RENT_SURVEY_NAME = "Recent Rent Survey"
 
 survey_types = Enum('survey_types', 'rent buy')
+
+# House Database config values
+COMMUTE_TYPES = (
+    ('driving', 'Driving'),
+    ('transit', 'Transit'),
+    ('walking', 'Walking'),
+    ('biking', 'Biking'),
+)
+ZIP_CODE_TIMEDELTA_VALUE = 60
 
 # Default Survey Max Values
 HYBRID_QUESTION_WEIGHT = 20
 commute_question_weight = 100
 price_question_weight = 100
-weight_question_max = 7
-Max_Num_Bathrooms = 7  # Base 0, I guess should be base 1
-Max_Num_Bedrooms = 6  # Base 1, so from 1 bedroom to 6 bedrooms
-Max_Text_Input_Length = 200
+WEIGHT_QUESTION_MAX = 7
+MAX_NUM_BATHROOMS = 7  # Base 0, I guess should be base 1
+MAX_NUM_BEDROOMS = 6  # Base 1, so from 1 bedroom to 6 bedrooms
+MAX_TEXT_INPUT_LENGTH = 200
 HYBRID_WEIGHT_MAX = 3
 HYBRID_WEIGHT_MIN = -3
+HYBRID_WEIGHT_CHOICES = (
+    (3, "Must have"),
+    (2, "Really want"),
+    (1, "Prefer to have"),
+    (0, "I don't care"),
+    (-1, "Prefer not to have"),
+    (-2, "Really don't want"),
+    (-3, "Don't want"),
+)
 
 # Survey preferences
 # This is the acceptable range for an apartment. So if the user selected a commute of 30 - 60 minutes
@@ -27,7 +45,7 @@ number_of_exact_commutes_computed = 100 # number of homes that the exact commute
 
 # Google distance matrix values
 gmaps = googlemaps.Client(key='AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw')
-
+gmaps_api_key = 'AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw'
 
 # Key:
 

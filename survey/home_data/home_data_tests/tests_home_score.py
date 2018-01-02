@@ -1,12 +1,13 @@
 from django.test import TestCase
 from survey.home_data.home_score import HomeScore
-from houseDatabase.models import RentDatabase
-
+from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
+    HomeTypeModel
 
 class TestScoringMethods(TestCase):
 
     def setUp(self):
-        self.home = RentDatabase.objects.create()
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = RentDatabaseModel.objects.create(home_type_home=self.home_type)
 
     def test_percent_score_positive(self):
         # Arrange
@@ -177,14 +178,69 @@ class TestScoringMethods(TestCase):
         home_score.home = self.home
         self.assertIsNotNone(home_score.home)
 
-    def test_approx_commute_times_setter(self):
+    def test_approx_commute_times_setter_basic(self):
+        # Arrange
         home_score = HomeScore()
-        self.assertIsEqual(home_score.approx_commute_times, [])
-        self.approx_commute_times = 5
-        self.approx_commute_times = 10
-        self.assertIsEqual(home_score.approx_commute_times, [5,10])
-        self.approx_commute_times = [1,2,3]
-        self.assertIsEqual(home_score.approx_commute_times, [1,2,3])
-        self.approx_commute_times = []
-        self.assertIsEqual(home_score.approx_commute_times, [])
+        self.assertEqual(home_score.approx_commute_times, {})
 
+        # Act
+        home_score.approx_commute_times = {"12345": 10}
+        home_score.approx_commute_times = {"01234": 20}
+
+        # Assert
+        self.assertEqual(home_score.approx_commute_times, {"12345": 10, "01234": 20})
+
+    def test_approx_commute_times_setter_overwriting(self):
+        # Arrange
+        home_score = HomeScore()
+        self.assertEqual(home_score.approx_commute_times, {})
+
+        # Act
+        home_score.approx_commute_times = {"12345": 10}
+        home_score.approx_commute_times = {"01234": 20}
+        home_score.approx_commute_times = {}
+        home_score.approx_commute_times = {"12345": 50}
+
+        # Assert
+        self.assertEqual(home_score.approx_commute_times, {"12345": 50, "01234": 20})
+
+class TestApproxCommute(TestCase):
+
+    def setUp(self):
+        self.zip_code = "12345"
+        self.zip_code1 = "01234"
+        self.zip_code2 = "23456"
+        self.commute_time = 6000 
+        self.commute_distance = 700
+        self.commute_type = "driving"
+
+    @staticmethod
+    def create_zip_code_dictionary(zip_code):
+        return ZipCodeDictionaryParentModel.objects.create(zip_code_parent=zip_code)
+
+    @staticmethod
+    def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time, 
+                                         commute_distance, commute_type):
+        parent_zip_code_dictionary.zipcodedictionarychildmodel_set.create(
+                zip_code_child=zip_code,
+                commute_time_seconds_child=commute_time,
+                commute_distance_meters_child=commute_distance,
+                commute_type_child=commute_type,
+                )
+
+    def test_compute_approx_commute_times(self):
+        # Arrange
+        home_score = HomeScore()
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time,
+                                              self.commute_distance, self.commute_type)
+
+        # Act
+        ret1 = home_score.calculate_approx_commute(self.zip_code, self.zip_code1, self.commute_type)
+        ret2 = home_score.calculate_approx_commute(self.zip_code, self.zip_code2, self.commute_type)
+        ret3 = home_score.calculate_approx_commute("00000", self.zip_code, self.commute_type)
+
+        # Assert
+        self.assertEqual(ret1, [0, 100])
+        self.assertEqual(ret2, [2, -1])
+        self.assertEqual(ret3, [1, -1])

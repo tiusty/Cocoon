@@ -1,11 +1,29 @@
+from houseDatabase.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 
 class HomeScore(object):
+    # noinspection SpellCheckingInspection
+    """
+        Class stores a home with supporting information regarding the home. Keeps track of data
+            while the algorithm is being computed
+
+          Attributes:
+            self._home (housedata.model): The actual home specified from the house database models.
+            self._accumulated_points (int): The total amount of points this home has earned
+            self._total_possible_points (int): The total amount of points this home could have earned
+            self._approx_commute_times_minutes (dict{'(survey.model.destinations)', (int)}: A dictionary with the key being
+                the destination and the value is the approximate commute time to that destination in minutes
+            self._exact_commute_times_minutes (dict{'(survey.model.destinations)', (int)}: A dictionary with the key being
+                the destination and the value is the exact commute time to that destination in minutes
+            self._eliminated (boolean): Indicates whether or not the home has been eliminated already
+
+        """
 
     def __init__(self, new_home=None):
         self._home = new_home
         self._accumulated_points = 0
         self._total_possible_points = 0
-        self._approx_commute_times_minutes = []
+        self._approx_commute_times_minutes = {}
+        self._exact_commute_times_minutes = {}
         self._eliminated = False
 
     @property
@@ -33,11 +51,60 @@ class HomeScore(object):
 
     @approx_commute_times.setter
     def approx_commute_times(self, new_approx_commute_time):
-        # If the setter is a list then set instead of append
-        if isinstance(new_approx_commute_time, list):
-            self._approx_commute_times_minutes = new_approx_commute_time
+        """
+        Takes in a dictionary of commutes and adds the ones that do not exist
+            to the member dictionary
+        :param new_approx_commute_time (dict{Destination: (int)}): Dictionary of Destinations and commute times in
+            in minutes to be added to the home
+        """
+        self._approx_commute_times_minutes.update(new_approx_commute_time)
+
+    @property
+    def exact_commute_times(self):
+        return self._exact_commute_times_minutes
+
+    @exact_commute_times.setter
+    def exact_commute_times(self, new_exact_commute_time):
+        """
+        Takes in a dictionary of commutes and adds the ones that do not exist
+            to the member dictionary
+        :param new_approx_commute_time (dict{Destination: (int)}): Dictionary of Destinations and commute times in
+            in minutes to be added to the home
+        """
+        self._exact_commute_times_minutes.update(new_exact_commute_time)
+
+    # TODO: Move to rent_algorithm (?)
+    # This should probably be moved into the rent_algorithm file as a helper method, as it doesn't
+    # actually interact with the object in any meaningful way.
+    def calculate_approx_commute(self, origin_zip, destination_zip, commute_type):
+        """
+        Computes an approximate commute time for this house to an input destination. First checks
+        the zipcode database to see if the commute time is already stored; if it's not, it then
+        returns the pair of failed zips, along with an error code as a 3 element list. The first
+        entry of the list is 0 if the pair was in the database, and 1 if the pair wasn't in the database
+        or if the pair wasn't valid. The last 2 entries are the origin and destination zip respectively.
+        :param origin_zip: The home's zip code, eg. "12345"
+        :param destination_zip: The destination's zip code, eg. "12345"
+        :param commute_type: commute_type enum, eg. "Driving"
+        :return 0 on success, 1 if parent zip is not in database, 2 if child zip is not in database, and 3
+            if database cache is invalid.
+        """
+        parent_zip_code_dictionary = ZipCodeDictionaryParentModel.objects.filter(zip_code_parent__exact=origin_zip)
+        if parent_zip_code_dictionary.exists():
+            for parent in parent_zip_code_dictionary:
+                zip_code_dictionary = ZipCodeDictionaryChildModel.objects.filter(
+                    parent_zip_code_child_id=parent).filter(zip_code_child__exact=destination_zip)
+                if zip_code_dictionary.exists():
+                    for match in zip_code_dictionary:
+                        if match.zip_code_cache_still_valid():
+                            # self.approx_commute_times = {destination_zip: match.commute_time_minutes}
+                            return [0, match.commute_time_minutes]
+                        else:
+                            return [3, match.commute_time_minutes]
+                else:
+                    return [2, -1]
         else:
-            self._approx_commute_times_minutes.append(new_approx_commute_time)
+            return [1, -1]
 
     @property
     def accumulated_points(self):
@@ -77,4 +144,3 @@ class HomeScore(object):
         :return: The score percent rounded
         """
         return round(self.percent_score())
-

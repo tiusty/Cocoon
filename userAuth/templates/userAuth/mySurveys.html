@@ -153,9 +153,9 @@
                                                                 {{ destAddress.full_address }}
                                                             </td>
                                                             {% if forloop.counter == 1 %}
-                                                                <td>{{ survey.get_home_types }}</td>
-                                                                <td>{{ survey.get_cost_range }}</td>
-                                                                <td>{{ survey.get_commute_range }}</td>
+                                                                <td>{{ survey.home_types }}</td>
+                                                                <td>{{ survey.price_range }}</td>
+                                                                <td>{{ survey.commute_range }}</td>
                                                             {% endif %}
                                                         </tr>
                                                     {% endfor %}

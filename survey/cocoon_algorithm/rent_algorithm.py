@@ -1,3 +1,9 @@
+# Import Django modules
+from django.db.models import Q
+
+# Import houseDatabase modules
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel
+
 # Import survey modules
 from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
@@ -5,8 +11,65 @@ from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 from survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 from survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 
+# Import HomeScore class
+from survey.home_data.home_score import HomeScore
+
+# Import DistanceWrapper
+from survey.distance_matrix.distance_wrapper import DistanceWrapper
+
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
+
+    def populate_survey_destinations_and_possible_homes(self, user_survey):
+
+        # Find all the possible homes that fit the static filter
+        filtered_home_list = self.generate_static_filter_home_list(user_survey)
+
+        # Add homes to rent_algorithm
+        for home in filtered_home_list:
+            self.homes = HomeScore(home)
+
+        # Retrieves all the destinations that the user recorded
+        self.destinations = user_survey.rentingdestinationsmodel_set.all()
+
+    @staticmethod
+    def generate_static_filter_home_list(user_survey):
+        """
+        Compute Static Elements
+        The item that will filter the list the most should be first to narrow down the number of iterations
+        The database needs to be searched
+        (Right now it isn't order by efficiency but instead by when it was added. Later it can be switched around
+
+        Current order:
+        1. Filter by price range. The House must be in the correct range to be accepted
+        2. Filter by Home Type. The home must be the correct home type to be accepted
+        3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
+            If the house is outside the range it is eliminated
+        4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
+        4. Filter by the number of bathrooms
+        """
+
+        # Find all the home types the user desires
+        current_home_types = []
+        for home in user_survey.home_type.all():
+            current_home_types.append(home.home_type)
+
+        # Create queries for all the user home types desired
+        home_type_queries = [Q(home_type_home=value) for value in
+                             HomeTypeModel.objects.filter(home_type_survey__in=current_home_types)]
+
+        # Or all the home type queries together, to make one query
+        query_home_type = home_type_queries.pop()
+        for item in home_type_queries:
+            query_home_type |= item
+
+        # Query the database
+        return RentDatabaseModel.objects \
+            .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
+            .filter(query_home_type) \
+            .filter(move_in_day_home__range=(user_survey.move_in_date_start, user_survey.move_in_date_end)) \
+            .filter(num_bedrooms_home=user_survey.num_bedrooms) \
+            .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
 
     def run_compute_approximate_commute_filter(self):
         """
@@ -24,9 +87,70 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         for home_data in self.homes:
             for commute in home_data.approx_commute_times:
-                score_result = self.compute_commute_score(commute)
-                home_data.accumulated_points = score_result * self.commute_user_scale_factor * self.commute_question_weight
+                score_result = self.compute_commute_score(home_data.approx_commute_times[commute])
+                home_data.accumulated_points = score_result * self.commute_user_scale_factor \
+                    * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
+
+    def run_compute_commute_score_exact(self):
+        """
+        Runs the exact commute scoring on any homes that have exact commutes populated. Homes are never marked for
+        deletion, it will only score based on a more accurate number
+        :return:
+        """
+        for home_data in self.homes:
+            for commute in home_data.exact_commute_times:
+                score_result = self.compute_commute_score(home_data.exact_commute_times[commute])
+                home_data.accumulated_points = score_result * self.commute_user_scale_factor \
+                    * self.commute_question_weight
+                home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
+
+    # TODO: Fix distance wrapper to update database rather than just return values
+    # TODO: Check syntax
+    # update approx_commute_times property with these values
+    def retrieve_all_approximate_commutes(self):
+        # 1: Query DB and update when info is there
+        failed_home_dict = {}
+        # destination will be a DestinationsModel object
+        for destination in self.destinations:
+            failed_list = []
+            # home will be a HomeScore object
+            for home in self.homes:
+                code_and_distance = home.calculate_approx_commute(home.home.zip_code, destination.zip_code, "")
+                # Case we have a match
+                # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
+                if code_and_distance[0] == 0:
+                    home.approx_commute_times[destination.destination_key] = code_and_distance[1]
+                # Case we don't have a match
+                else:
+                    failed_list.append(home.home.zip_code)
+            # Add to the dictionary of failed homes
+            failed_home_dict[destination.zip_code] = failed_list
+        # 2: Use DistanceWrapper to compute the failed homes
+        wrapper = DistanceWrapper()
+        for destination, origin_list in failed_home_dict:
+            # TODO: Use distance matrix wrapper to update database
+            # Currently we don't updated the database. If the wrapper could be updated/rewritten
+            # to automatically update the database, this would simplify this function.
+            wrapper.calculate_distances(origin_list, [destination])
+        # 3: Recompute failed homes using new DB data.
+        for home in self.homes:
+            if len(home.approx_commute_times) < len(self.destinations):
+                # Recompute missing destinations
+                for destination in self.destinations:
+                    if destination not in home.approx_commute_times:
+                        code_and_distance = home.approx_commute_times(home.home.zip_code, destination.zip_code)
+                        if code_and_distance[0] != 0:
+                            # Error: For some reason, the database was not updated, so we mark home for deletion
+                            home.eliminate_home()
+                        else:
+                            home.approx_commute_times[destination.destination_key] = code_and_distance[1]
+
+
+    #TODO: implement this with the distance_wrapper
+    #update an exact commute_times property with these values?
+    def retrieve_exact_commutes(self):
+        return
 
     def run_compute_price_score(self):
         """
@@ -34,13 +158,14 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         returns a -1 for the score then the home is also marked for deletion
         """
         for home_data in self.homes:
-            score_result = self.compute_price_score(home_data.home.get_price())
+            score_result = self.compute_price_score(home_data.home.price)
             if score_result == -1:
                 home_data.eliminate_home()
             home_data.accumulated_points = score_result * self.price_user_scale_factor * self.price_question_weight
             home_data.total_possible_points = self.price_user_scale_factor * self.price_question_weight
 
-    def run_compute_weighted_score_interior_amenities(self, air_conditioning_scale, washer_dryer_in_home_scale, dish_washer_scale, bath_scale):
+    def run_compute_weighted_score_interior_amenities(self, air_conditioning_scale, washer_dryer_in_home_scale,
+                                                      dish_washer_scale, bath_scale):
         """
         Runs the interior amenities scoring.
         TODO Think of better way to run this function since it is kinda messy
@@ -50,30 +175,30 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param bath_scale: Int -> User scale for bath
         """
         for home_data in self.homes:
-            if self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.get_air_conditioning()):
+            if self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.air_conditioning):
                 home_data.eliminate_home()
             home_data.accumulated_points = self.compute_weighted_question_score(air_conditioning_scale,
-                                                                                home_data.home.get_air_conditioning())
+                                                                                home_data.home.air_conditioning)
             home_data.total_possible_points = abs(air_conditioning_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.get_wash_dryer_in_home()):
+            if self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.interior_washer_dryer):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(washer_dryer_in_home_scale,
-                                                                                home_data.home.get_wash_dryer_in_home())
+                                                                                home_data.home.interior_washer_dryer)
             home_data.total_possible_points = abs(washer_dryer_in_home_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(dish_washer_scale, home_data.home.get_dish_washer()):
+            if self.compute_weighted_question_filter(dish_washer_scale, home_data.home.dish_washer):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(dish_washer_scale,
-                                                                                home_data.home.get_dish_washer())
+                                                                                home_data.home.dish_washer)
             home_data.total_possible_points = abs(dish_washer_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(bath_scale, home_data.home.get_bath()):
+            if self.compute_weighted_question_filter(bath_scale, home_data.home.bath):
                 home_data.eliminate_home()
 
-            home_data.accumulated_points = self.compute_weighted_question_score(bath_scale, home_data.home.get_bath())
+            home_data.accumulated_points = self.compute_weighted_question_score(bath_scale, home_data.home.bath)
             home_data.total_possible_points = abs(bath_scale) * self.hybrid_question_weight
 
     def run_sort_home_by_score(self):
