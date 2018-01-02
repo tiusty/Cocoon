@@ -1,6 +1,9 @@
 # Import Django modules
 from django.db.models import Q
 
+# Import global settings
+from Unicorn.settings.Global_Config import number_of_exact_commutes_computed
+
 # Import houseDatabase modules
 from houseDatabase.models import RentDatabaseModel, HomeTypeModel
 
@@ -106,7 +109,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
 
-    # TODO: Fix distance wrapper to update database rather than just return values
     # TODO: Check syntax
     # update approx_commute_times property with these values
     def retrieve_all_approximate_commutes(self):
@@ -136,14 +138,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 print("Caught: " + e.__class__.__name__)
             except Exception:
                 print("Unknown error returned by request")
-        '''
-        wrapper = DistanceWrapper()
-        for destination, origin_list in failed_home_dict:
-            # TODO: Use distance matrix wrapper to update database
-            # Currently we don't updated the database. If the wrapper could be updated/rewritten
-            # to automatically update the database, this would simplify this function.
-            wrapper.calculate_distances(origin_list, [destination])
-        '''
 
         # 3: Recompute failed homes using new DB data.
         for home in self.homes:
@@ -158,11 +152,24 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                         else:
                             home.approx_commute_times[destination.destination_key] = code_and_distance[1]
 
-
-    #TODO: implement this with the distance_wrapper
     #update an exact commute_times property with these values?
     def retrieve_exact_commutes(self):
-        return
+        distance_matrix_requester = DistanceWrapper()
+
+        for destination in self.destinations:
+            try:
+                origin_addresses = map(lambda house:house.home.full_address(), self.homes[:number_of_exact_commutes_computed])
+                destination_address = destination.full_address()
+                results = distance_matrix_requester.calculate_distances(origin_addresses, [destination_address])
+
+                for i in range(len(self.homes[:number_of_exact_commutes_computed])):
+                    # update exact commute time with in minutes
+                    self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0] / 60)
+
+            except Distance_Matrix_Exception as e:
+                print("Caught: " + e.__class__.__name__)
+            except Exception:
+                print("Unknown error returned by request")
 
     def run_compute_price_score(self):
         """
