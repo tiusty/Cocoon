@@ -109,10 +109,16 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
 
-    # TODO: Check syntax
-    # update approx_commute_times property with these values
     def retrieve_all_approximate_commutes(self):
+        """
+        retrieves the commute time and distance between each origin and each destination (zip code) and updates
+        the approx_commute_minutes dictionary within each HomeScore accordingly. For any zip code combinations that
+        are not in the database, the distance matrix is called to calculate the approximate distance and the
+        database is updated.
+        """
+
         # 1: Query DB and update when info is there
+
         failed_home_dict = {}
         # destination will be a DestinationsModel object
         for destination in self.destinations:
@@ -131,6 +137,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             failed_home_dict[destination.zip_code] = failed_list
 
         # 2: Use approx handler to compute the failed home distances and update db
+
         for destination, origin_list in failed_home_dict:
             try:
                 compute_approximates.approximate_compute_handler(origin_list, destination, "driving")
@@ -140,6 +147,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 print("Unknown error returned by request")
 
         # 3: Recompute failed homes using new DB data.
+
         for home in self.homes:
             if len(home.approx_commute_times) < len(self.destinations):
                 # Recompute missing destinations
@@ -152,14 +160,21 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                         else:
                             home.approx_commute_times[destination.destination_key] = code_and_distance[1]
 
-    #update an exact commute_times property with these values?
     def retrieve_exact_commutes(self):
+        """
+        updates the exact_commute_minutes property for the top homes, based on a global variable
+        in Global_Config. Uses the distance_matrix wrapper.
+        """
         distance_matrix_requester = DistanceWrapper()
 
         for destination in self.destinations:
             try:
-                origin_addresses = map(lambda house:house.home.full_address(), self.homes[:number_of_exact_commutes_computed])
+                # map list of HomeScore objects to full addresses
+                origin_addresses = map(lambda house:house.home.full_address(),
+                                       self.homes[:number_of_exact_commutes_computed])
+
                 destination_address = destination.full_address()
+
                 results = distance_matrix_requester.calculate_distances(origin_addresses, [destination_address])
 
                 for i in range(len(self.homes[:number_of_exact_commutes_computed])):
