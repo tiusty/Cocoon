@@ -1,26 +1,35 @@
 from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 from survey.distance_matrix.distance_wrapper import DistanceWrapper
 
-#TODO: how are we handling problems associated with passing only zip code
-#TODO: should we still update zip codes after certain period of time
-
-"""
-uses the distanc_wrapper to poll the distance matrix API, creating 
-parent-child zip code objects to store the results in the database.
-
-:param: origins, the list of origin zip codes
-:param: destination, the destination zip code
-:param: commute type
-"""
+# TODO: best way to add more specificity than zip code
+# TODO: update values after certain length of time
 def approximate_compute_handler(origins, destination, commute_type):
-    wrapper = DistanceWrapper()
+    """
+    approximate_compute_handler stands between the rent_algorithm and the distance_wrapper,
+    calling the distance matrix on the provided origins and destination and updates the
+    ZipCodeParent and ZipCodeChildModel models accordingly.
 
-    # list of lists of tuples
-    # each inner lists corresponds to an origin
-    # each tuple corresponds to a origin-destination combo
+    :param: origins, a list of strings that are 5 digit zip codes
+    :param: destination, a string that is the 5 digit zip code destination
+    :param: commute_type, a string, either "driving", "transit", "walking", "biking"
+    :return: the result of the DistanceWrapper.calculate_distances() call.
+        Format is a list of lists of tuples. Each inner list corresponds to an origin
+        and each of its tuples contains the duration (in seconds) and distance (in meters)
+        from the origin to a destination, in the same order they were given. In this case,
+        there will always be 1 destination.
+
+    Example Input:
+        origins = ["02123", "02012", "12345"]
+        destination = "20344"
+        commute_type = "driving"
+    Output:
+        [[(10349, 394)],[(2343. 423)],[(2342, 3452)]]
+    """
+
+    wrapper = DistanceWrapper(mode=commute_type)
     results = wrapper.calculate_distances(origins, [destination])
 
-    # iterates both lists
+    # iterates both lists simultaneously
     for origin, result in zip(origins, results):
         if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin).exists():
             zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin)

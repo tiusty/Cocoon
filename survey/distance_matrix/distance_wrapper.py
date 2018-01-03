@@ -1,12 +1,5 @@
 from googlemaps import distance_matrix, client
 from Unicorn.settings.Global_Config import gmaps_api_key
-import json
-
-"""
-Class that acts as a wrapper for distance matrix requests. Splits requests into 
-legal sizes and consolidates results
-"""
-
 
 class DistanceWrapper:
 
@@ -16,11 +9,12 @@ class DistanceWrapper:
         self.units = units
         self.client = client.Client(self.key)
 
-    """
-    handles any errors thrown by the distance_matrix API
-    :param error_code, the error code returned from distance_matrix
-    """
     def handle_exception(self, error_code):
+        """
+        interprets a distance matrix error code and raises the correct exception
+        :param error_code: a string
+        :return: this function does not return
+        """
         if (error_code == "INVALID_REQUEST"):
             raise Invalid_Request_Exception()
         elif (error_code == "MAX_ELEMENTS_EXCEEDED"):
@@ -36,15 +30,16 @@ class DistanceWrapper:
         else:
             raise Exception("Unidentifiable error in distance_matrix_response")
 
-
-    """
-    Interprets the json response dict from the googlemaps distance_matrix request.
-    Handles all errors and combines distances into a list
-    :param response_obj, the json response as a dictionary
-    :returns a list of lists with tuples (duration, distance) between origins and their destination(s)
-    :raises Distance_Matrix_Exception
-    """
     def interpret_distance_matrix_response(self, response_obj):
+        """
+        interprets the response dict returned by the distance_matrix API. This function both handles errors
+        and compiles the response into a list of lists of tuples.
+
+        :param response_obj: the dictionary returned by the distance matrix API
+        :return: a list of lists of tuples containing the duration and distance from each origin to each destination
+        [[(int, int), (int, int)], [(int, int)], [(int, int)]]
+        """
+
         # check the status
         response_status = response_obj["status"]
         if response_status == "OK":
@@ -62,7 +57,7 @@ class DistanceWrapper:
                         duration_in_seconds = int(element["duration"]["value"])
                         distance_in_meters = int(element["distance"]["value"])
                         origin_distance_list.append((duration_in_seconds, distance_in_meters))
-                    # otherwise we skip this origin-destination pairing
+                    # otherwise there was an error, skip this element
 
                 distance_list.append(origin_distance_list)
         else:
@@ -71,17 +66,25 @@ class DistanceWrapper:
         # list of lists of durations from origin to destinations
         return distance_list
 
-    """
-    Gets the distance matrix corresponding to a destination and an arbitrary number of origins.
-    Segments requests to the distance matrix API to include a maximum of 25 origins and returns
-    the consolidated results.
-    :params origins, list of origins in a distance matrix accepted format
-    :params destinations, the destination in a distance matrix accepted format
-    :returns a list of lists of tuples containing the duration and distance between the origins and the 
-    destination(s).
-    :raises DistanceMatrixException on invalid request
-    """
     def calculate_distances(self, origins, destinations):
+        """
+        Gets the distance matrix corresponding to a destination and an arbitrary number of origins.
+        Segments requests to the distance matrix API to include a maximum of 25 origins and returns
+        the consolidated results.
+
+        :params origins: list of origins in a distance matrix accepted format
+        :params destinations: the destination in a distance matrix accepted format
+        :returns a list of lists of tuples containing the duration and distance between the origins and the
+        destination(s). Each inner list corresponds to an origin and each of its tuples corresponds to a pairing
+        between that origin and one of its destinations.
+        :raises DistanceMatrixException on invalid request
+
+        Example Input:
+            origins: ["02052", "02124", "02482"]
+            origins: ["2 Snow Hill Lane, Medfield MA"]
+            destinations: ["Boston, MA"]
+            destinations: ["23412", "159 Brattle Street, Arlington MA"]
+        """
 
         distance_matrix_list = []
 
@@ -103,7 +106,6 @@ class DistanceWrapper:
                                                                 destinations[:25],
                                                                 units=self.units,
                                                                 mode=self.mode)
-                # response_dict = json.loads(response_json)
 
                 response_list = self.interpret_distance_matrix_response(response_json)
                 for res in response_list:
