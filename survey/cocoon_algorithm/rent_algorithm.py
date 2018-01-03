@@ -118,8 +118,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
 
         # 1: Query DB and update when info is there
-
-        failed_home_dict = {}
+        failed_home_dict = dict()
         # destination will be a DestinationsModel object
         for destination in self.destinations:
             failed_list = []
@@ -137,8 +136,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             failed_home_dict[destination.zip_code] = failed_list
 
         # 2: Use approx handler to compute the failed home distances and update db
-
-        for destination, origin_list in failed_home_dict:
+        for destination, origin_list in failed_home_dict.items():
             try:
                 compute_approximates.approximate_compute_handler(origin_list, destination, "driving")
             except Distance_Matrix_Exception as e:
@@ -152,13 +150,13 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             if len(home.approx_commute_times) < len(self.destinations):
                 # Recompute missing destinations
                 for destination in self.destinations:
-                    if destination not in home.approx_commute_times:
-                        code_and_distance = home.approx_commute_times(home.home.zip_code, destination.zip_code)
-                        if code_and_distance[0] != 0:
+                    if destination.destination_key not in home.approx_commute_times:
+                        new_code_and_distance = home.calculate_approx_commute(home.home.zip_code, destination.zip_code, "")
+                        if new_code_and_distance[0] != 0:
                             # Error: For some reason, the database was not updated, so we mark home for deletion
                             home.eliminate_home()
                         else:
-                            home.approx_commute_times[destination.destination_key] = code_and_distance[1]
+                            home.approx_commute_times[destination.destination_key] = new_code_and_distance[1]
 
     def retrieve_exact_commutes(self):
         """

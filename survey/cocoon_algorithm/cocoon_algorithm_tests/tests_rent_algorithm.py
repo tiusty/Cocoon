@@ -6,9 +6,13 @@ from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from survey.home_data.home_score import HomeScore
 
 # Import external models
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel
-from survey.models import RentingSurveyModel
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel,ZipCodeDictionaryChildModel
+from survey.models import RentingSurveyModel, DestinationsModel, RentingDestinationsModel
 from userAuth.models import MyUser, UserProfile
+
+# Import DistanceWrapper
+from survey.distance_matrix.distance_wrapper import *
+from survey.approximate_commute_handler import compute_approximates
 
 
 class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
@@ -812,3 +816,63 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.assertEqual(1, len(rent_algorithm.destinations))
         self.assertEqual(self.home, rent_algorithm.homes[0].home)
         self.assertEqual(self.home2, rent_algorithm.homes[1].home)
+
+
+class TestRetrieveApproximateCommutes(TestCase):
+
+    def setUp(self):
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.zip_code = "12345"
+        self.zip_code1 = "01234"
+        self.zip_code2 = "23456"
+        self.commute_time = 6000
+        self.commute_distance = 700
+        self.commute_type = "driving"
+        self.home.home.zip_code_home = self.zip_code
+        self.home1.home.zip_code_home = self.zip_code1
+        self.home2.home.zip_code_home = self.zip_code2
+
+    @staticmethod
+    def create_zip_code_dictionary(zip_code):
+        return ZipCodeDictionaryParentModel.objects.create(zip_code_parent=zip_code)
+
+    @staticmethod
+    def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,
+                                         commute_distance, commute_type):
+        parent_zip_code_dictionary.zipcodedictionarychildmodel_set.create(
+            zip_code_child=zip_code,
+            commute_time_seconds_child=commute_time,
+            commute_distance_meters_child=commute_distance,
+            commute_type_child=commute_type,
+        )
+
+    @staticmethod
+    def create_destination(address, city, state, zip):
+        return RentingDestinationsModel.objects.create(
+            survey_destinations_id="0",
+            street_address_destination=address,
+            city_destination=city,
+            state_destination=state,
+            zip_code_destination=zip
+        )
+
+    def test_retrieve_approx_commutes(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home, self.home1, self.home2]
+        dest = self.create_destination("", "Test", "Test", self.zip_code1)
+        dest1 = self.create_destination("", "Test", "Test", "55555")
+        rent_algorithm.destinations = [dest, dest1]
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time,
+                                              self.commute_distance, self.commute_type)
+
+        # Act
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+
+        # Assert
+        self.assertEqual(self.home.approx_commute_times, {"-Test-Test-01234" : 100.0, "-Test-Test-5555" : 10000.0})
