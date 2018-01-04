@@ -818,16 +818,16 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.assertEqual(self.home2, rent_algorithm.homes[1].home)
 
 
-class TestRetrieveApproximateCommutes(TestCase):
+class TestRetrieveCommutes(TestCase):
 
     def setUp(self):
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.zip_code = "12345"
-        self.zip_code1 = "01234"
-        self.zip_code2 = "23456"
+        self.zip_code = "04469" # Orono, ME zipcode
+        self.zip_code1 = "04401" # Bangor, ME zipcode
+        self.zip_code2 = "04240" # Lewiston, ME zipcode
         self.commute_time = 6000
         self.commute_distance = 700
         self.commute_type = "driving"
@@ -859,20 +859,178 @@ class TestRetrieveApproximateCommutes(TestCase):
             zip_code_destination=zip
         )
 
-    def test_retrieve_approx_commutes(self):
+    def test_retrieve_approx_commutes_in_database_one_home_one_destination(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home]
+        destination = self.create_destination("100 Main Street", "Anytown", "Anystate", "00000")
+        rent_algorithm.destinations = [destination]
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+        self.create_zip_code_dictionary_child(parent_zip_code, "00000", 6000.0, 100.0, "")
+
+        # Act
+        self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {})
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+        # Assert
+        self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {"100 Main Street-Anytown-Anystate-00000" : 100.0})
+
+    def test_retrieve_approx_commutes_in_database_several_homes_several_destinations(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [self.home, self.home1, self.home2]
-        dest = self.create_destination("", "Test", "Test", self.zip_code1)
-        dest1 = self.create_destination("", "Test", "Test", "55555")
-        rent_algorithm.destinations = [dest, dest1]
-        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time,
-                                              self.commute_distance, self.commute_type)
+        destination1 = self.create_destination("100 Main Street", "Anytown", "Anystate", "00000")
+        destination2 = self.create_destination("200 Center Street", "Anyville", "Anystate", "12345")
+        destination3 = self.create_destination("100 Franklin Street", "Somewhere", "Anystate", "23456")
+        rent_algorithm.destinations = [destination1, destination2, destination3]
+
+        parent_zip_code1 = self.create_zip_code_dictionary(self.zip_code)
+        self.create_zip_code_dictionary_child(parent_zip_code1, "00000", 6000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code1, "12345", 3000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code1, "23456", 12000.0, 100.0, "")
+
+        parent_zip_code2 = self.create_zip_code_dictionary(self.zip_code1)
+        self.create_zip_code_dictionary_child(parent_zip_code2, "00000", 1500.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code2, "12345", 6000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code2, "23456", 18000.0, 100.0, "")
+
+        parent_zip_code3 = self.create_zip_code_dictionary(self.zip_code2)
+        self.create_zip_code_dictionary_child(parent_zip_code3, "00000", 3000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code3, "12345", 12000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code3, "23456", 6000.0, 100.0, "")
+
+        # Act
+        for home in rent_algorithm.homes:
+            self.assertEqual(home.approx_commute_times, {})
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+        # Assert
+        self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
+                         {"100 Main Street-Anytown-Anystate-00000": 100.0,
+                          "200 Center Street-Anyville-Anystate-12345": 50.0,
+                          "100 Franklin Street-Somewhere-Anystate-23456": 200.0})
+        self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
+                         {"100 Main Street-Anytown-Anystate-00000": 25.0,
+                          "200 Center Street-Anyville-Anystate-12345": 100.0,
+                          "100 Franklin Street-Somewhere-Anystate-23456": 300.0})
+        self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
+                         {"100 Main Street-Anytown-Anystate-00000": 50.0,
+                          "200 Center Street-Anyville-Anystate-12345": 200.0,
+                          "100 Franklin Street-Somewhere-Anystate-23456": 100.0})
+
+    def test_retrieve_approx_commutes_not_in_database_no_parent_zip(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home]
+        destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
+        rent_algorithm.destinations = [destination]
 
         # Act
         rent_algorithm.retrieve_all_approximate_commutes()
 
+        # Assert (These times are place holders, since I don't know what the commute times will be)
+        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 20.0})
+
+    def test_retrieve_approx_commutes_not_in_database_with_parent_zip(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home]
+        destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
+        rent_algorithm.destinations = [destination]
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+
+        # Act
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+        # Assert (These times are place holders, since I don't know what the commute times will be)
+        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 20.0})
+
+    def test_retrieve_approx_commutes_not_in_database_many_homes_many_destinations(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home, self.home1, self.home2]
+        destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
+        destination2 = self.create_destination("", "Boston", "MA", "02101")
+        destination3 = self.create_destination("", "Providence", "RI", "02860")
+        rent_algorithm.destinations = [destination1, destination2, destination3]
+
+        # Act
+        for home in rent_algorithm.homes:
+            self.assertEqual(home.approx_commute_times, {})
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+        # Assert (These times are place holders, since I don't know what the commute times will be)
+        self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
+                         {"-Beverly Hills-CA-90210": 100.0,
+                          "-Boston-MA-02101": 50.0,
+                          "-Providence-RI-02860": 200.0})
+        self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
+                         {"-Beverly Hills-CA-90210": 25.0,
+                          "-Boston-MA-02101": 100.0,
+                          "-Providence-RI-02860": 300.0})
+        self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
+                         {"-Beverly Hills-CA-90210": 50.0,
+                          "-Boston-MA-02101": 200.0,
+                          "-Providence-RI-02860": 100.0})
+
+    def test_retrieve_approx_commutes_mixed(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home, self.home1, self.home2]
+        destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
+        destination2 = self.create_destination("", "Boston", "MA", "02101")
+        destination3 = self.create_destination("", "Providence", "RI", "02860")
+        rent_algorithm.destinations = [destination1, destination2, destination3]
+
+        # Only a few zip codes and destinations will be in the database
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+        parent_zip_code1 = self.create_zip_code_dictionary(self.zip_code1)
+        self.create_zip_code_dictionary_child(parent_zip_code, "90210", 6000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code1, "02101", 18000.0, 100.0, "")
+
+
+        # Act
+        for home in rent_algorithm.homes:
+            self.assertEqual(home.approx_commute_times, {})
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+        # Assert (These times are place holders, since I don't know what the commute times will be)
+        self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
+                         {"-Beverly Hills-CA-90210": 100.0,
+                          "-Boston-MA-02101": 50.0,
+                          "-Providence-RI-02860": 200.0})
+        self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
+                         {"-Beverly Hills-CA-90210": 25.0,
+                          "-Boston-MA-02101": 300.0,
+                          "-Providence-RI-02860": 300.0})
+        self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
+                         {"-Beverly Hills-CA-90210": 50.0,
+                          "-Boston-MA-02101": 200.0,
+                          "-Providence-RI-02860": 100.0})
+
+    def test_retrieve_approx_commutes_edge_case_empty_homes(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = []
+        destination = self.create_destination("", "Beverly Hills", "CA", "90210")
+        rent_algorithm.destinations = [destination]
+
+        # Act
+        rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        self.assertEqual(self.home.approx_commute_times, {"-Test-Test-01234" : 100.0, "-Test-Test-5555" : 10000.0})
+        self.assertEqual(rent_algorithm.homes, [])
+
+    def test_retrieve_approx_commutes_edge_case_empty_destinations(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home]
+        rent_algorithm.destinations = []
+
+        # Act
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+        # Assert
+        self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {})
+
+    #TODO: Write tests for exact commute computation
