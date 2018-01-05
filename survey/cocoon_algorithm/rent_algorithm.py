@@ -21,6 +21,7 @@ from survey.home_data.home_score import HomeScore
 from survey.distance_matrix.distance_wrapper import *
 from survey.approximate_commute_handler import compute_approximates
 
+import math
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
 
@@ -167,21 +168,19 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         for destination in self.destinations:
             try:
                 # map list of HomeScore objects to full addresses
-                origin_addresses = map(lambda house:house.home.full_address(),
-                                       self.homes[:number_of_exact_commutes_computed])
+                origin_addresses = list(map(lambda house:house.home.full_address,
+                                       self.homes[:number_of_exact_commutes_computed]))
 
-                destination_address = destination.full_address()
+                destination_address = destination.full_address
 
                 results = distance_matrix_requester.calculate_distances(origin_addresses, [destination_address])
-
-                for i in range(len(self.homes[:number_of_exact_commutes_computed])):
+                print('[%s]' % ', '.join(map(str, results)))
+                for i in range(min(len(self.homes[:number_of_exact_commutes_computed]), len(results))):
                     # update exact commute time with in minutes
-                    self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0] / 60)
+                    self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0][0] / 60)
 
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)
-            except Exception:
-                print("Unknown error returned by request")
 
     def run_compute_price_score(self):
         """

@@ -818,7 +818,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.assertEqual(self.home2, rent_algorithm.homes[1].home)
 
 
-class TestRetrieveCommutes(TestCase):
+class TestRetrieveApproximateCommutes(TestCase):
 
     def setUp(self):
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
@@ -1038,3 +1038,48 @@ class TestRetrieveCommutes(TestCase):
         self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {})
 
     #TODO: Write tests for exact commute computation
+
+class TestRetrieveExactCommutes(TestCase):
+
+    def setUp(self):
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+
+        # setting up full home
+        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.home.home.zip_code_home = "02052"
+        self.home.home.city_home = "Medfield"
+        self.home.home.state_home = "MA"
+        self.home.home.street_address_home = "2 Snow Hill Lane"
+
+        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+        self.home2.home.zip_code_home = "02474"
+        self.home2.home.city_home = "Arlington"
+        self.home2.home.state_home = "MA"
+        self.home2.home.street_address_home = "159 Brattle Street"
+
+    @staticmethod
+    def create_destination(address, city, state, zip):
+        return RentingDestinationsModel.objects.create(
+            survey_destinations_id="0",
+            street_address_destination=address,
+            city_destination=city,
+            state_destination=state,
+            zip_code_destination=zip
+        )
+
+    def test_retrieve_exact_commute_base_case(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home]
+        destination1 = self.create_destination("159 Brattle Street",
+                                                "Arlington",
+                                                "MA",
+                                                "02474")
+        rent_algorithm.destinations = [destination1]
+
+        # Act
+        rent_algorithm.retrieve_exact_commutes()
+
+        # Assert
+        self.assertEqual(rent_algorithm.homes[0].exact_commute_times,
+                         {"159 Brattle Street-Arlington-MA-02474": 39})
