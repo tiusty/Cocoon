@@ -131,9 +131,10 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     home.approx_commute_times[destination.destination_key] = code_and_distance[1]
                 # Case we don't have a match
                 else:
-                    failed_list.append(home.home.zip_code)
+                    failed_list.append((home.home.zip_code, home.home.state))
             # Add to the dictionary of failed homes
-            failed_home_dict[destination.zip_code] = failed_list
+
+            failed_home_dict[(destination.zip_code, destination.state)] = failed_list
 
         # 2: Use approx handler to compute the failed home distances and update db
         for destination, origin_list in failed_home_dict.items():
@@ -141,8 +142,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 compute_approximates.approximate_compute_handler(origin_list, destination, "driving")
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)
-            except Exception:
-                print("Unknown error returned by request")
 
         # 3: Recompute failed homes using new DB data.
 

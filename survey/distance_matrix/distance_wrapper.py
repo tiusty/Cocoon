@@ -27,8 +27,6 @@ class DistanceWrapper:
             raise Unknown_Error_Exception
         elif (error_code == "ZERO_RESULTS"):
             raise Zero_Results_Exception
-        else:
-            raise Exception("Unidentifiable error in distance_matrix_response")
 
     def interpret_distance_matrix_response(self, response_obj):
         """
@@ -37,7 +35,7 @@ class DistanceWrapper:
 
         :param response_obj: the dictionary returned by the distance matrix API
         :return: a list of lists of tuples containing the duration and distance from each origin to each destination
-        [[(int, int), (int, int)], [(int, int)], [(int, int)]]
+        [[(int, int), (int, int)], [(int, int), (int, int)]]
         """
 
         # check the status
@@ -59,7 +57,8 @@ class DistanceWrapper:
                         origin_distance_list.append((duration_in_seconds, distance_in_meters))
                     # otherwise there was an error, skip this element
 
-                distance_list.append(origin_distance_list)
+                if (origin_distance_list):
+                    distance_list.append(origin_distance_list)
         else:
             self.handle_exception(response_status)
 
@@ -106,7 +105,6 @@ class DistanceWrapper:
                                                                 destinations[:25],
                                                                 units=self.units,
                                                                 mode=self.mode)
-
                 response_list = self.interpret_distance_matrix_response(response_json)
                 for res in response_list:
                     distance_matrix_list.append(res)

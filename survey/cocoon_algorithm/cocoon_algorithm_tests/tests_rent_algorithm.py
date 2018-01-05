@@ -834,6 +834,10 @@ class TestRetrieveCommutes(TestCase):
         self.home.home.zip_code_home = self.zip_code
         self.home1.home.zip_code_home = self.zip_code1
         self.home2.home.zip_code_home = self.zip_code2
+        self.commute_type = "driving"
+        self.home.home.state_home = "Maine"
+        self.home1.home.state_home = "Maine"
+        self.home2.home.state_home = "Maine"
 
     @staticmethod
     def create_zip_code_dictionary(zip_code):
@@ -929,7 +933,7 @@ class TestRetrieveCommutes(TestCase):
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert (These times are place holders, since I don't know what the commute times will be)
-        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 20.0})
+        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 26.416666666666668})
 
     def test_retrieve_approx_commutes_not_in_database_with_parent_zip(self):
         # Arrange
@@ -943,7 +947,7 @@ class TestRetrieveCommutes(TestCase):
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert (These times are place holders, since I don't know what the commute times will be)
-        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 20.0})
+        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 26.416666666666668})
 
     def test_retrieve_approx_commutes_not_in_database_many_homes_many_destinations(self):
         # Arrange
@@ -961,17 +965,17 @@ class TestRetrieveCommutes(TestCase):
 
         # Assert (These times are place holders, since I don't know what the commute times will be)
         self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 100.0,
-                          "-Boston-MA-02101": 50.0,
-                          "-Providence-RI-02860": 200.0})
+                         {"-Beverly Hills-CA-90210": 2816.5833333333335,
+                          "-Boston-MA-02101": 230.53333333333333,
+                          "-Providence-RI-02860": 270.46666666666664})
         self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 25.0,
-                          "-Boston-MA-02101": 100.0,
-                          "-Providence-RI-02860": 300.0})
+                         {"-Beverly Hills-CA-90210": 2806.45,
+                          "-Boston-MA-02101": 220.4,
+                          "-Providence-RI-02860": 260.3333333333333})
         self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 50.0,
-                          "-Boston-MA-02101": 200.0,
-                          "-Providence-RI-02860": 100.0})
+                         {"-Beverly Hills-CA-90210": 2720.983333333333,
+                          "-Boston-MA-02101": 134.93333333333334,
+                          "-Providence-RI-02860": 174.86666666666667})
 
     def test_retrieve_approx_commutes_mixed(self):
         # Arrange
@@ -997,16 +1001,16 @@ class TestRetrieveCommutes(TestCase):
         # Assert (These times are place holders, since I don't know what the commute times will be)
         self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
                          {"-Beverly Hills-CA-90210": 100.0,
-                          "-Boston-MA-02101": 50.0,
-                          "-Providence-RI-02860": 200.0})
+                          "-Boston-MA-02101": 230.53333333333333,
+                          "-Providence-RI-02860": 270.46666666666664})
         self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 25.0,
+                         {"-Beverly Hills-CA-90210": 2806.45,
                           "-Boston-MA-02101": 300.0,
-                          "-Providence-RI-02860": 300.0})
+                          "-Providence-RI-02860": 260.3333333333333})
         self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 50.0,
-                          "-Boston-MA-02101": 200.0,
-                          "-Providence-RI-02860": 100.0})
+                         {"-Beverly Hills-CA-90210": 2720.983333333333,
+                          "-Boston-MA-02101": 134.93333333333334,
+                          "-Providence-RI-02860": 174.86666666666667})
 
     def test_retrieve_approx_commutes_edge_case_empty_homes(self):
         # Arrange

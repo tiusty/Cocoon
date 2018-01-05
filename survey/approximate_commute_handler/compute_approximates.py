@@ -3,14 +3,15 @@ from survey.distance_matrix.distance_wrapper import DistanceWrapper
 
 # TODO: best way to add more specificity than zip code
 # TODO: update values after certain length of time
-def approximate_compute_handler(origins, destination, commute_type):
+def approximate_compute_handler(origins_zips_states, destination_zip_state, commute_type):
     """
     approximate_compute_handler stands between the rent_algorithm and the distance_wrapper,
     calling the distance matrix on the provided origins and destination and updates the
     ZipCodeParent and ZipCodeChildModel models accordingly.
 
-    :param: origins, a list of strings that are 5 digit zip codes
-    :param: destination, a string that is the 5 digit zip code destination
+    :param: origin_zips_states, list(tuple(string, string)) a list of tuples strings
+    with zip code and state
+    :param: destination_zip_state, tuple(string, string), a tuple of zip code and state as strings
     :param: commute_type, a string, either "driving", "transit", "walking", "biking"
     :return: the result of the DistanceWrapper.calculate_distances() call.
         Format is a list of lists of tuples. Each inner list corresponds to an origin
@@ -19,39 +20,41 @@ def approximate_compute_handler(origins, destination, commute_type):
         there will always be 1 destination.
 
     Example Input:
-        origins = ["02123", "02012", "12345"]
-        destination = "20344"
+        origins = [("02123", "MA"), ("02012", Maine), ("12345", NY)]
+        destination = ("20344", California)
         commute_type = "driving"
     Output:
         [[(10349, 394)],[(2343. 423)],[(2342, 3452)]]
     """
 
     wrapper = DistanceWrapper(mode=commute_type)
-    results = wrapper.calculate_distances(origins, [destination])
+
+    # map zip, state tuples list to a list of "zip state" strings
+    results = wrapper.calculate_distances(list(map(lambda x:x[0]+" "+x[1], origins_zips_states)),
+                                          [destination_zip_state[0]+" "+destination_zip_state[1]])
 
     # iterates both lists simultaneously
-    for origin, result in zip(origins, results):
-        if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin).exists():
-            zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin)
+    for origin, result in zip(origins_zips_states, results):
+        if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin[0]).exists():
+            zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin[0])
             if zip_code_dictionary.zipcodedictionarychildmodel_set.filter(
-                    zip_code_child=destination,
+                    zip_code_child=destination_zip_state[0],
                     commute_type_child=commute_type).exists():
                 print("The combination that was computed already exists")
             else:
                 zip_code_dictionary.zipcodedictionarychildmodel_set.create(
-                    zip_code_child=destination,
+                    zip_code_child=destination_zip_state[0],
                     commute_type_child=commute_type,
-                    commute_distance_meters_child=result[1],
-                    commute_time_seconds_child=result[0],
+                    commute_distance_meters_child=result[0][1],
+                    commute_time_seconds_child=result[0][0],
                 )
-                print(result[0])
         else:
-            ZipCodeDictionaryParentModel.objects.create(zip_code_parent=origin) \
+            ZipCodeDictionaryParentModel.objects.create(zip_code_parent=origin[0]) \
                 .zipcodedictionarychildmodel_set.create(
-                zip_code_child=destination,
+                zip_code_child=destination_zip_state[0],
                 commute_type_child=commute_type,
-                commute_distance_meters_child=result[1],
-                commute_time_seconds_child=result[0],
+                commute_distance_meters_child=result[0][1],
+                commute_time_seconds_child=result[0][0],
             )
 
     return results
