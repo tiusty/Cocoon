@@ -174,7 +174,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 destination_address = destination.full_address
 
                 results = distance_matrix_requester.calculate_distances(origin_addresses, [destination_address])
-                print('[%s]' % ', '.join(map(str, results)))
+
                 for i in range(min(len(self.homes[:number_of_exact_commutes_computed]), len(results))):
                     # update exact commute time with in minutes
                     self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0][0] / 60)

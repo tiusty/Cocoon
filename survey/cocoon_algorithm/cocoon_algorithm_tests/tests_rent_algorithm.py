@@ -1067,7 +1067,7 @@ class TestRetrieveExactCommutes(TestCase):
             zip_code_destination=zip
         )
 
-    def test_retrieve_exact_commute_base_case(self):
+    def test_retrieve_exact_commute_simple_case(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [self.home]
@@ -1083,3 +1083,52 @@ class TestRetrieveExactCommutes(TestCase):
         # Assert
         self.assertEqual(rent_algorithm.homes[0].exact_commute_times,
                          {"159 Brattle Street-Arlington-MA-02474": 39})
+        
+    def test_retrieve_exact_commute_zero_origin(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = []
+        destination1 = self.create_destination("159 Brattle Street",
+                                                "Arlington",
+                                                "MA",
+                                                "02474")
+        rent_algorithm.destinations = [destination1]
+
+        # Act
+        rent_algorithm.retrieve_exact_commutes()
+
+        # Assert
+        self.assertEqual(len(rent_algorithm.homes), 0)
+
+    def test_retrieve_exact_commute_no_destinations(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home]
+        rent_algorithm.destinations = []
+
+        # Act
+        rent_algorithm.retrieve_exact_commutes()
+
+        # Assert
+        self.assertEqual(rent_algorithm.homes[0].exact_commute_times, {})
+
+    def test_retrieve_exact_commute_multiple_origins(self):
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [self.home, self.home2]
+        destination1 = self.create_destination("350 Prospect Street",
+                                               "Belmont",
+                                               "MA",
+                                               "02478")
+        rent_algorithm.destinations = [destination1]
+
+        # Act
+        rent_algorithm.retrieve_exact_commutes()
+
+        # Assert
+        self.assertEqual(rent_algorithm.homes[0].exact_commute_times,
+                         {"350 Prospect Street-Belmont-MA-02478": 33})
+        self.assertEqual(rent_algorithm.homes[1].exact_commute_times,
+                         {"350 Prospect Street-Belmont-MA-02478": 8})
+
+# TODO: stress test the algorithm with a mock API and the MLS data
