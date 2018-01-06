@@ -24,8 +24,6 @@ class maps_requester:
             json_response = response.read()
             map_json = json.loads(json_response)
 
-            # print(map_json["results"][0])
-
             if (map_json["status"] != "OK"):
                 return -1
             else:

@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from houseDatabase.models import HousePhotosModel, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
 from houseDatabase.management.commands.mls_fields import *
 from Unicorn.settings.Global_Config import gmaps_api_key
+from houseDatabase.models import HomeTypeModel
 from django.utils import timezone
 
 
@@ -36,6 +37,8 @@ class Command(BaseCommand):
         towns_file = open(os.path.join(os.path.dirname(__file__),"towns.txt"), "rb")
         town_txt = (towns_file.read().decode("iso-8859-1"))
 
+        print("Successfully read in IDX files")
+
         # 3. Build a dictionary of town codes to towns
         towns = {}
 
@@ -52,6 +55,8 @@ class Command(BaseCommand):
                     "state":fields[3]
                 }
         lines = idx_txt.split('\r\n')
+        print("Attempting to add " + str(len(lines)) + " apartments to the db...")
+        print("An equivalent number of requests will be made to the geocoder")
 
         # 4. Parses the IDX txt
         for line in lines[2:-1]:
@@ -81,14 +86,15 @@ class Command(BaseCommand):
             zip = cells[ZIP_CODE]
             full_add = address + ' ' + town + ' ' + state + ' ' + zip
 
-            if (RentDatabaseModel.objects.filter(listing_no=cells[LIST_NO]).exists()):
+            if (RentDatabaseModel.objects.filter(listing_number_home=cells[LIST_NO]).exists()):
                 # this house already exists, update move in day
-                existing_apartment = RentDatabaseModel.objects.get(listing_no=cells[LIST_NO])
-                existing_apartment.move_in_day = datetime.now()
+                existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
+                existing_apartment.move_in_day_home = datetime.now()
                 existing_apartment.save()
                 print("[DUPLICATE]" + full_add)
                 continue
             else:
+
                 # Pulls lat/lon based on address
                 locator = geolocator.maps_requester(gmaps_api_key)
                 latlng = locator.get_lat_lon_from_address(full_add)
@@ -99,10 +105,10 @@ class Command(BaseCommand):
                     lat = latlng[0]
                     lng = latlng[1]
 
-                new_listing = RentDatabaseModel()
+                new_listing = RentDatabaseModel(home_type_home=(HomeTypeModel.objects.get(home_type_survey="Apartment")))
                 new_listing.latitude_home = lat
                 new_listing.longitude_home = lng
-                new_listing.address = address
+                new_listing.street_address_home = address
                 new_listing.city_home = town
                 new_listing.zip_code_home = zip
                 new_listing.state_home = state
@@ -110,7 +116,7 @@ class Command(BaseCommand):
 
                 list_type = cells[PROP_TYPE]
                 if (list_type == "RN"):
-                    new_listing.home_type_survey = "Apartment"
+                    new_listing.home_type_home = HomeTypeModel.objects.get(home_type_survey="Apartment")
                 else:
                     print("listing not a rental")
                     continue
@@ -121,7 +127,7 @@ class Command(BaseCommand):
                 new_listing.num_bathrooms_home = no_baths
                 new_listing.bath_home = True if no_baths > 0 else False
                 new_listing.remarks_home = cells[REMARKS]
-                new_listing.listing_no = int(cells[LIST_NO])
+                new_listing.listing_number_home = int(cells[LIST_NO])
                 new_listing.listing_provider_home = "MLSPIN"
                 new_listing.listing_agent_home = cells[LIST_AGENT]
                 new_listing.listing_office_home = cells[LIST_OFFICE]
@@ -129,7 +135,7 @@ class Command(BaseCommand):
 
                 #TODO: Actually get photos based on ftp url and AWS S3
                 new_listing.save()
-                newPhotos = HousePhotosModel(house=new_listing)
+                newPhotos = HousePhotosModel(house_photo=new_listing)
                 newPhotos.save()
                 new_listing.save()
                 print(full_add + " added")
