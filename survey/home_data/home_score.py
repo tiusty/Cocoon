@@ -93,11 +93,11 @@ class HomeScore(object):
         if parent_zip_code_dictionary.exists():
             for parent in parent_zip_code_dictionary:
                 zip_code_dictionary = ZipCodeDictionaryChildModel.objects.filter(
-                    parent_zip_code_child_id=parent).filter(zip_code_child__exact=destination_zip)
+                    parent_zip_code_child_id=parent).filter(zip_code_child__exact=destination_zip)\
+                    .filter(commute_type_child__exact=commute_type)
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():
-                            # self.approx_commute_times = {destination_zip: match.commute_time_minutes}
                             return [0, match.commute_time_minutes]
                         else:
                             return [3, match.commute_time_minutes]
