@@ -737,7 +737,7 @@ def run_rent_algorithm(survey, context):
     STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
     This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
     """
-    # rent_algorithm.retrieve_all_approximate_commutes()
+    rent_algorithm.retrieve_all_approximate_commutes()
 
     """
     STEP 3: Remove homes that are too far away using approximate commutes
@@ -749,9 +749,10 @@ def run_rent_algorithm(survey, context):
     """
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
-    rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
-                                                                 survey.get_washer_dryer_in_home(),
-                                                                 survey.get_dish_washer_scale(), survey.get_bash())
+    rent_algorithm.run_compute_weighted_score_interior_amenities(survey.air_conditioning,
+                                                                 survey.interior_washer_dryer,
+                                                                 survey.dish_washer,
+                                                                 survey.bath)
     """
     STEP 5: Now sort all the homes from best homes to worst home
     """
@@ -760,7 +761,7 @@ def run_rent_algorithm(survey, context):
     """
     STEP 6: Compute the exact commute time/distance for best homes
     """
-    # rent_algorithm.retrieve_exact_commutes()
+    rent_algorithm.retrieve_exact_commutes()
 
     """
     STEP 7: Score the top homes based on the exact commute time/distance

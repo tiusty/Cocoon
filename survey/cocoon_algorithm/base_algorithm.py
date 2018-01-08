@@ -50,11 +50,6 @@ class CocoonAlgorithm(object):
     def destinations(self, new_destination):
         """
         Add destinations to the class
-        :param new_destination: survey.RentingDestinationModel as a list or single element
+        :param new_destination: survey.RentingDestinationModel as a Query Set
         """
-        # If a list is provided then set the lists equal
-        if isinstance(new_destination, list):
-            self._destinations = new_destination
-        # If a single element is provided then append that element
-        else:
-            self._destinations.append(new_destination)
+        self._destinations = new_destination
