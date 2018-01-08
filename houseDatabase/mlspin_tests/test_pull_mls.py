@@ -1,7 +1,8 @@
 from django.test import TestCase
 from houseDatabase.models import RentDatabaseModel, HomeTypeModel
 import os
-
+from datetime import datetime
+from decimal import Decimal
 # Import script to pull MLSPIN data
 from houseDatabase.management.commands.pull_mlspin import MlspinRequester
 
@@ -14,7 +15,7 @@ class TestPullMlspin(TestCase):
 
         # Set up the apartment home type
 
-        HomeTypeModel.objects.create(home_type_survey="Apartment")
+        self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
         idx_file = open(os.path.join(os.path.dirname(__file__), "test_idx_feed.txt"), "rb")
         self.idx_data = (idx_file.read().decode("iso-8859-1"))
 
@@ -28,7 +29,7 @@ class TestPullMlspin(TestCase):
         self.mls_handler.parse_idx_feed()
 
         # assert that the homes exist in the database
-        self.assertEqual(len(RentDatabaseModel.objects.all()), 3)
+        self.assertEqual(RentDatabaseModel.objects.count(), 3)
 
         home1 = RentDatabaseModel.objects.get(pk=1) # 12 Mount Vernon St.
         home2 = RentDatabaseModel.objects.get(pk=2) # 296 Marlborough St.
@@ -38,3 +39,14 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home1.city_home, "Boston")
         self.assertEqual(home1.zip_code_home, "02129")
         self.assertEqual(home1.price_home, 3800)
+        self.assertEqual(home1.home_type_home, self.home_type)
+        self.assertEqual(str(home1.latitude_home), "42.375699")
+        self.assertEqual(str(home1.longitude_home), "-71.058828")
+        self.assertEqual(home1.state_home, "MA")
+        self.assertEqual(home1.num_bedrooms_home, 2)
+        self.assertEqual(home1.num_bathrooms_home, 1)
+        self.assertEqual(home1.bath_home, True)
+        self.assertEqual(home1.listing_number_home, "71811023")
+        self.assertEqual(home1.listing_agent_home, "BB808729")
+        self.assertEqual(home1.listing_provider_home, "MLSPIN")
+        self.assertEqual(home1.listing_office_home, "AN1037")
