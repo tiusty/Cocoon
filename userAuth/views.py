@@ -11,7 +11,7 @@ from .forms import LoginUserForm, RegisterForm, ProfileForm
 # Create your views here.
 
 #import global config values
-from Unicorn.settings.Global_Config import creation_key_value
+from Cocoon.settings.Global_Config import creation_key_value
 
 
 def index(request):

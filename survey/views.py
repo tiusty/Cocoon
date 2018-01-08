@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Q
 
-from Unicorn.settings.Global_Config import survey_types, Hybrid_weighted_max, \
+from Cocoon.settings.Global_Config import survey_types, Hybrid_weighted_max, \
     Hybrid_weighted_min, hybrid_question_weight, approximate_commute_range, \
     DEFAULT_RENT_SURVEY_NAME, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
     price_question_weight

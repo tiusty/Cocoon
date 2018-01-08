@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 # Import Config file information
-from Unicorn.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
+from Cocoon.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
 
 
 class HomeTypeModel(models.Model):
