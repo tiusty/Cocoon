@@ -870,7 +870,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         destination = self.create_destination("100 Main Street", "Anytown", "Anystate", "00000")
         rent_algorithm.destinations = [destination]
         parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code, "00000", 6000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code, "00000", 6000.0, 100.0, self.commute_type)
 
         # Act
         self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {})
@@ -889,19 +889,19 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm.destinations = [destination1, destination2, destination3]
 
         parent_zip_code1 = self.create_zip_code_dictionary(self.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code1, "00000", 6000.0, 100.0, "")
-        self.create_zip_code_dictionary_child(parent_zip_code1, "12345", 3000.0, 100.0, "")
-        self.create_zip_code_dictionary_child(parent_zip_code1, "23456", 12000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code1, "00000", 6000.0, 100.0, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code1, "12345", 3000.0, 100.0, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code1, "23456", 12000.0, 100.0, self.commute_type)
 
         parent_zip_code2 = self.create_zip_code_dictionary(self.zip_code1)
-        self.create_zip_code_dictionary_child(parent_zip_code2, "00000", 1500.0, 100.0, "")
-        self.create_zip_code_dictionary_child(parent_zip_code2, "12345", 6000.0, 100.0, "")
-        self.create_zip_code_dictionary_child(parent_zip_code2, "23456", 18000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code2, "00000", 1500.0, 100.0, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code2, "12345", 6000.0, 100.0, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code2, "23456", 18000.0, 100.0, self.commute_type)
 
         parent_zip_code3 = self.create_zip_code_dictionary(self.zip_code2)
-        self.create_zip_code_dictionary_child(parent_zip_code3, "00000", 3000.0, 100.0, "")
-        self.create_zip_code_dictionary_child(parent_zip_code3, "12345", 12000.0, 100.0, "")
-        self.create_zip_code_dictionary_child(parent_zip_code3, "23456", 6000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code3, "00000", 3000.0, 100.0, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code3, "12345", 12000.0, 100.0, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code3, "23456", 6000.0, 100.0, self.commute_type)
 
         # Act
         for home in rent_algorithm.homes:
@@ -989,8 +989,8 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Only a few zip codes and destinations will be in the database
         parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
         parent_zip_code1 = self.create_zip_code_dictionary(self.zip_code1)
-        self.create_zip_code_dictionary_child(parent_zip_code, "90210", 6000.0, 100.0, "")
-        self.create_zip_code_dictionary_child(parent_zip_code1, "02101", 18000.0, 100.0, "")
+        self.create_zip_code_dictionary_child(parent_zip_code, "90210", 6000.0, 100.0, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code1, "02101", 18000.0, 100.0, self.commute_type)
 
 
         # Act
@@ -1082,7 +1082,7 @@ class TestRetrieveExactCommutes(TestCase):
 
         # Assert
         self.assertEqual(rent_algorithm.homes[0].exact_commute_times,
-                         {"159 Brattle Street-Arlington-MA-02474": 39})
+                         {"159 Brattle Street-Arlington-MA-02474": 38})
         
     def test_retrieve_exact_commute_zero_origin(self):
         # Arrange
@@ -1127,7 +1127,7 @@ class TestRetrieveExactCommutes(TestCase):
 
         # Assert
         self.assertEqual(rent_algorithm.homes[0].exact_commute_times,
-                         {"350 Prospect Street-Belmont-MA-02478": 33})
+                         {"350 Prospect Street-Belmont-MA-02478": 32})
         self.assertEqual(rent_algorithm.homes[1].exact_commute_times,
                          {"350 Prospect Street-Belmont-MA-02478": 8})
 
