@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 # Import Global config variables
-from Unicorn.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
+from Cocoon.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
 
 # Import House Database modules
 from houseDatabase.models import RentDatabaseModel
