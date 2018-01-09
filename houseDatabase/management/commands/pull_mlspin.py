@@ -1,7 +1,7 @@
 # noinspection PyPackageRequirements
 import urllib.request
 import urllib.error
-import houseDatabase.management.commands.maps_requester as geolocator
+import houseDatabase.maps_requester as geolocator
 import os, sys
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError

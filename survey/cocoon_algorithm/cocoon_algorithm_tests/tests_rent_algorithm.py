@@ -1,18 +1,16 @@
 from django.test import TestCase
 from django.utils import timezone
 
+# Import external models
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel
 # Import survey python modules
 from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from survey.home_data.home_score import HomeScore
-
-# Import external models
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel,ZipCodeDictionaryChildModel
-from survey.models import RentingSurveyModel, DestinationsModel, RentingDestinationsModel
+from survey.models import RentingSurveyModel, RentingDestinationsModel
 from userAuth.models import MyUser, UserProfile
 
+
 # Import DistanceWrapper
-from survey.distance_matrix.distance_wrapper import *
-from survey.approximate_commute_handler import compute_approximates
 
 
 class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):

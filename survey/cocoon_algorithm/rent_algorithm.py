@@ -3,25 +3,21 @@ from django.db.models import Q
 
 # Import global settings
 from Unicorn.settings.Global_Config import number_of_exact_commutes_computed
-
 # Import houseDatabase modules
 from houseDatabase.models import RentDatabaseModel, HomeTypeModel
-
+from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 # Import survey modules
 from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
-from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
-from survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 from survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
-
-# Import HomeScore class
-from survey.home_data.home_score import HomeScore
+from survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 # Import DistanceWrapper
 from survey.distance_matrix.distance_wrapper import *
-from survey.approximate_commute_handler import compute_approximates
+from survey.distance_matrix import compute_approximates
+# Import HomeScore class
+from survey.home_data.home_score import HomeScore
 
-import math
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
 
