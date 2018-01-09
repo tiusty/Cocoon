@@ -1,4 +1,4 @@
-from Unicorn.settings.Global_Config import commute_question_weight
+from Cocoon.settings.Global_Config import commute_question_weight
 
 
 class CommuteAlgorithm(object):

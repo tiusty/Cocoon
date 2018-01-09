@@ -2,7 +2,7 @@
 from django.db.models import Q
 
 # Import global settings
-from Unicorn.settings.Global_Config import number_of_exact_commutes_computed
+from Cocoon.settings.Global_Config import number_of_exact_commutes_computed
 # Import houseDatabase modules
 from houseDatabase.models import RentDatabaseModel, HomeTypeModel
 from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm

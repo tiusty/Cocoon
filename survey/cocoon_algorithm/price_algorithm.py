@@ -1,4 +1,4 @@
-from Unicorn.settings.Global_Config import price_question_weight
+from Cocoon.settings.Global_Config import price_question_weight
 
 
 class PriceAlgorithm(object):

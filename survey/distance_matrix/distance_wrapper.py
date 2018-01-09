@@ -1,5 +1,5 @@
 from googlemaps import distance_matrix, client
-from Unicorn.settings.Global_Config import gmaps_api_key
+from Cocoon.settings.Global_Config import gmaps_api_key
 
 class DistanceWrapper:
 
