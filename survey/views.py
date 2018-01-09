@@ -107,8 +107,7 @@ def run_rent_algorithm(survey, context):
     rent_algorithm = RentAlgorithm()
 
     """
-    STEP 1: Populate the rent_algorithm with all the desired destinations
-    and all the possible homes based on static filtering
+    STEP 1: Populate the rent_algorithm with all the information from the survey
     """
     rent_algorithm.populate_with_survey_information(survey)
 
