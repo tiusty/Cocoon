@@ -23,7 +23,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         self.populate_price_algorithm_information(user_survey.price_weight, user_survey.max_price,
                                                   user_survey.min_price)
         self.populate_commute_algorithm_information(user_survey.commute_weight, user_survey.max_commute,
-                                                    user_survey.min_commute)
+                                                    user_survey.min_commute, user_survey.commute_type)
 
     def run_compute_approximate_commute_filter(self):
         """
