@@ -157,7 +157,6 @@ def run_rent_algorithm(survey, context):
     context['locations'] = rent_algorithm.destinations
     context['houseList'] = rent_algorithm.homes[:200]
     context['commuteType'] = rent_algorithm.commute_type
-    context['commuteType'] = survey.commute_type
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
