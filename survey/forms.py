@@ -9,7 +9,7 @@ from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInfor
 from houseDatabase.models import HomeTypeModel
 
 # Python global configurations
-from Unicorn.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
+from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
     WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, COMMUTE_TYPES, HYBRID_WEIGHT_CHOICES
 
 

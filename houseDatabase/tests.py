@@ -7,7 +7,7 @@ from django.utils import timezone
 from houseDatabase.models import ZipCodeDictionaryParentModel
 
 # Import Global Config
-from Unicorn.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
+from Cocoon.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
 
 
 class ZipCodeDictionaryTest(TestCase):

@@ -8,7 +8,7 @@ from survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformation
 from houseDatabase.models import HomeTypeModel
 
 # Import cocoon global config values
-from Unicorn.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
+from Cocoon.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
 
 
 class TestHomeInformationForm(TestCase):

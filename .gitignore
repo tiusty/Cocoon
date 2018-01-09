@@ -1,5 +1,6 @@
 *.pyc
 .idea/
+venv/
 userAuth/migrations
 houseDatabase/migrations
 homePage/migrations

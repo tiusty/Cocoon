@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Unicorn.urls'
+ROOT_URLCONF = 'Cocoon.urls'
 
 TEMPLATES = [
     {
@@ -66,14 +66,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'Unicorn.context_processors.global_context_processors.add_favorite_homes_processor',
-                'Unicorn.context_processors.global_context_processors.add_visit_home_list_processor',
+                'Cocoon.context_processors.global_context_processors.add_favorite_homes_processor',
+                'Cocoon.context_processors.global_context_processors.add_visit_home_list_processor',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'Unicorn.wsgi.application'
+WSGI_APPLICATION = 'Cocoon.wsgi.application'
 
 
 # Database
