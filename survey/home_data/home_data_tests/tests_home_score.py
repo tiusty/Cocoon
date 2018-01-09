@@ -1,5 +1,6 @@
 from django.test import TestCase
 from survey.home_data.home_score import HomeScore
+from survey.models import RentingSurveyModel, DestinationsModel, RentingDestinationsModel
 from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
     HomeTypeModel
 
@@ -215,6 +216,16 @@ class TestApproxCommute(TestCase):
         self.commute_type = "driving"
 
     @staticmethod
+    def create_destination(address, city, state, zip):
+        return RentingDestinationsModel.objects.create(
+            survey_destinations_id="0",
+            street_address_destination=address,
+            city_destination=city,
+            state_destination=state,
+            zip_code_destination=zip
+        )
+
+    @staticmethod
     def create_zip_code_dictionary(zip_code):
         return ZipCodeDictionaryParentModel.objects.create(zip_code_parent=zip_code)
 
@@ -231,16 +242,22 @@ class TestApproxCommute(TestCase):
     def test_compute_approx_commute_times(self):
         # Arrange
         home_score = HomeScore()
+        destination = self.create_destination("101 Test Street", "Los Angeles", "California", self.zip_code1)
+        destination1 = self.create_destination("101 Test Street", "Los Angeles", "California", self.zip_code2)
+        destination2 = self.create_destination("101 Test Street", "Los Angeles", "California", self.zip_code)
         parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
         self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time,
                                               self.commute_distance, self.commute_type)
 
         # Act
-        ret1 = home_score.calculate_approx_commute(self.zip_code, self.zip_code1, self.commute_type)
-        ret2 = home_score.calculate_approx_commute(self.zip_code, self.zip_code2, self.commute_type)
-        ret3 = home_score.calculate_approx_commute("00000", self.zip_code, self.commute_type)
+        ret1 = home_score.calculate_approx_commute(self.zip_code, destination, self.commute_type)
+        ret2 = home_score.calculate_approx_commute(self.zip_code, destination1, self.commute_type)
+        ret3 = home_score.calculate_approx_commute("00000", destination, self.commute_type)
+        ret4 = home_score.calculate_approx_commute(self.zip_code, destination2, "walking")
 
         # Assert
-        self.assertEqual(ret1, [0, 100])
-        self.assertEqual(ret2, [2, -1])
-        self.assertEqual(ret3, [1, -1])
+        self.assertEqual(ret1, True)
+        self.assertEqual(home_score.approx_commute_times, {"101 Test Street-Los Angeles-California-01234": 100.0})
+        self.assertEqual(ret2, False)
+        self.assertEqual(ret3, False)
+        self.assertEqual(ret4, False)

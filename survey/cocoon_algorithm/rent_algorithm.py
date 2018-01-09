@@ -121,16 +121,12 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             failed_list = []
             # home will be a HomeScore object
             for home in self.homes:
-                code_and_distance = home.calculate_approx_commute(home.home.zip_code, destination.zip_code, "")
+                in_database = home.calculate_approx_commute(home.home.zip_code, destination, "driving")
                 # Case we have a match
                 # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
-                if code_and_distance[0] == 0:
-                    home.approx_commute_times[destination.destination_key] = code_and_distance[1]
-                # Case we don't have a match
-                else:
+                if in_database != True:
                     failed_list.append((home.home.zip_code, home.home.state))
             # Add to the dictionary of failed homes
-
             failed_home_dict[(destination.zip_code, destination.state)] = failed_list
 
         # 2: Use approx handler to compute the failed home distances and update db
@@ -147,12 +143,10 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 # Recompute missing destinations
                 for destination in self.destinations:
                     if destination.destination_key not in home.approx_commute_times:
-                        new_code_and_distance = home.calculate_approx_commute(home.home.zip_code, destination.zip_code, "")
-                        if new_code_and_distance[0] != 0:
+                        new_in_database = home.calculate_approx_commute(home.home.zip_code, destination, "driving")
+                        if new_in_database != True:
                             # Error: For some reason, the database was not updated, so we mark home for deletion
                             home.eliminate_home()
-                        else:
-                            home.approx_commute_times[destination.destination_key] = new_code_and_distance[1]
 
     def retrieve_exact_commutes(self):
         """

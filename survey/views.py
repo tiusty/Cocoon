@@ -1,50 +1,29 @@
+# Import Python Modules
 import json
-import math
 
+# Import Django modules
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
-from django.db.models import Q
 
-from Unicorn.settings.Global_Config import survey_types, HYBRID_WEIGHT_MAX, \
-    HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT, approximate_commute_range, \
-    DEFAULT_RENT_SURVEY_NAME, gmaps, number_of_exact_commutes_computed, commute_question_weight, \
-    price_question_weight
-from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
-    HomeTypeModel
-from survey.models import RentingSurveyModel, CommutePrecision
+# Import Global config variables
+from Unicorn.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
+
+# Import House Database modules
+from houseDatabase.models import RentDatabaseModel
+
+# Import User Auth modules
 from userAuth.models import UserProfile
-from survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
 
 # Import Survey algorithm modules
 from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
+from survey.models import RentingSurveyModel
+from survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
 
-class RequestCounter:
-    def __init__(self):
-        self.count = 0
-    def incr_count(self):
-        self.count += 1
-    def can_request(self):
-        if (self.count < 5):
-            return True
-        else:
-            return False
 
-class BlackList:
-    def __init__(self):
-        self.black_list = set()
-
-    def blacklist(self, zip):
-        self.black_list.add(int(zip))
-        print(zip)
-
-    def blacklisted(self, zip):
-        return (int(zip) in self.black_list)
-
-# Create your views here.
 @login_required
 def renting_survey(request):
     # Create the two forms,
@@ -117,612 +96,12 @@ def renting_survey(request):
     return render(request, 'survey/rentingSurvey.html', {'form': form, 'formDest': form_destination})
 
 
-# Function is not implemented, it will basically be the same as the rent survey but for buying instead
-# @login_required
-# def buying_survey(request):
-#     form = BuySurvey()
-#     return render(request, 'survey/buyingSurvey.html', {'form': form})
-
-
-class ScoringStruct:
-    """
-    Class that stores one home and the corresponding information for that home
-    This is used to rank homes and eliminate them if necessary
-    This also makes sure that the scores are easily associated with the home
-    Contains functions to easily extract information for the given home
-    """
-
-    def __init__(self, new_house):
-        self.house = new_house
-        self.score = 0
-        self.scorePossible = 0
-        self.commuteTime = []
-        self.approxCommuteTime = []
-        self.eliminated = False
-
-    def __str__(self):
-        return self.house.full_address
-
-    def get_score(self):
-        """
-        Generates the actual score based on the possible score and current score.
-        This makes sure that the divide by zero case is handled.
-        :return:
-            Returns the score. If it was eliminated then it returns -1 to indicate that
-                The house should not be used
-        """
-        # Takes care of divide by 0, also if it is eliminated the score should be -1
-        if self.scorePossible != 0 and self.eliminated is False:
-            return (self.score / self.scorePossible) * 100
-        elif self.eliminated:
-            # If eliminated return negative one so it is sorted to the back
-            return -1
-        else:
-            return 0
-
-    def get_final_score(self):
-        """
-        Returns the score but rounds to the nearest integer to make it human friendly
-        :return: the score rounded to the nearest integer
-        """
-        return round(self.get_score())
-
-    def get_user_score(self):
-        """
-        Function: get_user_score()
-        Description:
-        Returns a human readable score. Therefore, the user will not see
-            a long float which is meaningless
-        Comments:
-        Currently the scale is to large. Will define to +/- later.
-        """
-        current_score = self.get_score()
-        if current_score >= 90:
-            return "A"
-        elif current_score >= 80:
-            return "B"
-        elif current_score >= 70:
-            return "C"
-        elif current_score >= 60:
-            return "D"
-        else:
-            return "F"
-
-    def get_commute_times(self, commute_precision):
-        """
-        Get commute times gets the commute for the house depending on the argument
-        It will either return the exact or the approximate commute times
-        :param commute_precision: Enum type commutePrecision
-        :return: An array of ints which are all the commute times associated with that house
-        """
-        if commute_precision is CommutePrecision.exact:
-            return self.get_commute_times_exact()
-        else:
-            return self.get_commute_times_approx()
-
-    def get_commute_times_exact(self):
-        """
-        Returns all the commute times for that home as a list
-        :return: A list with all the commute times
-        """
-        commutes = []
-        for commute in self.commuteTime:
-            commutes.append(commute)
-        return commutes
-
-    def get_commute_times_approx(self):
-        """
-        Returns all the approximate commute times for that home as a list
-        :return: A list with all the approximate commute times
-        """
-        approx_commutes = []
-        for commute in self.approxCommuteTime:
-            approx_commutes.append(commute)
-        return approx_commutes
-
-    def get_commute_times_str(self):
-        """
-        Returns a formatted string that returns all the commute times for a given home
-        Example output:
-        27 Minutes, 27 Minutes, 27 Minutes
-        :return:
-        string -> Formatted to display nicely to the user
-        """
-        end_result = ""
-        counter = 0
-        for commute in self.commuteTime:
-            if commute > 60:
-                max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
-            else:
-                max_output = str(int(commute)) + " Minutes"
-            if counter != 0:
-                end_result = end_result + ", " + max_output
-            else:
-                end_result = max_output
-            counter = 1
-
-        return end_result
-
-    def get_approx_commute_times_str(self):
-        """
-        Returns a formatted string that returns all the commute times for a given home
-        Example output:
-        27 Minutes, 27 Minutes, 27 Minutes
-        :return:
-        string -> Formatted to display nicely to the user
-        """
-        end_result = ""
-        counter = 0
-        for commute in self.approxCommuteTime:
-            if commute > 60:
-                max_output = str(int(math.floor(commute / 60))) + " hours " + str(int(commute % 60)) + " Minutes"
-            else:
-                max_output = str(int(commute)) + " Minutes"
-            if counter != 0:
-                end_result = end_result + ", " + max_output
-            else:
-                end_result = max_output
-            counter = 1
-
-        return end_result
-
-    def eliminate_home(self):
-        """
-        Sets the eliminated flag on a home
-        :return:
-        """
-        self.eliminated = True
-
-
-# It will take in the houseMatrix score
-# It will commute the score based on the commute times to the destinations
-# The score is multiplied by the scale factor which is user determined
-# This factor determines how much the factor will affect the overall weight
-def create_commute_score(scored_house_list, survey, commute_precision):
-    """
-    Evaluates a score based on the commute times.
-    This function assumes that commutes have been already eliminated due to being out of range
-    Therefore, if the commute value is out of range, then it will force the value into the range
-    Out of range values should only occur for approximate commutes
-
-    The User can define a commute weight. If the commute weight is 0, then the scaling factor is 0 so all
-    homes are weighted the same as long as they are within the range. As the scaling factor increases, it
-    gives a large weight to homes that are closer.
-
-    Note: The commute score is calculated for either the approx commute or exact dependent
-        on commute_precision argument
-    :param scored_house_list: The array of ScoringStructs which holds all the homes that
-        have already gone past static filtering
-    :param survey: The Survey is passed, but is only really needed to find the max and min commute times
-    :param commute_precision: Enum of commutePrecision
-    :return:
-        Returns the ScoringStruct but with the housing scores updated with the commute times and
-            appropriate homes eliminated
-    """
-    # Currently only scores based on commute times
-    # It supports having multiple destinations
-    max_commute = survey.max_commute
-    min_commute = survey.min_commute
-    scale_factor = survey.commute_weight
-    for house in scored_house_list:
-        # It needs to be made clear that the scale factor only effects the homes that are under the
-        # Commute time. For example, if the max commute is 12 minutes, then anything over 12 is removed.
-        # If the scale factor is 0, then all the homes under 12 are weighted equally at 0. Likewise if
-        # the scale factor is 5, then a home with a commute time of 6 minutes will have a much higher score then
-        # a commute of 9 minutes even though in reality it isn't that much.
-        for commute in house.get_commute_times(commute_precision):
-            if commute:
-                if commute < min_commute:
-                    commute = min_commute
-                elif commute > max_commute:
-                    commute = max_commute
-                # Minimum range is always 10
-                if max_commute > 11:
-                    range_com = max_commute
-                else:
-                    # Make sure that the minimum is 11, so that when it subtracts 10, it doesn't do
-                    # a divide by zero
-                    range_com = 11
-                # First check to see if the commute is less then the minimum commute, if it is then remove it
-                # Second check if the commute time is less than 10 minutes, because if it is it is a perfect score
-                # Third If the commute is less than the max commute time compute a score
-                # Forth if the commute is more than the maxCommute then remove the house
-                if commute <= 10:
-                    house.score += (commute_question_weight * scale_factor)
-                    house.scorePossible += (commute_question_weight * scale_factor)
-                else:
-                    house.score += (((1 - (commute - 10) / (range_com - 10)) * commute_question_weight) * scale_factor)
-                    house.scorePossible += (commute_question_weight * scale_factor)
-    return scored_house_list
-
-
-def create_price_score(scored_house_list, survey):
-    """
-    Generates the score according to the price of the home
-    :param scored_house_list: The array of ScoringStructs which holds all the homes that
-        have already gone past static filtering
-    :param survey: The survey that the homes are being filtered by
-    :return:
-    """
-
-    # Retrieve all the constant values
-    max_price = survey.max_price
-    min_price = survey.min_price
-    scale_factor = survey.price_weight
-
-    # Apply price scoring for all the houses
-    for house in scored_house_list:
-        house_price = house.house.price
-        house_price_normalized = house_price - min_price
-        # Guarantee that the house normalized price is not negative, (score should never decrease)
-        if house_price_normalized >= 0:
-            house_range = max_price - min_price
-            # Make sure that the house range is never negative (score should never decrease)
-            if house_range > 0:
-                house.score += ((1 - house_price_normalized / house_range) * price_question_weight) * scale_factor
-                house.scorePossible += (price_question_weight * scale_factor)
-            # This takes care of the divide by zero case
-            # If the range is zero, then the max and min price should be the same
-            # Therefore assuming that the static filter worked before, the house price
-            # Needs to be between the max and minimum price and therefore, in this case,
-            # The house price should be equal to the min price. Therefore, if this case occurs
-            # Do an extra validation to make sure that the min_price equals the house price to
-            # Prevent an error
-            elif house_range == 0 and house_price == min_price:
-                house.score += price_question_weight * scale_factor
-                house.scorePossible += price_question_weight * scale_factor
-
-
-def weighted_question_scoring(home, contains_item, scale_factor):
-    """
-    This is the function that determines the weight of a given weight question
-    This allows a constant method of determining the score and thus makes it
-    Easier to change later
-    :param home: This is a home given as a single house structure
-    :param contains_item: This is a boolean that says whether or not the given home
-        has the item that is being tested for, i.e does it have an airconditioning?
-    :param scale_factor: This is an integer which is the weighted value that the user
-        gave the question. Therefore, the higher the scale factor, the more the question
-        affects the weight
-    """
-
-    # First remove the factor if the user marked it as must have, or must not have.
-    if scale_factor == HYBRID_WEIGHT_MAX and contains_item is False:
-        home.eliminate_home()
-    elif scale_factor == HYBRID_WEIGHT_MIN and contains_item is True:
-        home.eliminate_home()
-    # If the item is desired and the item is present the score will go up, or if the
-    # item is not desired and it doesn't have the item, then the score will go up.
-    # Otherwise the score will go down
-    home.score += (1 if contains_item else -1) * scale_factor * HYBRID_QUESTION_WEIGHT
-    # Regardless of anything else, always increment the possible points depending on the
-    # Scale factor. The factor is added by the absolute value because the maximum value
-    # needs to be added
-    home.scorePossible += abs(scale_factor) * HYBRID_QUESTION_WEIGHT
-
-
-def create_interior_amenities_score(scored_house_list, survey):
-    """
-    Updates the house scores based on the interior amenities questions
-    Homes are passed by reference
-    :param scored_house_list: The array of ScoringStructs which holds all the homes that
-        have already gone past static filtering
-    :param survey: The user survey that is being used to evaluate the homes
-    """
-    # Loop throuh all the homes and score each one
-    for home in scored_house_list:
-        weighted_question_scoring(home, home.house.air_conditioning, survey.air_conditioning)
-        weighted_question_scoring(home, home.house.interior_washer_dryer, survey.interior_washer_dryer)
-        weighted_question_scoring(home, home.house.dish_washer, survey.dish_washer)
-        weighted_question_scoring(home, home.house.bath, survey.bath)
-
-
-def create_exterior_amenities_score(scored_house_list, survey):
-    """
-    Updates the house scores based on the exterior amenities questions.
-    Homes are passed by reference
-    :param scored_house_list: The array of ScoringStructs which holds all the homes that
-        have already gone past static filtering
-    :param survey: The user survey that is being used to evaluate the homes
-    """
-    for home in scored_house_list:
-        weighted_question_scoring(home, home.house.parking_spot, survey.parking_spot)
-        weighted_question_scoring(home, home.house.building_washer_dryer,
-                                  survey.washer_dryer_in_building)
-        weighted_question_scoring(home, home.house.elevator, survey.elevator)
-        weighted_question_scoring(home, home.house.handicap_access, survey.handicap_access)
-        weighted_question_scoring(home, home.house.pool_hot_tub, survey.pool_hot_tub)
-        weighted_question_scoring(home, home.house.fitness_center, survey.fitness_center)
-        weighted_question_scoring(home, home.house.storage_unit, survey.storage_unit)
-
-
-# Given the houseScore and the survey generate and add the score based
-# On the commute times to the destinations
-def create_house_score(house_list_scored, survey):
-    """
-    All the functions that perform dynamic scoring will be listed here
-    :param house_list_scored: The array of ScoringStructs which holds all the homes that
-        have already gone past static filtering
-    :param survey: The current survey, since the scoring is based on the result of the survey
-    :return: The house structure with the homes scored
-    """
-    # Creates score based on commute
-    create_commute_score(house_list_scored, survey, CommutePrecision.approx)
-    create_price_score(house_list_scored, survey)
-    create_interior_amenities_score(house_list_scored, survey)
-    create_exterior_amenities_score(house_list_scored, survey)
-    return house_list_scored
-
-
-# Function takes in the ScoringStruct and returns the sorted list
-def order_by_house_score(scored_house_list):
-    """
-    Orders the homes based on the current score
-    The high scored home will be put at the front of the list
-    Homes that are eliminated have no order
-    :param scored_house_list: The array of ScoringStructs which holds all the homes that
-        have already gone past static filtering
-    :return: The house structure but sorted based on the home score
-    """
-    # Simple insertion sort to sort houses by score
-    for index in range(1, len(scored_house_list)):
-        current_value = scored_house_list[index]
-        position = index
-
-        while position > 0 and scored_house_list[position - 1].get_score() < current_value.get_score():
-            scored_house_list[position] = scored_house_list[position - 1]
-            position -= 1
-
-        scored_house_list[position] = current_value
-
-    return scored_house_list
-
-
-def compute_approximate_commute_times(destinations, scored_list, commute_type, blacklist):
-
-    #TODO: Pass the town along with the zip code
-
-    """
-    This function takes each home and tries to find the approximate commute times for all the destinations
-    The zip code combination will be checked in the database for the value and if it doesn't exist, it will
-    add the zip code combination to the failed_zip_codes list. That list will eventually be passed to another
-    function which will compute all the zipcode combinations and add them to the database. After the zip codes are
-    added to the database, the commute times will be recomputed
-    :param destinations: A list of all the destinations desired by the user
-    :param scored_list: Array of ScoringStruct that contains all the origins and associated values
-    :param commute_type: String, one of driving, walking, transit, bicycling
-    """
-    # If the home failed to find an associated zip code cached, mark it as failed
-    # and then we will dynamically get that zip code and store it
-    # Format of dictionary:
-    # { 'destination zip code 1' : [ 'origin zip code 1', 'origin zip code 2' ],
-    #   'destination zip code 2' : [ 'origin zip code 1', 'origin zip code 3' ]}
-    # failed_zip_codes = {}
-    request_count = RequestCounter()
-    failed_zip_dict = {}
-
-    for house in scored_list:
-        # Only populate the commute time if the array is empty
-        # This is important when this function is called again after all the failed
-        # zip codes are computed. Then homes with a commute already should not have the
-        # value recomputed
-        if not house.get_commute_times_approx():
-            for destination in destinations:
-                # This searches for the zip code combination and then if it can't find it, it will
-                # add the combination to the failed_zip_code dictionary
-                try:
-                    zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(
-                        zip_code_parent=house.house.zip_code
-                    )
-                    try:
-                        zip_code_dictionary_child = zip_code_dictionary.zipcodedictionarychildmodel_set.get(
-                            zip_code_child=destination.zip_code,
-                            commute_type_child=commute_type,
-                        )
-                        # If the zip code needs to be refreshed, then delete the zip code
-                        # and add it to the failed list
-                        if not zip_code_dictionary_child.zip_code_cache_still_valid():
-                            zip_code_dictionary_child.delete()
-                            # add_home_to_failed_list(failed_zip_codes, destination, house)
-                            add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-                            # If all the conditions pass, then store the commute time stored for that combination
-                        else:
-                            house.approxCommuteTime.append(zip_code_dictionary_child.commute_time_minutes)
-                    except ZipCodeDictionaryChildModel.DoesNotExist:
-                        # add_home_to_failed_list(failed_zip_codes, destination, house)
-                        add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-                except ZipCodeDictionaryParentModel.DoesNotExist:
-                    # add_home_to_failed_list(failed_zip_codes, destination, house)
-                    add_home_to_failed_list(failed_zip_dict, destination, house, blacklist)
-
-    # If there are failed zip codes, compute the commute for the zip code and add it to the database
-    if failed_zip_dict:
-        add_zip_codes_to_database(failed_zip_dict, commute_type, request_count, blacklist)
-        # Call the function again to recompute the commute times for the failed homes
-        compute_approximate_commute_times(destinations, scored_list, commute_type, blacklist)
-
-
-def add_home_to_failed_list(failed_zip_dict, destination, house, blacklist):
-    """
-    This function adds a failed home combination to the failed_zip_codes array
-    It is passed the house and the destination that is is supposed to go to
-    :param failed_zip_codes: A dictionary of failed zip code combination
-    :param destination: The destination stored as a RentDatabaseModel model
-    :param house: The house (origin), stored as a scoring structure
-
-
-    zip_code:
-
-    """
-
-    dest_zip = destination.zip_code
-    dest_city = destination.city
-
-    house_zip = house.house.zip_code
-    house_city = house.house.city
-
-    if (not blacklist.blacklisted(house_zip)):
-        if dest_zip in failed_zip_dict:
-            # Only add the zip code if the combination is not already in the list
-            if house_zip not in failed_zip_dict[dest_zip]["origins"]:
-                failed_zip_dict[dest_zip]["origins"][house_zip] = house_city
-        else:
-            failed_zip_dict[dest_zip] = {}
-            failed_zip_dict[dest_zip]["zip_city"] = dest_city
-            failed_zip_dict[dest_zip]["origins"] = {}
-            failed_zip_dict[dest_zip]["origins"][house_zip] = house_city
-
-
-def add_zip_codes_to_database(failed_zip_codes, commute_type, req_count, blacklist):
-    """
-    This function takes in a dictionary of failed zip code combination and computes
-    the distance and saves it to the database.
-    :param failed_zip_codes: A dictionary of zip code combinations:
-        i.e: {'02474': ['02476', '02474'], '02476': ['02474', '02476']} or {'destination': ['origin1', origin2]}
-    :param commute_type: String, one of driving, walking, bicycling, transit
-    """
-    print("adding new zip codes")
-
-    # Can add things to the arguments, like traffic_model, avoid things, depature_time etc
-    # Each row contains the origin with each corresponding destination
-    # The value field of duration is in seconds
-    measure_units = "imperial"
-
-    for dest_zip in failed_zip_codes:
-        if (req_count.can_request()):
-            origins = []
-            origins_dict = {}
-            if len(dest_zip) >= 5:
-                for origins_zip_code in failed_zip_codes[dest_zip]["origins"]:
-                    print(blacklist.blacklisted(origins_zip_code))
-                    print("checking " + origins_zip_code)
-                    if len(origins_zip_code) >= 5 and not blacklist.blacklisted(origins_zip_code):
-                        zip_city = failed_zip_codes[dest_zip]["origins"][origins_zip_code]
-                        origins.append(origins_zip_code[:5] + "+" + zip_city)
-                        origins_dict[origins_zip_code[:5]] = zip_city
-
-            dest_param = dest_zip + "+" + failed_zip_codes[dest_zip]["zip_city"]
-
-            print(origins)
-            print(dest_param)
-
-            if (len(origins) != 0):
-                matrix = gmaps.distance_matrix(
-                    origins,
-                    dest_param,
-                    mode=commute_type,
-                    units=measure_units,
-                )
-                req_count.incr_count()
-
-                if matrix:
-                    counter = 0
-                    for origin in origins_dict:
-                        for commute in matrix["rows"][counter]["elements"]:
-                            # Divide by 60 to get minutes
-                            if commute['status'] == 'OK':
-                                if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin).exists():
-                                    zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin)
-                                    if zip_code_dictionary.zipcodedictionarychildmodel_set.filter(
-                                            zip_code_child=dest_zip,
-                                            commute_type_child=commute_type).exists():
-                                        print("The combination that was computed already exists")
-                                    else:
-                                        zip_code_dictionary.zipcodedictionarychildmodel_set.create(
-                                            zip_code_child=dest_zip,
-                                            commute_type_child=commute_type,
-                                            commute_distance_meters_child=commute['distance']['value'],
-                                            commute_time_seconds_child=commute['duration']['value'],
-                                        )
-                                        print(commute['duration']['value'])
-                                else:
-                                    ZipCodeDictionaryParentModel.objects.create(zip_code_parent=origin) \
-                                        .zipcodedictionarychildmodel_set.create(
-                                        zip_code_child=dest_zip,
-                                        commute_type_child=commute_type,
-                                        commute_distance_meters_child=commute['distance']['value'],
-                                        commute_time_seconds_child=commute['duration']['value'],
-                                    )
-                            else:
-                                print("distance not found")
-                                blacklist.blacklist(origin)
-                                print("added " + origin + " to blacklist")
-                            counter += 1
-                else:
-                    print("something went wrong with zip code matrix")
-        else:
-            print("OVER MAX TESTING")
-
-
-def filter_homes_based_on_approximate_commute(survey, scored_list):
-    """
-    This function computes the approximate commute filter
-    This eliminates any home with an approximate commute that is over the
-    user's max_commute + approximate_commute_range, or user's min - approximate_commute_range
-    The reason why there is a buffer is because the approximate commute range is based off of the
-    zip_code. Within a zip_code the commute time can vary by say 20 minutes.
-    This function only eliminates homes out of range, it does not score
-    :param survey: Passed the user's survey
-    :param scored_list: Array of scoringStruct
-    """
-    for home in scored_list:
-        for commute in home.get_commute_times_approx():
-            if (commute >= survey.max_commute + approximate_commute_range) \
-                    or (commute <= survey.min_commute - approximate_commute_range):
-                home.eliminate_home()
-
-
-def compute_exact_commute(destinations, scored_list, commute_type):
-    """
-    Computes the exact commute for the first so many homes
-    :param destinations: The list of destinations as RentingDestination objects
-    :param scored_list: A list containing ScoreStruct objects.
-    :param commute_type: The commute type the user desires
-    :return:
-    """
-
-    # Can add things to the arguments, like traffic_model, avoid things, departure_time etc
-    # Each row contains the origin with each corresponding destination
-    # The value field of duration is in seconds
-    measure_units = "imperial"
-    destinations_full_address = []
-    # Retrieve only the full address to give to the distance matrix
-    for destination in destinations:
-        destinations_full_address.append(destination.full_address)
-
-    origins = []
-    counter = 0
-    for home in scored_list:
-        origins.append(home.house.full_address)
-        counter += 1
-        if counter is number_of_exact_commutes_computed:
-            break
-
-    matrix = gmaps.distance_matrix(origins, destinations_full_address,
-                                   mode=commute_type,
-                                   units=measure_units,
-                                   )
-    # Only if the matrix is defined should the calculations occur, otherwise throw an error
-    if matrix:
-        # Try to think of a better way than a simple counter
-        counter = 0
-        for house in scored_list[:number_of_exact_commutes_computed]:
-            for commute in matrix["rows"][counter]["elements"]:
-                # Divide by 60 to get minutes
-                if commute['status'] == 'OK':
-                    house.commuteTime.append(commute['duration']["value"] / 60)
-                else:
-                    # Eliminate houses that can't have a commute value
-                    house.eliminate_home()
-            counter += 1
-            # Only Add the context if the commute is able to be processed
-    else:
-        print("Couldn't calculate distances, something went wrong")
-
-    return scored_list
-
-
 def run_rent_algorithm(survey, context):
+    """
+    Runs the rent algorithm when the survey is being processed.
+    :param survey: (RentingSurveyModel): The survey that the user filled out
+    :param context: (dictionary): The context for the template
+    """
 
     # Initialize the rent_algorithm class with empty data
     rent_algorithm = RentAlgorithm()
@@ -737,7 +116,7 @@ def run_rent_algorithm(survey, context):
     STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
     This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
     """
-    # rent_algorithm.retrieve_all_approximate_commutes()
+    rent_algorithm.retrieve_all_approximate_commutes()
 
     """
     STEP 3: Remove homes that are too far away using approximate commutes
@@ -749,9 +128,10 @@ def run_rent_algorithm(survey, context):
     """
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
-    rent_algorithm.run_compute_weighted_score_interior_amenities(survey.get_air_conditioning(),
-                                                                 survey.get_washer_dryer_in_home(),
-                                                                 survey.get_dish_washer_scale(), survey.get_bash())
+    rent_algorithm.run_compute_weighted_score_interior_amenities(survey.air_conditioning,
+                                                                 survey.interior_washer_dryer,
+                                                                 survey.dish_washer,
+                                                                 survey.bath)
     """
     STEP 5: Now sort all the homes from best homes to worst home
     """
@@ -760,7 +140,7 @@ def run_rent_algorithm(survey, context):
     """
     STEP 6: Compute the exact commute time/distance for best homes
     """
-    # rent_algorithm.retrieve_exact_commutes()
+    rent_algorithm.retrieve_exact_commutes()
 
     """
     STEP 7: Score the top homes based on the exact commute time/distance
@@ -787,13 +167,13 @@ def survey_result_rent(request, survey_id="recent"):
     """
     Survey result rent is the heart of the website where the survey is grabbed and the housing list is created
     Based on the results of the survey. This is specifically for the rent survey
-    :param request: Http Request
-    :param survey_id:  This is the survey id that corresponds to the survey that is desired
+    :param request: (Http Request): The HTTP request object
+    :param survey_id: (string): This is the survey id that corresponds to the survey that is desired
         If no id is specified then the latest survey is used
     :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
         etc. If something goes wrong then it may redirect back to the survey homePage
 
-    To Do:
+    ToDo:
     1. Set a limit on the number of homes that are used for commute times. I would say 50 max, then
         only return the top 20-30 homes to the user
     """
@@ -864,8 +244,6 @@ def visit_list(request):
     context = {
         'error_message': []
     }
-
-    print("Got here")
 
     return render(request, 'survey/visitList.html', context)
 
