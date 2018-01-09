@@ -110,7 +110,7 @@ def run_rent_algorithm(survey, context):
     STEP 1: Populate the rent_algorithm with all the desired destinations
     and all the possible homes based on static filtering
     """
-    rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
+    rent_algorithm.populate_with_survey_information(survey)
 
     """
     STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.

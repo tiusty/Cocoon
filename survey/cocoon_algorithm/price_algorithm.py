@@ -20,6 +20,17 @@ class PriceAlgorithm(object):
         self._price_question_weight = price_question_weight
         super(PriceAlgorithm, self).__init__()
 
+    def populate_price_algorithm_information(self, user_price_scale, user_max_price, user_min_price):
+        """
+        Function populate important price algorithm constants
+        :param user_price_scale: (int): The user price weight
+        :param user_max_price:  (int): The max price the user is willing to spend
+        :param user_min_price:  (int): The min price the user is willing to spend
+        """
+        self.max_price = user_max_price
+        self.min_price = user_min_price
+        self.price_user_scale_factor = user_price_scale
+
     @property
     def max_price(self):
         """
