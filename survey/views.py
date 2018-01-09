@@ -93,7 +93,7 @@ def renting_survey(request):
             if not form.is_valid():
                 context['error_message'].append("The normal form is also not valid")
             context['error_message'].append("Destination form is not valid")
-    return render(request, 'survey/rentingSurvey.html', {'form': form, 'formDest': form_destination})
+    return render(request, 'survey/rentingSurvey.html', {'form': form, 'form_destination': form_destination})
 
 
 def run_rent_algorithm(survey, context):
@@ -201,7 +201,8 @@ def survey_result_rent(request, survey_id="recent"):
         except RentingSurveyModel.DoesNotExist:
             context['error_message'].append("Could not find survey id, getting recent survey")
             try:
-                survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).order_by('-created').first()
+                survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile)\
+                    .order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
                 messages.add_message(request, messages.ERROR, 'Could not find Survey')
                 return HttpResponseRedirect(reverse('homePage:index'))
@@ -257,7 +258,7 @@ def set_favorite(request):
     """
     Ajax request that sets a home as a favorite. This function just toggles the homes.
     Therefore, if the home is requested, if it already existed in the database as a favorite
-    Then it unfavorites it. If it was not in the database as a favorite then it favorites it. The return
+    Then it removes it from the favorites. If it was not in the database as a favorite then it favorites it. The return
     value is the current state of the house after toggling the home. It returns a 0 if the home is
     not in the home and returns a 1 if the home is a favorite
     :param request: The HTTP request
