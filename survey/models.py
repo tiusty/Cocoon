@@ -11,7 +11,7 @@ from userAuth.models import UserProfile
 from houseDatabase.models import HomeTypeModel
 
 # Import Global Variables
-from Unicorn.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES, \
+from Cocoon.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES, \
     HYBRID_WEIGHT_CHOICES
 
 
