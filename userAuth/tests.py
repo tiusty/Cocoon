@@ -3,7 +3,7 @@ from django.test import TestCase
 from userAuth.forms import RegisterForm,LoginUserForm
 
 # Import cocoon global config
-from Unicorn.settings.Global_Config import creation_key_value
+from Cocoon.settings.Global_Config import creation_key_value
 
 
 class TestRegisterForm(TestCase):

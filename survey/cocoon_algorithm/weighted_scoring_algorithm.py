@@ -1,4 +1,4 @@
-from Unicorn.settings.Global_Config import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
+from Cocoon.settings.Global_Config import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
 
 
 class WeightScoringAlgorithm(object):

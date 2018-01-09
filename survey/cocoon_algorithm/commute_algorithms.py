@@ -1,4 +1,4 @@
-from Unicorn.settings.Global_Config import commute_question_weight
+from Cocoon.settings.Global_Config import commute_question_weight
 
 
 class CommuteAlgorithm(object):
@@ -33,6 +33,20 @@ class CommuteAlgorithm(object):
         self._commute_type = None
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()
+
+    def populate_commute_algorithm_information(self, user_commute_scale, user_max_commute_minutes,
+                                               user_min_commute_minutes, user_commute_type):
+        """
+        Function sets important constants for commute algorithm
+        :param user_commute_scale: (int): The user commute scale factor
+        :param user_max_commute_minutes: (int): The max time the user is willing to spend commuting in minutes
+        :param user_min_commute_minutes: (int): The min time the user is willing to spend commuting in minutes
+        :return:
+        """
+        self.max_user_commute = user_max_commute_minutes
+        self.min_user_commute = user_min_commute_minutes
+        self.commute_user_scale_factor = user_commute_scale
+        self.commute_type = user_commute_type
 
     @property
     def commute_type(self):

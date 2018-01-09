@@ -1,11 +1,7 @@
-# Import Django modules
-from django.db.models import Q
-
 # Import global settings
-from Unicorn.settings.Global_Config import number_of_exact_commutes_computed
-# Import houseDatabase modules
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel
+from Cocoon.settings.Global_Config import number_of_exact_commutes_computed
 from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
+
 # Import survey modules
 from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
@@ -15,62 +11,19 @@ from survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgo
 # Import DistanceWrapper
 from survey.distance_matrix.distance_wrapper import *
 from survey.distance_matrix import compute_approximates
-# Import HomeScore class
-from survey.home_data.home_score import HomeScore
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
 
-    def populate_survey_destinations_and_possible_homes(self, user_survey):
+    def populate_with_survey_information(self, user_survey):
+        # First populate with destinations and possible homes
+        self.populate_survey_destinations_and_possible_homes(user_survey)
 
-        # Find all the possible homes that fit the static filter
-        filtered_home_list = self.generate_static_filter_home_list(user_survey)
-
-        # Add homes to rent_algorithm
-        for home in filtered_home_list:
-            self.homes = HomeScore(home)
-
-        # Retrieves all the destinations that the user recorded
-        self.destinations = user_survey.rentingdestinationsmodel_set.all()
-
-    @staticmethod
-    def generate_static_filter_home_list(user_survey):
-        """
-        Compute Static Elements
-        The item that will filter the list the most should be first to narrow down the number of iterations
-        The database needs to be searched
-        (Right now it isn't order by efficiency but instead by when it was added. Later it can be switched around
-
-        Current order:
-        1. Filter by price range. The House must be in the correct range to be accepted
-        2. Filter by Home Type. The home must be the correct home type to be accepted
-        3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
-            If the house is outside the range it is eliminated
-        4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
-        4. Filter by the number of bathrooms
-        """
-
-        # Find all the home types the user desires
-        current_home_types = []
-        for home in user_survey.home_type.all():
-            current_home_types.append(home.home_type)
-
-        # Create queries for all the user home types desired
-        home_type_queries = [Q(home_type_home=value) for value in
-                             HomeTypeModel.objects.filter(home_type_survey__in=current_home_types)]
-
-        # Or all the home type queries together, to make one query
-        query_home_type = home_type_queries.pop()
-        for item in home_type_queries:
-            query_home_type |= item
-
-        # Query the database
-        return RentDatabaseModel.objects \
-            .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
-            .filter(query_home_type) \
-            .filter(move_in_day_home__range=(user_survey.move_in_date_start, user_survey.move_in_date_end)) \
-            .filter(num_bedrooms_home=user_survey.num_bedrooms) \
-            .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
+        # Second populate with the rest of survey information
+        self.populate_price_algorithm_information(user_survey.price_weight, user_survey.max_price,
+                                                  user_survey.min_price)
+        self.populate_commute_algorithm_information(user_survey.commute_weight, user_survey.max_commute,
+                                                    user_survey.min_commute, user_survey.commute_type)
 
     def run_compute_approximate_commute_filter(self):
         """

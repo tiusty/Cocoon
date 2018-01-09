@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 # Import Global config variables
-from Unicorn.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
+from Cocoon.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
 
 # Import House Database modules
 from houseDatabase.models import RentDatabaseModel
@@ -93,7 +93,7 @@ def renting_survey(request):
             if not form.is_valid():
                 context['error_message'].append("The normal form is also not valid")
             context['error_message'].append("Destination form is not valid")
-    return render(request, 'survey/rentingSurvey.html', {'form': form, 'formDest': form_destination})
+    return render(request, 'survey/rentingSurvey.html', {'form': form, 'form_destination': form_destination})
 
 
 def run_rent_algorithm(survey, context):
@@ -107,10 +107,9 @@ def run_rent_algorithm(survey, context):
     rent_algorithm = RentAlgorithm()
 
     """
-    STEP 1: Populate the rent_algorithm with all the desired destinations
-    and all the possible homes based on static filtering
+    STEP 1: Populate the rent_algorithm with all the information from the survey
     """
-    rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
+    rent_algorithm.populate_with_survey_information(survey)
 
     """
     STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
@@ -157,7 +156,6 @@ def run_rent_algorithm(survey, context):
     context['locations'] = rent_algorithm.destinations
     context['houseList'] = rent_algorithm.homes[:200]
     context['commuteType'] = rent_algorithm.commute_type
-    context['commuteType'] = survey.commute_type
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
@@ -202,7 +200,8 @@ def survey_result_rent(request, survey_id="recent"):
         except RentingSurveyModel.DoesNotExist:
             context['error_message'].append("Could not find survey id, getting recent survey")
             try:
-                survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).order_by('-created').first()
+                survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile)\
+                    .order_by('-created').first()
             except RentingSurveyModel.DoesNotExist:
                 messages.add_message(request, messages.ERROR, 'Could not find Survey')
                 return HttpResponseRedirect(reverse('homePage:index'))
@@ -258,7 +257,7 @@ def set_favorite(request):
     """
     Ajax request that sets a home as a favorite. This function just toggles the homes.
     Therefore, if the home is requested, if it already existed in the database as a favorite
-    Then it unfavorites it. If it was not in the database as a favorite then it favorites it. The return
+    Then it removes it from the favorites. If it was not in the database as a favorite then it favorites it. The return
     value is the current state of the house after toggling the home. It returns a 0 if the home is
     not in the home and returns a 1 if the home is a favorite
     :param request: The HTTP request
