@@ -205,6 +205,7 @@ class TestScoringMethods(TestCase):
         # Assert
         self.assertEqual(home_score.approx_commute_times, {"12345": 50, "01234": 20})
 
+
 class TestApproxCommute(TestCase):
 
     def setUp(self):
@@ -239,7 +240,7 @@ class TestApproxCommute(TestCase):
                 commute_type_child=commute_type,
                 )
 
-    def test_compute_approx_commute_times(self):
+    def test_populate_approx_commute_times(self):
         # Arrange
         home_score = HomeScore()
         destination = self.create_destination("101 Test Street", "Los Angeles", "California", self.zip_code1)
@@ -250,10 +251,10 @@ class TestApproxCommute(TestCase):
                                               self.commute_distance, self.commute_type)
 
         # Act
-        ret1 = home_score.calculate_approx_commute(self.zip_code, destination, self.commute_type)
-        ret2 = home_score.calculate_approx_commute(self.zip_code, destination1, self.commute_type)
-        ret3 = home_score.calculate_approx_commute("00000", destination, self.commute_type)
-        ret4 = home_score.calculate_approx_commute(self.zip_code, destination2, "walking")
+        ret1 = home_score.populate_approx_commutes(self.zip_code, destination, self.commute_type)
+        ret2 = home_score.populate_approx_commutes(self.zip_code, destination1, self.commute_type)
+        ret3 = home_score.populate_approx_commutes("00000", destination, self.commute_type)
+        ret4 = home_score.populate_approx_commutes(self.zip_code, destination2, "walking")
 
         # Assert
         self.assertEqual(ret1, True)

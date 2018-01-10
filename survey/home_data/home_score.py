@@ -73,17 +73,10 @@ class HomeScore(object):
         """
         self._exact_commute_times_minutes.update(new_exact_commute_time)
 
-    # TODO: Move to rent_algorithm (?)
-    # This should probably be moved into the rent_algorithm file as a helper method, as it doesn't
-    # actually interact with the object in any meaningful way.
-    def calculate_approx_commute(self, origin_zip, destination, commute_type):
+    def populate_approx_commutes(self, origin_zip, destination, commute_type):
         """
-        Computes an approximate commute time for this house to an input destination. First checks
-        the zipcode database to see if the commute time is already stored; if it's not, it then
-        returns the pair of failed zips, along with an error code as a 3 element list. The first
-        entry of the list is 0 if the pair was in the database, and 1 if the pair wasn't in the database
-        or if the pair wasn't valid. The last 2 entries are the origin and destination zip respectively.
-        :param origin_zip: The home's zip code, eg. "12345"
+        Queries the ZipCode database to attempt to populate this HomeScore's approximate commute dictionary.
+        Returns True on success, False on failure.
         :param destination: The destination as a RentingDestinationsModel object
         :param commute_type: commute_type enum, eg. "Driving"
         :return True on success, False on failure.
