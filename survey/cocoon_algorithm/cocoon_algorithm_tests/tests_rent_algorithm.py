@@ -923,6 +923,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_not_in_database_no_parent_zip(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.commute_type = "driving"
         rent_algorithm.homes = [self.home]
         destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
         rent_algorithm.destinations = [destination]
@@ -936,6 +937,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_not_in_database_with_parent_zip(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.commute_type = "driving"
         rent_algorithm.homes = [self.home]
         destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
         rent_algorithm.destinations = [destination]
@@ -950,6 +952,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_not_in_database_many_homes_many_destinations(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.commute_type = "driving"
         rent_algorithm.homes = [self.home, self.home1, self.home2]
         destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
         destination2 = self.create_destination("", "Boston", "MA", "02101")
@@ -978,6 +981,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_mixed(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.commute_type = "driving"
         rent_algorithm.homes = [self.home, self.home1, self.home2]
         destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
         destination2 = self.create_destination("", "Boston", "MA", "02101")
@@ -1013,6 +1017,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_edge_case_empty_homes(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.commute_type = "driving"
         rent_algorithm.homes = []
         destination = self.create_destination("", "Beverly Hills", "CA", "90210")
         rent_algorithm.destinations = [destination]
@@ -1026,6 +1031,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_edge_case_empty_destinations(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.commute_type = "driving"
         rent_algorithm.homes = [self.home]
         rent_algorithm.destinations = []
 
