@@ -14,8 +14,16 @@ from survey.distance_matrix import compute_approximates
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
+    """
+    The rent algorithm class that contains all the helper functions to integrate all the different algorithm classes
+    This class inherits a lot of variables and methods to support the functionality that it needs.
+    """
 
     def populate_with_survey_information(self, user_survey):
+        """
+        Populates the rent algorithm member variables based on the survey values
+        :param user_survey: (RentingSurveyModel): The survey the user filled out
+        """
         # First populate with destinations and possible homes
         self.populate_survey_destinations_and_possible_homes(user_survey)
 
