@@ -105,7 +105,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 for destination in self.destinations:
                     if destination.destination_key not in home.approx_commute_times:
                         new_in_database = home.populate_approx_commutes(home.home.zip_code, destination, self.commute_type)
-                        if new_in_database != True:
+                        if not new_in_database:
                             # Error: For some reason, the database was not updated, so we mark home for deletion
                             home.eliminate_home()
 
