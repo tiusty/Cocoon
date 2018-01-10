@@ -72,20 +72,20 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         # destination will be a DestinationsModel object
         for destination in self.destinations:
             failed_list = []
-            # home will be a HomeScore object
-            for home in self.homes:
-                in_database = home.calculate_approx_commute(home.home.zip_code, destination, "driving")
+            # home_score will be a HomeScore object
+            for home_score in self.homes:
+                in_database = home_score.calculate_approx_commute(home_score.home.zip_code, destination, "driving")
                 # Case we have a match
                 # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
                 if in_database != True:
-                    failed_list.append((home.home.zip_code, home.home.state))
+                    failed_list.append((home_score.home.zip_code, home_score.home.state))
             # Add to the dictionary of failed homes
             failed_home_dict[(destination.zip_code, destination.state)] = failed_list
 
         # 2: Use approx handler to compute the failed home distances and update db
         for destination, origin_list in failed_home_dict.items():
             try:
-                compute_approximates.approximate_compute_handler(origin_list, destination, "driving")
+                compute_approximates.approximate_compute_handler(origin_list, destination, self.commute_type)
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)
 
@@ -96,7 +96,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 # Recompute missing destinations
                 for destination in self.destinations:
                     if destination.destination_key not in home.approx_commute_times:
-                        new_in_database = home.calculate_approx_commute(home.home.zip_code, destination, "driving")
+                        new_in_database = home.calculate_approx_commute(home.home.zip_code, destination, self.commute_type)
                         if new_in_database != True:
                             # Error: For some reason, the database was not updated, so we mark home for deletion
                             home.eliminate_home()
