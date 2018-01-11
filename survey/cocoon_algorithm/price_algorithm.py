@@ -1,4 +1,4 @@
-from Unicorn.settings.Global_Config import price_question_weight
+from Cocoon.settings.Global_Config import price_question_weight
 
 
 class PriceAlgorithm(object):
@@ -20,11 +20,22 @@ class PriceAlgorithm(object):
         self._price_question_weight = price_question_weight
         super(PriceAlgorithm, self).__init__()
 
+    def populate_price_algorithm_information(self, user_price_scale, user_max_price, user_min_price):
+        """
+        Function populate important price algorithm constants
+        :param user_price_scale: (int): The user price weight
+        :param user_max_price:  (int): The max price the user is willing to spend
+        :param user_min_price:  (int): The min price the user is willing to spend
+        """
+        self.max_price = user_max_price
+        self.min_price = user_min_price
+        self.price_user_scale_factor = user_price_scale
+
     @property
     def max_price(self):
         """
         Gets the max price in dollars
-        :return: The max price in dollars
+        :return: (int): The max price in dollars
         """
         return self._max_price
 
@@ -32,7 +43,7 @@ class PriceAlgorithm(object):
     def max_price(self, new_max_price):
         """
         Sets the max price in dollars
-        :param new_max_price: The new max price in dollars
+        :param new_max_price: (int): The new max price in dollars
         """
         self._max_price = new_max_price
 
@@ -40,7 +51,7 @@ class PriceAlgorithm(object):
     def min_price(self):
         """
         Gets the min price in dollars
-        :return: Min price in dollars
+        :return: (int): Min price in dollars
         """
         return self._min_price
 
@@ -48,7 +59,7 @@ class PriceAlgorithm(object):
     def min_price(self, new_min_price):
         """
         Sets the min price in dollars
-        :param new_min_price: The new min price in dollars
+        :param new_min_price: (int): The new min price in dollars
         """
         self._min_price = new_min_price
 
@@ -56,7 +67,7 @@ class PriceAlgorithm(object):
     def price_user_scale_factor(self):
         """
         Gets the price scale factor that the user set. (Aka, how much weight the price has)
-        :return: An int that is the scale factor
+        :return: (int): An int that is the scale factor
         """
         return self._price_user_scale_factor
 
@@ -64,7 +75,7 @@ class PriceAlgorithm(object):
     def price_user_scale_factor(self, new_price_scale_factor):
         """
         Sets the price scale factor
-        :param new_price_scale_factor: The new scale factor as an int
+        :param new_price_scale_factor: (int): The new scale factor as an int
         """
         self._price_user_scale_factor = new_price_scale_factor
 
@@ -72,7 +83,7 @@ class PriceAlgorithm(object):
     def price_question_weight(self):
         """
         Get the price_question weight that is determined by the config file
-        :return: THe price question weight as an int
+        :return: (int): THe price question weight as an int
         """
         return self._price_question_weight
 
@@ -81,8 +92,7 @@ class PriceAlgorithm(object):
         """
         This Function might get deprecated because it shouldn't be changed
         from the config files value
-        :param new_price_question_weight:
-        :return:
+        :param new_price_question_weight: (int): the new price_question_weight
         """
         # TODO determine if this function should not be allowed to be called
         self._price_question_weight = new_price_question_weight
@@ -91,8 +101,8 @@ class PriceAlgorithm(object):
         """
         Compute the score based off the price. A percent value of the fit of the home is returned
         I.E, .67 or .47, etc will be returned. The scaling will be done in the parent class
-        :param home_price: The price as an int for the home.
-        :return: The percent fit the home is or -1 if the home should be eliminated
+        :param home_price: (int): The price as an int for the home.
+        :return: (float): The percent fit the home is or -1 if the home should be eliminated
         """
         if home_price < self.min_price:
             return -1

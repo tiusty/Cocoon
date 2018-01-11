@@ -1,4 +1,4 @@
-from Unicorn.settings.Global_Config import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
+from Cocoon.settings.Global_Config import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
 
 
 class WeightScoringAlgorithm(object):
@@ -22,7 +22,7 @@ class WeightScoringAlgorithm(object):
     def hybrid_weight_global_min(self):
         """
         Gets the hybrid question global min
-        :return: The hybrid question global min as an int
+        :return: (int): The hybrid question global min as an int
         """
         return self._hybrid_weight_global_min
 
@@ -30,7 +30,7 @@ class WeightScoringAlgorithm(object):
     def hybrid_weight_global_max(self):
         """
         Gets the hybrid question global max
-        :return: The hybrid question global max as an int
+        :return: (int): The hybrid question global max as an int
         """
         return self._hybrid_weight_global_max
 
@@ -38,16 +38,16 @@ class WeightScoringAlgorithm(object):
     def hybrid_question_weight(self):
         """
         Gets the hybrid question weight
-        :return: The hybrid question weight as an int
+        :return: (int): The hybrid question weight as an int
         """
         return self._hybrid_question_weight
 
     def compute_weighted_question_filter(self, user_scale_factor, does_home_contain_item):
         """
         Returns whether the weighted question is going to eliminate the home
-        :param user_scale_factor: The user scale factor as an item
-        :param does_home_contain_item: Boolean of whether or not the home as the item
-        :return: Boolean, True: The home is not eliminated, False: The home is eliminated
+        :param user_scale_factor: (int): The user scale factor as an item
+        :param does_home_contain_item: (Boolean): Boolean of whether or not the home as the item
+        :return: (Boolean): True: The home is not eliminated, False: The home is eliminated
         """
         if user_scale_factor == self.hybrid_weight_global_max and does_home_contain_item is False:
             return False
@@ -59,9 +59,9 @@ class WeightScoringAlgorithm(object):
     def compute_weighted_question_score(self, user_scale_factor, does_home_contain_item):
         """
         This function returns the score that home generates based off a hybrid weighted question
-        :param user_scale_factor: The user defined scale factor for the question
-        :param does_home_contain_item: A boolean determining if the home contains the desired item
-        :return: An int ranging from negative (user_scale_factor * hybrid question weight) to positive
+        :param user_scale_factor: (int): The user defined scale factor for the question
+        :param does_home_contain_item: (Boolean): A boolean determining if the home contains the desired item
+        :return: (int): An int ranging from negative (user_scale_factor * hybrid question weight) to positive
             (user_scale_factor * hybrid_question_weight)
         """
         return (1 if does_home_contain_item else -1) * user_scale_factor * self.hybrid_question_weight

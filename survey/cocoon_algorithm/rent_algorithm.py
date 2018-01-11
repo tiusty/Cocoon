@@ -1,72 +1,38 @@
-# Import Django modules
-from django.db.models import Q
-
-# Import houseDatabase modules
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel
+# Import global settings
+# Import global settings
+from Cocoon.settings.Global_Config import number_of_exact_commutes_computed
+from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 
 # Import survey modules
 from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
-from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
-from survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 from survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
+from survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
-# Import HomeScore class
-from survey.home_data.home_score import HomeScore
+# Import DistanceWrapper
+from survey.distance_matrix.distance_wrapper import *
+from survey.distance_matrix import compute_approximates
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
+    """
+    The rent algorithm class that contains all the helper functions to integrate all the different algorithm classes
+    This class inherits a lot of variables and methods to support the functionality that it needs.
+    """
 
-    def populate_survey_destinations_and_possible_homes(self, user_survey):
-
-        # Find all the possible homes that fit the static filter
-        filtered_home_list = self.generate_static_filter_home_list(user_survey)
-
-        # Add homes to rent_algorithm
-        for home in filtered_home_list:
-            self.homes = HomeScore(home)
-
-        # Retrieves all the destinations that the user recorded
-        self.destinations = user_survey.rentingdestinationsmodel_set.all()
-
-    @staticmethod
-    def generate_static_filter_home_list(user_survey):
+    def populate_with_survey_information(self, user_survey):
         """
-        Compute Static Elements
-        The item that will filter the list the most should be first to narrow down the number of iterations
-        The database needs to be searched
-        (Right now it isn't order by efficiency but instead by when it was added. Later it can be switched around
-
-        Current order:
-        1. Filter by price range. The House must be in the correct range to be accepted
-        2. Filter by Home Type. The home must be the correct home type to be accepted
-        3. Filter by Move In day. The two move in days create the range that is allowed. The range is inclusive
-            If the house is outside the range it is eliminated
-        4. Filter by the number of bed rooms. It must be the correct number of bed rooms to work.
-        4. Filter by the number of bathrooms
+        Populates the rent algorithm member variables based on the survey values
+        :param user_survey: (RentingSurveyModel): The survey the user filled out
         """
+        # First populate with destinations and possible homes
+        self.populate_survey_destinations_and_possible_homes(user_survey)
 
-        # Find all the home types the user desires
-        current_home_types = []
-        for home in user_survey.home_type.all():
-            current_home_types.append(home.home_type)
-
-        # Create queries for all the user home types desired
-        home_type_queries = [Q(home_type_home=value) for value in
-                             HomeTypeModel.objects.filter(home_type_survey__in=current_home_types)]
-
-        # Or all the home type queries together, to make one query
-        query_home_type = home_type_queries.pop()
-        for item in home_type_queries:
-            query_home_type |= item
-
-        # Query the database
-        return RentDatabaseModel.objects \
-            .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
-            .filter(query_home_type) \
-            .filter(move_in_day_home__range=(user_survey.move_in_date_start, user_survey.move_in_date_end)) \
-            .filter(num_bedrooms_home=user_survey.num_bedrooms) \
-            .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
+        # Second populate with the rest of survey information
+        self.populate_price_algorithm_information(user_survey.price_weight, user_survey.max_price,
+                                                  user_survey.min_price)
+        self.populate_commute_algorithm_information(user_survey.commute_weight, user_survey.max_commute,
+                                                    user_survey.min_commute, user_survey.commute_type)
 
     def run_compute_approximate_commute_filter(self):
         """
@@ -101,6 +67,75 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 home_data.accumulated_points = score_result * self.commute_user_scale_factor \
                     * self.commute_question_weight
                 home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
+
+    def retrieve_all_approximate_commutes(self):
+        """
+        retrieves the commute time and distance between each origin and each destination (zip code) and updates
+        the approx_commute_minutes dictionary within each HomeScore accordingly. For any zip code combinations that
+        are not in the database, the distance matrix is called to calculate the approximate distance and the
+        database is updated.
+        """
+
+        # 1: Query DB and update when info is there
+        failed_home_dict = dict()
+        # destination will be a DestinationsModel object
+        for destination in self.destinations:
+            failed_list = []
+            # home_score will be a HomeScore object
+            for home_score in self.homes:
+                in_database = home_score.populate_approx_commutes(home_score.home.zip_code, destination, "driving")
+                # Case we have a match
+                # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
+                if not in_database:
+                    failed_list.append((home_score.home.zip_code, home_score.home.state))
+            # Add to the dictionary of failed homes
+            failed_home_dict[(destination.zip_code, destination.state)] = failed_list
+
+        # 2: Use approx handler to compute the failed home distances and update db
+        for destination, origin_list in failed_home_dict.items():
+            try:
+                compute_approximates.approximate_commute_handler(origin_list, destination, self.commute_type)
+            except Distance_Matrix_Exception as e:
+                print("Caught: " + e.__class__.__name__)
+
+        # 3: Recompute failed homes using new DB data.
+
+        for home in self.homes:
+            if len(home.approx_commute_times) < len(self.destinations):
+                # Recompute missing destinations
+                for destination in self.destinations:
+                    if destination.destination_key not in home.approx_commute_times:
+                        new_in_database = home.populate_approx_commutes(home.home.zip_code, destination, self.commute_type)
+                        if not new_in_database:
+                            # Error: For some reason, the database was not updated, so we mark home for deletion
+                            home.eliminate_home()
+
+    def retrieve_exact_commutes(self):
+        """
+        updates the exact_commute_minutes property for the top homes, based on a global variable
+        in Global_Config. Uses the distance_matrix wrapper.
+        """
+        distance_matrix_requester = DistanceWrapper()
+
+        for destination in self.destinations:
+            try:
+                # map list of HomeScore objects to full addresses
+                origin_addresses = list(map(lambda house:house.home.full_address,
+                                       self.homes[:number_of_exact_commutes_computed]))
+
+                destination_address = destination.full_address
+
+                results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
+                                                                                [destination_address],
+                                                                                mode=self.commute_type)
+
+                # iterates over min of number to be computed and length of results in case lens don't match
+                for i in range(min(number_of_exact_commutes_computed, len(results))):
+                    # update exact commute time with in minutes
+                    self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0][0] / 60)
+
+            except Distance_Matrix_Exception as e:
+                print("Caught: " + e.__class__.__name__)
 
     def run_compute_price_score(self):
         """
