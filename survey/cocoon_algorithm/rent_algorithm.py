@@ -127,7 +127,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
                 results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
                                                                                 [destination_address],
-                                                                                mode="driving")
+                                                                                mode=self.commute_type)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed), len(results)):

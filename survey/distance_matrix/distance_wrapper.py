@@ -99,9 +99,10 @@ class DistanceWrapper:
         distance_matrix_list = []
 
         origin_list = origins
-        if (len(destinations) < 25):
+
+        # max 24 dests since at least 1 origin must be sent
+        if (len(destinations) <= 24):
             while origin_list:
-                if (len(origin_list) > 25):
                     response_json = distance_matrix.distance_matrix(self.client,
                                                                     origin_list[:25/(len(destinations))],
                                                                     destinations[:24],

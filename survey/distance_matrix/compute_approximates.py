@@ -23,12 +23,12 @@ def approximate_commute_handler(origins_zips_states, destination_zip_state, comm
         commute_type = "driving"
     """
 
-    wrapper = DistanceWrapper(mode=commute_type)
+    wrapper = DistanceWrapper()
 
     # map (zip, state) tuples list to a list of "zip state" strings
     results = wrapper.get_durations_and_distances(list(map(lambda x:x[0]+" "+x[1], origins_zips_states)),
                                                   [destination_zip_state[0]+" "+destination_zip_state[1]],
-                                                  mode="driving")
+                                                  mode=commute_type)
 
     # iterates both lists simultaneously
     for origin, result in zip(origins_zips_states, results):
