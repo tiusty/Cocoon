@@ -1,7 +1,10 @@
+# import houseDatabase models
 from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+
+# import distance matrix wrapper
 from survey.distance_matrix.distance_wrapper import DistanceWrapper
 
-# TODO: best way to add more specificity than zip code
+
 # TODO: update values after certain length of time
 def approximate_commute_handler(origins_zips_states, destination_zip_state, commute_type):
     """
@@ -22,9 +25,10 @@ def approximate_commute_handler(origins_zips_states, destination_zip_state, comm
 
     wrapper = DistanceWrapper(mode=commute_type)
 
-    # map zip, state tuples list to a list of "zip state" strings
-    results = wrapper.calculate_distances(list(map(lambda x:x[0]+" "+x[1], origins_zips_states)),
-                                          [destination_zip_state[0]+" "+destination_zip_state[1]])
+    # map (zip, state) tuples list to a list of "zip state" strings
+    results = wrapper.get_durations_and_distances(list(map(lambda x:x[0]+" "+x[1], origins_zips_states)),
+                                                  [destination_zip_state[0]+" "+destination_zip_state[1]],
+                                                  mode="driving")
 
     # iterates both lists simultaneously
     for origin, result in zip(origins_zips_states, results):

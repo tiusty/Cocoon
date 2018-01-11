@@ -1,4 +1,7 @@
+# import googlemaps API
 from googlemaps import distance_matrix, client
+
+# import API key from settings
 from Cocoon.settings.Global_Config import gmaps_api_key
 
 
@@ -7,15 +10,13 @@ class DistanceWrapper:
     Class that includes the infrastructure to request the google matrix API.
     Attributes:
         self.key (String): the API key passed to the API
-        self.mode (String): denotes the mode of transportation.
         i.e. "driving", "walking"
         self.units (String): denotes the unites. "imperial" or "metric"
         self.client (Client): wrapper around the API key used in the googlemaps package
     """
 
-    def __init__(self, key=gmaps_api_key, mode="driving", units="imperial"):
+    def __init__(self, key=gmaps_api_key, units="imperial"):
         self.key = key
-        self.mode = mode
         self.units = units
         self.client = client.Client(self.key)
 
@@ -75,7 +76,7 @@ class DistanceWrapper:
         # list of lists of durations from origin to destinations
         return distance_list
 
-    def calculate_distances(self, origins, destinations):
+    def get_durations_and_distances(self, origins, destinations, mode="driving"):
         """
         Gets the distance matrix corresponding to a destination and an arbitrary number of origins.
         Segments requests to the distance matrix API to include a maximum of 25 origins and returns
@@ -105,7 +106,7 @@ class DistanceWrapper:
                                                                     origin_list[:25/(len(destinations))],
                                                                     destinations[:24],
                                                                     units=self.units,
-                                                                    mode=self.mode)
+                                                                    mode=mode)
                     response_list = self.interpret_distance_matrix_response(response_json)
                     for res in response_list:
                         distance_matrix_list.append(res)

@@ -1,4 +1,5 @@
 # Import global settings
+# Import global settings
 from Cocoon.settings.Global_Config import number_of_exact_commutes_computed
 from survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 
@@ -114,7 +115,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         updates the exact_commute_minutes property for the top homes, based on a global variable
         in Global_Config. Uses the distance_matrix wrapper.
         """
-        distance_matrix_requester = DistanceWrapper(mode="driving")
+        distance_matrix_requester = DistanceWrapper()
 
         for destination in self.destinations:
             try:
@@ -124,7 +125,9 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
                 destination_address = destination.full_address
 
-                results = distance_matrix_requester.calculate_distances(origin_addresses, [destination_address])
+                results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
+                                                                                [destination_address],
+                                                                                mode="driving")
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed), len(results)):
