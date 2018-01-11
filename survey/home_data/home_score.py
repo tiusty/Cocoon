@@ -18,7 +18,7 @@ class HomeScore(object):
 
         """
 
-    def __init__(self, new_home):
+    def __init__(self, new_home=None):
         self._home = new_home
         self._accumulated_points = 0
         self._total_possible_points = 0
