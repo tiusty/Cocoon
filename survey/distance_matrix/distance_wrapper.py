@@ -1,7 +1,17 @@
 from googlemaps import distance_matrix, client
 from Cocoon.settings.Global_Config import gmaps_api_key
 
+
 class DistanceWrapper:
+    """
+    Class that includes the infrastructure to request the google matrix API.
+    Attributes:
+        self.key (String): the API key passed to the API
+        self.mode (String): denotes the mode of transportation.
+        i.e. "driving", "walking"
+        self.units (String): denotes the unites. "imperial" or "metric"
+        self.client (Client): wrapper around the API key used in the googlemaps package
+    """
 
     def __init__(self, key=gmaps_api_key, mode="driving", units="imperial"):
         self.key = key
@@ -88,28 +98,18 @@ class DistanceWrapper:
         distance_matrix_list = []
 
         origin_list = origins
-        while origin_list:
-            if (len(origin_list) > 25):
-                response_json = distance_matrix.distance_matrix(self.client,
-                                                                origin_list[:25],
-                                                                destinations[:25],
-                                                                units=self.units,
-                                                                mode=self.mode)
-                response_list = self.interpret_distance_matrix_response(response_json)
-                for res in response_list:
-                    distance_matrix_list.append(res)
-                origin_list = origin_list[25:]
-            else:
-                response_json = distance_matrix.distance_matrix(self.client,
-                                                                origin_list,
-                                                                destinations[:25],
-                                                                units=self.units,
-                                                                mode=self.mode)
-                response_list = self.interpret_distance_matrix_response(response_json)
-                for res in response_list:
-                    distance_matrix_list.append(res)
-                # no origins remaining
-                origin_list = []
+        if (len(destinations) < 25):
+            while origin_list:
+                if (len(origin_list) > 25):
+                    response_json = distance_matrix.distance_matrix(self.client,
+                                                                    origin_list[:25/(len(destinations))],
+                                                                    destinations[:24],
+                                                                    units=self.units,
+                                                                    mode=self.mode)
+                    response_list = self.interpret_distance_matrix_response(response_json)
+                    for res in response_list:
+                        distance_matrix_list.append(res)
+                    origin_list = origin_list[25:]
 
         # consolidated list containing an inner list for each origin with the duration
         # in minutes to all of its destinations

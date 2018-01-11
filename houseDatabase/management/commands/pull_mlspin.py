@@ -12,6 +12,15 @@ from houseDatabase.models import HomeTypeModel
 from django.utils import timezone
 
 class MlspinRequester:
+    """
+    This class contains the logic for parsing the IDX (Internet Data Exchange)
+    feed from MLSPIN and adding apartments to the database. It has been abstracted
+    out of the Command class so it can be tested easily.
+    Attributes:
+        self.NUM_COLS (int): the number of columns in the txt file returned by MLSPIN
+        self.idx_txt (String): the pipe delimited txt file containing apartment data
+        self.town_txt (String): the pipe delimited txt file containing town codes
+    """
 
     NUM_COLS = 29
 
@@ -115,17 +124,20 @@ class MlspinRequester:
                 new_listing.listing_office_home = cells[LIST_OFFICE]
                 new_listing.apartment_number_home = apartment_no
 
-                #TODO: Actually get photos based on ftp url and AWS S3
+                # TODO: upload ftp path to S3 storage bucket
                 new_listing.save()
                 newPhotos = HousePhotosModel(house_photo=new_listing)
                 newPhotos.save()
                 new_listing.save()
                 print(full_add + " added")
 
-        print(len(lines))
-
 
 class Command(BaseCommand):
+    """
+    Command class that creates an MlsPinRequester object and requests the URL
+    of the apartments and towns txt files. This command is accessible via manage.py
+    """
+
     help = 'Ingests IDX feed into database'
 
     def add_arguments(self, parser):

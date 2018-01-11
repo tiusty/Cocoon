@@ -93,7 +93,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         # 2: Use approx handler to compute the failed home distances and update db
         for destination, origin_list in failed_home_dict.items():
             try:
-                compute_approximates.approximate_compute_handler(origin_list, destination, self.commute_type)
+                compute_approximates.approximate_commute_handler(origin_list, destination, self.commute_type)
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)
 
@@ -114,7 +114,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         updates the exact_commute_minutes property for the top homes, based on a global variable
         in Global_Config. Uses the distance_matrix wrapper.
         """
-        distance_matrix_requester = DistanceWrapper()
+        distance_matrix_requester = DistanceWrapper(mode="driving")
 
         for destination in self.destinations:
             try:
@@ -126,7 +126,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
                 results = distance_matrix_requester.calculate_distances(origin_addresses, [destination_address])
 
-                for i in range(min(len(self.homes[:number_of_exact_commutes_computed]), len(results))):
+                # iterates over min of number to be computed and length of results in case lens don't match
+                for i in range(min(number_of_exact_commutes_computed), len(results)):
                     # update exact commute time with in minutes
                     self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0][0] / 60)
 

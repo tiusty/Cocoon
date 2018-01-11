@@ -3,9 +3,9 @@ from survey.distance_matrix.distance_wrapper import DistanceWrapper
 
 # TODO: best way to add more specificity than zip code
 # TODO: update values after certain length of time
-def approximate_compute_handler(origins_zips_states, destination_zip_state, commute_type):
+def approximate_commute_handler(origins_zips_states, destination_zip_state, commute_type):
     """
-    approximate_compute_handler stands between the rent_algorithm and the distance_wrapper,
+    approximate_commute_handler stands between the rent_algorithm and the distance_wrapper,
     calling the distance matrix on the provided origins and destination and updates the
     ZipCodeParent and ZipCodeChildModel models accordingly.
 
@@ -13,18 +13,11 @@ def approximate_compute_handler(origins_zips_states, destination_zip_state, comm
     with zip code and state
     :param: destination_zip_state, tuple(string, string), a tuple of zip code and state as strings
     :param: commute_type, a string, either "driving", "transit", "walking", "biking"
-    :return: the result of the DistanceWrapper.calculate_distances() call.
-        Format is a list of lists of tuples. Each inner list corresponds to an origin
-        and each of its tuples contains the duration (in seconds) and distance (in meters)
-        from the origin to a destination, in the same order they were given. In this case,
-        there will always be 1 destination.
 
     Example Input:
         origins = [("02123", "MA"), ("02012", Maine), ("12345", NY)]
         destination = ("20344", California)
         commute_type = "driving"
-    Output:
-        [[(10349, 394)],[(2343. 423)],[(2342, 3452)]]
     """
 
     wrapper = DistanceWrapper(mode=commute_type)
@@ -56,5 +49,3 @@ def approximate_compute_handler(origins_zips_states, destination_zip_state, comm
                 commute_distance_meters_child=result[0][1],
                 commute_time_seconds_child=result[0][0],
             )
-
-    return results
