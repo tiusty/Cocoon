@@ -91,7 +91,7 @@ class TestDistanceWrapper(unittest.TestCase):
     def test_simple(self):
         destination = ["2 Snow Hill Lane, Medfield MA"]
         origin = ["1 Dewing Path, Wellesley MA"]
-        duration_list = self.wrapper.calculate_distances(destination, origin)
+        duration_list = self.wrapper.get_durations_and_distances(destination, origin)
         self.assertEqual(len(duration_list), 1)
         self.assertEqual(len(duration_list[0]), 1)
         self.assertEqual(type(duration_list[0][0][0]), int)
@@ -99,7 +99,7 @@ class TestDistanceWrapper(unittest.TestCase):
     def test_multiple_origin(self):
         destinations = ["2 Snow Hill Lane, Medfield MA", "1 Dewing Path, Welleslsey MA"]
         origin = ["350 Prospect Street, Belmont MA"]
-        duration_list = self.wrapper.calculate_distances(destinations, origin)
+        duration_list = self.wrapper.get_durations_and_distances(destinations, origin)
         self.assertEqual(len(duration_list), 2)
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 1)
@@ -109,25 +109,24 @@ class TestDistanceWrapper(unittest.TestCase):
     def test_multiple_destination(self):
         destinations = ["2 Snow Hill Lane, Medfield MA", "1 Dewing Path, Welleslsey MA"]
         origins = ["350 Prospect Street, Belmont MA", "159 Brattle Street, Arlington MA"]
-        duration_list = self.wrapper.calculate_distances(destinations, origins)
+        duration_list = self.wrapper.get_durations_and_distances(destinations, origins)
         self.assertEqual(len(duration_list), 2)
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 2)
             self.assertEqual(type(duration_list[0][0][0]), int)
 
 
-    # The following test makes many requests to the API
-    '''
+    # The following tests makes many requests to the API
+
     def test_exceeding_origins(self):
-        destinations = []
+        origins = []
         for i in range(50):
-            destinations.append("2 Snow Hill Lane, Medfield MA")
-        origins = ["350 Prospect Street, Belmont MA", "159 Brattle Street, Arlington MA"]
-        duration_list = self.wrapper.calculate_distances(destinations, origins)
+            origins.append("2 Snow Hill Lane, Medfield MA")
+        destinations = ["350 Prospect Street, Belmont MA", "159 Brattle Street, Arlington MA"]
+        duration_list = self.wrapper.get_durations_and_distances(origins, destinations)
         print(duration_list)
         self.assertEqual(len(duration_list), 50)
         for o in duration_list:
             self.assertEqual(len(duration_list[0]), 2)
             self.assertEqual(type(duration_list[0][0][0]), int)
             self.assertEqual(type(duration_list[0][0][1]), int)
-    '''
