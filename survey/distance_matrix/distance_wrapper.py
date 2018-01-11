@@ -97,21 +97,24 @@ class DistanceWrapper:
         """
 
         distance_matrix_list = []
-
         origin_list = origins
 
-        # max 24 dests since at least 1 origin must be sent
-        if (len(destinations) <= 24):
-            while origin_list:
-                    response_json = distance_matrix.distance_matrix(self.client,
-                                                                    origin_list[:25/(len(destinations))],
-                                                                    destinations[:24],
-                                                                    units=self.units,
-                                                                    mode=mode)
-                    response_list = self.interpret_distance_matrix_response(response_json)
-                    for res in response_list:
-                        distance_matrix_list.append(res)
-                    origin_list = origin_list[25:]
+        # maximizes 100 elements while retaining 25 origin/dest limit
+        destination_number = min(25, len(destinations))
+        origin_number = min((100 / destination_number), 25)
+
+        while origin_list:
+            # only computes for the first destination_number destinations
+            response_json = distance_matrix.distance_matrix(self.client,
+                                                            origin_list[:origin_number],
+                                                            destinations[:destination_number],
+                                                            units=self.units,
+                                                            mode=mode)
+            response_list = self.interpret_distance_matrix_response(response_json)
+            # each inner list the entire results of an origin
+            for res in response_list:
+                distance_matrix_list.append(res)
+            origin_list = origin_list[origin_number:]
 
         # consolidated list containing an inner list for each origin with the duration
         # in minutes to all of its destinations
