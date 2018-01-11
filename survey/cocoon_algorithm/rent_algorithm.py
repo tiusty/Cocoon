@@ -130,7 +130,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                                                                                 mode=self.commute_type)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
-                for i in range(min(number_of_exact_commutes_computed), len(results)):
+                for i in range(min(number_of_exact_commutes_computed, len(results))):
                     # update exact commute time with in minutes
                     self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0][0] / 60)
 
