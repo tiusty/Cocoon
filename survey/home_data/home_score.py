@@ -100,12 +100,12 @@ class HomeScore(object):
         """
         self._exact_commute_times_minutes.update(new_exact_commute_time)
 
-    def populate_approx_commutes(self, origin_zip, destination, commute_type):
+    def populate_approx_commutes(self, origin_zip, destination, commute_type_query):
         """
         Queries the ZipCode database to attempt to populate this HomeScore's approximate commute dictionary.
         Returns True on success, False on failure.
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
-        :param commute_type: (String) commute_type enum, eg. "Driving"
+        :param commute_type_query: (CommuteTypeModel) commute_type, eg. "Driving"
         :return (Boolean): True on success, False on failure.
         """
         parent_zip_code_dictionary = ZipCodeDictionaryParentModel.objects.filter(zip_code_parent__exact=origin_zip)
@@ -113,7 +113,7 @@ class HomeScore(object):
             for parent in parent_zip_code_dictionary:
                 zip_code_dictionary = ZipCodeDictionaryChildModel.objects.filter(
                     parent_zip_code_child_id=parent).filter(zip_code_child__exact=destination.zip_code)\
-                    .filter(commute_type_child__exact=commute_type)
+                    .filter(commute_type_child=commute_type_query)
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():

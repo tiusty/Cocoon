@@ -1,4 +1,5 @@
 from Cocoon.settings.Global_Config import commute_question_weight
+from houseDatabase.models import CommuteTypeModel
 
 
 class CommuteAlgorithm(object):
@@ -30,8 +31,8 @@ class CommuteAlgorithm(object):
         self._commute_question_weight = commute_question_weight
         # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
         self._min_possible_commute = 11
-        # TODO: When the commute type gets switched to foreign key, think of the best solution for default value
-        self._commute_type = "driving"
+        # Note: This means the driving object needs to be created before this class is run
+        self._commute_type_query = CommuteTypeModel.objects.get(commute_type_field='driving')
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()
 
@@ -43,29 +44,29 @@ class CommuteAlgorithm(object):
         :param user_max_commute_minutes: (int): The max time the user is willing to spend commuting in minutes
         :param user_min_commute_minutes: (int): The min time the user is willing to spend commuting in minutes
         #TODO fix documentation when commute type is switched to foreign key
-        :param user_commute_type: (string): The commute type desired by the user
+        :param user_commute_type: (CommuteTypeModel): The commute type desired by the user
         :return:
         """
         self.max_user_commute = user_max_commute_minutes
         self.min_user_commute = user_min_commute_minutes
         self.commute_user_scale_factor = user_commute_scale
-        self.commute_type = user_commute_type
+        self.commute_type_query = user_commute_type
 
     @property
-    def commute_type(self):
+    def commute_type_query(self):
         """
         Returns the commute type
-        :return: (string): Returns the commute type
+        :return: (CommuteTypeModel): Returns the commute type
         """
-        return self._commute_type
+        return self._commute_type_query
 
-    @commute_type.setter
-    def commute_type(self, new_commute_type):
+    @commute_type_query.setter
+    def commute_type_query(self, new_commute_type):
         """
         Sets the commute type
-        :param new_commute_type: (String): The new commute type desired by the user
+        :param new_commute_type: (CommuteTypeModel): The new commute type desired by the user
         """
-        self._commute_type = new_commute_type
+        self._commute_type_query = new_commute_type
 
     @property
     def commute_question_weight(self):

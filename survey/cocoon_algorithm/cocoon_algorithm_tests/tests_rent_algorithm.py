@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Import external models
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel, CommuteTypeModel
 # Import survey python modules
 from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from survey.home_data.home_score import HomeScore
@@ -16,11 +16,13 @@ from userAuth.models import MyUser, UserProfile
 class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 
     def setUp(self):
-
+        # Create a commute type
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
+                                                        commute_type_survey=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -124,6 +126,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 class TestRentAlgorithmJustPrice(TestCase):
 
     def setUp(self):
+        CommuteTypeModel.objects.create(commute_type_field='driving')
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(price_home=1000, home_type_home=self.home_type))
         self.home1 = HomeScore(RentDatabaseModel.objects.create(price_home=1500, home_type_home=self.home_type))
@@ -356,10 +359,13 @@ class TestRentAlgorithmJustPrice(TestCase):
 class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 
     def setUp(self):
+        # Create a commute type
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
+                                                        commute_type_survey=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -502,10 +508,13 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 class TestRentAlgorithmJustExactCommuteScore(TestCase):
 
     def setUp(self):
+        # Create a commute type
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
+                                                        commute_type_survey=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -648,6 +657,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 class TestRentAlgorithmJustSortHomeByScore(TestCase):
 
     def setUp(self):
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
@@ -729,6 +739,8 @@ class TestRentAlgorithmJustSortHomeByScore(TestCase):
 class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
     def setUp(self):
+        # Create a commute type
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         # Create possible home types
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home_type1 = HomeTypeModel.objects.create(home_type_survey='Apartment')
@@ -798,7 +810,8 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                                    min_price_survey=self.price_min,
                                                    max_bathrooms_survey=self.max_bathrooms,
                                                    min_bathrooms_survey=self.min_bathrooms,
-                                                   num_bedrooms_survey=self.num_bedrooms_min)
+                                                   num_bedrooms_survey=self.num_bedrooms_min,
+                                                   commute_type_survey=self.commute_type)
         survey.home_type_survey.set([self.home_type, self.home_type1])
         # Create a destination for the survey
         survey.rentingdestinationsmodel_set.create(street_address_destination=self.street_address,
@@ -828,11 +841,10 @@ class TestRetrieveApproximateCommutes(TestCase):
         self.zip_code2 = "04240" # Lewiston, ME zipcode
         self.commute_time = 6000
         self.commute_distance = 700
-        self.commute_type = "driving"
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         self.home.home.zip_code_home = self.zip_code
         self.home1.home.zip_code_home = self.zip_code1
         self.home2.home.zip_code_home = self.zip_code2
-        self.commute_type = "driving"
         self.home.home.state_home = "Maine"
         self.home1.home.state_home = "Maine"
         self.home2.home.state_home = "Maine"
@@ -923,7 +935,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_not_in_database_no_parent_zip(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type = "driving"
+        rent_algorithm.commute_type_query = self.commute_type
         rent_algorithm.homes = [self.home]
         destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
         rent_algorithm.destinations = [destination]
@@ -937,7 +949,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_not_in_database_with_parent_zip(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type = "driving"
+        rent_algorithm.commute_type_query = self.commute_type
         rent_algorithm.homes = [self.home]
         destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
         rent_algorithm.destinations = [destination]
@@ -952,7 +964,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_not_in_database_many_homes_many_destinations(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type = "driving"
+        rent_algorithm.commute_type_query = self.commute_type
         rent_algorithm.homes = [self.home, self.home1, self.home2]
         destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
         destination2 = self.create_destination("", "Boston", "MA", "02101")
@@ -981,7 +993,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def test_retrieve_approx_commutes_mixed(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type = "driving"
+        rent_algorithm.commute_type_query = self.commute_type
         rent_algorithm.homes = [self.home, self.home1, self.home2]
         destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
         destination2 = self.create_destination("", "Boston", "MA", "02101")
@@ -1046,6 +1058,7 @@ class TestRetrieveApproximateCommutes(TestCase):
 class TestRetrieveExactCommutes(TestCase):
 
     def setUp(self):
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
 
         # setting up full home

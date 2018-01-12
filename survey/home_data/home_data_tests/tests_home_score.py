@@ -2,7 +2,7 @@ from django.test import TestCase
 from survey.home_data.home_score import HomeScore
 from survey.models import RentingSurveyModel, DestinationsModel, RentingDestinationsModel
 from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
-    HomeTypeModel
+    HomeTypeModel, CommuteTypeModel
 
 class TestScoringMethods(TestCase):
 
@@ -214,7 +214,8 @@ class TestApproxCommute(TestCase):
         self.zip_code2 = "23456"
         self.commute_time = 6000 
         self.commute_distance = 700
-        self.commute_type = "driving"
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type_walking = CommuteTypeModel.objects.create(commute_type_field='walking')
 
     @staticmethod
     def create_destination(address, city, state, zip):
@@ -254,7 +255,7 @@ class TestApproxCommute(TestCase):
         ret1 = home_score.populate_approx_commutes(self.zip_code, destination, self.commute_type)
         ret2 = home_score.populate_approx_commutes(self.zip_code, destination1, self.commute_type)
         ret3 = home_score.populate_approx_commutes("00000", destination, self.commute_type)
-        ret4 = home_score.populate_approx_commutes(self.zip_code, destination2, "walking")
+        ret4 = home_score.populate_approx_commutes(self.zip_code, destination2, self.commute_type_walking)
 
         # Assert
         self.assertEqual(ret1, True)

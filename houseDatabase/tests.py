@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 
 # House Database models
-from houseDatabase.models import ZipCodeDictionaryParentModel
+from houseDatabase.models import ZipCodeDictionaryParentModel, CommuteTypeModel
 
 # Import Global Config
 from Cocoon.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
@@ -18,8 +18,8 @@ class ZipCodeDictionaryTest(TestCase):
         self.zip_code2 = "02467"
         self.commute_time = 4500
         self.commute_distance = 700
-        self.commute_type = "driving"
-        self.commute_type1 = "transit"
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type1 = CommuteTypeModel.objects.create(commute_type_field="transit")
 
     @staticmethod
     def create_zip_code_dictionary(zip_code):
