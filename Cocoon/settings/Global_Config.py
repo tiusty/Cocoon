@@ -17,15 +17,15 @@ COMMUTE_TYPES = (
 ZIP_CODE_TIMEDELTA_VALUE = 60
 
 # Default Survey Max Values
-hybrid_question_weight = 20
+HYBRID_QUESTION_WEIGHT = 20
 commute_question_weight = 100
 price_question_weight = 100
 WEIGHT_QUESTION_MAX = 7
 MAX_NUM_BATHROOMS = 7  # Base 0, I guess should be base 1
 MAX_NUM_BEDROOMS = 6  # Base 1, so from 1 bedroom to 6 bedrooms
 MAX_TEXT_INPUT_LENGTH = 200
-Hybrid_weighted_max = 3
-Hybrid_weighted_min = -3
+HYBRID_WEIGHT_MAX = 3
+HYBRID_WEIGHT_MIN = -3
 HYBRID_WEIGHT_CHOICES = (
     (3, "Must have"),
     (2, "Really want"),
@@ -45,7 +45,7 @@ number_of_exact_commutes_computed = 100 # number of homes that the exact commute
 
 # Google distance matrix values
 gmaps = googlemaps.Client(key='AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw')
-
+gmaps_api_key = 'AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw'
 
 # Key:
 
