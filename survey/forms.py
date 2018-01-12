@@ -6,11 +6,11 @@ from django.utils import timezone
 # Survey models
 from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
     PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
-from houseDatabase.models import HomeTypeModel
+from houseDatabase.models import HomeTypeModel, CommuteTypeModel
 
 # Python global configurations
 from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
-    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, COMMUTE_TYPES, HYBRID_WEIGHT_CHOICES
+    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
 
 
 class HomeInformationForm(ModelForm):
@@ -162,12 +162,21 @@ class CommuteInformationForm(ModelForm):
             }),
     )
 
-    commute_type_survey = forms.ChoiceField(
-        choices=COMMUTE_TYPES,
+    # commute_type_survey = forms.ChoiceField(
+    #     choices=COMMUTE_TYPES,
+    #     label="Commute Type",
+    #     widget=forms.Select(
+    #         attrs={
+    #             'class': 'form-control',
+    #         }
+    #     )
+    # )
+    commute_type_survey = forms.ModelChoiceField(
+        queryset=CommuteTypeModel.objects.all(),
         label="Commute Type",
         widget=forms.Select(
             attrs={
-                'class': 'form-control',
+                'class': 'form-control'
             }
         )
     )

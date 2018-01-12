@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 # Import Config file information
-from Cocoon.settings.Global_Config import COMMUTE_TYPES, ZIP_CODE_TIMEDELTA_VALUE
+from Cocoon.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
 
 
 class HomeTypeModel(models.Model):
@@ -11,7 +11,6 @@ class HomeTypeModel(models.Model):
     Class stores all the different homes types
     This generates the multiple select field in the survey
     If another home gets added it needs to be added here in the HOME_TYPE
-    tuples but also allowed past the query in the survey result view.
     """
     HOME_TYPE = (
         ('House', 'House'),
@@ -31,6 +30,33 @@ class HomeTypeModel(models.Model):
     @property
     def home_type(self):
         return self.home_type_survey
+
+
+class CommuteTypeModel(models.Model):
+    """
+    Class stores all the different commute types
+    This generates a choice field in the survey
+    If another commute type gets added, it should get added to the COMMUTE_TYPES field
+    """
+
+    COMMUTE_TYPES = (
+        ('driving', 'Driving'),
+        ('transit', 'Transit'),
+        ('walking', 'Walking'),
+        ('biking', 'Biking'),
+    )
+    commute_type_field = models.CharField(
+        unique=True,
+        choices=COMMUTE_TYPES,
+        max_length=200,
+    )
+
+    def __str__(self):
+        return self.commute_type
+
+    @property
+    def commute_type(self):
+        return self.commute_type_field
 
 
 class HomeBaseModel(models.Model):
@@ -276,10 +302,7 @@ class ZipCodeDictionaryChildModel(models.Model):
     commute_time_seconds_child = models.IntegerField(default=-1)
     commute_distance_meters_child = models.IntegerField(default=-1)
     last_date_updated_child = models.DateField(default=timezone.now)
-    commute_type_child = models.CharField(
-        choices=COMMUTE_TYPES,
-        max_length=15,
-    )
+    commute_type_child = models.ForeignKey('CommuteTypeModel', on_delete=models.PROTECT)
 
     def __str__(self):
         return self.zip_code
