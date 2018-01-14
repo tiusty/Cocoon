@@ -7,7 +7,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from houseDatabase.models import HousePhotosModel, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
 from houseDatabase.management.commands.mls_fields import *
-from Unicorn.settings.Global_Config import gmaps_api_key
+from Cocoon.settings.Global_Config import gmaps_api_key
 from houseDatabase.models import HomeTypeModel
 from django.utils import timezone
 
