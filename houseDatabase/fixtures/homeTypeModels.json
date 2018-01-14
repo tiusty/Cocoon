@@ -1,1 +1,0 @@
-[{"model": "houseDatabase.hometypemodel", "pk": 1, "fields": {"home_type_survey": "House"}}, {"model": "houseDatabase.hometypemodel", "pk": 2, "fields": {"home_type_survey": "Apartment"}}, {"model": "houseDatabase.hometypemodel", "pk": 3, "fields": {"home_type_survey": "Condo"}}, {"model": "houseDatabase.hometypemodel", "pk": 4, "fields": {"home_type_survey": "Town House"}}]
