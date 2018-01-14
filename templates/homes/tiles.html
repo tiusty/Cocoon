@@ -14,7 +14,7 @@ context.
 {% endcomment %}
 {% load static %}
 
-<div class="tile bound" id="{{ forloop.counter }}" data-count="{{ forloop.counter }}" data-address="{{ theHouse.get_full_address }}">
+<div class="tile bound" id="{{ forloop.counter }}" data-count="{{ forloop.counter }}" data-address="{{ theHouse.full_address }}">
 
     {#  Template that holds expanded tile information. #}
     {#  Script tag contents read in by  jQuery         #}
@@ -67,31 +67,31 @@ context.
                     <table class="expanded-info-table">
                         <tr>
                             <td class="expanded-tile-text category">Address</td>
-                            <td class="expanded-tile-text value">{{ theHouse.get_full_address }}</td>
+                            <td class="expanded-tile-text value">{{ theHouse.full_address }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">Price</td>
-                            <td class="expanded-tile-text value">{{ theHouse.get_price_str }}</td>
+                            <td class="expanded-tile-text value">{{ theHouse.price_string }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">Move in</td>
-                            <td class="expanded-tile-text value">{{ theHouse.get_move_in_day }}</td>
+                            <td class="expanded-tile-text value">{{ theHouse.move_in_day }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">Beds</td>
-                            <td class="expanded-tile-text value">{{ theHouse.get_num_bedrooms }}</td>
+                            <td class="expanded-tile-text value">{{ theHouse.num_bedrooms }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">Baths</td>
-                            <td class="expanded-tile-text value">{{ theHouse.get_num_bathrooms }}</td>
+                            <td class="expanded-tile-text value">{{ theHouse.num_bathrooms }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">Home type</td>
-                            <td class="expanded-tile-text value">{{ theHouse.get_home_type }}</td>
+                            <td class="expanded-tile-text value">{{ theHouse.home_type }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">A/C</td>
-                            <td class="expanded-tile-text value">{{ theHouse.get_air_conditioning }}</td>
+                            <td class="expanded-tile-text value">{{ theHouse.air_conditioning }}</td>
                         </tr>
                     </table>
 
@@ -195,13 +195,13 @@ context.
         {# TODO: Pull high priority items here #}
         {# Below are placeholder strings    #}
 
-        <span class="infoBit">{{ theHouse.get_price_str }}</span>
-        <span class="infoBit addressBit">{{ theHouse.get_full_address }}</span>
+        <span class="infoBit">{{ theHouse.price_string }}</span>
+        <span class="infoBit addressBit">{{ theHouse.full_address }}</span>
         <span class="infoBit"></span>
 
     </div>
 
-    {% for image in theHouse.housephotos_set.all|slice:":2" %}
+    {% for image in theHouse.housephotosmodel_set.all|slice:":2" %}
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
             <img class="thumbnailImage"
                  src="{% static image %}">
