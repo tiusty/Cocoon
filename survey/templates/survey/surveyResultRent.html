@@ -284,19 +284,19 @@ Global variables are listed below
 
             </script>
 
-            {% for house in houseList %}
+            {% for home_score in houseList %}
 
-              {% include "homes/tiles.html" with includeScore=True theHouse=house.home homeScore=house.user_friendly_score%}
+              {% include "homes/tiles.html" with includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score%}
 
               <script>
 
-                  var lat = {{ house.home.latitude|safe }};
-                  var lon = {{ house.home.longitude|safe }};
+                  var lat = {{ home_score.home.latitude|safe }};
+                  var lon = {{ home_score.home.longitude|safe }};
                   var id = {{ forloop.counter }};
-                  var score = {{ house.user_friendly_score }};
-                  var color = colorFromScore({{ home.user_friendly_score }});
+                  var score = {{ home_score.user_friendly_score }};
+                  var color = colorFromScore({{ home_score.user_friendly_score }});
 
-                  console.log(colorFromScore({{ home.user_friendly_score }}));
+                  console.log(colorFromScore({{ home_score.user_friendly_score }}));
 
                   // associate a pin with each result
 
