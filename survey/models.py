@@ -8,10 +8,10 @@ import math
 
 # Import cocoon models
 from userAuth.models import UserProfile
-from houseDatabase.models import HomeTypeModel
+from houseDatabase.models import HomeTypeModel, CommuteTypeModel
 
 # Import Global Variables
-from Cocoon.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, COMMUTE_TYPES, \
+from Cocoon.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, \
     HYBRID_WEIGHT_CHOICES
 
 
@@ -121,7 +121,7 @@ class CommuteInformationModel(models.Model):
     max_commute_survey = models.IntegerField(default=0)
     min_commute_survey = models.IntegerField(default=0)
     commute_weight_survey = models.IntegerField(default=0)
-    commute_type_survey = models.CharField(max_length=20, choices=COMMUTE_TYPES, default="driving")
+    commute_type_survey = models.ForeignKey(CommuteTypeModel)
 
     @property
     def max_commute(self):

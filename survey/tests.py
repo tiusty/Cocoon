@@ -5,7 +5,7 @@ from django.utils import timezone
 # Import Survey Models and forms
 from survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
     InteriorAmenitiesForm, ExteriorAmenitiesForm
-from houseDatabase.models import HomeTypeModel
+from houseDatabase.models import HomeTypeModel, CommuteTypeModel
 
 # Import cocoon global config values
 from Cocoon.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
@@ -258,7 +258,7 @@ class TestCommuteInformationForm(TestCase):
         self.max_commute = 0
         self.min_commute = 0
         self.commute_weight = 0
-        self.commute_type = 'driving'
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
 
     def tests_commute_information_valid(self):
         # Arrange
@@ -266,12 +266,13 @@ class TestCommuteInformationForm(TestCase):
             'max_commute_survey': self.max_commute,
             'min_commute_survey': self.min_commute,
             'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type
+            'commute_type_survey': 1
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
         # Act
         result = commute_information_form.is_valid()
+        print(commute_information_form.errors)
 
         # Assert
         self.assertTrue(result)
@@ -696,7 +697,7 @@ class TestRentSurveyForm(TestCase):
         self.max_commute = 0
         self.min_commute = 0
         self.commute_weight = 0
-        self.commute_type = 'driving'
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
 
         self.max_price = 0
         self.min_price = 0
@@ -727,7 +728,7 @@ class TestRentSurveyForm(TestCase):
             'max_commute_survey': self.max_commute,
             'min_commute_survey': self.min_commute,
             'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type,
+            'commute_type_survey': 1,
             'max_price_survey': self.max_price,
             'min_price_survey': self.min_price,
             'price_weight_survey': self.price_weight,

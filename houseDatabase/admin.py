@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, HousePhotosModel, \
-    HomeTypeModel
+    HomeTypeModel, CommuteTypeModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
@@ -60,6 +60,15 @@ class HomeTypeModelAdmin(admin.ModelAdmin):
     list_display = ('home_type_survey',)
 
 
+class CommuteTypeModelAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Commute Type',
+         {'fields': ['commute_type_field',]})
+    ]
+    list_display = ('commute_type_field',)
+
+
 admin.site.register(RentDatabaseModel, HouseAdmin)
 admin.site.register(ZipCodeDictionaryParentModel, ZipCodeDictionaryAdmin)
 admin.site.register(HomeTypeModel, HomeTypeModelAdmin)
+admin.site.register(CommuteTypeModel, CommuteTypeModelAdmin)

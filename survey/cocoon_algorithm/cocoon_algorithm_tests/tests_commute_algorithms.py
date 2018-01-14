@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from houseDatabase.models import CommuteTypeModel
 from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from userAuth.models import MyUser, UserProfile
 from survey.models import RentingSurveyModel
@@ -8,10 +9,12 @@ from survey.models import RentingSurveyModel
 class TestApproximateCommutesFilter(TestCase):
 
     def setUp(self):
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
+                                                        commute_type_survey=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -234,6 +237,9 @@ class TestApproximateCommutesFilter(TestCase):
 
 
 class TestComputeCommuteScore(TestCase):
+
+    def setUp(self):
+        CommuteTypeModel.objects.create(commute_type_field='driving')
 
     def test_compute_commute_score_working(self):
         # Arrange

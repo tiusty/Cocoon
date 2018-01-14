@@ -83,7 +83,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             failed_list = []
             # home_score will be a HomeScore object
             for home_score in self.homes:
-                in_database = home_score.populate_approx_commutes(home_score.home.zip_code, destination, "driving")
+                in_database = home_score.populate_approx_commutes(home_score.home.zip_code, destination,
+                                                                  self.commute_type_query)
                 # Case we have a match
                 # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
                 if not in_database:
@@ -94,7 +95,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         # 2: Use approx handler to compute the failed home distances and update db
         for destination, origin_list in failed_home_dict.items():
             try:
-                compute_approximates.approximate_commute_handler(origin_list, destination, self.commute_type)
+                compute_approximates.approximate_commute_handler(origin_list, destination, self.commute_type_query)
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)
 
@@ -105,7 +106,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 # Recompute missing destinations
                 for destination in self.destinations:
                     if destination.destination_key not in home.approx_commute_times:
-                        new_in_database = home.populate_approx_commutes(home.home.zip_code, destination, self.commute_type)
+                        new_in_database = home.populate_approx_commutes(home.home.zip_code, destination, self.commute_type_query)
                         if not new_in_database:
                             # Error: For some reason, the database was not updated, so we mark home for deletion
                             home.eliminate_home()
@@ -127,7 +128,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
                 results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
                                                                                 [destination_address],
-                                                                                mode=self.commute_type)
+                                                                                mode=self.commute_type_query.commute_type)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):
@@ -160,27 +161,27 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param bath_scale: Int -> User scale for bath
         """
         for home_data in self.homes:
-            if self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.air_conditioning):
+            if not (self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.air_conditioning)):
                 home_data.eliminate_home()
             home_data.accumulated_points = self.compute_weighted_question_score(air_conditioning_scale,
                                                                                 home_data.home.air_conditioning)
             home_data.total_possible_points = abs(air_conditioning_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.interior_washer_dryer):
+            if not (self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.interior_washer_dryer)):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(washer_dryer_in_home_scale,
                                                                                 home_data.home.interior_washer_dryer)
             home_data.total_possible_points = abs(washer_dryer_in_home_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(dish_washer_scale, home_data.home.dish_washer):
+            if not (self.compute_weighted_question_filter(dish_washer_scale, home_data.home.dish_washer)):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(dish_washer_scale,
                                                                                 home_data.home.dish_washer)
             home_data.total_possible_points = abs(dish_washer_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(bath_scale, home_data.home.bath):
+            if not (self.compute_weighted_question_filter(bath_scale, home_data.home.bath)):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(bath_scale, home_data.home.bath)
