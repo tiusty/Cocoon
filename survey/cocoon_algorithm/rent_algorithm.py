@@ -160,27 +160,27 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param bath_scale: Int -> User scale for bath
         """
         for home_data in self.homes:
-            if self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.air_conditioning):
+            if not (self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.air_conditioning)):
                 home_data.eliminate_home()
             home_data.accumulated_points = self.compute_weighted_question_score(air_conditioning_scale,
                                                                                 home_data.home.air_conditioning)
             home_data.total_possible_points = abs(air_conditioning_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.interior_washer_dryer):
+            if not (self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.interior_washer_dryer)):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(washer_dryer_in_home_scale,
                                                                                 home_data.home.interior_washer_dryer)
             home_data.total_possible_points = abs(washer_dryer_in_home_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(dish_washer_scale, home_data.home.dish_washer):
+            if not (self.compute_weighted_question_filter(dish_washer_scale, home_data.home.dish_washer)):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(dish_washer_scale,
                                                                                 home_data.home.dish_washer)
             home_data.total_possible_points = abs(dish_washer_scale) * self.hybrid_question_weight
 
-            if self.compute_weighted_question_filter(bath_scale, home_data.home.bath):
+            if not (self.compute_weighted_question_filter(bath_scale, home_data.home.bath)):
                 home_data.eliminate_home()
 
             home_data.accumulated_points = self.compute_weighted_question_score(bath_scale, home_data.home.bath)
