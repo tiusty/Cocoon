@@ -111,7 +111,7 @@ def ProfilePage(request, defaultPage="profile"):
         messages.add_message(request,messages.ERROR, "User is not authenticated")
         return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
-    rent_surveys = RentingSurveyModel.objects.filter(user_profile=userProfile).order_by('-created')[:50]
+    rent_surveys = RentingSurveyModel.objects.filter(user_profile_survey=userProfile).order_by('-created_survey')[:50]
     context['numRentSurveys'] = rent_surveys.count()
     context['numBuySurveys'] = 0
     context['surveys'] = rent_surveys
