@@ -22,7 +22,7 @@ class maps_requester:
         # TODO: Error check this request
         with request.urlopen(self.maps + param_address + self.key) as response:
             json_response = response.read()
-            map_json = json.loads(json_response)
+            map_json = json.loads(json_response.decode(encoding='UTF-8'))
 
             if (map_json["status"] != "OK"):
                 return -1
