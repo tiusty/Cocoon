@@ -12,7 +12,11 @@ ALLOWED_HOSTS = ['bostoncocoon.com', 'cocoonboston.com']
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '../db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'bostonCocoonDatabase',
+	'USER': 'bostoncocoon',
+	'PASSWORD': 'Pr0jectUn!corn2018',
+	'HOST': 'coocondatabase.cqoopoxrcwhz.us-east-2.rds.amazonaws.com',
+	'PORT': '5432',
     }
 }
