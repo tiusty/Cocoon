@@ -1,7 +1,8 @@
 from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+#TODO: Turn to False when the website goes public
+DEBUG = True
 
 # Domains that are allowed
 ALLOWED_HOSTS = ['bostoncocoon.com', 'cocoonboston.com']
