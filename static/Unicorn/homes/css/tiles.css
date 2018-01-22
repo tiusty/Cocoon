@@ -267,8 +267,8 @@ STYLING NEW TILE RESULTS
     max-width: 109%;
     width: 109%;
     /*max-height: 106%;*/
-    transition: height .1s;
-    transition: width .1s;
+    /*transition: height .1s;*/
+    /*transition: width .1s;*/
 }
 
 .infoBit {
