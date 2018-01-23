@@ -4,9 +4,6 @@
 # IntelliJ Idea workspace configuration #
 .idea/
 
-# Virtual environment location #
-venv/
-
 # Migration folders #
 userAuth/migrations
 houseDatabase/migrations
