@@ -40,10 +40,10 @@ class CommuteTypeModel(models.Model):
     """
 
     COMMUTE_TYPES = (
-        ('driving', 'Driving'),
-        ('transit', 'Transit'),
-        ('walking', 'Walking'),
-        ('biking', 'Biking'),
+        ('Driving', 'Driving'),
+        ('Transit', 'Transit'),
+        ('Walking', 'Walking'),
+        ('Biking', 'Biking'),
     )
     commute_type_field = models.CharField(
         unique=True,
