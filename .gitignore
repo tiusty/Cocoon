@@ -1,8 +1,17 @@
+# Compiled Source #
 *.pyc
+
+# IntelliJ Idea workspace configuration #
 .idea/
-venv/
+
+# Migration folders #
 userAuth/migrations
 houseDatabase/migrations
 homePage/migrations
 survey/migrations
+
+# Home MLSpin feed #
+houseDatabase/management/commands/idx_feed.txt
+
+# Sqlite database #
 db.sqlite3
