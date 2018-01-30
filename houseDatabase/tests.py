@@ -18,8 +18,8 @@ class ZipCodeDictionaryTest(TestCase):
         self.zip_code2 = "02467"
         self.commute_time = 4500
         self.commute_distance = 700
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
-        self.commute_type1 = CommuteTypeModel.objects.create(commute_type_field="transit")
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
+        self.commute_type1 = CommuteTypeModel.objects.create(commute_type_field="Transit")
 
     @staticmethod
     def create_zip_code_dictionary(zip_code):

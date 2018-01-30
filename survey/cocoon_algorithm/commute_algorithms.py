@@ -32,7 +32,7 @@ class CommuteAlgorithm(object):
         # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
         self._min_possible_commute = 11
         # Note: This means the driving object needs to be created before this class is run
-        self._commute_type_query = CommuteTypeModel.objects.get(commute_type_field='driving')
+        self._commute_type_query = CommuteTypeModel.objects.get(commute_type_field='Driving')
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()
 
