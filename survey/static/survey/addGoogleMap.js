@@ -1,13 +1,21 @@
 /**
  * Created by awagu on 12/22/2016.
  */
+
 var map;
 var markers = [];
+var MAPZOOM = 12;
+var MAXZOOM = 16;
+
+/**
+ * function required by google maps api for initialization
+ */
 function initMap() {
 	var mapDiv = document.getElementById('map');
 	map = new google.maps.Map(mapDiv, {
 		center: {lat:42.3601, lng: -71.0589},
-		zoom: 10
+		zoom: MAPZOOM,
+        maxZoom: MAXZOOM
 	});
 	//distanceMatrix();
 	var geocoder = new google.maps.Geocoder();
@@ -17,13 +25,21 @@ function initMap() {
     }
     // The destinations need to have the lat long because
     // Otherwise the geocoding goes over the limit
-	for(i=0;i<myDestinations.length; i++)
+	for(i=0;i<myLocations.length; i++)
 	{
-        addLocationMarkers(map, myDestinations[i]);
+        addLocationMarkers(map, myLocations[i]);
     }
+
 }
 
 // Adds a marker to the map and push to the array.
+/**
+ * Adds a marker to the map after initialization
+ *
+ * Note: Deprecated.
+ *
+ * @param address - location to add the new pin
+ */
 function addChosenMarker(address) {
     deleteMarkers();
     var geocoder = new google.maps.Geocoder();
@@ -37,7 +53,7 @@ function addChosenMarker(address) {
                     icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
                     zIndex: google.maps.Marker.MAX_ZINDEX + 1,
                 });
-                console.log(results);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                console.log(results);
                 markers.push(marker);
             } else {
                 alert('Geocode was not successful for the following reason: ' + status);

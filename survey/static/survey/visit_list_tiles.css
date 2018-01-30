@@ -1,0 +1,21 @@
+/******************************************
+
+    specific tile styling
+
+ *****************************************/
+
+.glyphicon-heart {
+    font-size: 36px !important;
+}
+
+.glyphicon-heart-empty {
+    font-size: 36px !important;
+}
+
+.expanded-info {
+    flex-basis: 30% !important;
+}
+
+.expanded-tile-contents {
+    height: calc(65vh - 50px);
+}

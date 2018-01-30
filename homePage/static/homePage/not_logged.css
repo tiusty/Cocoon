@@ -1,0 +1,52 @@
+ul > li > a.register-link {
+    padding: 0px 8px;
+    font-size: 14px;
+    line-height: 60px;
+}
+
+.signup-button {
+    padding: 5px 10px;
+}
+
+.signup-button-right {
+    margin-right: 15px;
+}
+
+/*****************************
+
+    Styling Scrolls
+
+ ****************************/
+
+.button-link-animated {
+    font-size: 10px;
+}
+
+.register-link-animated {
+    padding: 0px 15px;
+}
+
+@media (max-width: 768px) {
+    .signup-button {
+        border: none;
+    }
+
+    .register-link {
+        width: 50px;
+        padding: 0;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 974px) {
+    body {
+        padding-top: 50px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1021px) {
+
+    ul > li > a.register-link {
+    padding: 16px 8px;
+}
+
+}

@@ -8,6 +8,7 @@
 
     <!-- Login Styling -->
     <link href="{% static "userAuth/signin.css" %}" rel="stylesheet">
+    <link href="{% static "userAuth/general_auth.css" %}" rel="stylesheet">
 {% endblock head %}
 
 {% comment %}
@@ -16,6 +17,24 @@ Leaving empty nav_bar block to prevent the nav bar from showing up
 {% block nav_bar %} {% endblock nav_bar %}
 
 {% block content %}
+
+    <div class="row">
+        <div class="col-sm-2 col-sm-offset-2 header">
+            <img class="logo" src="{% static 'homePage/cocoon_logo.png' %}">
+        </div>
+    <div class="col-sm-4">
+        <p class="welcome_text">Welcome to Cocoon</p>
+    </div>
+
+    </div>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
     <form class="form-signin form-horizontal" action="{% url 'userAuth:loginPage' %}" method='POST'>
         {% csrf_token %}
@@ -56,5 +75,13 @@ Leaving empty nav_bar block to prevent the nav bar from showing up
     <p style="text-align:center">
 	    <a href="{% url 'userAuth:registerPage' %}">Register New User</a>
 	</p>
+       <p style="text-align:center">
+	    <a href="{% url 'homePage:index' %}">Return to the Home Page</a>
+	</p>
 
 {% endblock content %}
+
+{% block endScripts %}
+
+    {{ block.super }}
+{% endblock %}

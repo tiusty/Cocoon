@@ -1,97 +1,203 @@
+# Django modules
 from django.test import TestCase
-import datetime
+from django.db import IntegrityError
+from django.utils import timezone
 
-from houseDatabase.models import RentDatabase
+# House Database models
+from houseDatabase.models import ZipCodeDictionaryParentModel, CommuteTypeModel
 
-default_address = "12 Stony Brook Rd"
-default_price = 700
-default_home_type = "Condo"
-default_move_in_day = datetime.date.today() + datetime.timedelta(days=10)
-default_lon = 71.161418
-default_lat = 42.413845
-default_air_conditioning = True
-default_wash_dryer_in_home = False
-default_dish_washer = True
-default_bath = False
-default_num_bathrooms = 4
-default_num_bedrooms = 2
-default_parking_spot = False
-default_washer_dryer_in_building = False
-default_elevator = True
-default_handicap_access = False
-default_pool_hot_tub = False
-default_fitness_center = False
-default_storage_unit = True
+# Import Global Config
+from Cocoon.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
 
 
-def create_home(address=default_address,
-                price=default_price,
-                home_type=default_home_type,
-                move_in_day=default_move_in_day,
-                lon=default_lon,
-                lat=default_lat,
-                air_conditioning=default_air_conditioning,
-                wash_dryer_in_home=default_wash_dryer_in_home,
-                dish_washer=default_dish_washer,
-                bath=default_bath,
-                num_bathrooms=default_num_bathrooms,
-                num_bedrooms=default_num_bedrooms,
-                parking_spot=default_parking_spot,
-                washer_dryer_in_building=default_washer_dryer_in_building,
-                elevator=default_elevator,
-                handicap_access=default_handicap_access,
-                pool_hot_tub=default_pool_hot_tub,
-                fitness_center=default_fitness_center,
-                storage_unit=default_storage_unit,
-                ):
-    """
-    Creates a home for the testing module.
-    Uses default values unless it is passed an argument
-    """
-    return RentDatabase.objects.create(
-        address=address,
-        price=price,
-        home_type=home_type,
-        move_in_day=move_in_day,
-        lon=lon,
-        lat=lat,
-        air_conditioning=air_conditioning,
-        wash_dryer_in_home=wash_dryer_in_home,
-        dish_washer=dish_washer,
-        bath=bath,
-        num_bathrooms=num_bathrooms,
-        num_bedrooms=num_bedrooms,
-        parking_spot=parking_spot,
-        washer_dryer_in_building=washer_dryer_in_building,
-        elevator=elevator,
-        handicap_access=handicap_access,
-        pool_hot_tub=pool_hot_tub,
-        fitness_center=fitness_center,
-        storage_unit=storage_unit,
-    )
+class ZipCodeDictionaryTest(TestCase):
 
+    def setUp(self):
+        self.zip_code = "02476"
+        self.zip_code1 = "02474"
+        self.zip_code2 = "02467"
+        self.commute_time = 4500
+        self.commute_distance = 700
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type1 = CommuteTypeModel.objects.create(commute_type_field="transit")
 
-class HouseDataBaseGetters(TestCase):
+    @staticmethod
+    def create_zip_code_dictionary(zip_code):
+        """
+        Creates a parent zip_code_dictionary object
+        :param zip_code: String -> Zip code for parent zip_code
+        :return: ZipCodeDictionaryParentModel -> An object instance
+        """
+        return ZipCodeDictionaryParentModel.objects.create(zip_code_parent=zip_code)
 
-    def test_all_model_getters(self):
-        home = create_home()
-        assert(home.get_address() == default_address)
-        assert(home.get_price() == default_price)
-        assert(home.get_price_str() == "$" + str(home.get_price()))
-        assert(home.get_move_in_day() == default_move_in_day)
-        assert(home.get_num_bedrooms() == default_num_bedrooms)
-        assert(home.get_num_bathrooms() == default_num_bathrooms)
-        assert(home.get_home_type() == default_home_type)
-        assert(home.get_air_conditioning() == default_air_conditioning)
-        assert(home.get_wash_dryer_in_home() == default_wash_dryer_in_home)
-        assert(home.get_dish_washer() == default_dish_washer)
-        assert(home.get_bath() == default_bath)
-        assert(home.get_lat() == default_lat)
-        assert(home.get_lon() == default_lon)
-        assert(home.get_parking_spot() == default_parking_spot)
-        assert(home.get_washer_dryer_in_building() == default_washer_dryer_in_building)
-        assert(home.get_elevator() == default_elevator)
-        assert(home.get_handicap_access() == default_handicap_access)
-        assert(home.get_pool_hot_tub() == default_pool_hot_tub)
-        assert(home.get_fitness_center() == default_fitness_center)
-        assert(home.get_storage_unit() == default_storage_unit)
+    @staticmethod
+    def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,
+                                         commute_distance, commute_type):
+        """
+        Creates a child zip code dictionary for the parent zip code object
+        :param parent_zip_code_dictionary: ZipCodeDictionaryParentModel -> An object instance
+        :param zip_code: String -> zip_code for the child dictionary
+        :param commute_time: Int -> The commute time for the child dictionary in seconds
+        :param commute_distance: Int -> The commute distance for the child dictionary in meters
+        :param commute_type: Commute Type Enum -> Enum for the different commute types
+        :return:
+        """
+        parent_zip_code_dictionary.zipcodedictionarychildmodel_set.create(
+            zip_code_child=zip_code,
+            commute_time_seconds_child=commute_time,
+            commute_distance_meters_child=commute_distance,
+            commute_type_child=commute_type,
+        )
+
+    def test_zip_code_dictionary_parent_working(self):
+        # Arrange/ Act
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+
+        # Assert
+        self.assertEqual(self.zip_code, parent_zip_code.zip_code)
+
+    def test_zip_code_dictionary_parent_all_working_child(self):
+        # Arrange/ Act / Assert // not really following methodology
+        # Adding zip code 1
+        try:
+            self.create_zip_code_dictionary(self.zip_code)
+        except IntegrityError:
+            self.assertTrue(False, "Integrity exception should not have been raised")
+
+        # Adding zip code 1
+        try:
+            self.create_zip_code_dictionary(self.zip_code1)
+        except IntegrityError:
+            self.assertTrue(False, "Integrity exception should not have been raised")
+
+        # Adding zip code 1
+        try:
+            self.create_zip_code_dictionary(self.zip_code2)
+        except IntegrityError:
+            self.assertTrue(False, "Integrity exception should not have been raised")
+
+        # All the adding should pass and finish successfully
+        self.assertTrue(True)
+
+    def test_zip_code_dictionary_parent_error_adding_duplicate_error_child(self):
+        # Arrange/ Act / Assert // not really following methodology
+        # Adding zip code 1
+        try:
+            self.create_zip_code_dictionary(self.zip_code)
+        except IntegrityError:
+            self.assertTrue(False, "Integrity exception should not have been raised")
+
+        # Act
+        try:
+            self.create_zip_code_dictionary(self.zip_code)
+            self.assertTrue(False, "Integrity exception should have been raised")
+        except IntegrityError:
+            self.assertTrue(True)
+
+    def test_zip_code_dictionary_parent_error_adding_duplicate_third_child(self):
+        # Arrange/ Act / Assert // not really following methodology
+
+        # Adding zip code 1
+        try:
+            self.create_zip_code_dictionary(self.zip_code)
+        except IntegrityError:
+            self.assertTrue(False, "Integrity exception should not have been raised")
+
+        # Adding zip code 2
+        try:
+            self.create_zip_code_dictionary(self.zip_code1)
+        except IntegrityError:
+            self.assertTrue(False, "Integrity exception should not have been raised")
+
+        # Adding zip code 3, should fail
+        try:
+            self.create_zip_code_dictionary(self.zip_code)
+            self.assertTrue(False, "Integrity exception should have been raised")
+        except IntegrityError:
+            self.assertTrue(True)
+
+    def test_zip_code_dictionary_child_two_child_with_different_commute_types(self):
+        # Arrange
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+
+        # Act
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code, self.commute_time,
+                                              self.commute_distance, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code, self.commute_time,
+                                              self.commute_distance, self.commute_type1)
+
+        # Assert
+        self.assertEqual(2, parent_zip_code.zipcodedictionarychildmodel_set.
+                         filter(zip_code_child=self.zip_code).count())
+        self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychildmodel_set
+                         .get(zip_code_child=self.zip_code, commute_type_child=self.commute_type).zip_code)
+        self.assertEqual(self.commute_type, parent_zip_code.zipcodedictionarychildmodel_set
+                         .get(zip_code_child=self.zip_code, commute_type_child=self.commute_type).commute_type)
+        self.assertEqual(self.commute_type1, parent_zip_code.zipcodedictionarychildmodel_set
+                         .get(zip_code_child=self.zip_code, commute_type_child=self.commute_type1).commute_type)
+
+    def test_zip_code_dictionary_child_cache_still_valid(self):
+        # Arrange
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+
+        # Act
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code, self.commute_time,
+                                              self.commute_distance, self.commute_type)
+
+        # Assert
+        self.assertTrue(parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code_cache_still_valid())
+
+    def test_zip_code_dictionary_child_cache_still_valid_on_day(self):
+        # Arrange
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+
+        # Act
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code, self.commute_time,
+                                              self.commute_distance, self.commute_type)
+
+        # Set the last_date_updated in the past to simulate an old zip_code entry
+        time = timezone.now().date() + timezone.timedelta(days=-ZIP_CODE_TIMEDELTA_VALUE)
+        child_zip_code = parent_zip_code.zipcodedictionarychildmodel_set.first()
+        child_zip_code.last_date_updated = time
+        child_zip_code.save()
+
+        # Assert
+        self.assertTrue(parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code_cache_still_valid())
+
+    def test_zip_code_dictionary_child_cache_not_still_valid(self):
+        # Arrange
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+
+        # Act
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code, self.commute_time,
+                                              self.commute_distance, self.commute_type)
+
+        # Set the last_date_updated in the past to simulate an old zip_code entry
+        time = timezone.now().date() + timezone.timedelta(days=-ZIP_CODE_TIMEDELTA_VALUE-1)
+        child_zip_code = parent_zip_code.zipcodedictionarychildmodel_set.first()
+        child_zip_code.last_date_updated = time
+        child_zip_code.save()
+
+        # Assert
+        self.assertFalse(parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code_cache_still_valid())
+
+    def test_zip_code_dictionary_child_name(self):
+        # Arrange
+        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
+
+        # Act
+        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code, self.commute_time,
+                                              self.commute_distance, self.commute_type)
+
+        # Assert
+        self.assertEqual(parent_zip_code, parent_zip_code.zipcodedictionarychildmodel_set.first().parent_zip_code)
+        self.assertEqual(self.zip_code, parent_zip_code.zipcodedictionarychildmodel_set.first().zip_code)
+        self.assertEqual(self.commute_time, parent_zip_code.zipcodedictionarychildmodel_set.first()
+                         .commute_time_seconds)
+        self.assertEqual(self.commute_time/60, parent_zip_code.zipcodedictionarychildmodel_set.first()
+                         .commute_time_minutes)
+        self.assertEqual(self.commute_distance, parent_zip_code.zipcodedictionarychildmodel_set.first()
+                         .commute_distance_meters)
+        self.assertEqual(self.commute_distance * 0.000621371, parent_zip_code.zipcodedictionarychildmodel_set.first()
+                         .commute_distance_miles)
+        self.assertEqual(self.commute_type, parent_zip_code.zipcodedictionarychildmodel_set.first().commute_type)

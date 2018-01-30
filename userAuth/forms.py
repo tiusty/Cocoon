@@ -3,13 +3,6 @@ from .models import MyUser, UserProfile
 from django import forms
 
 
-####################################################
-# Notes: The username is set as the current email address
-#
-#
-####################################################
-
-# If you don't do this you cannot use Bootstrap CSS
 class LoginUserForm(AuthenticationForm):
     username = forms.EmailField(
         label="Username",
@@ -40,6 +33,18 @@ class LoginUserForm(AuthenticationForm):
 
 
 class RegisterForm(UserCreationForm):
+
+    creation_key = forms.CharField(
+        required=True,
+        label="Please enter the key",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'key',
+            }
+        )
+    )
+
     email = forms.EmailField(
         required=True,
         label="Email Address",
@@ -132,6 +137,7 @@ class ProfileForm(forms.ModelForm):
             }
         )
     )
+
     class Meta:
         model = MyUser
         fields = ['email', 'first_name', 'last_name']

@@ -4,6 +4,10 @@ body {
   background-color: #eee;
 }
 
+.wrapper {
+   min-height: calc(100vh - 60px);
+}
+
 .form-register {
   max-width: 400px;
   padding: 15px;

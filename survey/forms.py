@@ -1,122 +1,21 @@
+# Django modules
 from django import forms
-from survey.models import RentingSurveyModel, BuyingSurveyModel, RentingDestinations, HomeType, default_rent_survey_name
 from django.forms import ModelForm
-from django.db.models import Q
+from django.utils import timezone
 
-import datetime
+# Survey models
+from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
+    PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
+from houseDatabase.models import HomeTypeModel, CommuteTypeModel
 
 # Python global configurations
-from Unicorn.settings.Global_Config import \
-    Max_Num_Bathrooms, Max_Text_Input_Length, \
-    Max_Num_Bedrooms, Hybrid_weighted_max
+from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
+    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
 
 
-class DestinationForm(ModelForm):
-    streetAddress = forms.CharField(
-        label="Destination",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter in a Destination',
-                'autocomplete': 'off',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
+class HomeInformationForm(ModelForm):
 
-    city = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the city',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
-
-    state = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the State',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
-
-    zip_code = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the Zip Code',
-            }),
-        max_length=Max_Text_Input_Length,
-    )
-
-    class Meta:
-        model = RentingDestinations
-        fields = ['streetAddress', 'city', 'state', 'zip_code']
-
-
-class RentSurveyBase(ModelForm):
-    # if name is left blank it sets a default name
-    min_price = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    max_price = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    price_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
-        label="Price Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    min_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    max_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    home_type = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
-        # Prevents other objects from being displayed as choices as a home type,
-        # If more hometypes are added then it needs to be added here to the survey
-        queryset=HomeType.objects.filter(Q(homeType__startswith="house")
-                                         | Q(homeType__startswith="Apartment")
-                                         | Q(homeType__startswith="condo")
-                                         | Q(homeType__startswith="Town House"))
-    )
-
-    commute_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
-        label="Commute Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    move_in_date_start = forms.DateField(
+    move_in_date_start_survey = forms.DateField(
         label="Start of move in range",
         widget=forms.DateInput(
             attrs={
@@ -126,7 +25,7 @@ class RentSurveyBase(ModelForm):
             format='%m/%d/%Y',
         ))
 
-    move_in_date_end = forms.DateField(
+    move_in_date_end_survey = forms.DateField(
         label="End of move in range",
         widget=forms.DateInput(
             attrs={
@@ -136,8 +35,8 @@ class RentSurveyBase(ModelForm):
             format='%m/%d/%Y',
         ))
 
-    num_bedrooms = forms.ChoiceField(
-        choices=[(x, x) for x in range(1, Max_Num_Bedrooms)],
+    num_bedrooms_survey = forms.ChoiceField(
+        choices=[(x, x) for x in range(1, MAX_NUM_BEDROOMS)],
         label="Number of Bedrooms",
         widget=forms.Select(
             attrs={
@@ -146,11 +45,50 @@ class RentSurveyBase(ModelForm):
         )
     )
 
-    # Adding validation constraints to form
-    # Need to make sure the move in day is properly set
-    # Aka the start date is before the end date
+    max_bathrooms_survey = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_bathrooms_survey = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    home_type_survey = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control',
+            }),
+        queryset=HomeTypeModel.objects.all()
+    )
+
+    @property
+    def move_in_date_start(self):
+        return self.move_in_date_start_survey
+
+    @property
+    def move_in_date_end(self):
+        return self.move_in_date_end_survey
+
+    @property
+    def num_bedrooms(self):
+        return self.num_bedrooms_survey
+
+    @property
+    def min_bathrooms(self):
+        return self.min_bathrooms_survey
+
+    @property
+    def max_bathrooms(self):
+        return self.max_bathrooms_survey
+
     def is_valid(self):
-        valid = super(RentSurveyBase, self).is_valid()
+        valid = super(HomeInformationForm, self).is_valid()
 
         if not valid:
             return valid
@@ -160,59 +98,144 @@ class RentSurveyBase(ModelForm):
         # will cause a key error
         current_form = self.cleaned_data.copy()
 
-        # Validate all the form fields
-
-        # Makes sure the start date is either the present day or in the future
-        if current_form['move_in_date_start'] < datetime.date.today():
-            self.add_error('move_in_date_start', "Start Day should not be in the past")
+        # Validate move-in field
+        if current_form['move_in_date_start_survey'] < timezone.now().date():
+            self.add_error('move_in_date_start_survey', "Start Day should not be in the past")
             valid = False
 
         # Makes sure that the End day is after the start day
-        if current_form['move_in_date_start'] > current_form['move_in_date_end']:
-            self.add_error('move_in_date_end', "End date should not be before the start date")
+        if current_form['move_in_date_start_survey'] > current_form['move_in_date_end_survey']:
+            self.add_error('move_in_date_end_survey', "End date should not be before the start date")
             valid = False
 
-        # Make sure that the minimum number of bathrooms is not less then 0
-        if current_form['min_bathrooms'] < 0:
-            self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
-            valid = False
-
-        # make sure that the max number of bathrooms is not greater than the max specified
-        if current_form['max_bathrooms'] > Max_Num_Bathrooms:
-            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(Max_Num_Bathrooms))
-            valid = False
-
-        # Make sure the bedrooms is at least 1
-        # With the choice fields, the field needs to be casted as an int since it
-        # Is stored as a string in cleaned_data
-        if int(current_form['num_bedrooms']) < 1:
-            self.add_error('num_bedrooms', "There can't be less than 1 bedroom")
+        if int(current_form['num_bedrooms_survey']) < 1:
+            self.add_error('num_bedrooms_survey', "There can't be less than 1 bedroom")
             valid = False
 
         # Make sure the bedrooms are not more than the max allowed
-        if int(current_form['num_bedrooms']) > Max_Num_Bedrooms:
-            self.add_error('num_bedrooms', "There can't be more than " + str(Max_Num_Bedrooms))
+        if int(current_form['num_bedrooms_survey']) > MAX_NUM_BEDROOMS:
+            self.add_error('num_bedrooms_survey', "There can't be more than " + str(MAX_NUM_BEDROOMS))
             valid = False
 
-        # Make sure
-        if int(current_form['commute_weight']) > Hybrid_weighted_max:
-            self.add_error('commuteWeight', "Commute weight cant' be greater than " + str(Hybrid_weighted_max))
+        # make sure that the max number of bathrooms is not greater than the max specified
+        if current_form['max_bathrooms_survey'] > MAX_NUM_BATHROOMS:
+            self.add_error('max_bathrooms_survey', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
             valid = False
 
-        if int(current_form['commute_weight']) < 0:
-            self.add_error('commuteWeight', "Commute weight cant' be less than 0")
+        if current_form['min_bathrooms_survey'] < 0:
+            self.add_error('min_bathrooms_survey', "You can't have less than 0 bathrooms")
             valid = False
 
         return valid
 
+    @property
+    def move_in_data_start(self):
+        return self.move_in_date_start_survey
+
+    class Meta:
+        model = HomeInformationModel
+        fields = '__all__'
+
+
+class CommuteInformationForm(ModelForm):
+
+    max_commute_survey = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_commute_survey = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    commute_weight_survey = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
+        label="Commute Weight",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    # commute_type_survey = forms.ChoiceField(
+    #     choices=COMMUTE_TYPES,
+    #     label="Commute Type",
+    #     widget=forms.Select(
+    #         attrs={
+    #             'class': 'form-control',
+    #         }
+    #     )
+    # )
+    commute_type_survey = forms.ModelChoiceField(
+        queryset=CommuteTypeModel.objects.all(),
+        label="Commute Type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+
+    @property
+    def commute_type(self):
+        return self.commute_type_survey
+
+    class Meta:
+        model = CommuteInformationModel
+        fields = '__all__'
+
+
+class PriceInformationForm(ModelForm):
+
+    max_price_survey = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_price_survey = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    price_weight_survey = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
+        label="Price Weight",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    @property
+    def min_price(self):
+        return self.min_price_survey
+
+    @property
+    def max_price(self):
+        return self.max_price_survey
+
+    class Meta:
+        model = PriceInformationModel
+        fields = '__all__'
+
 
 class InteriorAmenitiesForm(ModelForm):
     """
-    Class stores all the form fields in regards to the interior Admenities
+    Class stores all the form fields in regards to the interior Amenities
     """
 
-    air_conditioning = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    air_conditioning_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Air conditioning",
         widget=forms.Select(
             attrs={
@@ -221,8 +244,9 @@ class InteriorAmenitiesForm(ModelForm):
         )
     )
 
-    wash_dryer_in_home = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    interior_washer_dryer_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Wash + Dryer in Home",
         widget=forms.Select(
             attrs={
@@ -231,8 +255,9 @@ class InteriorAmenitiesForm(ModelForm):
         )
     )
 
-    dish_washer = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    dish_washer_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Dish Washer",
         widget=forms.Select(
             attrs={
@@ -241,8 +266,9 @@ class InteriorAmenitiesForm(ModelForm):
         )
     )
 
-    bath = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    bath_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Bath",
         widget=forms.Select(
             attrs={
@@ -251,27 +277,18 @@ class InteriorAmenitiesForm(ModelForm):
         )
     )
 
-    max_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    min_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
+    class Meta:
+        model = InteriorAmenitiesModel
+        fields = '__all__'
 
 
-class BuildingExteriorAmenitiesForm(ModelForm):
+class ExteriorAmenitiesForm(ModelForm):
     """
-    Class stores all the form fields for the BuildingExteriorAmenities Model
+    Class stores all the form fields for the BuildingExteriorAmenitiesModel Model
     """
-    parking_spot = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    parking_spot_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Parking Spot",
         widget=forms.Select(
             attrs={
@@ -280,8 +297,9 @@ class BuildingExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    washer_dryer_in_building = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    building_washer_dryer_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Washer/Dryer in Building",
         widget=forms.Select(
             attrs={
@@ -290,8 +308,9 @@ class BuildingExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    elevator = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    elevator_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Elevator",
         widget=forms.Select(
             attrs={
@@ -300,8 +319,9 @@ class BuildingExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    handicap_access = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    handicap_access_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Handicap Access",
         widget=forms.Select(
             attrs={
@@ -310,8 +330,9 @@ class BuildingExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    pool_hot_tub = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    pool_hot_tub_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Pool/Hot tub",
         widget=forms.Select(
             attrs={
@@ -320,8 +341,9 @@ class BuildingExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    fitness_center = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    fitness_center_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Fitness Center",
         widget=forms.Select(
             attrs={
@@ -330,8 +352,9 @@ class BuildingExteriorAmenitiesForm(ModelForm):
         )
     )
 
-    storage_unit = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, Hybrid_weighted_max)],
+    storage_unit_survey = forms.ChoiceField(
+        choices=HYBRID_WEIGHT_CHOICES,
+        initial=0,
         label="Storage Unit",
         widget=forms.Select(
             attrs={
@@ -340,39 +363,83 @@ class BuildingExteriorAmenitiesForm(ModelForm):
         )
     )
 
+    class Meta:
+        model = ExteriorAmenitiesModel
+        fields = '__all__'
 
-class RentSurvey(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
+
+class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
+                     CommuteInformationForm, HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ['userProf', 'survey_type', 'name', ]
+        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", ]
 
 
-class RentSurveyMini(RentSurveyBase, InteriorAmenitiesForm, BuildingExteriorAmenitiesForm):
+class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
+                         CommuteInformationForm, HomeInformationForm):
     """
-    RentSurveyMini is the survey that is on the survey results page and allows the user to create
-    quick changes. This should be mostly a subset of the RentSurvey
+    RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
+    quick changes. This should be mostly a subset of the RentSurveyForm
     """
-    name = forms.CharField(
+    name_survey = forms.CharField(
         label="Survey Name",
-        initial=default_rent_survey_name,
+        initial=DEFAULT_RENT_SURVEY_NAME,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter the name of the survey',
             }),
-        max_length=Max_Text_Input_Length,
+        max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
     class Meta:
         model = RentingSurveyModel
-        exclude = ['userProf', 'survey_type']
+        exclude = ["user_profile_survey", 'survey_type_survey']
 
 
-class BuySurvey(ModelForm):
+class DestinationForm(ModelForm):
+    street_address_destination = forms.CharField(
+        label="Destination",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter in a Destination',
+                'autocomplete': 'off',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    city_destination = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the city',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    state_destination = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the State',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    zip_code_destination = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the Zip Code',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
     class Meta:
-        model = BuyingSurveyModel
-        fields = ['maxPrice', ]
+        model = RentingDestinationsModel
+        exclude = ['survey_destinations']

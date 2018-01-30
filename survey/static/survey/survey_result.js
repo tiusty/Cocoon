@@ -12,4 +12,12 @@ function selectAddress(currNum) {
     addChosenMarker(address)
 }
 
+$(document).ready(function () {
+    $(window).resize(function () {
+        $('.sidenav').css("height", $(document).height() - $('.navbar').height() - $('.footer').height());
+    })
 
+    $(window).scroll(function () {
+        $('.sidenav').css("height", $(document).height() - $('.navbar').height() - $('.footer').height());
+    })
+})

@@ -7,195 +7,201 @@ Global variables are listed below
 {% endcomment %}
 
 {% block head %}
-    {{ block.super }}
-    <!-- JQuery UI style sheet, mostly used for slider ui -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  {{ block.super }}
+  <!-- JQuery UI style sheet, mostly used for slider ui -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-    <!-- Style sheets for template page -->
-    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">
-    <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
-    <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
-    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
-    <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
+  <!-- Style sheets for template page -->
+  <link href="{% static 'Unicorn/homes/css/tiles.css' %}" rel="stylesheet">
+  <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
+  <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
+  <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
+  <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block nav-survey %}
-    <li class="active"><a>Survey</a></li>{% endblock %}
+  <li class="active"><a>Survey</a></li>{% endblock %}
 
 {% block container_type %}container-fluid{% endblock %}
 {% block content %}
-    {% comment %}
+
+  {% comment %}
     <h3>Note all the homes currently have a move in day of Feburary if you are wondering why nothing shows up</h3>
     {% endcomment %}
-    {% comment %}
+  {% comment %}
         Modal assumes it is being called within a for loop
     {% endcomment %}
-    {% for houseStruct in houseList %}
-        <!-- Modal -->
-        {% with house=houseStruct.house %}
-            {% include "homes/homeModal.html" with modalId="myModal" %}
-        {% endwith %}
-    {% endfor %}
-    <div class="row" id="row-main">
-        <div id="sidebarSurvey" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
-                    {{ form.non_field_errors }}
-                    {{ form.errors }}
-                    {% csrf_token %}
-                    <div class="form-group step_div">
-                        <div class="form-group">
-                            {{ form.name.label_tag }}
-                            {{ form.name }}
-                            {{ form.name.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.move_in_date_start.label_tag }}
-                            {{ form.move_in_date_start }}
-                            {{ form.move_in_date_start.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.move_in_date_end.label_tag }}
-                            {{ form.move_in_date_end }}
-                            {{ form.move_in_date_end.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.num_bedrooms.label_tag }}
-                            {{ form.num_bedrooms }}
-                            {{ form.num_bedrooms.errors }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.home_type.label_tag }}
-                            {{ form.home_type }}
-                            {{ form.home_type.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="amountCost">Cost Per Month:</label>
-                            <input type="text" id="amountCost" name="amountCost" readonly
-                                   style="border:0; color:#f6931f; font-weight:bold;">
-                            <div id="cost"></div>
-                            {{ form.min_price }}
-                            {{ form.max_price }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.price_weight.label_tag }}
-                            {{ form.price_weight }}
-                            {{ form.price_weight.errors }}
-                        </div>
-                        <br>
-                        <div class="form-group step_div">
-                            <div class="form-group">
-                                <label for="amountCommute">Commute:</label>
-                                <input type="text" id="amountCommute" name="amountCommute" readonly
-                                       style="border:0; color:#f6931f; font-weight:bold;">
-                                <div id="commute"></div>
-                                {{ form.min_commute }}
-                                {{ form.max_commute }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.commute_weight.label_tag }}
-                                {{ form.commute_weight }}
-                                {{ form.commute_weight.errors }}
-                            </div>
-                        </div>
-                        <br>
-                    </div>
-                    <div class="form-group">
-                        <div class="panel-group" id="accordion">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-                                            Interior Amenities</a>
-                                    </h4>
-                                </div>
-                                <div id="collapse1" class="panel-collapse collapse in">
-                                    <div class="panel-body">
-                                        <p>
-                                            {{ form.air_conditioning.label_tag }}
-                                            {{ form.air_conditioning }}
-                                            {{ form.air_conditioning.errors }}
-                                        </p>
+  {% for houseStruct in houseList %}
+    <!-- Modal -->
+    {% with house=houseStruct.house %}
+      {% include "homes/homeModal.html" with modalId="myModal" %}
+    {% endwith %}
+  {% endfor %}
+  <div class="row" id="row-main">
+    <div id="sidebarSurvey" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
+        {{ form.non_field_errors }}
+        {{ form.errors }}
+        {% csrf_token %}
+        <div class="form-group step_div">
+          <div class="form-group">
+            {{ form.name_survey.label_tag }}
+            {{ form.name_survey }}
+            {{ form.name_survey.errors }}
+          </div>
+          <div class="form-group">
+            {{ form.move_in_date_start_survey.label_tag }}
+            {{ form.move_in_date_start_survey }}
+            {{ form.move_in_date_start_survey.errors }}
+          </div>
+          <div class="form-group">
+            {{ form.move_in_date_end_survey.label_tag }}
+            {{ form.move_in_date_end_survey }}
+            {{ form.move_in_date_end_survey.errors }}
+          </div>
+          <div class="form-group">
+            {{ form.num_bedrooms_survey.label_tag }}
+            {{ form.num_bedrooms_survey }}
+            {{ form.num_bedrooms_survey.errors }}
+          </div>
+          <div class="form-group">
+            {{ form.home_type_survey.label_tag }}
+            {{ form.home_type_survey }}
+            {{ form.home_type_survey.errors }}
+          </div>
+          <div class="form-group">
+            <label for="amountCost">Cost Per Month:</label>
+            <input type="text" id="amountCost" name="amountCost" readonly
+                   style="border:0; color:#f6931f; font-weight:bold;">
+            <div id="cost"></div>
+            {{ form.min_price_survey }}
+            {{ form.max_price_survey }}
+          </div>
+          <div class="form-group">
+            {{ form.price_weight_survey.label_tag }}
+            {{ form.price_weight_survey }}
+            {{ form.price_weight_survey.errors }}
+          </div>
+          <br>
+          <div class="form-group step_div">
+            <div class="form-group">
+              <label for="amountCommute">Commute:</label>
+              <input type="text" id="amountCommute" name="amountCommute" readonly
+                     style="border:0; color:#f6931f; font-weight:bold;">
+              <div id="commute"></div>
+              {{ form.min_commute_survey }}
+              {{ form.max_commute_survey }}
+            </div>
+            <div class="form-group">
+              {{ form.commute_weight_survey.label_tag }}
+              {{ form.commute_weight_survey }}
+              {{ form.commute_weight_survey.errors }}
+            </div>
+            <div class="form-group">
+              {{ form.commute_type_survey.label_tag }}
+              {{ form.commute_type_survey }}
+              {{ form.commute_type_survey.errors }}
+            </div>
+          </div>
+          <br>
+        </div>
+        <div class="form-group">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                    Interior Amenities</a>
+                </h4>
+              </div>
+              <div id="collapse1" class="panel-collapse collapse in">
+                <div class="panel-body">
+                  <p>
+                    {{ form.air_conditioning_survey.label_tag }}
+                    {{ form.air_conditioning_survey }}
+                    {{ form.air_conditioning_survey.errors }}
+                  </p>
 
-                                        <p>
-                                            {{ form.wash_dryer_in_home.label_tag }}
-                                            {{ form.wash_dryer_in_home }}
-                                            {{ form.wash_dryer_in_home.errors }}
-                                        </p>
+                  <p>
+                    {{ form.interior_washer_dryer_survey.label_tag }}
+                    {{ form.interior_washer_dryer_survey }}
+                    {{ form.interior_washer_dryer_survey.errors }}
+                  </p>
 
-                                        <p>
-                                            {{ form.dish_washer.label_tag }}
-                                            {{ form.dish_washer }}
-                                            {{ form.dish_washer.errors }}
-                                        </p>
+                  <p>
+                    {{ form.dish_washer_survey.label_tag }}
+                    {{ form.dish_washer_survey }}
+                    {{ form.dish_washer_survey.errors }}
+                  </p>
 
-                                        <p>
-                                            {{ form.bath.label_tag }}
-                                            {{ form.bath }}
-                                            {{ form.bath.errors }}
-                                        </p>
+                  <p>
+                    {{ form.bath_survey.label_tag }}
+                    {{ form.bath_survey }}
+                    {{ form.bath_survey.errors }}
+                  </p>
 
-                                        <p>
-                                            <label for="amountBathrooms"># Bathrooms:</label>
-                                            <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
-                                                   style="border:0; color:#f6931f; font-weight:bold;">
-                                        <div id="bathrooms"></div>
-                                        {{ form.min_bathrooms }}
-                                        {{ form.max_bathrooms }}
-                                        {{ form.min_bathrooms.errors }}
-                                        {{ form.max_bathrooms.errors }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-                                            Building/Exterior Amentities</a>
-                                    </h4>
-                                </div>
-                                <div id="collapse2" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <p>
-                                            {{ form.parking_spot.label_tag }}
-                                            {{ form.parking_spot }}
-                                            {{ form.parking_spot.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.washer_dryer_in_building.label_tag }}
-                                            {{ form.washer_dryer_in_building }}
-                                            {{ form.washer_dryer_in_building.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.elevator.label_tag }}
-                                            {{ form.elevator }}
-                                            {{ form.elevator.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.handicap_access.label_tag }}
-                                            {{ form.handicap_access }}
-                                            {{ form.handicap_access.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.pool_hot_tub.label_tag }}
-                                            {{ form.pool_hot_tub }}
-                                            {{ form.pool_hot_tub.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.fitness_center.label_tag }}
-                                            {{ form.fitness_center }}
-                                            {{ form.fitness_center.errors }}
-                                        </p>
-                                        <p>
-                                            {{ form.storage_unit.label_tag }}
-                                            {{ form.storage_unit }}
-                                            {{ form.storage_unit.errors }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            {% comment %}
+                  <p>
+                    <label for="amountBathrooms"># Bathrooms:</label>
+                    <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
+                           style="border:0; color:#f6931f; font-weight:bold;">
+                  <div id="bathrooms"></div>
+                  {{ form.min_bathrooms_survey }}
+                  {{ form.max_bathrooms_survey }}
+                  {{ form.min_bathrooms_survey.errors }}
+                  {{ form.max_bathrooms_survey.errors }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                    Building/Exterior Amentities</a>
+                </h4>
+              </div>
+              <div id="collapse2" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>
+                    {{ form.parking_spot_survey.label_tag }}
+                    {{ form.parking_spot_survey }}
+                    {{ form.parking_spot_survey.errors }}
+                  </p>
+                  <p>
+                    {{ form.building_washer_dryer_survey.label_tag }}
+                    {{ form.building_washer_dryer_survey }}
+                    {{ form.building_washer_dryer_survey.errors }}
+                  </p>
+                  <p>
+                    {{ form.elevator_survey.label_tag }}
+                    {{ form.elevator_survey }}
+                    {{ form.elevator_survey.errors }}
+                  </p>
+                  <p>
+                    {{ form.handicap_access_survey.label_tag }}
+                    {{ form.handicap_access_survey }}
+                    {{ form.handicap_access_survey.errors }}
+                  </p>
+                  <p>
+                    {{ form.pool_hot_tub_survey.label_tag }}
+                    {{ form.pool_hot_tub_survey }}
+                    {{ form.pool_hot_tub_survey.errors }}
+                  </p>
+                  <p>
+                    {{ form.fitness_center_survey.label_tag }}
+                    {{ form.fitness_center_survey }}
+                    {{ form.fitness_center_survey.errors }}
+                  </p>
+                  <p>
+                    {{ form.storage_unit_survey.label_tag }}
+                    {{ form.storage_unit_survey }}
+                    {{ form.storage_unit_survey.errors }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            {% comment %}
                                 Not currently needed so commenting out
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -211,161 +217,213 @@ Global variables are listed below
                                 </div>
 
                             {% endcomment %}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
-                    </div>
-                </form>
+          </div>
         </div>
-        <div class="col-sm-12 main" id="contentSurvey">
-            {% if error_message %}
-                <div class="row" style="text-align:center">
-                    <div style="color:red">
-                        <p><strong>
-                            {% for error in error_message %}
-                                {{ error }}
-                            {% endfor %}
-                        </strong></p>
-                    </div>
-                </div>
-            {% endif %}
-
-            <div class="row">
-                <div class="col-sm-6">
-                    <h1 class="page-header">
-                        <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
-                    </h1>
-                    <div id="map"></div>
-
-                </div>
-                <div class="col-sm-6">
-                    <h1 class="page-header" style="text-align: center">Home List</h1>
-                    <div style="max-height:750px;overflow-y:auto;">
-                        <table class="table table-striped table-hover table-responsive">
-                            <thead>
-                            <tr>
-                                <th>Toggle</th>
-                                <th>Rank</th>
-                                <th>Display</th>
-                                <th>House Address</th>
-                                <th>Commute Time ({{ commuteMode }})</th>
-                                <th>Price</th>
-                                <th>Home Type</th>
-                                <th>Score</th>
-                                <th>Favorite</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for home in houseList %}
-                                <tr>
-                                    <td style="vertical-align:middle">
-                                        <h3 style="margin-top: 10px;">
-                                    <span style="cursor:pointer" data-toggle="modal" class="accordion-toggle glyphicon glyphicon-plus"
-                                          data-target="#myModal{{ forloop.counter }}" style="padding-right:1em"></span>
-                                        </h3>
-                                    </td>
-                                    <td><h3 style="margin-top: 10px;">
-                                        {% if home.eliminated == False %}{{ forloop.counter }} {% else %}
-                                            Deleted {% endif %}</h3>
-                                    </td>
-                                    <td style="vertical-align:middle">
-                                        <button type="button" class="btn btn-primary btn-sm"
-                                                onclick="selectAddress({{ forloop.counter }})">Select
-                                        </button>
-                                    </td>
-                                    <!-- id is used for selecting pin on google maps -->
-                                    <td id="address{{ forloop.counter }}"
-                                        style="vertical-align:middle"> {{ home.house.get_address }}</td>
-                                    <td style="vertical-align:middle"> {{ home.get_commute_times }}</td>
-                                    <td style="vertical-align:middle"> {{ home.house.get_price_str }}</td>
-                                    <td style="vertical-align:middle"> {{ home.house.get_home_type }}</td>
-                                    <td style="vertical-align:middle"> {{ home.get_final_score }}</td>
-                                    <td>
-                                        <h3 style="margin-top: 10px;"><span id="glyph{{ home.house.id }}"
-                                                                            onclick="set_favorite({{ home.house.id }}, '{% url 'survey:setFavorite' %}');"
-                                                {% if home.house in user_favorite_houses %}
-                                                                            class="glyphicon glyphicon-heart"
-                                                                            style="cursor:pointer"
-                                                {% else %}
-                                                                            class="glyphicon glyphicon-heart-empty"
-                                                                            style="cursor:pointer"
-                                                {% endif %}
-                                                                            aria-hidden="true"></span>
-                                        </h3>
-                                    </td>
-                                </tr>
-                            {% empty %}
-
-                                <!-- TAKES THIS OUT!!!! -->
-                                <tr>
-                                    <td>Congratulations!!! You are homeless :)</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+          <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
         </div>
+      </form>
     </div>
+    <div class="nopadding-row row main" id="contentSurvey">
+      {% if error_message %}
+        <div class="col-sm-12" style="text-align:center">
+          <div style="color:red">
+            <p><strong>
+              {% for error in error_message %}
+                {{ error }}
+              {% endfor %}
+            </strong></p>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="nopadding-row row">
+        <div class="nopadding col-sm-6">
+          <h1 class="page-header">
+            <span style="margin-left:10px;font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
+          </h1>
+          <div class="map_wrapper">
+            <div id="map"></div>
+          </div>
+
+        </div>
+
+        {# Beginning of the new tile survey result list #}
+        <div class="resultTiles col-sm-6">
+          <h1 class="page-header">Home List</h1>
+
+          <div class="tileTable">
+            <script>
+
+                // initializing the pin object
+                function locationPin(lat, lon, id, score, fillColor) {
+                    this.latitude = lat;
+                    this.longitude = lon;
+                    this.pinID = id;
+                    this.label = score;
+                    this.color = fillColor;
+                }
+
+                function colorFromScore(score) {
+                    if (score > 86) {
+                        return 'green';
+                    } else if (score > 79) {
+                        return '#CDDC39';
+                    } else if (score > 69) {
+                        return '#FFC107';
+                    } else if (score > 59) {
+                        return '#FF6D00';
+                    } else {
+                        return '#DD2C00';
+                    }
+                }
+
+                var myLocations = [];
+
+            </script>
+
+            {% for home_score in houseList %}
+
+              {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score%}
+
+              <script>
+
+                  var lat = {{ home_score.home.latitude|safe }};
+                  var lon = {{ home_score.home.longitude|safe }};
+                  var id = {{ forloop.counter }};
+                  var score = {{ home_score.user_friendly_score }};
+                  var color = colorFromScore({{ home_score.user_friendly_score }});
+
+                  console.log(colorFromScore({{ home_score.user_friendly_score }}));
+
+                  // associate a pin with each result
+
+                  myLocations.push(new locationPin(lat, lon, id, score.toString(), color.toString()));
+
+              </script>
+
+            {% endfor %}
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block endScripts %}
-    {{ block.super }}
+  {{ block.super }}
 
-    {% comment %}Variables for google map generating with markers and for sliders {% endcomment %}
-    <script>
-        {% comment endScritps %}
-        // Deprecating computing commute time and distance in favor of doing in on the server side
-        // Going to keep the portions that create the markers on the map
-        {% endcomment %}
-        var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
-        var myDestinations = [{% for dest in houseList %}[{{ dest.house.get_lat|safe }}, {{ dest.house.get_lon|safe }}],{% endfor %}];
-        // Manipulated by survey_result.js in selectAddress
-        //var myDestination = "{{ houseList.0.address }}";
-        // Manipulated by costSliderResults.js
-        costSliderMax = {{ survey.get_max_price }};
-        costSliderMin = {{ survey.get_min_price }};
-        commuteSliderMin = {{ survey.get_min_commute }};
-        commuteSliderMax = {{ survey.get_max_commute }};
-        bathroomsMin = {{ survey.get_min_bathrooms }};
-        bathroomsMax = {{ survey.get_max_bathrooms }};
-    </script>
+  {% comment %}Variables for google map generating with markers and for sliders {% endcomment %}
+  <script>
+      {% comment endScritps %}
+      // Deprecating computing commute time and distance in favor of doing in on the server side
+      // Going to keep the portions that create the markers on the map
+      {% endcomment %}
+      var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
+      var myDestinations = [{% for dest in houseList %}[{{ dest.house.latitude|safe }}, {{ dest.house.longitude|safe }}
+          ],{% endfor %}];
+      // Manipulated by survey_result.js in selectAddress
+      //var myDestination = "{{ houseList.0.address }}";
+      // Manipulated by costSliderResults.js
+      costSliderMax = {{ form.max_price_survey.value }};
+      costSliderMin = {{ form.min_price_survey.value }};
+      commuteSliderMin = {{ form.min_commute_survey.value }};
+      commuteSliderMax = {{ form.max_commute_survey.value }};
+      bathroomsMin = {{ form.min_bathrooms_survey.value }};
+      bathroomsMax = {{ form.max_bathrooms_survey.value }};
+  </script>
 
-    <!-- Custom Javascript -->
-    {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
-    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
-    {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
-    <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
-    {% comment %}This script adds the set_favorite function which allows the user to toggle a home in their favorites list{% endcomment %}
-    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
-    <script src="{% static 'survey/costSlider.js' %}"></script>
-    <script src="{% static 'survey/commuteSlider.js' %}"></script>
-    <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
+  {#    <script src="{% static 'homePage/carousel.js' %}"></script>#}
+  <script src="{% static 'survey/tileCarousel.js' %}"></script>
+  <!-- Custom Javascript -->
+  {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
+  <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+  {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
+  <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+  {% comment %}This script adds the set_favorite function which allows the user to toggle a home in their favorites list{% endcomment %}
+  <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
+  <script src="{% static 'survey/costSlider.js' %}"></script>
+  <script src="{% static 'survey/commuteSlider.js' %}"></script>
+  <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
 
-    <!-- Loading scripts at the end to increase loading times -->
-    <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
-    <script src="{% static 'survey/survey_result.js' %}"></script>
-    <script src="{% static 'survey/addMarkers.js' %}"></script>
-    <script src="{% static 'survey/addGoogleMap.js' %}"></script>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
+  <!-- Loading scripts at the end to increase loading times -->
+  <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
+  <script src="{% static 'survey/tileInteraction.js' %}"></script>
+  <script src="{% static 'survey/survey_result.js' %}"></script>
+  <script src="{% static 'survey/addMarkers.js' %}"></script>
+  <script src="{% static 'survey/addGoogleMap.js' %}"></script>
+  <script src="{% static 'survey/expandTile.js' %}"></script>
 
-    <!-- JQuery UI for sliders -->
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDocEM2aNmd47atCkIpw2zXOBShUhF3PwE &callback=initMap"></script>
 
-    <script>
-        /* Set the width of the side navigation to 250px */
-        function openNav() {
-            document.getElementById("sidebarSurvey").classList.add("openNav");
-            document.getElementById("sidebarSurvey").style.width = "30%";
+{#   <script#}
+{#      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4N8QDafqOvYtrCux4fLHIwGEDqFCwo_w &callback=initMap"></script>#}
+
+
+
+  <!-- JQuery UI for sliders -->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <script src="{% static 'survey/markerclusterer.js' %}"></script>
+
+  <script>
+
+    /* Set the width of the side navigation to 250px */
+    function openNav() {
+        document.getElementById("sidebarSurvey").classList.add("openNav");
+        $('.sidenav').css("height", $(document).height() - $('.navbar').height() - $('.footer').height());
+
+        if ($(window).width() < 768) {
+            document.getElementById("sidebarSurvey").style.width = "100%";
+        } else if ($(window).width() < 900) {
+            document.getElementById("sidebarSurvey").style.width = "60%";
+        } else {
+            document.getElementById("sidebarSurvey").style.width = "40%";
         }
+    }
 
-        /* Set the width of the side navigation to 0 */
-        function closeNav() {
-            document.getElementById("sidebarSurvey").style.width = "0";
-            document.getElementById("sidebarSurvey").classList.remove("openNav")
+    $(window).resize(function () {
+        if ($(this).width() <= 768) {
+
+            if ($('.openNav').length) {
+                document.getElementById("sidebarSurvey").style.width = "100%";
+
+            }
+
+
+        } else if ($(window).width() < 900) {
+
+            if ($('.openNav').length) {
+                document.getElementById("sidebarSurvey").style.width = "60%";
+
+            }
+
+        } else {
+
+            if ($('.openNav').length) {
+                document.getElementById("sidebarSurvey").style.width = "40%";
+
+            }
+
         }
-    </script>
+    })
+
+
+    /* Set the width of the side navigation to 0 */
+    function closeNav() {
+        document.getElementById("sidebarSurvey").style.width = "0";
+        document.getElementById("sidebarSurvey").classList.remove("openNav")
+    }
+
+    var markerCluster = new MarkerClusterer(map, markers, {
+        imagePath: "{% static 'survey/images/m' %}"
+    });
+
+  </script>
+
+
+
 {% endblock %}
