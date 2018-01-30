@@ -258,7 +258,7 @@ class TestCommuteInformationForm(TestCase):
         self.max_commute = 0
         self.min_commute = 0
         self.commute_weight = 0
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
 
     def tests_commute_information_valid(self):
         # Arrange
@@ -697,7 +697,7 @@ class TestRentSurveyForm(TestCase):
         self.max_commute = 0
         self.min_commute = 0
         self.commute_weight = 0
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
 
         self.max_price = 0
         self.min_price = 0

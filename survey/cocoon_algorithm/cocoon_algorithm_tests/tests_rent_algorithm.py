@@ -17,7 +17,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
@@ -126,7 +126,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 class TestRentAlgorithmJustPrice(TestCase):
 
     def setUp(self):
-        CommuteTypeModel.objects.create(commute_type_field='driving')
+        CommuteTypeModel.objects.create(commute_type_field='Driving')
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(price_home=1000, home_type_home=self.home_type))
         self.home1 = HomeScore(RentDatabaseModel.objects.create(price_home=1500, home_type_home=self.home_type))
@@ -360,7 +360,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
@@ -509,7 +509,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
@@ -657,7 +657,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 class TestRentAlgorithmJustSortHomeByScore(TestCase):
 
     def setUp(self):
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
@@ -740,7 +740,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
         # Create possible home types
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home_type1 = HomeTypeModel.objects.create(home_type_survey='Apartment')
@@ -841,7 +841,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         self.zip_code2 = "04240" # Lewiston, ME zipcode
         self.commute_time = 6000
         self.commute_distance = 700
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
         self.home.home.zip_code_home = self.zip_code
         self.home1.home.zip_code_home = self.zip_code1
         self.home2.home.zip_code_home = self.zip_code2
@@ -1058,7 +1058,7 @@ class TestRetrieveApproximateCommutes(TestCase):
 class TestRetrieveExactCommutes(TestCase):
 
     def setUp(self):
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
 
         # setting up full home
