@@ -98,6 +98,7 @@ class MlspinRequester:
                     lng = latlng[1]
 
                 new_listing = RentDatabaseModel(home_type_home=(HomeTypeModel.objects.get(home_type_survey="Apartment")))
+                new_listing.currently_available = True
                 new_listing.latitude_home = lat
                 new_listing.longitude_home = lng
                 new_listing.street_address_home = address

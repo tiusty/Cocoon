@@ -237,6 +237,8 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     """
     apartment_number_home = models.CharField(max_length=200)
     home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
+    # [Issue-57] Currently move_in_day has no effect, instead the is currently_available is used, later the move
+    # in day may become useful again
     move_in_day_home = models.DateField(default=timezone.now)
     currently_available_home = models.BooleanField(default=False)
 
@@ -257,7 +259,15 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
 
     @property
     def currently_available(self):
-        return self.currently_available
+        return self.currently_available_home
+
+    @currently_available.setter
+    def currently_available(self, is_available):
+        """
+        Sets whehter or not the home is currently available
+        :param is_available: (Boolean) True if the home is available, false otherwise
+        """
+        self.currently_available_home = is_available
 
 
 def house_directory_path(instance, filename):

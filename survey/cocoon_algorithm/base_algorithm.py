@@ -104,9 +104,10 @@ class CocoonAlgorithm(object):
             query_home_type |= item
 
         # Query the database
+        # [Issue-57] Right now only homes that are currently available will be used. The move in day has no effect.
         return RentDatabaseModel.objects \
             .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(query_home_type) \
-            .filter(move_in_day_home__range=(user_survey.move_in_date_start, user_survey.move_in_date_end)) \
+            .filter(currently_available_home=True) \
             .filter(num_bedrooms_home=user_survey.num_bedrooms) \
             .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
