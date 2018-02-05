@@ -12,7 +12,7 @@ class HousePhotoUrlInLine(admin.StackedInline):
 class HouseAdmin(admin.ModelAdmin):
     fieldsets = [
         ('House Info',
-         {'fields': ['street_address_home', 'city_home', 'state_home', 'zip_code_home', 'price_home',
+         {'fields': ['currently_available_home', 'street_address_home', 'city_home', 'state_home', 'zip_code_home', 'price_home',
                      'home_type_home', 'move_in_day_home', 'latitude_home', 'longitude_home', ]}),
         ('Interior Amenities',
          {'fields': ('air_conditioning_home', 'interior_washer_dryer_home', 'dish_washer_home',

@@ -238,6 +238,7 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     apartment_number_home = models.CharField(max_length=200)
     home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
     move_in_day_home = models.DateField(default=timezone.now)
+    currently_available_home = models.BooleanField(default=False)
 
     def __str__(self):
         return self.full_address
@@ -253,6 +254,10 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     @property
     def apartment_number(self):
         return self.apartment_number_home
+
+    @property
+    def currently_available(self):
+        return self.currently_available
 
 
 def house_directory_path(instance, filename):

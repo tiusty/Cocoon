@@ -81,6 +81,7 @@ class MlspinRequester:
                 # this house already exists, update move in day
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
                 existing_apartment.move_in_day_home = datetime.now()
+                existing_apartment.currently_available = True
                 existing_apartment.save()
                 print("[DUPLICATE]" + full_add)
                 continue
