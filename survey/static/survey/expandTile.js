@@ -115,6 +115,7 @@ function expand(aTile) {
         $(aTile).children().hide();
         $(aTile).animate({"height": "100vh"}, 200, function () {
             $(aTile).siblings('.tile').slideUp(150);
+            $(aTile).parents('.tileTable').scrollTop(0);
         });
 
         // Adds the templated HTML to the page
@@ -146,16 +147,16 @@ function minimize(clickedElement) {
 
     $(clickedElement).closest('.expanded-tile-container').hide();
 
-    $(clickedElement).parents('.tile-expanded').animate({"height": "115px"}, 200, function () {
+    $(clickedElement).parents('.tile-expanded').animate({"height": "115px"}, 100, function () {
 
         $(clickedElement).parents('.tile-expanded').addClass('tile');
-        $(clickedElement).parents('.tile').siblings('.tile').not('.toRemove').slideDown(150);
+        $(clickedElement).parents('.tile').siblings('.tile').not('.toRemove').show();
         $(clickedElement).parents('.tile').children().show();
         $(clickedElement).parents('.tile').removeClass('tile-expanded');
         $(clickedElement).parents('.tile').addClass('bound');
         $(clickedElement).closest('.expanded-tile-container').remove();
 
-        $('.toRemove').fadeOut();
+        $('.toRemove').hide();
 
     })
 }

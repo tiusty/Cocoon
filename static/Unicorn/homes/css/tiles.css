@@ -152,6 +152,8 @@ STYLING NEW TILE RESULTS
     max-width: 700px;
     /*max-height: 1200px;*/
     overflow-x: scroll;
+    overflow-y: scroll;
+    height: 80vh;
 }
 
 /* scrolling on small screens */
@@ -176,7 +178,6 @@ STYLING NEW TILE RESULTS
     margin-bottom: 2%;
     border: 1px solid #c65c3b;
     background-color: #f7f7f7;
-    overflow-y: scroll;
 }
 
 .tile:hover {
@@ -266,8 +267,8 @@ STYLING NEW TILE RESULTS
     max-width: 109%;
     width: 109%;
     /*max-height: 106%;*/
-    transition: height .1s;
-    transition: width .1s;
+    /*transition: height .1s;*/
+    /*transition: width .1s;*/
 }
 
 .infoBit {

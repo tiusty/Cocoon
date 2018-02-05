@@ -214,8 +214,8 @@ class TestApproxCommute(TestCase):
         self.zip_code2 = "23456"
         self.commute_time = 6000 
         self.commute_distance = 700
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='driving')
-        self.commute_type_walking = CommuteTypeModel.objects.create(commute_type_field='walking')
+        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
+        self.commute_type_walking = CommuteTypeModel.objects.create(commute_type_field='Walking')
 
     @staticmethod
     def create_destination(address, city, state, zip):
