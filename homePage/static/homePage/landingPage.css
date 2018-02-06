@@ -42,6 +42,10 @@ body {
     content: "Here at Cocoon, we strive to find you the perfect home!";
 }
 
+.landingImage {
+    width: 100%;
+}
+
 .selectSurvey {
     background-color: rgba(38,50,56,.75);
     text-align: center;
@@ -171,7 +175,7 @@ a:hover {
 
 @media (max-width: 768px) {
     .info-row {
-        width: 90%
+        width: 90%;
     }
 
     .info-text {
@@ -183,7 +187,6 @@ a:hover {
     .icon-container {
         flex-grow: 1;
     }
-
 
     .info-text > span {
         width: 100%;
@@ -233,7 +236,7 @@ a:hover {
 
  ********************************/
 
-@media (max-width: 990px) {
+@media (max-width: 768px) {
     .jumbotron {
         font-size: 16px;
         width: 55%;
