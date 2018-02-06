@@ -15,25 +15,25 @@ from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOM
 
 class HomeInformationForm(ModelForm):
 
-    move_in_date_start_survey = forms.DateField(
-        label="Start of move in range",
-        widget=forms.DateInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Choose first day to move in',
-            },
-            format='%m/%d/%Y',
-        ))
+    # move_in_date_start_survey = forms.DateField(
+    #     label="Start of move in range",
+    #     widget=forms.DateInput(
+    #         attrs={
+    #             'class': 'form-control',
+    #             'placeholder': 'Choose first day to move in',
+    #         },
+    #         format='%m/%d/%Y',
+    #     ))
 
-    move_in_date_end_survey = forms.DateField(
-        label="End of move in range",
-        widget=forms.DateInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Choose last date to move in',
-            },
-            format='%m/%d/%Y',
-        ))
+    # move_in_date_end_survey = forms.DateField(
+    #     label="End of move in range",
+    #     widget=forms.DateInput(
+    #         attrs={
+    #             'class': 'form-control',
+    #             'placeholder': 'Choose last date to move in',
+    #         },
+    #         format='%m/%d/%Y',
+    #     ))
 
     num_bedrooms_survey = forms.ChoiceField(
         choices=[(x, x) for x in range(1, MAX_NUM_BEDROOMS)],
@@ -67,13 +67,13 @@ class HomeInformationForm(ModelForm):
         queryset=HomeTypeModel.objects.all()
     )
 
-    @property
-    def move_in_date_start(self):
-        return self.move_in_date_start_survey
+    # @property
+    # def move_in_date_start(self):
+    #     return self.move_in_date_start_survey
 
-    @property
-    def move_in_date_end(self):
-        return self.move_in_date_end_survey
+    # @property
+    # def move_in_date_end(self):
+    #     return self.move_in_date_end_survey
 
     @property
     def num_bedrooms(self):
@@ -99,14 +99,14 @@ class HomeInformationForm(ModelForm):
         current_form = self.cleaned_data.copy()
 
         # Validate move-in field
-        if current_form['move_in_date_start_survey'] < timezone.now().date():
-            self.add_error('move_in_date_start_survey', "Start Day should not be in the past")
-            valid = False
-
+        # if current_form['move_in_date_start_survey'] < timezone.now().date():
+        #     self.add_error('move_in_date_start_survey', "Start Day should not be in the past")
+        #     valid = False
+        #
         # Makes sure that the End day is after the start day
-        if current_form['move_in_date_start_survey'] > current_form['move_in_date_end_survey']:
-            self.add_error('move_in_date_end_survey', "End date should not be before the start date")
-            valid = False
+        # if current_form['move_in_date_start_survey'] > current_form['move_in_date_end_survey']:
+        #     self.add_error('move_in_date_end_survey', "End date should not be before the start date")
+        #     valid = False
 
         if int(current_form['num_bedrooms_survey']) < 1:
             self.add_error('num_bedrooms_survey', "There can't be less than 1 bedroom")
@@ -127,10 +127,6 @@ class HomeInformationForm(ModelForm):
             valid = False
 
         return valid
-
-    @property
-    def move_in_data_start(self):
-        return self.move_in_date_start_survey
 
     class Meta:
         model = HomeInformationModel
