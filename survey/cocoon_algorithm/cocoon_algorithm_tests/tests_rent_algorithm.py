@@ -759,7 +759,6 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
         # Create a user so the survey form can validate
         self.user = MyUser.objects.create(email="test@email.com")
-        self.user_profile = UserProfile.objects.get(user=self.user)
 
         # Survey values
         self.move_in_day_start = timezone.now()
@@ -774,23 +773,25 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         # Make some homes
         self.home = RentDatabaseModel.objects.create(home_type_home=self.home_type,
                                                      price_home=self.price_min,
-                                                     move_in_day_home=self.move_in_day_home,
+                                                     currently_available_home=True,
                                                      num_bathrooms_home=self.num_bathrooms_min,
                                                      num_bedrooms_home=self.num_bedrooms_min)
 
         self.home1 = RentDatabaseModel.objects.create(home_type_home=self.home_type,
                                                       price_home=self.price_middle,
-                                                      move_in_day_home=self.move_in_day_home1,
+                                                      currently_available_home=True,
                                                       num_bathrooms_home=self.num_bathrooms_middle,
                                                       num_bedrooms_home=self.num_bedrooms_max)
         self.home2 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
                                                       price_home=self.price_max,
                                                       move_in_day_home=self.move_in_day_home,
+                                                      currently_available_home=False,
                                                       num_bathrooms_home=self.num_bathrooms_min,
                                                       num_bedrooms_home=self.num_bedrooms_min)
         self.home3 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
                                                       price_home=self.price_min,
                                                       move_in_day_home=self.move_in_day_home1,
+                                                      currently_available_home=False,
                                                       num_bathrooms_home=self.num_bathrooms_max,
                                                       num_bedrooms_home=self.num_bedrooms_max)
 
@@ -805,7 +806,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         rent_algorithm = RentAlgorithm()
         # Create the survey
         survey = RentingSurveyModel.objects.create(
-                                                   user_profile_survey=self.user_profile,
+                                                   user_profile_survey=self.user.userProfile,
                                                    max_price_survey=self.price_max,
                                                    min_price_survey=self.price_min,
                                                    max_bathrooms_survey=self.max_bathrooms,
@@ -823,10 +824,9 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
 
         # Assert
-        self.assertEqual(2, len(rent_algorithm.homes))
+        self.assertEqual(1, len(rent_algorithm.homes))
         self.assertEqual(1, len(rent_algorithm.destinations))
         self.assertEqual(self.home, rent_algorithm.homes[0].home)
-        self.assertEqual(self.home2, rent_algorithm.homes[1].home)
 
 
 class TestRetrieveApproximateCommutes(TestCase):
