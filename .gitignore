@@ -10,6 +10,7 @@ houseDatabase/migrations
 homePage/migrations
 survey/migrations
 
+# Visual Studio Code Settings #
 .vscode/
 
 # Home MLSpin feed #
