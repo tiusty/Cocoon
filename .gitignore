@@ -6,3 +6,4 @@ houseDatabase/migrations
 homePage/migrations
 survey/migrations
 db.sqlite3
+.vscode
