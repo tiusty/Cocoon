@@ -237,17 +237,10 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     """
     apartment_number_home = models.CharField(max_length=200)
     home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
-    # [Issue-57] Currently move_in_day has no effect, instead the is currently_available is used, later the move
-    # in day may become useful again
-    move_in_day_home = models.DateField(default=timezone.now)
     currently_available_home = models.BooleanField(default=False)
 
     def __str__(self):
         return self.full_address
-
-    @property
-    def move_in_day(self):
-        return self.move_in_day_home
 
     @property
     def home_type(self):

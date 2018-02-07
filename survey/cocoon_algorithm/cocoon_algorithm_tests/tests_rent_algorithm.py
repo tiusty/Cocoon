@@ -784,13 +784,11 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                                       num_bedrooms_home=self.num_bedrooms_max)
         self.home2 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
                                                       price_home=self.price_max,
-                                                      move_in_day_home=self.move_in_day_home,
                                                       currently_available_home=False,
                                                       num_bathrooms_home=self.num_bathrooms_min,
                                                       num_bedrooms_home=self.num_bedrooms_min)
         self.home3 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
                                                       price_home=self.price_min,
-                                                      move_in_day_home=self.move_in_day_home1,
                                                       currently_available_home=False,
                                                       num_bathrooms_home=self.num_bathrooms_max,
                                                       num_bedrooms_home=self.num_bedrooms_max)

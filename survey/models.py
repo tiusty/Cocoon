@@ -62,20 +62,10 @@ class HomeInformationModel(models.Model):
     """
     Contains basic information about a home
     """
-    # move_in_date_start_survey = models.DateField(default=timezone.now)
-    # move_in_date_end_survey = models.DateField(default=timezone.now)
     num_bedrooms_survey = models.IntegerField(default=0)
     max_bathrooms_survey = models.IntegerField(default=MAX_NUM_BATHROOMS)
     min_bathrooms_survey = models.IntegerField(default=0)
     home_type_survey = models.ManyToManyField(HomeTypeModel)
-
-    # @property
-    # def move_in_date_start(self):
-    #     return self.move_in_date_start_survey
-
-    # @property
-    # def move_in_date_end(self):
-    #     return self.move_in_date_end_survey
 
     @property
     def num_bedrooms(self):
