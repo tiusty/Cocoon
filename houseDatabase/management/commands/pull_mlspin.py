@@ -80,7 +80,6 @@ class MlspinRequester:
             if (RentDatabaseModel.objects.filter(listing_number_home=cells[LIST_NO]).exists()):
                 # this house already exists, update move in day
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
-                existing_apartment.move_in_day_home = datetime.now()
                 existing_apartment.currently_available = True
                 existing_apartment.save()
                 print("[DUPLICATE]" + full_add)
@@ -114,7 +113,6 @@ class MlspinRequester:
                     print("listing not a rental")
                     continue
 
-                new_listing.move_in_day_home = datetime.now()
                 new_listing.num_bedrooms_home = int(cells[NO_BEDROOMS])
                 no_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
                 new_listing.num_bathrooms_home = no_baths
