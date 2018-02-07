@@ -109,7 +109,8 @@ class DistanceWrapper:
                                                             origin_list[:origin_number],
                                                             destinations[:destination_number],
                                                             units=self.units,
-                                                            mode=mode)
+                                                            # make sure the mode is lower case
+                                                            mode=mode.lower())
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin
             for res in response_list:

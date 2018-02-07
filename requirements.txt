@@ -1,4 +1,4 @@
-Django==1.11.9
+django==1.11.9
 googlemaps==2.4.5
 requests==2.11.1
 geocoder==1.31.0
