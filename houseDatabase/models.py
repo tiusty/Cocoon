@@ -206,6 +206,7 @@ class MLSpinDataModel(models.Model):
     listing_provider_home = models.CharField(max_length=200)
     listing_agent_home = models.CharField(max_length=200)
     listing_office_home = models.CharField(max_length=200)
+    last_updated_home = models.DateField(default=timezone.now)
 
     @property
     def remarks(self):
@@ -226,6 +227,10 @@ class MLSpinDataModel(models.Model):
     @property
     def listing_office(self):
         return self.listing_office_home
+
+    @property
+    def last_updated(self):
+        return self.last_updated_home
 
     class Meta:
         abstract = True
@@ -274,6 +279,13 @@ class HousePhotosModel(models.Model):
     def image_path(self):
         return self.image_path_photo
 
+
+class DatabaseManagementModel(models.Model):
+    """
+    Model that stores general database-wide information
+    """
+
+    last_updated_database = models.DateField()
 
 class ZipCodeDictionaryParentModel(models.Model):
     """

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, HousePhotosModel, \
-    HomeTypeModel, CommuteTypeModel
+    HomeTypeModel, CommuteTypeModel, DatabaseManagementModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
@@ -13,7 +13,7 @@ class HouseAdmin(admin.ModelAdmin):
     fieldsets = [
         ('House Info',
          {'fields': ['street_address_home', 'city_home', 'state_home', 'zip_code_home', 'price_home',
-                     'home_type_home', 'move_in_day_home', 'latitude_home', 'longitude_home', ]}),
+                     'home_type_home', 'last_updated_home', 'latitude_home', 'longitude_home', ]}),
         ('Interior Amenities',
          {'fields': ('air_conditioning_home', 'interior_washer_dryer_home', 'dish_washer_home',
                      'bath_home', 'num_bedrooms_home', 'num_bathrooms_home',), }),
@@ -29,18 +29,19 @@ class HouseAdmin(admin.ModelAdmin):
         )
     ]
 
-    list_display = ('street_address_home', 'price_home', 'home_type_home', 'move_in_day_home', 'num_bedrooms_home',
+    list_display = ('street_address_home', 'price_home', 'home_type_home', 'last_updated_home', 'num_bedrooms_home',
                     'latitude_home', 'longitude_home',)
     list_filter = ['home_type_home']
     search_fields = ['street_address_home']
     # noinspection SpellCheckingInspection
     inlines = [HousePhotoUrlInLine]
 
-
 class ZipCodeDictionaryChildInLine(admin.StackedInline):
     model = ZipCodeDictionaryChildModel
     extra = 0
-
+    
+class DatabaseManagementModelAdmin(admin.ModelAdmin):
+    pass
 
 class ZipCodeDictionaryAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -72,3 +73,4 @@ admin.site.register(RentDatabaseModel, HouseAdmin)
 admin.site.register(ZipCodeDictionaryParentModel, ZipCodeDictionaryAdmin)
 admin.site.register(HomeTypeModel, HomeTypeModelAdmin)
 admin.site.register(CommuteTypeModel, CommuteTypeModelAdmin)
+admin.site.register(DatabaseManagementModel, DatabaseManagementModelAdmin)

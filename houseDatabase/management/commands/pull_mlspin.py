@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from houseDatabase.models import HousePhotosModel, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
 from houseDatabase.management.commands.mls_fields import *
 from Cocoon.settings.Global_Config import gmaps_api_key
-from houseDatabase.models import HomeTypeModel
+from houseDatabase.models import HomeTypeModel, DatabaseManagementModel
 from django.utils import timezone
 
 class MlspinRequester:
@@ -33,10 +33,10 @@ class MlspinRequester:
         self.idx_txt = idx_data
         self.town_txt = town_data
 
-        # 3. Build a dictionary of town codes to towns
+        # Builds a dictionary of town codes to towns
         self.towns = {}
         self.town_lines = self.town_txt.split('\r\n')
-        for line in self.town_lines[1:-1]:
+        for line in self.town_lines[1:-1]: # skips the col headers
             fields = line.split('|')
             self.towns[str(fields[0])] = {
                 "town":fields[1],
@@ -50,8 +50,8 @@ class MlspinRequester:
         print("Attempting to add *" + str(len(lines)) + "* apartments to the db...")
         print("An equivalent number of requests will be made to the geocoder")
 
-        # 4. Parses the IDX txt
-        for line in lines[1:-1]:
+        # Parses the IDX txt
+        for line in lines[1:-1]: # skips the col headers
 
             cells = line.split('|')
             cells[STREET_NAME].replace(',','')
@@ -66,6 +66,7 @@ class MlspinRequester:
                 apartment_no = split_address[len(split_address)-1]
                 clean_address = " ".join(split_address[:-1])
                 has_apartment_no = True
+            # no int in last address element (not an apartment #)
             except ValueError:
                 clean_address = " ".join(split_address)
                 has_apartment_no = False
@@ -80,9 +81,8 @@ class MlspinRequester:
             if (RentDatabaseModel.objects.filter(listing_number_home=cells[LIST_NO]).exists()):
                 # this house already exists, update move in day
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
-                existing_apartment.move_in_day_home = datetime.now()
-                existing_apartment.save()
-                print("[DUPLICATE]" + full_add)
+                existing_apartment.last_updated_home = timezone.now()
+                print("[ UPDATING ]" + full_add)
                 continue
             else:
 
@@ -96,40 +96,49 @@ class MlspinRequester:
                     lat = latlng[0]
                     lng = latlng[1]
 
-                new_listing = RentDatabaseModel(home_type_home=(HomeTypeModel.objects.get(home_type_survey="Apartment")))
+                new_listing = RentDatabaseModel()
+                list_type = cells[PROP_TYPE]
+                if (list_type == "RN"):
+                    new_listing.home_type_home = HomeTypeModel.objects.get(home_type_survey="Apartment")
+                    new_listing.save()
+                else:
+                    continue
+
                 new_listing.latitude_home = lat
                 new_listing.longitude_home = lng
                 new_listing.street_address_home = address
                 new_listing.city_home = town
                 new_listing.zip_code_home = zip
                 new_listing.state_home = state
-                new_listing.price_home = cells[LIST_PRICE]
-
-                list_type = cells[PROP_TYPE]
-                if (list_type == "RN"):
-                    new_listing.home_type_home = HomeTypeModel.objects.get(home_type_survey="Apartment")
-                else:
-                    print("listing not a rental")
+                
+                try:
+                    # assert that fields are ints
+                    new_listing.price_home = int(cells[LIST_PRICE])
+                    new_listing.num_bedrooms_home = int(cells[NO_BEDROOMS])
+                    no_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
+                    new_listing.num_bathrooms_home = no_baths
+                    new_listing.listing_number_home = int(cells[LIST_NO])
+                except ValueError:
                     continue
 
-                new_listing.move_in_day_home = datetime.now()
-                new_listing.num_bedrooms_home = int(cells[NO_BEDROOMS])
-                no_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
-                new_listing.num_bathrooms_home = no_baths
+                new_listing.last_updated_home = timezone.now()
                 new_listing.bath_home = True if no_baths > 0 else False
                 new_listing.remarks_home = cells[REMARKS]
-                new_listing.listing_number_home = int(cells[LIST_NO])
                 new_listing.listing_provider_home = "MLSPIN"
                 new_listing.listing_agent_home = cells[LIST_AGENT]
                 new_listing.listing_office_home = cells[LIST_OFFICE]
                 new_listing.apartment_number_home = apartment_no
 
                 # TODO: upload ftp path to S3 storage bucket
-                new_listing.save()
                 newPhotos = HousePhotosModel(house_photo=new_listing)
                 newPhotos.save()
                 new_listing.save()
-                print(full_add + " added")
+                print("[ ADDING   ]" + full_add)
+        
+        # TODO: Assess problem of time difference between start/end of update
+        manager = DatabaseManagementModel.objects.get(pk=1)
+        manager.last_updated_database = timezone.now()
+        manager.save()
 
 
 class Command(BaseCommand):
