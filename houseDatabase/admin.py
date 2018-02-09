@@ -40,7 +40,7 @@ class ZipCodeDictionaryChildInLine(admin.StackedInline):
     model = ZipCodeDictionaryChildModel
     extra = 0
     
-class DatabaseManagementModelAdmin(admin.ModelAdmin):
+class MlsManagementModelAdmin(admin.ModelAdmin):
     pass
 
 class ZipCodeDictionaryAdmin(admin.ModelAdmin):
@@ -73,4 +73,4 @@ admin.site.register(RentDatabaseModel, HouseAdmin)
 admin.site.register(ZipCodeDictionaryParentModel, ZipCodeDictionaryAdmin)
 admin.site.register(HomeTypeModel, HomeTypeModelAdmin)
 admin.site.register(CommuteTypeModel, CommuteTypeModelAdmin)
-admin.site.register(DatabaseManagementModel, DatabaseManagementModelAdmin)
+admin.site.register(MlsManagementModel, MlsManagementModelAdmin)

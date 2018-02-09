@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from houseDatabase.models import HousePhotosModel, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
 from houseDatabase.management.commands.mls_fields import *
 from Cocoon.settings.Global_Config import gmaps_api_key
-from houseDatabase.models import HomeTypeModel, DatabaseManagementModel
+from houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
 
 class MlspinRequester:
@@ -51,6 +51,7 @@ class MlspinRequester:
         print("An equivalent number of requests will be made to the geocoder")
 
         # Parses the IDX txt
+        update_timestamp = timezone.now()
         for line in lines[1:-1]: # skips the col headers
 
             cells = line.split('|')
@@ -81,7 +82,7 @@ class MlspinRequester:
             if (RentDatabaseModel.objects.filter(listing_number_home=cells[LIST_NO]).exists()):
                 # this house already exists, update move in day
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
-                existing_apartment.last_updated_home = timezone.now()
+                existing_apartment.last_updated_home = update_timestamp
                 print("[ UPDATING ]" + full_add)
                 continue
             else:
@@ -121,7 +122,7 @@ class MlspinRequester:
                 except ValueError:
                     continue
 
-                new_listing.last_updated_home = timezone.now()
+                new_listing.last_updated_home = update_timestamp
                 new_listing.bath_home = True if no_baths > 0 else False
                 new_listing.remarks_home = cells[REMARKS]
                 new_listing.listing_provider_home = "MLSPIN"
@@ -136,8 +137,8 @@ class MlspinRequester:
                 print("[ ADDING   ]" + full_add)
         
         # TODO: Assess problem of time difference between start/end of update
-        manager = DatabaseManagementModel.objects.get(pk=1)
-        manager.last_updated_database = timezone.now()
+        manager = MlsManagementModel.objects.all.first()
+        manager.last_updated_database = update_timestamp
         manager.save()
 
 

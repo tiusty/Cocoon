@@ -280,12 +280,17 @@ class HousePhotosModel(models.Model):
         return self.image_path_photo
 
 
-class DatabaseManagementModel(models.Model):
+class MlsManagementModel(models.Model):
     """
     Model that stores general database-wide information
     """
 
-    last_updated_database = models.DateField()
+    last_updated_mls = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if MlsManagementModel.objects.exists() and not self.pk:
+            raise ValidationError("There should only be one MlsManagementModel object")
+        return super(MlsManagementModel, self).save(*args, **kwargs)
 
 class ZipCodeDictionaryParentModel(models.Model):
     """
