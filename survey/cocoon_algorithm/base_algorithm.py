@@ -107,6 +107,6 @@ class CocoonAlgorithm(object):
         return RentDatabaseModel.objects \
             .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(query_home_type) \
-            .filter(move_in_day_home__range=(user_survey.move_in_date_start, user_survey.move_in_date_end)) \
+            .filter(currently_available_home=True) \
             .filter(num_bedrooms_home=user_survey.num_bedrooms) \
             .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))

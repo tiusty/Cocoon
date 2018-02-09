@@ -83,6 +83,8 @@ class MlspinRequester:
                 # this house already exists, update move in day
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
                 existing_apartment.last_updated_home = update_timestamp
+                existing_apartment.currently_available = True
+                existing_apartment.save()
                 print("[ UPDATING ]" + full_add)
                 continue
             else:
@@ -101,10 +103,11 @@ class MlspinRequester:
                 list_type = cells[PROP_TYPE]
                 if (list_type == "RN"):
                     new_listing.home_type_home = HomeTypeModel.objects.get(home_type_survey="Apartment")
+                    new_listing.currently_available = True
                     new_listing.save()
                 else:
                     continue
-
+                    
                 new_listing.latitude_home = lat
                 new_listing.longitude_home = lng
                 new_listing.street_address_home = address
