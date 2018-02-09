@@ -101,6 +101,7 @@ class MlspinRequester:
 
                 new_listing = RentDatabaseModel()
                 list_type = cells[PROP_TYPE]
+                # verifies unit is a rental (RN denotes rental in MLS feed)
                 if (list_type == "RN"):
                     new_listing.home_type_home = HomeTypeModel.objects.get(home_type_survey="Apartment")
                     new_listing.currently_available = True
