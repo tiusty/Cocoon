@@ -1,6 +1,7 @@
 # Import Django modules
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # Import Config file information
 from Cocoon.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
@@ -299,6 +300,7 @@ class MlsManagementModel(models.Model):
         if MlsManagementModel.objects.exists() and not self.pk:
             raise ValidationError("There should only be one MlsManagementModel object")
         return super(MlsManagementModel, self).save(*args, **kwargs)
+
 
 class ZipCodeDictionaryParentModel(models.Model):
     """
