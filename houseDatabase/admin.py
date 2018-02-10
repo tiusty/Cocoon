@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, HousePhotosModel, \
-    HomeTypeModel, CommuteTypeModel, DatabaseManagementModel
+    HomeTypeModel, CommuteTypeModel, MlsManagementModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
