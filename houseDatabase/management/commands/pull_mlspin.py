@@ -139,8 +139,7 @@ class MlspinRequester:
                 newPhotos.save()
                 new_listing.save()
                 print("[ ADDING   ]" + full_add)
-        
-        # TODO: Assess problem of time difference between start/end of update
+       
         manager = MlsManagementModel.objects.all.first()
         manager.last_updated_database = update_timestamp
         manager.save()
