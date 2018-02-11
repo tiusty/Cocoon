@@ -2,7 +2,7 @@
 from django.db.models import Q
 
 # Import houseDatabase modules
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel
 
 # Import HomeScore class
 from survey.home_data.home_score import HomeScore
@@ -108,5 +108,8 @@ class CocoonAlgorithm(object):
             .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(query_home_type) \
             .filter(currently_available_home=True) \
+            .filter(last_updated_home__day=MlsManagementModel.objects.all().first().last_updated_mls.day) \
+            .filter(last_updated_home__month=MlsManagementModel.objects.all().first().last_updated_mls.month) \
+            .filter(last_updated_home__year=MlsManagementModel.objects.all().first().last_updated_mls.year) \
             .filter(num_bedrooms_home=user_survey.num_bedrooms) \
             .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
