@@ -141,7 +141,7 @@ class MlspinRequester:
                 print("[ ADDING   ]" + full_add)
        
         manager = MlsManagementModel.objects.all.first()
-        manager.last_updated_database = update_timestamp
+        manager.last_updated_mls = update_timestamp
         manager.save()
 
 
