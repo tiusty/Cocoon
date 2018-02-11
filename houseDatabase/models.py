@@ -1,6 +1,7 @@
 # Import Django modules
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # Import Config file information
 from Cocoon.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
@@ -206,6 +207,7 @@ class MLSpinDataModel(models.Model):
     listing_provider_home = models.CharField(max_length=200)
     listing_agent_home = models.CharField(max_length=200)
     listing_office_home = models.CharField(max_length=200)
+    last_updated_home = models.DateField(default=timezone.now)
 
     @property
     def remarks(self):
@@ -226,6 +228,10 @@ class MLSpinDataModel(models.Model):
     @property
     def listing_office(self):
         return self.listing_office_home
+
+    @property
+    def last_updated(self):
+        return self.last_updated_home
 
     class Meta:
         abstract = True
@@ -281,6 +287,19 @@ class HousePhotosModel(models.Model):
     @property
     def image_path(self):
         return self.image_path_photo
+
+
+class MlsManagementModel(models.Model):
+    """
+    Model that stores general database-wide information
+    """
+
+    last_updated_mls = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if MlsManagementModel.objects.exists() and not self.pk:
+            raise ValidationError("There should only be one MlsManagementModel object")
+        return super(MlsManagementModel, self).save(*args, **kwargs)
 
 
 class ZipCodeDictionaryParentModel(models.Model):
