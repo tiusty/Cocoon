@@ -169,7 +169,7 @@ class MlspinRequester:
                 new_photos.save()
                 print("[ ADDING   ]" + full_add)
        
-        manager = MlsManagementModel.objects.all.first()
+        manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = update_timestamp
         manager.save()
 
