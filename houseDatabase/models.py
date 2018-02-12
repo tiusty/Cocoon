@@ -115,6 +115,10 @@ class HomeBaseModel(models.Model):
     def price(self):
         return self.price_home
 
+    @price.setter
+    def price(self, new_price):
+        self.price_home = new_price
+
     @property
     def price_string(self):
         return "$" + str(self.price)
@@ -166,13 +170,25 @@ class InteriorAmenitiesModel(models.Model):
     def bath(self):
         return self.bath_home
 
+    @bath.setter
+    def bath(self, new_bath):
+        self.bath_home = new_bath
+
     @property
     def num_bathrooms(self):
         return self.num_bathrooms_home
 
+    @num_bathrooms.setter
+    def num_bathrooms(self, new_num_bathrooms):
+        self.num_bathrooms_home = new_num_bathrooms
+
     @property
     def num_bedrooms(self):
         return self.num_bedrooms_home
+
+    @num_bedrooms.setter
+    def num_bedrooms(self, new_num_bedrooms):
+        self.num_bedrooms_home = new_num_bedrooms
 
     class Meta:
         abstract = True
@@ -237,21 +253,41 @@ class MLSpinDataModel(models.Model):
     def remarks(self):
         return self.remarks_home
 
+    @remarks.setter
+    def remarks(self, new_remarks):
+        self.remarks_home = new_remarks
+
     @property
     def listing_number(self):
         return self.listing_number_home
+
+    @listing_number.setter
+    def listing_number(self, new_listing_number):
+        self.listing_number_home = new_listing_number
 
     @property
     def listing_provider(self):
         return self.listing_provider_home
 
+    @listing_provider.setter
+    def listing_provider(self, new_listing_provider):
+        self.listing_provider_home = new_listing_provider
+
     @property
     def listing_agent(self):
         return self.listing_agent_home
 
+    @listing_agent.setter
+    def listing_agent(self, new_listing_agent):
+        self.listing_agent_home = new_listing_agent
+
     @property
     def listing_office(self):
         return self.listing_office_home
+
+    @listing_office.setter
+    def listing_office(self, new_listing_office):
+        self.listing_office_home = new_listing_office
 
     @property
     def last_updated(self):
@@ -280,9 +316,18 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     def home_type(self):
         return self.home_type_home
 
+    @home_type.setter
+    def home_type(self, new_home_type):
+        self.home_type_home = new_home_type
+
     @property
     def apartment_number(self):
         return self.apartment_number_home
+
+    @apartment_number.setter
+    def apartment_number(self, new_apartment_number):
+        self.apartment_number_home = new_apartment_number
+
 
     @property
     def currently_available(self):

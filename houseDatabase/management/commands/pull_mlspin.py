@@ -120,7 +120,7 @@ class MlspinRequester:
 
                 # verifies unit is a rental (RN denotes rental in MLS feed)
                 if list_type == "RN":
-                    new_listing.home_type_home = HomeTypeModel.objects.get(home_type_survey="Apartment")
+                    new_listing.home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
                 else:
                     print("Home not a rental, continuing with line {0}".format(line))
                     continue
@@ -137,21 +137,21 @@ class MlspinRequester:
                 #   if not then skip the home
                 try:
                     # assert that fields are ints
-                    new_listing.price_home = int(cells[LIST_PRICE])
-                    new_listing.num_bedrooms_home = int(cells[NO_BEDROOMS])
+                    new_listing.price = int(cells[LIST_PRICE])
+                    new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
                     no_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
-                    new_listing.num_bathrooms_home = no_baths
-                    new_listing.listing_number_home = int(cells[LIST_NO])
+                    new_listing.num_bathrooms = no_baths
+                    new_listing.listing_number = int(cells[LIST_NO])
                 except ValueError:
                     continue
 
-                new_listing.last_updated_home = update_timestamp
-                new_listing.bath_home = True if no_baths > 0 else False
-                new_listing.remarks_home = cells[REMARKS]
-                new_listing.listing_provider_home = "MLSPIN"
-                new_listing.listing_agent_home = cells[LIST_AGENT]
-                new_listing.listing_office_home = cells[LIST_OFFICE]
-                new_listing.apartment_number_home = apartment_no
+                new_listing.last_updated = update_timestamp
+                new_listing.bath = True if no_baths > 0 else False
+                new_listing.remarks = cells[REMARKS]
+                new_listing.listing_provider = "MLSPIN"
+                new_listing.listing_agent = cells[LIST_AGENT]
+                new_listing.listing_office = cells[LIST_OFFICE]
+                new_listing.apartment_number = apartment_no
 
                 # After all the data is added, save the home to the database
                 new_listing.save()
