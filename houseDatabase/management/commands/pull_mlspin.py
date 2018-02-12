@@ -72,11 +72,12 @@ class MlspinRequester:
             except ValueError:
                 clean_address = " ".join(split_address)
 
-            # Generate each component for the home
+            # Generate each component for the home address
             town = (self.towns[str(cells[TOWN_NUM])]["town"])
             state = (self.towns[str(cells[TOWN_NUM])]["state"])
             address = ((cells[STREET_NO]) + ' ' + clean_address)
             zip_code = cells[ZIP_CODE]
+
             # Full address for the geolocator
             full_add = address + ' ' + town + ' ' + state + ' ' + zip_code
 
