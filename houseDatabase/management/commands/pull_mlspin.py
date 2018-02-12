@@ -168,7 +168,9 @@ class MlspinRequester:
                 new_photos = HousePhotosModel(house_photo=new_listing)
                 new_photos.save()
                 print("[ ADDING   ]" + full_add)
-       
+
+        # When all the homes are added, update the MLSManagement model to reflex that the homes have been updated
+        print("Updating MLS timestamp to {0}".format(update_timestamp.date()))
         manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = update_timestamp
         manager.save()
