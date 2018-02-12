@@ -139,9 +139,11 @@ class MlspinRequester:
                     new_listing.longitude = lng
 
                     # Set InteriorAmenitiesModel Fields
-                    # Currently don't support non-integers in the bath field, when we do then we can include half baths
-                    # new_listing.bath = True if (int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS]) > 0) else False
-                    new_listing.bath = True if int(cells[NO_FULL_BATHS]) > 0 else False
+                    # Currently don't support non-integers for num_bathrooms. Therefore
+                    #   The num of full and half baths are added then rounded to the nearest int
+                    num_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
+                    new_listing.bath = True if num_baths > 0 else False
+                    new_listing.num_bathrooms = num_baths
                     new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
 
                     # Set MLSpinDataModel fields
