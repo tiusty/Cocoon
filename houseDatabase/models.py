@@ -81,19 +81,35 @@ class HomeBaseModel(models.Model):
     def street_address(self):
         return self.street_address_home
 
+    @street_address.setter
+    def street_address(self, new_street_address):
+        self.street_address_home = new_street_address
+
     @property
     def city(self):
         return self.city_home
 
+    @city.setter
+    def city(self, new_city):
+        self.city_home = new_city
+
     @property
     def state(self):
         return self.state_home
+
+    @state.setter
+    def state(self, new_state):
+        self.state_home = new_state
 
     @property
     def zip_code(self):
         if len(self.zip_code_home) > 5:
             return self.zip_code_home[:5]
         return self.zip_code_home
+
+    @zip_code.setter
+    def zip_code(self, new_zip_code):
+        self.zip_code_home = new_zip_code
 
     @property
     def price(self):
@@ -107,9 +123,17 @@ class HomeBaseModel(models.Model):
     def latitude(self):
         return self.latitude_home
 
+    @latitude.setter
+    def latitude(self, new_latitude):
+        self.latitude_home = new_latitude
+
     @property
     def longitude(self):
         return self.longitude_home
+
+    @longitude.setter
+    def longitude(self, new_longitude):
+        self.longitude_home = new_longitude
 
     class Meta:
         abstract = True
@@ -203,7 +227,7 @@ class MLSpinDataModel(models.Model):
     Contains all the data related to the MLS pin
     """
     remarks_home = models.TextField(default="")
-    listing_number_home = models.IntegerField(unique=True, default=-1)
+    listing_number_home = models.IntegerField(default=-1)
     listing_provider_home = models.CharField(max_length=200)
     listing_agent_home = models.CharField(max_length=200)
     listing_office_home = models.CharField(max_length=200)
@@ -232,6 +256,10 @@ class MLSpinDataModel(models.Model):
     @property
     def last_updated(self):
         return self.last_updated_home
+
+    @last_updated.setter
+    def last_updated(self, new_last_updated):
+        self.last_updated_home = new_last_updated
 
     class Meta:
         abstract = True
