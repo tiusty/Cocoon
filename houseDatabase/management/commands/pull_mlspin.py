@@ -10,6 +10,7 @@ from houseDatabase.management.commands.mls_fields import *
 from Cocoon.settings.Global_Config import gmaps_api_key
 from houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class MlspinRequester:
     """
@@ -54,11 +55,12 @@ class MlspinRequester:
         update_timestamp = timezone.now()
         for line in lines[1:-1]:  # skips the col headers
 
+            # Parse IDX feed to put each item into an array
             cells = line.split('|')
+            # Make sure there are no commas in the street name
             cells[STREET_NAME].replace(',', '')
             split_address = cells[STREET_NAME].split()
             apartment_no = ""
-            has_apartment_no = False
             clean_address = ""
 
             try:
@@ -66,81 +68,112 @@ class MlspinRequester:
                 int(cells[STREET_NAME][len(cells[STREET_NAME])-1])
                 apartment_no = split_address[len(split_address)-1]
                 clean_address = " ".join(split_address[:-1])
-                has_apartment_no = True
             # no int in last address element (not an apartment #)
             except ValueError:
                 clean_address = " ".join(split_address)
-                has_apartment_no = False
 
-            # combining address components
+            # Generate each component for the home address
             town = (self.towns[str(cells[TOWN_NUM])]["town"])
             state = (self.towns[str(cells[TOWN_NUM])]["state"])
             address = ((cells[STREET_NO]) + ' ' + clean_address)
-            zip = cells[ZIP_CODE]
-            full_add = address + ' ' + town + ' ' + state + ' ' + zip
+            zip_code = cells[ZIP_CODE]
+
+            # Full address for the geolocator
+            full_add = address + ' ' + town + ' ' + state + ' ' + zip_code
 
             if RentDatabaseModel.objects.filter(listing_number_home=cells[LIST_NO]).exists():
-                # this house already exists, update move in day
+                # If the apartment already exists, verify that the address is the same, if it is then continue,
+                #   otherwise throw an error (just for testing purposes to see if it happens). If we decide this is a
+                #   non-issue, we can take this out
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
-                existing_apartment.last_updated_home = update_timestamp
-                existing_apartment.currently_available = True
-                existing_apartment.save()
-                print("[ UPDATING ]" + full_add)
-                continue
+                if existing_apartment.street_address == address and existing_apartment.zip_code == zip_code:
+                    existing_apartment.last_updated = update_timestamp
+                    existing_apartment.currently_available = True
+                    existing_apartment.save()
+                    print("[ UPDATING ]" + full_add)
+                else:
+                    print("Attempting to add home with address {0}".format(full_add))
+                    print("Home address that was in the database was {0}".format(existing_apartment.street_address))
+                    ValidationError("A home didn't have the same address even though the listing number existed in the "
+                                    "database")
             else:
+                # If the apartment listing_number did not already exist then add an entry in the database
 
                 # Pulls lat/lon based on address
                 locator = geolocator.maps_requester(gmaps_api_key)
                 latlng = locator.get_lat_lon_from_address(full_add)
 
-                if (latlng == -1):
+                if latlng == -1:
+                    print("Could not generate Lat and Long for apartment {0}, which had line {1} in IDX feed".format(
+                        full_add, line
+                    ))
                     continue
                 else:
                     lat = latlng[0]
                     lng = latlng[1]
 
+                # Now that the latlng were generated, start creating the apartment
+
+                # Create the new home
                 new_listing = RentDatabaseModel()
+                # Define the home type
                 list_type = cells[PROP_TYPE]
+
                 # verifies unit is a rental (RN denotes rental in MLS feed)
-                if (list_type == "RN"):
-                    new_listing.home_type_home = HomeTypeModel.objects.get(home_type_survey="Apartment")
-                    new_listing.currently_available = True
-                    new_listing.save()
+                if list_type == "RN":
+                    apartment_home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
                 else:
-                    continue
-                    
-                new_listing.latitude_home = lat
-                new_listing.longitude_home = lng
-                new_listing.street_address_home = address
-                new_listing.city_home = town
-                new_listing.zip_code_home = zip
-                new_listing.state_home = state
-                
-                try:
-                    # assert that fields are ints
-                    new_listing.price_home = int(cells[LIST_PRICE])
-                    new_listing.num_bedrooms_home = int(cells[NO_BEDROOMS])
-                    no_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
-                    new_listing.num_bathrooms_home = no_baths
-                    new_listing.listing_number_home = int(cells[LIST_NO])
-                except ValueError:
+                    # Since we only support rentals right now we don't want to retrieve any other home types
+                    print("Home not a rental, continuing. Error was with line {0}".format(line))
                     continue
 
-                new_listing.last_updated_home = update_timestamp
-                new_listing.bath_home = True if no_baths > 0 else False
-                new_listing.remarks_home = cells[REMARKS]
-                new_listing.listing_provider_home = "MLSPIN"
-                new_listing.listing_agent_home = cells[LIST_AGENT]
-                new_listing.listing_office_home = cells[LIST_OFFICE]
-                new_listing.apartment_number_home = apartment_no
+                # If any of the fields give a value error, then don't save the apartment
+                try:
+                    # Set the HomeBaseModel Fields
+                    new_listing.street_address = address
+                    new_listing.city = town
+                    new_listing.state = state
+                    new_listing.zip_code = zip_code
+                    new_listing.price = int(cells[LIST_PRICE])
+                    new_listing.latitude = lat
+                    new_listing.longitude = lng
+
+                    # Set InteriorAmenitiesModel Fields
+                    # Currently don't support non-integers for num_bathrooms. Therefore
+                    #   The num of full and half baths are added then rounded to the nearest int
+                    num_baths = int(cells[NO_FULL_BATHS]) + int(cells[NO_HALF_BATHS])
+                    new_listing.bath = True if num_baths > 0 else False
+                    new_listing.num_bathrooms = num_baths
+                    new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
+
+                    # Set MLSpinDataModel fields
+                    new_listing.remarks = cells[REMARKS]
+                    new_listing.listing_number = int(cells[LIST_NO])
+                    new_listing.listing_provider = "MLSPIN"
+                    new_listing.listing_agent = cells[LIST_AGENT]
+                    new_listing.listing_office = cells[LIST_OFFICE]
+                    new_listing.last_updated = update_timestamp
+
+                    # Set RentDatabaseModel fields
+                    new_listing.apartment_number = apartment_no
+                    new_listing.home_type = apartment_home_type
+                    new_listing.currently_available = True
+
+                except ValueError:
+                    print("Home could not be added. Error is with line: {0}".format(line))
+                    continue
+
+                # After all the data is added, save the home to the database
+                new_listing.save()
 
                 # TODO: upload ftp path to S3 storage bucket
-                newPhotos = HousePhotosModel(house_photo=new_listing)
-                newPhotos.save()
-                new_listing.save()
+                new_photos = HousePhotosModel(house_photo=new_listing)
+                new_photos.save()
                 print("[ ADDING   ]" + full_add)
-       
-        manager = MlsManagementModel.objects.all.first()
+
+        # When all the homes are added, update the MLSManagement model to reflex that the homes have been updated
+        print("Updating MLS timestamp to {0}".format(update_timestamp.date()))
+        manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = update_timestamp
         manager.save()
 
