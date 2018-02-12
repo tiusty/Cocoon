@@ -203,7 +203,7 @@ class MLSpinDataModel(models.Model):
     Contains all the data related to the MLS pin
     """
     remarks_home = models.TextField(default="")
-    listing_number_home = models.IntegerField(default=-1)
+    listing_number_home = models.IntegerField(unique=True, default=-1)
     listing_provider_home = models.CharField(max_length=200)
     listing_agent_home = models.CharField(max_length=200)
     listing_office_home = models.CharField(max_length=200)

@@ -52,10 +52,10 @@ class MlspinRequester:
 
         # Parses the IDX txt
         update_timestamp = timezone.now()
-        for line in lines[1:-1]: # skips the col headers
+        for line in lines[1:-1]:  # skips the col headers
 
             cells = line.split('|')
-            cells[STREET_NAME].replace(',','')
+            cells[STREET_NAME].replace(',', '')
             split_address = cells[STREET_NAME].split()
             apartment_no = ""
             has_apartment_no = False
@@ -79,7 +79,7 @@ class MlspinRequester:
             zip = cells[ZIP_CODE]
             full_add = address + ' ' + town + ' ' + state + ' ' + zip
 
-            if (RentDatabaseModel.objects.filter(listing_number_home=cells[LIST_NO]).exists()):
+            if RentDatabaseModel.objects.filter(listing_number_home=cells[LIST_NO]).exists():
                 # this house already exists, update move in day
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
                 existing_apartment.last_updated_home = update_timestamp
