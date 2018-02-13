@@ -51,6 +51,12 @@ class MlspinRequester:
         print("Attempting to add *" + str(len(lines)) + "* apartments to the db...")
         print("An equivalent number of requests will be made to the geocoder")
 
+        # Generate values for the different error cases for tracking purposes
+        num_apartments_failed_to_update = 0
+        num_apartments_failed_geolocate = 0
+        num_apartments_not_for_rental = 0
+        num_apartments_with_value_error = 0
+
         # Parses the IDX txt
         update_timestamp = timezone.now()
         for line in lines[1:-1]:  # skips the col headers
@@ -94,8 +100,7 @@ class MlspinRequester:
                 else:
                     print("Attempting to add home with address {0}".format(full_add))
                     print("Home address that was in the database was {0}".format(existing_apartment.street_address))
-                    ValidationError("A home didn't have the same address even though the listing number existed in the "
-                                    "database")
+                    num_apartments_failed_to_update += 1
             else:
                 # If the apartment listing_number did not already exist then add an entry in the database
 
@@ -107,6 +112,7 @@ class MlspinRequester:
                     print("Could not generate Lat and Long for apartment {0}, which had line {1} in IDX feed".format(
                         full_add, line
                     ))
+                    num_apartments_failed_geolocate += 1
                     continue
                 else:
                     lat = latlng[0]
@@ -125,6 +131,7 @@ class MlspinRequester:
                 else:
                     # Since we only support rentals right now we don't want to retrieve any other home types
                     print("Home not a rental, continuing. Error was with line {0}".format(line))
+                    num_apartments_not_for_rental += 1
                     continue
 
                 # If any of the fields give a value error, then don't save the apartment
@@ -161,6 +168,7 @@ class MlspinRequester:
 
                 except ValueError:
                     print("Home could not be added. Error is with line: {0}".format(line))
+                    num_apartments_with_value_error += 1
                     continue
 
                 # After all the data is added, save the home to the database
@@ -173,6 +181,21 @@ class MlspinRequester:
 
         # When all the homes are added, update the MLSManagement model to reflex that the homes have been updated
         print("Updating MLS timestamp to {0}".format(update_timestamp.date()))
+
+        # Printing out errors for data collection and observation
+        print()
+        print("The following errors were observed:")
+        print("Number of homes that failed to update due to address mismatch with same MLS_listing_number: {0}".format(
+            num_apartments_failed_to_update
+        ))
+        print("Number of homes that failed due to failing getting lat + lng: {0}",format(
+            num_apartments_failed_geolocate
+        ))
+        print("Number of homes that failed due to not being for rental: {0}".format(
+            num_apartments_not_for_rental
+        ))
+        print("Number of homes that failed due to Value Error: {0}".format(num_apartments_with_value_error))
+
         manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = update_timestamp
         manager.save()

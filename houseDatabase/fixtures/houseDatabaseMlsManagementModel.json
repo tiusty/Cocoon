@@ -1,9 +1,0 @@
-[
-    {
-        "model" : "houseDatabase.MlsManagementModel",
-        "pk" : 1,
-        "fields" : {
-            "last_updated_database" : "1901-01-01"
-        }
-    }
-]
