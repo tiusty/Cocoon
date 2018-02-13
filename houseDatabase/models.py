@@ -367,7 +367,7 @@ class MlsManagementModel(models.Model):
     Model that stores general database-wide information
     """
 
-    last_updated_mls = models.DateField()
+    last_updated_mls = models.DateField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         if MlsManagementModel.objects.exists() and not self.pk:
