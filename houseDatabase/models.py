@@ -1,6 +1,7 @@
 # Import Django modules
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # Import Config file information
 from Cocoon.settings.Global_Config import ZIP_CODE_TIMEDELTA_VALUE
@@ -80,13 +81,25 @@ class HomeBaseModel(models.Model):
     def street_address(self):
         return self.street_address_home
 
+    @street_address.setter
+    def street_address(self, new_street_address):
+        self.street_address_home = new_street_address
+
     @property
     def city(self):
         return self.city_home
 
+    @city.setter
+    def city(self, new_city):
+        self.city_home = new_city
+
     @property
     def state(self):
         return self.state_home
+
+    @state.setter
+    def state(self, new_state):
+        self.state_home = new_state
 
     @property
     def zip_code(self):
@@ -94,9 +107,17 @@ class HomeBaseModel(models.Model):
             return self.zip_code_home[:5]
         return self.zip_code_home
 
+    @zip_code.setter
+    def zip_code(self, new_zip_code):
+        self.zip_code_home = new_zip_code
+
     @property
     def price(self):
         return self.price_home
+
+    @price.setter
+    def price(self, new_price):
+        self.price_home = new_price
 
     @property
     def price_string(self):
@@ -106,9 +127,17 @@ class HomeBaseModel(models.Model):
     def latitude(self):
         return self.latitude_home
 
+    @latitude.setter
+    def latitude(self, new_latitude):
+        self.latitude_home = new_latitude
+
     @property
     def longitude(self):
         return self.longitude_home
+
+    @longitude.setter
+    def longitude(self, new_longitude):
+        self.longitude_home = new_longitude
 
     class Meta:
         abstract = True
@@ -141,13 +170,25 @@ class InteriorAmenitiesModel(models.Model):
     def bath(self):
         return self.bath_home
 
+    @bath.setter
+    def bath(self, new_bath):
+        self.bath_home = new_bath
+
     @property
     def num_bathrooms(self):
         return self.num_bathrooms_home
 
+    @num_bathrooms.setter
+    def num_bathrooms(self, new_num_bathrooms):
+        self.num_bathrooms_home = new_num_bathrooms
+
     @property
     def num_bedrooms(self):
         return self.num_bedrooms_home
+
+    @num_bedrooms.setter
+    def num_bedrooms(self, new_num_bedrooms):
+        self.num_bedrooms_home = new_num_bedrooms
 
     class Meta:
         abstract = True
@@ -206,26 +247,55 @@ class MLSpinDataModel(models.Model):
     listing_provider_home = models.CharField(max_length=200)
     listing_agent_home = models.CharField(max_length=200)
     listing_office_home = models.CharField(max_length=200)
+    last_updated_home = models.DateField(default=timezone.now)
 
     @property
     def remarks(self):
         return self.remarks_home
 
+    @remarks.setter
+    def remarks(self, new_remarks):
+        self.remarks_home = new_remarks
+
     @property
     def listing_number(self):
         return self.listing_number_home
+
+    @listing_number.setter
+    def listing_number(self, new_listing_number):
+        self.listing_number_home = new_listing_number
 
     @property
     def listing_provider(self):
         return self.listing_provider_home
 
+    @listing_provider.setter
+    def listing_provider(self, new_listing_provider):
+        self.listing_provider_home = new_listing_provider
+
     @property
     def listing_agent(self):
         return self.listing_agent_home
 
+    @listing_agent.setter
+    def listing_agent(self, new_listing_agent):
+        self.listing_agent_home = new_listing_agent
+
     @property
     def listing_office(self):
         return self.listing_office_home
+
+    @listing_office.setter
+    def listing_office(self, new_listing_office):
+        self.listing_office_home = new_listing_office
+
+    @property
+    def last_updated(self):
+        return self.last_updated_home
+
+    @last_updated.setter
+    def last_updated(self, new_last_updated):
+        self.last_updated_home = new_last_updated
 
     class Meta:
         abstract = True
@@ -237,22 +307,39 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
     """
     apartment_number_home = models.CharField(max_length=200)
     home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
-    move_in_day_home = models.DateField(default=timezone.now)
+    currently_available_home = models.BooleanField(default=False)
 
     def __str__(self):
         return self.full_address
 
     @property
-    def move_in_day(self):
-        return self.move_in_day_home
-
-    @property
     def home_type(self):
         return self.home_type_home
+
+    @home_type.setter
+    def home_type(self, new_home_type):
+        self.home_type_home = new_home_type
 
     @property
     def apartment_number(self):
         return self.apartment_number_home
+
+    @apartment_number.setter
+    def apartment_number(self, new_apartment_number):
+        self.apartment_number_home = new_apartment_number
+
+
+    @property
+    def currently_available(self):
+        return self.currently_available_home
+
+    @currently_available.setter
+    def currently_available(self, is_available):
+        """
+        Sets whehter or not the home is currently available
+        :param is_available: (Boolean) True if the home is available, false otherwise
+        """
+        self.currently_available_home = is_available
 
 
 def house_directory_path(instance, filename):
@@ -273,6 +360,19 @@ class HousePhotosModel(models.Model):
     @property
     def image_path(self):
         return self.image_path_photo
+
+
+class MlsManagementModel(models.Model):
+    """
+    Model that stores general database-wide information
+    """
+
+    last_updated_mls = models.DateField()
+
+    def save(self, *args, **kwargs):
+        if MlsManagementModel.objects.exists() and not self.pk:
+            raise ValidationError("There should only be one MlsManagementModel object")
+        return super(MlsManagementModel, self).save(*args, **kwargs)
 
 
 class ZipCodeDictionaryParentModel(models.Model):

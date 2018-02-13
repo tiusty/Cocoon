@@ -10,8 +10,12 @@ houseDatabase/migrations
 homePage/migrations
 survey/migrations
 
+# Visual Studio Code Settings #
+.vscode/
+
 # Home MLSpin feed #
 houseDatabase/management/commands/idx_feed.txt
 
 # Sqlite database #
 db.sqlite3
+
