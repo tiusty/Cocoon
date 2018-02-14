@@ -11,7 +11,12 @@ function add_destination_form(form_add_value, number_of_formsets) {
         if (destination_form_number > 0) {
             $("#form_destination_" + destination_form_number).addClass("hide")
             $("#form_destination_section_" + destination_form_number).find('input:text').val('');
+            $("#form_destination_section_" + destination_form_number).removeClass('active in')
+            $("#form_destination_" + destination_form_number).removeClass('active')
             destination_form_number += form_add_value;
+            $("#form_destination_section_" + destination_form_number).addClass('active in')
+            $("#form_destination_" + destination_form_number).addClass('active')
+
         }
     }
 
@@ -24,8 +29,16 @@ function add_destination_form(form_add_value, number_of_formsets) {
 
     if(destination_form_number === 0) {
         $("#form_destination_minus_span").addClass('hide')
+        $("#form_destination_div").addClass('hide')
     }
     else {
+        if(destination_form_number == 1)
+        {
+            $("#form_destination_section_" + destination_form_number).addClass('active in')
+            $("#form_destination_" + destination_form_number).addClass('active')
+        }
         $("#form_destination_minus_span").removeClass('hide')
+        $("#form_destination_div").removeClass('hide')
+
     }
 }

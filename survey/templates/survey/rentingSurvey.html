@@ -110,7 +110,7 @@
                                         <li><a><span id='form_destination_add_span' class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
                                                 {{ number_of_formsets }})"></span></a></li>
                                     </ul>
-                                    <div class="tab-content">
+                                    <div id="form_destination_div" class="tab-content">
                                         {{ form_destination.management_form }}
                                         {% for form in form_destination %}
                                         <div id="form_destination_section_{{ forloop.counter }}"
