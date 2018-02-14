@@ -96,15 +96,17 @@
                                 {% comment %} Contains form for destination {% endcomment %}
                                 <div class="bs-example">
                                     <ul class="nav nav-tabs">
+                                        <li><a><span></span></a></li>
                                         {% for num_forms in form_destination %}
                                         {% if forloop.counter == 1 %}
-                                        <li class="active">
+                                        <li class="active" id="form_destination_{{ forloop.counter}}">
                                             {% else %}
-                                        <li>
+                                        <li class="hide" id="form_destination_{{ forloop.counter }}">
                                             {% endif %}
                                             <a data-toggle="tab"
                                                href="#section{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
                                         {% endfor %}
+                                        <li><a><span class="glyphicon glyphicon-plus" onclick="add_destination_form(1)"></span></a></li>
                                     </ul>
                                     <div class="tab-content">
                                         {{ form_destination.management_form }}
@@ -293,9 +295,11 @@
     bathroomsMax = 6;
     $(function () {
   $('[data-toggle="tooltip"]').tooltip()
+
+    // Destination Form values
+    destination_form_number = 1;
 })
 </script>
-
 
 <!-- JQuery UI for sliders -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -303,4 +307,5 @@
 <script src="{% static 'survey/costSlider.js' %}"></script>
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
 <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
+<script src="{% static 'survey/destinationToggle.js' %}"></script>
 {% endblock %}
