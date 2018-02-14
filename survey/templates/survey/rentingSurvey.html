@@ -96,7 +96,7 @@
                                 {% comment %} Contains form for destination {% endcomment %}
                                 <div class="bs-example">
                                     <ul class="nav nav-tabs">
-                                        <li><a><span></span></a></li>
+                                        <li><a><span class="glyphicon glyphicon-minus" onclick="add_destination_form(-1, {{ number_of_formsets }})"></span></a></li>
                                         {% for num_forms in form_destination %}
                                         {% if forloop.counter == 1 %}
                                         <li class="active" id="form_destination_{{ forloop.counter}}">
@@ -106,7 +106,7 @@
                                             <a data-toggle="tab"
                                                href="#section{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
                                         {% endfor %}
-                                        <li><a><span class="glyphicon glyphicon-plus" onclick="add_destination_form(1)"></span></a></li>
+                                        <li><a><span class="glyphicon glyphicon-plus" onclick="add_destination_form(1, {{ number_of_formsets }})"></span></a></li>
                                     </ul>
                                     <div class="tab-content">
                                         {{ form_destination.management_form }}
