@@ -14,4 +14,17 @@ function add_destination_form(form_add_value, number_of_formsets) {
         }
     }
 
+    if(destination_form_number === 3) {
+        $("#form_destination_add_span").addClass('hide')
+    }
+    else {
+        $("#form_destination_add_span").removeClass('hide')
+    }
+
+    if(destination_form_number === 0) {
+        $("#form_destination_minus_span").addClass('hide')
+    }
+    else {
+        $("#form_destination_minus_span").removeClass('hide')
+    }
 }
