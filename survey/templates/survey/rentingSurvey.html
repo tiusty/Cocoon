@@ -105,7 +105,7 @@
                                         <li class="hide" id="form_destination_{{ forloop.counter }}">
                                             {% endif %}
                                             <a data-toggle="tab"
-                                               href="#section{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
+                                               href="#form_destination_section_{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
                                         {% endfor %}
                                         <li><a><span id='form_destination_add_span' class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
                                                 {{ number_of_formsets }})"></span></a></li>
@@ -113,7 +113,7 @@
                                     <div class="tab-content">
                                         {{ form_destination.management_form }}
                                         {% for form in form_destination %}
-                                        <div id="section{{ forloop.counter }}"
+                                        <div id="form_destination_section_{{ forloop.counter }}"
                                              {% if forloop.counter == 1 %}
                                                 class="tab-pane fade in active">
                                             {% else %}
