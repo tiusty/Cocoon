@@ -54,6 +54,8 @@ def renting_survey(request):
         form = RentSurveyForm(request.POST)
 
         # check whether it is valid
+        # Current problem with method is that the rent_survey must be saved before the formset
+        #   can probably save
         if form.is_valid():
             # process the data in form.cleaned_data as required
             rent_survey = form.save(commit=False)
