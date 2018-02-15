@@ -35,7 +35,6 @@ def renting_survey(request):
     # The reason why this is split is because the destination form can be made into a form factory
     # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
     # Multiple DestinationsModel on the frontend
-    # form_destination = DestinationForm()
     number_of_formsets = 3
     form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
                                                      extra=number_of_formsets, fields=('street_address_destination', 'city_destination',
@@ -54,8 +53,6 @@ def renting_survey(request):
         form = RentSurveyForm(request.POST)
 
         # check whether it is valid
-        # Current problem with method is that the rent_survey must be saved before the formset
-        #   can probably save
         if form.is_valid():
             # process the data in form.cleaned_data as required
             rent_survey = form.save(commit=False)
@@ -73,16 +70,15 @@ def renting_survey(request):
             # The user has the option to change the name of it to save it permanently
             RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
                 name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
-            rent_survey.save()
-
-            # Since commit=False in the save, need to save the many to many fields
-            # After saving the form
-            form.save_m2m()
 
             # Create the form destination set
             destination_form_set = form_inline_destination_set(request.POST, instance=rent_survey)
 
             if destination_form_set.is_valid():
+
+                # Only if all the forms validate will we save it to the database
+                rent_survey.save()
+                form.save_m2m()
                 destination_form_set.save()
 
                 # redirect to survey result on success:
@@ -91,11 +87,6 @@ def renting_survey(request):
 
             else:
                 context['error_message'] = "The destination set did not validate"
-                # Since the form has been desired start at 0 and increase for each form there is input
-                # number_of_validated_forms = 0
-                # for form in form_destination_set.extra_forms:
-                #     if form._validate_unique:
-                #         print(form)
         else:
             # If the destination form is not valid, also do a quick test of the survey field to
             # Inform the user if the survey is also invalid
