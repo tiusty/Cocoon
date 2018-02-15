@@ -37,10 +37,11 @@ def renting_survey(request):
     # Multiple DestinationsModel on the frontend
     # form_destination = DestinationForm()
     number_of_formsets = 3
-    FormInlineDestinationSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
+    form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
                                                      extra=number_of_formsets, fields=('street_address_destination', 'city_destination',
                                                                       'state_destination', 'zip_code_destination'),
                                                      form=DestinationForm)
+    destination_form_set = form_inline_destination_set
 
     # Retrieve the current profile or return a 404
     current_profile = get_object_or_404(UserProfile, user=request.user)
@@ -79,10 +80,10 @@ def renting_survey(request):
             form.save_m2m()
 
             # Create the form destination set
-            form_destination_set = FormInlineDestinationSet(request.POST, instance=rent_survey)
+            destination_form_set = form_inline_destination_set(request.POST, instance=rent_survey)
 
-            if form_destination_set.is_valid():
-                form_destination_set.save()
+            if destination_form_set.is_valid():
+                destination_form_set.save()
 
                 # redirect to survey result on success:
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult',
@@ -90,15 +91,18 @@ def renting_survey(request):
 
             else:
                 context['error_message'] = "The destination set did not validate"
+                # Since the form has been desired start at 0 and increase for each form there is input
+                # number_of_validated_forms = 0
+                # for form in form_destination_set.extra_forms:
+                #     if form._validate_unique:
+                #         print(form)
         else:
             # If the destination form is not valid, also do a quick test of the survey field to
             # Inform the user if the survey is also invalid
-            if not form.is_valid():
-                context['error_message'].append("The normal form is also not valid")
-            context['error_message'].append("Destination form is not valid")
+            context['error_message'].append('The survey did not validate')
 
     context['form'] = form
-    context['form_destination'] = FormInlineDestinationSet
+    context['form_destination'] = destination_form_set
     return render(request, 'survey/rentingSurvey.html', context)
 
 
