@@ -65,16 +65,16 @@ def renting_survey(request):
             # This can probably be removed after testing it
             rent_survey.survey_type = survey_types.rent.value
 
-            # Try seeing if there is already a recent survey and if there is
-            # Then delete it. We only want to keep one "recent" survey
-            # The user has the option to change the name of it to save it permanently
-            RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
-                name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
-
             # Create the form destination set
             destination_form_set = form_inline_destination_set(request.POST, instance=rent_survey)
 
             if destination_form_set.is_valid():
+
+                # Try seeing if there is already a recent survey and if there is
+                # Then delete it. We only want to keep one "recent" survey
+                # The user has the option to change the name of it to save it permanently
+                RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
+                    name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
 
                 # Only if all the forms validate will we save it to the database
                 rent_survey.save()
