@@ -90,7 +90,8 @@
                         <br>
 
                         <h3>Step 2</h3>
-                        <span class="help-block">Please enter a work, school or somewhere you need to commute to</span>
+                        <span class="help-block">Please enter up to {{ number_of_formsets }} commutes to locations you need to go to.
+                            This can be your work, school or somewhere you commute to regularily</span>
                         <div class="form-group step_div">
                             <div class="form-group">
                                 {% comment %} Contains form for destination {% endcomment %}
@@ -119,13 +120,16 @@
                                             {% else %}
                                                 class="tab-pane fade">
                                             {% endif %}
-                                                <h3>Address {{ forloop.counter }}</h3>
+                                                <h3>Commute {{ forloop.counter }}</h3>
                                             {{ form.as_table }}
                                         </div>
                                         {% endfor %}
                                     </div>
                                 </div>
                             </div>
+
+                            <br>
+                            <span class="help-block">Currently the Commute time, weight and type are for all the commutes</span>
 
                             <div class="form-group">
                                 <label for="amountCommute">Commute:</label>
