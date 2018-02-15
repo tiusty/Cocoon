@@ -100,9 +100,9 @@
                                                 {{ number_of_formsets }})"></span></a></li>
                                         {% for num_forms in form_destination %}
                                         {% if forloop.counter == 1 %}
-                                        <li class="active" id="form_destination_{{ forloop.counter}}">
+                                        <li class="active" id="form_destination_tabs_{{ forloop.counter}}">
                                             {% else %}
-                                        <li class="hide" id="form_destination_{{ forloop.counter }}">
+                                        <li class="hide" id="form_destination_tabs_{{ forloop.counter }}">
                                             {% endif %}
                                             <a data-toggle="tab"
                                                href="#form_destination_section_{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
