@@ -36,6 +36,7 @@ HYBRID_WEIGHT_CHOICES = (
 # within a given zip code
 approximate_commute_range = 20
 number_of_exact_commutes_computed = 50  # number of homes that the exact commute is calculated
+DEFAULT_COMMUTE_TYPE = "Driving"
 
 # Google distance matrix values
 gmaps = googlemaps.Client(key='AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw')

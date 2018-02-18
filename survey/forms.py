@@ -9,7 +9,7 @@ from houseDatabase.models import HomeTypeModel, CommuteTypeModel
 
 # Python global configurations
 from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
-    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
+    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES, DEFAULT_COMMUTE_TYPE
 
 
 class HomeInformationForm(ModelForm):
@@ -125,7 +125,8 @@ class CommuteInformationForm(ModelForm):
             attrs={
                 'class': 'form-control'
             }
-        )
+        ),
+        initial=DEFAULT_COMMUTE_TYPE,
     )
 
     @property
