@@ -12,6 +12,9 @@ function add_destination_form(form_add_value, number_of_formsets) {
     Return:
         None:
      */
+
+
+    var destination_form_number = parseInt($('#id_number_destinations_filled_out').val());
     console.log(form_add_value);
     console.log(destination_form_number);
 
@@ -81,4 +84,6 @@ function add_destination_form(form_add_value, number_of_formsets) {
     else {
         $("#" + form_destination_add_span).removeClass('hide');
     }
+    console.log(destination_form_number)
+    $('#id_number_destinations_filled_out').val(destination_form_number);
 }

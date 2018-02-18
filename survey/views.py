@@ -36,6 +36,7 @@ def renting_survey(request):
     # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
     # Multiple DestinationsModel on the frontend
     number_of_formsets = 3
+    number_of_destinations = 1
     form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
                                                      extra=number_of_formsets, fields=('street_address_destination', 'city_destination',
                                                                       'state_destination', 'zip_code_destination'),
@@ -48,9 +49,9 @@ def renting_survey(request):
     context = {'error_message': [], 'number_of_formsets': number_of_formsets}
 
     if request.method == 'POST':
-
+        number_of_destinations = int(request.POST['number_destinations_filled_out'])
         # create a form instance and populate it with data from the request:
-        form = RentSurveyForm(request.POST)
+        form = RentSurveyForm(request.POST, initial={'number_destinations_filled_out': number_of_destinations})
 
         # check whether it is valid
         if form.is_valid():
@@ -94,6 +95,7 @@ def renting_survey(request):
 
     context['form'] = form
     context['form_destination'] = destination_form_set
+    context['number_of_destinations'] = number_of_destinations
     return render(request, 'survey/rentingSurvey.html', context)
 
 

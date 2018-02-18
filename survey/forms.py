@@ -320,6 +320,14 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
     """
     Rent Survey is the rent survey on the main survey page
     """
+    number_destinations_filled_out = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+        initial=1,
+    )
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
