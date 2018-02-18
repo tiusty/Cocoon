@@ -100,22 +100,24 @@
                                         <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
                                                 {{ number_of_formsets }})"></span></a></li>
                                         {% for num_forms in form_destination %}
-                                            {% if forloop.counter == 1 %}
-                                                <li class="active" id="form_destination_tabs_{{ forloop.counter}}">
-                                            {% elif forloop.counter <= number_of_destinations %}
-                                                <li id="form_destination_tabs_{{ forloop.counter }}">
-                                            {% else %}
-                                                <li class="hide" id="form_destination_tabs_{{ forloop.counter }}">
-                                            {% endif %}
-                                                <a data-toggle="tab"
-                                                   href="#form_destination_section_{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
-                                        {% endfor %}
+                                            <li
+                                                {% if forloop.counter == 1 %}
+                                                    class="active"
+                                                {% elif forloop.counter <= number_of_destinations %}
+                                                    class=""
+                                                {% else %}
+                                                    class="hide"
+                                                {% endif %}
+                                                id="form_destination_tabs_{{ forloop.counter }}">
 
+                                            <a data-toggle="tab"
+                                               href="#form_destination_section_{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
+                                        {% endfor %}
                                         <li
-                                                {% if number_of_destinations >= number_of_formsets %}
+                                            {% if number_of_destinations >= number_of_formsets %}
                                                 class='hide'
-                                               {% endif %}
-                                                id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
+                                            {% endif %}
+                                            id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
                                                 {{ number_of_formsets }})"></span></a></li>
                                     </ul>
                                     <div id="form_destination_div" class="tab-content">
