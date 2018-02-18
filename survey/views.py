@@ -49,12 +49,13 @@ def renting_survey(request):
     context = {'error_message': [], 'number_of_formsets': number_of_formsets}
 
     if request.method == 'POST':
-        number_of_destinations = int(request.POST['number_destinations_filled_out'])
         # create a form instance and populate it with data from the request:
-        form = RentSurveyForm(request.POST, initial={'number_destinations_filled_out': number_of_destinations})
+        form = RentSurveyForm(request.POST)
 
         # check whether it is valid
         if form.is_valid():
+            number_of_destinations = int(form.cleaned_data['number_destinations_filled_out'])
+
             # process the data in form.cleaned_data as required
             rent_survey = form.save(commit=False)
             # Need to retrieve the current userProfile to link the survey to
