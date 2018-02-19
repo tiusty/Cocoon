@@ -74,10 +74,6 @@ context.
                             <td class="expanded-tile-text value">{{ theHouse.price_string }}</td>
                         </tr>
                         <tr>
-                            <td class="expanded-tile-text category">Move in</td>
-                            <td class="expanded-tile-text value">{{ theHouse.move_in_day }}</td>
-                        </tr>
-                        <tr>
                             <td class="expanded-tile-text category">Beds</td>
                             <td class="expanded-tile-text value">{{ theHouse.num_bedrooms }}</td>
                         </tr>
@@ -92,6 +88,16 @@ context.
                         <tr>
                             <td class="expanded-tile-text category">A/C</td>
                             <td class="expanded-tile-text value">{{ theHouse.air_conditioning }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Remarks</td>
+                            <td class="expanded-tile-text value remarks">{{ theHouse.remarks }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Commute Time (minutes)</td>
+                            {% for key, value in commuteExact.items %}
+                            <td class="expanded-tile-text value">Exact: {{ value|floatformat:"0" }}</td>
+                            {% endfor %}
                         </tr>
                     </table>
 

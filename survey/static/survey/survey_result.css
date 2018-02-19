@@ -78,7 +78,8 @@ EXPANDED TILE STYLING
     display: flex;
     width: 100%;
     flex-direction: column;
-    height: calc(65vh - 50px);
+    /* height: calc(65vh - 50px); */
+    overflow: hidden;
     justify-content: space-around;
     align-content: center;
 }
@@ -142,14 +143,14 @@ STYLING NEW TILE RESULTS
 */
 .resultTiles {
 
-}
 
+}
 .tileTable {
     margin: 0 auto;
     min-height: 750px;
     max-width: 700px;
     /*max-height: 1200px;*/
-    overflow-x: scroll;
+    /* overflow-x: scroll; */
 }
 
 /* scrolling on small screens */
