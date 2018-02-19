@@ -61,7 +61,7 @@ context.
                       style="cursor:pointer"
                         {% endif %}
                       aria-hidden="true">
-                                            </span>
+                </span>
 
                 <div class="expanded-info">
                     <table class="expanded-info-table">
@@ -94,8 +94,14 @@ context.
                             <td class="expanded-tile-text value remarks">{{ theHouse.remarks }}</td>
                         </tr>
                         <tr>
-                            <td class="expanded-tile-text category">Commute Time (minutes)</td>
+                            <td class="expanded-tile-text category">Exact Commute Time (minutes)</td>
                             {% for key, value in commuteExact.items %}
+                            <td class="expanded-tile-text value">Exact: {{ value|floatformat:"0" }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Approx Commute Time (minutes)</td>
+                            {% for key, value in commuteApprox.items %}
                             <td class="expanded-tile-text value">Exact: {{ value|floatformat:"0" }}</td>
                             {% endfor %}
                         </tr>
@@ -158,8 +164,6 @@ context.
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
-
-
 
             </div>
 
