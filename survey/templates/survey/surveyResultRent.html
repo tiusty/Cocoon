@@ -416,18 +416,8 @@ Global variables are listed below
 
   <script src="{% static 'survey/markerclusterer.js' %}"></script>
 
-  <script type="text/javascript">
-    var isVisible = false;
-    function toggleList() {
+  <script src="{% static 'survey/displaylist.js' %}">
 
-        if (!isVisible) {
-          $(".export-modal").show();
-          isVisible = true
-        } else {
-          $(".export-modal").hide();
-          isVisible = false;
-        }
-    }
   </script>
 
   <script>
