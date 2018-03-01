@@ -160,6 +160,7 @@ STYLING NEW TILE RESULTS
     max-width: 700px;
     overflow-x: scroll;
     overflow-y: scroll;
+    max-height: 90vh;
 }
 
 /* scrolling on small screens */
