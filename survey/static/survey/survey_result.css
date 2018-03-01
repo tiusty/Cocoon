@@ -144,8 +144,6 @@ STYLING NEW TILE RESULTS
     TODO: remove this code
 */
 .resultTiles {
-    overflow-y: scroll;
-
 }
 .tileTable {
     margin: 0 auto;
