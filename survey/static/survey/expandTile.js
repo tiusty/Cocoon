@@ -113,10 +113,9 @@ function expand(aTile) {
         $(aTile).removeClass('tile');
         $(aTile).addClass('tile-expanded');
         $(aTile).children().hide();
-        $(aTile).animate({"height": "100vh"}, 200, function () {
-            $(aTile).siblings('.tile').slideUp(150);
-            $(aTile).parents('.tileTable').scrollTop(0);
-        });
+        $(aTile).css("height", "auto")
+        $(aTile).siblings('.tile').slideUp(150);
+        $(aTile).parents('.tileTable').scrollTop(0);
 
         // Adds the templated HTML to the page
         $(aTile).append($(aTile).children('#expanded-tile-contents').html());

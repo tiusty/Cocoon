@@ -37,12 +37,9 @@ EXPANDED TILE STYLING
     color: #009688;
 }
 
-.contact-button {
-
-}
-
 .expanded-tile-container {
     width: 100%;
+    padding: 8px !important;
 }
 
 .expanded-tile-contents {
@@ -50,17 +47,17 @@ EXPANDED TILE STYLING
     width: 100%;
     min-width: 450px;
     flex-direction: column;
-    height: calc(100vh - 50px);
     /*max-height: 900px;*/
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-content: center;
+    padding: 5%;
 }
 
 .expanded-tile-text {
     font-family: 'Open Sans', sans-serif;
     font-size: 16px;
-    margin-bottom: 5px%;
+    margin-bottom: 5px;
 }
 
     /* #############
@@ -98,6 +95,8 @@ EXPANDED TILE STYLING
     align-self: center;
     margin-top: 5px;
     margin-bottom: 5%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #myCarousel {
@@ -111,18 +110,30 @@ tr {
     width: 100%;
 }
 
+tr:nth-child(even) {
+    background-color: #efefef;
+}
+
 td.value {
     display: inline-block;
     width: 55%;
     font-weight: normal;
     text-align: left;
     color: #26A69A;
+    padding: 8px;
+}
+
+td.remarks {
+    font-size: 10px;
 }
 
 .expanded-info-table {
+    border: 2px #777 !important;
     display: table;
     width: 90%;
     margin: 0 auto;
+    padding: 8px !important;
+    border-collapse: collapse;
 }
 
 td.category {
@@ -143,17 +154,12 @@ STYLING NEW TILE RESULTS
 /* Pushing old styling down
     TODO: remove this code
 */
-.resultTiles {
-
-}
 
 .tileTable {
     margin: 0 auto;
     max-width: 700px;
-    /*max-height: 1200px;*/
     overflow-x: scroll;
     overflow-y: scroll;
-    height: 80vh;
 }
 
 /* scrolling on small screens */
@@ -173,8 +179,8 @@ STYLING NEW TILE RESULTS
 
 .tile-expanded {
     width: 100%;
+    height: auto;
     min-width: 450px;
-    /*max-height: 900px;*/
     margin-bottom: 2%;
     border: 1px solid #c65c3b;
     background-color: #f7f7f7;
@@ -333,7 +339,6 @@ STYLING NEW TILE RESULTS
 @media (max-width: 768px) {
     .tileTable {
         min-height: 350px;
-        max-height: 600px;
     }
 
     .tile {

@@ -61,7 +61,7 @@ context.
                       style="cursor:pointer"
                         {% endif %}
                       aria-hidden="true">
-                                            </span>
+                </span>
 
                 <div class="expanded-info">
                     <table class="expanded-info-table">
@@ -72,10 +72,6 @@ context.
                         <tr>
                             <td class="expanded-tile-text category">Price</td>
                             <td class="expanded-tile-text value">{{ theHouse.price_string }}</td>
-                        </tr>
-                        <tr>
-                            <td class="expanded-tile-text category">Move in</td>
-                            <td class="expanded-tile-text value">{{ theHouse.move_in_day }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">Beds</td>
@@ -92,6 +88,22 @@ context.
                         <tr>
                             <td class="expanded-tile-text category">A/C</td>
                             <td class="expanded-tile-text value">{{ theHouse.air_conditioning }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Remarks</td>
+                            <td class="expanded-tile-text value remarks">{{ theHouse.remarks }}</td>
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Exact Commute Time (minutes)</td>
+                            {% for key, value in commuteExact.items %}
+                            <td class="expanded-tile-text value">Exact: {{ value|floatformat:"0" }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="expanded-tile-text category">Approx Commute Time (minutes)</td>
+                            {% for key, value in commuteApprox.items %}
+                            <td class="expanded-tile-text value">Exact: {{ value|floatformat:"0" }}</td>
+                            {% endfor %}
                         </tr>
                     </table>
 
@@ -152,8 +164,6 @@ context.
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
-
-
 
             </div>
 

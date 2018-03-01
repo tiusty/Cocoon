@@ -17,6 +17,7 @@ Global variables are listed below
   <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
   <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
   <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
+  <link href="{% static 'survey/compiledResults.css'%}" rel="stylesheet">
 {% endblock %}
 
 {% block nav-survey %}
@@ -228,6 +229,63 @@ Global variables are listed below
       {% endif %}
 
       <div class="nopadding-row row">
+        <div class="row">
+          <div class="col-sm-6">
+            <button class="btn expand-btn" onclick="toggleList()">List View</button>
+          </div>
+        </div>
+        <div class="export-modal">
+          {% for home_score in houseList|slice:"20" %}
+            <div class="home-box">
+              <div>
+                <span class="rank">#{{forloop.counter}}</span>
+                <span class="address">{{home_score.home.full_address}}</span>
+              </div>
+                <div class="export-row">
+                  <div class="export-col">Score</div>
+                  <div class="export-col-val" id="score-item">{{home_score.user_friendly_score}}</div>
+                </div>
+
+                {% for key, value in home_score.exact_commute_times.items %}
+                  <div class="export-row">
+                    <div class="export-col">Commute to {{key}}</div>
+                    <div class="export-col-val">{{value|floatformat:"0"}}</div>
+                  </div>
+                {% endfor %}
+
+                <div class="export-row">
+                  <div class="export-col">Price</div>
+                  <div class="export-col-val">{{home_score.home.price_string}}</div>
+                </div>
+
+                <div class="export-row">
+                  <div class="export-col">Bedrooms</div>
+                  <div class="export-col-val">{{home_score.home.num_bedrooms}}</div>
+                </div>
+
+                 <div class="export-row">
+                  <div class="export-col">Bathrooms</div>
+                  <div class="export-col-val">{{home_score.home.num_bathrooms}}</div>
+                </div>
+
+                 <div class="export-row">
+                  <div class="export-col">Home Type</div>
+                  <div class="export-col-val">{{home_score.home.home_type}}</div>
+                </div>
+
+                <div class="export-row">
+                  <div class="export-col">Air Conditioning</div>
+                  <div class="export-col-val">{{home_score.home.air_conditioning}}</div>
+                </div>
+
+                <div class="export-row">
+                  <div class="export-col">Remarks</div>
+                  <div class="export-col-val">{{home_score.home.remarks}}</div>
+                </div>
+            </div>
+          {% endfor %}
+        </div>
+
         <div class="nopadding col-sm-6">
           <h1 class="page-header">
             <span style="margin-left:10px;font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
@@ -277,7 +335,6 @@ Global variables are listed below
               {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score%}
 
               <script>
-
                   var lat = {{ home_score.home.latitude|safe }};
                   var lon = {{ home_score.home.longitude|safe }};
                   var id = {{ forloop.counter }};
@@ -358,6 +415,10 @@ Global variables are listed below
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
   <script src="{% static 'survey/markerclusterer.js' %}"></script>
+
+  <script src="{% static 'survey/displaylist.js' %}">
+
+  </script>
 
   <script>
 
