@@ -9,7 +9,7 @@ from houseDatabase.models import HomeTypeModel, CommuteTypeModel
 
 # Python global configurations
 from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
-    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES, DEFAULT_COMMUTE_TYPE
+    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
 
 
 class HomeInformationForm(ModelForm):
@@ -125,8 +125,7 @@ class CommuteInformationForm(ModelForm):
             attrs={
                 'class': 'form-control'
             }
-        ),
-        initial=DEFAULT_COMMUTE_TYPE,
+        )
     )
 
     @property
@@ -321,14 +320,6 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
     """
     Rent Survey is the rent survey on the main survey page
     """
-    number_destinations_filled_out = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-        initial=1,
-    )
-
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result

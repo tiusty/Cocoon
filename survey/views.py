@@ -8,7 +8,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
-from django.forms import inlineformset_factory
 
 # Import Global config variables
 from Cocoon.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
@@ -21,7 +20,7 @@ from userAuth.models import UserProfile
 
 # Import Survey algorithm modules
 from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
-from survey.models import RentingSurveyModel, RentingDestinationsModel
+from survey.models import RentingSurveyModel
 from survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
 
 
@@ -35,69 +34,66 @@ def renting_survey(request):
     # The reason why this is split is because the destination form can be made into a form factory
     # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
     # Multiple DestinationsModel on the frontend
-    number_of_formsets = 3
-    number_of_destinations = 1
-    form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
-                                                     extra=number_of_formsets, fields=('street_address_destination', 'city_destination',
-                                                                      'state_destination', 'zip_code_destination'),
-                                                     form=DestinationForm)
-    destination_form_set = form_inline_destination_set
+    form_destination = DestinationForm()
 
     # Retrieve the current profile or return a 404
     current_profile = get_object_or_404(UserProfile, user=request.user)
 
-    context = {'error_message': [], 'number_of_formsets': number_of_formsets}
+    context = {
+        'error_message': [],
+    }
 
     if request.method == 'POST':
+
+        # first validating Destination form
+        form_destination = DestinationForm(request.POST)
         # create a form instance and populate it with data from the request:
         form = RentSurveyForm(request.POST)
 
-        # check whether it is valid
-        if form.is_valid():
-            number_of_destinations = int(form.cleaned_data['number_destinations_filled_out'])
+        # Check to see if the designations are valid
+        if form_destination.is_valid():
+            # check whether it is valid
+            if form.is_valid():
+                # process the data in form.cleaned_data as required
+                rent_survey = form.save(commit=False)
+                # Need to retrieve the current userProfile to link the survey to
 
-            # process the data in form.cleaned_data as required
-            rent_survey = form.save(commit=False)
-            # Need to retrieve the current userProfile to link the survey to
+                # Add the current user to the survey
+                rent_survey.user_profile = current_profile
 
-            # Add the current user to the survey
-            rent_survey.user_profile = current_profile
-
-            # Given the enumeration, set the survey to either rent or buy
-            # This can probably be removed after testing it
-            rent_survey.survey_type = survey_types.rent.value
-
-            # Create the form destination set
-            destination_form_set = form_inline_destination_set(request.POST, instance=rent_survey)
-
-            if destination_form_set.is_valid():
+                # Given the enumeration, set the survey to either rent or buy
+                # This can probably be removed after testing it
+                rent_survey.survey_type = survey_types.rent.value
 
                 # Try seeing if there is already a recent survey and if there is
                 # Then delete it. We only want to keep one "recent" survey
                 # The user has the option to change the name of it to save it permanently
                 RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
                     name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
-
-                # Only if all the forms validate will we save it to the database
                 rent_survey.save()
+
+                # Since commit=False in the save, need to save the many to many fields
+                # After saving the form
                 form.save_m2m()
-                destination_form_set.save()
+
+                # Save the destination forms
+                destinations = form_destination.save(commit=False)
+                # Set the foreign field from the destination to the corresponding survey
+                destinations.survey = rent_survey
+                destinations.save()
 
                 # redirect to survey result on success:
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                                     kwargs={"survey_id": rent_survey.id}))
-
             else:
-                context['error_message'] = "The destination set did not validate"
+                context['error_message'].append("The survey form is not valid")
         else:
             # If the destination form is not valid, also do a quick test of the survey field to
             # Inform the user if the survey is also invalid
-            context['error_message'].append('The survey did not validate')
-
-    context['form'] = form
-    context['form_destination'] = destination_form_set
-    context['number_of_destinations'] = number_of_destinations
-    return render(request, 'survey/rentingSurvey.html', context)
+            if not form.is_valid():
+                context['error_message'].append("The normal form is also not valid")
+            context['error_message'].append("Destination form is not valid")
+    return render(request, 'survey/rentingSurvey.html', {'form': form, 'form_destination': form_destination})
 
 
 def run_rent_algorithm(survey, context):

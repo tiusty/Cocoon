@@ -43,6 +43,7 @@ class CommuteAlgorithm(object):
         :param user_commute_scale: (int): The user commute scale factor
         :param user_max_commute_minutes: (int): The max time the user is willing to spend commuting in minutes
         :param user_min_commute_minutes: (int): The min time the user is willing to spend commuting in minutes
+        #TODO fix documentation when commute type is switched to foreign key
         :param user_commute_type: (CommuteTypeModel): The commute type desired by the user
         :return:
         """

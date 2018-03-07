@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Import external models
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel, CommuteTypeModel, MlsManagementModel
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictionaryParentModel, CommuteTypeModel
 # Import survey python modules
 from survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from survey.home_data.home_score import HomeScore
@@ -798,8 +798,6 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.city = "Arlington"
         self.state = "MA"
         self.zip_code = '02476'
-
-        MlsManagementModel.objects.create()
 
     def tests_populate_survey_destinations_and_possible_homes_query_all_2_bedrooms_with_destination(self):
         # Arrange
