@@ -207,9 +207,6 @@ context.
 
         <span class="infoBit">{{ theHouse.price_string }}</span>
         <span class="infoBit addressBit">{{ theHouse.full_address }}</span>
-        {% for key, value in commuteApprox.items %}
-            <span class="infoBit commuteApproxbit">Approx: {{ value|floatformat:"0" }}</span>
-        {% endfor %}
         {% for key, value in commuteExact.items %}
         <span class="infoBit commuteExactbit">Exact: {{ value|floatformat:"0" }}</span>
         {% endfor %}

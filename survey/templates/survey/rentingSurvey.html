@@ -90,12 +90,56 @@
                         <br>
 
                         <h3>Step 2</h3>
-                        <span class="help-block">Please enter a work, school or somewhere you need to commute to</span>
+                        <span class="help-block">Please enter up to {{ number_of_formsets }} commutes to locations you need to go to.
+                            This can be your work, school or somewhere you commute to regularily</span>
                         <div class="form-group step_div">
                             <div class="form-group">
                                 {% comment %} Contains form for destination {% endcomment %}
-                                {{ form_destination.as_p }}
+                                <div class="bs-example">
+                                    <ul class="nav nav-tabs">
+                                        <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
+                                                {{ number_of_formsets }})"></span></a></li>
+                                        {% for num_forms in form_destination %}
+                                            <li
+                                                {% if forloop.counter == 1 %}
+                                                    class="active"
+                                                {% elif forloop.counter <= number_of_destinations %}
+                                                    class=""
+                                                {% else %}
+                                                    class="hide"
+                                                {% endif %}
+                                                id="form_destination_tabs_{{ forloop.counter }}">
+
+                                            <a data-toggle="tab"
+                                               href="#form_destination_section_{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
+                                        {% endfor %}
+                                        <li
+                                            {% if number_of_destinations >= number_of_formsets %}
+                                                class='hide'
+                                            {% endif %}
+                                            id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
+                                                {{ number_of_formsets }})"></span></a></li>
+                                    </ul>
+                                    <div id="form_destination_div" class="tab-content">
+                                        {{ form.number_destinations_filled_out }}
+                                        {{ form_destination.management_form }}
+                                        {% for form in form_destination %}
+                                        <div id="form_destination_section_{{ forloop.counter }}"
+                                             {% if forloop.counter == 1 %}
+                                                class="tab-pane fade in active">
+                                            {% else %}
+                                                class="tab-pane fade">
+                                            {% endif %}
+                                                <h3>Commute {{ forloop.counter }}</h3>
+                                            {{ form.as_table }}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
+
+                            <br>
+                            <span class="help-block">Currently the Commute time, weight and type are for all the commutes</span>
 
                             <div class="form-group">
                                 <label for="amountCommute">Commute:</label>
@@ -267,9 +311,9 @@
     bathroomsMax = 6;
     $(function () {
   $('[data-toggle="tooltip"]').tooltip()
+
 })
 </script>
-
 
 <!-- JQuery UI for sliders -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -277,4 +321,5 @@
 <script src="{% static 'survey/costSlider.js' %}"></script>
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
 <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
+<script src="{% static 'survey/destinationToggle.js' %}"></script>
 {% endblock %}

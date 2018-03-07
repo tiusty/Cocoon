@@ -646,6 +646,8 @@ class TestRentSurveyForm(TestCase):
         self.fitness_center = 0
         self.storage_unit = 0
 
+        self.number_of_destinations = 1
+
     def tests_rent_survey_valid(self):
         # Arrange
         form_data = {
@@ -658,6 +660,7 @@ class TestRentSurveyForm(TestCase):
             'max_commute_survey': self.max_commute,
             'min_commute_survey': self.min_commute,
             'commute_weight_survey': self.commute_weight,
+            'number_destinations_filled_out': self.number_of_destinations,
             'commute_type_survey': 1,
             'max_price_survey': self.max_price,
             'min_price_survey': self.min_price,
