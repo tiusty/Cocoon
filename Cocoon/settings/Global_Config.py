@@ -35,7 +35,7 @@ HYBRID_WEIGHT_CHOICES = (
 # Homes with a commute of 10-80 will be accepted. This is to account for the difference of commute
 # within a given zip code
 approximate_commute_range = 20
-number_of_exact_commutes_computed = 25  # number of homes that the exact commute is calculated
+number_of_exact_commutes_computed = 24  # number of homes that the exact commute is calculated
 DEFAULT_COMMUTE_TYPE = "Driving"
 
 # Google distance matrix values
