@@ -24,7 +24,7 @@ def approximate_commute_handler(origins_zips_states, destination_zip_state, comm
 
     wrapper = DistanceWrapper()
 
-    # map (zip, state) tuples list to a list of "zip state" strings
+    # map (zip, state) tuples list to a list of "state+zip" strings
     results = wrapper.get_durations_and_distances(list(map(lambda x:x[1]+"+"+x[0], origins_zips_states)),
                                                   [destination_zip_state[1]+"+"+destination_zip_state[0]],
                                                   mode=commute_type_query.commute_type)
@@ -39,7 +39,7 @@ def approximate_commute_handler(origins_zips_states, destination_zip_state, comm
 
             # If the zip code doesn't exist or is not valid then compute the approximate distance
             #   If the zip code was not valid then delete it first before recomputing it
-            if not zip_dest or not zip_dest.first().zip_code_cache_still_valid():
+            if not zip_dest.exists() or not zip_dest.first().zip_code_cache_still_valid():
                 if zip_dest.exists():
                     zip_dest.delete()
                 zip_code_dictionary.zipcodedictionarychildmodel_set.create(

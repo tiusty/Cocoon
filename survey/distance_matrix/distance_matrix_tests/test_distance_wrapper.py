@@ -3,11 +3,6 @@ from unittest.mock import MagicMock
 from survey.distance_matrix import distance_wrapper
 from survey.distance_matrix.distance_wrapper import *
 
-'''
-TODO: Hard code the requests in to avoid polling the API
-TODO: Test more than 25 origins
-'''
-
 
 class TestDistanceWrapper(unittest.TestCase):
 
