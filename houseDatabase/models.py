@@ -343,23 +343,27 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
 
 
 def house_directory_path(instance, filename):
-    return 'houseDatabase_{0}/{1}'.format(instance.house.id, filename)
+    return 'house_database/{0}/{1}'.format(instance.house.id, filename)
 
 
 class HousePhotosModel(models.Model):
     house_photo = models.ForeignKey('RentDatabaseModel', on_delete=models.CASCADE)
-    image_path_photo = models.CharField(default='housePhotos/5/pic1.jpg', max_length=200)
+    house_image = models.ImageField(upload_to=house_directory_path)
 
     def __str__(self):
-        return self.image_path
+        return self.house_image.name
 
     @property
     def house(self):
         return self.house_photo
 
     @property
-    def image_path(self):
-        return self.image_path_photo
+    def image(self):
+        return self.house_image
+
+    @image.setter
+    def image(self, new_image):
+        self.house_image = new_image
 
 
 class MlsManagementModel(models.Model):
