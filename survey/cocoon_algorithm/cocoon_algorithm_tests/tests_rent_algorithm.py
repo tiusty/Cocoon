@@ -1,4 +1,5 @@
 from django.test import TestCase
+from unittest import skip
 from django.utils import timezone
 
 # Import external models
@@ -932,6 +933,7 @@ class TestRetrieveApproximateCommutes(TestCase):
                           "200 Center Street-Anyville-Anystate-12345": 200.0,
                           "100 Franklin Street-Somewhere-Anystate-23456": 100.0})
 
+    @skip("reenable when distance matrix is mocked")
     def test_retrieve_approx_commutes_not_in_database_no_parent_zip(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
@@ -946,6 +948,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Assert (These times are place holders, since I don't know what the commute times will be)
         self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 26.416666666666668})
 
+    @skip("reenable when distance matrix is mocked")
     def test_retrieve_approx_commutes_not_in_database_with_parent_zip(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
@@ -961,6 +964,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Assert (These times are place holders, since I don't know what the commute times will be)
         self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 26.416666666666668})
 
+    @skip("reenable when distance matrix is mocked")
     def test_retrieve_approx_commutes_not_in_database_many_homes_many_destinations(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
@@ -990,6 +994,7 @@ class TestRetrieveApproximateCommutes(TestCase):
                           "-Boston-MA-02101": 134.93333333333334,
                           "-Providence-RI-02860": 174.86666666666667})
 
+    @skip("reenable when distance matrix is mocked")
     def test_retrieve_approx_commutes_mixed(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
@@ -1129,6 +1134,7 @@ class TestRetrieveExactCommutes(TestCase):
         # Assert
         self.assertEqual(rent_algorithm.homes[0].exact_commute_times, {})
 
+    @skip("reenable when distance matrix is mocked")
     def test_retrieve_exact_commute_multiple_origins(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
