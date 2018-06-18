@@ -37,12 +37,15 @@ class HouseAdmin(admin.ModelAdmin):
     # noinspection SpellCheckingInspection
     inlines = [HousePhotoUrlInLine]
 
+
 class ZipCodeDictionaryChildInLine(admin.StackedInline):
     model = ZipCodeDictionaryChildModel
     extra = 0
-    
+
+
 class MlsManagementModelAdmin(admin.ModelAdmin):
     pass
+
 
 class ZipCodeDictionaryAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -50,6 +53,7 @@ class ZipCodeDictionaryAdmin(admin.ModelAdmin):
          {'fields': ['zip_code_parent', ]}),
     ]
     list_display = ('zip_code_parent',)
+    search_fields = ['zip_code_parent']
     # noinspection SpellCheckingInspection
     inlines = [ZipCodeDictionaryChildInLine]
 
