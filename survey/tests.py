@@ -81,7 +81,7 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': 0,
+            'num_bedrooms_survey': -1,
             'max_bathrooms_survey': self.max_num_bathrooms,
             'min_bathrooms_survey': self.min_num_bathrooms,
             'home_type_survey': self.home_type_survey

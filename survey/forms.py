@@ -14,7 +14,7 @@ from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOM
 
 class HomeInformationForm(ModelForm):
     num_bedrooms_survey = forms.ChoiceField(
-        choices=[(x, x) for x in range(1, MAX_NUM_BEDROOMS)],
+        choices=[(x, x) for x in range(0, MAX_NUM_BEDROOMS)],
         label="Number of Bedrooms",
         widget=forms.Select(
             attrs={
@@ -68,7 +68,7 @@ class HomeInformationForm(ModelForm):
         # will cause a key error
         current_form = self.cleaned_data.copy()
 
-        if int(current_form['num_bedrooms_survey']) < 1:
+        if int(current_form['num_bedrooms_survey']) < 0:
             self.add_error('num_bedrooms_survey', "There can't be less than 1 bedroom")
             valid = False
 
