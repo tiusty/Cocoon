@@ -39,8 +39,8 @@ number_of_exact_commutes_computed = 50  # number of homes that the exact commute
 DEFAULT_COMMUTE_TYPE = "Driving"
 
 # Google distance matrix values
-gmaps = googlemaps.Client(key='AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw')
-gmaps_api_key = 'AIzaSyDpV0VIEDoBzbflBgr506-udNqSLd127aw'
+gmaps_api_key = 'AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho'
+gmaps = googlemaps.Client(key=gmaps_api_key)
 
 # Key:
 

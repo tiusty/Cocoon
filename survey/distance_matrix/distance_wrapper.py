@@ -20,23 +20,24 @@ class DistanceWrapper:
         self.units = units
         self.client = client.Client(self.key)
 
-    def handle_exception(self, error_code):
+    @staticmethod
+    def handle_exception(error_code):
         """
         interprets a distance matrix error code and raises the correct exception
         :param error_code: a string
         :return: this function does not return
         """
-        if (error_code == "INVALID_REQUEST"):
+        if error_code == "INVALID_REQUEST":
             raise Invalid_Request_Exception()
-        elif (error_code == "MAX_ELEMENTS_EXCEEDED"):
+        elif error_code == "MAX_ELEMENTS_EXCEEDED":
             raise Max_Elements_Exceeded_Exception()
-        elif (error_code == "OVER_QUERY_LIMIT"):
+        elif error_code == "OVER_QUERY_LIMIT":
             raise Over_Query_Limit_Exception()
-        elif (error_code == "REQUEST_DENIED"):
+        elif error_code == "REQUEST_DENIED":
             raise Request_Denied_Exception()
-        elif (error_code == "UNKNOWN_ERROR"):
+        elif error_code == "UNKNOWN_ERROR":
             raise Unknown_Error_Exception
-        elif (error_code == "ZERO_RESULTS"):
+        elif error_code == "ZERO_RESULTS":
             raise Zero_Results_Exception
 
     def interpret_distance_matrix_response(self, response_obj):
@@ -51,8 +52,8 @@ class DistanceWrapper:
 
         # check the status
         response_status = response_obj["status"]
+        distance_list = []
         if response_status == "OK":
-            distance_list = []
 
             # each row is an origin
             for row in response_obj["rows"]:
@@ -68,7 +69,7 @@ class DistanceWrapper:
                         origin_distance_list.append((duration_in_seconds, distance_in_meters))
                     # otherwise there was an error, skip this element
 
-                if (origin_distance_list):
+                if origin_distance_list:
                     distance_list.append(origin_distance_list)
         else:
             self.handle_exception(response_status)

@@ -5,7 +5,6 @@ from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictio
 from survey.distance_matrix.distance_wrapper import DistanceWrapper
 
 
-# TODO: update values after certain length of time
 def approximate_commute_handler(origins_zips_states, destination_zip_state, commute_type_query):
     """
     approximate_commute_handler stands between the rent_algorithm and the distance_wrapper,
@@ -25,20 +24,24 @@ def approximate_commute_handler(origins_zips_states, destination_zip_state, comm
 
     wrapper = DistanceWrapper()
 
-    # map (zip, state) tuples list to a list of "zip state" strings
-    results = wrapper.get_durations_and_distances(list(map(lambda x:x[0]+" "+x[1], origins_zips_states)),
-                                                  [destination_zip_state[0]+" "+destination_zip_state[1]],
+    # map (zip, state) tuples list to a list of "state+zip" strings
+    results = wrapper.get_durations_and_distances(list(map(lambda x:x[1]+"+"+x[0], origins_zips_states)),
+                                                  [destination_zip_state[1]+"+"+destination_zip_state[0]],
                                                   mode=commute_type_query.commute_type)
 
     # iterates both lists simultaneously
     for origin, result in zip(origins_zips_states, results):
         if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin[0]).exists():
             zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin[0])
-            if zip_code_dictionary.zipcodedictionarychildmodel_set.filter(
+            zip_dest = zip_code_dictionary.zipcodedictionarychildmodel_set.filter(
                     zip_code_child=destination_zip_state[0],
-                    commute_type_child=commute_type_query).exists():
-                print("The combination that was computed already exists")
-            else:
+                    commute_type_child=commute_type_query)
+
+            # If the zip code doesn't exist or is not valid then compute the approximate distance
+            #   If the zip code was not valid then delete it first before recomputing it
+            if not zip_dest.exists() or not zip_dest.first().zip_code_cache_still_valid():
+                if zip_dest.exists():
+                    zip_dest.delete()
                 zip_code_dictionary.zipcodedictionarychildmodel_set.create(
                     zip_code_child=destination_zip_state[0],
                     commute_type_child=commute_type_query,
