@@ -5,7 +5,6 @@ from houseDatabase.models import RentDatabaseModel, HomeTypeModel, ZipCodeDictio
 from survey.distance_matrix.distance_wrapper import DistanceWrapper
 
 
-# TODO: update values after certain length of time
 def approximate_commute_handler(origins_zips_states, destination_zip_state, commute_type_query):
     """
     approximate_commute_handler stands between the rent_algorithm and the distance_wrapper,
