@@ -12,8 +12,12 @@ ALLOWED_HOSTS = ['52.14.25.81', '127.0.0.1', 'bostoncocoon.com', 'kakun.us', 'co
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '../db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'cocoon',
+        'USER': 'cocoon_dev',
+        'PASSWORD': 'cocoon_pass',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
