@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 
 # Commutes Imports
-from commutes.models import CommuteTypeModel, ZipCodeDictionaryParentModel
+from commutes.models import CommuteType, ZipCodeBase
 
 # Import zip-code constants
 from commutes.constants import ZIP_CODE_TIMEDELTA_VALUE
@@ -18,8 +18,8 @@ class ZipCodeDictionaryTest(TestCase):
         self.zip_code2 = "02467"
         self.commute_time = 4500
         self.commute_distance = 700
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
-        self.commute_type1 = CommuteTypeModel.objects.create(commute_type_field="Transit")
+        self.commute_type = CommuteType.objects.create(commute_type_field='Driving')
+        self.commute_type1 = CommuteType.objects.create(commute_type_field="Transit")
 
     @staticmethod
     def create_zip_code_dictionary(zip_code):
@@ -28,7 +28,7 @@ class ZipCodeDictionaryTest(TestCase):
         :param zip_code: String -> Zip code for parent zip_code
         :return: ZipCodeDictionaryParentModel -> An object instance
         """
-        return ZipCodeDictionaryParentModel.objects.create(zip_code_parent=zip_code)
+        return ZipCodeBase.objects.create(zip_code_parent=zip_code)
 
     @staticmethod
     def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,

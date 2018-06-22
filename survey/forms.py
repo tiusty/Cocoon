@@ -6,7 +6,7 @@ from django.forms import ModelForm
 from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
     PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
 from houseDatabase.models import HomeTypeModel
-from commutes.models import CommuteTypeModel
+from commutes.models import CommuteType
 
 # Python global configurations
 from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -120,7 +120,7 @@ class CommuteInformationForm(ModelForm):
     )
 
     commute_type_survey = forms.ModelChoiceField(
-        queryset=CommuteTypeModel.objects.all(),
+        queryset=CommuteType.objects.all(),
         label="Commute Type",
         widget=forms.Select(
             attrs={

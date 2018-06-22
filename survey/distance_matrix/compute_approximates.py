@@ -1,5 +1,5 @@
 # import houseDatabase models
-from commutes.models import ZipCodeDictionaryParentModel
+from commutes.models import ZipCodeBase
 
 # import distance matrix wrapper
 from survey.distance_matrix.distance_wrapper import DistanceWrapper
@@ -31,8 +31,8 @@ def approximate_commute_handler(origins_zips_states, destination_zip_state, comm
 
     # iterates both lists simultaneously
     for origin, result in zip(origins_zips_states, results):
-        if ZipCodeDictionaryParentModel.objects.filter(zip_code_parent=origin[0]).exists():
-            zip_code_dictionary = ZipCodeDictionaryParentModel.objects.get(zip_code_parent=origin[0])
+        if ZipCodeBase.objects.filter(zip_code_parent=origin[0]).exists():
+            zip_code_dictionary = ZipCodeBase.objects.get(zip_code_parent=origin[0])
             zip_dest = zip_code_dictionary.zipcodedictionarychildmodel_set.filter(
                     zip_code_child=destination_zip_state[0],
                     commute_type_child=commute_type_query)
@@ -49,7 +49,7 @@ def approximate_commute_handler(origins_zips_states, destination_zip_state, comm
                     commute_time_seconds_child=result[0][0],
                 )
         else:
-            ZipCodeDictionaryParentModel.objects.create(zip_code_parent=origin[0]) \
+            ZipCodeBase.objects.create(zip_code_parent=origin[0]) \
                 .zipcodedictionarychildmodel_set.create(
                 zip_code_child=destination_zip_state[0],
                 commute_type_child=commute_type_query,
