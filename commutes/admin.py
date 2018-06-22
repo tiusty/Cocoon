@@ -5,7 +5,7 @@ from django.contrib import admin
 from commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
 
-class ZipCodeDictionaryChildInLine(admin.StackedInline):
+class ZipCodeChildInLine(admin.StackedInline):
     model = ZipCodeChild
     extra = 0
 
@@ -18,16 +18,16 @@ class ZipCodeAdmin(admin.ModelAdmin):
     list_display = ('zip_code',)
     search_fields = ['zip_code']
     # noinspection SpellCheckingInspection
-    inlines = [ZipCodeDictionaryChildInLine]
+    inlines = [ZipCodeChildInLine]
 
 
-class CommuteTypeModelAdmin(admin.ModelAdmin):
+class CommuteTypeAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Commute Type',
-         {'fields': ['commute_type',]})
+         {'fields': ['commute_type', ]})
     ]
     list_display = ('commute_type',)
 
 
 admin.site.register(ZipCodeBase, ZipCodeAdmin)
-admin.site.register(CommuteType, CommuteTypeModelAdmin)
+admin.site.register(CommuteType, CommuteTypeAdmin)

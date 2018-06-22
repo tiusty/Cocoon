@@ -5,7 +5,8 @@ from django.utils import timezone
 # Import Survey Models and forms
 from survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
     InteriorAmenitiesForm, ExteriorAmenitiesForm
-from houseDatabase.models import HomeTypeModel, CommuteTypeModel
+from houseDatabase.models import HomeTypeModel
+from commutes.models import CommuteType
 
 # Import cocoon global config values
 from Cocoon.settings.Global_Config import MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
@@ -188,7 +189,7 @@ class TestCommuteInformationForm(TestCase):
         self.max_commute = 0
         self.min_commute = 0
         self.commute_weight = 0
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type='Driving')
 
     def tests_commute_information_valid(self):
         # Arrange
@@ -627,7 +628,7 @@ class TestRentSurveyForm(TestCase):
         self.max_commute = 0
         self.min_commute = 0
         self.commute_weight = 0
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type='Driving')
 
         self.max_price = 0
         self.min_price = 0

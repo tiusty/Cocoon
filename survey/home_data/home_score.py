@@ -106,15 +106,15 @@ class HomeScore(object):
         Queries the ZipCode database to attempt to populate this HomeScore's approximate commute dictionary.
         Returns True on success, False on failure.
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
-        :param commute_type_query: (CommuteTypeModel) commute_type, eg. "Driving"
+        :param commute_type_query: (CommuteType) commute_type, eg. "Driving"
         :return (Boolean): True on success, False on failure.
         """
-        parent_zip_code_dictionary = ZipCodeBase.objects.filter(zip_code_parent__exact=origin_zip)
+        parent_zip_code_dictionary = ZipCodeBase.objects.filter(zip_code__exact=origin_zip)
         if parent_zip_code_dictionary.exists():
             for parent in parent_zip_code_dictionary:
                 zip_code_dictionary = ZipCodeChild.objects.filter(
-                    parent_zip_code_child_id=parent).filter(zip_code_child__exact=destination.zip_code)\
-                    .filter(commute_type_child=commute_type_query)
+                    base_zip_code_id=parent).filter(zip_code__exact=destination.zip_code)\
+                    .filter(commute_type=commute_type_query)
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():

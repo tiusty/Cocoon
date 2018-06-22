@@ -1,8 +1,8 @@
 from django.test import TestCase
 from survey.home_data.home_score import HomeScore
 from survey.models import RentingSurveyModel, DestinationsModel, RentingDestinationsModel
-from houseDatabase.models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, \
-    HomeTypeModel, CommuteTypeModel
+from houseDatabase.models import RentDatabaseModel, HomeTypeModel
+from commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
 class TestScoringMethods(TestCase):
 
@@ -214,8 +214,8 @@ class TestApproxCommute(TestCase):
         self.zip_code2 = "23456"
         self.commute_time = 6000 
         self.commute_distance = 700
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
-        self.commute_type_walking = CommuteTypeModel.objects.create(commute_type_field='Walking')
+        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type_walking = CommuteType.objects.create(commute_type='Walking')
 
     @staticmethod
     def create_destination(address, city, state, zip):
@@ -229,16 +229,16 @@ class TestApproxCommute(TestCase):
 
     @staticmethod
     def create_zip_code_dictionary(zip_code):
-        return ZipCodeDictionaryParentModel.objects.create(zip_code_parent=zip_code)
+        return ZipCodeBase.objects.create(zip_code=zip_code)
 
     @staticmethod
     def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time, 
                                          commute_distance, commute_type):
-        parent_zip_code_dictionary.zipcodedictionarychildmodel_set.create(
-                zip_code_child=zip_code,
-                commute_time_seconds_child=commute_time,
-                commute_distance_meters_child=commute_distance,
-                commute_type_child=commute_type,
+        parent_zip_code_dictionary.zipcodechild_set.create(
+                zip_code=zip_code,
+                commute_time_seconds=commute_time,
+                commute_distance_meters=commute_distance,
+                commute_type=commute_type,
                 )
 
     def test_populate_approx_commute_times(self):
