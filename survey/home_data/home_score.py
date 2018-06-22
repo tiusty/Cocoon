@@ -1,4 +1,5 @@
-from houseDatabase.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+from zipcodes.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+
 
 class HomeScore(object):
     # noinspection SpellCheckingInspection

@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import RentDatabaseModel, ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, HousePhotosModel, \
-    HomeTypeModel, CommuteTypeModel, MlsManagementModel
+from .models import RentDatabaseModel, HousePhotosModel, \
+    HomeTypeModel, MlsManagementModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
@@ -38,24 +38,8 @@ class HouseAdmin(admin.ModelAdmin):
     inlines = [HousePhotoUrlInLine]
 
 
-class ZipCodeDictionaryChildInLine(admin.StackedInline):
-    model = ZipCodeDictionaryChildModel
-    extra = 0
-
-
 class MlsManagementModelAdmin(admin.ModelAdmin):
     pass
-
-
-class ZipCodeDictionaryAdmin(admin.ModelAdmin):
-    fieldsets = [
-        ('ZipCodes',
-         {'fields': ['zip_code_parent', ]}),
-    ]
-    list_display = ('zip_code_parent',)
-    search_fields = ['zip_code_parent']
-    # noinspection SpellCheckingInspection
-    inlines = [ZipCodeDictionaryChildInLine]
 
 
 class HomeTypeModelAdmin(admin.ModelAdmin):
@@ -66,16 +50,6 @@ class HomeTypeModelAdmin(admin.ModelAdmin):
     list_display = ('home_type_survey',)
 
 
-class CommuteTypeModelAdmin(admin.ModelAdmin):
-    fieldsets = [
-        ('Commute Type',
-         {'fields': ['commute_type_field',]})
-    ]
-    list_display = ('commute_type_field',)
-
-
 admin.site.register(RentDatabaseModel, HouseAdmin)
-admin.site.register(ZipCodeDictionaryParentModel, ZipCodeDictionaryAdmin)
 admin.site.register(HomeTypeModel, HomeTypeModelAdmin)
-admin.site.register(CommuteTypeModel, CommuteTypeModelAdmin)
 admin.site.register(MlsManagementModel, MlsManagementModelAdmin)

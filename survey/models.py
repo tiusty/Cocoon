@@ -8,7 +8,8 @@ import math
 
 # Import cocoon models
 from userAuth.models import UserProfile
-from houseDatabase.models import HomeTypeModel, CommuteTypeModel
+from houseDatabase.models import HomeTypeModel
+from zipcodes.models import CommuteTypeModel
 
 # Import Global Variables
 from Cocoon.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, \

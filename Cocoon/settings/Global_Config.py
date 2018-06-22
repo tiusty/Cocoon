@@ -7,8 +7,6 @@ DEFAULT_RENT_SURVEY_NAME = "Recent Rent Survey"
 
 survey_types = Enum('survey_types', 'rent buy')
 
-# House Database config values
-ZIP_CODE_TIMEDELTA_VALUE = 60
 
 # Default Survey Max Values
 HYBRID_QUESTION_WEIGHT = 20

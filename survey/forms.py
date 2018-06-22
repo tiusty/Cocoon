@@ -5,7 +5,8 @@ from django.forms import ModelForm
 # Survey models
 from survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
     PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
-from houseDatabase.models import HomeTypeModel, CommuteTypeModel
+from houseDatabase.models import HomeTypeModel
+from zipcodes.models import CommuteTypeModel
 
 # Python global configurations
 from Cocoon.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
