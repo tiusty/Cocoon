@@ -3,14 +3,11 @@ from django.test import TestCase
 from django.db import IntegrityError
 from django.utils import timezone
 
-# House Database Imports
-from houseDatabase.models import CommuteTypeModel
-
-# zip-code Database
-from zipcodes.models import ZipCodeDictionaryParentModel
+# Commutes Imports
+from commutes.models import CommuteTypeModel, ZipCodeDictionaryParentModel
 
 # Import zip-code constants
-from zipcodes.constants import ZIP_CODE_TIMEDELTA_VALUE
+from commutes.constants import ZIP_CODE_TIMEDELTA_VALUE
 
 
 class ZipCodeDictionaryTest(TestCase):

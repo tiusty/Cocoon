@@ -1,5 +1,5 @@
 from Cocoon.settings.Global_Config import commute_question_weight
-from zipcodes.models import CommuteTypeModel
+from commutes.models import CommuteTypeModel
 
 
 class CommuteAlgorithm(object):

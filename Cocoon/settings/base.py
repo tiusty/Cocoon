@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'userAuth',
     'survey',
     'houseDatabase',
-    'zipcodes',
+    'commutes',
 ]
 
 MIDDLEWARE = [

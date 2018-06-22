@@ -1,6 +1,5 @@
 # import houseDatabase models
-from houseDatabase.models import RentDatabaseModel, HomeTypeModel
-from zipcodes.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+from commutes.models import ZipCodeDictionaryParentModel
 
 # import distance matrix wrapper
 from survey.distance_matrix.distance_wrapper import DistanceWrapper

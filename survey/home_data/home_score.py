@@ -1,4 +1,4 @@
-from zipcodes.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
+from commutes.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel
 
 
 class HomeScore(object):

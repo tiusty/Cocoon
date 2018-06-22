@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # zip-code imports
-from zipcodes.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, CommuteTypeModel
+from commutes.models import ZipCodeDictionaryParentModel, ZipCodeDictionaryChildModel, CommuteTypeModel
 
 
 class ZipCodeDictionaryChildInLine(admin.StackedInline):
