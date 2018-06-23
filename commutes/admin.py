@@ -1,7 +1,7 @@
 # Django Imports
 from django.contrib import admin
 
-# zip-code imports
+# Commute imports
 from commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
 
