@@ -851,6 +851,8 @@ class TestRetrieveApproximateCommutes(TestCase):
         self.home1.home.state_home = "Maine"
         self.home2.home.state_home = "Maine"
 
+        self.survey = RentingSurveyModel.objects.create()
+
     @staticmethod
     def create_zip_code_dictionary(zip_code):
         return ZipCodeBase.objects.create(zip_code=zip_code)

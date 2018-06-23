@@ -42,7 +42,7 @@ class ZipCodeBase(models.Model):
 class ZipCodeChild(models.Model):
     """
     This is the child zip-code which computes the time and distance from this child zip_code to the
-    base zip-code. Each base zip-code will have a bunch of child zip-codes. For each zip-code, there
+    base zip-code. Each base zip-code will have a bunch of child zip-codes. For each base zip-code, there
     can be a child zip-code for each commute type.
     """
     zip_code = models.CharField(max_length=20)
