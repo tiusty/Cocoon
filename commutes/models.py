@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 # Import constants
-from commutes.constants import ZIP_CODE_TIMEDELTA_VALUE
+from .constants import ZIP_CODE_TIMEDELTA_VALUE
 
 
 class CommuteType(models.Model):
