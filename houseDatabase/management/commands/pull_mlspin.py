@@ -216,8 +216,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # reads the apartment data into memory and passes it to the mlspin_handler
 
-        URL = ("http://idx.mlspin.com/idx.asp?user=2KzB9t1MntTtFUBNRt7rdWjyY2L" +
-               "29YztntNuRDNKn2rZhRFotmDcv7ZnDPxIt9OLf22qotUxtyT&proptype=RN")
+        URL = ("http://idx.mlspin.com/idx.asp?user=2K7zB9ytn1MtTtUNFsBtm2R7rZtjfWdyY"
+               "aLtNzY2zPPhe2PuDtDK1mP2HrZhPFoE5NND4c7vZPNmNRxItmOLAf2DqO0oDPxUyPn&proptype=RN")
 
         # 1. Connect to mlspin IDX (internet data exchange URL)
         try:
