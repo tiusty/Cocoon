@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from houseDatabase.models import CommuteTypeModel
+from commutes.models import CommuteType
 from survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from userAuth.models import MyUser, UserProfile
 from survey.models import RentingSurveyModel
@@ -9,7 +9,7 @@ from survey.models import RentingSurveyModel
 class TestApproximateCommutesFilter(TestCase):
 
     def setUp(self):
-        self.commute_type = CommuteTypeModel.objects.create(commute_type_field='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type='Driving')
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
@@ -239,7 +239,7 @@ class TestApproximateCommutesFilter(TestCase):
 class TestComputeCommuteScore(TestCase):
 
     def setUp(self):
-        CommuteTypeModel.objects.create(commute_type_field='Driving')
+        CommuteType.objects.create(commute_type='Driving')
 
     def test_compute_commute_score_working(self):
         # Arrange

@@ -76,6 +76,7 @@ class CocoonAlgorithm(object):
 
         # Find all the possible homes that fit the static filter
         filtered_home_list = self.generate_static_filter_home_list(user_survey)
+        print(filtered_home_list)
 
         # Add homes to rent_algorithm, homes should be stored as a HomeScore
         for home in filtered_home_list:

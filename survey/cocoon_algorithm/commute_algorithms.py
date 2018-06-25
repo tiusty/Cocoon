@@ -1,5 +1,5 @@
 from Cocoon.settings.Global_Config import commute_question_weight
-from houseDatabase.models import CommuteTypeModel
+from commutes.models import CommuteType
 
 
 class CommuteAlgorithm(object):
@@ -32,7 +32,7 @@ class CommuteAlgorithm(object):
         # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
         self._min_possible_commute = 11
         # Note: This means the driving object needs to be created before this class is run
-        self._commute_type_query = CommuteTypeModel.objects.get(commute_type_field='Driving')
+        self._commute_type_query = CommuteType.objects.get(commute_type='Driving')
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()
 
@@ -43,7 +43,7 @@ class CommuteAlgorithm(object):
         :param user_commute_scale: (int): The user commute scale factor
         :param user_max_commute_minutes: (int): The max time the user is willing to spend commuting in minutes
         :param user_min_commute_minutes: (int): The min time the user is willing to spend commuting in minutes
-        :param user_commute_type: (CommuteTypeModel): The commute type desired by the user
+        :param user_commute_type: (CommuteType): The commute type desired by the user
         :return:
         """
         self.max_user_commute = user_max_commute_minutes
@@ -55,7 +55,7 @@ class CommuteAlgorithm(object):
     def commute_type_query(self):
         """
         Returns the commute type
-        :return: (CommuteTypeModel): Returns the commute type
+        :return: (CommuteType): Returns the commute type
         """
         return self._commute_type_query
 
@@ -63,7 +63,7 @@ class CommuteAlgorithm(object):
     def commute_type_query(self, new_commute_type):
         """
         Sets the commute type
-        :param new_commute_type: (CommuteTypeModel): The new commute type desired by the user
+        :param new_commute_type: (CommuteType): The new commute type desired by the user
         """
         self._commute_type_query = new_commute_type
 

@@ -1,6 +1,5 @@
 # Import Django modules
 from django.db import models
-from django.utils import timezone
 
 # Python Modules
 from enum import Enum
@@ -8,7 +7,8 @@ import math
 
 # Import cocoon models
 from userAuth.models import UserProfile
-from houseDatabase.models import HomeTypeModel, CommuteTypeModel
+from houseDatabase.models import HomeTypeModel
+from commutes.models import CommuteType
 
 # Import Global Variables
 from Cocoon.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -111,7 +111,7 @@ class CommuteInformationModel(models.Model):
     max_commute_survey = models.IntegerField(default=0)
     min_commute_survey = models.IntegerField(default=0)
     commute_weight_survey = models.IntegerField(default=0)
-    commute_type_survey = models.ForeignKey(CommuteTypeModel)
+    commute_type_survey = models.ForeignKey(CommuteType)
 
     @property
     def max_commute(self):

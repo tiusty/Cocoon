@@ -9,6 +9,7 @@ userAuth/migrations
 houseDatabase/migrations
 homePage/migrations
 survey/migrations
+commutes/migrations
 
 # Visual Studio Code Settings #
 .vscode/
