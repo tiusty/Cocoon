@@ -35,7 +35,7 @@ class MlspinRequester:
 
         # Builds a dictionary of town codes to towns
         self.towns = {}
-        self.town_lines = self.town_txt.split('\r\n')
+        self.town_lines = self.town_txt.split('\n')
         for line in self.town_lines[1:-1]: # skips the col headers
             fields = line.split('|')
             self.towns[str(fields[0])] = {
