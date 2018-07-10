@@ -9,6 +9,11 @@ from cocoon.houseDatabase.management.commands.mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
+from ftplib import FTP
+from config.settings.base import MEDIA_ROOT
+from django.core.files.images import ImageFile
+import tempfile
+import io
 
 
 class MlspinRequester:
@@ -173,9 +178,32 @@ class MlspinRequester:
                 # After all the data is added, save the home to the database
                 new_listing.save()
 
-                # TODO: upload ftp path to S3 storage bucket
-                new_photos = HousePhotosModel(house_photo=new_listing)
-                new_photos.save()
+                # Need to parse the listing numbers to find the location of the photos.
+                # The directory goes like photo/##/###/###_#.jpg
+                # The 8 numbers correspond to the mlspin number
+                if new_listing.listing_number > 0:
+                    first_directory = str(new_listing.listing_number)[:2]
+                    second_directory = str(new_listing.listing_number)[2:5]
+                    file_name = str(new_listing.listing_number)[5:9]
+                    ftp = FTP("ftp.mlspin.com", "anonymous", "")
+                    ftp.login()
+                    filenames = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory, second_directory))))
+                    for file in filenames:
+                        file_data = ""
+                        r = io.BytesIO()
+                        # f = tempfile.TemporaryFile("w+b")
+                        lf = open(os.path.join(os.path.basename(file)), "wb+")
+                        ftp.retrbinary("RETR " + file, lf.write)
+                        new_photos = HousePhotosModel(house_photo=new_listing)
+                        myfile = ImageFile(lf)
+                        new_photos.save()
+                        new_photos.house_image.save(os.path.basename(file), myfile)
+                        new_photos.save()
+                        lf.close()
+
+                    # TODO: upload ftp path to S3 storage bucket
+                else:
+                    print("Not adding photo for house")
                 print("[ ADDING   ]" + full_add)
 
         # When all the homes are added, update the MLSManagement model to reflex that the homes have been updated

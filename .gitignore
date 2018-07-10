@@ -17,6 +17,9 @@ cocoon/commutes/migrations
 # Home MLSpin feed #
 cocoon/houseDatabase/management/commands/idx_feed.txt
 
+# Media folder #
+cocoon/media
+
 # Sqlite database #
 db.sqlite3
 

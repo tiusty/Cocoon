@@ -314,7 +314,7 @@ class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, Interio
 
 
 def house_directory_path(instance, filename):
-    return 'house_database/{0}/{1}'.format(instance.house.id, filename)
+    return 'houseDatabase/{0}/{1}'.format(instance.house.id, filename)
 
 
 class HousePhotosModel(models.Model):

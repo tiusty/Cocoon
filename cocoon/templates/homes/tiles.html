@@ -139,7 +139,7 @@ context.
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner">
                         <div class="item active">
-                            <img src="{% static 'stockHomes/stock_houses/house1.1.jpg' %}"
+                            <img src="{{MEDIA_URL}}/houseDatabase/177/853_0.jpg"
                                  alt="Los Angeles">
                         </div>
 
@@ -216,8 +216,9 @@ context.
 
     {% for image in theHouse.housephotosmodel_set.all|slice:":2" %}
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
-            <img class="thumbnailImage"
-                 src="{% static image %}">
+            <!--<img class="thumbnailImage"-->
+                 <!--src="{% static image %}">-->
+            <img src="/media/houseDatabase/177/853_0.jpg">
         </div>
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
             <img class="thumbnailImage"
