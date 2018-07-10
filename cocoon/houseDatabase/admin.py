@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import RentDatabaseModel, HousePhotosModel, \
+from .models import RentDatabaseModel, HousePhotos, \
     HomeTypeModel, MlsManagementModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
-    model = HousePhotosModel
+    model = HousePhotos
     extra = 0
 
 

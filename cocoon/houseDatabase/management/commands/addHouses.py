@@ -5,7 +5,7 @@ import os
 import string
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
-from cocoon.houseDatabase.models import HousePhotosModel, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
+from cocoon.houseDatabase.models import HousePhotos, RentDatabaseModel, InteriorAmenitiesModel, BuildingExteriorAmenitiesModel
 from django.utils import timezone
 
 '''
@@ -137,7 +137,7 @@ class Command(BaseCommand):
 
                         newHouse.save()
 
-                        newPhotos = HousePhotosModel(house=newHouse)
+                        newPhotos = HousePhotos(house=newHouse)
                         newPhotos.save()
                         newHouse.save()
 

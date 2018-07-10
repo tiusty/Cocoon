@@ -4,16 +4,14 @@ import urllib.error
 import cocoon.houseDatabase.maps_requester as geolocator
 import os, sys
 from django.core.management.base import BaseCommand
-from cocoon.houseDatabase.models import HousePhotosModel, RentDatabaseModel
+from cocoon.houseDatabase.models import HousePhotos, RentDatabaseModel
 from cocoon.houseDatabase.management.commands.mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
 from ftplib import FTP
-from config.settings.base import MEDIA_ROOT
 from django.core.files.images import ImageFile
 import tempfile
-import io
 
 
 class MlspinRequester:
@@ -187,18 +185,16 @@ class MlspinRequester:
                     file_name = str(new_listing.listing_number)[5:9]
                     ftp = FTP("ftp.mlspin.com", "anonymous", "")
                     ftp.login()
-                    filenames = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory, second_directory))))
-                    for file in filenames:
+                    file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory, second_directory))))
+                    for file in file_names:
                         lf = tempfile.TemporaryFile("wb+")
                         ftp.retrbinary("RETR " + file, lf.write)
-                        new_photos = HousePhotosModel(house_photo=new_listing)
+                        new_photos = HousePhotos(house=new_listing)
                         myfile = ImageFile(lf)
                         new_photos.save()
-                        new_photos.house_image.save(os.path.basename(file), myfile)
+                        new_photos.image.save(os.path.basename(file), myfile)
                         new_photos.save()
                         lf.close()
-
-                    # TODO: upload ftp path to S3 storage bucket
                 else:
                     print("Not adding photo for house")
                 print("[ ADDING   ]" + full_add)

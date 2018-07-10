@@ -317,24 +317,12 @@ def house_directory_path(instance, filename):
     return 'houseDatabase/{0}/{1}'.format(instance.house.id, filename)
 
 
-class HousePhotosModel(models.Model):
-    house_photo = models.ForeignKey('RentDatabaseModel', on_delete=models.CASCADE)
-    house_image = models.ImageField(upload_to=house_directory_path)
+class HousePhotos(models.Model):
+    house = models.ForeignKey('RentDatabaseModel', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=house_directory_path)
 
     def __str__(self):
-        return self.house_image.name
-
-    @property
-    def house(self):
-        return self.house_photo
-
-    @property
-    def image(self):
-        return self.house_image
-
-    @image.setter
-    def image(self, new_image):
-        self.house_image = new_image
+        return self.image.name
 
 
 class MlsManagementModel(models.Model):
