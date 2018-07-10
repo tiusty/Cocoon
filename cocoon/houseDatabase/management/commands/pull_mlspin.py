@@ -189,10 +189,7 @@ class MlspinRequester:
                     ftp.login()
                     filenames = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory, second_directory))))
                     for file in filenames:
-                        file_data = ""
-                        r = io.BytesIO()
-                        # f = tempfile.TemporaryFile("w+b")
-                        lf = open(os.path.join(os.path.basename(file)), "wb+")
+                        lf = tempfile.TemporaryFile("wb+")
                         ftp.retrbinary("RETR " + file, lf.write)
                         new_photos = HousePhotosModel(house_photo=new_listing)
                         myfile = ImageFile(lf)
