@@ -114,7 +114,6 @@ LOGIN_URL = "/userAuth/login/"
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-print(BASE_DIR)
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 MEDIA_ROOT = os.path.join(BASE_DIR, "../cocoon/media/photos")
 

@@ -216,13 +216,7 @@ context.
 
     {% for image in theHouse.housephotosmodel_set.all|slice:":2" %}
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
-            <!--<img class="thumbnailImage"-->
-                 <!--src="{% static image %}">-->
-            <img src="/media/houseDatabase/177/853_0.jpg">
-        </div>
-        <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
-            <img class="thumbnailImage"
-                 src="{% static 'stockHomes/stock_houses/house1.3.jpg' %}">
+            <img src="{{ image.house_image.url }}" height="70">
         </div>
     {% endfor %}
 </div>
