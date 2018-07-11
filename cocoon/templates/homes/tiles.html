@@ -206,7 +206,7 @@ context.
 
     {% for image in theHouse.housephotos_set.all|slice:":2" %}
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
-            <img src="{{ image.image.url }}" height="70">
+            <img src="{{ image.image.url }}">
         </div>
     {% endfor %}
 </div>
