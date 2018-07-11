@@ -5,13 +5,10 @@ import cocoon.houseDatabase.maps_requester as geolocator
 import os, sys
 from django.core.management.base import BaseCommand
 from cocoon.houseDatabase.models import HousePhotos, RentDatabaseModel
-from cocoon.houseDatabase.management.commands.mls_fields import *
+from cocoon.houseDatabase.management.commands._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
-from ftplib import FTP
-from django.core.files.images import ImageFile
-import tempfile
 
 
 class MlspinRequester:
@@ -176,27 +173,6 @@ class MlspinRequester:
                 # After all the data is added, save the home to the database
                 new_listing.save()
 
-                # Need to parse the listing numbers to find the location of the photos.
-                # The directory goes like photo/##/###/###_#.jpg
-                # The 8 numbers correspond to the mlspin number
-                if new_listing.listing_number > 0:
-                    first_directory = str(new_listing.listing_number)[:2]
-                    second_directory = str(new_listing.listing_number)[2:5]
-                    file_name = str(new_listing.listing_number)[5:9]
-                    ftp = FTP("ftp.mlspin.com", "anonymous", "")
-                    ftp.login()
-                    file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory, second_directory))))
-                    for file in file_names:
-                        lf = tempfile.TemporaryFile("wb+")
-                        ftp.retrbinary("RETR " + file, lf.write)
-                        new_photos = HousePhotos(house=new_listing)
-                        myfile = ImageFile(lf)
-                        new_photos.save()
-                        new_photos.image.save(os.path.basename(file), myfile)
-                        new_photos.save()
-                        lf.close()
-                else:
-                    print("Not adding photo for house")
                 print("[ ADDING   ]" + full_add)
 
         # When all the homes are added, update the MLSManagement model to reflex that the homes have been updated
