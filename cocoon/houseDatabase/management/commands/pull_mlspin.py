@@ -200,7 +200,7 @@ class MlspinRequester:
         # This is a hacky way of adding photos once all the homes are added.
         # The main purpose of adding it here is to reuse the update_timestamp in case a day
         #   progressed before finishing the homes
-        image_requester = MLSpinRequesterImage(update_timestamp)
+        image_requester = MLSpinRequesterImage(last_update=update_timestamp)
         image_requester.add_images()
 
 
