@@ -2,7 +2,7 @@
 from storages.backends.s3boto3 import S3Boto3Storage
 
 # Settings import
-from config.settings.base import AWS_STATIC_LOCATION, AWS_PUBLIC_MEDIA_LOCATION
+from config.settings.production import AWS_STATIC_LOCATION, AWS_PUBLIC_MEDIA_LOCATION
 
 class StaticStorage(S3Boto3Storage):
     location = AWS_STATIC_LOCATION
