@@ -62,11 +62,11 @@ class MLSpinRequesterImage(object):
                     if home.housephotos_set.exists():
                         for photo in home.housephotos_set.all():
                             # Determine if an image is currently saved
-                            if photo.image:
+                            # if photo.image:
                                 # If there is an image saved, then make sure it is a file
-                                if os.path.isfile(photo.image.path):
+                                # if os.path.isfile(photo.image.path):
                                     # Delete the image on the machine
-                                    os.remove(photo.image.path)
+                                    # os.remove(photo.image.path)
                             # Delete the image from the database
                             # Note: This does not delete the file from the machine which
                             #   is why it is deleted beforehand. It just deletes the reference
@@ -75,18 +75,23 @@ class MLSpinRequesterImage(object):
 
                     # Save each image to the database
                     for file in file_names:
-                        lf = tempfile.TemporaryFile("wb+")
-                        try:
-                            ftp.retrbinary("RETR " + file, lf.write)
-                        # If a permission error occurs then skip to the next image
-                        #   This usually occurs if the image doesn't exist for some reason
-                        except error_perm:
-                            print("Error_perm happened")
-                            continue
-                        new_photos = HousePhotos(house=home)
-                        new_photos.image.save(os.path.basename(file), ImageFile(lf))
-                        new_photos.save()
-                        lf.close()
+                        with tempfile.TemporaryFile("wb+") as lf:
+                            try:
+                                ftp.retrbinary("RETR " + file, lf.write)
+                            # If a permission error occurs then skip to the next image
+                            #   This usually occurs if the image doesn't exist for some reason
+                            except error_perm:
+                                print("Error_perm happened" + str(file))
+                                continue
+                            # Timeout sometimes occurs, so instead of quiting,
+                            #   just skip that image
+                            except TimeoutError:
+                                print("File Timeout" + str(file))
+                                continue
+                            new_photos = HousePhotos(house=home)
+                            new_photos.image.save(os.path.basename(file), ImageFile(lf))
+                            new_photos.save()
+
                     print("[ UPDATED PHOTOS ] " + home.full_address)
                 else:
                     print("[ ALL SET ] " + home.full_address)
