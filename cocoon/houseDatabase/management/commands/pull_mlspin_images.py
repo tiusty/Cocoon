@@ -41,7 +41,7 @@ class MLSpinRequesterImage(object):
             if home.listing_number > 0:
                 # Need to parse the listing numbers to find the location of the photos.
                 # The directory goes like photo/##/###/###_#.jpg
-                # The 8 numbers correspond to the mlspin number
+                # The first 8 numbers correspond to the mlspin listing number
                 first_directory = str(home.listing_number)[:2]
                 second_directory = str(home.listing_number)[2:5]
                 file_name = str(home.listing_number)[5:9] + "_"
@@ -51,13 +51,14 @@ class MLSpinRequesterImage(object):
                 ftp.login()
 
                 # Retrieve a list of all the images for a corresponding home (from the mlspin listing number)
+                # Only stores files that have the file_name in the name of the file
                 file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory,
                                                                                          second_directory))))
 
-                # Determine if the house photos needs updated
+                # Determine if the house photos needs updating
                 if home.housephotos_set.count() != len(file_names):
 
-                    # Determine if there are housePhoto files and if so delete them
+                    # Determine if there are housePhoto files and if so deletes them
                     if home.housephotos_set.exists():
                         for photo in home.housephotos_set.all():
                             # Determine if an image is currently saved
