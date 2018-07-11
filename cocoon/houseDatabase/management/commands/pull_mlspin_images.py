@@ -15,7 +15,7 @@ from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos
 class MLSpinRequesterImage(object):
     """
     This class implements the logic to retrieve all the images for homes on the server
-    The homes must already be saved onto the server. This will iterate through all the homes
+    The homes must already be saved onto the Cocoon database. This will iterate through all the homes
     and if a different amount of images exist on the MLSpin server than on the Cocoon server,
     the directory is deleted and the images are uploaded.
 
@@ -26,8 +26,8 @@ class MLSpinRequesterImage(object):
 
     def __init__(self, last_update=timezone.now()):
         # Create a list of all the homes.
-        # If no last_update value is passed in then it defaults to filtering homes which,
-        #   where last updated today
+        # If no last_update value is passed in then it defaults to filtering homes that were
+        #   last updated today
         self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update)
 
     def add_images(self):
@@ -60,13 +60,16 @@ class MLSpinRequesterImage(object):
                     # Determine if there are housePhoto files and if so delete them
                     if home.housephotos_set.exists():
                         for photo in home.housephotos_set.all():
+                            # Determine if an image is currently saved
                             if photo.image:
+                                # If there is an image saved, then make sure it is a file
                                 if os.path.isfile(photo.image.path):
                                     # Delete the image on the machine
                                     os.remove(photo.image.path)
-                                    # Delete the image from the database
-                                    # Note: This does not delete it from the machine which
-                                    #   is why it is deleted beforehand
+                            # Delete the image from the database
+                            # Note: This does not delete the file from the machine which
+                            #   is why it is deleted beforehand. It just deletes the reference
+                            #   to the file on the database
                             photo.delete()
 
                     # Save each image to the database

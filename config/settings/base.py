@@ -115,7 +115,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-MEDIA_ROOT = os.path.join(BASE_DIR, "../cocoon/media/photos")
+MEDIA_ROOT = os.path.join(BASE_DIR, "../cocoon/media/")
 
 # Adds a global static file that isn't linked to a particular app
 STATICFILES_DIRS = [
