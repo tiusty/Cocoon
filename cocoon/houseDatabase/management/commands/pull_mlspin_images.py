@@ -4,10 +4,9 @@ from django.utils import timezone
 from django.core.files.images import ImageFile
 
 # Third party imports
-from ftplib import FTP
+from ftplib import FTP, error_perm
 import tempfile
 import os
-import shutil
 
 # Import from houseDatabase app
 from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos
@@ -19,6 +18,10 @@ class MLSpinRequesterImage(object):
     The homes must already be saved onto the server. This will iterate through all the homes
     and if a different amount of images exist on the MLSpin server than on the Cocoon server,
     the directory is deleted and the images are uploaded.
+
+    Attributes:
+        self.homes (list(RentDatabaseModel object)) -> This stores all the homes for which
+            images are being added to
     """
 
     def __init__(self, last_update=timezone.now()):
@@ -41,14 +44,15 @@ class MLSpinRequesterImage(object):
                 # The 8 numbers correspond to the mlspin number
                 first_directory = str(home.listing_number)[:2]
                 second_directory = str(home.listing_number)[2:5]
-                file_name = str(home.listing_number)[5:9]
+                file_name = str(home.listing_number)[5:9] + "_"
 
                 # Connect to the FTP server and login
                 ftp = FTP("ftp.mlspin.com", "anonymous", "")
                 ftp.login()
 
                 # Retrieve a list of all the images for a corresponding home (from the mlspin listing number)
-                file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory, second_directory))))
+                file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory,
+                                                                                         second_directory))))
 
                 # Determine if the house photos needs updated
                 if home.housephotos_set.count() != len(file_names):
@@ -70,14 +74,16 @@ class MLSpinRequesterImage(object):
                         lf = tempfile.TemporaryFile("wb+")
                         try:
                             ftp.retrbinary("RETR " + file, lf.write)
-                        except FTP.error_perm:
+                        # If a permission error occurs then skip to the next image
+                        #   This usually occurs if the image doesn't exist for some reason
+                        except error_perm:
                             print("Error_perm happened")
                             continue
                         new_photos = HousePhotos(house=home)
                         new_photos.image.save(os.path.basename(file), ImageFile(lf))
                         new_photos.save()
                         lf.close()
-                    print("[ ADDED PHOTOS ] " + home.full_address)
+                    print("[ UPDATED PHOTOS ] " + home.full_address)
                 else:
                     print("[ ALL SET ] " + home.full_address)
 
@@ -91,14 +97,14 @@ class Command(BaseCommand):
     This command is accessible via manage.py
     """
 
-    help = 'Ingests IDX feed into database'
+    help = 'Ingests MLSpin photos into the database'
 
     def add_arguments(self, parser):
         # add args here
         return
 
     def handle(self, *args, **options):
+        # Create the MLSpin Requester
         request = MLSpinRequesterImage()
+        # Add images
         request.add_images()
-
-
