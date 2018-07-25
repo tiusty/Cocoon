@@ -4,11 +4,12 @@ import urllib.error
 import cocoon.houseDatabase.maps_requester as geolocator
 import os, sys
 from django.core.management.base import BaseCommand
-from cocoon.houseDatabase.models import HousePhotosModel, RentDatabaseModel
-from cocoon.houseDatabase.management.commands.mls_fields import *
+from cocoon.houseDatabase.models import HousePhotos, RentDatabaseModel
+from cocoon.houseDatabase.management.commands._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
+from .pull_mlspin_images import MLSpinRequesterImage
 
 
 class MlspinRequester:
@@ -173,9 +174,6 @@ class MlspinRequester:
                 # After all the data is added, save the home to the database
                 new_listing.save()
 
-                # TODO: upload ftp path to S3 storage bucket
-                new_photos = HousePhotosModel(house_photo=new_listing)
-                new_photos.save()
                 print("[ ADDING   ]" + full_add)
 
         # When all the homes are added, update the MLSManagement model to reflex that the homes have been updated
@@ -198,6 +196,12 @@ class MlspinRequester:
         manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = update_timestamp
         manager.save()
+
+        # This is a hacky way of adding photos once all the homes are added.
+        # The main purpose of adding it here is to reuse the update_timestamp in case a day
+        #   progressed before finishing the homes
+        image_requester = MLSpinRequesterImage(last_update=update_timestamp)
+        image_requester.add_images()
 
 
 class Command(BaseCommand):

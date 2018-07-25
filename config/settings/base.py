@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'cocoon.survey',
     'cocoon.houseDatabase',
     'cocoon.commutes',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -112,9 +113,10 @@ LOGIN_URL = "/userAuth/login/"
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR,"static/")
-MEDIA_ROOT = os.path.join(BASE_DIR, "static/photos")
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "../cocoon/media/")
 
 # Adds a global static file that isn't linked to a particular app
 STATICFILES_DIRS = [
