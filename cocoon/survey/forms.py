@@ -365,7 +365,7 @@ class DestinationForm(ModelForm):
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Street Address',
-                'disabled': 'true',
+                'readonly': 'readonly',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
@@ -375,7 +375,7 @@ class DestinationForm(ModelForm):
             attrs={
                 'class': 'form-control',
                 'placeholder': 'City',
-                'disabled': 'true',
+                'readonly': 'readonly',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
@@ -385,7 +385,7 @@ class DestinationForm(ModelForm):
             attrs={
                 'class': 'form-control',
                 'placeholder': 'State',
-                'disabled': 'true',
+                'readonly': 'readonly',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
@@ -395,7 +395,7 @@ class DestinationForm(ModelForm):
             attrs={
                 'class': 'form-control',
                 'placeholder': 'Zip Code',
-                'disabled': 'true',
+                'readonly': 'readonly',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
