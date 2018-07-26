@@ -194,10 +194,10 @@ class TestCommuteInformationForm(TestCase):
     def tests_commute_information_valid(self):
         # Arrange
         form_data = {
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -211,9 +211,9 @@ class TestCommuteInformationForm(TestCase):
     def tests_commute_information_max_commute_missing(self):
         # Arrange
         form_data = {
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -226,9 +226,9 @@ class TestCommuteInformationForm(TestCase):
     def tests_commute_information_min_commute_missing(self):
         # Arrange
         form_data = {
-            'max_commute_survey': self.max_commute,
-            'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type
+            'max_commute': self.max_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -241,9 +241,9 @@ class TestCommuteInformationForm(TestCase):
     def tests_commute_information_commute_weight_missing(self):
         # Arrange
         form_data = {
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_type_survey': self.commute_type
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_type': self.commute_type
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -256,10 +256,10 @@ class TestCommuteInformationForm(TestCase):
     def tests_commute_information_commute_weight_over_weight_question_max(self):
         # Arrange
         form_data = {
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': WEIGHT_QUESTION_MAX + 1,
-            'commute_type_survey': self.commute_type
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': WEIGHT_QUESTION_MAX + 1,
+            'commute_type': self.commute_type
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -272,10 +272,10 @@ class TestCommuteInformationForm(TestCase):
     def tests_commute_information_commute_weight_under_zero(self):
         # Arrange
         form_data = {
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': -1,
-            'commute_type_survey': self.commute_type
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': -1,
+            'commute_type': self.commute_type
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -288,9 +288,9 @@ class TestCommuteInformationForm(TestCase):
     def tests_commute_information_commute_type_missing(self):
         # Arrange
         form_data = {
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': -1,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': -1,
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -658,11 +658,11 @@ class TestRentSurveyForm(TestCase):
             'max_bathrooms_survey': self.max_num_bathrooms,
             'min_bathrooms_survey': self.min_num_bathrooms,
             'home_type_survey': self.home_type_survey,
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': self.commute_weight,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
             'number_destinations_filled_out': self.number_of_destinations,
-            'commute_type_survey': 1,
+            'commute_type': 1,
             'max_price_survey': self.max_price,
             'min_price_survey': self.min_price,
             'price_weight_survey': self.price_weight,
@@ -689,10 +689,10 @@ class TestRentSurveyForm(TestCase):
     def tests_rent_survey_missing_home_information_data(self):
         # Arrange
         form_data = {
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type,
             'max_price_survey': self.max_price,
             'min_price_survey': self.min_price,
             'price_weight_survey': self.price_weight,
@@ -757,10 +757,10 @@ class TestRentSurveyForm(TestCase):
             'max_bathrooms_survey': self.max_num_bathrooms,
             'min_bathrooms_survey': self.min_num_bathrooms,
             'home_type_survey': self.home_type_survey,
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
@@ -790,10 +790,10 @@ class TestRentSurveyForm(TestCase):
             'max_bathrooms_survey': self.max_num_bathrooms,
             'min_bathrooms_survey': self.min_num_bathrooms,
             'home_type_survey': self.home_type_survey,
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type,
             'max_price_survey': self.max_price,
             'min_price_survey': self.min_price,
             'price_weight_survey': self.price_weight,
@@ -822,10 +822,10 @@ class TestRentSurveyForm(TestCase):
             'max_bathrooms_survey': self.max_num_bathrooms,
             'min_bathrooms_survey': self.min_num_bathrooms,
             'home_type_survey': self.home_type_survey,
-            'max_commute_survey': self.max_commute,
-            'min_commute_survey': self.min_commute,
-            'commute_weight_survey': self.commute_weight,
-            'commute_type_survey': self.commute_type,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type,
             'max_price_survey': self.max_price,
             'min_price_survey': self.min_price,
             'price_weight_survey': self.price_weight,

@@ -24,7 +24,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
-                                                        commute_type_survey=self.commute_type)
+                                                        commute_type=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -32,10 +32,10 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.state = 'MA'
         self.zip_code = '02476'
         self.destination = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address,
-            city_destination=self.city,
-            state_destination=self.state,
-            zip_code_destination=self.zip_code
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code
         )
 
         self.street_address1 = '8 Stony Brook Rd'
@@ -43,10 +43,10 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.state1 = 'MA'
         self.zip_code1 = '02476'
         self.destination1 = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address1,
-            city_destination=self.city1,
-            state_destination=self.state1,
-            zip_code_destination=self.zip_code1
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1
         )
 
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
@@ -367,7 +367,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
-                                                        commute_type_survey=self.commute_type)
+                                                        commute_type=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -375,10 +375,10 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         self.state = 'MA'
         self.zip_code = '02476'
         self.destination = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address,
-            city_destination=self.city,
-            state_destination=self.state,
-            zip_code_destination=self.zip_code
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code
         )
 
         self.street_address1 = '8 Stony Brook Rd'
@@ -386,10 +386,10 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         self.state1 = 'MA'
         self.zip_code1 = '02476'
         self.destination1 = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address1,
-            city_destination=self.city1,
-            state_destination=self.state1,
-            zip_code_destination=self.zip_code1
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1
         )
 
         self.street_address2 = '360 Huntington Ave'
@@ -397,10 +397,10 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         self.state2 = 'MA'
         self.zip_code2 = '02115'
         self.destination2 = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address2,
-            city_destination=self.city2,
-            state_destination=self.state2,
-            zip_code_destination=self.zip_code2
+            street_address=self.street_address2,
+            city=self.city2,
+            state=self.state2,
+            zip_code=self.zip_code2
         )
 
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
@@ -516,7 +516,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
-                                                        commute_type_survey=self.commute_type)
+                                                        commute_type=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -524,10 +524,10 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
         self.state = 'MA'
         self.zip_code = '02476'
         self.destination = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address,
-            city_destination=self.city,
-            state_destination=self.state,
-            zip_code_destination=self.zip_code
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code
         )
 
         self.street_address1 = '8 Stony Brook Rd'
@@ -535,10 +535,10 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
         self.state1 = 'MA'
         self.zip_code1 = '02476'
         self.destination1 = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address1,
-            city_destination=self.city1,
-            state_destination=self.state1,
-            zip_code_destination=self.zip_code1
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1
         )
 
         self.street_address2 = '360 Huntington Ave'
@@ -546,10 +546,10 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
         self.state2 = 'MA'
         self.zip_code2 = '02115'
         self.destination2 = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address2,
-            city_destination=self.city2,
-            state_destination=self.state2,
-            zip_code_destination=self.zip_code2
+            street_address=self.street_address2,
+            city=self.city2,
+            state=self.state2,
+            zip_code=self.zip_code2
         )
 
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
@@ -814,13 +814,13 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                                    max_bathrooms_survey=self.max_bathrooms,
                                                    min_bathrooms_survey=self.min_bathrooms,
                                                    num_bedrooms_survey=self.num_bedrooms_min,
-                                                   commute_type_survey=self.commute_type)
+                                                   commute_type=self.commute_type)
         survey.home_type_survey.set([self.home_type, self.home_type1])
         # Create a destination for the survey
-        survey.rentingdestinationsmodel_set.create(street_address_destination=self.street_address,
-                                                   city_destination=self.city,
-                                                   state_destination=self.state,
-                                                   zip_code_destination=self.zip_code)
+        survey.rentingdestinationsmodel_set.create(street_address=self.street_address,
+                                                   city=self.city,
+                                                   state=self.state,
+                                                   zip_code=self.zip_code)
 
         # Act
         rent_algorithm.populate_survey_destinations_and_possible_homes(survey)
@@ -869,10 +869,10 @@ class TestRetrieveApproximateCommutes(TestCase):
     def create_destination(address, city, state, zip):
         return RentingDestinationsModel.objects.create(
             survey_destinations_id="0",
-            street_address_destination=address,
-            city_destination=city,
-            state_destination=state,
-            zip_code_destination=zip
+            street_address=address,
+            city=city,
+            state=state,
+            zip_code=zip
         )
 
     def test_retrieve_approx_commutes_in_database_one_home_one_destination(self):
@@ -1084,10 +1084,10 @@ class TestRetrieveExactCommutes(TestCase):
     def create_destination(address, city, state, zip):
         return RentingDestinationsModel.objects.create(
             survey_destinations_id="0",
-            street_address_destination=address,
-            city_destination=city,
-            state_destination=state,
-            zip_code_destination=zip
+            street_address=address,
+            city=city,
+            state=state,
+            zip_code=zip
         )
 
     def test_retrieve_exact_commute_simple_case(self):

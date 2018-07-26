@@ -4,7 +4,7 @@ from django.forms import ModelForm
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
-    PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel
+    PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel, DestinationsModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 
@@ -91,51 +91,6 @@ class HomeInformationForm(ModelForm):
 
     class Meta:
         model = HomeInformationModel
-        fields = '__all__'
-
-
-class CommuteInformationForm(ModelForm):
-
-    max_commute_survey = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    min_commute_survey = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    commute_weight_survey = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
-        label="Commute Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    commute_type_survey = forms.ModelChoiceField(
-        queryset=CommuteType.objects.all(),
-        label="Commute Type",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
-        initial=DEFAULT_COMMUTE_TYPE,
-    )
-
-    @property
-    def commute_type(self):
-        return self.commute_type_survey
-
-    class Meta:
-        model = CommuteInformationModel
         fields = '__all__'
 
 
@@ -318,7 +273,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
 
 class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
-                     CommuteInformationForm, HomeInformationForm):
+                     HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -337,7 +292,7 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
-                         CommuteInformationForm, HomeInformationForm):
+                         HomeInformationForm):
     """
     RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurveyForm
@@ -358,8 +313,49 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
         exclude = ["user_profile_survey", 'survey_type_survey']
 
 
+class CommuteInformationForm(ModelForm):
+
+    max_commute = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_commute = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    commute_weight = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
+        label="Commute Weight",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    commute_type = forms.ModelChoiceField(
+        queryset=CommuteType.objects.all(),
+        label="Commute Type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+        initial=DEFAULT_COMMUTE_TYPE,
+    )
+
+    class Meta:
+        model = CommuteInformationModel
+        fields = '__all__'
+
+
 class DestinationForm(ModelForm):
-    street_address_destination = forms.CharField(
+    street_address = forms.CharField(
         label="Destination",
         widget=forms.TextInput(
             attrs={
@@ -370,7 +366,7 @@ class DestinationForm(ModelForm):
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
-    city_destination = forms.CharField(
+    city = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -380,7 +376,7 @@ class DestinationForm(ModelForm):
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
-    state_destination = forms.CharField(
+    state = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -390,7 +386,7 @@ class DestinationForm(ModelForm):
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
-    zip_code_destination = forms.CharField(
+    zip_code = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -401,5 +397,12 @@ class DestinationForm(ModelForm):
     )
 
     class Meta:
+        model = DestinationsModel
+        exclude = ['survey']
+
+
+class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
+
+    class Meta:
         model = RentingDestinationsModel
-        exclude = ['survey_destinations']
+        exclude = ['survey']

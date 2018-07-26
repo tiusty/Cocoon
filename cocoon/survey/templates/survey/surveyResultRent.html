@@ -81,18 +81,18 @@ Global variables are listed below
               <input type="text" id="amountCommute" name="amountCommute" readonly
                      style="border:0; color:#f6931f; font-weight:bold;">
               <div id="commute"></div>
-              {{ form.min_commute_survey }}
-              {{ form.max_commute_survey }}
+              {{ form.min_commute }}
+              {{ form.max_commute }}
             </div>
             <div class="form-group">
-              {{ form.commute_weight_survey.label_tag }}
-              {{ form.commute_weight_survey }}
-              {{ form.commute_weight_survey.errors }}
+              {{ form.commute_weight.label_tag }}
+              {{ form.commute_weight }}
+              {{ form.commute_weight.errors }}
             </div>
             <div class="form-group">
-              {{ form.commute_type_survey.label_tag }}
-              {{ form.commute_type_survey }}
-              {{ form.commute_type_survey.errors }}
+              {{ form.commute_type.label_tag }}
+              {{ form.commute_type }}
+              {{ form.commute_type.errors }}
             </div>
           </div>
           <br>
@@ -374,12 +374,12 @@ Global variables are listed below
       // Manipulated by survey_result.js in selectAddress
       //var myDestination = "{{ houseList.0.address }}";
       // Manipulated by costSliderResults.js
-      costSliderMax = {{ form.max_price_survey.value }};
-      costSliderMin = {{ form.min_price_survey.value }};
-      commuteSliderMin = {{ form.min_commute_survey.value }};
-      commuteSliderMax = {{ form.max_commute_survey.value }};
-      bathroomsMin = {{ form.min_bathrooms_survey.value }};
-      bathroomsMax = {{ form.max_bathrooms_survey.value }};
+      costSliderMax = {{ form.max_price.value }};
+      costSliderMin = {{ form.min_price.value }};
+      commuteSliderMin = {{ form.min_commute.value }};
+      commuteSliderMax = {{ form.max_commute.value }};
+      bathroomsMin = {{ form.min_bathrooms.value }};
+      bathroomsMax = {{ form.max_bathrooms.value }};
   </script>
 
   {#    <script src="{% static 'homePage/carousel.js' %}"></script>#}

@@ -220,11 +220,11 @@ class TestApproxCommute(TestCase):
     @staticmethod
     def create_destination(address, city, state, zip):
         return RentingDestinationsModel.objects.create(
-            survey_destinations_id="0",
-            street_address_destination=address,
-            city_destination=city,
-            state_destination=state,
-            zip_code_destination=zip
+            survey_id="0",
+            street_address=address,
+            city=city,
+            state=state,
+            zip_code=zip
         )
 
     @staticmethod
