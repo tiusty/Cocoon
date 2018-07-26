@@ -44,7 +44,7 @@ function fillInAddress() {
     // Get the place details from the autocomplete object.
     var place = autocomplete.getPlace();
 
-    // Retrives the number of forms that are active (i.e The number of commuters the user
+    // Retrieves the number of forms that are active (i.e The number of commuters the user
     //  has selected)
     var destination_form_number = parseInt($('#id_number_destinations_filled_out').val());
 
@@ -59,6 +59,8 @@ function fillInAddress() {
             // Since the tabs are base 1 and the input fields are base 0. Need to subtract 1
             //  so that the number is converted to the right base for the input fields
             active_form_num = j-1;
+
+            // Once we find the active tab then quit because there should only be one
             break;
         }
 
