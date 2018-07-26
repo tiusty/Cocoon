@@ -70,29 +70,28 @@ function fillInAddress() {
             street_address = place.address_components[i][componentForm["route"]]
         }
 
+        if (place.address_components[i].types[0] === "postal_code")
+        {
+            var val = place.address_components[i][componentForm["postal_code"]];
+            document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-zip_code_destination').value = val;
+        }
+
+        if (place.address_components[i].types[0] === "administrative_area_level_1")
+        {
+            var val = place.address_components[i][componentForm["administrative_area_level_1"]];
+            document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-state_destination').value = val;
+        }
+
+        if (place.address_components[i].types[0] === "locality")
+        {
+            var val = place.address_components[i][componentForm["locality"]];
+            document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-city_destination').value = val;
+        }
+
     }
 
     // Now concatenate the street_num and street address to store the full address
     var full_street_address = street_num + " " + street_address;
     document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-street_address_destination').value = full_street_address;
 
-
-    // Get each component of the address from the place details
-    // and fill the corresponding field on the form.
-    // for (var i = 0; i < place.address_components.length; i++) {
-    //   var addressType = place.address_components[i].types[0];
-    //   if (componentForm[addressType]) {
-    //     var val = place.address_components[i][componentForm[addressType]];
-        // console.log(val);
-        //   console.log(place.address_components);
-        // $('#id_rentingdestinationsmodel_set-0-street_address_destination').value = val;
-        // document.getElementById(addressType).value = val;
-      // }
-    // }
   }
-
-
-
-
-// <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"
-//     async defer></script>
