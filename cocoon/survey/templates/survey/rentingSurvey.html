@@ -60,7 +60,6 @@
                         <h3>Essentials</h3>
                         <span class="help-block">All fields are required. Each item will be an important factor which will filter the items</span>
                         <div class="form-group step_div">
-                            {% include "survey/helpers/address_form.html" %}
                             <div class="form-group">
                                 {{ form.num_bedrooms_survey.label_tag }}
                                 {{ form.num_bedrooms_survey }}
@@ -94,6 +93,7 @@
                         <span class="help-block">Please enter up to {{ number_of_formsets }} commutes to locations you need to go to.
                             This can be your work, school or somewhere you commute to regularily</span>
                         <div class="form-group step_div">
+                            {% include "survey/helpers/address_form.html" %}
 {#                            <div class="form-group">#}
 {#                                {% comment %} Contains form for destination {% endcomment %}#}
 {#                                <div class="bs-example">#}
