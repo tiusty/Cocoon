@@ -1,0 +1,48 @@
+<div class="form-group">
+    {% comment %} Contains form for destination {% endcomment %}
+    <div class="bs-example">
+        <ul class="nav nav-tabs">
+            <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
+                    {{ number_of_formsets }})"></span></a></li>
+            {% for num_forms in form_destination %}
+                <li
+                        {% if forloop.counter == 1 %}
+                            class="active"
+                        {% elif forloop.counter <= number_of_destinations %}
+                            class=""
+                        {% else %}
+                            class="hide"
+                        {% endif %}
+                            id="form_destination_tabs_{{ forloop.counter }}">
+
+                    <a data-toggle="tab"
+                       href="#form_destination_section_{{ forloop.counter }}"><b>Commuter {{ forloop.counter }}</b></a></li>
+            {% endfor %}
+            <li
+                    {% if number_of_destinations >= number_of_formsets %}
+                        class='hide'
+                    {% endif %}
+                        id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
+                    {{ number_of_formsets }})"></span></a></li>
+        </ul>
+        <div id="form_destination_div" class="tab-content">
+            {{ form.number_destinations_filled_out }}
+            {{ form_destination.management_form }}
+            {% for form in form_destination %}
+                <div id="form_destination_section_{{ forloop.counter }}"
+                        {% if forloop.counter == 1 %}
+                     class="tab-pane fade in active">
+                        {% else %}
+                            class="tab-pane fade">
+                        {% endif %}
+                <br>
+                {{ form.as_table }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"
+        async defer></script>
+
