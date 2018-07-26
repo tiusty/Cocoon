@@ -7,7 +7,7 @@
         location
  */
 
-var placeSearch, autocomplete;
+var autocomplete;
 var componentForm = {
                 street_number: 'short_name',
                 route: 'long_name',
@@ -52,7 +52,6 @@ function fillInAddress() {
 
     }
 
-
     // Since the street num and the street address are two different component fields in google
     //  Store the variables so that they can be concatenated together at the end
     var street_num = "";
@@ -94,4 +93,8 @@ function fillInAddress() {
     var full_street_address = street_num + " " + street_address;
     document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-street_address_destination').value = full_street_address;
 
+  }
+
+  function clean_autocomplete() {
+    document.getElementById('autocomplete').value = "";
   }

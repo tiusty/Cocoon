@@ -1,8 +1,13 @@
+<div id="form-group locationField">
+    <label for="autocomplete">Address:</label>
+    <br>
+    <input id="autocomplete" placeholder="Enter your address" type="text">
+    <br>
+    <br>
+</div>
+
 <div class="form-group">
     {% comment %} Contains form for destination {% endcomment %}
-    <div id="locationField">
-        <input id="autocomplete" placeholder="Enter your address" type="text">
-    </div>
     <div>
 
         <ul class="nav nav-tabs">
@@ -20,7 +25,8 @@
                             id="form_destination_tabs_{{ forloop.counter }}">
 
                     <a data-toggle="tab"
-                       href="#form_destination_section_{{ forloop.counter }}"><b>Commuter {{ forloop.counter }}</b></a></li>
+                       href="#form_destination_section_{{ forloop.counter }}"
+                        onclick="clean_autocomplete()"><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
             <li
                     {% if number_of_destinations >= number_of_formsets %}
