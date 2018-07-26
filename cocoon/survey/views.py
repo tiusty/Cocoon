@@ -22,7 +22,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
-from cocoon.survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
+from cocoon.survey.forms import RentSurveyForm, RentingDestinationsForm, RentSurveyFormMini
 
 
 @login_required
@@ -38,9 +38,9 @@ def renting_survey(request):
     number_of_formsets = 4
     number_of_destinations = 1
     form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
-                                                     extra=number_of_formsets, fields=('street_address', 'city',
-                                                                      'state', 'zip_code'),
-                                                     form=DestinationForm)
+                                                        extra=number_of_formsets, fields=('street_address', 'city',
+                                                                                          'state', 'zip_code'),
+                                                        form=RentingDestinationsForm)
     destination_form_set = form_inline_destination_set
 
     # Retrieve the current profile or return a 404

@@ -316,17 +316,20 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
 class CommuteInformationForm(ModelForm):
 
     max_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
+        widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
             }),
+        initial=60,
     )
 
     min_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
+        widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
             }),
+        initial=0,
+
     )
 
     commute_weight = forms.ChoiceField(

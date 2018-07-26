@@ -10,6 +10,11 @@
     {% comment %} Contains form for destination {% endcomment %}
     <div>
 
+        <label for="amountCommute">Commute:</label>
+        <input type="text" id="amountCommute" name="amountCommute" readonly
+               style="border:0; color:#f6931f; font-weight:bold;">
+        <div id="commute"></div>
+
         <ul class="nav nav-tabs">
             <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
                     {{ number_of_formsets }})"></span></a></li>
@@ -26,7 +31,7 @@
 
                     <a data-toggle="tab"
                        href="#form_destination_section_{{ forloop.counter }}"
-                        onclick="clean_autocomplete()"><b>Commuter {{ forloop.counter }}</b></a></li>
+                        onclick="clean_autocomplete();set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
             <li
                     {% if number_of_destinations >= number_of_formsets %}
