@@ -7,7 +7,10 @@
         location
  */
 
+// Stores the autocomplete result
 var autocomplete;
+
+// The different componenents of the autocomplete and the type desired for each field
 var componentForm = {
                 street_number: 'short_name',
                 route: 'long_name',
@@ -18,6 +21,10 @@ var componentForm = {
                 };
 
 function initAutocomplete() {
+    /**
+     * This function is the initialization function for the autocomplete. In the script tag with the google
+     *  api key, this function is used as the callback method.
+     */
     // Create the autocomplete object
     autocomplete = new google.maps.places.Autocomplete(
     /** @type {!HTMLInputElement} */(document.getElementById('autocomplete')),
@@ -29,6 +36,11 @@ function initAutocomplete() {
 }
 
 function fillInAddress() {
+    /**
+     * This function fills in the destination form with the values provided form the google
+     *  address autocomplete. The autocomplete is parsed and the values are added to the correct
+     *  input forms so that the form will validate correctly.
+     */
     // Get the place details from the autocomplete object.
     var place = autocomplete.getPlace();
 
@@ -95,6 +107,10 @@ function fillInAddress() {
 
   }
 
-  function clean_autocomplete() {
+function clean_autocomplete() {
+    /**
+    * This function cleans the autocomplete input box so the user can easily
+    *    enter in a new address
+    */
     document.getElementById('autocomplete').value = "";
-  }
+}
