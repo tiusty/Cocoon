@@ -364,8 +364,8 @@ class DestinationForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter in a Destination',
-                'autocomplete': 'off',
+                'placeholder': 'Street Address',
+                'disabled': 'true',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
@@ -374,7 +374,8 @@ class DestinationForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter the city',
+                'placeholder': 'City',
+                'disabled': 'true',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
@@ -383,7 +384,8 @@ class DestinationForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter the State',
+                'placeholder': 'State',
+                'disabled': 'true',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
@@ -392,7 +394,8 @@ class DestinationForm(ModelForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter the Zip Code',
+                'placeholder': 'Zip Code',
+                'disabled': 'true',
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
