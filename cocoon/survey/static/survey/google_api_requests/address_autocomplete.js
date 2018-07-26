@@ -31,21 +31,59 @@ function initAutocomplete() {
 function fillInAddress() {
     // Get the place details from the autocomplete object.
     var place = autocomplete.getPlace();
+    var destination_form_number = parseInt($('#id_number_destinations_filled_out').val());
 
-    for (var component in componentForm) {
-      document.getElementById(component).value = '';
-      document.getElementById(component).disabled = false;
+    var active_form_num = -1;
+    for (var j = 1; j <= destination_form_number; j++)
+    {
+        if ($('#form_destination_section_' + j).hasClass('active'))
+        {
+            active_form_num = j-1;
+            console.log(active_form_num);
+            break;
+        }
+
     }
+
+
+    // for (var component in componentForm) {
+    //   document.getElementById(component).value = '';
+    //   document.getElementById(component).disabled = false;
+    // }
+
+    var street_num = "";
+    var street_address = "";
+
+    for (var i = 0; i < place.address_components.length; i++) {
+        if (place.address_components[i].types[0] === "street_number")
+        {
+            street_num = place.address_components[i][componentForm["street_number"]];
+        }
+
+        if (place.address_components[i].types[0] === "route")
+        {
+            street_address = place.address_components[i][componentForm["route"]]
+        }
+
+    }
+
+    var full_street_address = street_num + " " + street_address;
+    console.log(destination_form_number);
+    document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-street_address_destination').value = full_street_address;
+
 
     // Get each component of the address from the place details
     // and fill the corresponding field on the form.
-    for (var i = 0; i < place.address_components.length; i++) {
-      var addressType = place.address_components[i].types[0];
-      if (componentForm[addressType]) {
-        var val = place.address_components[i][componentForm[addressType]];
-        document.getElementById(addressType).value = val;
-      }
-    }
+    // for (var i = 0; i < place.address_components.length; i++) {
+    //   var addressType = place.address_components[i].types[0];
+    //   if (componentForm[addressType]) {
+    //     var val = place.address_components[i][componentForm[addressType]];
+        // console.log(val);
+        //   console.log(place.address_components);
+        // $('#id_rentingdestinationsmodel_set-0-street_address_destination').value = val;
+        // document.getElementById(addressType).value = val;
+      // }
+    // }
   }
 
 
