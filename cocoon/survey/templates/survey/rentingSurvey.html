@@ -57,7 +57,7 @@
                     {{ form.errors }}
                     {% csrf_token %}
                     <div class="col-sm-offset-3 col-sm-6">
-                        <h3>Step 1</h3>
+                        <h3>Essentials</h3>
                         <span class="help-block">All fields are required. Each item will be an important factor which will filter the items</span>
                         <div class="form-group step_div">
                             <div class="form-group">
@@ -89,7 +89,7 @@
                         </div>
                         <br>
 
-                        <h3>Step 2</h3>
+                        <h3>Commute</h3>
                         <span class="help-block">Please enter up to {{ number_of_formsets }} commutes to locations you need to go to.
                             This can be your work, school or somewhere you commute to regularily</span>
                         <div class="form-group step_div">
@@ -167,7 +167,7 @@
                         <br>
 
                         {% comment %} Accordion ONLY will have questions that do not need to be validated {% endcomment %}
-                        <h3>Step 3</h3>
+                        <h3>Amenities</h3>
                         <p class="help-block">Nothing below is required but it tailors the search to your needs!
                             <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip"
                                   data-placement="left" title="For the following questions, a weight of zero means the question has no effect.
