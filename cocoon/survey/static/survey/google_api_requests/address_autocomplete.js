@@ -31,29 +31,34 @@ function initAutocomplete() {
 function fillInAddress() {
     // Get the place details from the autocomplete object.
     var place = autocomplete.getPlace();
+
+    // Retrives the number of forms that are active (i.e The number of commuters the user
+    //  has selected)
     var destination_form_number = parseInt($('#id_number_destinations_filled_out').val());
 
+    // If there is no active tab then set to -1
     var active_form_num = -1;
+
+    // This determines which commuter is the actively selected commuter
     for (var j = 1; j <= destination_form_number; j++)
     {
         if ($('#form_destination_section_' + j).hasClass('active'))
         {
+            // Since the tabs are base 1 and the input fields are base 0. Need to subtract 1
+            //  so that the number is converted to the right base for the input fields
             active_form_num = j-1;
-            console.log(active_form_num);
             break;
         }
 
     }
 
 
-    // for (var component in componentForm) {
-    //   document.getElementById(component).value = '';
-    //   document.getElementById(component).disabled = false;
-    // }
-
+    // Since the street num and the street address are two different component fields in google
+    //  Store the variables so that they can be concatenated together at the end
     var street_num = "";
     var street_address = "";
 
+    // Loop through and select the required components to autofill the required fields
     for (var i = 0; i < place.address_components.length; i++) {
         if (place.address_components[i].types[0] === "street_number")
         {
@@ -67,8 +72,8 @@ function fillInAddress() {
 
     }
 
+    // Now concatenate the street_num and street address to store the full address
     var full_street_address = street_num + " " + street_address;
-    console.log(destination_form_number);
     document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-street_address_destination').value = full_street_address;
 
 
