@@ -1,6 +1,10 @@
 <div class="form-group">
     {% comment %} Contains form for destination {% endcomment %}
-    <div class="bs-example">
+    <div id="locationField">
+        <input id="autocomplete" placeholder="Enter your address" type="text">
+    </div>
+    <div>
+
         <ul class="nav nav-tabs">
             <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
                     {{ number_of_formsets }})"></span></a></li>
@@ -43,6 +47,6 @@
     </div>
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete"
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&libraries=places&callback=initAutocomplete"
         async defer></script>
 
