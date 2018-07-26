@@ -6,6 +6,7 @@ $( function() {
         range: true,
         min: 0,
         max: 5000,
+        step: 50,
         values: [ costSliderMin, costSliderMax ],
         slide: function( event, ui ) {
             $( "#amountCost" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
