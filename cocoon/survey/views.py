@@ -35,7 +35,7 @@ def renting_survey(request):
     # The reason why this is split is because the destination form can be made into a form factory
     # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
     # Multiple DestinationsModel on the frontend
-    number_of_formsets = 3
+    number_of_formsets = 4
     number_of_destinations = 1
     form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
                                                      extra=number_of_formsets, fields=('street_address_destination', 'city_destination',

@@ -111,7 +111,7 @@
                                                 id="form_destination_tabs_{{ forloop.counter }}">
 
                                             <a data-toggle="tab"
-                                               href="#form_destination_section_{{ forloop.counter }}">Destination {{ forloop.counter }}</a></li>
+                                               href="#form_destination_section_{{ forloop.counter }}"><b>Commuter {{ forloop.counter }}</b></a></li>
                                         {% endfor %}
                                         <li
                                             {% if number_of_destinations >= number_of_formsets %}
@@ -130,7 +130,7 @@
                                             {% else %}
                                                 class="tab-pane fade">
                                             {% endif %}
-                                                <h3>Commute {{ forloop.counter }}</h3>
+                                            <br>
                                             {{ form.as_table }}
                                         </div>
                                         {% endfor %}
