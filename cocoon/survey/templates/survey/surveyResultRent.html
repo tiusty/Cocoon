@@ -374,12 +374,12 @@ Global variables are listed below
       // Manipulated by survey_result.js in selectAddress
       //var myDestination = "{{ houseList.0.address }}";
       // Manipulated by costSliderResults.js
-      costSliderMax = {{ form.max_price.value }};
-      costSliderMin = {{ form.min_price.value }};
-      commuteSliderMin = {{ form.min_commute.value }};
-      commuteSliderMax = {{ form.max_commute.value }};
-      bathroomsMin = {{ form.min_bathrooms.value }};
-      bathroomsMax = {{ form.max_bathrooms.value }};
+      costSliderMax = {{ form.max_price_survey.value }};
+      costSliderMin = {{ form.min_price_survey.value }};
+      {#commuteSliderMin = {{ form.min_commute.value }};#}
+      {#commuteSliderMax = {{ form.max_commute.value }};#}
+      bathroomsMin = {{ form.min_bathrooms_survey.value }};
+      bathroomsMax = {{ form.max_bathrooms_survey.value }};
   </script>
 
   {#    <script src="{% static 'homePage/carousel.js' %}"></script>#}
