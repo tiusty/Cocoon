@@ -216,7 +216,7 @@ def survey_result_rent(request, survey_id="recent"):
 
     # Populate form with stored data
     form = RentSurveyFormMini(instance=survey)
-    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel,
+    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=0,
                                                form=RentingDestinationsForm, can_delete=False)
     destination_form_set = DestinationFormSet(instance=survey)
 
@@ -226,12 +226,18 @@ def survey_result_rent(request, survey_id="recent"):
         # If a POST occurs, update the form. In the case of an error, then the survey
         # Should be populated by the POST data.
         form = RentSurveyFormMini(request.POST, instance=survey)
+        destination_form_set = DestinationFormSet(request.POST, instance=survey)
         # If the survey is valid then redirect back to the page to reload the changes
         # This will also update the house list
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                kwargs={"survey_id": survey.id}))
+            if destination_form_set.is_valid():
+                form.save()
+                destination_form_set.save()
+                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                    kwargs={"survey_id": survey.id}))
+            else:
+                context['error_message'].append("There are form errors in destinatino form")
+                context['error_message'].append(destination_form_set.errors)
         else:
             context['error_message'].append("There are form errors")
             try:
@@ -247,8 +253,9 @@ def survey_result_rent(request, survey_id="recent"):
     context['survey'] = survey
     context['form'] = form
     context['form_destination'] = destination_form_set
-    context['number_of_formsets'] = survey.rentingdestinationsmodel_set.count()
-    context['number_of_destinations'] = survey.rentingdestinationsmodel_set.count()
+    number_of_forms = survey.rentingdestinationsmodel_set.count()
+    context['number_of_formsets'] = number_of_forms
+    context['number_of_destinations'] = number_of_forms
     context['survey_result_page'] = True
     return render(request, 'survey/surveyResultRent.html', context)
 
