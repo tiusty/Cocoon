@@ -368,7 +368,7 @@ Global variables are listed below
       // Deprecating computing commute time and distance in favor of doing in on the server side
       // Going to keep the portions that create the markers on the map
       {% endcomment %}
-      var myStreetAddresses = [{% for location in locations %}"{{ location.full_address }}",{% endfor %}];
+      var myStreetAddresses = [{% for commuter in commuters %}"{{ commuter.full_address }}",{% endfor %}];
       var myDestinations = [{% for dest in houseList %}[{{ dest.house.latitude|safe }}, {{ dest.house.longitude|safe }}
           ],{% endfor %}];
       // Manipulated by survey_result.js in selectAddress

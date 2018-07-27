@@ -162,8 +162,8 @@ def run_rent_algorithm(survey, context):
     rent_algorithm.run_sort_home_by_score()
 
     # Set template variables
-    context['locations'] = rent_algorithm.destinations
-    context['houseList'] = rent_algorithm.homes[:200]
+    context['commuters'] = rent_algorithm.destinations
+    context['houseList'] = rent_algorithm.homes[:50]
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
