@@ -27,7 +27,6 @@ function add_destination_form(form_add_value, number_of_formsets) {
     if(form_add_value === 1) {
         if (destination_form_number < number_of_formsets)
             destination_form_number += form_add_value;
-            console.log(form_destination_tabs);
             $("#" + form_destination_tabs + destination_form_number).removeClass("hide")
     }
     else if (form_add_value === -1) {
