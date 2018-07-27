@@ -46,18 +46,6 @@ class HomeInformationForm(ModelForm):
         queryset=HomeTypeModel.objects.all()
     )
 
-    @property
-    def num_bedrooms(self):
-        return self.num_bedrooms_survey
-
-    @property
-    def min_bathrooms(self):
-        return self.min_bathrooms_survey
-
-    @property
-    def max_bathrooms(self):
-        return self.max_bathrooms_survey
-
     def is_valid(self):
         valid = super(HomeInformationForm, self).is_valid()
 
@@ -118,14 +106,6 @@ class PriceInformationForm(ModelForm):
                 'class': 'form-control',
             }),
     )
-
-    @property
-    def min_price(self):
-        return self.min_price_survey
-
-    @property
-    def max_price(self):
-        return self.max_price_survey
 
     class Meta:
         model = PriceInformationModel

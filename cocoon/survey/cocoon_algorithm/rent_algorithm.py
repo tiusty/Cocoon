@@ -25,14 +25,15 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         Populates the rent algorithm member variables based on the survey values
         :param user_survey: (RentingSurveyModel): The survey the user filled out
         """
-        # First populate with destinations and possible homes
-        self.populate_survey_destinations_and_possible_homes(user_survey)
+        # First populate homes
+        self.populate_survey_homes(user_survey)
+
+        # Populate the destinations in commute information
+        self.populate_commute_algorithm(user_survey)
 
         # Second populate with the rest of survey information
         self.populate_price_algorithm_information(user_survey.price_weight, user_survey.max_price,
                                                   user_survey.min_price)
-        self.populate_commute_algorithm_information(user_survey.commute_weight, user_survey.max_commute,
-                                                    user_survey.min_commute, user_survey.commute_type)
 
     def run_compute_approximate_commute_filter(self):
         """
@@ -49,11 +50,11 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         No homes will be marked for elimination since the filter should have already marked them
         """
         for home_data in self.homes:
-            for commute in home_data.approx_commute_times:
-                score_result = self.compute_commute_score(home_data.approx_commute_times[commute])
-                home_data.accumulated_points = score_result * self.commute_user_scale_factor \
+            for commuter in home_data.approx_commute_times:
+                score_result = self.compute_commute_score(home_data.approx_commute_times[commuter], commuter)
+                home_data.accumulated_points = score_result * commuter.commute_weight \
                     * self.commute_question_weight
-                home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
+                home_data.total_possible_points = commuter.commute_weight * self.commute_question_weight
 
     def run_compute_commute_score_exact(self):
         """
@@ -62,11 +63,11 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :return:
         """
         for home_data in self.homes:
-            for commute in home_data.exact_commute_times:
-                score_result = self.compute_commute_score(home_data.exact_commute_times[commute])
-                home_data.accumulated_points = score_result * self.commute_user_scale_factor \
+            for commuter in home_data.exact_commute_times:
+                score_result = self.compute_commute_score(home_data.exact_commute_times[commuter], commuter)
+                home_data.accumulated_points = score_result * commuter.commute_weight \
                     * self.commute_question_weight
-                home_data.total_possible_points = self.commute_user_scale_factor * self.commute_question_weight
+                home_data.total_possible_points = commuter.commute_weight * self.commute_question_weight
 
     def retrieve_all_approximate_commutes(self):
         """
@@ -77,14 +78,14 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
 
         # 1: Query DB and update when info is there
-        failed_home_dict = dict()
         # destination will be a DestinationsModel object
         for destination in self.destinations:
+            failed_home_dict = dict()
             failed_list = []
             # home_score will be a HomeScore object
             for home_score in self.homes:
                 in_database = home_score.populate_approx_commutes(home_score.home.zip_code, destination,
-                                                                  self.commute_type_query)
+                                                                  destination.commute_type)
                 # Case we have a match
                 # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
                 if not in_database:
@@ -92,12 +93,13 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             # Add to the dictionary of failed homes
             failed_home_dict[(destination.zip_code, destination.state)] = failed_list
 
-        # 2: Use approx handler to compute the failed home distances and update db
-        for destination, origin_list in failed_home_dict.items():
-            try:
-                compute_approximates.approximate_commute_handler(origin_list, destination, self.commute_type_query)
-            except Distance_Matrix_Exception as e:
-                print("Caught: " + e.__class__.__name__)
+            # 2: Use approx handler to compute the failed home distances and update db
+            for destination_zip, origin_list in failed_home_dict.items():
+                try:
+                    compute_approximates.approximate_commute_handler(origin_list, destination_zip,
+                                                                     destination.commute_type)
+                except Distance_Matrix_Exception as e:
+                    print("Caught: " + e.__class__.__name__)
 
         # 3: Recompute failed homes using new DB data.
 
@@ -106,7 +108,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 # Recompute missing destinations
                 for destination in self.destinations:
                     if destination.destination_key not in home.approx_commute_times:
-                        new_in_database = home.populate_approx_commutes(home.home.zip_code, destination, self.commute_type_query)
+                        new_in_database = home.populate_approx_commutes(home.home.zip_code, destination,
+                                                                        destination.commute_type)
                         if not new_in_database:
                             # Error: For some reason, the database was not updated, so we mark home for deletion
                             home.eliminate_home()
@@ -128,12 +131,12 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
                 results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
                                                                                 [destination_address],
-                                                                                mode=self.commute_type_query.commute_type)
+                                                                                mode=destination.commute_type.commute_type)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):
                     # update exact commute time with in minutes
-                    self.homes[i].exact_commute_times[destination.destination_key] = int(results[i][0][0] / 60)
+                    self.homes[i].exact_commute_times[destination] = int(results[i][0][0] / 60)
 
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)
