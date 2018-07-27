@@ -216,6 +216,9 @@ def survey_result_rent(request, survey_id="recent"):
 
     # Populate form with stored data
     form = RentSurveyFormMini(instance=survey)
+    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel,
+                                               form=RentingDestinationsForm, can_delete=False)
+    destination_form_set = DestinationFormSet(instance=survey)
 
     # If a POST message occurs (They submit the mini form) then process it
     # If it fails then keep loading survey result and pass the error messages
@@ -243,6 +246,10 @@ def survey_result_rent(request, survey_id="recent"):
     run_rent_algorithm(survey, context)
     context['survey'] = survey
     context['form'] = form
+    context['form_destination'] = destination_form_set
+    context['number_of_formsets'] = survey.rentingdestinationsmodel_set.count()
+    context['number_of_destinations'] = survey.rentingdestinationsmodel_set.count()
+    context['survey_result_page'] = True
     return render(request, 'survey/surveyResultRent.html', context)
 
 

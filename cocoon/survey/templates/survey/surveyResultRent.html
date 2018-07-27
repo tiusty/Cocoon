@@ -75,26 +75,8 @@ Global variables are listed below
             {{ form.price_weight_survey.errors }}
           </div>
           <br>
-          <div class="form-group step_div">
-            <div class="form-group">
-              <label for="amountCommute">Commute:</label>
-              <input type="text" id="amountCommute" name="amountCommute" readonly
-                     style="border:0; color:#f6931f; font-weight:bold;">
-              <div id="commute"></div>
-              {{ form.min_commute }}
-              {{ form.max_commute }}
-            </div>
-            <div class="form-group">
-              {{ form.commute_weight.label_tag }}
-              {{ form.commute_weight }}
-              {{ form.commute_weight.errors }}
-            </div>
-            <div class="form-group">
-              {{ form.commute_type.label_tag }}
-              {{ form.commute_type }}
-              {{ form.commute_type.errors }}
-            </div>
-          </div>
+            {% include "survey/helpers/commuter_form.html" %}
+            <br>
           <br>
         </div>
         <div class="form-group">
@@ -376,8 +358,10 @@ Global variables are listed below
       // Manipulated by costSliderResults.js
       costSliderMax = {{ form.max_price_survey.value }};
       costSliderMin = {{ form.min_price_survey.value }};
-      {#commuteSliderMin = {{ form.min_commute.value }};#}
-      {#commuteSliderMax = {{ form.max_commute.value }};#}
+      {% for commuter in commuters|slice:"1" %}
+          commuteSliderMin = {{ commuter.min_commute }};
+          commuteSliderMax = {{ commuter.max_commute }};
+      {% endfor %}
       bathroomsMin = {{ form.min_bathrooms_survey.value }};
       bathroomsMax = {{ form.max_bathrooms_survey.value }};
   </script>

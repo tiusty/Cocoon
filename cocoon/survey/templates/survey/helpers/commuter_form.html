@@ -1,3 +1,4 @@
+{%  if not survey_result_page %}
 <div id="form-group locationField">
     <label for="autocomplete">Address:</label>
     <br>
@@ -5,19 +6,30 @@
     <br>
     <br>
 </div>
+{% endif %}
 
 <div class="form-group">
     {% comment %} Contains form for destination {% endcomment %}
     <div>
 
+        {% comment %}
+            This is the commute slider code. This requires the commute slider javascript
+                file to have the slider functionality to work correctly
+        {% endcomment %}
         <label for="amountCommute">Commute:</label>
         <input type="text" id="amountCommute" name="amountCommute" readonly
                style="border:0; color:#f6931f; font-weight:bold;">
         <div id="commute"></div>
 
+        {% comment %}
+            This contains the tabs for the different commuters. When the + sign is clicked,
+                then another form is created. When the 0 sign is clicked, it deletes a form.
+        {% endcomment %}
         <ul class="nav nav-tabs">
+            {%  if not survey_result_page %}
             <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
                     {{ number_of_formsets }})"></span></a></li>
+            {% endif %}
             {% for num_forms in form_destination %}
                 <li
                         {% if forloop.counter == 1 %}
@@ -33,12 +45,14 @@
                        href="#form_destination_section_{{ forloop.counter }}"
                         onclick="clean_autocomplete();set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
+            {%  if not survey_result_page %}
             <li
                     {% if number_of_destinations >= number_of_formsets %}
                         class='hide'
                     {% endif %}
                         id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
                     {{ number_of_formsets }})"></span></a></li>
+            {% endif %}
         </ul>
         <div id="form_destination_div" class="tab-content">
             {{ form.number_destinations_filled_out }}
