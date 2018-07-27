@@ -118,7 +118,7 @@ class HomeScore(object):
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():
-                            self.approx_commute_times[destination.destination_key] = match.commute_time_minutes
+                            self.approx_commute_times[destination] = match.commute_time_minutes
                             return True
                         else:
                             return False

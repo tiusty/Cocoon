@@ -104,54 +104,6 @@ class HomeInformationModel(models.Model):
         abstract = True
 
 
-class CommuteInformationModel(models.Model):
-    """
-    Contains all the commute information for a given home
-    """
-    max_commute_survey = models.IntegerField(default=0)
-    min_commute_survey = models.IntegerField(default=0)
-    commute_weight_survey = models.IntegerField(default=0)
-    commute_type_survey = models.ForeignKey(CommuteType)
-
-    @property
-    def max_commute(self):
-        return self.max_commute_survey
-
-    @property
-    def min_commute(self):
-        return self.min_commute_survey
-
-    @property
-    def commute_weight(self):
-        return self.commute_weight_survey
-
-    @property
-    def commute_type(self):
-        return self.commute_type_survey
-
-    @property
-    def commute_range(self):
-        """
-        Return the commute range as a string
-        :return: String -> Commute range
-        """
-        if self.max_commute > 60:
-            max_output = str(math.floor(self.max_commute / 60)) + " hours " + str(self.max_commute % 60) \
-                         + " Minutes"
-        else:
-            max_output = str(self.max_commute) + " Minutes"
-        if self.min_commute > 60:
-            min_output = str(math.floor(self.min_commute / 60)) + " hours " + str(self.min_commute % 60) \
-                         + " Minutes"
-        else:
-            min_output = str(self.min_commute) + " Minutes"
-
-        return min_output + " - " + max_output
-
-    class Meta:
-        abstract = True
-
-
 class PriceInformationModel(models.Model):
     """
     Contains all the price information for a given home
@@ -258,7 +210,7 @@ class ExteriorAmenitiesModel(models.Model):
         abstract = True
 
 
-class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceInformationModel, CommuteInformationModel,
+class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceInformationModel,
                          HomeInformationModel, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
@@ -276,26 +228,10 @@ class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceIn
 
 
 class DestinationsModel(models.Model):
-    street_address_destination = models.CharField(max_length=200)
-    city_destination = models.CharField(max_length=200)
-    state_destination = models.CharField(max_length=200)
-    zip_code_destination = models.CharField(max_length=200)
-
-    @property
-    def street_address(self):
-        return self.street_address_destination
-
-    @property
-    def city(self):
-        return self.city_destination
-
-    @property
-    def state(self):
-        return self.state_destination
-
-    @property
-    def zip_code(self):
-        return self.zip_code_destination[:5]
+    street_address = models.CharField(max_length=200)
+    city = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
+    zip_code = models.CharField(max_length=200)
 
     @property
     def full_address(self):
@@ -313,16 +249,40 @@ class DestinationsModel(models.Model):
         abstract = True
 
 
-class RentingDestinationsModel(DestinationsModel):
-    survey_destinations = models.ForeignKey(RentingSurveyModel)
+class CommuteInformationModel(models.Model):
+    """
+    Contains all the commute information for a given home
+    """
+    max_commute = models.IntegerField()
+    min_commute = models.IntegerField()
+    commute_weight = models.IntegerField()
+    commute_type = models.ForeignKey(CommuteType)
+
+    @property
+    def commute_range(self):
+        """
+        Return the commute range as a string
+        :return: String -> Commute range
+        """
+        if self.max_commute > 60:
+            max_output = str(math.floor(self.max_commute / 60)) + " hours " + str(self.max_commute % 60) \
+                         + " Minutes"
+        else:
+            max_output = str(self.max_commute) + " Minutes"
+        if self.min_commute > 60:
+            min_output = str(math.floor(self.min_commute / 60)) + " hours " + str(self.min_commute % 60) \
+                         + " Minutes"
+        else:
+            min_output = str(self.min_commute) + " Minutes"
+
+        return min_output + " - " + max_output
+
+    class Meta:
+        abstract = True
+
+
+class RentingDestinationsModel(DestinationsModel, CommuteInformationModel):
+    survey = models.ForeignKey(RentingSurveyModel)
 
     def __str__(self):
         return self.street_address
-
-    @property
-    def survey(self):
-        return self.survey_destinations
-
-    @survey.setter
-    def survey(self, new_survey):
-        self.survey_destinations = new_survey

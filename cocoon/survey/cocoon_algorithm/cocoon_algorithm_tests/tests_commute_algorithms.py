@@ -14,7 +14,7 @@ class TestApproximateCommutesFilter(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
-                                                        commute_type_survey=self.commute_type)
+                                                        commute_type=self.commute_type)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -22,10 +22,10 @@ class TestApproximateCommutesFilter(TestCase):
         self.state = 'MA'
         self.zip_code = '02476'
         self.destination = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address,
-            city_destination=self.city,
-            state_destination=self.state,
-            zip_code_destination=self.zip_code
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code
         )
 
         self.street_address1 = '8 Stony Brook Rd'
@@ -33,10 +33,10 @@ class TestApproximateCommutesFilter(TestCase):
         self.state1 = 'MA'
         self.zip_code1 = '02476'
         self.destination1 = self.survey.rentingdestinationsmodel_set.create(
-            street_address_destination=self.street_address1,
-            city_destination=self.city1,
-            state_destination=self.state1,
-            zip_code_destination=self.zip_code1
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1
         )
 
     def test_adding_positive_approx_commute_range(self):
