@@ -210,42 +210,8 @@ class ExteriorAmenitiesModel(models.Model):
         abstract = True
 
 
-class CommuteInformationModel(models.Model):
-    """
-    Contains all the commute information for a given home
-    """
-    max_commute = models.IntegerField(default=0)
-    min_commute = models.IntegerField(default=0)
-    commute_weight = models.IntegerField(default=0)
-    commute_type = models.ForeignKey(CommuteType)
-
-    @property
-    def commute_range(self):
-        """
-        Return the commute range as a string
-        :return: String -> Commute range
-        """
-        if self.max_commute > 60:
-            max_output = str(math.floor(self.max_commute / 60)) + " hours " + str(self.max_commute % 60) \
-                         + " Minutes"
-        else:
-            max_output = str(self.max_commute) + " Minutes"
-        if self.min_commute > 60:
-            min_output = str(math.floor(self.min_commute / 60)) + " hours " + str(self.min_commute % 60) \
-                         + " Minutes"
-        else:
-            min_output = str(self.min_commute) + " Minutes"
-
-        return min_output + " - " + max_output
-
-    class Meta:
-        abstract = True
-
-
-
-
 class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceInformationModel,
-                         HomeInformationModel, InitialSurveyModel, CommuteInformationModel):
+                         HomeInformationModel, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
     The user may take multiple surveys and it is linked to their User Profile
@@ -278,6 +244,38 @@ class DestinationsModel(models.Model):
     @property
     def destination_key(self):
         return "{0}-{1}-{2}-{3}".format(self.street_address, self.city, self.state, self.zip_code)
+
+    class Meta:
+        abstract = True
+
+
+class CommuteInformationModel(models.Model):
+    """
+    Contains all the commute information for a given home
+    """
+    max_commute = models.IntegerField()
+    min_commute = models.IntegerField()
+    commute_weight = models.IntegerField()
+    commute_type = models.ForeignKey(CommuteType)
+
+    @property
+    def commute_range(self):
+        """
+        Return the commute range as a string
+        :return: String -> Commute range
+        """
+        if self.max_commute > 60:
+            max_output = str(math.floor(self.max_commute / 60)) + " hours " + str(self.max_commute % 60) \
+                         + " Minutes"
+        else:
+            max_output = str(self.max_commute) + " Minutes"
+        if self.min_commute > 60:
+            min_output = str(math.floor(self.min_commute / 60)) + " hours " + str(self.min_commute % 60) \
+                         + " Minutes"
+        else:
+            min_output = str(self.min_commute) + " Minutes"
+
+        return min_output + " - " + max_output
 
     class Meta:
         abstract = True

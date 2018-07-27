@@ -320,7 +320,6 @@ class CommuteInformationForm(ModelForm):
             attrs={
                 'class': 'form-control',
             }),
-        initial=60,
     )
 
     min_commute = forms.IntegerField(
@@ -328,8 +327,6 @@ class CommuteInformationForm(ModelForm):
             attrs={
                 'class': 'form-control',
             }),
-        initial=0,
-
     )
 
     commute_weight = forms.ChoiceField(
@@ -349,7 +346,6 @@ class CommuteInformationForm(ModelForm):
                 'class': 'form-control'
             }
         ),
-        initial=DEFAULT_COMMUTE_TYPE,
     )
 
     class Meta:
@@ -401,7 +397,7 @@ class DestinationForm(ModelForm):
 
     class Meta:
         model = DestinationsModel
-        exclude = ['survey']
+        fields = '__all__'
 
 
 class RentingDestinationsForm(DestinationForm, CommuteInformationForm):

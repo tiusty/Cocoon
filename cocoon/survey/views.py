@@ -37,11 +37,9 @@ def renting_survey(request):
     # Multiple DestinationsModel on the frontend
     number_of_formsets = 4
     number_of_destinations = 1
-    form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
-                                                        extra=number_of_formsets, fields=('street_address', 'city',
-                                                                                          'state', 'zip_code'),
-                                                        form=RentingDestinationsForm)
-    destination_form_set = form_inline_destination_set
+    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=number_of_formsets,
+                                               form=RentingDestinationsForm, can_delete=False)
+    destination_form_set = DestinationFormSet()
 
     # Retrieve the current profile or return a 404
     current_profile = get_object_or_404(UserProfile, user=request.user)
@@ -68,7 +66,13 @@ def renting_survey(request):
             rent_survey.survey_type = survey_types.rent.value
 
             # Create the form destination set
-            destination_form_set = form_inline_destination_set(request.POST, instance=rent_survey)
+            request_post = request.POST.copy()
+            for x in range (number_of_destinations, number_of_formsets):
+                for field in request.POST:
+                    if 'rentingdestinationsmodel_set-' + str(x) in field:
+                        del request_post[field]
+
+            destination_form_set = DestinationFormSet(request_post, instance=rent_survey)
 
             if destination_form_set.is_valid():
 
@@ -89,6 +93,7 @@ def renting_survey(request):
 
             else:
                 context['error_message'] = "The destination set did not validate"
+                context['error_message'] = destination_form_set.errors
         else:
             # If the destination form is not valid, also do a quick test of the survey field to
             # Inform the user if the survey is also invalid
