@@ -216,6 +216,7 @@ def survey_result_rent(request, survey_id="recent"):
 
     # Populate form with stored data
     form = RentSurveyFormMini(instance=survey)
+    number_of_forms = survey.rentingdestinationsmodel_set.count()
     DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=0,
                                                form=RentingDestinationsForm, can_delete=False)
     destination_form_set = DestinationFormSet(instance=survey)
@@ -253,7 +254,6 @@ def survey_result_rent(request, survey_id="recent"):
     context['survey'] = survey
     context['form'] = form
     context['form_destination'] = destination_form_set
-    number_of_forms = survey.rentingdestinationsmodel_set.count()
     context['number_of_formsets'] = number_of_forms
     context['number_of_destinations'] = number_of_forms
     context['survey_result_page'] = True

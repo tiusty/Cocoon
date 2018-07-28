@@ -20,6 +20,7 @@ $( function() {
             {
                 if ($('#form_destination_section_' + j).hasClass('active'))
                 {
+                    console.log(j);
                     // Since the tabs are base 1 and the input fields are base 0. Need to subtract 1
                     //  so that the number is converted to the right base for the input fields
                     active_form_num = j-1;
@@ -30,6 +31,7 @@ $( function() {
 
             }
 
+            console.log(active_form_num);
             var max_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-max_commute";
             var min_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-min_commute";
 
