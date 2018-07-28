@@ -80,6 +80,8 @@ class CommuteAlgorithm(object):
         Note: Since the eliminating filter should have been done first, this computation
             does not mark any home for elimination
         :param commute_minutes: (int): The commute time in minutes.
+        :param commuter: (RentingDestinationModel): The renting destination model which holds all the information
+            regarding the commute
         :return: (float) THe percent fit the home is or -1 if the home should be eliminated
         """
 
