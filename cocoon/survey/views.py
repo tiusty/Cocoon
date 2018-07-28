@@ -52,7 +52,7 @@ def renting_survey(request):
 
         # check whether it is valid
         if form.is_valid():
-            number_of_destinations = int(form.cleaned_data['number_destinations_filled_out'])
+            number_of_destinations = int(request.POST['number_destinations_filled_out'])
 
             # process the data in form.cleaned_data as required
             rent_survey = form.save(commit=False)
@@ -256,7 +256,7 @@ def survey_result_rent(request, survey_id="recent"):
     context['form_destination'] = destination_form_set
     context['number_of_formsets'] = number_of_forms
     context['number_of_destinations'] = number_of_forms
-    context['survey_result_page'] = True
+    context['mini_form'] = True
     return render(request, 'survey/surveyResultRent.html', context)
 
 

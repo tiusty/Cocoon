@@ -1,4 +1,11 @@
-{%  if not survey_result_page %}
+{%  if not mini_form %}
+{% comment %}
+    The autocomplete field is for populating the address, city, state and zip_code porition of the survey.
+        This is only populated in the main survey but not the mini survey
+        If this is the main survey then the javascript files:
+            1. address_autocomplete.js
+        Is needed. Furture the javascript google api key should be present in the scripts
+{% endcomment %}
 <div id="form-group locationField">
     <label for="autocomplete">Address:</label>
     <br>
@@ -9,9 +16,18 @@
 {% endif %}
 
 <div class="form-group">
-    {% comment %} Contains form for destination {% endcomment %}
+    {% comment %}
+        This form-group contains the rentingdestination model form. This form group includes the functionality to adding
+            a dynamic amount of coummters. There are a couple key functions.
+            1. Tabs are used to seperate commuters and clicking on the different tabs loads the different commuters
+            2. There is a plug and minus tab which is able to add and remove commuters from the list.
+    {% endcomment %}
     <div>
-    <input name="number_destinations_filled_out" value="{{ number_of_destinations }}" id="id_number_destinations_filled_out" class="form-control" type="hidden">
+        {% comment %}
+            This input stores how many forms are desired. A form is desired if it is an active tab and being displayed.
+                Only desired forms should be validated and saved.
+        {% endcomment %}
+        <input name="number_destinations_filled_out" value="{{ number_of_destinations }}" id="id_number_destinations_filled_out" class="form-control" type="hidden">
 
         {% comment %}
             This is the commute slider code. This requires the commute slider javascript
@@ -27,7 +43,7 @@
                 then another form is created. When the 0 sign is clicked, it deletes a form.
         {% endcomment %}
         <ul class="nav nav-tabs">
-            {%  if not survey_result_page %}
+            {%  if not mini_form %}
             <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
                     {{ number_of_formsets }})"></span></a></li>
             {% endif %}
@@ -45,12 +61,12 @@
                     <a data-toggle="tab"
                        href="#form_destination_section_{{ forloop.counter }}"
                         onclick="
-                        {% if not survey_result_page %}
+                        {% if not mini_form %}
                         clean_autocomplete();
                         {% endif %}
                         set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
-            {%  if not survey_result_page %}
+            {%  if not mini_form %}
             <li
                     {% if number_of_destinations >= number_of_formsets %}
                         class='hide'
