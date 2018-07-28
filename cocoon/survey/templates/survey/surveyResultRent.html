@@ -358,9 +358,25 @@ Global variables are listed below
       // Manipulated by costSliderResults.js
       costSliderMax = {{ form.max_price_survey.value }};
       costSliderMin = {{ form.min_price_survey.value }};
-      {% for commuter in commuters|slice:"1" %}
-          commuteSliderMin = {{ commuter.min_commute }};
-          commuteSliderMax = {{ commuter.max_commute }};
+      {% comment %}
+            Determines the correct commute slider values. This is just used when the page loads. This grabs the first
+                form in the formset and sets the max and commute values to it. This is because the first form is the
+                form that is loaded. After that, the loaded javascript takes care of the values.
+
+            The double for loop is needed because the first one just extracts the first form.
+            The second one extras the items from the dictionary for the initial values of the form fields.
+
+            Only save the javascript variables if the values exist in the formset
+      {% endcomment %}
+      {% for dest_form in form_destination|slice:"1" %}
+          {% for key, value in dest_form.initial.items %}
+              {% ifequal key "min_commute" %}
+                  commuteSliderMin = {{ value }};
+              {% endifequal %}
+              {% ifequal key "max_commute" %}
+                  commuteSliderMax = {{ value }};
+              {% endifequal %}
+          {% endfor %}
       {% endfor %}
       bathroomsMin = {{ form.min_bathrooms_survey.value }};
       bathroomsMax = {{ form.max_bathrooms_survey.value }};
