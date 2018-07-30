@@ -107,7 +107,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             if len(home.approx_commute_times) < len(self.destinations):
                 # Recompute missing destinations
                 for destination in self.destinations:
-                    if destination.destination_key not in home.approx_commute_times:
+                    if destination not in home.approx_commute_times:
                         new_in_database = home.populate_approx_commutes(home.home.zip_code, destination,
                                                                         destination.commute_type)
                         if not new_in_database:
