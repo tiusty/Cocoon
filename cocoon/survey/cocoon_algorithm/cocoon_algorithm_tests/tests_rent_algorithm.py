@@ -533,9 +533,8 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
         self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
 
-    def create_destination(self, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
-                           zip_code="02476", commute_type=CommuteType.objects.get(commute_type="Driving"),
-                           commute_weight=0, max_commute=60, min_commute=0):
+    def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
+                           zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
         return self.survey.rentingdestinationsmodel_set.create(
             street_address=street_address,
             city=city,
@@ -556,11 +555,11 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         rent_algorithm = RentAlgorithm()
 
         # Create the destinations
-        self.destination = self.create_destination(min_commute=50, max_commute=110, commute_weight=1)
+        self.destination = self.create_destination(self.commute_type, min_commute=50, max_commute=110, commute_weight=1)
 
-        self.destination1 = self.create_destination(min_commute=50, max_commute=90, commute_weight=2)
+        self.destination1 = self.create_destination(self.commute_type, min_commute=50, max_commute=90, commute_weight=2)
 
-        self.destination2 = self.create_destination(min_commute=30, max_commute=110, commute_weight=3)
+        self.destination2 = self.create_destination(self.commute_type, min_commute=30, max_commute=110, commute_weight=3)
 
         # Set the commute times to each destination
 
@@ -617,17 +616,16 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
     def test_run_compute_commute_score_approximate_working_large_user_scale_factor(self):
         """
         This unit tests checks that even with large user scale factors, everything works correctly
-        :return:
         """
         # Arrange
         rent_algorithm = RentAlgorithm()
 
         # Create the destinations
-        self.destination = self.create_destination(min_commute=0, max_commute=100, commute_weight=5)
+        self.destination = self.create_destination(self.commute_type, min_commute=0, max_commute=100, commute_weight=5)
 
-        self.destination1 = self.create_destination(min_commute=10, max_commute=80, commute_weight=6)
+        self.destination1 = self.create_destination(self.commute_type, min_commute=10, max_commute=80, commute_weight=6)
 
-        self.destination2 = self.create_destination(min_commute=7, max_commute=120, commute_weight=5)
+        self.destination2 = self.create_destination(self.commute_type, min_commute=7, max_commute=120, commute_weight=5)
 
         # Set the commute times to each destination
 
