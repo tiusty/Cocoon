@@ -1,5 +1,6 @@
 from django.test import TestCase
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel
+from cocoon.houseDatabase.models import MlsManagementModel
 import os
 from datetime import datetime
 from decimal import Decimal
@@ -15,6 +16,8 @@ class TestPullMlspin(TestCase):
     def setUp(self):
 
         # Set up the apartment home type
+
+        MlsManagementModel.objects.create()
 
         self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
         idx_file = open(os.path.join(os.path.dirname(__file__), "test_idx_feed.txt"), "rb")

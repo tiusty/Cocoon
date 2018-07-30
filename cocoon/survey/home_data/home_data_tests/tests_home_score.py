@@ -1,8 +1,10 @@
 from django.test import TestCase
 from cocoon.survey.home_data.home_score import HomeScore
-from cocoon.survey.models import RentingDestinationsModel
+from cocoon.userAuth.models import MyUser
+from cocoon.survey.models import RentingDestinationsModel, RentingSurveyModel
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel
 from cocoon.commutes.models import ZipCodeBase, CommuteType
+
 
 class TestScoringMethods(TestCase):
 
@@ -209,6 +211,7 @@ class TestScoringMethods(TestCase):
 class TestApproxCommute(TestCase):
 
     def setUp(self):
+        self.user = MyUser.objects.create(email="test@email.com")
         self.zip_code = "12345"
         self.zip_code1 = "01234"
         self.zip_code2 = "23456"
@@ -218,13 +221,29 @@ class TestApproxCommute(TestCase):
         self.commute_type_walking = CommuteType.objects.create(commute_type='Walking')
 
     @staticmethod
-    def create_destination(address, city, state, zip):
-        return RentingDestinationsModel.objects.create(
-            survey_id="0",
-            street_address=address,
+    def create_survey(user_profile, max_price=1500, min_price=0, max_bathroom=2, min_bathroom=0,
+                      num_bedrooms=2):
+        return RentingSurveyModel.objects.create(
+            user_profile_survey=user_profile,
+            max_price_survey=max_price,
+            min_price_survey=min_price,
+            max_bathrooms_survey=max_bathroom,
+            min_bathrooms_survey=min_bathroom,
+            num_bedrooms_survey=num_bedrooms,
+        )
+
+    @staticmethod
+    def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
+                           zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
+        return survey.rentingdestinationsmodel_set.create(
+            street_address=street_address,
             city=city,
             state=state,
-            zip_code=zip
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
         )
 
     @staticmethod
@@ -243,10 +262,20 @@ class TestApproxCommute(TestCase):
 
     def test_populate_approx_commute_times(self):
         # Arrange
+        survey = self.create_survey(self.user.userProfile)
         home_score = HomeScore()
-        destination = self.create_destination("101 Test Street", "Los Angeles", "California", self.zip_code1)
-        destination1 = self.create_destination("101 Test Street", "Los Angeles", "California", self.zip_code2)
-        destination2 = self.create_destination("101 Test Street", "Los Angeles", "California", self.zip_code)
+
+        self.zip_code = "12345"
+        self.zip_code1 = "01234"
+        self.zip_code2 = "23456"
+
+        destination = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
+                                              city="Los Angeles", state="California", zip_code=self.zip_code1)
+        destination1 = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
+                                               city="Los Angeles", state="California", zip_code=self.zip_code2)
+        destination2 = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
+                                               city="Los Angeles", state="California", zip_code=self.zip_code)
+
         parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
         self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time,
                                               self.commute_distance, self.commute_type)
@@ -259,7 +288,7 @@ class TestApproxCommute(TestCase):
 
         # Assert
         self.assertEqual(ret1, True)
-        self.assertEqual(home_score.approx_commute_times, {"101 Test Street-Los Angeles-California-01234": 100.0})
+        self.assertEqual(home_score.approx_commute_times, {destination: 100.0})
         self.assertEqual(ret2, False)
         self.assertEqual(ret3, False)
         self.assertEqual(ret4, False)
