@@ -73,7 +73,8 @@ class CommuteAlgorithm(object):
                 return False
         return True
 
-    def compute_commute_score(self, commute_minutes, commuter):
+    @staticmethod
+    def compute_commute_score(commute_minutes, commuter):
         """
         Compute the score based off the commute. A percent value of the fit of the home is returned.
         I.E, .67, .47, etc will be returned. The scaling will be done in the parent class

@@ -23,52 +23,75 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile,
-                                                        commute_type=self.commute_type)
+        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
         self.city = 'Arlington'
         self.state = 'MA'
         self.zip_code = '02476'
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code
-        )
+        self.commute_type = self.commute_type
+        self.commute_weight = 0
 
         self.street_address1 = '8 Stony Brook Rd'
         self.city1 = 'Arlington'
         self.state1 = 'MA'
         self.zip_code1 = '02476'
-        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
-            street_address=self.street_address1,
-            city=self.city1,
-            state=self.state1,
-            zip_code=self.zip_code1
-        )
+        self.commute_type1 = self.commute_type
+        self.commute_weight1 = 1
 
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home.approx_commute_times = {self.destination.destination_key: 50}
-        self.home.approx_commute_times = {self.destination1.destination_key: 70}
         self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1.approx_commute_times = {self.destination.destination_key: 10}
-        self.home1.approx_commute_times = {self.destination1.destination_key: 70}
         self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2.approx_commute_times = {self.destination.destination_key: 40}
-        self.home2.approx_commute_times = {self.destination1.destination_key: 100}
 
     def test_run_compute_approximate_commute_filter_no_eliminations(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.approx_commute_range = 20
+
+        # Create the first commuter destination
+        self.min_commute = 20
+        self.max_commute = 80
+        self.destination = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
+
+        # Create the second commuter destination
+        self.min_commute1 = 40
+        self.max_commute1 = 90
+        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
+
+        # Set commutes times from each home to the each commuters destination
+        self.home.approx_commute_times = {self.destination: 50}
+        self.home.approx_commute_times = {self.destination1: 70}
+
+        self.home1.approx_commute_times = {self.destination: 10}
+        self.home1.approx_commute_times = {self.destination1: 70}
+
+        self.home2.approx_commute_times = {self.destination: 40}
+        self.home2.approx_commute_times = {self.destination1: 100}
+
+        # Create homes
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.min_user_commute = 30
-        rent_algorithm.max_user_commute = 80
-        rent_algorithm.approx_commute_range = 20
 
         # Act
         rent_algorithm.run_compute_approximate_commute_filter()
@@ -81,12 +104,50 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
     def test_run_compute_approximate_commute_filter_one_elimination(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.approx_commute_range = 10
+
+        # Create the first commuter destination
+        self.min_commute = 20
+        self.max_commute = 60
+        self.destination = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
+
+        # Create the second commuter destination
+        self.min_commute1 = 10
+        self.max_commute1 = 80
+        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
+
+        # Set commutes times from each home to the each commuters destination
+        self.home.approx_commute_times = {self.destination: 50}
+        self.home.approx_commute_times = {self.destination1: 70}
+
+        self.home1.approx_commute_times = {self.destination: 10}
+        self.home1.approx_commute_times = {self.destination1: 70}
+
+        self.home2.approx_commute_times = {self.destination: 40}
+        self.home2.approx_commute_times = {self.destination1: 100}
+
+        # Create homes
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.min_user_commute = 10
-        rent_algorithm.max_user_commute = 80
-        rent_algorithm.approx_commute_range = 10
 
         # Act
         rent_algorithm.run_compute_approximate_commute_filter()
@@ -99,12 +160,50 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
     def test_run_compute_approximate_commute_filter_all_eliminated(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        rent_algorithm.approx_commute_range = 0
+
+        # Create the first commuter destination
+        self.min_commute = 60
+        self.max_commute = 60
+        self.destination = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
+
+        # Create the second commuter destination
+        self.min_commute1 = 80
+        self.max_commute1 = 80
+        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
+
+        # Set commutes times from each home to the each commuters destination
+        self.home.approx_commute_times = {self.destination: 50}
+        self.home.approx_commute_times = {self.destination1: 70}
+
+        self.home1.approx_commute_times = {self.destination: 10}
+        self.home1.approx_commute_times = {self.destination1: 70}
+
+        self.home2.approx_commute_times = {self.destination: 40}
+        self.home2.approx_commute_times = {self.destination1: 100}
+
+        # Create homes
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.min_user_commute = 60
-        rent_algorithm.max_user_commute = 60
-        rent_algorithm.approx_commute_range = 0
 
         # Act
         rent_algorithm.run_compute_approximate_commute_filter()
@@ -112,6 +211,67 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Assert
         self.assertTrue(rent_algorithm.homes[0].eliminated)
         self.assertTrue(rent_algorithm.homes[1].eliminated)
+        self.assertTrue(rent_algorithm.homes[2].eliminated)
+
+    def test_run_compute_approximate_commute_filter_one_destination_out_of_range(self):
+        """
+        This unit tests tests for a given home, if one of the destinations is out of range
+            but the other one is in range, the home is still marked for elimination
+        :return:
+        """
+        # Arrange
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.approx_commute_range = 20
+
+        # Create the first commuter destination
+        self.min_commute = 20
+        self.max_commute = 80
+        self.destination = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
+
+        # Create the second commuter destination
+        self.min_commute1 = 30
+        self.max_commute1 = 60
+        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
+
+        # Set commutes times from each home to the each commuters destination
+        self.home.approx_commute_times = {self.destination: 50}
+        self.home.approx_commute_times = {self.destination1: 90}
+
+        self.home1.approx_commute_times = {self.destination: 10}
+        self.home1.approx_commute_times = {self.destination1: 70}
+
+        self.home2.approx_commute_times = {self.destination: 120}
+        self.home2.approx_commute_times = {self.destination1: 80}
+
+        # Create homes
+        rent_algorithm.homes = self.home
+        rent_algorithm.homes = self.home1
+        rent_algorithm.homes = self.home2
+
+        # Act
+        rent_algorithm.run_compute_approximate_commute_filter()
+
+        # Assert
+        self.assertTrue(rent_algorithm.homes[0].eliminated)
+        self.assertFalse(rent_algorithm.homes[1].eliminated)
         self.assertTrue(rent_algorithm.homes[2].eliminated)
 
     def test_run_compute_approximate_commute_filter_no_homes(self):
