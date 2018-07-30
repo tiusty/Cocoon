@@ -30,7 +30,6 @@ class HomeTypeModel(models.Model):
         return self.home_type_survey
 
 
-
 class HomeBaseModel(models.Model):
     """
     Contains all the base information for a home
