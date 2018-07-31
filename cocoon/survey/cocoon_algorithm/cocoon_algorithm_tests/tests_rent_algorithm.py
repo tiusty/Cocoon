@@ -333,7 +333,8 @@ class TestRentAlgorithmJustPrice(TestCase):
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.desired_price = 1100
+        rent_algorithm.min_price = 1100
+        rent_algorithm.desired_price = 1400
         rent_algorithm.max_price = 2500
 
         # Set the user scale
@@ -354,24 +355,25 @@ class TestRentAlgorithmJustPrice(TestCase):
         self.assertTrue(rent_algorithm.homes[0].eliminated)
 
         # Home 1
-        self.assertEqual((1 - (400 / 1400)) * price_question_weight * price_user_scale_factor,
+        self.assertEqual((1 - (100 / 1100)) * price_question_weight * price_user_scale_factor,
                          rent_algorithm.homes[1].accumulated_points)
         self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
         self.assertFalse(rent_algorithm.homes[1].eliminated)
 
         # Home 2
-        self.assertEqual((1 - (900 / 1400)) * price_question_weight * price_user_scale_factor,
+        self.assertEqual((1 - (600 / 1100)) * price_question_weight * price_user_scale_factor,
                          rent_algorithm.homes[2].accumulated_points)
         self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
         self.assertFalse(rent_algorithm.homes[2].eliminated)
 
-    def test_run_compute_price_score_two_eliminations_desired_price(self):
+    def test_run_compute_price_score_two_eliminations_min_price(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.desired_price = 1600
+        rent_algorithm.min_price = 1600
+        rent_algorithm.desired_price = 1900
         rent_algorithm.max_price = 2500
 
         # Set the user scale
@@ -397,7 +399,7 @@ class TestRentAlgorithmJustPrice(TestCase):
         self.assertTrue(rent_algorithm.homes[1].eliminated)
 
         # Home 2
-        self.assertEqual((1 - (400 / 900)) * price_question_weight * price_user_scale_factor,
+        self.assertEqual((1 - (100 / 600)) * price_question_weight * price_user_scale_factor,
                          rent_algorithm.homes[2].accumulated_points)
         self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
         self.assertFalse(rent_algorithm.homes[2].eliminated)
