@@ -128,11 +128,12 @@ class TestApproximateCommutesFilter(TestCase):
         # Assert
         self.assertTrue(homes_in_range)
 
-    def test_compute_approximate_commute_filter_one_home_no_approx_range_to_far(self):
+    def test_compute_approximate_commute_filter_one_home_no_approx_range_to_far_zero_approx_commute_range(self):
         # Arrange
         approx_algorithm = CommuteAlgorithm()
         approx_algorithm.min_user_commute = 40
         approx_algorithm.max_user_commute = 80
+        approx_algorithm.approx_commute_range = 0
         approx_commutes_times = {self.destination: 81}
 
         # Act
@@ -141,11 +142,12 @@ class TestApproximateCommutesFilter(TestCase):
         # Assert
         self.assertFalse(homes_in_range)
 
-    def test_compute_approximate_commute_filter_one_home_no_approx_range_to_close(self):
+    def test_compute_approximate_commute_filter_one_home_no_approx_range_to_close_zero_approx_commute_range(self):
         # Arrange
         approx_algorithm = CommuteAlgorithm()
         approx_algorithm.min_user_commute = 40
         approx_algorithm.max_user_commute = 80
+        approx_algorithm.approx_commute_range = 0
         approx_commutes_times = {self.destination: 39}
 
         # Act
@@ -194,11 +196,12 @@ class TestApproximateCommutesFilter(TestCase):
         # Assert
         self.assertTrue(homes_in_range)
 
-    def test_compute_approximate_commute_filter_multiple_home_one_out_of_range(self):
+    def test_compute_approximate_commute_filter_multiple_home_one_out_of_range_zero_approx_commute_range(self):
         # Arrange
         approx_algorithm = CommuteAlgorithm()
         approx_algorithm.min_user_commute = 40
         approx_algorithm.max_user_commute = 80
+        approx_algorithm.approx_commute_range = 0
         approx_commutes_times = {self.destination: 45,
                                  self.destination1: 90}
 
@@ -208,11 +211,12 @@ class TestApproximateCommutesFilter(TestCase):
         # Assert
         self.assertFalse(homes_in_range)
 
-    def test_compute_approximate_commute_filter_multiple_home_both_out_of_range(self):
+    def test_compute_approximate_commute_filter_multiple_home_both_out_of_range_zero_approx_commute_range(self):
         # Arrange
         approx_algorithm = CommuteAlgorithm()
         approx_algorithm.min_user_commute = 40
         approx_algorithm.max_user_commute = 80
+        approx_algorithm.approx_commute_range = 0
         approx_commutes_times = {self.destination: 30,
                                  self.destination1: 90}
 
@@ -222,7 +226,7 @@ class TestApproximateCommutesFilter(TestCase):
         # Assert
         self.assertFalse(homes_in_range)
 
-    def test_compute_approximate_commute_filter_multiple_home_in_range_with_approximate_range(self):
+    def test_compute_approximate_commute_filter_multiple_home_in_range_with_approximate_range_zero_approx_commute_range(self):
         # Arrange
         approx_algorithm = CommuteAlgorithm()
         approx_algorithm.approx_commute_range = 20
