@@ -46,17 +46,18 @@ class MLSpinRequesterImage(object):
                 second_directory = str(home.listing_number)[2:5]
                 file_name = str(home.listing_number)[5:9] + "_"
 
-                # Connect to the FTP server and login
-                ftp = FTP("ftp.mlspin.com", "anonymous", "")
-                ftp.login()
+                # Determine if the house photos needs updating.
+                # This is to speed up updating the photos by skipping homes with photos already
+                if not home.housephotos_set.exists():
 
-                # Retrieve a list of all the images for a corresponding home (from the mlspin listing number)
-                # Only stores files that have the file_name in the name of the file
-                file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory,
+                    # Connect to the FTP server and login
+                    ftp = FTP("ftp.mlspin.com", "anonymous", "")
+                    ftp.login()
+
+                    # Retrieve a list of all the images for a corresponding home (from the mlspin listing number)
+                    # Only stores files that have the file_name in the name of the file
+                    file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory,
                                                                                          second_directory))))
-
-                # Determine if the house photos needs updating
-                if home.housephotos_set.count() != len(file_names):
 
                     # Determine if there are housePhoto files and if so deletes them
                     if home.housephotos_set.exists():
