@@ -85,7 +85,7 @@ class CocoonAlgorithm(object):
 
         # Query the database
         return RentDatabaseModel.objects \
-            .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
+            .filter(price_home__range=(user_survey.desired_price, user_survey.max_price)) \
             .filter(query_home_type) \
             .filter(currently_available_home=True) \
             .filter(last_updated_home__range=(MlsManagementModel.objects.all().first().last_updated_mls,

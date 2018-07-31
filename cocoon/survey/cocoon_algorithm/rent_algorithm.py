@@ -1,5 +1,4 @@
 # Import global settings
-# Import global settings
 from config.settings.Global_Config import number_of_exact_commutes_computed
 from cocoon.survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 
@@ -33,7 +32,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
         # Second populate with the rest of survey information
         self.populate_price_algorithm_information(user_survey.price_weight, user_survey.max_price,
-                                                  user_survey.min_price)
+                                                  user_survey.desired_price, user_survey.min_price)
 
     def run_compute_approximate_commute_filter(self):
         """
@@ -157,7 +156,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                                                       dish_washer_scale, bath_scale):
         """
         Runs the interior amenities scoring.
-        TODO Think of better way to run this function since it is kinda messy
+        # TODO Think of better way to run this function since it is kinda messy
         :param air_conditioning_scale: Int -> User scale for air_conditioning
         :param washer_dryer_in_home_scale: Int -> User scale for washer/dryer in home
         :param dish_washer_scale: Int -> User scale for dish washer

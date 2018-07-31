@@ -1,5 +1,5 @@
-from config.settings.Global_Config import commute_question_weight
-from cocoon.commutes.models import CommuteType
+# Import survey constants
+from cocoon.survey.constants import APPROX_COMMUTE_RANGE, COMMUTE_QUESTION_WEIGHT
 
 
 class CommuteAlgorithm(object):
@@ -24,9 +24,9 @@ class CommuteAlgorithm(object):
         """
         Sets the values to default values. Calls the super function so all parent init functions are called.
         """
-        self._approx_commute_range_minutes = 0
+        self._approx_commute_range_minutes = APPROX_COMMUTE_RANGE
         self.destinations = []
-        self.commute_question_weight = commute_question_weight
+        self.commute_question_weight = COMMUTE_QUESTION_WEIGHT
         # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
         self._min_possible_commute = 11
         # Need super to allow calling each classes constructor

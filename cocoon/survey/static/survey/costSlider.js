@@ -10,12 +10,12 @@ $( function() {
         values: [ costSliderMin, costSliderMax ],
         slide: function( event, ui ) {
             $( "#amountCost" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-            $( "#id_min_price_survey").val(ui.values[0]);
+            $( "#id_desired_price_survey").val(ui.values[0]);
             $( "#id_max_price_survey").val(ui.values[1]);
         }
     });
     $( "#amountCost" ).val( "$" + $( "#cost" ).slider( "values", 0 ) +
         " - $" + $( "#cost" ).slider( "values", 1 ) );
-    $( "#id_min_price_survey").val( $("#cost").slider("values", 0));
+    $( "#id_desired_price_survey").val( $("#cost").slider("values", 0));
     $( "#id_max_price_survey").val( $("#cost").slider("values", 1));
 } );
