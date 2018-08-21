@@ -6,25 +6,6 @@
     <!-- JQuery UI style sheet, mostly used for slider ui -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{% static 'survey/rentingSurvey.css' %}">
-
-   <!-- Smarty Street API -->
-    <script type="text/javascript"
-            src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
-    <script src="//d79i1fxsrar4t.cloudfront.net/jquery.liveaddress/3.1/jquery.liveaddress.min.js"></script>
-    <script>jQuery.LiveAddress({
-        key: "28808043421919080",
-        debug: false,
-        autocomplete: 5,
-        autoVerify: false,
-        target: "US",
-        addresses: [{
-            address1: '#id_street_address_destination',
-            locality: '#id_city_destination',
-            administrative_area: "#id_state_destination",
-            postal_code: '#id_zip_code_destination'
-        }]
-    });
-    </script>
 {% endblock %}
 
 {% block nav-survey %}<li class="active"><a>Survey</a></li>{% endblock %}
@@ -93,76 +74,9 @@
                         <span class="help-block">Please enter up to {{ number_of_formsets }} commutes to locations you need to go to.
                             This can be your work, school or somewhere you commute to regularily</span>
                         <div class="form-group step_div">
-                            <div class="form-group">
-                                {% comment %} Contains form for destination {% endcomment %}
-                                <div class="bs-example">
-                                    <ul class="nav nav-tabs">
-                                        <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
-                                                {{ number_of_formsets }})"></span></a></li>
-                                        {% for num_forms in form_destination %}
-                                            <li
-                                                {% if forloop.counter == 1 %}
-                                                    class="active"
-                                                {% elif forloop.counter <= number_of_destinations %}
-                                                    class=""
-                                                {% else %}
-                                                    class="hide"
-                                                {% endif %}
-                                                id="form_destination_tabs_{{ forloop.counter }}">
-
-                                            <a data-toggle="tab"
-                                               href="#form_destination_section_{{ forloop.counter }}"><b>Commuter {{ forloop.counter }}</b></a></li>
-                                        {% endfor %}
-                                        <li
-                                            {% if number_of_destinations >= number_of_formsets %}
-                                                class='hide'
-                                            {% endif %}
-                                            id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
-                                                {{ number_of_formsets }})"></span></a></li>
-                                    </ul>
-                                    <div id="form_destination_div" class="tab-content">
-                                        {{ form.number_destinations_filled_out }}
-                                        {{ form_destination.management_form }}
-                                        {% for form in form_destination %}
-                                        <div id="form_destination_section_{{ forloop.counter }}"
-                                             {% if forloop.counter == 1 %}
-                                                class="tab-pane fade in active">
-                                            {% else %}
-                                                class="tab-pane fade">
-                                            {% endif %}
-                                            <br>
-                                            {{ form.as_table }}
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-
+                            {% include "survey/helpers/commuter_form.html" %}
                             <br>
                             <span class="help-block">Currently the Commute time, weight and type are for all the commutes</span>
-
-                            <div class="form-group">
-                                <label for="amountCommute">Commute:</label>
-                                <input type="text" id="amountCommute" name="amountCommute" readonly
-                                       style="border:0; color:#f6931f; font-weight:bold;">
-                                <div id="commute"></div>
-                                {{ form.min_commute_survey }}
-                                {{ form.max_commute_survey }}
-                            </div>
-
-                            <div class="form-group">
-                                {{ form.commute_weight_survey.label_tag }}
-                                <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="A weight of zero means all homes within the commute range are weighted equally.
-                                Increasing the weight gives increasing preferences to closer homes"></span>
-                                {{ form.commute_weight_survey }}
-                                {{ form.commute_weight_survey.errors }}
-                            </div>
-
-                            <div class="form-group">
-                                {{ form.commute_type_survey.label_tag }}
-                                {{ form.commute_type_survey }}
-                                {{ form.commute_type_survey.errors }}
-                            </div>
                         </div>
                         <br>
 
@@ -322,4 +236,7 @@
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
 <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
 <script src="{% static 'survey/destinationToggle.js' %}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&libraries=places&callback=initAutocomplete"
+        async defer></script>
+<script src="{% static 'survey/google_api_requests/address_autocomplete.js' %}"></script>
 {% endblock %}

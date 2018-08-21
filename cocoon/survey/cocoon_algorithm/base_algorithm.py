@@ -18,14 +18,10 @@ class CocoonAlgorithm(object):
       Attributes:
         self._homes (List[HomeScore]): Stores a list of homes as a HomeScore. These are the possible homes the user
             could live in
-        self._destinations (DestinationsModel Queryset): The desired destinations
-            specified by the user. These locations are the work, schools that the user needs to go to.
-
     """
 
     def __init__(self):
         self._homes = []
-        self._destinations = []
         # Need super to allow calling each classes constructor
         super(CocoonAlgorithm, self).__init__()
 
@@ -52,38 +48,18 @@ class CocoonAlgorithm(object):
         else:
             self._homes.append(new_home)
 
-    @property
-    def destinations(self):
+    def populate_survey_homes(self, user_survey):
         """
-        Get the list of destinations stored
-        :return: (DestinationModel Queryset): The list of destinations the user specified
-        """
-        return self._destinations
-
-    @destinations.setter
-    def destinations(self, new_destination):
-        """
-        Add destinations to the class
-        :param new_destination: (DestinationModel Queryset): Sets the variable with a new query set
-        """
-        self._destinations = new_destination
-
-    def populate_survey_destinations_and_possible_homes(self, user_survey):
-        """
-        Populates the homes variable and destinations variable based off a user survey
+        Populates the homes variable based off a user survey
         :param user_survey: (RentingSurveyModel): The survey filled out by the user
         """
 
         # Find all the possible homes that fit the static filter
         filtered_home_list = self.generate_static_filter_home_list(user_survey)
-        print(filtered_home_list)
 
         # Add homes to rent_algorithm, homes should be stored as a HomeScore
         for home in filtered_home_list:
             self.homes = HomeScore(home)
-
-        # Retrieves all the destinations that the user recorded
-        self.destinations = user_survey.rentingdestinationsmodel_set.all()
 
     @staticmethod
     def generate_static_filter_home_list(user_survey):

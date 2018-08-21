@@ -25,9 +25,19 @@ function add_destination_form(form_add_value, number_of_formsets) {
 
     // Case if the user wants to add a form
     if(form_add_value === 1) {
+
+        // If there were no active forms and the user adds one, then set the max and min commute to the current
+        //  slider values
+        if (destination_form_number === 0)
+        {
+            var max_commute_id = "#id_rentingdestinationsmodel_set-0-max_commute";
+            var min_commute_id = "#id_rentingdestinationsmodel_set-0-min_commute";
+
+            $(min_commute_id).val($("#commute").slider("values", 0));
+            $(max_commute_id).val($("#commute").slider("values", 1));
+        }
         if (destination_form_number < number_of_formsets)
             destination_form_number += form_add_value;
-            console.log(form_destination_tabs);
             $("#" + form_destination_tabs + destination_form_number).removeClass("hide")
     }
     else if (form_add_value === -1) {

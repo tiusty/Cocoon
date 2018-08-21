@@ -25,96 +25,12 @@ class CommuteAlgorithm(object):
         Sets the values to default values. Calls the super function so all parent init functions are called.
         """
         self._approx_commute_range_minutes = 0
-        self._max_user_commute_minutes = 0
-        self._min_user_commute_minutes = 0
-        self._commute_user_scale_factor = 1
-        self._commute_question_weight = commute_question_weight
+        self.destinations = []
+        self.commute_question_weight = commute_question_weight
         # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
         self._min_possible_commute = 11
-        # Note: This means the driving object needs to be created before this class is run
-        self._commute_type_query = CommuteType.objects.get(commute_type='Driving')
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()
-
-    def populate_commute_algorithm_information(self, user_commute_scale, user_max_commute_minutes,
-                                               user_min_commute_minutes, user_commute_type):
-        """
-        Function sets important constants for commute algorithm
-        :param user_commute_scale: (int): The user commute scale factor
-        :param user_max_commute_minutes: (int): The max time the user is willing to spend commuting in minutes
-        :param user_min_commute_minutes: (int): The min time the user is willing to spend commuting in minutes
-        :param user_commute_type: (CommuteType): The commute type desired by the user
-        :return:
-        """
-        self.max_user_commute = user_max_commute_minutes
-        self.min_user_commute = user_min_commute_minutes
-        self.commute_user_scale_factor = user_commute_scale
-        self.commute_type_query = user_commute_type
-
-    @property
-    def commute_type_query(self):
-        """
-        Returns the commute type
-        :return: (CommuteType): Returns the commute type
-        """
-        return self._commute_type_query
-
-    @commute_type_query.setter
-    def commute_type_query(self, new_commute_type):
-        """
-        Sets the commute type
-        :param new_commute_type: (CommuteType): The new commute type desired by the user
-        """
-        self._commute_type_query = new_commute_type
-
-    @property
-    def commute_question_weight(self):
-        """
-        Gets the commute_question_weight
-        :return: (int)L The commute_question_weight
-        """
-        return self._commute_question_weight
-
-    @commute_question_weight.setter
-    def commute_question_weight(self, new_commute_question_weight):
-        """
-        Sets the commute_question_weight
-        :param new_commute_question_weight: (int): The new commute question weight
-        """
-        self._commute_question_weight = new_commute_question_weight
-
-    @property
-    def min_possible_commute(self):
-        """
-        Returns the min_possible_commute
-        :return: (int): Returns the min possible commute
-        """
-        return self._min_possible_commute
-
-    @min_possible_commute.setter
-    def min_possible_commute(self, new_min_possible_commute):
-        """
-        Sets the min_possible_commute.
-        :param new_min_possible_commute: (int): The new min possible commute
-        """
-        self._min_possible_commute = new_min_possible_commute
-
-    @property
-    def commute_user_scale_factor(self):
-        """
-        Gets the commute user scale factor.
-        This increases or decreases the weight that the commute has to the survey
-        :return: (int): Te commute user scale factor
-        """
-        return self._commute_user_scale_factor
-
-    @commute_user_scale_factor.setter
-    def commute_user_scale_factor(self, new_commute_user_scale_factor):
-        """
-        Sets the commute user scale factor
-        :param new_commute_user_scale_factor: (int): The new scale factor as an int
-        """
-        self._commute_user_scale_factor = new_commute_user_scale_factor
 
     @property
     def approx_commute_range(self):
@@ -138,39 +54,9 @@ class CommuteAlgorithm(object):
         else:
             self._approx_commute_range_minutes = new_approx_commute_range_minutes
 
-    @property
-    def max_user_commute(self):
-        """
-        Get the max_user_commute as minutes.
-        This is the maximum commute that a user is willing to have
-        :return: (int): The max commute time in minutes
-        """
-        return self._max_user_commute_minutes
-
-    @max_user_commute.setter
-    def max_user_commute(self, new_max_user_commute_minutes):
-        """
-        Sets the max_user_commute as minutes
-        :param new_max_user_commute_minutes: (int) The new max_commute_time in minutes
-        """
-        self._max_user_commute_minutes = new_max_user_commute_minutes
-
-    @property
-    def min_user_commute(self):
-        """
-        Get the min_user_commute as minutes
-        This is the minimum commute that user is willing to have
-        :return: (int): The min commute time in minutes
-        """
-        return self._min_user_commute_minutes
-
-    @min_user_commute.setter
-    def min_user_commute(self, new_min_user_commute):
-        """
-        Set the min_user_commute as minutes
-        :param new_min_user_commute: (int): The new min commute time as minutes
-        """
-        self._min_user_commute_minutes = new_min_user_commute
+    def populate_commute_algorithm(self, user_survey):
+        # Retrieves all the destinations that the user recorded
+        self.destinations = user_survey.rentingdestinationsmodel_set.all()
 
     def compute_approximate_commute_filter(self, approx_commute_times):
         """
@@ -182,34 +68,37 @@ class CommuteAlgorithm(object):
         :return: (Boolean): True if the home is inside the range, False otherwise
         """
         for commute in approx_commute_times:
-            if (approx_commute_times[commute] > self.max_user_commute + self.approx_commute_range) \
-                            or (approx_commute_times[commute] < self.min_user_commute - self.approx_commute_range):
+            if (approx_commute_times[commute] > commute.max_commute + self.approx_commute_range) \
+                            or (approx_commute_times[commute] < commute.min_commute - self.approx_commute_range):
                 return False
         return True
 
-    def compute_commute_score(self, commute_minutes):
+    @staticmethod
+    def compute_commute_score(commute_minutes, commuter):
         """
         Compute the score based off the commute. A percent value of the fit of the home is returned.
         I.E, .67, .47, etc will be returned. The scaling will be done in the parent class
         Note: Since the eliminating filter should have been done first, this computation
             does not mark any home for elimination
         :param commute_minutes: (int): The commute time in minutes.
+        :param commuter: (RentingDestinationModel): The renting destination model which holds all the information
+            regarding the commute
         :return: (float) THe percent fit the home is or -1 if the home should be eliminated
         """
 
         # Because the commute is allowed to be less or more depending on the approx_commute_range
         #   the homes are allowed to be past the user bounds. Therefore if the commute is past the bounds,
         #   just set the home to the max or min
-        if commute_minutes < self.min_user_commute:
-            commute_minutes = self.min_user_commute
-        elif commute_minutes > self.max_user_commute:
-            commute_minutes = self.max_user_commute
+        if commute_minutes < commuter.min_commute:
+            commute_minutes = commuter.min_commute
+        elif commute_minutes > commuter.max_commute:
+            commute_minutes = commuter.max_commute
 
-        commute_time_normalized = commute_minutes - self.min_user_commute
-        commute_range = self.max_user_commute - self.min_user_commute
+        commute_time_normalized = commute_minutes - commuter.min_commute
+        commute_range = commuter.max_commute - commuter.min_commute
 
         if commute_range <= 0:
-            if commute_minutes == self.min_user_commute:
+            if commute_minutes == commuter.min_commute:
                 return 1
             else:
                 return 0

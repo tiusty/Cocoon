@@ -22,7 +22,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
-from cocoon.survey.forms import RentSurveyForm, DestinationForm, RentSurveyFormMini
+from cocoon.survey.forms import RentSurveyForm, RentingDestinationsForm, RentSurveyFormMini
 
 
 @login_required
@@ -37,11 +37,9 @@ def renting_survey(request):
     # Multiple DestinationsModel on the frontend
     number_of_formsets = 4
     number_of_destinations = 1
-    form_inline_destination_set = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, can_delete=False,
-                                                     extra=number_of_formsets, fields=('street_address_destination', 'city_destination',
-                                                                      'state_destination', 'zip_code_destination'),
-                                                     form=DestinationForm)
-    destination_form_set = form_inline_destination_set
+    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=number_of_formsets,
+                                               form=RentingDestinationsForm, can_delete=False)
+    destination_form_set = DestinationFormSet()
 
     # Retrieve the current profile or return a 404
     current_profile = get_object_or_404(UserProfile, user=request.user)
@@ -54,7 +52,7 @@ def renting_survey(request):
 
         # check whether it is valid
         if form.is_valid():
-            number_of_destinations = int(form.cleaned_data['number_destinations_filled_out'])
+            number_of_destinations = int(request.POST['number_destinations_filled_out'])
 
             # process the data in form.cleaned_data as required
             rent_survey = form.save(commit=False)
@@ -68,7 +66,13 @@ def renting_survey(request):
             rent_survey.survey_type = survey_types.rent.value
 
             # Create the form destination set
-            destination_form_set = form_inline_destination_set(request.POST, instance=rent_survey)
+            request_post = request.POST.copy()
+            for x in range (number_of_destinations, number_of_formsets):
+                for field in request.POST:
+                    if 'rentingdestinationsmodel_set-' + str(x) in field:
+                        del request_post[field]
+
+            destination_form_set = DestinationFormSet(request_post, instance=rent_survey)
 
             if destination_form_set.is_valid():
 
@@ -89,6 +93,7 @@ def renting_survey(request):
 
             else:
                 context['error_message'] = "The destination set did not validate"
+                context['error_message'] = destination_form_set.errors
         else:
             # If the destination form is not valid, also do a quick test of the survey field to
             # Inform the user if the survey is also invalid
@@ -157,9 +162,8 @@ def run_rent_algorithm(survey, context):
     rent_algorithm.run_sort_home_by_score()
 
     # Set template variables
-    context['locations'] = rent_algorithm.destinations
-    context['houseList'] = rent_algorithm.homes[:200]
-    context['commuteType'] = rent_algorithm.commute_type_query.commute_type
+    context['commuters'] = rent_algorithm.destinations
+    context['houseList'] = rent_algorithm.homes[:50]
 
 
 # Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
@@ -212,6 +216,10 @@ def survey_result_rent(request, survey_id="recent"):
 
     # Populate form with stored data
     form = RentSurveyFormMini(instance=survey)
+    number_of_forms = survey.rentingdestinationsmodel_set.count()
+    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=0,
+                                               form=RentingDestinationsForm, can_delete=False)
+    destination_form_set = DestinationFormSet(instance=survey)
 
     # If a POST message occurs (They submit the mini form) then process it
     # If it fails then keep loading survey result and pass the error messages
@@ -219,12 +227,18 @@ def survey_result_rent(request, survey_id="recent"):
         # If a POST occurs, update the form. In the case of an error, then the survey
         # Should be populated by the POST data.
         form = RentSurveyFormMini(request.POST, instance=survey)
+        destination_form_set = DestinationFormSet(request.POST, instance=survey)
         # If the survey is valid then redirect back to the page to reload the changes
         # This will also update the house list
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                kwargs={"survey_id": survey.id}))
+            if destination_form_set.is_valid():
+                form.save()
+                destination_form_set.save()
+                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                    kwargs={"survey_id": survey.id}))
+            else:
+                context['error_message'].append("There are form errors in destinatino form")
+                context['error_message'].append(destination_form_set.errors)
         else:
             context['error_message'].append("There are form errors")
             try:
@@ -239,6 +253,10 @@ def survey_result_rent(request, survey_id="recent"):
     run_rent_algorithm(survey, context)
     context['survey'] = survey
     context['form'] = form
+    context['form_destination'] = destination_form_set
+    context['number_of_formsets'] = number_of_forms
+    context['number_of_destinations'] = number_of_forms
+    context['mini_form'] = True
     return render(request, 'survey/surveyResultRent.html', context)
 
 
