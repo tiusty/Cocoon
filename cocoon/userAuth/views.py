@@ -77,7 +77,7 @@ def logoutPage(request):
 
 
 @login_required
-def ProfilePage(request, defaultPage="profile"):
+def user_profile(request):
     context = {
         'error_message': [],
     }
@@ -87,37 +87,20 @@ def ProfilePage(request, defaultPage="profile"):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, 'Updated Account')
-            return HttpResponseRedirect(reverse('userAuth:profilePage',
-                                                kwargs={'defaultPage': "profile"}))
+            return HttpResponseRedirect(reverse('userAuth:user_profile'))
         else:
             context['error_message'].append("Could not post form, try again")
-    if request.user.is_authenticated():
-        userProfile = UserProfile.objects.get(user=request.user)
-        context['userProfile'] = userProfile
-        if defaultPage == "profile":
-            context['defaultProfile'] = 0
-        elif defaultPage == "rentSurvey":
-            context['defaultProfile'] = 1
-        # for now since buy survey is not implemented, just have it load the rent survey
-        elif defaultPage == "buySurvey":
-            context['defaultProfile'] = 1
-        elif defaultPage == "favorites":
-            context['defaultProfile'] = 3
-        else:
-            context['defaultProfile'] = 0
-        context['favorites'] = userProfile.favorites.all()
 
-    else:
-        messages.add_message(request,messages.ERROR, "User is not authenticated")
-        return HttpResponseRedirect(reverse('userAuth:loginPage'))
+    # Retrieve data relevant to user
+    user_prof = UserProfile.objects.get(user=request.user)
+    num_rent_surveys = RentingSurveyModel.objects.filter(user_profile_survey=user_prof).count()
+    form = ProfileForm(instance=user_prof.user)
 
-    rent_surveys = RentingSurveyModel.objects.filter(user_profile_survey=userProfile).order_by('-created_survey')[:50]
-    context['numRentSurveys'] = rent_surveys.count()
-    context['numBuySurveys'] = 0
-    context['surveys'] = rent_surveys
-    form = ProfileForm(instance=userProfile.user)
+    context['numRentSurveys'] = num_rent_surveys
+    context['userProfile'] = user_prof
     context['form'] = form
     return render(request, 'userAuth/profilePage.html', context)
+
 
 @login_required
 def SurveyPage(request, defaultPage="rentSurvey"):
@@ -130,8 +113,7 @@ def SurveyPage(request, defaultPage="rentSurvey"):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, 'Updated Account')
-            return HttpResponseRedirect(reverse('userAuth:profilePage',
-                                                kwargs={'defaultPage': "profile"}))
+            return HttpResponseRedirect(reverse('userAuth:user_profile'))
         else:
             context['error_message'].append("Could not post form, try again")
     if request.user.is_authenticated():

@@ -258,7 +258,7 @@
                         // On Success always redirect back to the rent survey page
                         // Because that is where the ajax request took place
                         console.log("Success!");
-                        window.location = "{% url 'userAuth:profilePage' 'rentSurvey' %}";
+                        window.location = "{% url 'userAuth:user_surveys' %}";
                     }
                     // Need to handle error! Create a div that is meant for errors
                     else {
