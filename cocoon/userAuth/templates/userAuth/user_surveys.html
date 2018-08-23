@@ -6,12 +6,15 @@
 {% block head %}
     {{ block.super }}
     <!-- Custom StyleSheets -->
-    <link rel="stylesheet" href="{% static 'userAuth/css/profilePage.css' %}">
+    <link rel="stylesheet" href="{% static 'userAuth/css/user_surveys.css' %}">
 {% endblock %}
 
 
 {% block content %}
 
+    {% comment %}
+        Displays errors messages that occur
+    {% endcomment %}
     <div class="row">
         <div class="col-sm-12">
             {% if error_message %}
@@ -21,15 +24,17 @@
                     </div>
                 </div>
             {% endif %}
-
         </div>
     </div>
+
+    {% comment %}
+        Displays top of the data fields, i.e the picture and the button
+    {% endcomment %}
     <div class="row">
         <div class="col-lg-12 col-sm-12">
             <div class="card hovercard">
                 <div class="card-background">
                     <img class="card-bkimg" alt="" src="{% static 'userAuth/cityBackground.jpg' %}">
-                    <!-- http://lorempixel.com/850/280/people/9/ -->
                 </div>
                 <div class="useravatar">
                     <img alt="" src="{% static 'userAuth/unicornProfilePic.jpeg' %}">
@@ -48,26 +53,11 @@
                         <div class="hidden-xs">Rent Surveys</div>
                     </button>
                 </div>
-
-            {% comment FAVORITES TAB %}
-
-                <div class="btn-group" role="group">
-                    <button type="button" id="following"
-                            {% if defaultProfile == 3 %}
-                            class="btn btn-primary"
-                            {% else %}
-                            class="btn btn-default"
-                            {% endif %}
-                            href="#tab3" data-toggle="tab"><span
-                            class="glyphicon glyphicon-heart" aria-hidden="true"></span>
-                        <div class="hidden-xs">Favorites</div>
-                    </button>
-                </div>
-
-            {% endcomment %}
-
             </div>
 
+            {% comment %}
+                Displays the data. I.e all the surveys etc
+            {% endcomment %}
             <div class="well">
                 <div class="tab-content">
                     <div class="tab-pane fade in active" id="tab2">
@@ -153,7 +143,6 @@
                             {% endfor %}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
