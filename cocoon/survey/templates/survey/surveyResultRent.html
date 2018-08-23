@@ -56,6 +56,12 @@
                 </div>
 
                 {% comment %}
+                    Adds the template code for the list view pop down. It is hidden by default and must be triggered
+                       by clicking the button
+                {% endcomment %}
+                {% include 'survey/helpers/list_view.html' %}
+
+                {% comment %}
                     Adds the button to open the rent mini survey
                 {% endcomment %}
                 <div class="nopadding col-sm-6">
