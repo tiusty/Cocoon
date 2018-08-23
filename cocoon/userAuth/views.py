@@ -103,43 +103,13 @@ def user_profile(request):
 
 
 @login_required
-def SurveyPage(request, defaultPage="rentSurvey"):
+def user_surveys(request):
     context = {
         'error_message': [],
     }
 
-    if request.method == "POST":
-        form = ProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.add_message(request, messages.SUCCESS, 'Updated Account')
-            return HttpResponseRedirect(reverse('userAuth:user_profile'))
-        else:
-            context['error_message'].append("Could not post form, try again")
-    if request.user.is_authenticated():
-        userProfile = UserProfile.objects.get(user=request.user)
-        context['userProfile'] = userProfile
-        if defaultPage == "profile":
-            context['defaultProfile'] = 0
-        elif defaultPage == "rentSurvey":
-            context['defaultProfile'] = 1
-        # for now since buy survey is not implemented, just have it load the rent survey
-        elif defaultPage == "buySurvey":
-            context['defaultProfile'] = 1
-        elif defaultPage == "favorites":
-            context['defaultProfile'] = 3
-        else:
-            context['defaultProfile'] = 0
-        context['favorites'] = userProfile.favorites.all()
+    profile = UserProfile.objects.get(user=request.user)
 
-    else:
-        messages.add_message(request, messages.ERROR, "User is not authenticated")
-        return HttpResponseRedirect(reverse('userAuth:loginPage'))
-
-    rent_surveys = RentingSurveyModel.objects.filter(user_profile_survey=userProfile).order_by('-created_survey')[:50]
-    context['numRentSurveys'] = rent_surveys.count()
-    context['numBuySurveys'] = 0
+    rent_surveys = RentingSurveyModel.objects.filter(user_profile_survey=profile).order_by('-created_survey')[:50]
     context['surveys'] = rent_surveys
-    form = ProfileForm(instance=userProfile.user)
-    context['form'] = form
     return render(request, 'userAuth/mySurveys.html', context)
