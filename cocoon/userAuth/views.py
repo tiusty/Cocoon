@@ -99,7 +99,7 @@ def user_profile(request):
     context['numRentSurveys'] = num_rent_surveys
     context['userProfile'] = user_prof
     context['form'] = form
-    return render(request, 'userAuth/profilePage.html', context)
+    return render(request, 'userAuth/user_profile.html', context)
 
 
 @login_required
