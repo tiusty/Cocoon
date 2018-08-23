@@ -10,7 +10,6 @@ survey_types = Enum('survey_types', 'rent buy')
 
 # Default Survey Max Values
 HYBRID_QUESTION_WEIGHT = 20
-commute_question_weight = 100
 price_question_weight = 100
 WEIGHT_QUESTION_MAX = 7
 MAX_NUM_BATHROOMS = 7  # Base 0, I guess should be base 1

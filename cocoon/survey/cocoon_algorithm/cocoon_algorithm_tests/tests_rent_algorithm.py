@@ -300,7 +300,7 @@ class TestRentAlgorithmJustPrice(TestCase):
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.min_price = 1000
+        rent_algorithm.desired_price = 1000
         rent_algorithm.max_price = 2500
 
         # Set the user scale
@@ -327,13 +327,14 @@ class TestRentAlgorithmJustPrice(TestCase):
         self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
         self.assertFalse(rent_algorithm.homes[2].eliminated)
 
-    def test_run_compute_price_score_one_elimination_min_price(self):
+    def test_run_compute_price_score_one_elimination_desired_price(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
         rent_algorithm.min_price = 1100
+        rent_algorithm.desired_price = 1400
         rent_algorithm.max_price = 2500
 
         # Set the user scale
@@ -354,13 +355,13 @@ class TestRentAlgorithmJustPrice(TestCase):
         self.assertTrue(rent_algorithm.homes[0].eliminated)
 
         # Home 1
-        self.assertEqual((1 - (400 / 1400)) * price_question_weight * price_user_scale_factor,
+        self.assertEqual((1 - (100 / 1100)) * price_question_weight * price_user_scale_factor,
                          rent_algorithm.homes[1].accumulated_points)
         self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[1].total_possible_points)
         self.assertFalse(rent_algorithm.homes[1].eliminated)
 
         # Home 2
-        self.assertEqual((1 - (900 / 1400)) * price_question_weight * price_user_scale_factor,
+        self.assertEqual((1 - (600 / 1100)) * price_question_weight * price_user_scale_factor,
                          rent_algorithm.homes[2].accumulated_points)
         self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
         self.assertFalse(rent_algorithm.homes[2].eliminated)
@@ -372,6 +373,7 @@ class TestRentAlgorithmJustPrice(TestCase):
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
         rent_algorithm.min_price = 1600
+        rent_algorithm.desired_price = 1900
         rent_algorithm.max_price = 2500
 
         # Set the user scale
@@ -397,7 +399,7 @@ class TestRentAlgorithmJustPrice(TestCase):
         self.assertTrue(rent_algorithm.homes[1].eliminated)
 
         # Home 2
-        self.assertEqual((1 - (400 / 900)) * price_question_weight * price_user_scale_factor,
+        self.assertEqual((1 - (100 / 600)) * price_question_weight * price_user_scale_factor,
                          rent_algorithm.homes[2].accumulated_points)
         self.assertEqual(price_question_weight * price_user_scale_factor, rent_algorithm.homes[2].total_possible_points)
         self.assertFalse(rent_algorithm.homes[2].eliminated)
@@ -408,7 +410,7 @@ class TestRentAlgorithmJustPrice(TestCase):
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.min_price = 1000
+        rent_algorithm.desired_price = 1000
         rent_algorithm.max_price = 1900
 
         # Set the user scale
@@ -447,7 +449,7 @@ class TestRentAlgorithmJustPrice(TestCase):
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.min_price = 1000
+        rent_algorithm.desired_price = 1000
         rent_algorithm.max_price = 1400
 
         # Set the user scale
@@ -484,7 +486,7 @@ class TestRentAlgorithmJustPrice(TestCase):
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
-        rent_algorithm.min_price = 1000
+        rent_algorithm.desired_price = 1000
         rent_algorithm.max_price = 2500
 
         # Set the user scale
@@ -973,12 +975,12 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         MlsManagementModel.objects.create()
 
     @staticmethod
-    def create_survey(user_profile, max_price=1500, min_price=0, max_bathroom=2, min_bathroom=0,
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile_survey=user_profile,
             max_price_survey=max_price,
-            min_price_survey=min_price,
+            desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
             min_bathrooms_survey=min_bathroom,
             num_bedrooms_survey=num_bedrooms,
@@ -1044,12 +1046,12 @@ class TestRetrieveApproximateCommutes(TestCase):
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
 
     @staticmethod
-    def create_survey(user_profile, max_price=1500, min_price=0, max_bathroom=2, min_bathroom=0,
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile_survey=user_profile,
             max_price_survey=max_price,
-            min_price_survey=min_price,
+            desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
             min_bathrooms_survey=min_bathroom,
             num_bedrooms_survey=num_bedrooms,
@@ -1320,12 +1322,12 @@ class TestRetrieveExactCommutes(TestCase):
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
 
     @staticmethod
-    def create_survey(user_profile, max_price=1500, min_price=0, max_bathroom=2, min_bathroom=0,
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile_survey=user_profile,
             max_price_survey=max_price,
-            min_price_survey=min_price,
+            desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
             min_bathrooms_survey=min_bathroom,
             num_bedrooms_survey=num_bedrooms,

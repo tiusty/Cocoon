@@ -305,14 +305,14 @@ class TestPriceInformationForm(TestCase):
 
     def setUp(self):
         self.max_price = 0
-        self.min_price = 0
+        self.desired_price = 0
         self.price_weight = 0
 
     def tests_price_information_valid(self):
         # Arrange
         form_data = {
             'max_price_survey': self.max_price,
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,
         }
         price_information_form = PriceInformationForm(data=form_data)
@@ -326,7 +326,7 @@ class TestPriceInformationForm(TestCase):
     def tests_price_information_max_price_missing(self):
         # Arrange
         form_data = {
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,
         }
         price_information_form = PriceInformationForm(data=form_data)
@@ -337,7 +337,7 @@ class TestPriceInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_price_information_min_price_missing(self):
+    def tests_price_information_desired_price_missing(self):
         # Arrange
         form_data = {
             'max_price_survey': self.max_price,
@@ -355,7 +355,7 @@ class TestPriceInformationForm(TestCase):
         # Arrange
         form_data = {
             'max_price_survey': self.max_price,
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
         }
         price_information_form = PriceInformationForm(data=form_data)
 
@@ -631,7 +631,7 @@ class TestRentSurveyForm(TestCase):
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
 
         self.max_price = 0
-        self.min_price = 0
+        self.desired_price = 0
         self.price_weight = 0
 
         self.air_conditioning = 0
@@ -664,7 +664,7 @@ class TestRentSurveyForm(TestCase):
             'number_destinations_filled_out': self.number_of_destinations,
             'commute_type': 1,
             'max_price_survey': self.max_price,
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
@@ -694,7 +694,7 @@ class TestRentSurveyForm(TestCase):
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
             'max_price_survey': self.max_price,
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
@@ -726,7 +726,7 @@ class TestRentSurveyForm(TestCase):
             'min_bathrooms_survey': self.min_num_bathrooms,
             'home_type_survey': self.home_type_survey,
             'max_price_survey': self.max_price,
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
@@ -795,7 +795,7 @@ class TestRentSurveyForm(TestCase):
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
             'max_price_survey': self.max_price,
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,
             'parking_spot_survey': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
@@ -827,7 +827,7 @@ class TestRentSurveyForm(TestCase):
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
             'max_price_survey': self.max_price,
-            'min_price_survey': self.min_price,
+            'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,

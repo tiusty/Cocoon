@@ -64,9 +64,9 @@ Global variables are listed below
           <div class="form-group">
             <label for="amountCost">Cost Per Month:</label>
             <input type="text" id="amountCost" name="amountCost" readonly
-                   style="border:0; color:#f6931f; font-weight:bold;">
+                   size="30" style="border:0; color:#f6931f; font-weight:bold;">
             <div id="cost"></div>
-            {{ form.min_price_survey }}
+            {{ form.desired_price_survey }}
             {{ form.max_price_survey }}
           </div>
           <div class="form-group">
@@ -357,7 +357,7 @@ Global variables are listed below
       //var myDestination = "{{ houseList.0.address }}";
       // Manipulated by costSliderResults.js
       costSliderMax = {{ form.max_price_survey.value }};
-      costSliderMin = {{ form.min_price_survey.value }};
+      costSliderMin = {{ form.desired_price_survey.value }};
       {% comment %}
             Determines the correct commute slider values. This is just used when the page loads. This grabs the first
                 form in the formset and sets the max and commute values to it. This is because the first form is the

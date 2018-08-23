@@ -9,13 +9,13 @@ $( function() {
         step: 50,
         values: [ costSliderMin, costSliderMax ],
         slide: function( event, ui ) {
-            $( "#amountCost" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-            $( "#id_min_price_survey").val(ui.values[0]);
+            $( "#amountCost" ).val( "Want To Pay: $" + ui.values[ 0 ].toLocaleString() + " - Max: $" + ui.values[ 1 ].toLocaleString() );
+            $( "#id_desired_price_survey").val(ui.values[0]);
             $( "#id_max_price_survey").val(ui.values[1]);
         }
     });
-    $( "#amountCost" ).val( "$" + $( "#cost" ).slider( "values", 0 ) +
-        " - $" + $( "#cost" ).slider( "values", 1 ) );
-    $( "#id_min_price_survey").val( $("#cost").slider("values", 0));
+    $( "#amountCost" ).val( "Want To Pay: $" + $( "#cost" ).slider( "values", 0 ).toLocaleString() +
+        " - Max: $" + $( "#cost" ).slider( "values", 1 ).toLocaleString() );
+    $( "#id_desired_price_survey").val( $("#cost").slider("values", 0));
     $( "#id_max_price_survey").val( $("#cost").slider("values", 1));
 } );

@@ -14,6 +14,9 @@ from cocoon.commutes.models import CommuteType
 from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, \
     HYBRID_WEIGHT_CHOICES
 
+# Import app constants
+from .constants import MIN_PRICE_DELTA
+
 
 # TODO: Deprecate with new algorithm
 class CommutePrecision(Enum):
@@ -109,7 +112,7 @@ class PriceInformationModel(models.Model):
     Contains all the price information for a given home
     """
     max_price_survey = models.IntegerField(default=0)
-    min_price_survey = models.IntegerField(default=0)
+    desired_price_survey = models.IntegerField(default=0)
     price_weight_survey = models.IntegerField(default=0)
 
     @property
@@ -117,8 +120,8 @@ class PriceInformationModel(models.Model):
         return self.max_price_survey
 
     @property
-    def min_price(self):
-        return self.min_price_survey
+    def desired_price(self):
+        return self.desired_price_survey
 
     @property
     def price_weight(self):
@@ -130,7 +133,11 @@ class PriceInformationModel(models.Model):
         Returns the price range
         :return: String -> Price range
         """
-        return "${0} - ${1} ".format(self.min_price, self.max_price)
+        return "${0} - ${1} ".format(self.desired_price, self.max_price)
+
+    @property
+    def min_price(self):
+        return self.desired_price - MIN_PRICE_DELTA
 
     class Meta:
         abstract = True

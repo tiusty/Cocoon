@@ -91,7 +91,7 @@ class PriceInformationForm(ModelForm):
             }),
     )
 
-    min_price_survey = forms.IntegerField(
+    desired_price_survey = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',

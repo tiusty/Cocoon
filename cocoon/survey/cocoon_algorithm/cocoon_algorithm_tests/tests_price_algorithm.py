@@ -9,7 +9,7 @@ class TestPriceAlgorithm(TestCase):
     def test_compute_price_score_working(self):
         # Arrange
         price_algorithm = PriceAlgorithm()
-        price_algorithm.min_price = 500
+        price_algorithm.desired_price = 500
         price_algorithm.max_price = 2000
         home_price = 1000
 
@@ -19,10 +19,10 @@ class TestPriceAlgorithm(TestCase):
         # Assert
         self.assertEqual(1 - (500/1500), score_result)
 
-    def test_compute_price_score_zero_min_price(self):
+    def test_compute_price_score_zero_desired_price(self):
         # Arrange
         price_algorithm = PriceAlgorithm()
-        price_algorithm.min_price = 0
+        price_algorithm.desired_price = 0
         price_algorithm.max_price = 1500
         home_price = 1000
 
@@ -35,7 +35,7 @@ class TestPriceAlgorithm(TestCase):
     def test_compute_price_score_zero_max_price(self):
         # Arrange
         price_algorithm = PriceAlgorithm()
-        price_algorithm.min_price = 500
+        price_algorithm.desired_price = 500
         price_algorithm.max_price = 0
         home_price = 1000
 
@@ -63,6 +63,7 @@ class TestPriceAlgorithm(TestCase):
         price_algorithm = PriceAlgorithm()
         price_algorithm.min_price = 1000
         price_algorithm.max_price = 1000
+        price_algorithm.desired_price = 1000
         home_price = 1000
 
         # Act

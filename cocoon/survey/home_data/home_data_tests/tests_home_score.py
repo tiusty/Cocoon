@@ -221,12 +221,12 @@ class TestApproxCommute(TestCase):
         self.commute_type_walking = CommuteType.objects.create(commute_type='Walking')
 
     @staticmethod
-    def create_survey(user_profile, max_price=1500, min_price=0, max_bathroom=2, min_bathroom=0,
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile_survey=user_profile,
             max_price_survey=max_price,
-            min_price_survey=min_price,
+            desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
             min_bathrooms_survey=min_bathroom,
             num_bedrooms_survey=num_bedrooms,
