@@ -6,7 +6,7 @@ $( function() {
         range: true,
         min: 0,
         max: 180,
-        values: [ commuteSliderMin, commuteSliderMax ],
+        values: [ commuteSliderMinInit, commuteSliderMaxInit ],
         slide: function( event, ui ) {
 
             // Retrieve the current active commuter number

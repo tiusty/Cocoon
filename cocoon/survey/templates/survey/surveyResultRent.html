@@ -121,10 +121,7 @@
                                 var score = {{ home_score.user_friendly_score }};
                                 var color = colorFromScore({{ home_score.user_friendly_score }});
 
-                                console.log(colorFromScore({{ home_score.user_friendly_score }}));
-
                                 // associate a pin with each result
-
                                 myLocations.push(new locationPin(lat, lon, id, score.toString(), color.toString()));
 
                             </script>
@@ -147,14 +144,13 @@
         // Going to keep the portions that create the markers on the map
         {% endcomment %}
         var myStreetAddresses = [{% for commuter in commuters %}"{{ commuter.full_address }}",{% endfor %}];
-        var myDestinations = [{% for dest in houseList %}[
-            {{ dest.house.latitude|safe }}, {{ dest.house.longitude|safe }}
-            ],{% endfor %}];
-        // Manipulated by survey_result.js in selectAddress
-        //var myDestination = "{{ houseList.0.address }}";
-        // Manipulated by costSliderResults.js
-        costSliderMax = {{ form.max_price_survey.value }};
-        costSliderMin = {{ form.desired_price_survey.value }};
+
+        {% comment %}
+           The initialize values to load the cost sliders to
+        {% endcomment %}
+        costSliderMaxInit = {{ form.max_price_survey.value }};
+        costSliderMinInit = {{ form.desired_price_survey.value }};
+
         {% comment %}
               Determines the correct commute slider values. This is just used when the page loads. This grabs the first
                   form in the formset and sets the max and commute values to it. This is because the first form is the
@@ -168,27 +164,34 @@
         {% for dest_form in form_destination|slice:"1" %}
             {% for key, value in dest_form.initial.items %}
                 {% ifequal key "min_commute" %}
-                    commuteSliderMin = {{ value }};
+                    commuteSliderMinInit = {{ value }};
                 {% endifequal %}
                 {% ifequal key "max_commute" %}
-                    commuteSliderMax = {{ value }};
+                    commuteSliderMaxInit = {{ value }};
                 {% endifequal %}
             {% endfor %}
         {% endfor %}
+
+        {% comment %}
+           The initialize values to load the bathroom sliders
+        {% endcomment %}
         bathroomsMin = {{ form.min_bathrooms_survey.value }};
         bathroomsMax = {{ form.max_bathrooms_survey.value }};
     </script>
 
-    {#    <script src="{% static 'homePage/carousel.js' %}"></script>#}
+
     <script src="{% static 'survey/javascript/rent_survey_mini_form.js' %}"></script>
     <script src="{% static 'survey/tileCarousel.js' %}"></script>
-    <!-- Custom Javascript -->
+
+    {% comment %}Loads Javascript files necessary for Ajac requests{% endcomment %}
     {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
     <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
     {% comment %}This script adds the set_favorite function which allows the user to toggle a home in their favorites list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
+
+    {% comment %}Loads the sliders {% endcomment %}
     <script src="{% static 'survey/costSlider.js' %}"></script>
     <script src="{% static 'survey/commuteSlider.js' %}"></script>
     <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
@@ -207,8 +210,8 @@
     <!-- JQuery UI for sliders -->
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-    <script src="{% static 'survey/markerclusterer.js' %}"></script>
 
+    <script src="{% static 'survey/markerclusterer.js' %}"></script>
     <script src="{% static 'survey/displaylist.js' %}">
 
     </script>
