@@ -122,3 +122,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "../cocoon/media/")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "../cocoon/static"),
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
