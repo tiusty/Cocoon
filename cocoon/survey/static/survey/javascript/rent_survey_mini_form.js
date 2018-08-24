@@ -1,3 +1,12 @@
+/**
+ * This javascript files adds the functionality associated with the rent_mini_survey.html file
+ *
+ * Therefore if the mini survey is wanted, then this javascript file should be included with it
+ *
+ * Associated Html files:
+ *      rent_survey_survey.html
+ */
+
 /* Set the width of the side navigation to 0 */
 function closeNav() {
     document.getElementById("sidebarSurvey").style.width = "0";
