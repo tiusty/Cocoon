@@ -108,8 +108,8 @@ def user_surveys(request):
         'error_message': [],
     }
 
+    # Retrieve data relevant to user
     profile = UserProfile.objects.get(user=request.user)
-
-    rent_surveys = RentingSurveyModel.objects.filter(user_profile_survey=profile).order_by('-created_survey')[:50]
+    rent_surveys = RentingSurveyModel.objects.filter(user_profile_survey=profile).order_by('-created_survey')
     context['surveys'] = rent_surveys
     return render(request, 'userAuth/user_surveys.html', context)
