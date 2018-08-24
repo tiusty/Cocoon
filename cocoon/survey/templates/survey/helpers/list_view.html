@@ -1,3 +1,11 @@
+{% comment Header %}
+    This html file contains the html code for the list view. The list view displays the first 20 homes
+        in an easy copy and paste format for someone to extract.
+
+    Template Variables:
+        houseList: List(HomeScore) -> The list of homes for the user
+
+{% endcomment %}
 <div class="export-modal">
     {% for home_score in houseList|slice:"20" %}
         <div class="home-box">

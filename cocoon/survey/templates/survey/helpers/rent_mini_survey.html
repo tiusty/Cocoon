@@ -1,3 +1,12 @@
+{% comment Header %}
+    This html file contains the layout for the navbar mini survey in the survey results page.
+
+    This contains the entire form including the submit button
+
+    Template Variables:
+        form: (RentSurveyFormMini) -> The survey that is being displayed
+
+{% endcomment %}
 <div id="sidebarSurvey" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
@@ -34,6 +43,9 @@
                 {{ form.price_weight_survey.errors }}
             </div>
             <br>
+            {% comment %}
+                Adds in the commuter form to the mini survey
+            {% endcomment %}
             {% include "survey/helpers/commuter_form.html" %}
             <br>
             <br>
