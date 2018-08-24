@@ -8,7 +8,6 @@ urlpatterns = [
     url(r'^login/$', views.loginPage, name='loginPage'),
     url(r'^register/$', views.registerPage, name='registerPage'),
     url(r'^logout/$', views.logoutPage, name='logoutPage'),
-    url(r'^userProfile/$', views.ProfilePage, name='profilePage'),
-    url(r'^userSurveys', views.SurveyPage, name='surveyPage'),
-    url(r'^userProfile/(?P<defaultPage>(profile|rentSurvey|buySurvey|favorites))/$', views.ProfilePage, name='profilePage')
+    url(r'^profile$', views.user_profile, name='user_profile'),
+    url(r'^surveys', views.user_surveys, name='user_surveys'),
 ]

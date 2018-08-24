@@ -43,7 +43,7 @@
                                     <li class="dropdown-header">Account</li>
                                     <li class="dropdown-header"><a href="{% url 'userAuth:logoutPage' %}">Logout</a>
                                     </li>
-                                    <li class="dropdown-header"><a href="{% url 'userAuth:profilePage' 'profile' %}">User
+                                    <li class="dropdown-header"><a href="{% url 'userAuth:user_profile' %}">User
                                         Profile</a></li>
                                     {% comment %}
                                 <li role="separator" class="divider"></li>
@@ -60,7 +60,7 @@
                 </ul>
                 <ul class="nav navbar-nav">
                     {% if user.is_authenticated %}
-                        {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:surveyPage' %}">My Surveys</a></li>{% endblock %}
+                        {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:user_surveys' %}">My Surveys</a></li>{% endblock %}
                         {% block nav-visitlist %}<li><a class="link" href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
                         {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
                     {% endif %}
