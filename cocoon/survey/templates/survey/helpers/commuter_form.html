@@ -1,3 +1,18 @@
+{% comment Header %}
+    This html file contains the code for the commuter_form. The commuter form is a subsection of the fully rent
+        survey form. Therefore this is not meant to be called independently of the rent survey form. This should
+        be included within the rent survey form, thus why it is a form-group and does not contain a form tag. This
+        file also works for both the mini survey and the normal survey. In the mini survey certain elements are removed
+        such as the auto complete field and javascript functions that are no longer needed
+
+    Template Variables:
+        form: (RentSurveyFormMini) -> The survey that is being displayed
+        mini_form: (boolean) -> A boolean that determines if the survey is a mini survey or not
+        number_of_destinations: (int) -> The number of commuters selected by the user
+        number_of_formsets: (int) -> The number of commuters allowed by the user
+
+{% endcomment %}
+
 {%  if not mini_form %}
 {% comment %}
     The autocomplete field is for populating the address, city, state and zip_code porition of the survey.
