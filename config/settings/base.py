@@ -131,4 +131,4 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'devteam@bostoncocoon.com'
 EMAIL_HOST_PASSWORD = 'projectunicorn2018'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'TestSite Team <noreply@example.com>'
+DEFAULT_FROM_EMAIL = 'Bostoncocoon Team <devteam@bostoncocoon.com>'
