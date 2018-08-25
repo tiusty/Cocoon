@@ -226,7 +226,7 @@ def survey_result_rent(request, survey_id="recent"):
     if request.method == 'POST':
         # If a POST occurs, update the form. In the case of an error, then the survey
         # Should be populated by the POST data.
-        form = RentSurveyFormMini(request.POST, instance=survey)
+        form = RentSurveyFormMini(request.POST, instance=survey, user=request.user)
         destination_form_set = DestinationFormSet(request.POST, instance=survey)
         # If the survey is valid then redirect back to the page to reload the changes
         # This will also update the house list

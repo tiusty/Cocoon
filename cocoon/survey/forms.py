@@ -269,6 +269,11 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
     RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurveyForm
     """
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(RentSurveyFormMini, self).__init__(*args, **kwargs)
+
     name_survey = forms.CharField(
         label="Survey Name",
         initial=DEFAULT_RENT_SURVEY_NAME,
@@ -279,6 +284,24 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
             }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
+
+    def is_valid(self):
+        valid = super(RentSurveyFormMini, self).is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        # Make sure the user cannot create a survey with the same name
+        if self.user.userProfile.rentingsurveymodel_set.filter(name_survey=current_form['name_survey']).exists():
+            self.add_error('name_survey', "Survey with that name already exists")
+            valid = False
+
+        return valid
 
     class Meta:
         model = RentingSurveyModel
