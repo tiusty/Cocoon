@@ -23,3 +23,6 @@ cocoon/media
 # Sqlite database #
 db.sqlite3
 
+# The log file generated #
+cocoon.log
+
