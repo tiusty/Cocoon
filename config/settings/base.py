@@ -185,8 +185,8 @@ LOGGING = {
         # Allows for easily seeing if warn errors occurred
         'file': {
             'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': 'cocoon.log',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logCocoon.log',
             'formatter': 'verbose',
         },
     },
