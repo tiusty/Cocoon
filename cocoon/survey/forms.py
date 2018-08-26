@@ -260,7 +260,7 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", ]
+        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", "slug", ]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
@@ -305,7 +305,7 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
 
     class Meta:
         model = RentingSurveyModel
-        exclude = ["user_profile_survey", 'survey_type_survey']
+        exclude = ["user_profile_survey", 'survey_type_survey', 'slug']
 
 
 class CommuteInformationForm(ModelForm):

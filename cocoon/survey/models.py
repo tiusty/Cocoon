@@ -32,6 +32,7 @@ class InitialSurveyModel(models.Model):
     survey_type_survey = models.IntegerField(default=-1)
     created_survey = models.DateField(auto_now_add=True)
     user_profile_survey = models.ForeignKey(UserProfile)
+    slug = models.SlugField(max_length=100)
 
     @property
     def name(self):
@@ -57,6 +58,14 @@ class InitialSurveyModel(models.Model):
     def user_profile(self, new_user_profile):
         self.user_profile_survey = new_user_profile
 
+    def generate_slug(self):
+        """
+        The slug should just be the name without spaces and with dashes instead.
+        This is because spaces look weird in urls and should be dashes instead
+        :return: (string) -> The generated slug
+        """
+        return self.name.replace(" ", "-")
+
     # Adds functionality to the save method. This checks to see if a survey with the same name
     #   for that user already exists. If it does then delete that survey and save the new one instead
     def save(self, *args, **kwargs):
@@ -64,6 +73,10 @@ class InitialSurveyModel(models.Model):
                 .filter(name_survey=self.name_survey).exists():
             RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile)\
                 .filter(name_survey=self.name_survey).delete()
+
+        # When the model is being saved, make sure to generate the slug associated with the survey.
+        # Since surveys with duplicate names are deleted, then it should guarantee uniqueness
+        self.slug = self.generate_slug()
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     class Meta:
