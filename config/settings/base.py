@@ -144,11 +144,11 @@ LOGGING = {
     # Add different formatters for more verbose logging
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'format': '{levelname} {asctime} {name} {process:d} {thread:d} {message}',
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} {message}',
+            'format': '{levelname} {name} {message}',
             'style': '{',
         },
     },

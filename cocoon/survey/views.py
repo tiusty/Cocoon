@@ -105,7 +105,6 @@ def renting_survey(request):
     context['form'] = form
     context['form_destination'] = destination_form_set
     context['number_of_destinations'] = number_of_destinations
-    logger.error("In the survey rent page")
     return render(request, 'survey/rentingSurvey.html', context)
 
 
