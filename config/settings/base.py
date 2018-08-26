@@ -188,6 +188,8 @@ LOGGING = {
             'class':'logging.handlers.RotatingFileHandler',
             'filename': 'logCocoon.log',
             'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * 15,  # 15MB
+            'backupCount': 10,
         },
     },
     'loggers': {
