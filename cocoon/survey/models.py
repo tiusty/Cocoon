@@ -1,5 +1,6 @@
 # Import Django modules
 from django.db import models
+from django.utils.text import slugify
 
 # Python Modules
 from enum import Enum
@@ -64,19 +65,21 @@ class InitialSurveyModel(models.Model):
         This is because spaces look weird in urls and should be dashes instead
         :return: (string) -> The generated slug
         """
-        return self.name.replace(" ", "-")
+        return slugify(self.name)
 
-    # Adds functionality to the save method. This checks to see if a survey with the same name
+    # Adds functionality to the save method. This checks to see if a survey with the same slug
     #   for that user already exists. If it does then delete that survey and save the new one instead
     def save(self, *args, **kwargs):
+        self.slug = self.generate_slug()
+
+        # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
         if RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile_survey)\
-                .filter(name_survey=self.name_survey).exists():
+                .filter(slug=self.slug).exists():
             RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile)\
-                .filter(name_survey=self.name_survey).delete()
+                .filter(slug=self.slug).delete()
 
         # When the model is being saved, make sure to generate the slug associated with the survey.
         # Since surveys with duplicate names are deleted, then it should guarantee uniqueness
-        self.slug = self.generate_slug()
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     class Meta:

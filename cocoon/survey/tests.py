@@ -983,3 +983,35 @@ class TestRentSurveModelMultipleNames(TestCase):
         self.assertTrue(RentingSurveyModel.objects.filter(name_survey=survey2.name_survey))
         self.assertTrue(RentingSurveyModel.objects.filter(name_survey=survey3.name_survey))
         self.assertTrue(RentingSurveyModel.objects.filter(name_survey=survey4.name_survey))
+
+    def testAddingHomeWithSameSlugDifferentName(self):
+        """
+        Tests that is the name are different but the slug names are the same. Then only one
+            will exist
+        """
+        # Arrange
+        # Create the first survey
+        survey1 = self.create_survey(self.user.userProfile, name="Recents")
+
+        survey2 = self.create_survey(self.user.userProfile, name="Recent's")
+
+        # Assert
+        self.assertEqual(RentingSurveyModel.objects.count(), 1)
+        self.assertTrue(RentingSurveyModel.objects.filter(slug=survey2.slug))
+
+    def testAddingHomeWithSameSlugDifferentNameDifferentUsers(self):
+        """
+        Tests that is the names are different but the slugs names are the same but they
+            are from different users, then they both will exist
+        """
+        # Arrange
+        user2 = MyUser.objects.create(email="test2@test.com")
+        # Create the first survey
+        survey1 = self.create_survey(self.user.userProfile, name="Recents")
+
+        survey2 = self.create_survey(user2.userProfile, name="Recent's")
+
+        # Assert
+        self.assertEqual(RentingSurveyModel.objects.count(), 2)
+        self.assertTrue(RentingSurveyModel.objects.filter(slug=survey1.slug))
+        self.assertTrue(RentingSurveyModel.objects.filter(slug=survey2.slug))

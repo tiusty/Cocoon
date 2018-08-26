@@ -1,6 +1,7 @@
 # Django modules
 from django import forms
 from django.forms import ModelForm
+from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
@@ -296,9 +297,10 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
         # will cause a key error
         current_form = self.cleaned_data.copy()
 
-        # Make sure the user cannot create a survey with the same name
-        if self.user.userProfile.rentingsurveymodel_set.filter(name_survey=current_form['name_survey']).exists():
-            self.add_error('name_survey', "Survey with that name already exists")
+        # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
+        #   will not conflict with a current survey. If it does, force them to choose a new name.
+        if self.user.userProfile.rentingsurveymodel_set.filter(slug=slugify(current_form['name_survey'])).exists():
+            self.add_error('name_survey', "You already have a very similar name, please choose a more unique name")
             valid = False
 
         return valid
