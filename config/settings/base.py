@@ -202,46 +202,60 @@ LOGGING = {
         'cocoon.userAuth': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
 
         # Survey app loggers
         'cocoon.survey': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
         'cocoon.survey.cocoon_algorithm': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
         'cocoon.survey.distance_matrix': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
         'cocoon.survey.home_data': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
         'cocoon.survey.view': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
+        },
+        'cocoon.survey.models': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
 
         # Commute app logger
         'cocoon.commutes': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
 
         # HomePage app logger
         'cocoon.homePage': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
 
         # HouseDatabase app logger
         'cocoon.houseDatabase': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
     },
 }

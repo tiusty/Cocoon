@@ -57,6 +57,15 @@ class InitialSurveyModel(models.Model):
     def user_profile(self, new_user_profile):
         self.user_profile_survey = new_user_profile
 
+    # Adds functionality to the save method. This checks to see if a survey with the same name
+    #   for that user already exists. If it does then delete that survey and save the new one instead
+    def save(self, *args, **kwargs):
+        if RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile_survey)\
+                .filter(name_survey=self.name_survey).exists():
+            RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile)\
+                .filter(name_survey=self.name_survey).delete()
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
     class Meta:
         abstract = True
 
