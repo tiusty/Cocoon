@@ -1,0 +1,59 @@
+{% comment Header %}
+    This html file contains the html code for the list view. The list view displays the first 20 homes
+        in an easy copy and paste format for someone to extract.
+
+    Template Variables:
+        houseList: List(HomeScore) -> The list of homes for the user
+
+{% endcomment %}
+<div class="export-modal">
+    {% for home_score in houseList|slice:"20" %}
+        <div class="home-box">
+            <div>
+                <span class="rank">#{{ forloop.counter }}</span>
+                <span class="address">{{ home_score.home.full_address }}</span>
+            </div>
+            <div class="export-row">
+                <div class="export-col">Score</div>
+                <div class="export-col-val" id="score-item">{{ home_score.user_friendly_score }}</div>
+            </div>
+
+            {% for key, value in home_score.exact_commute_times.items %}
+                <div class="export-row">
+                    <div class="export-col">Commute to {{ key }}</div>
+                    <div class="export-col-val">{{ value|floatformat:"0" }}</div>
+                </div>
+            {% endfor %}
+
+            <div class="export-row">
+                <div class="export-col">Price</div>
+                <div class="export-col-val">{{ home_score.home.price_string }}</div>
+            </div>
+
+            <div class="export-row">
+                <div class="export-col">Bedrooms</div>
+                <div class="export-col-val">{{ home_score.home.num_bedrooms }}</div>
+            </div>
+
+            <div class="export-row">
+                <div class="export-col">Bathrooms</div>
+                <div class="export-col-val">{{ home_score.home.num_bathrooms }}</div>
+            </div>
+
+            <div class="export-row">
+                <div class="export-col">Home Type</div>
+                <div class="export-col-val">{{ home_score.home.home_type }}</div>
+            </div>
+
+            <div class="export-row">
+                <div class="export-col">Air Conditioning</div>
+                <div class="export-col-val">{{ home_score.home.air_conditioning }}</div>
+            </div>
+
+            <div class="export-row">
+                <div class="export-col">Remarks</div>
+                <div class="export-col-val">{{ home_score.home.remarks }}</div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

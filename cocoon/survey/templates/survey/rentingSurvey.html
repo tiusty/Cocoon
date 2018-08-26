@@ -183,22 +183,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {% comment %}
-                                Not currently needed so commenting out
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
-                                                Something else 2</a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse3" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                        </div>
-                                    </div>
-                                </div>
-
-                            {% endcomment %}
                             </div>
                         </div>
 
@@ -216,13 +200,23 @@
 {% block endScripts %}
     {{ block.super }}
 <script>
-    // Default values for sliders
-    commuteSliderMin = 0;
-    commuteSliderMax = 60;
-    costSliderMax = 2000;
-    costSliderMin = 1500;
-    bathroomsMin = 0;
-    bathroomsMax = 6;
+    {% comment %}
+       The initialize values to load the commute sliders to
+    {% endcomment %}
+    commuteSliderMinInit = 0;
+    commuteSliderMaxInit = 60;
+
+    {% comment %}
+       The initialize values to load the cost sliders to
+    {% endcomment %}
+    costSliderMaxInit = 2000;
+    costSliderMinInit = 1500;
+
+    {% comment %}
+       The initialize values to load the bathroom sliders
+    {% endcomment %}
+    bathroomsMinInit = 0;
+    bathroomsMaxInit = 6;
     $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 

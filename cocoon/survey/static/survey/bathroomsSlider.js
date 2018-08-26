@@ -10,7 +10,7 @@ $( function() {
         min: 0,
         max: 6,
         //step: .5,
-        values: [ bathroomsMin , bathroomsMax ],
+        values: [ bathroomsMinInit , bathroomsMaxInit ],
         slide: function( event, ui ) {
             $( "#amountBathrooms" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
             $( "#id_min_bathrooms_survey").val(ui.values[0]);

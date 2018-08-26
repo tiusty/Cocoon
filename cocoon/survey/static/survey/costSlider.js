@@ -7,7 +7,7 @@ $( function() {
         min: 0,
         max: 5000,
         step: 50,
-        values: [ costSliderMin, costSliderMax ],
+        values: [ costSliderMinInit, costSliderMaxInit ],
         slide: function( event, ui ) {
             $( "#amountCost" ).val( "Want To Pay: $" + ui.values[ 0 ].toLocaleString() + " - Max: $" + ui.values[ 1 ].toLocaleString() );
             $( "#id_desired_price_survey").val(ui.values[0]);

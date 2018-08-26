@@ -2,472 +2,228 @@
 {% load static %}
 {% block title %}Survey Result{% endblock %}
 
-{% comment %}
-Global variables are listed below
-{% endcomment %}
-
 {% block head %}
-  {{ block.super }}
-  <!-- JQuery UI style sheet, mostly used for slider ui -->
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    {{ block.super }}
+    <!-- JQuery UI style sheet, mostly used for slider ui -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-  <!-- Style sheets for template page -->
-  <link href="{% static 'Unicorn/homes/css/tiles.css' %}" rel="stylesheet">
-  <link href="{% static 'survey/dashboard.css' %}" rel="stylesheet">
-  <link href="{% static 'survey/GoogleMapStyle.css' %}" rel="stylesheet">
-  <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
-  <link href="{% static 'survey/sidebarnav.css' %}" rel="stylesheet">
-  <link href="{% static 'survey/compiledResults.css'%}" rel="stylesheet">
+    <!-- Style sheets for template page -->
+    <link href="{% static 'Unicorn/homes/css/tiles.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/GoogleMapStyle.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/sidebarnav.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/compiledResults.css' %}" rel="stylesheet">
 {% endblock %}
 
-{% block nav-survey %}
-  <li class="active"><a>Survey</a></li>{% endblock %}
+{% block container_type %}
+    container-fluid
+{% endblock %}
 
-{% block container_type %}container-fluid{% endblock %}
 {% block content %}
+    <div class="row" id="row-main">
 
-  {% comment %}
-    <h3>Note all the homes currently have a move in day of Feburary if you are wondering why nothing shows up</h3>
-    {% endcomment %}
-  {% comment %}
-        Modal assumes it is being called within a for loop
-    {% endcomment %}
-  {% for houseStruct in houseList %}
-    <!-- Modal -->
-    {% with house=houseStruct.house %}
-      {% include "homes/homeModal.html" with modalId="myModal" %}
-    {% endwith %}
-  {% endfor %}
-  <div class="row" id="row-main">
-    <div id="sidebarSurvey" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
-        {{ form.non_field_errors }}
-        {{ form.errors }}
-        {% csrf_token %}
-        <div class="form-group step_div">
-          <div class="form-group">
-            {{ form.name_survey.label_tag }}
-            {{ form.name_survey }}
-            {{ form.name_survey.errors }}
-          </div>
-          <div class="form-group">
-            {{ form.num_bedrooms_survey.label_tag }}
-            {{ form.num_bedrooms_survey }}
-            {{ form.num_bedrooms_survey.errors }}
-          </div>
-          <div class="form-group">
-            {{ form.home_type_survey.label_tag }}
-            {{ form.home_type_survey }}
-            {{ form.home_type_survey.errors }}
-          </div>
-          <div class="form-group">
-            <label for="amountCost">Cost Per Month:</label>
-            <input type="text" id="amountCost" name="amountCost" readonly
-                   size="30" style="border:0; color:#f6931f; font-weight:bold;">
-            <div id="cost"></div>
-            {{ form.desired_price_survey }}
-            {{ form.max_price_survey }}
-          </div>
-          <div class="form-group">
-            {{ form.price_weight_survey.label_tag }}
-            {{ form.price_weight_survey }}
-            {{ form.price_weight_survey.errors }}
-          </div>
-          <br>
-            {% include "survey/helpers/commuter_form.html" %}
-            <br>
-          <br>
-        </div>
-        <div class="form-group">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-                    Interior Amenities</a>
-                </h4>
-              </div>
-              <div id="collapse1" class="panel-collapse collapse in">
-                <div class="panel-body">
-                  <p>
-                    {{ form.air_conditioning_survey.label_tag }}
-                    {{ form.air_conditioning_survey }}
-                    {{ form.air_conditioning_survey.errors }}
-                  </p>
+        {% comment %}
+            Adds in the rent_mini_survey
+        {% endcomment %}
+        {% include "survey/helpers/rent_mini_survey.html" %}
 
-                  <p>
-                    {{ form.interior_washer_dryer_survey.label_tag }}
-                    {{ form.interior_washer_dryer_survey }}
-                    {{ form.interior_washer_dryer_survey.errors }}
-                  </p>
+        <div class="nopadding-row row main" id="contentSurvey">
 
-                  <p>
-                    {{ form.dish_washer_survey.label_tag }}
-                    {{ form.dish_washer_survey }}
-                    {{ form.dish_washer_survey.errors }}
-                  </p>
-
-                  <p>
-                    {{ form.bath_survey.label_tag }}
-                    {{ form.bath_survey }}
-                    {{ form.bath_survey.errors }}
-                  </p>
-
-                  <p>
-                    <label for="amountBathrooms"># Bathrooms:</label>
-                    <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
-                           style="border:0; color:#f6931f; font-weight:bold;">
-                  <div id="bathrooms"></div>
-                  {{ form.min_bathrooms_survey }}
-                  {{ form.max_bathrooms_survey }}
-                  {{ form.min_bathrooms_survey.errors }}
-                  {{ form.max_bathrooms_survey.errors }}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
-                    Building/Exterior Amentities</a>
-                </h4>
-              </div>
-              <div id="collapse2" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <p>
-                    {{ form.parking_spot_survey.label_tag }}
-                    {{ form.parking_spot_survey }}
-                    {{ form.parking_spot_survey.errors }}
-                  </p>
-                  <p>
-                    {{ form.building_washer_dryer_survey.label_tag }}
-                    {{ form.building_washer_dryer_survey }}
-                    {{ form.building_washer_dryer_survey.errors }}
-                  </p>
-                  <p>
-                    {{ form.elevator_survey.label_tag }}
-                    {{ form.elevator_survey }}
-                    {{ form.elevator_survey.errors }}
-                  </p>
-                  <p>
-                    {{ form.handicap_access_survey.label_tag }}
-                    {{ form.handicap_access_survey }}
-                    {{ form.handicap_access_survey.errors }}
-                  </p>
-                  <p>
-                    {{ form.pool_hot_tub_survey.label_tag }}
-                    {{ form.pool_hot_tub_survey }}
-                    {{ form.pool_hot_tub_survey.errors }}
-                  </p>
-                  <p>
-                    {{ form.fitness_center_survey.label_tag }}
-                    {{ form.fitness_center_survey }}
-                    {{ form.fitness_center_survey.errors }}
-                  </p>
-                  <p>
-                    {{ form.storage_unit_survey.label_tag }}
-                    {{ form.storage_unit_survey }}
-                    {{ form.storage_unit_survey.errors }}
-                  </p>
-                </div>
-              </div>
-            </div>
             {% comment %}
-                                Not currently needed so commenting out
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
-                                                Something else 2</a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse3" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                        </div>
-                                    </div>
-                                </div>
+                Adds any error messages associated with the page
+            {% endcomment %}
+            {% if error_message %}
+                <div class="col-sm-12" style="text-align:center">
+                    <div style="color:red">
+                        <p><strong>
+                            {% for error in error_message %}
+                                {{ error }}
+                            {% endfor %}
+                        </strong></p>
+                    </div>
+                </div>
+            {% endif %}
 
-                            {% endcomment %}
-          </div>
-        </div>
-        <div class="form-group">
-          <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
-        </div>
-      </form>
-    </div>
-    <div class="nopadding-row row main" id="contentSurvey">
-      {% if error_message %}
-        <div class="col-sm-12" style="text-align:center">
-          <div style="color:red">
-            <p><strong>
-              {% for error in error_message %}
-                {{ error }}
-              {% endfor %}
-            </strong></p>
-          </div>
-        </div>
-      {% endif %}
 
-      <div class="nopadding-row row">
-        <div class="row">
-          <div class="col-sm-6">
-            <button class="btn expand-btn" onclick="toggleList()">List View</button>
-          </div>
-        </div>
-        <div class="export-modal">
-          {% for home_score in houseList|slice:"20" %}
-            <div class="home-box">
-              <div>
-                <span class="rank">#{{forloop.counter}}</span>
-                <span class="address">{{home_score.home.full_address}}</span>
-              </div>
-                <div class="export-row">
-                  <div class="export-col">Score</div>
-                  <div class="export-col-val" id="score-item">{{home_score.user_friendly_score}}</div>
+            {% comment %}
+                Adds the button to get the list view for the homes
+            {% endcomment %}
+            <div class="nopadding-row row">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <button class="btn expand-btn" onclick="toggleList()">List View</button>
+                    </div>
                 </div>
 
-                {% for key, value in home_score.exact_commute_times.items %}
-                  <div class="export-row">
-                    <div class="export-col">Commute to {{key}}</div>
-                    <div class="export-col-val">{{value|floatformat:"0"}}</div>
-                  </div>
-                {% endfor %}
+                {% comment %}
+                    Adds the template code for the list view pop down. It is hidden by default and must be triggered
+                       by clicking the button
+                {% endcomment %}
+                {% include 'survey/helpers/list_view.html' %}
 
-                <div class="export-row">
-                  <div class="export-col">Price</div>
-                  <div class="export-col-val">{{home_score.home.price_string}}</div>
+                {% comment %}
+                    Adds the button to open the rent mini survey
+                {% endcomment %}
+                <div class="nopadding col-sm-6">
+                    <h1 class="page-header">
+                        <span style="margin-left:10px;font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
+                    </h1>
+                    <div class="map_wrapper">
+                        <div id="map"></div>
+                    </div>
+
                 </div>
 
-                <div class="export-row">
-                  <div class="export-col">Bedrooms</div>
-                  <div class="export-col-val">{{home_score.home.num_bedrooms}}</div>
-                </div>
+                {% comment %}
+                    Displays the homes with the information for the user
+                {% endcomment %}
+                <div class="resultTiles col-sm-6">
+                    <h1 class="page-header">Home List</h1>
 
-                 <div class="export-row">
-                  <div class="export-col">Bathrooms</div>
-                  <div class="export-col-val">{{home_score.home.num_bathrooms}}</div>
-                </div>
+                    <div class="tileTable">
+                        <script>
 
-                 <div class="export-row">
-                  <div class="export-col">Home Type</div>
-                  <div class="export-col-val">{{home_score.home.home_type}}</div>
-                </div>
+                            // initializing the pin object
+                            function locationPin(lat, lon, id, score, fillColor) {
+                                this.latitude = lat;
+                                this.longitude = lon;
+                                this.pinID = id;
+                                this.label = score;
+                                this.color = fillColor;
+                            }
 
-                <div class="export-row">
-                  <div class="export-col">Air Conditioning</div>
-                  <div class="export-col-val">{{home_score.home.air_conditioning}}</div>
-                </div>
+                            function colorFromScore(score) {
+                                if (score > 86) {
+                                    return 'green';
+                                } else if (score > 79) {
+                                    return '#CDDC39';
+                                } else if (score > 69) {
+                                    return '#FFC107';
+                                } else if (score > 59) {
+                                    return '#FF6D00';
+                                } else {
+                                    return '#DD2C00';
+                                }
+                            }
 
-                <div class="export-row">
-                  <div class="export-col">Remarks</div>
-                  <div class="export-col-val">{{home_score.home.remarks}}</div>
+                            var myLocations = [];
+
+                        </script>
+
+                        {% for home_score in houseList %}
+
+                            {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score %}
+
+                            <script>
+                                var lat = {{ home_score.home.latitude|safe }};
+                                var lon = {{ home_score.home.longitude|safe }};
+                                var id = {{ forloop.counter }};
+                                var score = {{ home_score.user_friendly_score }};
+                                var color = colorFromScore({{ home_score.user_friendly_score }});
+
+                                // associate a pin with each result
+                                myLocations.push(new locationPin(lat, lon, id, score.toString(), color.toString()));
+
+                            </script>
+
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-          {% endfor %}
         </div>
-
-        <div class="nopadding col-sm-6">
-          <h1 class="page-header">
-            <span style="margin-left:10px;font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
-          </h1>
-          <div class="map_wrapper">
-            <div id="map"></div>
-          </div>
-
-        </div>
-
-        {# Beginning of the new tile survey result list #}
-        <div class="resultTiles col-sm-6">
-          <h1 class="page-header">Home List</h1>
-
-          <div class="tileTable">
-            <script>
-
-                // initializing the pin object
-                function locationPin(lat, lon, id, score, fillColor) {
-                    this.latitude = lat;
-                    this.longitude = lon;
-                    this.pinID = id;
-                    this.label = score;
-                    this.color = fillColor;
-                }
-
-                function colorFromScore(score) {
-                    if (score > 86) {
-                        return 'green';
-                    } else if (score > 79) {
-                        return '#CDDC39';
-                    } else if (score > 69) {
-                        return '#FFC107';
-                    } else if (score > 59) {
-                        return '#FF6D00';
-                    } else {
-                        return '#DD2C00';
-                    }
-                }
-
-                var myLocations = [];
-
-            </script>
-
-            {% for home_score in houseList %}
-
-              {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score%}
-
-              <script>
-                  var lat = {{ home_score.home.latitude|safe }};
-                  var lon = {{ home_score.home.longitude|safe }};
-                  var id = {{ forloop.counter }};
-                  var score = {{ home_score.user_friendly_score }};
-                  var color = colorFromScore({{ home_score.user_friendly_score }});
-
-                  console.log(colorFromScore({{ home_score.user_friendly_score }}));
-
-                  // associate a pin with each result
-
-                  myLocations.push(new locationPin(lat, lon, id, score.toString(), color.toString()));
-
-              </script>
-
-            {% endfor %}
-
-          </div>
-        </div>
-
-      </div>
     </div>
-  </div>
 {% endblock %}
 
 {% block endScripts %}
-  {{ block.super }}
+    {{ block.super }}
 
-  {% comment %}Variables for google map generating with markers and for sliders {% endcomment %}
-  <script>
-      {% comment endScritps %}
-      // Deprecating computing commute time and distance in favor of doing in on the server side
-      // Going to keep the portions that create the markers on the map
-      {% endcomment %}
-      var myStreetAddresses = [{% for commuter in commuters %}"{{ commuter.full_address }}",{% endfor %}];
-      var myDestinations = [{% for dest in houseList %}[{{ dest.house.latitude|safe }}, {{ dest.house.longitude|safe }}
-          ],{% endfor %}];
-      // Manipulated by survey_result.js in selectAddress
-      //var myDestination = "{{ houseList.0.address }}";
-      // Manipulated by costSliderResults.js
-      costSliderMax = {{ form.max_price_survey.value }};
-      costSliderMin = {{ form.desired_price_survey.value }};
-      {% comment %}
-            Determines the correct commute slider values. This is just used when the page loads. This grabs the first
-                form in the formset and sets the max and commute values to it. This is because the first form is the
-                form that is loaded. After that, the loaded javascript takes care of the values.
+    {% comment %}Variables for google map generating with markers and for sliders {% endcomment %}
+    <script>
+        {% comment endScritps %}
+        // Deprecating computing commute time and distance in favor of doing in on the server side
+        // Going to keep the portions that create the markers on the map
+        {% endcomment %}
+        var myStreetAddresses = [{% for commuter in commuters %}"{{ commuter.full_address }}",{% endfor %}];
 
-            The double for loop is needed because the first one just extracts the first form.
-            The second one extras the items from the dictionary for the initial values of the form fields.
+        {% comment %}
+           The initialize values to load the cost sliders to
+        {% endcomment %}
+        costSliderMaxInit = {{ form.max_price_survey.value }};
+        costSliderMinInit = {{ form.desired_price_survey.value }};
 
-            Only save the javascript variables if the values exist in the formset
-      {% endcomment %}
-      {% for dest_form in form_destination|slice:"1" %}
-          {% for key, value in dest_form.initial.items %}
-              {% ifequal key "min_commute" %}
-                  commuteSliderMin = {{ value }};
-              {% endifequal %}
-              {% ifequal key "max_commute" %}
-                  commuteSliderMax = {{ value }};
-              {% endifequal %}
-          {% endfor %}
-      {% endfor %}
-      bathroomsMin = {{ form.min_bathrooms_survey.value }};
-      bathroomsMax = {{ form.max_bathrooms_survey.value }};
-  </script>
+        {% comment %}
+              Determines the correct commute slider values. This is just used when the page loads. This grabs the first
+                  form in the formset and sets the max and commute values to it. This is because the first form is the
+                  form that is loaded. After that, the loaded javascript takes care of the values.
 
-  {#    <script src="{% static 'homePage/carousel.js' %}"></script>#}
-  <script src="{% static 'survey/tileCarousel.js' %}"></script>
-  <!-- Custom Javascript -->
-  {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
-  <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
-  {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
-  <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
-  {% comment %}This script adds the set_favorite function which allows the user to toggle a home in their favorites list{% endcomment %}
-  <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
-  <script src="{% static 'survey/costSlider.js' %}"></script>
-  <script src="{% static 'survey/commuteSlider.js' %}"></script>
-  <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
+              The double for loop is needed because the first one just extracts the first form.
+              The second one extras the items from the dictionary for the initial values of the form fields.
 
-  <!-- Loading scripts at the end to increase loading times -->
-  <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
-  <script src="{% static 'survey/tileInteraction.js' %}"></script>
-  <script src="{% static 'survey/survey_result.js' %}"></script>
-  <script src="{% static 'survey/addMarkers.js' %}"></script>
-  <script src="{% static 'survey/addGoogleMap.js' %}"></script>
-  <script src="{% static 'survey/expandTile.js' %}"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&callback=initMap"
-  type="text/javascript"></script>
+              Only save the javascript variables if the values exist in the formset
+        {% endcomment %}
+        {% for dest_form in form_destination|slice:"1" %}
+            {% for key, value in dest_form.initial.items %}
+                {% ifequal key "min_commute" %}
+                    commuteSliderMinInit = {{ value }};
+                {% endifequal %}
+                {% ifequal key "max_commute" %}
+                    commuteSliderMaxInit = {{ value }};
+                {% endifequal %}
+            {% endfor %}
+        {% endfor %}
 
-  <!-- JQuery UI for sliders -->
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-  <script src="{% static 'survey/markerclusterer.js' %}"></script>
-
-  <script src="{% static 'survey/displaylist.js' %}">
-
-  </script>
-
-  <script>
-
-    /* Set the width of the side navigation to 250px */
-    function openNav() {
-        document.getElementById("sidebarSurvey").classList.add("openNav");
-        $('.sidenav').css("height", $(document).height() - $('.navbar').height() - $('.footer').height());
-
-        if ($(window).width() < 768) {
-            document.getElementById("sidebarSurvey").style.width = "100%";
-        } else if ($(window).width() < 900) {
-            document.getElementById("sidebarSurvey").style.width = "60%";
-        } else {
-            document.getElementById("sidebarSurvey").style.width = "40%";
-        }
-    }
-
-    $(window).resize(function () {
-        if ($(this).width() <= 768) {
-
-            if ($('.openNav').length) {
-                document.getElementById("sidebarSurvey").style.width = "100%";
-
-            }
+        {% comment %}
+           The initialize values to load the bathroom sliders
+        {% endcomment %}
+        bathroomsMinInit = {{ form.min_bathrooms_survey.value }};
+        bathroomsMaxInit = {{ form.max_bathrooms_survey.value }};
+    </script>
 
 
-        } else if ($(window).width() < 900) {
+    <script src="{% static 'survey/javascript/rent_survey_mini_form.js' %}"></script>
+    <script src="{% static 'survey/tileCarousel.js' %}"></script>
 
-            if ($('.openNav').length) {
-                document.getElementById("sidebarSurvey").style.width = "60%";
+    {% comment %}Loads Javascript files necessary for Ajac requests{% endcomment %}
+    {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
+    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+    {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
+    <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    {% comment %}This script adds the set_favorite function which allows the user to toggle a home in their favorites list{% endcomment %}
+    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
 
-            }
+    {% comment %}Loads the sliders {% endcomment %}
+    <script src="{% static 'survey/costSlider.js' %}"></script>
+    <script src="{% static 'survey/commuteSlider.js' %}"></script>
+    <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
 
-        } else {
+    <!-- Loading scripts at the end to increase loading times -->
+    <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
+    <script src="{% static 'survey/tileInteraction.js' %}"></script>
+    <script src="{% static 'survey/survey_result.js' %}"></script>
+    <script src="{% static 'survey/addMarkers.js' %}"></script>
+    <script src="{% static 'survey/addGoogleMap.js' %}"></script>
+    <script src="{% static 'survey/expandTile.js' %}"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&callback=initMap"
+            type="text/javascript"></script>
 
-            if ($('.openNav').length) {
-                document.getElementById("sidebarSurvey").style.width = "40%";
-
-            }
-
-        }
-    })
+    <!-- JQuery UI for sliders -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
-    /* Set the width of the side navigation to 0 */
-    function closeNav() {
-        document.getElementById("sidebarSurvey").style.width = "0";
-        document.getElementById("sidebarSurvey").classList.remove("openNav")
-    }
+    <script src="{% static 'survey/markerclusterer.js' %}"></script>
+    <script src="{% static 'survey/displaylist.js' %}">
 
-    var markerCluster = new MarkerClusterer(map, markers, {
-        imagePath: "{% static 'survey/images/m' %}"
-    });
+    </script>
 
-  </script>
+    <script>
+
+
+        var markerCluster = new MarkerClusterer(map, markers, {
+            imagePath: "{% static 'survey/images/m' %}"
+        });
+
+    </script>
 
 
 
