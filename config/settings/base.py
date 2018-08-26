@@ -144,11 +144,11 @@ LOGGING = {
     # Add different formatters for more verbose logging
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'format': '{levelname} {asctime} {name} {process:d} {thread:d} {message}',
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} {message}',
+            'format': '{levelname} {name} {message}',
             'style': '{',
         },
     },
@@ -185,12 +185,17 @@ LOGGING = {
         # Allows for easily seeing if warn errors occurred
         'file': {
             'level': 'WARNING',
-            'class': 'logging.FileHandler',
-            'filename': 'cocoon.log',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logCocoon.log',
             'formatter': 'verbose',
         },
     },
     'loggers': {
+
+        'django': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+        },
 
         # Catch all logger
         'cocoon': {
