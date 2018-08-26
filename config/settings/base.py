@@ -195,7 +195,7 @@ LOGGING = {
         'django': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': False,
         },
 
         # Catch all logger
