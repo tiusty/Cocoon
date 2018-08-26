@@ -24,6 +24,9 @@ from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
 from cocoon.survey.forms import RentSurveyForm, RentingDestinationsForm, RentSurveyFormMini
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 @login_required
 def renting_survey(request):
@@ -102,6 +105,7 @@ def renting_survey(request):
     context['form'] = form
     context['form_destination'] = destination_form_set
     context['number_of_destinations'] = number_of_destinations
+    logger.error("In the survey rent page")
     return render(request, 'survey/rentingSurvey.html', context)
 
 

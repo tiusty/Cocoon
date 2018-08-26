@@ -192,6 +192,12 @@ LOGGING = {
     },
     'loggers': {
 
+        'django': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+
         # Catch all logger
         'cocoon': {
             'handlers': ['console', 'mail_admins', 'file'],
