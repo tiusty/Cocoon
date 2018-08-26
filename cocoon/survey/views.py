@@ -76,12 +76,6 @@ def renting_survey(request):
 
             if destination_form_set.is_valid():
 
-                # Try seeing if there is already a recent survey and if there is
-                # Then delete it. We only want to keep one "recent" survey
-                # The user has the option to change the name of it to save it permanently
-                RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
-                    name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
-
                 # Only if all the forms validate will we save it to the database
                 rent_survey.save()
                 form.save_m2m()
