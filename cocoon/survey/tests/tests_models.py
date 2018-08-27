@@ -158,7 +158,7 @@ class TestRentSurveyModelMultipleNames(TestCase):
 
         # Assert
         self.assertEqual(RentingSurveyModel.objects.count(), 1)
-        self.assertTrue(RentingSurveyModel.objects.filter(slug=survey2.slug))
+        self.assertTrue(RentingSurveyModel.objects.filter(url=survey2.url))
 
     def testAddingHomeWithSameSlugDifferentNameDifferentUsers(self):
         """
@@ -174,5 +174,5 @@ class TestRentSurveyModelMultipleNames(TestCase):
 
         # Assert
         self.assertEqual(RentingSurveyModel.objects.count(), 2)
-        self.assertTrue(RentingSurveyModel.objects.filter(slug=survey1.slug))
-        self.assertTrue(RentingSurveyModel.objects.filter(slug=survey2.slug))
+        self.assertTrue(RentingSurveyModel.objects.filter(url=survey1.url))
+        self.assertTrue(RentingSurveyModel.objects.filter(url=survey2.url))

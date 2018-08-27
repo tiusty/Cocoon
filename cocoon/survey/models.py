@@ -33,7 +33,7 @@ class InitialSurveyModel(models.Model):
     survey_type_survey = models.IntegerField(default=-1)
     created_survey = models.DateField(auto_now_add=True)
     user_profile_survey = models.ForeignKey(UserProfile)
-    slug = models.SlugField(max_length=100)
+    url = models.SlugField(max_length=100)
 
     @property
     def name(self):
@@ -70,13 +70,13 @@ class InitialSurveyModel(models.Model):
     # Adds functionality to the save method. This checks to see if a survey with the same slug
     #   for that user already exists. If it does then delete that survey and save the new one instead
     def save(self, *args, **kwargs):
-        self.slug = self.generate_slug()
+        self.url = self.generate_slug()
 
         # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
         if RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile_survey)\
-                .filter(slug=self.slug).exists():
+                .filter(url=self.url).exists():
             RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile)\
-                .filter(slug=self.slug).delete()
+                .filter(url=self.url).delete()
 
         # When the model is being saved, make sure to generate the slug associated with the survey.
         # Since surveys with duplicate names are deleted, then it should guarantee uniqueness

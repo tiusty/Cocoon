@@ -261,7 +261,7 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", "slug", ]
+        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", "survey_url", ]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
@@ -300,7 +300,7 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
         # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
         #   will not conflict with a current survey. If it does, force them to choose a new name.
         if 'name_survey' in self.changed_data:
-            if self.user.userProfile.rentingsurveymodel_set.filter(slug=slugify(current_form['name_survey'])).exists():
+            if self.user.userProfile.rentingsurveymodel_set.filter(url=slugify(current_form['name_survey'])).exists():
                 self.add_error('name_survey', "You already have a very similar name, please choose a more unique name")
                 valid = False
 
@@ -308,7 +308,7 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
 
     class Meta:
         model = RentingSurveyModel
-        exclude = ["user_profile_survey", 'survey_type_survey', 'slug']
+        exclude = ["user_profile_survey", 'survey_type_survey', 'url']
 
 
 class CommuteInformationForm(ModelForm):
