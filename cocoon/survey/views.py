@@ -83,7 +83,7 @@ def renting_survey(request):
 
                 # redirect to survey result on success:
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_url": rent_survey.survey_url}))
+                                                    kwargs={"survey_url": rent_survey.url}))
 
             else:
                 context['error_message'] = "The destination set did not validate"
