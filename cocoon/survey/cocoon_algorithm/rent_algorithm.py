@@ -9,8 +9,8 @@ from cocoon.survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 # Import DistanceWrapper
-from cocoon.survey.distance_matrix.distance_wrapper import *
-from cocoon.survey.distance_matrix import compute_approximates
+from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper, Distance_Matrix_Exception
+from cocoon.commutes.distance_matrix import compute_approximates
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):

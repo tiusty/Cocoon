@@ -1,13 +1,14 @@
 import unittest
 from unittest.mock import MagicMock
-from cocoon.survey.distance_matrix import distance_wrapper
-from cocoon.survey.distance_matrix.distance_wrapper import *
+from cocoon.commutes.distance_matrix.distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
+    Over_Query_Limit_Exception, Max_Elements_Exceeded_Exception, Unknown_Error_Exception, Zero_Results_Exception, \
+    distance_matrix, DistanceWrapper
 
 
 class TestDistanceWrapper(unittest.TestCase):
 
     def setUp(self):
-        self.wrapper = distance_wrapper.DistanceWrapper()
+        self.wrapper = DistanceWrapper()
 
     def test_request_denied_exception(self):
         response_obj = {
