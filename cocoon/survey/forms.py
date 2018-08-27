@@ -308,7 +308,7 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
 
     class Meta:
         model = RentingSurveyModel
-        exclude = ["user_profile_survey", 'survey_type_survey', 'survey_url']
+        exclude = ["user_profile_survey", 'survey_type_survey', 'url']
 
 
 class CommuteInformationForm(ModelForm):
