@@ -261,7 +261,11 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", "survey_url", ]
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", ]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
@@ -308,7 +312,11 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
 
     class Meta:
         model = RentingSurveyModel
-        exclude = ["user_profile_survey", 'survey_type_survey', 'url']
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", "name_survey"]
 
 
 class CommuteInformationForm(ModelForm):

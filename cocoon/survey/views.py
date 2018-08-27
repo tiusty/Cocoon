@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.forms import inlineformset_factory
 
 # Import Global config variables
-from config.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
+from config.settings.Global_Config import survey_types
 
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -83,7 +83,7 @@ def renting_survey(request):
 
                 # redirect to survey result on success:
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_url": rent_survey.survey_url}))
+                                                    kwargs={"survey_url": rent_survey.url}))
 
             else:
                 context['error_message'] = "The destination set did not validate"
