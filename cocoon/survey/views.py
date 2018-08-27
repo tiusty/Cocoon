@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.forms import inlineformset_factory
 
 # Import Global config variables
-from config.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
+from config.settings.Global_Config import survey_types
 
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
