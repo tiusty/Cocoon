@@ -4,6 +4,10 @@ from googlemaps import distance_matrix, client
 # import API key from settings
 from config.settings.Global_Config import gmaps_api_key
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
 
 class DistanceWrapper:
     """
@@ -28,16 +32,22 @@ class DistanceWrapper:
         :return: this function does not return
         """
         if error_code == "INVALID_REQUEST":
+            logger.warning("INVALID_REQUEST")
             raise Invalid_Request_Exception()
         elif error_code == "MAX_ELEMENTS_EXCEEDED":
+            logger.warning("MAX_ELEMENTS_EXCEEDED")
             raise Max_Elements_Exceeded_Exception()
         elif error_code == "OVER_QUERY_LIMIT":
+            logger.warning("OVER_QUERY_LIMIT")
             raise Over_Query_Limit_Exception()
         elif error_code == "REQUEST_DENIED":
+            logger.error("REQUEST_DENIED")
             raise Request_Denied_Exception()
         elif error_code == "UNKNOWN_ERROR":
+            logger.warning("UNKNOWN_ERROR")
             raise Unknown_Error_Exception
         elif error_code == "ZERO_RESULTS":
+            logger.warning("ZERO_RESULTS")
             raise Zero_Results_Exception
 
     def interpret_distance_matrix_response(self, response_obj):

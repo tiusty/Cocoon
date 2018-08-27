@@ -11,11 +11,11 @@ class TestDistanceWrapper(unittest.TestCase):
 
     def test_request_denied_exception(self):
         response_obj = {
-           "destination_addresses": [],
-           "error_message": "The provided API key is invalid.",
-           "origin_addresses": [],
-           "rows": [],
-           "status": "REQUEST_DENIED"
+            "destination_addresses": [],
+            "error_message": "The provided API key is invalid.",
+            "origin_addresses": [],
+            "rows": [],
+            "status": "REQUEST_DENIED"
         }
 
         self.assertRaises(Request_Denied_Exception,

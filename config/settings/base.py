@@ -132,3 +132,132 @@ EMAIL_HOST_USER = 'devteam@bostoncocoon.com'
 EMAIL_HOST_PASSWORD = 'projectunicorn2018'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Bostoncocoon Team <devteam@bostoncocoon.com>'
+
+# Admins are sent emails due to logging
+ADMINS = [('Alex Agudelo', 'awagud12@gmail.com')]
+
+# Add logging mechanisms
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    # Add different formatters for more verbose logging
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {name} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {name} {message}',
+            'style': '{',
+        },
+    },
+
+    # Add filters for handlers to determine whether to process log record or not
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+
+    # Determines what to do with the loggers
+    'handlers': {
+        # Console is only logged if Debug=True
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+
+        # An email is only sent if the log comes when Debug=False
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'verbose',
+        },
+
+        # Stores results if the log is greater than warn
+        # Allows for easily seeing if warn errors occurred
+        'file': {
+            'level': 'WARNING',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': 'logCocoon.log',
+            'formatter': 'verbose',
+            'maxBytes': 1024 * 1024 * 15,  # 15MB
+            'backupCount': 10,
+        },
+    },
+    'loggers': {
+
+        'django': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+        },
+
+        # Catch all logger
+        'cocoon': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'WARNING',
+        },
+
+        # UserAuth app loggers
+        'cocoon.userAuth': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+
+        # Survey app loggers
+        'cocoon.survey': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'cocoon.survey.cocoon_algorithm': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'cocoon.survey.distance_matrix': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'cocoon.survey.home_data': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'cocoon.survey.view': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+
+        # Commute app logger
+        'cocoon.commutes': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+
+        # HomePage app logger
+        'cocoon.homePage': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+
+        # HouseDatabase app logger
+        'cocoon.houseDatabase': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

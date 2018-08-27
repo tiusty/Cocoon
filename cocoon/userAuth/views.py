@@ -10,7 +10,7 @@ from django.contrib import messages
 from .forms import LoginUserForm, RegisterForm, ProfileForm
 # Create your views here.
 
-#import global config values
+# import global config values
 from config.settings.Global_Config import creation_key_value
 
 
