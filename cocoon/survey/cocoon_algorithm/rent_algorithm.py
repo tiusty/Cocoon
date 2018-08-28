@@ -10,7 +10,10 @@ from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScor
 
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper, Distance_Matrix_Exception
-from cocoon.commutes.distance_matrix import compute_approximates
+from cocoon.commutes.distance_matrix.update_commutes_cache import update_commutes_cache
+
+# Import Constants from commute module
+from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
@@ -75,43 +78,11 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         are not in the database, the distance matrix is called to calculate the approximate distance and the
         database is updated.
         """
-
-        # 1: Query DB and update when info is there
-        # destination will be a DestinationsModel object
+        update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
         for destination in self.destinations:
-            failed_home_dict = dict()
-            failed_list = []
-            # home_score will be a HomeScore object
-            for home_score in self.homes:
-                in_database = home_score.populate_approx_commutes(home_score.home.zip_code, destination,
-                                                                  destination.commute_type)
-                # Case we have a match
-                # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
-                if not in_database:
-                    failed_list.append((home_score.home.zip_code, home_score.home.state))
-            # Add to the dictionary of failed homes
-            failed_home_dict[(destination.zip_code, destination.state)] = failed_list
-
-            # 2: Use approx handler to compute the failed home distances and update db
-            for destination_zip, origin_list in failed_home_dict.items():
-                try:
-                    compute_approximates.approximate_commute_handler(origin_list, destination_zip,
-                                                                     destination.commute_type)
-                except Distance_Matrix_Exception as e:
-                    print("Caught: " + e.__class__.__name__)
-
-        # 3: Recompute failed homes using new DB data.
-
-        for home in self.homes:
-            if len(home.approx_commute_times) < len(self.destinations):
-                # Recompute missing destinations
-                for destination in self.destinations:
-                    if destination not in home.approx_commute_times:
-                        new_in_database = home.populate_approx_commutes(home.home.zip_code, destination,
-                                                                        destination.commute_type)
-                        if not new_in_database:
-                            # Error: For some reason, the database was not updated, so we mark home for deletion
-                            home.eliminate_home()
+            for home in self.homes:
+                if not home.populate_approx_commutes(home.home.zip_code, destination):
+                    home.eliminate_home()
 
     def retrieve_exact_commutes(self):
         """

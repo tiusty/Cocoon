@@ -1123,6 +1123,7 @@ class TestRetrieveApproximateCommutes(TestCase):
 
         # Assert
         self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {destination: self.commute_distance})
+        self.assertFalse(rent_algorithm.homes[0].eliminated)
 
     def test_retrieve_approx_commutes_in_database_several_homes_several_destinations(self):
         # Arrange

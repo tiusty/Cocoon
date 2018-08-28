@@ -273,7 +273,7 @@ class TestApproxCommute(TestCase):
                                               city="Los Angeles", state="California", zip_code=self.zip_code1)
         destination1 = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
                                                city="Los Angeles", state="California", zip_code=self.zip_code2)
-        destination2 = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
+        destination2 = self.create_destination(survey, self.commute_type_walking, street_address="101 Test Street",
                                                city="Los Angeles", state="California", zip_code=self.zip_code)
 
         parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
@@ -281,14 +281,14 @@ class TestApproxCommute(TestCase):
                                               self.commute_distance, self.commute_type)
 
         # Act
-        ret1 = home_score.populate_approx_commutes(self.zip_code, destination, self.commute_type)
-        ret2 = home_score.populate_approx_commutes(self.zip_code, destination1, self.commute_type)
-        ret3 = home_score.populate_approx_commutes("00000", destination, self.commute_type)
-        ret4 = home_score.populate_approx_commutes(self.zip_code, destination2, self.commute_type_walking)
+        ret1 = home_score.populate_approx_commutes(self.zip_code, destination)
+        ret2 = home_score.populate_approx_commutes(self.zip_code, destination1)
+        ret3 = home_score.populate_approx_commutes("00000", destination)
+        ret4 = home_score.populate_approx_commutes(self.zip_code, destination2)
 
         # Assert
         self.assertEqual(ret1, True)
         self.assertEqual(home_score.approx_commute_times, {destination: 100.0})
         self.assertEqual(ret2, False)
         self.assertEqual(ret3, False)
-        self.assertEqual(ret4, False)
+        self.assertEqual(ret4, True)

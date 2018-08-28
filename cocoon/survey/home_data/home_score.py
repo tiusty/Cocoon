@@ -1,5 +1,6 @@
 from cocoon.commutes.models import ZipCodeBase, ZipCodeChild
 
+from cocoon.commutes.constants import GoogleCommuteNaming
 
 class HomeScore(object):
     # noinspection SpellCheckingInspection
@@ -101,20 +102,38 @@ class HomeScore(object):
         """
         self._exact_commute_times_minutes.update(new_exact_commute_time)
 
-    def populate_approx_commutes(self, origin_zip, destination, commute_type_query):
+    def populate_approx_commutes(self, origin_zip, destination):
         """
-        Queries the ZipCode database to attempt to populate this HomeScore's approximate commute dictionary.
-        Returns True on success, False on failure.
+        Based on the commute type of the destination, this function determines the algorithm method that will
+            be used to generate the approximation
+        :param origin_zip: (string) -> The zip code of the origin, i.e '02476'
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
-        :param commute_type_query: (CommuteType) commute_type, eg. "Driving"
-        :return (Boolean): True on success, False on failure.
+        :return (Boolean): True if a valid pair match is found, False otherwise.
+        """
+        if destination.commute_type.commute_type == GoogleCommuteNaming.DRIVING:
+            return self.zip_code_approximation(origin_zip, destination)
+        elif destination.commute_type.commute_type == GoogleCommuteNaming.TRANSIT:
+            return self.zip_code_approximation(origin_zip, destination)
+        elif destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING:
+            return True
+        elif destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
+            return True
+
+    def zip_code_approximation(self, origin_zip, destination):
+        """
+        This is the zip_code_approximation algorithm. This assumes that the zip-code cache is already updated
+            and that all the valid pairs are already generated. This just goes through and finds the valid pairs
+            for the given zipcode and the destination
+        :param origin_zip: (string) -> The zip code of the origin, i.e home
+        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
+        :return (Boolean): True if a valid pair exists, False otherwise.
         """
         parent_zip_code_dictionary = ZipCodeBase.objects.filter(zip_code__exact=origin_zip)
         if parent_zip_code_dictionary.exists():
             for parent in parent_zip_code_dictionary:
                 zip_code_dictionary = ZipCodeChild.objects.filter(
-                    base_zip_code_id=parent).filter(zip_code__exact=destination.zip_code)\
-                    .filter(commute_type=commute_type_query)
+                    base_zip_code_id=parent).filter(zip_code__exact=destination.zip_code) \
+                    .filter(commute_type=destination.commute_type)
                 if zip_code_dictionary.exists():
                     for match in zip_code_dictionary:
                         if match.zip_code_cache_still_valid():
