@@ -245,11 +245,13 @@ class TestApproxCommute(TestCase):
             commute_weight=commute_weight,
             max_commute=max_commute,
             min_commute=min_commute,
+
         )
 
     @staticmethod
     def create_home(home_type, price=1500,
-                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2,
+                    zip_code="02476", state="MA", latitude=0.0, longitude=0.0):
         return HomeScore(RentDatabaseModel.objects.create(
             home_type_home=home_type,
             price_home=price,
@@ -258,6 +260,8 @@ class TestApproxCommute(TestCase):
             num_bathrooms_home=num_bathrooms,
             zip_code_home=zip_code,
             state_home=state,
+            latitude_home=latitude,
+            longitude_home=longitude,
         ))
 
     @staticmethod
@@ -433,3 +437,56 @@ class TestApproxCommute(TestCase):
         self.assertFalse(result)
         # Convert to minutes because that is what is returned
         self.assertEqual(home.approx_commute_times, {})
+
+    def test_lat_lng_approximation_bicycling(self):
+        """
+        Tests that the lat_lng approximation for for bicycling
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        destination = self.create_destination(survey, commute_type_bicycling)
+
+        # Act
+        result = home.lat_lng_approximation(home.home, destination, (42.4080528, -71.1632442),
+                                            average_speed=AVERAGE_BICYCLING_SPEED)
+
+        # Assert
+        self.assertTrue(result)
+        self.assertAlmostEqual(home.approx_commute_times[destination], 14.0775, places=3)
+
+    def test_lat_lng_approximation_walking(self):
+        """
+        Tests that the lat lng approximation works for walking
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
+        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+
+        # Act
+        result = home.lat_lng_approximation(home.home, destination, (42.4080528, -71.1632442),
+                                            average_speed=AVERAGE_WALKING_SPEED)
+
+        # Assert
+        self.assertTrue(result)
+        self.assertAlmostEqual(home.approx_commute_times[destination], 35.8404, places=3)
+
+    def test_lat_lng_approximation_average_speed_zero(self):
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.408021, longitude=-71.163222)
+        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+
+        # Act
+        result = home.lat_lng_approximation(home.home, destination, (42.415656, -71.165393),
+                                            average_speed=0)
+
+        # Assert
+        self.assertFalse(result)
+        self.assertEqual(home.approx_commute_times, {})
+
+

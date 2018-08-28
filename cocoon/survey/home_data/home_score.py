@@ -113,6 +113,7 @@ class HomeScore(object):
             be used to generate the approximation
         :param home: (RentDatabaseModel) -> The home that the user is computing for
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
+        :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
         :return (Boolean): True if a valid pair match is found, False otherwise.
         """
         if destination.commute_type.commute_type == GoogleCommuteNaming.DRIVING:
@@ -125,8 +126,24 @@ class HomeScore(object):
             return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
 
     def lat_lng_approximation(self, home, destination, lat_lng_dest, average_speed):
+        """
+        This function given a home and a destination will determine the distance between the two homes based off of the
+            lat and lng points. Then once the distance is determined, then the commute time is determined based off of
+            the average speed.
+        :param home: (RentDatabaseModel) -> The home that the user is computing for
+        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
+        :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
+        :param average_speed: (int) -> The average speed in mph that the person moves for the given mode of transport
+        :return: (Boolean): -> True: The home approximation was found and added
+                               False: The home was not able to have a approximation created
+        """
+        # Stores the lat and lng points for the home
         lat_lng_home = (home.latitude, home.longitude)
+
+        # Returns the distance from the two lat lng points in miles
         distance = geopy.distance.geodesic(lat_lng_home, lat_lng_dest).miles
+
+        # If the distance is less than a mile then don't add any distance since it is already so close
         if distance > 1:
             # Extra distance is determined by giving more distance to homes farther away
             extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/math.sqrt(distance))
@@ -145,7 +162,7 @@ class HomeScore(object):
         """
         This is the zip_code_approximation algorithm. This assumes that the zip-code cache is already updated
             and that all the valid pairs are already generated. This just goes through and finds the valid pairs
-            for the given zipcode and the destination
+            for the given zip_code and the destination
         :param origin_zip: (string) -> The zip code of the origin, i.e home
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
         :return (Boolean): True if a valid pair exists, False otherwise.
