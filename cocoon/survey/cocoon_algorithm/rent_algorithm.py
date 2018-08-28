@@ -15,6 +15,10 @@ from cocoon.commutes.distance_matrix.update_commutes_cache import update_commute
 # Import Constants from commute module
 from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
 
+# Import Geolocator
+import cocoon.houseDatabase.maps_requester as geolocator
+from config.settings.Global_Config import gmaps_api_key
+
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
     """
@@ -73,15 +77,28 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
     def retrieve_all_approximate_commutes(self):
         """
-        retrieves the commute time and distance between each origin and each destination (zip code) and updates
-        the approx_commute_minutes dictionary within each HomeScore accordingly. For any zip code combinations that
-        are not in the database, the distance matrix is called to calculate the approximate distance and the
-        database is updated.
+        First the function updates all the caches for the new homes and destinations. Then it will populate the rent
+            algorithm with valid commutes
         """
         update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
         for destination in self.destinations:
+            lat_lng=""
+
+            # If the commute type is walking or bicycling then we need to generate a lat and lng for the destination
+            # We do it here so we can save the lat and lng for every home
+            if destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING or \
+                    destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
+                # Pulls lat/lon based on address
+                locator = geolocator.maps_requester(gmaps_api_key)
+                lat_lng_result = locator.get_lat_lon_from_address(destination.full_address)
+
+                if lat_lng_result == -1:
+                    continue
+                else:
+                    lat_lng = (lat_lng_result[0], lat_lng_result[1])
+
             for home in self.homes:
-                if not home.populate_approx_commutes(home.home.zip_code, destination):
+                if not home.populate_approx_commutes(home.home, destination, lat_lng_dest=lat_lng):
                     home.eliminate_home()
 
     def retrieve_exact_commutes(self):

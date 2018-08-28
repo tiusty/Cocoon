@@ -1,6 +1,11 @@
 from cocoon.commutes.models import ZipCodeBase, ZipCodeChild
 
 from cocoon.commutes.constants import GoogleCommuteNaming
+from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED, EXTRA_DISTANCE_LAT_LNG_APPROX
+import geopy.distance
+
+import math
+
 
 class HomeScore(object):
     # noinspection SpellCheckingInspection
@@ -102,22 +107,39 @@ class HomeScore(object):
         """
         self._exact_commute_times_minutes.update(new_exact_commute_time)
 
-    def populate_approx_commutes(self, origin_zip, destination):
+    def populate_approx_commutes(self, home, destination, lat_lng_dest=""):
         """
         Based on the commute type of the destination, this function determines the algorithm method that will
             be used to generate the approximation
-        :param origin_zip: (string) -> The zip code of the origin, i.e '02476'
+        :param home: (RentDatabaseModel) -> The home that the user is computing for
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
         :return (Boolean): True if a valid pair match is found, False otherwise.
         """
         if destination.commute_type.commute_type == GoogleCommuteNaming.DRIVING:
-            return self.zip_code_approximation(origin_zip, destination)
+            return self.zip_code_approximation(home.zip_code, destination)
         elif destination.commute_type.commute_type == GoogleCommuteNaming.TRANSIT:
-            return self.zip_code_approximation(origin_zip, destination)
+            return self.zip_code_approximation(home.zip_code, destination)
         elif destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING:
-            return True
+            return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_BICYCLING_SPEED)
         elif destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
-            return True
+            return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
+
+    def lat_lng_approximation(self, home, destination, lat_lng_dest, average_speed):
+        lat_lng_home = (home.latitude, home.longitude)
+        distance = geopy.distance.geodesic(lat_lng_home, lat_lng_dest).miles
+        if distance > 1:
+            # Extra distance is determined by giving more distance to homes farther away
+            extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/math.sqrt(distance))
+            # This normalizes the value since walking needs less of a weight than biking since homes
+            #   are more direct when walking.
+            distance += extra_distance * average_speed/AVERAGE_BICYCLING_SPEED
+        if average_speed is not 0:
+            commute_time_hours = distance / average_speed
+            commute_time = commute_time_hours * 60
+        else:
+            return False
+        self.approx_commute_times[destination] = commute_time
+        return True
 
     def zip_code_approximation(self, origin_zip, destination):
         """
