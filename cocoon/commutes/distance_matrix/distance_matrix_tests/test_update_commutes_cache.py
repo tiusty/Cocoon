@@ -4,11 +4,12 @@ from django.test import TestCase
 # Import django libraries
 from django.utils import timezone
 
+# Import python libraries
+from unittest.mock import MagicMock
+
 # Import Commute modules
 from cocoon.commutes.models import ZipCodeBase
-
-# Import Commute Constants
-from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE
+from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy
 
 # Import Distance matrix classes
 from cocoon.commutes.distance_matrix.update_commutes_cache import Driving, Transit
@@ -150,6 +151,50 @@ class TestDriveCommuteCalculator(TestCase):
         # Assert
         self.assertFalse(result)
 
+    def test_run_approximate(self):
+        """
+        Tests to make sure that the check_all_combinations is called when approximate commutes are desired. It also
+            makes sure that the run_exact_commute_cache function is not called
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type, zip_code='02476')
+        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+
+        commute_calculator = Driving([home_score], destination, accuracy=CommuteAccuracy.APPROXIMATE)
+
+        Driving.check_all_combinations = MagicMock()
+        Driving.run_exact_commute_cache = MagicMock()
+
+        # Act
+        commute_calculator.run()
+
+        # Assert
+        Driving.check_all_combinations.assert_called_once_with()
+        self.assertFalse(Driving.run_exact_commute_cache.called)
+
+    def test_run_exact(self):
+        """
+        Tests to make sure that the run_exact_commute is called when exact commutes are desired. It also makes
+            sure that the check_all_combinations is not called
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type, zip_code='02476')
+        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+
+        commute_calculator = Driving([home_score], destination, accuracy=CommuteAccuracy.EXACT)
+
+        Driving.check_all_combinations = MagicMock()
+        Driving.run_exact_commute_cache = MagicMock()
+
+        # Act
+        commute_calculator.run()
+
+        # Assert
+        Driving.run_exact_commute_cache.assert_called_once_with()
+        self.assertFalse(Driving.check_all_combinations.called)
+
 
 class TestTransitCommuteCalculator(TestCase):
     """
@@ -279,3 +324,47 @@ class TestTransitCommuteCalculator(TestCase):
 
         # Assert
         self.assertFalse(result)
+
+    def test_run_approximate(self):
+        """
+        Tests to make sure that the check_all_combinations is called when approximate commutes are desired. It also
+            makes sure that the run_exact_commute_cache function is not called
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type, zip_code='02476')
+        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+
+        commute_calculator = Transit([home_score], destination, accuracy=CommuteAccuracy.APPROXIMATE)
+
+        Transit.check_all_combinations = MagicMock()
+        Transit.run_exact_commute_cache = MagicMock()
+
+        # Act
+        commute_calculator.run()
+
+        # Assert
+        Transit.check_all_combinations.assert_called_once_with()
+        self.assertFalse(Transit.run_exact_commute_cache.called)
+
+    def test_run_exact(self):
+        """
+        Tests to make sure that the run_exact_commute is called when exact commutes are desired. It also makes
+            sure that the check_all_combinations is not called
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type, zip_code='02476')
+        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+
+        commute_calculator = Transit([home_score], destination, accuracy=CommuteAccuracy.EXACT)
+
+        Transit.check_all_combinations = MagicMock()
+        Transit.run_exact_commute_cache = MagicMock()
+
+        # Act
+        commute_calculator.run()
+
+        # Assert
+        Transit.run_exact_commute_cache.assert_called_once_with()
+        self.assertFalse(Transit.check_all_combinations.called)

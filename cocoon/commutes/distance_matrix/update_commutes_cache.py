@@ -106,6 +106,9 @@ class Driving(CommuteCalculator):
         else:
             return False
 
+    def run_exact_commute_cache(self):
+        pass
+
     def run(self):
         """
         The generic run method that each chlid class should have. Starts the execution of the class
@@ -114,7 +117,7 @@ class Driving(CommuteCalculator):
             """
             Currently exact commutes are not stored in the database so nothing happens
             """
-            pass
+            self.run_exact_commute_cache()
         elif self.accuracy == CommuteAccuracy.APPROXIMATE:
             """
             If approximations are desired, then start the computation
