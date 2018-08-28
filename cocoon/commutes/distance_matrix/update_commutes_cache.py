@@ -24,13 +24,13 @@ def update_commutes_cache(homes, destinations, accuracy=CommuteAccuracy.DEFAULT)
 
     # Since each destination can have a commute type, loop through all the destinations
     for destination in destinations:
-        if destination.commute_type == GoogleCommuteNaming.DRIVING:
+        if destination.commute_type.commute_type == GoogleCommuteNaming.DRIVING:
             Driving(homes, destination, accuracy=accuracy).run()
-        elif destination.commute_type == GoogleCommuteNaming.TRANSIT:
+        elif destination.commute_type.commute_type == GoogleCommuteNaming.TRANSIT:
             Transit(homes, destination, accuracy=accuracy).run()
-        elif destination.commute_type == GoogleCommuteNaming.BICYCLING:
+        elif destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING:
             Bicycling(homes, destination, accuracy=accuracy).run()
-        elif destination.commute_type == GoogleCommuteNaming.WALKING:
+        elif destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
             Walking(homes, destination, accuracy=accuracy).run()
         else:
             logger.error("Unknown commute_type: {0}".format(destination.commute_type))
@@ -110,12 +110,12 @@ class Driving(CommuteCalculator):
         """
         The generic run method that each chlid class should have. Starts the execution of the class
         """
-        if self.destination.commute_type == CommuteAccuracy.EXACT:
+        if self.accuracy == CommuteAccuracy.EXACT:
             """
             Currently exact commutes are not stored in the database so nothing happens
             """
             pass
-        elif self.destination.commute_type == CommuteAccuracy.APPROXIMATE:
+        elif self.accuracy == CommuteAccuracy.APPROXIMATE:
             """
             If approximations are desired, then start the computation
             """

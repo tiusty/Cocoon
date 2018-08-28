@@ -7,7 +7,7 @@ ZIP_CODE_TIMEDELTA_VALUE = 60
 # Google Distance Matrix Api naming convention
 class GoogleCommuteNaming:
     DRIVING = "Driving"
-    TRANSIT = ""
+    TRANSIT = "Transit"
     BICYCLING = "Bicycling"
     WALKING = "Walking"
     DEFAULT = DRIVING
