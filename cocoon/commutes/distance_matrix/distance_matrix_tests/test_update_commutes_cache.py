@@ -9,10 +9,11 @@ from unittest.mock import MagicMock
 
 # Import Commute modules
 from cocoon.commutes.models import ZipCodeBase
-from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy
+from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy, GoogleCommuteNaming
 
 # Import Distance matrix classes
-from cocoon.commutes.distance_matrix.update_commutes_cache import Driving, Transit
+from cocoon.commutes.distance_matrix.update_commutes_cache import Driving, Transit, Bicycling, Walking, \
+    update_commutes_cache
 
 # Import home score
 from cocoon.survey.home_data.home_score import HomeScore
@@ -25,6 +26,184 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 
 # Import Users
 from cocoon.userAuth.models import MyUser
+
+
+class TestUpdateCommutesCache(TestCase):
+
+    def setUp(self):
+        self.user = MyUser.objects.create(email="test@email.com")
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+
+    @staticmethod
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
+                      num_bedrooms=2):
+        return RentingSurveyModel.objects.create(
+            user_profile_survey=user_profile,
+            max_price_survey=max_price,
+            desired_price_survey=desired_price,
+            max_bathrooms_survey=max_bathroom,
+            min_bathrooms_survey=min_bathroom,
+            num_bedrooms_survey=num_bedrooms,
+        )
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+        ))
+
+    @staticmethod
+    def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
+                           zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
+        return survey.rentingdestinationsmodel_set.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
+
+    def test_one_destination_driving(self):
+        """
+        Tests to make sure if the destination selects driving, that driving is actually selected
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_type)
+        accuracy = CommuteAccuracy.EXACT
+
+        Driving.run = MagicMock()
+        Transit.run = MagicMock()
+        Bicycling.run = MagicMock()
+        Walking.run = MagicMock()
+
+        # Act
+        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+
+        # Assert
+        Driving.run.assert_called_once_with()
+        Transit.run.assert_not_called()
+        Bicycling.run.assert_not_called()
+        Walking.run.assert_not_called()
+
+    def test_one_destination_transit(self):
+        """
+        Tests to make sure if the destination selects transit, that transit is actually selected
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_type)
+        accuracy = CommuteAccuracy.EXACT
+
+        Driving.run = MagicMock()
+        Transit.run = MagicMock()
+        Bicycling.run = MagicMock()
+        Walking.run = MagicMock()
+
+        # Act
+        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+
+        # Assert
+        Driving.run.assert_not_called()
+        Transit.run.assert_called_once_with()
+        Bicycling.run.assert_not_called()
+        Walking.run.assert_not_called()
+
+    def test_one_destination_bicycling(self):
+        """
+        Tests to make sure if the destination selects bicycling, that bicycling is actually selected
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_type)
+        accuracy = CommuteAccuracy.EXACT
+
+        Driving.run = MagicMock()
+        Transit.run = MagicMock()
+        Bicycling.run = MagicMock()
+        Walking.run = MagicMock()
+
+        # Act
+        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+
+        # Assert
+        Driving.run.assert_not_called()
+        Transit.run.assert_called_once_with()
+        Bicycling.run.assert_not_called()
+        Walking.run.assert_not_called()
+
+    def test_one_destination_walking(self):
+        """
+        Tests to make sure if the destination selects walking, that waking is actually selected
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_type)
+        accuracy = CommuteAccuracy.EXACT
+
+        Driving.run = MagicMock()
+        Transit.run = MagicMock()
+        Bicycling.run = MagicMock()
+        Walking.run = MagicMock()
+
+        # Act
+        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+
+        # Assert
+        Driving.run.assert_not_called()
+        Transit.run.assert_called_once_with()
+        Bicycling.run.assert_not_called()
+        Walking.run.assert_not_called()
+
+    def test_three_destination_driving_transit_bicycling_walking(self):
+        """
+        Tests to make sure if multiple destinations are inputed then it loops and selectes
+            the appropriate functions
+        """
+        # Arrange
+        commute_driving = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
+        commute_transit = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
+        commute_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        commute_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_driving)
+        destination1 = self.create_destination(survey, commute_type=commute_walking)
+        destination2 = self.create_destination(survey, commute_type=commute_bicycling)
+        destination3 = self.create_destination(survey, commute_type=commute_transit)
+        accuracy = CommuteAccuracy.EXACT
+
+        Driving.run = MagicMock()
+        Transit.run = MagicMock()
+        Bicycling.run = MagicMock()
+        Walking.run = MagicMock()
+
+        # Act
+        update_commutes_cache([home_score], [destination, destination1, destination2, destination3], accuracy=accuracy)
+
+        # Assert
+        Driving.run.assert_called_once_with()
+        Transit.run.assert_called_once_with()
+        Bicycling.run.assert_called_once_with()
+        Walking.run.assert_called_once_with()
 
 
 class TestDriveCommuteCalculator(TestCase):
@@ -171,7 +350,7 @@ class TestDriveCommuteCalculator(TestCase):
 
         # Assert
         Driving.check_all_combinations.assert_called_once_with()
-        self.assertFalse(Driving.run_exact_commute_cache.called)
+        Driving.run_exact_commute_cache.assert_not_called()
 
     def test_run_exact(self):
         """
@@ -193,7 +372,7 @@ class TestDriveCommuteCalculator(TestCase):
 
         # Assert
         Driving.run_exact_commute_cache.assert_called_once_with()
-        self.assertFalse(Driving.check_all_combinations.called)
+        Driving.check_all_combinations.assert_not_called()
 
 
 class TestTransitCommuteCalculator(TestCase):
@@ -345,7 +524,7 @@ class TestTransitCommuteCalculator(TestCase):
 
         # Assert
         Transit.check_all_combinations.assert_called_once_with()
-        self.assertFalse(Transit.run_exact_commute_cache.called)
+        Transit.run_exact_commute_cache.assert_not_called()
 
     def test_run_exact(self):
         """
@@ -367,4 +546,4 @@ class TestTransitCommuteCalculator(TestCase):
 
         # Assert
         Transit.run_exact_commute_cache.assert_called_once_with()
-        self.assertFalse(Transit.check_all_combinations.called)
+        Transit.check_all_combinations.assert_not_called()
