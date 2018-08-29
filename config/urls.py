@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^adminBostoncocoon/', admin.site.urls),
     url(r'^', include('cocoon.homePage.urls')),
     url(r'^userAuth/', include('cocoon.userAuth.urls')),
     url(r'^survey/', include('cocoon.survey.urls')),
