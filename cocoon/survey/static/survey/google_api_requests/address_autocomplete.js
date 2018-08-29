@@ -103,8 +103,20 @@ function fillInAddress() {
 
     }
 
-    // Now concatenate the street_num and street address to store the full address
     var full_street_address = street_num + " " + street_address;
+
+    // Sometimes if the address is a subpremise or something, the autocomplete will show up
+    //  and let the user select the address but then it will not return the street address or street num.
+    //  Therefore, if the street_num and street_address were not populated, then auto-populate
+    //  with the user populated address.
+    // Remember that population of the form fields only occurs when the user selected on the address from
+    //  the google drop down list, so the address being added is still a valid address
+    if ( !street_num || !street_address ) {
+        var full_autocomplete = $('#autocomplete').val();
+        full_street_address = full_autocomplete.split(',')[0];
+    }
+
+    // Now concatenate the street_num and street address to store the full address
     document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-street_address').value = full_street_address;
 
   }
