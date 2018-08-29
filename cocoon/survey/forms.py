@@ -1,6 +1,7 @@
 # Django modules
 from django import forms
 from django.forms import ModelForm
+from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
@@ -260,7 +261,11 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        exclude = ["user_profile_survey", 'survey_type_survey', "name_survey", ]
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", ]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
@@ -269,6 +274,11 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
     RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurveyForm
     """
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(RentSurveyFormMini, self).__init__(*args, **kwargs)
+
     name_survey = forms.CharField(
         label="Survey Name",
         initial=DEFAULT_RENT_SURVEY_NAME,
@@ -280,9 +290,33 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
+    def is_valid(self):
+        valid = super(RentSurveyFormMini, self).is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
+        #   will not conflict with a current survey. If it does, force them to choose a new name.
+        if 'name_survey' in self.changed_data:
+            if self.user.userProfile.rentingsurveymodel_set.filter(url=slugify(current_form['name_survey'])).exists():
+                self.add_error('name_survey', "You already have a very similar name, please choose a more unique name")
+                valid = False
+
+        return valid
+
     class Meta:
         model = RentingSurveyModel
-        exclude = ["user_profile_survey", 'survey_type_survey']
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", "name_survey"]
 
 
 class CommuteInformationForm(ModelForm):

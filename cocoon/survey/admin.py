@@ -15,7 +15,7 @@ class AddressInLine(admin.StackedInline):
 
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
-    readonly_fields = ("created_survey", 'id',)
+    readonly_fields = ("created_survey", 'id', 'url')
     # noinspection SpellCheckingInspection
     inlines = [AddressInLine]
     fieldsets = (
@@ -24,7 +24,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
                                'max_bathrooms_survey', )}),
         ('Interior Amenities',
          {'fields': ('air_conditioning_survey', 'interior_washer_dryer_survey',)}),
-        ('Created', {'fields': ('created_survey', 'id',)}),
+        ('Created', {'fields': ('created_survey', 'id', 'url')}),
     )
     list_display = ('name', 'user_profile_survey', )
     list_filter = ['user_profile_survey']

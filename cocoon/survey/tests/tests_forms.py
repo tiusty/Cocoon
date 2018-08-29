@@ -4,9 +4,11 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    InteriorAmenitiesForm, ExteriorAmenitiesForm
+    InteriorAmenitiesForm, ExteriorAmenitiesForm, RentSurveyFormMini
+from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
+from cocoon.userAuth.models import MyUser
 
 # Import cocoon global config values
 from config.settings.Global_Config import WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
@@ -841,3 +843,189 @@ class TestRentSurveyForm(TestCase):
 
         # Assert
         self.assertFalse(result)
+
+
+class TestRentSurveyMiniForm(TestCase):
+
+    def setUp(self):
+
+        # Creating user
+        self.user = MyUser.objects.create(email="test@email.com")
+
+        # Create home type objects
+        HomeTypeModel.objects.create(home_type_survey="Apartment")
+        HomeTypeModel.objects.create(home_type_survey="Condo")
+        HomeTypeModel.objects.create(home_type_survey="Town House")
+        HomeTypeModel.objects.create(home_type_survey="House")
+
+        # Home Information form fields
+        self.move_in_date_start = timezone.now()
+        self.move_in_date_end = timezone.now()
+        self.num_bedrooms = 1
+        self.max_num_bathrooms = 0
+        self.min_num_bathrooms = 0
+        self.home_type_survey = [HomeTypeModel.objects.get(home_type_survey="Apartment")]
+
+        self.max_commute = 0
+        self.min_commute = 0
+        self.commute_weight = 0
+        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+
+        self.max_price = 0
+        self.desired_price = 0
+        self.price_weight = 0
+
+        self.air_conditioning = 0
+        self.interior_washer_dryer = 0
+        self.dish_washer = 0
+        self.bath = 0
+
+        self.parking_spot = 0
+        self.building_washer_dryer = 0
+        self.elevator = 0
+        self.handicap_access = 0
+        self.pool_hot_tub = 0
+        self.fitness_center = 0
+        self.storage_unit = 0
+
+        self.number_of_destinations = 1
+
+    @staticmethod
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
+                      num_bedrooms=2, name="Recent Rent Survey"):
+        return RentingSurveyModel.objects.create(
+            name_survey=name,
+            user_profile_survey=user_profile,
+            max_price_survey=max_price,
+            desired_price_survey=desired_price,
+            max_bathrooms_survey=max_bathroom,
+            min_bathrooms_survey=min_bathroom,
+            num_bedrooms_survey=num_bedrooms,
+        )
+
+    def tests_saving_a_form_without_name_conflict(self):
+        """
+        Test that is there is no name conflict, the survey saves successfully
+        """
+        # Arrange
+        form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'max_bathrooms_survey': self.max_num_bathrooms,
+            'min_bathrooms_survey': self.min_num_bathrooms,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'max_price_survey': self.max_price,
+            'desired_price_survey': self.desired_price,
+            'price_weight_survey': self.price_weight,
+            'air_conditioning_survey': self.air_conditioning,
+            'interior_washer_dryer_survey': self.interior_washer_dryer,
+            'dish_washer_survey': self.dish_washer,
+            'bath_survey': self.bath,
+            'fitness_center_survey': self.fitness_center,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'home_type_survey': self.home_type_survey,
+            'storage_unit_survey': self.storage_unit,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'parking_spot_survey': self.parking_spot,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'name_survey': 'test_survey',
+        }
+
+        rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
+
+        # Act
+        result = rent_survey_form.is_valid()
+        print(rent_survey_form.errors)
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_saving_a_form_with_name_conflict(self):
+        """
+        Tests that if a naming conflict occurs, i.e trying to save a survey with a survey with
+            the same slug, then prevent the saving
+        """
+        # Arrange
+        self.create_survey(self.user.userProfile, name='test_survey')
+
+        form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'max_bathrooms_survey': self.max_num_bathrooms,
+            'min_bathrooms_survey': self.min_num_bathrooms,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'max_price_survey': self.max_price,
+            'desired_price_survey': self.desired_price,
+            'price_weight_survey': self.price_weight,
+            'air_conditioning_survey': self.air_conditioning,
+            'interior_washer_dryer_survey': self.interior_washer_dryer,
+            'dish_washer_survey': self.dish_washer,
+            'bath_survey': self.bath,
+            'fitness_center_survey': self.fitness_center,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'home_type_survey': self.home_type_survey,
+            'storage_unit_survey': self.storage_unit,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'parking_spot_survey': self.parking_spot,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'name_survey': 'test_survey',
+        }
+
+        rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
+
+        # Act
+        result = rent_survey_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_saving_a_form_with_name_conflict_different_users(self):
+        """
+        Tests that if there is a naming conflict but with a different user, then allow the saving
+        """
+        # Arrange
+        self.create_survey(self.user.userProfile, name='test_survey')
+        user2 = MyUser.objects.create(email="test2@gmail.com")
+
+        form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms_survey': self.num_bedrooms,
+            'max_bathrooms_survey': self.max_num_bathrooms,
+            'min_bathrooms_survey': self.min_num_bathrooms,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'max_price_survey': self.max_price,
+            'desired_price_survey': self.desired_price,
+            'price_weight_survey': self.price_weight,
+            'air_conditioning_survey': self.air_conditioning,
+            'interior_washer_dryer_survey': self.interior_washer_dryer,
+            'dish_washer_survey': self.dish_washer,
+            'bath_survey': self.bath,
+            'fitness_center_survey': self.fitness_center,
+            'building_washer_dryer_survey': self.building_washer_dryer,
+            'home_type_survey': self.home_type_survey,
+            'storage_unit_survey': self.storage_unit,
+            'pool_hot_tub_survey': self.pool_hot_tub,
+            'parking_spot_survey': self.parking_spot,
+            'elevator_survey': self.elevator,
+            'handicap_access_survey': self.handicap_access,
+            'name_survey': 'test_survey',
+        }
+
+        rent_survey_form = RentSurveyFormMini(data=form_data, user=user2)
+
+        # Act
+        result = rent_survey_form.is_valid()
+
+        # Assert
+        self.assertTrue(result)

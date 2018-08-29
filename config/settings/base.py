@@ -238,6 +238,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
+        'cocoon.survey.models': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
 
         # Commute app logger
         'cocoon.commutes': {

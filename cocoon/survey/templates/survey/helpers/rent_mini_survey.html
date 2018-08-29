@@ -13,7 +13,7 @@
 {% endcomment %}
 <div id="sidebarSurvey" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <form action="{% url 'survey:rentSurveyResult' survey_id=survey.id %}" method="post">
+    <form action="{% url 'survey:rentSurveyResult' survey_url=survey.url %}" method="post">
         {{ form.non_field_errors }}
         {{ form.errors }}
         {% csrf_token %}

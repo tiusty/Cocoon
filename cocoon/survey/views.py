@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.forms import inlineformset_factory
 
 # Import Global config variables
-from config.settings.Global_Config import survey_types, DEFAULT_RENT_SURVEY_NAME
+from config.settings.Global_Config import survey_types
 
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -76,12 +76,6 @@ def renting_survey(request):
 
             if destination_form_set.is_valid():
 
-                # Try seeing if there is already a recent survey and if there is
-                # Then delete it. We only want to keep one "recent" survey
-                # The user has the option to change the name of it to save it permanently
-                RentingSurveyModel.objects.filter(user_profile_survey=current_profile).filter(
-                    name_survey=DEFAULT_RENT_SURVEY_NAME).delete()
-
                 # Only if all the forms validate will we save it to the database
                 rent_survey.save()
                 form.save_m2m()
@@ -89,7 +83,7 @@ def renting_survey(request):
 
                 # redirect to survey result on success:
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_id": rent_survey.id}))
+                                                    kwargs={"survey_url": rent_survey.url}))
 
             else:
                 context['error_message'] = "The destination set did not validate"
@@ -166,16 +160,15 @@ def run_rent_algorithm(survey, context):
     context['houseList'] = rent_algorithm.homes[:50]
 
 
-# Assumes the survey_id will be passed by the URL if not, then it grabs the most recent survey.
+# Assumes the survey_slug will be passed by the URL if not, then it grabs the most recent survey.
 # If it can't find the most recent survey it redirects back to the survey
 @login_required
-def survey_result_rent(request, survey_id="recent"):
+def survey_result_rent(request, survey_url=""):
     """
     Survey result rent is the heart of the website where the survey is grabbed and the housing list is created
     Based on the results of the survey. This is specifically for the rent survey
     :param request: (Http Request): The HTTP request object
-    :param survey_id: (string): This is the survey id that corresponds to the survey that is desired
-        If no id is specified then the latest survey is used
+    :param survey_url: (string): This is the survey slug to determine which survey to load
     :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
         etc. If something goes wrong then it may redirect back to the survey homePage
 
@@ -188,31 +181,21 @@ def survey_result_rent(request, survey_id="recent"):
     }
 
     user_profile = get_object_or_404(UserProfile, user=request.user)
-    # If no id is specified in the URL, then it attempts to load the recent survey
-    # The recent survey is the last survey to be created
-    if survey_id == "recent":
-        # Try to retrieve the most recent survey, but if there are no surveys, then
-        # Redirect back to the homepage
-        try:
-            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).order_by('-created').first()
-        except RentingSurveyModel.DoesNotExist:
+
+    # Tries to grab the survey. If the survey name was not passed in, then it grabs the most recent survey taken.
+    try:
+        survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).get(url=survey_url)
+    # If the survey ID, does not exist/is not for that user, then return the most recent survey
+    except RentingSurveyModel.DoesNotExist:
+        if RentingSurveyModel.objects.filter(user_profile_survey=user_profile).exists():
+            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile)\
+                .order_by('created_survey').first()
+            messages.add_message(request, messages.WARNING, 'Could not find Survey, loading most recent survey')
+            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                kwargs={"survey_url": survey.url}))
+        else:
             messages.add_message(request, messages.ERROR, 'Could not find Survey')
             return HttpResponseRedirect(reverse('homePage:index'))
-    else:
-        # If the user did not choose recent, then try to grab the survey by it's id
-        # If it can't find it or it is not associated with the user, just grab the
-        # Recent Survey. If that fails, then redirect back to the home page.
-        try:
-            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).get(id=survey_id)
-        # If the survey ID, does not exist/is not for that user, then return the most recent survey
-        except RentingSurveyModel.DoesNotExist:
-            context['error_message'].append("Could not find survey id, getting recent survey")
-            try:
-                survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile)\
-                    .order_by('-created').first()
-            except RentingSurveyModel.DoesNotExist:
-                messages.add_message(request, messages.ERROR, 'Could not find Survey')
-                return HttpResponseRedirect(reverse('homePage:index'))
 
     # Populate form with stored data
     form = RentSurveyFormMini(instance=survey)
@@ -226,7 +209,7 @@ def survey_result_rent(request, survey_id="recent"):
     if request.method == 'POST':
         # If a POST occurs, update the form. In the case of an error, then the survey
         # Should be populated by the POST data.
-        form = RentSurveyFormMini(request.POST, instance=survey)
+        form = RentSurveyFormMini(request.POST, instance=survey, user=request.user)
         destination_form_set = DestinationFormSet(request.POST, instance=survey)
         # If the survey is valid then redirect back to the page to reload the changes
         # This will also update the house list
@@ -235,7 +218,7 @@ def survey_result_rent(request, survey_id="recent"):
                 form.save()
                 destination_form_set.save()
                 return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_id": survey.id}))
+                                                    kwargs={"survey_url": survey.url}))
             else:
                 context['error_message'].append("There are form errors in destinatino form")
                 context['error_message'].append(destination_form_set.errors)
