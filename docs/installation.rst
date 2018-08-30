@@ -67,7 +67,9 @@ Instructions are from this website_:
 .. _website: https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-16-04
 
 ::
-
+        
+    Everyone should use the same username and password for debugging locally:
+    
     The Database table name should be: Cocoon
     The Database User should be: cocoon_dev
     The Database Password should be: cocoon_pass
@@ -76,12 +78,12 @@ Instructions are from this website_:
 
     sudo -u postgres psql
     CREATE DATABASE Cocoon;
-    CREATE USER cocoon_dev WITH PASSWORD 'cocoon_pass'; (everyone should use the same username and password for debugging locally)
+    CREATE USER cocoon_dev WITH PASSWORD 'cocoon_pass'; 
     ALTER ROLE cocoon_dev SET client_encoding TO 'utf8';
     ALTER ROLE cocoon_dev SET default_transaction_isolation TO 'read committed';
     ALTER ROLE cocoon_dev SET timezone TO 'UTC';
     GRANT ALL PRIVILEGES ON DATABASE Cocoon TO cocoon_dev;
-    ALTER USER cocoon_dev CREATEDB; (allow unit tests to be run)
+    ALTER USER cocoon_dev CREATEDB;
     \q
 
 Tips
