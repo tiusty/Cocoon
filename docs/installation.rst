@@ -26,7 +26,7 @@ Setting up Software
         cd ~
         mkdir work
         cd work
-        clone git <repo> .
+        git clone git@github.com:tiusty/Cocoon.git
 
 * Go to settings, Languages & Frameworks, Django.
     * Click enable Django support. Set the project Root to the top directory for the Git project structure.
