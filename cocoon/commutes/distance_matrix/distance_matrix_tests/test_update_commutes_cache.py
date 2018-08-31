@@ -144,8 +144,8 @@ class TestUpdateCommutesCache(TestCase):
 
         # Assert
         Driving.run.assert_not_called()
-        Transit.run.assert_called_once_with()
-        Bicycling.run.assert_not_called()
+        Transit.run.assert_not_called()
+        Bicycling.run.assert_called_once_with()
         Walking.run.assert_not_called()
 
     def test_one_destination_walking(self):
@@ -169,9 +169,9 @@ class TestUpdateCommutesCache(TestCase):
 
         # Assert
         Driving.run.assert_not_called()
-        Transit.run.assert_called_once_with()
+        Transit.run.assert_not_called()
         Bicycling.run.assert_not_called()
-        Walking.run.assert_not_called()
+        Walking.run.assert_called_once_with()
 
     def test_three_destination_driving_transit_bicycling_walking(self):
         """
