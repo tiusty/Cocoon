@@ -10,7 +10,7 @@ from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScor
 
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper, Distance_Matrix_Exception
-from cocoon.commutes.distance_matrix.update_commutes_cache import update_commutes_cache
+from cocoon.commutes.distance_matrix import commute_cache_updater
 
 # Import Constants from commute module
 from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
@@ -80,7 +80,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         First the function updates all the caches for the new homes and destinations. Then it will populate the rent
             algorithm with valid commutes
         """
-        update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
+        commute_cache_updater.update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
         for destination in self.destinations:
             lat_lng=""
 
@@ -89,8 +89,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             if destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING or \
                     destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
                 # Pulls lat/lon based on address
-                locator = geolocator.maps_requester(gmaps_api_key)
-                lat_lng_result = locator.get_lat_lon_from_address(destination.full_address)
+                lat_lng_result = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(destination.full_address)
 
                 if lat_lng_result == -1:
                     continue

@@ -12,7 +12,7 @@ from cocoon.commutes.models import ZipCodeBase
 from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy, GoogleCommuteNaming
 
 # Import Distance matrix classes
-from cocoon.commutes.distance_matrix.update_commutes_cache import Driving, Transit, Bicycling, Walking, \
+from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Transit, Bicycling, Walking, \
     update_commutes_cache
 
 # Import home score
