@@ -12,7 +12,7 @@ from cocoon.commutes.models import ZipCodeBase
 from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy, GoogleCommuteNaming
 
 # Import Distance matrix classes
-from cocoon.commutes.distance_matrix.update_commutes_cache import Driving, Transit, Bicycling, Walking, \
+from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Transit, Bicycling, Walking, \
     update_commutes_cache
 
 # Import home score
@@ -144,8 +144,8 @@ class TestUpdateCommutesCache(TestCase):
 
         # Assert
         Driving.run.assert_not_called()
-        Transit.run.assert_called_once_with()
-        Bicycling.run.assert_not_called()
+        Transit.run.assert_not_called()
+        Bicycling.run.assert_called_once_with()
         Walking.run.assert_not_called()
 
     def test_one_destination_walking(self):
@@ -169,9 +169,9 @@ class TestUpdateCommutesCache(TestCase):
 
         # Assert
         Driving.run.assert_not_called()
-        Transit.run.assert_called_once_with()
+        Transit.run.assert_not_called()
         Bicycling.run.assert_not_called()
-        Walking.run.assert_not_called()
+        Walking.run.assert_called_once_with()
 
     def test_three_destination_driving_transit_bicycling_walking(self):
         """
