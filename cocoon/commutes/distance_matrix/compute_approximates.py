@@ -2,7 +2,7 @@
 from cocoon.commutes.models import ZipCodeBase
 
 # import distance matrix wrapper
-from cocoon.survey.distance_matrix.distance_wrapper import DistanceWrapper
+from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 
 
 def approximate_commute_handler(origins_zips_states, destination_zip_state, commute_type_query):

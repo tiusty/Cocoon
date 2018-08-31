@@ -1,9 +1,15 @@
+# Django imports
 from django.test import TestCase
+from django.utils import timezone
+from unittest.mock import MagicMock
+
 from cocoon.survey.home_data.home_score import HomeScore
 from cocoon.userAuth.models import MyUser
 from cocoon.survey.models import RentingDestinationsModel, RentingSurveyModel
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel
 from cocoon.commutes.models import ZipCodeBase, CommuteType
+from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, GoogleCommuteNaming
+from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED
 
 
 class TestScoringMethods(TestCase):
@@ -212,13 +218,8 @@ class TestApproxCommute(TestCase):
 
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
-        self.zip_code = "12345"
-        self.zip_code1 = "01234"
-        self.zip_code2 = "23456"
-        self.commute_time = 6000 
-        self.commute_distance = 700
+        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
-        self.commute_type_walking = CommuteType.objects.create(commute_type='Walking')
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -244,51 +245,248 @@ class TestApproxCommute(TestCase):
             commute_weight=commute_weight,
             max_commute=max_commute,
             min_commute=min_commute,
+
         )
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2,
+                    zip_code="02476", state="MA", latitude=0.0, longitude=0.0):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            latitude_home=latitude,
+            longitude_home=longitude,
+        ))
 
     @staticmethod
     def create_zip_code_dictionary(zip_code):
         return ZipCodeBase.objects.create(zip_code=zip_code)
 
     @staticmethod
-    def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time, 
-                                         commute_distance, commute_type):
+    def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,
+                                         commute_distance, commute_type, last_updated=timezone.now()):
         parent_zip_code_dictionary.zipcodechild_set.create(
-                zip_code=zip_code,
-                commute_time_seconds=commute_time,
-                commute_distance_meters=commute_distance,
-                commute_type=commute_type,
-                )
+            zip_code=zip_code,
+            commute_time_seconds=commute_time,
+            commute_distance_meters=commute_distance,
+            commute_type=commute_type,
+            last_date_updated=last_updated,
+        )
 
-    def test_populate_approx_commute_times(self):
+    def test_populate_approx_commute_times_driving(self):
         # Arrange
+        home = self.create_home(self.home_type)
         survey = self.create_survey(self.user.userProfile)
-        home_score = HomeScore()
-
-        self.zip_code = "12345"
-        self.zip_code1 = "01234"
-        self.zip_code2 = "23456"
-
-        destination = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
-                                              city="Los Angeles", state="California", zip_code=self.zip_code1)
-        destination1 = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
-                                               city="Los Angeles", state="California", zip_code=self.zip_code2)
-        destination2 = self.create_destination(survey, self.commute_type, street_address="101 Test Street",
-                                               city="Los Angeles", state="California", zip_code=self.zip_code)
-
-        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code, self.zip_code1, self.commute_time,
-                                              self.commute_distance, self.commute_type)
+        destination = self.create_destination(survey, self.commute_type)
+        home.zip_code_approximation = MagicMock()
+        home.lat_lng_approximation = MagicMock()
 
         # Act
-        ret1 = home_score.populate_approx_commutes(self.zip_code, destination, self.commute_type)
-        ret2 = home_score.populate_approx_commutes(self.zip_code, destination1, self.commute_type)
-        ret3 = home_score.populate_approx_commutes("00000", destination, self.commute_type)
-        ret4 = home_score.populate_approx_commutes(self.zip_code, destination2, self.commute_type_walking)
+        home.populate_approx_commutes(home.home, destination)
 
         # Assert
-        self.assertEqual(ret1, True)
-        self.assertEqual(home_score.approx_commute_times, {destination: 100.0})
-        self.assertEqual(ret2, False)
-        self.assertEqual(ret3, False)
-        self.assertEqual(ret4, False)
+        home.zip_code_approximation.assert_called_once_with(home.home.zip_code, destination)
+        home.lat_lng_approximation.assert_not_called()
+
+    def test_populate_approx_commute_times_transit(self):
+        # Arrange
+        home = self.create_home(self.home_type)
+        survey = self.create_survey(self.user.userProfile)
+        commute_type_transit = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
+        destination = self.create_destination(survey, commute_type_transit)
+        home.zip_code_approximation = MagicMock()
+        home.lat_lng_approximation = MagicMock()
+
+        # Act
+        home.populate_approx_commutes(home.home, destination)
+
+        # Assert
+        home.zip_code_approximation.assert_called_once_with(home.home.zip_code, destination)
+        home.lat_lng_approximation.assert_not_called()
+
+    def test_populate_approx_commute_times_bicycling(self):
+        # Arrange
+        home = self.create_home(self.home_type)
+        survey = self.create_survey(self.user.userProfile)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        destination = self.create_destination(survey, commute_type_bicycling)
+        latlng = (5,10)
+        home.zip_code_approximation = MagicMock()
+        home.lat_lng_approximation = MagicMock()
+
+        # Act
+        home.populate_approx_commutes(home.home, destination, lat_lng_dest=latlng)
+
+        # Assert
+        home.zip_code_approximation.assert_not_called()
+        home.lat_lng_approximation.assert_called_once_with(home.home, destination, latlng, AVERAGE_BICYCLING_SPEED)
+
+    def test_populate_approx_commute_times_walking(self):
+        # Arrange
+        home = self.create_home(self.home_type)
+        survey = self.create_survey(self.user.userProfile)
+        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+        latlng = (5,10)
+        home.zip_code_approximation = MagicMock()
+        home.lat_lng_approximation = MagicMock()
+
+        # Act
+        home.populate_approx_commutes(home.home, destination, lat_lng_dest=latlng)
+
+        # Assert
+        home.zip_code_approximation.assert_not_called()
+        home.lat_lng_approximation.assert_called_once_with(home.home, destination, latlng, AVERAGE_WALKING_SPEED)
+
+    def test_zip_code_approximation_combo_exists(self):
+        """
+        Tests that if the zip_combo exists then it will extract it from the zip-code database and use the values
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
+        zip_code = '02476'
+        home = self.create_home(self.home_type)
+        commute_distance = 100
+        commute_time_seconds = 376
+
+        # Create the zip-code dictionary
+        parent_zip_code = self.create_zip_code_dictionary(zip_code)
+        self.create_zip_code_dictionary_child(parent_zip_code, destination.zip_code, commute_time_seconds,
+                                              commute_distance, self.commute_type)
+
+        # Act
+        result = home.zip_code_approximation(zip_code, destination)
+
+        # Assert
+        self.assertTrue(result)
+        # Convert to minutes because that is what is returned
+        self.assertEqual(home.approx_commute_times, {destination: commute_time_seconds / 60})
+
+    def test_zip_code_approximation_child_does_not_exist(self):
+        """
+        Tests that if the parent zip code exists but not the child, then the function will return false
+            and the home will not be added to the list of commute times
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
+        zip_code = '02476'
+        home = self.create_home(self.home_type)
+
+        # Create the zip-code dictionary
+        self.create_zip_code_dictionary(zip_code)
+
+        # Act
+        result = home.zip_code_approximation(zip_code, destination)
+
+        # Assert
+        self.assertFalse(result)
+        # Convert to minutes because that is what is returned
+        self.assertEqual(home.approx_commute_times, {})
+
+    def test_zip_code_approximation_neither_exist(self):
+        """
+        Tests that if the parent/child zip code approximation doesn't exist then the function will return false and
+            the commute is not added to the approx_commute_times
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
+        zip_code = '02476'
+        home = self.create_home(self.home_type)
+
+        # Act
+        result = home.zip_code_approximation(zip_code, destination)
+
+        # Assert
+        self.assertFalse(result)
+        # Convert to minutes because that is what is returned
+        self.assertEqual(home.approx_commute_times, {})
+
+    def test_zip_code_approximation_exit_not_valid(self):
+        """
+        Tests that if the parent/child zip code pair exists but are out of date then the commute is not added
+            and the function returns false
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
+        zip_code = '02476'
+        home = self.create_home(self.home_type)
+        commute_distance = 100
+        commute_time_seconds = 376
+
+        # Create the zip-code dictionary
+        parent_zip_code = self.create_zip_code_dictionary(zip_code)
+        self.create_zip_code_dictionary_child(parent_zip_code, destination.zip_code, commute_time_seconds,
+                                              commute_distance, self.commute_type,
+                                              last_updated=timezone.now() -
+                                                           timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE + 1))
+
+        # Act
+        result = home.zip_code_approximation(zip_code, destination)
+
+        # Assert
+        self.assertFalse(result)
+        # Convert to minutes because that is what is returned
+        self.assertEqual(home.approx_commute_times, {})
+
+    def test_lat_lng_approximation_bicycling(self):
+        """
+        Tests that the lat_lng approximation for for bicycling
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        destination = self.create_destination(survey, commute_type_bicycling)
+
+        # Act
+        result = home.lat_lng_approximation(home.home, destination, (42.4080528, -71.1632442),
+                                            average_speed=AVERAGE_BICYCLING_SPEED)
+
+        # Assert
+        self.assertTrue(result)
+        self.assertAlmostEqual(home.approx_commute_times[destination], 14.0775, places=3)
+
+    def test_lat_lng_approximation_walking(self):
+        """
+        Tests that the lat lng approximation works for walking
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
+        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+
+        # Act
+        result = home.lat_lng_approximation(home.home, destination, (42.4080528, -71.1632442),
+                                            average_speed=AVERAGE_WALKING_SPEED)
+
+        # Assert
+        self.assertTrue(result)
+        self.assertAlmostEqual(home.approx_commute_times[destination], 35.8404, places=3)
+
+    def test_lat_lng_approximation_average_speed_zero(self):
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.408021, longitude=-71.163222)
+        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+
+        # Act
+        result = home.lat_lng_approximation(home.home, destination, (42.415656, -71.165393),
+                                            average_speed=0)
+
+        # Assert
+        self.assertFalse(result)
+        self.assertEqual(home.approx_commute_times, {})
+
+

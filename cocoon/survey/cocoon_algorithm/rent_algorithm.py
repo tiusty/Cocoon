@@ -9,8 +9,15 @@ from cocoon.survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 # Import DistanceWrapper
-from cocoon.survey.distance_matrix.distance_wrapper import *
-from cocoon.survey.distance_matrix import compute_approximates
+from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper, Distance_Matrix_Exception
+from cocoon.commutes.distance_matrix import commute_cache_updater
+
+# Import Constants from commute module
+from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
+
+# Import Geolocator
+import cocoon.houseDatabase.maps_requester as geolocator
+from config.settings.Global_Config import gmaps_api_key
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
@@ -70,48 +77,28 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
     def retrieve_all_approximate_commutes(self):
         """
-        retrieves the commute time and distance between each origin and each destination (zip code) and updates
-        the approx_commute_minutes dictionary within each HomeScore accordingly. For any zip code combinations that
-        are not in the database, the distance matrix is called to calculate the approximate distance and the
-        database is updated.
+        First the function updates all the caches for the new homes and destinations. Then it will populate the rent
+            algorithm with valid commutes
         """
-
-        # 1: Query DB and update when info is there
-        # destination will be a DestinationsModel object
+        commute_cache_updater.update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
         for destination in self.destinations:
-            failed_home_dict = dict()
-            failed_list = []
-            # home_score will be a HomeScore object
-            for home_score in self.homes:
-                in_database = home_score.populate_approx_commutes(home_score.home.zip_code, destination,
-                                                                  destination.commute_type)
-                # Case we have a match
-                # code_and_distance is a 2 element list, first an error code and second the commute time in minutes
-                if not in_database:
-                    failed_list.append((home_score.home.zip_code, home_score.home.state))
-            # Add to the dictionary of failed homes
-            failed_home_dict[(destination.zip_code, destination.state)] = failed_list
+            lat_lng=""
 
-            # 2: Use approx handler to compute the failed home distances and update db
-            for destination_zip, origin_list in failed_home_dict.items():
-                try:
-                    compute_approximates.approximate_commute_handler(origin_list, destination_zip,
-                                                                     destination.commute_type)
-                except Distance_Matrix_Exception as e:
-                    print("Caught: " + e.__class__.__name__)
+            # If the commute type is walking or bicycling then we need to generate a lat and lng for the destination
+            # We do it here so we can save the lat and lng for every home
+            if destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING or \
+                    destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
+                # Pulls lat/lon based on address
+                lat_lng_result = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(destination.full_address)
 
-        # 3: Recompute failed homes using new DB data.
+                if lat_lng_result == -1:
+                    continue
+                else:
+                    lat_lng = (lat_lng_result[0], lat_lng_result[1])
 
-        for home in self.homes:
-            if len(home.approx_commute_times) < len(self.destinations):
-                # Recompute missing destinations
-                for destination in self.destinations:
-                    if destination not in home.approx_commute_times:
-                        new_in_database = home.populate_approx_commutes(home.home.zip_code, destination,
-                                                                        destination.commute_type)
-                        if not new_in_database:
-                            # Error: For some reason, the database was not updated, so we mark home for deletion
-                            home.eliminate_home()
+            for home in self.homes:
+                if not home.populate_approx_commutes(home.home, destination, lat_lng_dest=lat_lng):
+                    home.eliminate_home()
 
     def retrieve_exact_commutes(self):
         """

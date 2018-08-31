@@ -223,11 +223,6 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'cocoon.survey.distance_matrix': {
-            'handlers': ['console', 'mail_admins', 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
         'cocoon.survey.home_data': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
@@ -246,6 +241,11 @@ LOGGING = {
 
         # Commute app logger
         'cocoon.commutes': {
+            'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'cocoon.commutes.distance_matrix': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
             'propagate': False,
