@@ -41,7 +41,7 @@ Setting up Software
     ::
 
         export WORKON_HOME=$HOME/.virtualenvs
-        export PROJECT_HOME=$HOME/PycharmProjects
+        export PROJECT_HOME=$HOME/work
         source $HOME/.local/bin/virtualenvwrapper.sh
 
 * Create the virtual environment
@@ -85,6 +85,45 @@ Instructions are from this website_:
     GRANT ALL PRIVILEGES ON DATABASE Cocoon TO cocoon_dev;
     ALTER USER cocoon_dev CREATEDB;
     \q
+
+
+Setting up the necessary Models
+---------------------------------
+* To Access anything you need to create a super user account for you local server
+    * Go to the terminal:
+
+    ::
+
+        cd ~/work/Cocoon # Go to Cocoon project root directory
+        workon Cocoon # Load the virtual environment
+        python manage.py createsuperuser # Creates a super user
+        #   Follow steps and create the super user
+
+* Go to the admin site
+    * probably: http://127.0.0.1:8000/adminBostoncocoon/
+
+* There are models you need to create:
+    * Commute Types:
+        * Click on Commute Types, then add Commute Types
+        * Make sure to create at least one, i.e driving, but you can create all if you want
+    * Home Type Models:
+        * Click on Home Type Models, then add Home Type Model
+        * Create at least apartment, but you can create all 4 if you want
+    * MLSManagementModel:
+        * Click on MLSManagementModel, then click add
+        * Just need to click save
+
+Adding Homes to the database
+-----------------------------
+* Go to the manage.py location and make sure to have the virtual env loaded
+    * You can also load manage.py through pycharms in the tools drop down
+
+* Run the pull_mlspin script to add homes to the database
+    * This script will try to add every avaiable apartment in boston, therefore please
+        make sure to exit the script after adding a decent number of homes, maybe like 500
+
+* To add pictures for those homes run the pull_mls_images script
+    * This script might take a little while to run but wait until this script exits
 
 Tips
 -----
