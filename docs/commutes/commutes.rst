@@ -33,7 +33,7 @@ This module does both updates the caching for approximate commutes and handles t
   
 * Transit:
     
-    * Transit currently uses the exact approximation type as Driving
+  * Transit currently uses the exact approximation type as Driving
       
 * Bicycling:
     
