@@ -4,7 +4,7 @@ from .base import *
 DEBUG = True
 
 # Domains that are allowed
-ALLOWED_HOSTS = ['bostoncocoon.com', 'cocoonboston.com']
+ALLOWED_HOSTS = ['bostoncocoon.com', 'cocoonboston.com', '18.223.228.147']
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
