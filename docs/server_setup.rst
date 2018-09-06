@@ -9,6 +9,7 @@ AWS Setup
 
   * Use BostonCocoon Security group
   * Create with Ubuntu 16.04 server
+  * Create an elastic ip address and assoiated with the instance
   
 * Follow installation setups in docs/installation.rst
 
