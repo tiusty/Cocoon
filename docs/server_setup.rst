@@ -21,7 +21,7 @@ AWS Setup
  :
  
   workon Cocoon
-  pip install -r ~/work/Cocoon/config/requirments.txt
+  pip install -r ~/work/Cocoon/requirments.txt
  
 * Install additional necessary pacakges
 
