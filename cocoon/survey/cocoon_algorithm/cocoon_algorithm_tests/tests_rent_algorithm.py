@@ -1,10 +1,16 @@
 from django.test import TestCase
 from unittest import skip
 from django.utils import timezone
+from unittest.mock import MagicMock, Mock, patch, call
+
+# Import Google geolocator
+import cocoon.houseDatabase.maps_requester as geolocator
 
 # Import external models
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel
+from cocoon.commutes.distance_matrix import commute_cache_updater
 from cocoon.commutes.models import ZipCodeBase, CommuteType
+from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
 # Import survey python modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.home_data.home_score import HomeScore
@@ -1043,7 +1049,6 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Create a user so the survey form can validate
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -1084,238 +1089,136 @@ class TestRetrieveApproximateCommutes(TestCase):
             state_home=state,
         ))
 
-    @staticmethod
-    def create_zip_code_dictionary(zip_code):
-        return ZipCodeBase.objects.create(zip_code=zip_code)
-
-    @staticmethod
-    def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,
-                                         commute_distance, commute_type, last_updated=timezone.now()):
-        parent_zip_code_dictionary.zipcodechild_set.create(
-            zip_code=zip_code,
-            commute_time_seconds=commute_time,
-            commute_distance_meters=commute_distance,
-            commute_type=commute_type,
-            last_date_updated=last_updated,
-        )
-
-    def test_retrieve_approx_commutes_in_database_one_home_one_destination(self):
+    def test_retrieve_approx_commutes_driving_transit_one_home_and_destination_not_eliminated(self):
+        """
+        This tests that is one home is inputted and one destination with driving or transit and the home is not
+        eliminated, then the home is not eliminated
+        """
         # Arrange
+        commute_type_driving = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
         survey = self.create_survey(self.user.userProfile)
-        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
-        house = self.create_home(self.home_type)
-
-        self.commute_time = 6000
-        self.commute_distance = 100
+        home = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_type_driving)
 
         # Start the algorithm
         rent_algorithm = RentAlgorithm()
-        rent_algorithm.homes = [house]
+        rent_algorithm.homes = [home]
         rent_algorithm.destinations = [destination]
 
-        # Create the zip-code dictionary
-        parent_zip_code = self.create_zip_code_dictionary(house.home.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code, destination.zip_code, self.commute_time,
-                                              self.commute_distance, self.commute_type)
+        # Mock the functions to just test this one function
+
+        # Tests that the home is valid and is not eliminated
+        home.populate_approx_commutes = MagicMock(return_value=True)
+        # Doesn't have a return but prevents updating the database unnecessarily
+        commute_cache_updater.update_commutes_cache = MagicMock()
 
         # Act
-        self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {})
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {destination: self.commute_distance})
-        self.assertFalse(rent_algorithm.homes[0].eliminated)
+        commute_cache_updater.update_commutes_cache.assert_called_once_with([home], [destination],
+                                                                            accuracy=CommuteAccuracy.APPROXIMATE)
+        home.populate_approx_commutes.assert_called_once_with(home.home, destination, lat_lng_dest="")
+        self.assertFalse(home.eliminated)
 
-    def test_retrieve_approx_commutes_in_database_several_homes_several_destinations(self):
+    def test_retrieve_approx_commutes_walking_one_home_and_destination_not_eliminated(self):
+        """
+        This tests that is one home is inputted and one destination with bicycling or waking and the home is not
+        eliminated, then the home is not eliminated and the correct lat_lng is generated and passed
+        """
         # Arrange
-
-        # Create the survey
+        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
         survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_type_walking)
 
-        # Create the commuter destinations
-        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
-        destination1 = self.create_destination(survey, self.commute_type,
-                                               street_address="200 Center Street", zip_code="12345")
-        destination2 = self.create_destination(survey, self.commute_type,
-                                               street_address="100 Franklin Street", zip_code="23456")
-
-        # Create the houses
-        house = self.create_home(self.home_type)
-        house1 = self.create_home(self.home_type, zip_code="04401")
-        house2 = self.create_home(self.home_type, zip_code="04204")
-
-        # Start the survey
+        # Start the algorithm
         rent_algorithm = RentAlgorithm()
-        rent_algorithm.homes = [house, house1, house2]
+        rent_algorithm.homes = [home]
+        rent_algorithm.destinations = [destination]
+
+        # Mock the functions to just test this one function
+
+        # Tests that the home is valid and is not eliminated
+        home.populate_approx_commutes = MagicMock(return_value=True)
+        # Doesn't have a return but prevents updating the database unnecessarily
+        commute_cache_updater.update_commutes_cache = MagicMock()
+        # Prevent google maps query
+        geolocator.maps_requester.get_lat_lon_from_address = MagicMock(return_value=(42.4080528, -71.1632442))
+
+        # Act
+        rent_algorithm.retrieve_all_approximate_commutes()
+
+        # Assert
+        commute_cache_updater.update_commutes_cache.assert_called_once_with([home], [destination],
+                                                                            accuracy=CommuteAccuracy.APPROXIMATE)
+        home.populate_approx_commutes.assert_called_once_with(home.home, destination,
+                                                              lat_lng_dest=(42.4080528, -71.1632442))
+        self.assertFalse(home.eliminated)
+
+    def test_retrieve_approx_commutes_driving_several_homes_and_destinations_some_not_eliminated_drive_transit_bicycling(self):
+        """
+        Checks that if several homes and destinations are put in, then the correct homes are eliminated and
+            the correct functions calls are made. Also tests that for the bicycling case that the homes generate
+            a lat and long
+        """
+        # Arrange
+        commute_type_driving = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
+        commute_type_transit = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type)
+        home1 = self.create_home(self.home_type)
+        home2 = self.create_home(self.home_type)
+        destination = self.create_destination(survey, commute_type=commute_type_driving)
+        destination1 = self.create_destination(survey, commute_type=commute_type_transit)
+        destination2 = self.create_destination(survey, commute_type=commute_type_bicycling)
+
+        # Start the algorithm
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.homes = [home, home1, home2]
         rent_algorithm.destinations = [destination, destination1, destination2]
 
-        parent_zip_code1 = self.create_zip_code_dictionary(house.home.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code1, destination.zip_code, 6000.0, 100.0, self.commute_type)
-        self.create_zip_code_dictionary_child(parent_zip_code1, destination1.zip_code, 3000.0, 100.0, self.commute_type)
-        self.create_zip_code_dictionary_child(parent_zip_code1, destination2.zip_code, 12000.0, 100.0, self.commute_type)
+        # Mock the functions to just test this one function
 
-        parent_zip_code2 = self.create_zip_code_dictionary(house1.home.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code2, destination.zip_code, 1500.0, 100.0, self.commute_type)
-        self.create_zip_code_dictionary_child(parent_zip_code2, destination1.zip_code, 6000.0, 100.0, self.commute_type)
-        self.create_zip_code_dictionary_child(parent_zip_code2, destination2.zip_code, 18000.0, 100.0, self.commute_type)
-
-        parent_zip_code3 = self.create_zip_code_dictionary(house2.home.zip_code)
-        self.create_zip_code_dictionary_child(parent_zip_code3, destination.zip_code, 3000.0, 100.0, self.commute_type)
-        self.create_zip_code_dictionary_child(parent_zip_code3, destination1.zip_code, 12000.0, 100.0, self.commute_type)
-        self.create_zip_code_dictionary_child(parent_zip_code3, destination2.zip_code, 6000.0, 100.0, self.commute_type)
-
-        # Act
-        for home in rent_algorithm.homes:
-            self.assertEqual(home.approx_commute_times, {})
-        rent_algorithm.retrieve_all_approximate_commutes()
-
-        # Assert
-        self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
-                         {destination: 100.0,
-                          destination1: 50.0,
-                          destination2: 200.0})
-        self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
-                         {destination: 25.0,
-                          destination1: 100.0,
-                          destination2: 300.0})
-        self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
-                         {destination: 50.0,
-                          destination1: 200.0,
-                          destination2: 100.0})
-
-    @skip("reenable when distance matrix is mocked")
-    def test_retrieve_approx_commutes_not_in_database_no_parent_zip(self):
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type_query = self.commute_type
-        rent_algorithm.homes = [self.home]
-        destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
-        rent_algorithm.destinations = [destination]
-
-        # Act
-        rent_algorithm.retrieve_all_approximate_commutes()
-
-        # Assert (These times are place holders, since I don't know what the commute times will be)
-        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 26.416666666666668})
-
-    @skip("reenable when distance matrix is mocked")
-    def test_retrieve_approx_commutes_not_in_database_with_parent_zip(self):
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type_query = self.commute_type
-        rent_algorithm.homes = [self.home]
-        destination = self.create_destination("300 Fern Street", "Bangor", "ME", "04401")
-        rent_algorithm.destinations = [destination]
-        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
-
-        # Act
-        rent_algorithm.retrieve_all_approximate_commutes()
-
-        # Assert (These times are place holders, since I don't know what the commute times will be)
-        self.assertEqual(self.home.approx_commute_times, {"300 Fern Street-Bangor-ME-04401" : 26.416666666666668})
-
-    @skip("reenable when distance matrix is mocked")
-    def test_retrieve_approx_commutes_not_in_database_many_homes_many_destinations(self):
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type_query = self.commute_type
-        rent_algorithm.homes = [self.home, self.home1, self.home2]
-        destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
-        destination2 = self.create_destination("", "Boston", "MA", "02101")
-        destination3 = self.create_destination("", "Providence", "RI", "02860")
-        rent_algorithm.destinations = [destination1, destination2, destination3]
-
-        # Act
-        for home in rent_algorithm.homes:
-            self.assertEqual(home.approx_commute_times, {})
-        rent_algorithm.retrieve_all_approximate_commutes()
-
-        # Assert (These times are place holders, since I don't know what the commute times will be)
-        self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 2816.5833333333335,
-                          "-Boston-MA-02101": 230.53333333333333,
-                          "-Providence-RI-02860": 270.46666666666664})
-        self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 2806.45,
-                          "-Boston-MA-02101": 220.4,
-                          "-Providence-RI-02860": 260.3333333333333})
-        self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 2720.983333333333,
-                          "-Boston-MA-02101": 134.93333333333334,
-                          "-Providence-RI-02860": 174.86666666666667})
-
-    @skip("reenable when distance matrix is mocked")
-    def test_retrieve_approx_commutes_mixed(self):
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.commute_type_query = self.commute_type
-        rent_algorithm.homes = [self.home, self.home1, self.home2]
-        destination1 = self.create_destination("", "Beverly Hills", "CA", "90210")
-        destination2 = self.create_destination("", "Boston", "MA", "02101")
-        destination3 = self.create_destination("", "Providence", "RI", "02860")
-        rent_algorithm.destinations = [destination1, destination2, destination3]
-
-        # Only a few zip codes and destinations will be in the database
-        parent_zip_code = self.create_zip_code_dictionary(self.zip_code)
-        parent_zip_code1 = self.create_zip_code_dictionary(self.zip_code1)
-        self.create_zip_code_dictionary_child(parent_zip_code, "90210", 6000.0, 100.0, self.commute_type)
-        self.create_zip_code_dictionary_child(parent_zip_code1, "02101", 18000.0, 100.0, self.commute_type)
-
-
-        # Act
-        for home in rent_algorithm.homes:
-            self.assertEqual(home.approx_commute_times, {})
-        rent_algorithm.retrieve_all_approximate_commutes()
-
-        # Assert (These times are place holders, since I don't know what the commute times will be)
-        self.assertEqual(rent_algorithm.homes[0].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 100.0,
-                          "-Boston-MA-02101": 230.53333333333333,
-                          "-Providence-RI-02860": 270.46666666666664})
-        self.assertEqual(rent_algorithm.homes[1].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 2806.45,
-                          "-Boston-MA-02101": 300.0,
-                          "-Providence-RI-02860": 260.3333333333333})
-        self.assertEqual(rent_algorithm.homes[2].approx_commute_times,
-                         {"-Beverly Hills-CA-90210": 2720.983333333333,
-                          "-Boston-MA-02101": 134.93333333333334,
-                          "-Providence-RI-02860": 174.86666666666667})
-
-    def test_retrieve_approx_commutes_edge_case_empty_homes(self):
-        # Arrange
-
-        # Create the survey
-        survey = self.create_survey(self.user.userProfile)
-        destination = self.create_destination(survey, self.commute_type, street_address="", city="Beverly Hills",
-                                              state="CA", zip_code="90210")
-
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.homes = []
-        rent_algorithm.destinations = [destination]
+        # Tests that the home is valid and is not eliminated
+        home.populate_approx_commutes = MagicMock(return_value=True)
+        home1.populate_approx_commutes = MagicMock(return_value=False)
+        home2.populate_approx_commutes = MagicMock(return_value=True)
+        # Doesn't have a return but prevents updating the database unnecessarily
+        commute_cache_updater.update_commutes_cache = MagicMock()
+        # Prevent google maps query
+        geolocator.maps_requester.get_lat_lon_from_address = MagicMock(return_value=(42.4080528, -71.1632442))
 
         # Act
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        self.assertEqual(rent_algorithm.homes, [])
+        commute_cache_updater.update_commutes_cache.assert_called_once_with([home, home1, home2],
+                                                                            [destination, destination1, destination2],
+                                                                            accuracy=CommuteAccuracy.APPROXIMATE)
+        home.populate_approx_commutes.assert_has_calls(
+            [call(home.home, destination, lat_lng_dest=""),
+             call(home.home, destination1, lat_lng_dest=""),
+             call(home.home, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
+        )
+        home1.populate_approx_commutes.assert_has_calls(
+             [call(home1.home, destination, lat_lng_dest=""),
+              call(home1.home, destination1, lat_lng_dest=""),
+              call(home1.home, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
+        )
+        home2.populate_approx_commutes.assert_has_calls(
+             [call(home2.home, destination, lat_lng_dest=""),
+              call(home2.home, destination1, lat_lng_dest=""),
+              call(home2.home, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
+        )
 
-    def test_retrieve_approx_commutes_edge_case_empty_destinations(self):
-        # Arrange
-        house = self.create_home(self.home_type)
-
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.homes = [house]
-        rent_algorithm.destinations = []
-
-        # Act
-        rent_algorithm.retrieve_all_approximate_commutes()
-
-        # Assert
-        self.assertEqual(rent_algorithm.homes[0].approx_commute_times, {})
-
-    # TODO: Write tests for exact commute computation
+        self.assertFalse(home.eliminated)
+        self.assertTrue(home1.eliminated)
+        self.assertFalse(home2.eliminated)
 
 
+# TODO fix exact commutes to use mocking
 class TestRetrieveExactCommutes(TestCase):
 
     def setUp(self):
