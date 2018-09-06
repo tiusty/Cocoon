@@ -13,8 +13,8 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model:
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User
-    list_display = ('email', 'joined', 'first_name', 'last_name', 'is_admin',)
-    list_filter = ('is_admin',)
+    list_display = ('email', 'joined', 'first_name', 'last_name', 'is_admin', 'is_hunter', 'is_broker')
+    list_filter = ('is_admin', 'is_hunter', 'is_broker',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name',)}),
@@ -35,6 +35,7 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileInline(admin.StackedInline):
+    raw_id_fields = ("favorites", "visit_list",)
     model = UserProfile
     can_delete = False
     verbose_name_plural = 'Profile'

@@ -6,7 +6,7 @@ from cocoon.userAuth.models import UserProfile, MyUser
 from cocoon.survey.models import RentingSurveyModel
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 
@@ -45,33 +45,20 @@ def loginPage(request):
     return render(request, 'userAuth/login.html', context)
 
 
-def registerPage(request):
-    form = RegisterForm()
-    context = {
-        'error_message': [],
-    }
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            if form.cleaned_data['creation_key'] == creation_key_value:
-                # The email address is used as the username
-                form.save()
-                # Try to have the user automatically log in but for now go back to login page
-                messages.add_message(request, messages.SUCCESS, 'Successfully registered user')
-                return HttpResponseRedirect(reverse('userAuth:loginPage'))
-            else:
-                form.add_error('creation_key', 'Creation key wrong')
-                context['error_message'].append("Creation key wrong")
-        else:
-            context['error_message'].append('Unable to create user')
-    context['form'] = form
-    return render(request, 'userAuth/register.html', context)
+class SignUpView(TemplateView):
+    """
+    Redirects user to sign up page which gives them options for what to sign up as
+    """
+    template_name = 'userAuth/signup.html'
 
 
 class ApartmentHunterSignupView(CreateView):
+    """
+    Loads register page for an apartment hunter
+    """
     model = MyUser
     form_class = ApartmentHunterSignupForm
-    template_name = 'userAuth/register.html'
+    template_name = 'userAuth/signup_form.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'hunter'
@@ -84,9 +71,12 @@ class ApartmentHunterSignupView(CreateView):
 
 
 class BrokerSignupView(CreateView):
+    """
+    Loads the sign up page for a broker
+    """
     model = MyUser
     form_class = BrokerSignupForm
-    template_name = 'userAuth/register.html'
+    template_name = 'userAuth/signup_form.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'broker'
