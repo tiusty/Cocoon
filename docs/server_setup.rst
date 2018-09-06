@@ -5,33 +5,33 @@ Setting up the server
 AWS Setup
 ----------
 
-* Create an EC2 instance:
+1. Create an EC2 instance:
 
-  * Use BostonCocoon Security group
-  * Create with Ubuntu 16.04 server
-  * Create an elastic ip address and assoiated with the instance
-  * If desired, a record set for type A to the elastic ip address to connect it to a domain
+* Use BostonCocoon Security group
+* Create with Ubuntu 16.04 server
+* Create an elastic ip address and assoiated with the instance
+* If desired, a record set for type A to the elastic ip address to connect it to a domain
   
-* Follow installation setups in docs/installation.rst
+2. Follow installation setups in docs/installation.rst
 
- * Follow steps for installing software and setting up software
+* Follow steps for installing software and setting up software
  
-* Install python libraries
+Install python libraries
 
- * Make sure to be in virtual env
+* Make sure to be in virtual env
  
 ::
  
   workon Cocoon
   pip install -r ~/work/Cocoon/requirments.txt
  
-* Install additional necessary pacakges
+3. Install additional necessary pacakges
 
 ::
  
  sudo apt-get install apache2 libapache2-mod-wsgi-py3 -y
   
-* Symlink apache2 file
+4. Symlink apache2 file
 
 ::
  
