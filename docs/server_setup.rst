@@ -37,4 +37,13 @@ Install python libraries
  
  sudo ln -sf ~/work/Cocoon/config/apache2/000-default.conf /etc/apache2/sites-available/
  
+ HTTPS
+ ------
+ * Make sure aws inbound connections accepts https
+ 
+ * Go to https://letsencrypt.org/getting-started/ and follow instructions
+ 
+ * Some things that I needed to do
+  * First when doing the challenges keep the http apache2 config file. Then once that is done and it fails to install then comment out the wsgiProcessGroup and ProcessID lines, then try again and it should work
+ 
  
