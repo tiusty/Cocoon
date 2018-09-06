@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import CreateView
 
-from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm
+from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 
 
 def index(request):
@@ -75,6 +75,21 @@ class ApartmentHunterSignupView(CreateView):
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'hunter'
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return HttpResponseRedirect(reverse('homePage:index'))
+
+
+class BrokerSignupView(CreateView):
+    model = MyUser
+    form_class = BrokerSignupForm
+    template_name = 'userAuth/register.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'broker'
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
