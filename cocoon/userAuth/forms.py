@@ -37,17 +37,6 @@ class LoginUserForm(AuthenticationForm):
 
 class BaseRegisterForm(UserCreationForm):
 
-    creation_key = forms.CharField(
-        required=True,
-        label="Please enter the key",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'key',
-            }
-        )
-    )
-
     email = forms.EmailField(
         required=True,
         label="Email Address",
@@ -110,6 +99,17 @@ class BaseRegisterForm(UserCreationForm):
 
 class ApartmentHunterSignupForm(BaseRegisterForm):
 
+    creation_key = forms.CharField(
+        required=True,
+        label="Please enter the key",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'key',
+            }
+        )
+    )
+
     def is_valid(self):
         valid = super(ApartmentHunterSignupForm, self).is_valid()
 
@@ -137,6 +137,17 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
 
 
 class BrokerSignupForm(BaseRegisterForm):
+
+    creation_key = forms.CharField(
+        required=True,
+        label="Please enter the key",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'key',
+            }
+        )
+    )
 
     def is_valid(self):
         valid = super(BrokerSignupForm, self).is_valid()
