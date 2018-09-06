@@ -38,8 +38,8 @@ Install python libraries
  sudo ln -sf ~/work/Cocoon/config/apache2/000-default.conf /etc/apache2/enabled-available/
  sudo ln -sf ~/work/Cocoon/config/apache2/000-default-le-ssl.conf /etc/apache2/enabled-available/
  
- HTTPS
- ------
+HTTPS
+------
  * Make sure aws inbound connections accepts https
  
  * Go to https://letsencrypt.org/getting-started/ and follow instructions
