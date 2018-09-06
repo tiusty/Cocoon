@@ -11,3 +11,5 @@ AWS Setup
   * Create with Ubuntu 16.04 server
   
 * Follow installation setups in docs/installation.rst
+
+ * Skip any step referring to Pycharms
