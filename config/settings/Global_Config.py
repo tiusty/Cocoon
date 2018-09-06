@@ -38,7 +38,3 @@ DEFAULT_COMMUTE_TYPE = "Driving"
 # Google distance matrix values
 gmaps_api_key = 'AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho'
 gmaps = googlemaps.Client(key=gmaps_api_key)
-
-# Key:
-
-# User Registration Data
