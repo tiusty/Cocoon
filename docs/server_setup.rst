@@ -12,4 +12,16 @@ AWS Setup
   
 * Follow installation setups in docs/installation.rst
 
- * Skip any step referring to Pycharms
+ * Skip any step referring to Pycharms and local setup
+ 
+* Install python libraries
+ * Make sure to be in virtual env
+ :
+ 
+  workon Cocoon
+  pip install -r ~/work/Cocoon/config/requirments.txt
+ 
+* Install additional necessary pacakges
+
+ :
+  sudo apt-get install apache2 libapache2-mod-wsgi-py3
