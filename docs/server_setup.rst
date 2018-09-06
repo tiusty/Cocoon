@@ -25,3 +25,10 @@ AWS Setup
 
  :
   sudo apt-get install apache2 libapache2-mod-wsgi-py3 -y
+  
+* Symlink apache2 file
+
+ :
+  sudo ln -sf ~/work/Cocoon/config/apache2/000-default.conf /etc/apache2/sites-available/
+ 
+ 
