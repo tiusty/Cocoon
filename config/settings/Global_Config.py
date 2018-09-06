@@ -42,4 +42,3 @@ gmaps = googlemaps.Client(key=gmaps_api_key)
 # Key:
 
 # User Registration Data
-creation_key_value = "cocoon2017usercreation"

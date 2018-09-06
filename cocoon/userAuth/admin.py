@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cocoon.userAuth.forms import RegisterForm
+from cocoon.userAuth.forms import BaseRegisterForm
 from .models import MyUser
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -8,7 +8,7 @@ from .models import UserProfile
 
 class UserAdmin(BaseUserAdmin):
     # Form to add a user
-    add_form = RegisterForm
+    add_form = BaseRegisterForm
     readonly_fields = ("joined",)
     # The fields to be used in displaying the User model:
     # These override the definitions on the base UserAdmin
@@ -19,7 +19,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name',)}),
         ('Joined', {'fields': ('joined',)}),
-        ('Permissions', {'fields': ('is_active', 'is_admin',)}),
+        ('Permissions', {'fields': ('is_active', 'is_admin', 'is_hunter', 'is_broker')}),
     )
     # add_fields sets is not a standard ModelAdmin Attribute. UserAdmin
     # overrides get_fieldsset to use this attirbute when creating a user.

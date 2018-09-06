@@ -1,6 +1,9 @@
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.db import transaction
 from .models import MyUser, UserProfile
 from django import forms
+
+from .constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
 
 
 class LoginUserForm(AuthenticationForm):
@@ -32,7 +35,7 @@ class LoginUserForm(AuthenticationForm):
     )
 
 
-class RegisterForm(UserCreationForm):
+class BaseRegisterForm(UserCreationForm):
 
     creation_key = forms.CharField(
         required=True,
@@ -103,6 +106,34 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = MyUser
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
+
+
+class ApartmentHunterSignupForm(BaseRegisterForm):
+
+    def is_valid(self):
+        valid = super(ApartmentHunterSignupForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        current_form = self.cleaned_data.copy()
+
+        if current_form['creation_key'] != HUNTER_CREATION_KEY:
+            self.add_error('creation_key', "Creation Key invaild")
+            valid = False
+
+        return valid
+
+    class Meta:
+        model = MyUser
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_hunter = True
+        user.save()
+        return user
 
 
 class ProfileForm(forms.ModelForm):
