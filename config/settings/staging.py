@@ -9,7 +9,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 # Domains that are allowed
-ALLOWED_HOSTS = ['bostoncocoon.com', 'cocoonboston.com']
+ALLOWED_HOSTS = ['bostoncocoon.com', 'cocoonbeta.com']
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
