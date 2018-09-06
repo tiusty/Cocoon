@@ -65,10 +65,12 @@ context.
 
                 <div class="expanded-info">
                     <table class="expanded-info-table">
+                    {% if is_broker %}
                         <tr>
                             <td class="expanded-tile-text category">Address</td>
                             <td class="expanded-tile-text value">{{ theHouse.full_address }}</td>
                         </tr>
+                    {% endif %}
                         <tr>
                             <td class="expanded-tile-text category">Price</td>
                             <td class="expanded-tile-text value">{{ theHouse.price_string }}</td>
@@ -178,7 +180,9 @@ context.
         {# Below are placeholder strings    #}
 
         <span class="infoBit">{{ theHouse.price_string }}</span>
-        <span class="infoBit addressBit">{{ theHouse.full_address }}</span>
+        {% if is_broker %}
+            <span class="infoBit addressBit">{{ theHouse.full_address }}</span>
+        {% endif %}
         {% for key, value in commuteExact.items %}
         <span class="infoBit commuteExactbit">Exact: {{ value|floatformat:"0" }}</span>
         {% endfor %}
