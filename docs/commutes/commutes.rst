@@ -25,7 +25,7 @@ This module does both updates the caching for approximate commutes and handles t
 
   * This file computes the approximate distance/time between the given zipcodes. 
   
-**Appriximations for each commute**
+**Approximations for each commute**
   
 * Driving:
    
@@ -42,3 +42,18 @@ This module does both updates the caching for approximate commutes and handles t
 * Walking:
   
   * Walking is computed in the same way as bicycling but uses a different average speed to compute the approximate commute time
+
+Models.py
+~~~~~~~~~~~
+
+* CommuteType:
+
+    * This contains the different possible commutes types the user can select
+
+* ZipCodeBase:
+
+    * This stores a zipcode. The main use of this model is paired with the ZipCodeChild
+
+* ZipCodeChild:
+
+    * The zip code child model stores a zip code that is in relation to the parent zipcode. I.e The ZipCodeChild stores a zipcode and a commute type associated with that ZipCodeChild. Basically, the other fields, i.e time, distance is the time and distance from the ChildZipCode to the parent ZipCode. This is used as the approximation for Driving and Transit commute types.
