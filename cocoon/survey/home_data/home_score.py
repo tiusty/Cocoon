@@ -146,7 +146,7 @@ class HomeScore(object):
         # If the distance is less than a mile then don't add any distance since it is already so close
         if distance > 1:
             # Extra distance is determined by giving more distance to homes farther away
-            extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/math.sqrt(distance))
+            extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/distance)
             # This normalizes the value since walking needs less of a weight than biking since homes
             #   are more direct when walking.
             distance += extra_distance * average_speed/AVERAGE_BICYCLING_SPEED

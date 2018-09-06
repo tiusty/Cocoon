@@ -454,7 +454,7 @@ class TestApproxCommute(TestCase):
 
         # Assert
         self.assertTrue(result)
-        self.assertAlmostEqual(home.approx_commute_times[destination], 14.0775, places=3)
+        self.assertAlmostEqual(home.approx_commute_times[destination], 17.8878, places=3)
 
     def test_lat_lng_approximation_walking(self):
         """
@@ -472,7 +472,7 @@ class TestApproxCommute(TestCase):
 
         # Assert
         self.assertTrue(result)
-        self.assertAlmostEqual(home.approx_commute_times[destination], 35.8404, places=3)
+        self.assertAlmostEqual(home.approx_commute_times[destination], 39.6506, places=3)
 
     def test_lat_lng_approximation_average_speed_zero(self):
         # Arrange
