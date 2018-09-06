@@ -24,4 +24,4 @@ AWS Setup
 * Install additional necessary pacakges
 
  :
-  sudo apt-get install apache2 libapache2-mod-wsgi-py3
+  sudo apt-get install apache2 libapache2-mod-wsgi-py3 -y
