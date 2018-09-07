@@ -5,7 +5,7 @@
 var map;
 var markers = [];
 var MAPZOOM = 12;
-var MAXZOOM = 16;
+var MAXZOOM = 13;
 
 /**
  * function required by google maps api for initialization
