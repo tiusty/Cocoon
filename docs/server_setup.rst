@@ -31,6 +31,15 @@ Install python libraries
  
  sudo apt-get install apache2 libapache2-mod-wsgi-py3 -y
  
+4. Create the secrets file
+
+::
+  
+  cd ~/work/Cocoon/config/settings
+  cp secrets.json.tempate secrets.json
+ 
+* Now modify the values inside to the correct values
+ 
  
 HTTPS
 ------
