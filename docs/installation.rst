@@ -26,12 +26,12 @@ Setting up Software
 
 * Instructions rely on cloning to: ~/work/
 
-::
+        ::
 
-        cd ~
-        mkdir work
-        cd work
-        git clone git@github.com:tiusty/Cocoon.git
+                cd ~
+                mkdir work
+                cd work
+                git clone git@github.com:tiusty/Cocoon.git
 
 3. In ~/.bashrc add to the bottom:
 
@@ -51,10 +51,10 @@ Setting up Software
 
 * Not really used in locally development but still needed
 
-::
+        ::
 
-        cd ~/work/Cocoon/config/settings
-        cp secret.json.template secret.json
+                cd ~/work/Cocoon/config/settings
+                cp secret.json.template secret.json
 
 Creating the Postgres Database
 ------------------------------
