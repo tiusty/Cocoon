@@ -246,10 +246,12 @@ STYLING NEW TILE RESULTS
     /*flex-grow: 3;*/
     /*flex-basis: 30%;*/
     overflow: hidden;
+    max-width:100%;
+    max-height:100%;
 }
 
 .thumbnailItem-hover {
-    padding: 0 !important;
+    padding: 1px !important;
 }
 
 #thumbnailItem1 {
