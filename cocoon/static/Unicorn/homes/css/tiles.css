@@ -246,6 +246,9 @@ STYLING NEW TILE RESULTS
     /*flex-grow: 3;*/
     /*flex-basis: 30%;*/
     overflow: hidden;
+}
+
+.thumbnailImage {
     max-width:100%;
     max-height:100%;
 }
