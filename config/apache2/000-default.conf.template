@@ -45,11 +45,6 @@
 	#WSGIDaemonProcess CocoonServer python-path=/home/ubuntu/work/Cocoon python-home=/home/ubuntu/.virtualenvs/Cocoon user=ubuntu home=/home/ubuntu/work/Cocoon
 	#WSGIProcessGroup CocoonServer
 	WSGIScriptAlias / /home/ubuntu/work/Cocoon/config/wsgi.py
-
-	# Force http requests to redirect to the https connection
-    RewriteEngine on
-    RewriteCond %{SERVER_NAME} =bostoncocoon.com
-    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
 
 # vim: syntax=apache ts=4 sw=4 sts=4 sr noet

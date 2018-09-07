@@ -17,16 +17,16 @@ ALLOWED_HOSTS = ['bostoncocoon.com', 'cocoonbeta.com']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bostonCocoonDatabase',
+        'NAME': 'bostonCocoonDatabaseStaging',
         'USER': 'bostoncocoon',
         'PASSWORD': 'Pr0jectUn!corn2018',
-        'HOST': 'coocondatabase.cqoopoxrcwhz.us-east-2.rds.amazonaws.com',
+        'HOST': 'cocoonstagingdatabase.cqoopoxrcwhz.us-east-2.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
 
 # AWS configuration settings
-AWS_STORAGE_BUCKET_NAME = 'bostoncocoon-assets'
+AWS_STORAGE_BUCKET_NAME = 'bostoncocoonstaging'
 AWS_ACCESS_KEY_ID = 'AKIAIL5BFKNQ6GZPNDWQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
