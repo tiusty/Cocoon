@@ -7,32 +7,33 @@ Ubuntu Installation
 Installing Software
 -------------------
 
-* Install the latest version of pycharms
-* Install Git
-* Install pip3 + virtualenv + virtualenvwrapper + databse necessary libraries:
+1. Install depedencies
+* Install pip3 + virtualenv + virtualenvwrapper + databse necessary libraries + git:
 
         ::
 
             sudo apt-get update
-            sudo apt-get install python3-pip python3-dev libpq-dev postgresql postgresql-contrib
+            sudo apt-get install python3-pip python3-dev libpq-dev postgresql postgresql-contrib git -y
             pip3 install virtualenv
             pip3 install virtualenvwrapper
 
 Setting up Software
 -------------------
 
-* Set up ssh keys and add to github
-* Clone repo to local machine
-    * Preferably clone to: ~/work/
+1. Set up ssh keys and add to github
 
-    ::
+2. Clone repo to local machine
+
+* Instructions rely on cloning to: ~/work/
+
+::
 
         cd ~
         mkdir work
         cd work
         git clone git@github.com:tiusty/Cocoon.git
 
-* In ~/.bashrc add to the bottom:
+3. In ~/.bashrc add to the bottom:
 
     ::
 
@@ -40,14 +41,20 @@ Setting up Software
         export PROJECT_HOME=$HOME/work
         source $HOME/.local/bin/virtualenvwrapper.sh
 
-* Create the virtual environment
+4. Create the virtual environment
 
     ::
 
         mkvirtualenv Cocoon
+        
+5. Copy over secrets file
 
+* Not really used in locally development but still needed
 
+::
 
+        cd ~/work/Cocoon/config/settings
+        cp secret.json.template secret.json
 
 Creating the Postgres Database
 ------------------------------
