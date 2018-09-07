@@ -44,8 +44,10 @@ HTTPS
       cp 000-default.conf.template 000-default.conf
     
 3. Now need to change some of the settings
-    * Change ServerName to the ServerName, i.e bostoncocoon.com
-    * Copy it over to the right location
+
+* Change ServerName to the ServerName, i.e bostoncocoon.com
+
+* Copy it over to the right location
     
     ::
     
@@ -65,7 +67,8 @@ HTTPS
     # Also make sure to force redirect of https and not allow http requests
     
 5. Once the new https .conf file is created need to do a couple of things
-  * Remove the comment for:
+
+* Remove the comment for:
   
   ::
   
