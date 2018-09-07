@@ -4,7 +4,6 @@
 # IntelliJ Idea workspace configuration #
 .idea/
 
-<<<<<<< HEAD
 # Ignore the settings file
 config/settings/secrets.json
 
