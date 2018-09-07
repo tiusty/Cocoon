@@ -4,6 +4,9 @@
 # IntelliJ Idea workspace configuration #
 .idea/
 
+# Html files in the docs
+docs/*.html
+
 # Migration folders #
 cocoon/userAuth/migrations
 cocoon/houseDatabase/migrations
