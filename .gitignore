@@ -4,14 +4,14 @@
 # IntelliJ Idea workspace configuration #
 .idea/
 
-# Html files in the docs
-docs/*.html
-
 # Ignore the settings file
 config/settings/secrets.json
 
 # Ignore the other apache files that isn't the template file
 config/apache2/*.conf
+
+# Html files in the docs
+docs/*.html
 
 # Migration folders #
 cocoon/userAuth/migrations

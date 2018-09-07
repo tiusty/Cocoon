@@ -39,7 +39,7 @@
 		</Files>
 	</Directory>
 
-    # These are commented out because the HTTP request is now only used for the challenge questinos to renew the certificate for https
+    # These are commented out because the HTTP request is now only used for the challenge questions to renew the certificate for https
     #   With the WSGIDaemonProcess now commented out, the https fails to install because the naming will conflict with
     #   the https apache2 settings file
 	#WSGIDaemonProcess CocoonServer python-path=/home/ubuntu/work/Cocoon python-home=/home/ubuntu/.virtualenvs/Cocoon user=ubuntu home=/home/ubuntu/work/Cocoon
