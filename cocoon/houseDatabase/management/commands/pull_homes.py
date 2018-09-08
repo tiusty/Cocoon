@@ -1,5 +1,6 @@
 # Django Modules
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 # Cocoon Modules
 from cocoon.houseDatabase.management.commands.mlspin.pull_mlspin import MlspinRequester
@@ -22,23 +23,25 @@ class Command(BaseCommand):
         """
         Pulls all the homes for all the providers
         """
-        # self.pull_mlspin_homes()
-        self.pull_ygl_homes()
+
+        update_timestamp = timezone.now()
+        # self.pull_mlspin_homes(update_timestamp)
+        self.pull_ygl_homes(update_timestamp)
 
     @staticmethod
-    def pull_mlspin_homes():
+    def pull_mlspin_homes(timestamp):
         """
         Pulls the homes from MLSpin
         """
         # Pull the MLS homes
-        mlspin_request = MlspinRequester()
+        mlspin_request = MlspinRequester(timestamp=timestamp)
         mlspin_request.parse_idx_feed()
 
     @staticmethod
-    def pull_ygl_homes():
+    def pull_ygl_homes(timestamp):
         """
         Pulls the homes from YGL
         """
-        ygl_requester = YGLRequester()
+        ygl_requester = YGLRequester(timestamp=timestamp)
         ygl_requester.parse_idx_feed()
 

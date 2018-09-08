@@ -24,11 +24,13 @@ class MlspinRequester(object):
 
     NUM_COLS = 29
 
-    def __init__(self):
+    def __init__(self, timestamp=timezone.now):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
         """
+
+        self.update_timestamp = timestamp
 
         # 1. Connect to mlspin IDX (internet data exchange URL)
         try:
@@ -71,8 +73,6 @@ class MlspinRequester(object):
         num_apartments_not_for_rental = 0
         num_apartments_with_value_error = 0
 
-        # Parses the IDX txt
-        update_timestamp = timezone.now()
         for line in lines[1:-1]:  # skips the col headers
 
             # Parse IDX feed to put each item into an array
@@ -107,7 +107,8 @@ class MlspinRequester(object):
                 #   non-issue, we can take this out
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=cells[LIST_NO])
                 if existing_apartment.street_address == address and existing_apartment.zip_code == zip_code:
-                    existing_apartment.last_updated = update_timestamp
+                    existing_apartment.apartment_number = cells[UNIT_NO].lower()
+                    existing_apartment.last_updated = self.update_timestamp
                     existing_apartment.currently_available = True
                     existing_apartment.save()
                     print("[ UPDATING ]" + full_add)
@@ -173,10 +174,10 @@ class MlspinRequester(object):
                     new_listing.listing_provider = "MLSPIN"
                     new_listing.listing_agent = cells[LIST_AGENT]
                     new_listing.listing_office = cells[LIST_OFFICE]
-                    new_listing.last_updated = update_timestamp
+                    new_listing.last_updated = self.update_timestamp
 
                     # Set RentDatabaseModel fields
-                    new_listing.apartment_number = apartment_no
+                    new_listing.apartment_number = cells[UNIT_NO].lower()
                     new_listing.home_type = apartment_home_type
                     new_listing.currently_available = True
 
@@ -191,7 +192,7 @@ class MlspinRequester(object):
                 print("[ ADDING   ]" + full_add)
 
         # When all the homes are added, update the MLSManagement model to reflex that the homes have been updated
-        print("Updating MLS timestamp to {0}".format(update_timestamp.date()))
+        print("Updating MLS timestamp to {0}".format(self.update_timestamp.date()))
 
         # Printing out errors for data collection and observation
         print()
@@ -208,13 +209,13 @@ class MlspinRequester(object):
         print("Number of homes that failed due to Value Error: {0}".format(num_apartments_with_value_error))
 
         manager = MlsManagementModel.objects.all().first()
-        manager.last_updated_mls = update_timestamp
+        manager.last_updated_mls = self.update_timestamp
         manager.save()
 
         # This is a hacky way of adding photos once all the homes are added.
         # The main purpose of adding it here is to reuse the update_timestamp in case a day
         #   progressed before finishing the homes
-        image_requester = MLSpinRequesterImage(last_update=update_timestamp)
+        image_requester = MLSpinRequesterImage(last_update=self.update_timestamp)
         image_requester.add_images()
 
 

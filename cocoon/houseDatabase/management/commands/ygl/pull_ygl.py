@@ -4,6 +4,7 @@ from django.utils import timezone
 # Cocoon modules
 from cocoon.houseDatabase.constants import YGL_URL
 from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.houseDatabase.models import YglManagementModel
 
 # Import third party libraries
 import os
@@ -11,6 +12,8 @@ import sys
 import urllib.request
 import urllib.error
 import xml.etree.ElementTree as ET
+from datetime import datetime
+from pytz import timezone as pytimezone
 
 
 class YGLRequester(object):
@@ -26,11 +29,13 @@ class YGLRequester(object):
     NUM_COLS = 29
     YGL_FEED_FILE_NAME = "ygl_feed.xml"
 
-    def __init__(self):
+    def __init__(self, timestamp=timezone.now):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
         """
+
+        self.update_timestamp = timestamp
 
         # 1. Connect to mlspin IDX (internet data exchange URL)
         try:
@@ -45,9 +50,9 @@ class YGLRequester(object):
     def parse_idx_feed(self):
         root = self.ygl_file.getroot()
 
-        # The date for all the homes that they were updated on.
-        #   They use all the same times in case the day go past midnight while updating
-        update_timestamp = timezone.now()
+        # Reporting information
+        num_of_duplicates = 0
+        num_of_value_errors = 0
 
         # Loop through every home
         for house in root.iter('Rental'):
@@ -56,8 +61,6 @@ class YGLRequester(object):
             street_name = ""
             for element in house:
                 try:
-                    new_listing.listing_provider = "YGL"
-
                     if element.tag == 'ID':
                         new_listing.listing_number = element.text
                     elif element.tag == 'StreetNumber':
@@ -71,7 +74,7 @@ class YGLRequester(object):
                     elif element.tag == 'Zip':
                         new_listing.zip_code = element.text
                     elif element.tag == 'UnitNumber':
-                        new_listing.apartment_number = int(element.text)
+                        new_listing.apartment_number = element.text.lower()
                     elif element.tag == 'Latitude':
                         new_listing.latitude = element.text
                     elif element.tag == 'Longitude':
@@ -79,18 +82,45 @@ class YGLRequester(object):
                     elif element.tag == 'Beds':
                         new_listing.num_bedrooms = int(element.text)
                     elif element.tag == 'Baths':
-                        new_listing.num_bathrooms = int(element.text)
+                        # don't support decimals right now
+                        new_listing.num_bathrooms = round(float(element.text))
                     elif element.tag == 'AvailableDate':
-                        # Make sure to change this depending on when the available date is
-                        new_listing.currently_available = True
+                        date_available = datetime.strptime(element.text, '%m/%d/%Y')
+                        # Need to compare non-naive timezone date to non-naive.
+                        # This way the dates are comparable
+                        date_available = pytimezone('US/Eastern').localize(date_available)
+                        if timezone.now() > date_available:
+                            new_listing.currently_available = True
+                    elif element.tag == 'Parking':
+                        if element.text == 'Included':
+                            new_listing.parking_spot = True
                     elif element.tag == 'Price':
                         new_listing.price = int(element.text)
-
-                    new_listing.last_updated = update_timestamp
-                    new_listing.street_address = "{0} {1}".format(street_number, street_name)
-                    new_listing.save()
-
-                    print("[ ADDING   ]" + new_listing.full_address)
+                    elif element.tag == 'Features':
+                        new_listing.remarks = element.text
 
                 except ValueError:
-                    print("value error occurred")
+                    print("[ VALUE ERROR ] Could not add home")
+                    num_of_value_errors += 1
+                    continue
+
+            new_listing.listing_provider = "YGL"
+            new_listing.last_updated = self.update_timestamp
+            new_listing.street_address = "{0} {1}".format(street_number, street_name)
+            if RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address)\
+                    .filter(apartment_number_home=new_listing.apartment_number_home):
+                print("[ DUPLICATE ]" + new_listing.full_address)
+                num_of_duplicates += 1
+            else:
+                # new_listing.save()
+                print("[ ADDING ]" + new_listing.full_address)
+
+        manager = YglManagementModel.objects.all().first()
+        manager.last_updated_ygl = self.update_timestamp
+        manager.save()
+
+        print("")
+        print("RESULTS:")
+        print("Update timestamp: {0}".format(self.update_timestamp.date()))
+        print("Number of duplicates: {0}".format(num_of_duplicates))
+        print("Number of value errors: {0}".format(num_of_value_errors))

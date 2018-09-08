@@ -180,6 +180,10 @@ class BuildingExteriorAmenitiesModel(models.Model):
     def parking_spot(self):
         return self.parking_spot_home
 
+    @parking_spot.setter
+    def parking_spot(self, has_parking_spot):
+        self.parking_spot_home = has_parking_spot
+
     @property
     def building_washer_dryer(self):
         return self.building_washer_dryer_home
@@ -332,7 +336,7 @@ class HousePhotos(models.Model):
 
 class MlsManagementModel(models.Model):
     """
-    Model that stores general database-wide information
+    Model that stores general mls information information
     """
 
     last_updated_mls = models.DateField(default=timezone.now)
@@ -341,5 +345,19 @@ class MlsManagementModel(models.Model):
         if MlsManagementModel.objects.exists() and not self.pk:
             raise ValidationError("There should only be one MlsManagementModel object")
         return super(MlsManagementModel, self).save(*args, **kwargs)
+
+
+class YglManagementModel(models.Model):
+    """
+    Model that stores general ygl information information
+    """
+
+    last_updated_ygl = models.DateField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        if YglManagementModel.objects.exists() and not self.pk:
+            raise ValidationError("There should only be one MlsManagementModel object")
+        return super(YglManagementModel, self).save(*args, **kwargs)
+
 
 
