@@ -26,7 +26,6 @@ class YGLRequester(object):
         self.NUM_COLS (int): the number of columns in the txt file returned by MLSPIN
     """
 
-    NUM_COLS = 29
     YGL_FEED_FILE_NAME = "ygl_feed.xml"
 
     def __init__(self, timestamp=timezone.now):
@@ -102,14 +101,14 @@ class YGLRequester(object):
                     elif element.tag == 'Features':
                         new_listing.remarks = element.text
 
+                    new_listing.listing_provider = "YGL"
+                    new_listing.last_updated = self.update_timestamp
+                    new_listing.street_address = "{0} {1}".format(street_number, street_name)
+
                 except ValueError:
                     print("[ VALUE ERROR ] Could not add home")
                     num_of_value_errors += 1
                     continue
-
-            new_listing.listing_provider = "YGL"
-            new_listing.last_updated = self.update_timestamp
-            new_listing.street_address = "{0} {1}".format(street_number, street_name)
 
             # Determines if the home already exists as a YGL house
             if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider)\
@@ -120,6 +119,7 @@ class YGLRequester(object):
                 if existing_apartment.full_address == new_listing.full_address:
                     existing_apartment.last_updated = self.update_timestamp
                     existing_apartment.currently_available = new_listing.currently_available
+                    # existing_apartment.save()
                     print("[ UPDATED ] {0}".format(existing_apartment.full_address))
 
                 # If the street addresses don't line up, then mark it as an error

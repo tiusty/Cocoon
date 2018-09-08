@@ -25,8 +25,8 @@ class Command(BaseCommand):
         """
 
         update_timestamp = timezone.now()
-        # self.pull_mlspin_homes(update_timestamp)
-        self.pull_ygl_homes(update_timestamp)
+        self.pull_mlspin_homes(update_timestamp)
+        # self.pull_ygl_homes(update_timestamp)
 
     @staticmethod
     def pull_mlspin_homes(timestamp):
