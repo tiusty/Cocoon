@@ -27,7 +27,8 @@ class MLSpinRequesterImage(object):
         # Create a list of all the homes.
         # If no last_update value is passed in then it defaults to filtering homes that were
         #   last updated today
-        self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update).filter(listing_provider_home="MLSPIN")
+        self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update)\
+            .filter(listing_provider_home="MLSPIN")
 
     def add_images(self):
         # For each home see how many photos are stored
