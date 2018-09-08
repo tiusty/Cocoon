@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 # Cocoon Modules
-from cocoon.houseDatabase.management.commands.mlspin.MlspinRequester import MlspinRequester
 from cocoon.houseDatabase.management.commands.mlspin.MlspinRequesterImages import MlspinRequesterImage
 
 
