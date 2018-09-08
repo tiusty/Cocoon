@@ -45,12 +45,6 @@
                                     </li>
                                     <li class="dropdown-header"><a href="{% url 'userAuth:user_profile' %}">User
                                         Profile</a></li>
-                                    {% comment %}
-                                <li role="separator" class="divider"></li>
-                                <li class="dropdown-header">Surveys</li>
-                                <li><a href="{% url 'userAuth:profilePage' 'rentSurvey' %}">Renting Survey</a></li>
-                                <li><a href="{% url 'userAuth:profilePage' 'buySurvey' %}">Buying Surveys</a></li>
-                                {% endcomment %}
                             </ul>
                         </li>
                     {% else %}
@@ -69,13 +63,14 @@
                 </div><!--/.nav-collapse -->
             </div><!--/.container-fluid -->
         </nav>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible" role="alert" style="text-align: center; margin-bottom: 0px">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endblock nav_bar %}
 
     <div id="siteWrapper">
