@@ -146,7 +146,7 @@ class MlspinRequester(object):
                 num_of_value_errors += 1
                 continue
 
-            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider)\
+            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider) \
                     .filter(listing_number_home=new_listing.listing_number):
                 # If the apartment already exists on MLSpin, verify that the address is the same, if it is then continue
                 #   otherwise throw an error (just for testing purposes to see if it happens). If we decide this is a
@@ -161,7 +161,7 @@ class MlspinRequester(object):
                 else:
                     print("[ FAILED UPDATE ] {0}".format(new_listing.full_address))
                     num_failed_to_update += 1
-            elif RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address)\
+            elif RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address) \
                     .filter(apartment_number_home=new_listing.apartment_number_home):
                 print("[ DUPLICATE ] {0}".format(new_listing.full_address))
                 num_of_duplicates += 1

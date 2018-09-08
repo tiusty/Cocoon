@@ -111,7 +111,7 @@ class YGLRequester(object):
                     continue
 
             # Determines if the home already exists as a YGL house
-            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider)\
+            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider) \
                     .filter(listing_number_home=new_listing.listing_number):
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=new_listing.listing_number)
 
@@ -128,7 +128,7 @@ class YGLRequester(object):
                     print("[ FAILED UPDATE ] {0}".format(existing_apartment.full_address))
 
             # If the home isn't an YGL house, then check to see if it could exist in another provider
-            elif RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address)\
+            elif RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address) \
                     .filter(apartment_number_home=new_listing.apartment_number_home):
                 print("[ DUPLICATE ] " + new_listing.full_address)
                 num_of_duplicates += 1
