@@ -26,6 +26,9 @@ cocoon/commutes/migrations
 # Home MLSpin feed #
 cocoon/houseDatabase/management/commands/mlspin/idx_feed.txt
 
+# Home YGL feed
+cocoon/houseDatabase/management/commands/ygl/ygl_feed.txt
+
 # Media folder #
 cocoon/media
 

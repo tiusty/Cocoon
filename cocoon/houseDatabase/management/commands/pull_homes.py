@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 
 # Cocoon Modules
 from cocoon.houseDatabase.management.commands.mlspin.pull_mlspin import MlspinRequester
+from cocoon.houseDatabase.management.commands.ygl.pull_ygl import YGLRequester
 
 
 class Command(BaseCommand):
@@ -21,16 +22,23 @@ class Command(BaseCommand):
         """
         Pulls all the homes for all the providers
         """
-        self.pull_mlspin_homes()
+        # self.pull_mlspin_homes()
+        self.pull_ygl_homes()
 
     @staticmethod
     def pull_mlspin_homes():
         """
-        Pulls the home for MLSpin
+        Pulls the homes from MLSpin
         """
         # Pull the MLS homes
         mlspin_request = MlspinRequester()
         mlspin_request.parse_idx_feed()
 
-
+    @staticmethod
+    def pull_ygl_homes():
+        """
+        Pulls the homes from YGL
+        """
+        ygl_requester = YGLRequester()
+        ygl_requester.parse_idx_feed()
 
