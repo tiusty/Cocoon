@@ -9,6 +9,7 @@ from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
 from cocoon.houseDatabase.constants import MLSpin_URL
+from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 
 
 class MlspinRequester(object):
@@ -99,7 +100,7 @@ class MlspinRequester(object):
             # If any of the fields give a value error, then don't save the apartment
             try:
                 # Set the HomeBaseModel Fields
-                new_listing.street_address = "{0} {1}".format(cells[STREET_NO], clean_address)
+                new_listing.street_address = normalize_street_address("{0} {1}".format(cells[STREET_NO], clean_address))
                 new_listing.city = self.towns[str(cells[TOWN_NUM])]["town"]
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]

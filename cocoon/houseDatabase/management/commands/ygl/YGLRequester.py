@@ -4,7 +4,8 @@ from django.utils import timezone
 # Cocoon modules
 from cocoon.houseDatabase.constants import YGL_URL
 from cocoon.houseDatabase.models import RentDatabaseModel
-from cocoon.houseDatabase.models import YglManagementModel
+from cocoon.houseDatabase.models import YglManagementModel, HomeTypeModel
+from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 
 # Import third party libraries
 import os
@@ -101,25 +102,26 @@ class YGLRequester(object):
                     elif element.tag == 'Features':
                         new_listing.remarks = element.text
 
-                    new_listing.listing_provider = "YGL"
-                    new_listing.last_updated = self.update_timestamp
-                    new_listing.street_address = "{0} {1}".format(street_number, street_name)
-
                 except ValueError:
                     print("[ VALUE ERROR ] Could not add home")
                     num_of_value_errors += 1
                     continue
 
+            new_listing.home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
+            new_listing.listing_provider = "YGL"
+            new_listing.last_updated = self.update_timestamp
+            new_listing.street_address = normalize_street_address("{0} {1}".format(street_number, street_name))
+
             # Determines if the home already exists as a YGL house
-            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider) \
-                    .filter(listing_number_home=new_listing.listing_number):
+            if RentDatabaseModel.objects.filter(listing_provider_home__contains=new_listing.listing_provider) \
+                    .filter(listing_number_home=new_listing.listing_number).exists():
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=new_listing.listing_number)
 
                 # If it does, then make sure the street addresses line up before updating the home
                 if existing_apartment.full_address == new_listing.full_address:
                     existing_apartment.last_updated = self.update_timestamp
                     existing_apartment.currently_available = new_listing.currently_available
-                    # existing_apartment.save()
+                    existing_apartment.save()
                     print("[ UPDATED ] {0}".format(existing_apartment.full_address))
 
                 # If the street addresses don't line up, then mark it as an error
@@ -133,7 +135,7 @@ class YGLRequester(object):
                 print("[ DUPLICATE ] " + new_listing.full_address)
                 num_of_duplicates += 1
             else:
-                # new_listing.save()
+                new_listing.save()
                 print("[ ADDING ] " + new_listing.full_address)
 
         manager = YglManagementModel.objects.all().first()

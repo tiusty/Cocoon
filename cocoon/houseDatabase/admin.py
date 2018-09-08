@@ -20,7 +20,7 @@ class HouseAdmin(admin.ModelAdmin):
         ('Exterior Amenities',
          {'fields': ('parking_spot_home', 'building_washer_dryer_home', 'elevator_home',
                      'handicap_access_home', 'pool_hot_tub_home', 'fitness_center_home', 'storage_unit_home',), }),
-        ('MLS Pin Data',
+        ('Provider Data',
          {'fields': (
              'listing_provider_home',
              'listing_agent_home',
@@ -32,7 +32,7 @@ class HouseAdmin(admin.ModelAdmin):
 
     list_display = ('street_address_home', 'price_home', 'home_type_home', 'currently_available_home', 'last_updated_home', 'num_bedrooms_home',
                     'latitude_home', 'longitude_home',)
-    list_filter = ['home_type_home']
+    list_filter = ['home_type_home', 'listing_provider_home',]
     search_fields = ['street_address_home']
     # noinspection SpellCheckingInspection
     inlines = [HousePhotoUrlInLine]

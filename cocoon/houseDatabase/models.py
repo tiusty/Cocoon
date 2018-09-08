@@ -218,8 +218,8 @@ class HomeManagementModel(models.Model):
     """
 
     PROVIDER_TYPES = (
-        ('mlspin', 'MLSPIN'),
-        ('ygl', 'YGL'),
+        ('MLSPIN', 'MLSPIN'),
+        ('YGL', 'YGL'),
     )
 
     remarks_home = models.TextField(default="")
