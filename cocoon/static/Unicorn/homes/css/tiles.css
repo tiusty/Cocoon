@@ -248,8 +248,13 @@ STYLING NEW TILE RESULTS
     overflow: hidden;
 }
 
+.thumbnailImage {
+    max-width:100%;
+    max-height:100%;
+}
+
 .thumbnailItem-hover {
-    padding: 0 !important;
+    padding: 1px !important;
 }
 
 #thumbnailItem1 {
