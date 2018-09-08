@@ -240,8 +240,6 @@ def survey_result_rent(request, survey_url=""):
     context['number_of_formsets'] = number_of_forms
     context['number_of_destinations'] = number_of_forms
     context['mini_form'] = True
-    context['is_broker'] = user_profile.user.is_broker
-    context['is_hunter'] = user_profile.user.is_hunter
     return render(request, 'survey/surveyResultRent.html', context)
 
 
