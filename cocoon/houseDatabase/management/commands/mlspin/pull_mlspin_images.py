@@ -23,7 +23,7 @@ class MLSpinRequesterImage(object):
             images are being added to
     """
 
-    def __init__(self, last_update=timezone.now()):
+    def __init__(self, last_update=timezone.now):
         # Create a list of all the homes.
         # If no last_update value is passed in then it defaults to filtering homes that were
         #   last updated today

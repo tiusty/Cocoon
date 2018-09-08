@@ -51,11 +51,14 @@ class YGLRequester(object):
         root = self.ygl_file.getroot()
 
         # Reporting information
+        num_houses = 0
         num_of_duplicates = 0
         num_of_value_errors = 0
+        num_failed_to_update = 0
 
         # Loop through every home
         for house in root.iter('Rental'):
+            num_houses += 1
             new_listing = RentDatabaseModel()
             street_number = ""
             street_name = ""
@@ -107,13 +110,31 @@ class YGLRequester(object):
             new_listing.listing_provider = "YGL"
             new_listing.last_updated = self.update_timestamp
             new_listing.street_address = "{0} {1}".format(street_number, street_name)
-            if RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address)\
+
+            # Determines if the home already exists as a YGL house
+            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider)\
+                    .filter(listing_number_home=new_listing.listing_number):
+                existing_apartment = RentDatabaseModel.objects.get(listing_number_home=new_listing.listing_number)
+
+                # If it does, then make sure the street addresses line up before updating the home
+                if existing_apartment.full_address == new_listing.full_address:
+                    existing_apartment.last_updated = self.update_timestamp
+                    existing_apartment.currently_available = new_listing.currently_available
+                    print("[ UPDATED ] {0}".format(existing_apartment.full_address))
+
+                # If the street addresses don't line up, then mark it as an error
+                else:
+                    num_failed_to_update += 1
+                    print("[ FAILED UPDATE ] {0}".format(existing_apartment.full_address))
+
+            # If the home isn't an YGL house, then check to see if it could exist in another provider
+            elif RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address)\
                     .filter(apartment_number_home=new_listing.apartment_number_home):
-                print("[ DUPLICATE ]" + new_listing.full_address)
+                print("[ DUPLICATE ] " + new_listing.full_address)
                 num_of_duplicates += 1
             else:
                 # new_listing.save()
-                print("[ ADDING ]" + new_listing.full_address)
+                print("[ ADDING ] " + new_listing.full_address)
 
         manager = YglManagementModel.objects.all().first()
         manager.last_updated_ygl = self.update_timestamp
@@ -121,6 +142,8 @@ class YGLRequester(object):
 
         print("")
         print("RESULTS:")
+        print("Number of houses in database: {0}".format(num_houses))
         print("Update timestamp: {0}".format(self.update_timestamp.date()))
         print("Number of duplicates: {0}".format(num_of_duplicates))
         print("Number of value errors: {0}".format(num_of_value_errors))
+        print("Number of failed updated houses: {0}".format(num_failed_to_update))
