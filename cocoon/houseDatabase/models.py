@@ -208,15 +208,15 @@ class BuildingExteriorAmenitiesModel(models.Model):
         abstract = True
 
 
-class MLSpinDataModel(models.Model):
+class HomeManagementModel(models.Model):
     """
-    Contains all the data related to the MLS pin
+    Contains all the data related to managing the house listing
     """
     remarks_home = models.TextField(default="")
-    listing_number_home = models.IntegerField(default=-1)
-    listing_provider_home = models.CharField(max_length=200)
-    listing_agent_home = models.CharField(max_length=200)
-    listing_office_home = models.CharField(max_length=200)
+    listing_number_home = models.IntegerField(default=-1)  # The id of the home
+    listing_provider_home = models.CharField(max_length=200, default="")  # The data source, i.e MLS YGL etc
+    listing_agent_home = models.CharField(max_length=200, default="")
+    listing_office_home = models.CharField(max_length=200, default="")  # The listing office, i.e William Raveis
     last_updated_home = models.DateField(default=timezone.now)
 
     @property
@@ -271,7 +271,7 @@ class MLSpinDataModel(models.Model):
         abstract = True
 
 
-class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, InteriorAmenitiesModel, HomeBaseModel):
+class RentDatabaseModel(HomeManagementModel, BuildingExteriorAmenitiesModel, InteriorAmenitiesModel, HomeBaseModel):
     """
     This model stores all the information associated with a home
     """

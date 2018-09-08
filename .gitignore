@@ -24,7 +24,7 @@ cocoon/commutes/migrations
 .vscode/
 
 # Home MLSpin feed #
-cocoon/houseDatabase/management/commands/idx_feed.txt
+cocoon/houseDatabase/management/commands/mlspin/idx_feed.txt
 
 # Media folder #
 cocoon/media

@@ -2,10 +2,8 @@ from django.test import TestCase
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel
 from cocoon.houseDatabase.models import MlsManagementModel
 import os
-from datetime import datetime
-from decimal import Decimal
 # Import script to pull MLSPIN data
-from cocoon.houseDatabase.management.commands.pull_mlspin import MlspinRequester
+from cocoon.houseDatabase.management.commands.mlspin.pull_mlspin import MlspinRequester
 
 
 class TestPullMlspin(TestCase):

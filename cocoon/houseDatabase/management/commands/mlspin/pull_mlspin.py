@@ -3,36 +3,50 @@ import urllib.request
 import urllib.error
 import cocoon.houseDatabase.maps_requester as geolocator
 import os, sys
-from django.core.management.base import BaseCommand
-from cocoon.houseDatabase.models import HousePhotos, RentDatabaseModel
-from cocoon.houseDatabase.management.commands._mls_fields import *
+from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.houseDatabase.management.commands.mlspin._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from django.utils import timezone
-from .pull_mlspin_images import MLSpinRequesterImage
+from cocoon.houseDatabase.management.commands.mlspin.pull_mlspin_images import MLSpinRequesterImage
+from cocoon.houseDatabase.constants import MLSpin_URL
 
 
-class MlspinRequester:
+class MlspinRequester(object):
     """
     This class contains the logic for parsing the IDX (Internet Data Exchange)
     feed from MLSPIN and adding apartments to the database. It has been abstracted
     out of the Command class so it can be tested easily.
+
     Attributes:
         self.NUM_COLS (int): the number of columns in the txt file returned by MLSPIN
-        self.idx_txt (String): the pipe delimited txt file containing apartment data
-        self.town_txt (String): the pipe delimited txt file containing town codes
     """
 
     NUM_COLS = 29
 
-    def __init__(self, idx_data, town_data):
+    def __init__(self):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
         """
 
-        self.idx_txt = idx_data
-        self.town_txt = town_data
+        # 1. Connect to mlspin IDX (internet data exchange URL)
+        try:
+            urllib.request.urlretrieve(MLSpin_URL, os.path.join(os.path.dirname(__file__), "idx_feed.txt"))
+        except (urllib.error.HTTPError, urllib.error.URLError):
+            print("Error connecting to MLSPIN")
+            sys.exit()
+
+        # 2. Read the response txt into memory
+        idx_file = open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb")
+        idx_txt = (idx_file.read().decode("iso-8859-1"))
+
+        towns_file = open(os.path.join(os.path.dirname(__file__), "towns.txt"), "rb")
+        towns_txt = (towns_file.read().decode("iso-8859-1"))
+        print("Successfully read in IDX files")
+
+        self.idx_txt = idx_txt
+        self.town_txt = towns_txt
 
         # Builds a dictionary of town codes to towns
         self.towns = {}
@@ -40,9 +54,9 @@ class MlspinRequester:
         for line in self.town_lines[1:-1]: # skips the col headers
             fields = line.split('|')
             self.towns[str(fields[0])] = {
-                "town":fields[1],
-                "county":fields[2],
-                "state":fields[3]
+                "town": fields[1],
+                "county": fields[2],
+                "state": fields[3]
             }
 
     def parse_idx_feed(self):
@@ -204,39 +218,3 @@ class MlspinRequester:
         image_requester.add_images()
 
 
-class Command(BaseCommand):
-    """
-    Command class that creates an MlsPinRequester object and requests the URL
-    of the apartments and towns txt files. This command is accessible via manage.py
-    """
-
-    help = 'Ingests IDX feed into database'
-
-    def add_arguments(self, parser):
-        # add args here
-        return
-
-    def handle(self, *args, **options):
-        # reads the apartment data into memory and passes it to the mlspin_handler
-
-        URL = ("http://idx.mlspin.com/idx.asp?user=2K7zB9ytn1MtTtUNFsBtm2R7rZtjfWdyY"
-               "aLtNzY2zPPhe2PuDtDK1mP2HrZhPFoE5NND4c7vZPNmNRxItmOLAf2DqO0oDPxUyPn&proptype=RN")
-
-        # 1. Connect to mlspin IDX (internet data exchange URL)
-        try:
-            urllib.request.urlretrieve(URL, os.path.join(os.path.dirname(__file__), "idx_feed.txt"))
-        except (urllib.error.HTTPError, urllib.error.URLError):
-            print("Error connecting to MLSPIN")
-            sys.exit()
-
-        # 2. Read the response txt into memory
-        idx_file = open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb")
-        idx_txt = (idx_file.read().decode("iso-8859-1"))
-
-        towns_file = open(os.path.join(os.path.dirname(__file__), "towns.txt"), "rb")
-        town_txt = (towns_file.read().decode("iso-8859-1"))
-
-        print("Successfully read in IDX files")
-
-        mls_handler = MlspinRequester(idx_txt, town_txt)
-        mls_handler.parse_idx_feed()

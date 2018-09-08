@@ -1,0 +1,1 @@
+MLSpin_URL ="http://idx.mlspin.com/idx.asp?user=2K7zB9ytn1MtTtUNFsBtm2R7rZtjfWdyYaLtNzY2zPPhe2PuDtDK1mP2HrZhPFoE5NND4c7vZPNmNRxItmOLAf2DqO0oDPxUyPn&proptype=RN"
