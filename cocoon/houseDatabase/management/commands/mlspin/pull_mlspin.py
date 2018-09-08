@@ -201,11 +201,3 @@ class MlspinRequester(object):
         print("Number of failed updated houses: {0}".format(num_failed_to_update))
         print("Number of failed geolocates: {0}".format(num_failed_to_geolocate))
         print("Number of houses not for rental: {0}".format(num_not_for_rental))
-
-        # This is a hacky way of adding photos once all the homes are added.
-        # The main purpose of adding it here is to reuse the update_timestamp in case a day
-        #   progressed before finishing the homes
-        image_requester = MLSpinRequesterImage(last_update=self.update_timestamp)
-        image_requester.add_images()
-
-
