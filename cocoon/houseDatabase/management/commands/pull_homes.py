@@ -18,7 +18,16 @@ class Command(BaseCommand):
         return
 
     def handle(self, *args, **options):
+        """
+        Pulls all the homes for all the providers
+        """
+        self.pull_mlspin_homes()
 
+    @staticmethod
+    def pull_mlspin_homes():
+        """
+        Pulls the home for MLSpin
+        """
         # Pull the MLS homes
         mlspin_request = MlspinRequester()
         mlspin_request.parse_idx_feed()

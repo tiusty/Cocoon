@@ -1,5 +1,4 @@
 # Core Django Imports
-from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.core.files.images import ImageFile
 
@@ -28,7 +27,7 @@ class MLSpinRequesterImage(object):
         # Create a list of all the homes.
         # If no last_update value is passed in then it defaults to filtering homes that were
         #   last updated today
-        self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update)
+        self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update).filter(listing_provider_home="MLSPIN")
 
     def add_images(self):
         # For each home see how many photos are stored
@@ -99,22 +98,3 @@ class MLSpinRequesterImage(object):
 
             else:
                 print("Listing number is not valid")
-
-
-class Command(BaseCommand):
-    """
-    Command class that creates an MlsPinRequesterImage object and uploads images for homes in the Cocoon database.
-    This command is accessible via manage.py
-    """
-
-    help = 'Ingests MLSpin photos into the database'
-
-    def add_arguments(self, parser):
-        # add args here
-        return
-
-    def handle(self, *args, **options):
-        # Create the MLSpin Requester
-        request = MLSpinRequesterImage()
-        # Add images
-        request.add_images()
