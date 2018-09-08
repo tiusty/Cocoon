@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 
 # Cocoon modules
-from cocoon.houseDatabase.management.commands.mlspin.pull_mlspin_images import MLSpinRequesterImage
+from cocoon.houseDatabase.management.commands.pull_mlspin_images import MLSpinRequesterImage
 
 
 class Command(BaseCommand):

@@ -11,7 +11,7 @@ import os
 from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos
 
 
-class MLSpinRequesterImage(object):
+class MlspinRequesterImage(object):
     """
     This class implements the logic to retrieve all the images for homes on the server
     The homes must already be saved onto the Cocoon database. This will iterate through all the homes
@@ -27,7 +27,7 @@ class MLSpinRequesterImage(object):
         # Create a list of all the homes.
         # If no last_update value is passed in then it defaults to filtering homes that were
         #   last updated today
-        self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update)\
+        self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update) \
             .filter(listing_provider_home="MLSPIN")
 
     def add_images(self):
@@ -57,17 +57,17 @@ class MLSpinRequesterImage(object):
                     # Retrieve a list of all the images for a corresponding home (from the mlspin listing number)
                     # Only stores files that have the file_name in the name of the file
                     file_names = list(filter(lambda x: file_name in x, ftp.nlst(os.path.join('photo', first_directory,
-                                                                                         second_directory))))
+                                                                                             second_directory))))
 
                     # Determine if there are housePhoto files and if so deletes them
                     if home.housephotos_set.exists():
                         for photo in home.housephotos_set.all():
                             # Determine if an image is currently saved
                             # if photo.image:
-                                # If there is an image saved, then make sure it is a file
-                                # if os.path.isfile(photo.image.path):
-                                    # Delete the image on the machine
-                                    # os.remove(photo.image.path)
+                            # If there is an image saved, then make sure it is a file
+                            # if os.path.isfile(photo.image.path):
+                            # Delete the image on the machine
+                            # os.remove(photo.image.path)
                             # Delete the image from the database
                             # Note: This does not delete the file from the machine which
                             #   is why it is deleted beforehand. It just deletes the reference

@@ -26,20 +26,8 @@ class Command(BaseCommand):
 
         update_timestamp = timezone.now()
 
-        # Pull the homes
-        self.pull_mlspin_homes(update_timestamp)
-
         # Pull the images
         self.pull_mlspin_images(update_timestamp)
-
-    @staticmethod
-    def pull_mlspin_homes(timestamp):
-        """
-        Pulls the homes from MLSpin
-        """
-        # Pull the MLS homes
-        mlspin_request = MlspinRequester(timestamp=timestamp)
-        mlspin_request.parse_idx_feed()
 
     @staticmethod
     def pull_mlspin_images(timestamp):

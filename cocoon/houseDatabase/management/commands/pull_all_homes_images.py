@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Cocoon Modules
 from cocoon.houseDatabase.management.commands.pull_mlspin import MlspinRequester
-from cocoon.houseDatabase.management.commands.mlspin.pull_mlspin_images import MLSpinRequesterImage
+from cocoon.houseDatabase.management.commands.pull_mlspin_images import MLSpinRequesterImage
 from cocoon.houseDatabase.management.commands.ygl.YGLRequester import YGLRequester
 
 
