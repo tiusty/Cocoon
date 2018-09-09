@@ -46,9 +46,9 @@ class TestPullMlspin(TestCase):
         # assert that the homes exist in the database
         self.assertEqual(RentDatabaseModel.objects.count(), 3)
 
-        home1 = RentDatabaseModel.objects.get(pk=1)  # 12 Mount Vernon St.
-        home2 = RentDatabaseModel.objects.get(pk=2)  # 296 Marlborough St.
-        home3 = RentDatabaseModel.objects.get(pk=3)  # 784 Tremont St.
+        home1 = RentDatabaseModel.objects.get(street_address_home="12 Mount Vernon St")  # 12 Mount Vernon St.
+        home2 = RentDatabaseModel.objects.get(street_address_home="296 Marlborough St")  # 296 Marlborough St.
+        home3 = RentDatabaseModel.objects.get(street_address_home="784 Tremont Street")  # 784 Tremont St.
 
         # asserts for the first home
         self.assertEqual(home1.street_address_home, "12 Mount Vernon St")
