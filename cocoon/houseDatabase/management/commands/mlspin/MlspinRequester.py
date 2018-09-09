@@ -7,7 +7,6 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.houseDatabase.management.commands.mlspin._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
-from django.utils import timezone
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 
@@ -24,7 +23,7 @@ class MlspinRequester(object):
 
     NUM_COLS = 29
 
-    def __init__(self, timestamp=timezone.now):
+    def __init__(self, timestamp, pull_idx_feed=True, **kwargs):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
@@ -32,23 +31,26 @@ class MlspinRequester(object):
 
         self.update_timestamp = timestamp
 
-        # 1. Connect to mlspin IDX (internet data exchange URL)
-        try:
-            urllib.request.urlretrieve(MLSpin_URL, os.path.join(os.path.dirname(__file__), "idx_feed.txt"))
-        except (urllib.error.HTTPError, urllib.error.URLError):
-            print("Error connecting to MLSPIN")
-            sys.exit()
+        if pull_idx_feed:
+            # 1. Connect to mlspin IDX (internet data exchange URL)
+            try:
+                urllib.request.urlretrieve(MLSpin_URL, os.path.join(os.path.dirname(__file__), "idx_feed.txt"))
+            except (urllib.error.HTTPError, urllib.error.URLError):
+                print("Error connecting to MLSPIN")
+                sys.exit()
 
-        # 2. Read the response txt into memory
-        idx_file = open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb")
-        idx_txt = (idx_file.read().decode("iso-8859-1"))
+            # 2. Read the response txt into memory
+            idx_file = open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb")
+            idx_txt = (idx_file.read().decode("iso-8859-1"))
 
-        towns_file = open(os.path.join(os.path.dirname(__file__), "towns.txt"), "rb")
-        towns_txt = (towns_file.read().decode("iso-8859-1"))
-        print("Successfully read in IDX files")
+            towns_file = open(os.path.join(os.path.dirname(__file__), "towns.txt"), "rb")
+            towns_txt = (towns_file.read().decode("iso-8859-1"))
 
-        self.idx_txt = idx_txt
-        self.town_txt = towns_txt
+            self.idx_txt = idx_txt
+            self.town_txt = towns_txt
+
+        if kwargs is not None:
+            self.town_txt = kwargs.pop('town_txt', None)
 
         # Builds a dictionary of town codes to towns
         self.towns = {}
@@ -168,8 +170,7 @@ class MlspinRequester(object):
             else:
 
                 # If it is a new home then get the lat and long of the home.
-                locator = geolocator.maps_requester(gmaps_api_key)
-                latlng = locator.get_lat_lon_from_address(new_listing.full_address)
+                latlng = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(new_listing.full_address)
 
                 if latlng == -1:
                     print("Could not generate Lat and Long for apartment {0}, which had line {1} in IDX feed".format(
