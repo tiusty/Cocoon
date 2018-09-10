@@ -1,11 +1,8 @@
 # Import Python Modules
 from django.utils import timezone
 
-# Import Django modules
-from django.db.models import Q
-
 # Import houseDatabase modules
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel, HomeProviderModel
+from cocoon.houseDatabase.models import RentDatabaseModel
 
 # Import HomeScore class
 from cocoon.survey.home_data.home_score import HomeScore
