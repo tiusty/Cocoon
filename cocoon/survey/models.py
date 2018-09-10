@@ -64,6 +64,23 @@ class InitialSurveyModel(models.Model):
     def provider(self):
         return self.provider_survey
 
+    @property
+    def providers(self):
+        provider_set = self.provider.all()
+        if provider_set.count() == 0:
+            return "Not set"
+        else:
+            type_output = ""
+            counter = 0
+            for provider in provider_set:
+                if counter == 0:
+                    type_output = str(provider)
+                    counter += 1
+                else:
+                    type_output = str(provider) + ", " + type_output
+
+        return type_output
+
     @provider.setter
     def provider(self, new_provider):
         self.provider_survey = new_provider

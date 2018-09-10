@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Q
 
 # Import houseDatabase modules
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel, HomeProviderModel
 
 # Import HomeScore class
 from cocoon.survey.home_data.home_score import HomeScore
@@ -83,12 +83,28 @@ class CocoonAlgorithm(object):
         for item in home_type_queries:
             query_home_type |= item
 
+        current_home_providers = []
+        for house in user_survey.provider.all():
+            current_home_providers.append(house.provider)
+
+        provider_queries = [Q(listing_provider_home=value) for value in
+                            HomeProviderModel.objects.filter(provider__in=current_home_providers)]
+
+        # Logic Or all the provider queries together, to make one query
+        if current_home_providers:
+            query_provider = provider_queries.pop()
+            for item in provider_queries:
+                query_provider |= item
+
         # Query the database
-        return RentDatabaseModel.objects \
+        house_query =  RentDatabaseModel.objects\
             .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(query_home_type) \
             .filter(currently_available_home=True) \
-            .filter(last_updated_home__range=(MlsManagementModel.objects.all().first().last_updated_mls,
-                                              MlsManagementModel.objects.all().first().last_updated_mls)) \
             .filter(num_bedrooms_home=user_survey.num_bedrooms) \
             .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
+
+        if current_home_providers:
+            house_query = house_query.filter(query_provider)
+
+        return house_query
