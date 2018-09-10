@@ -55,7 +55,7 @@ pull_mlspin.py
 
 pull_mlspin_images.py
 
-* This script loads all the MLS images for homes already loaded into our locally databaes
+* This script loads all the MLS images for homes already loaded into our local database
 
 pull_ygl.py
 
@@ -63,4 +63,4 @@ pull_ygl.py
 
 pull_ygl_images.py
 
-* This script loads all the YGL images for homes already loaded into our locally databaes
+* This script loads all the YGL images for homes already loaded into our local database
