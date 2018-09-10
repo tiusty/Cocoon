@@ -137,6 +137,10 @@ class HomeInformationModel(models.Model):
     def home_type(self):
         return self.home_type_survey
 
+    @home_type.setter
+    def home_type(self, new_home_type):
+        self.home_type_survey = new_home_type
+
     @property
     def home_types(self):
         home_type_set = self.home_type.all()

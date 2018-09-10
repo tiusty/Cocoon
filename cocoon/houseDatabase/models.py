@@ -31,6 +31,9 @@ class HomeTypeModel(models.Model):
 
 
 class HomeProviderModel(models.Model):
+    """
+    Class stores all the different providers that are used
+    """
     PROVIDER_TYPES = (
         ('MLSPIN', 'MLSPIN'),
         ('YGL', 'YGL'),
@@ -232,12 +235,6 @@ class HomeManagementModel(models.Model):
     """
     Contains all the data related to managing the house listing
     """
-
-    PROVIDER_TYPES = (
-        ('MLSPIN', 'MLSPIN'),
-        ('YGL', 'YGL'),
-    )
-
     remarks_home = models.TextField(default="")
     listing_number_home = models.IntegerField(default=-1)  # The id of the home
     listing_provider_home = models.ForeignKey(HomeProviderModel)
