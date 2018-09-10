@@ -4,6 +4,7 @@ from django.utils import timezone
 
 # Cocoon Modules
 from cocoon.houseDatabase.management.commands.ygl.YGLRequester import YGLRequester
+from cocoon.houseDatabase.management.commands.ygl.YGLRequesterImages import YGLRequesterImage
 
 
 class Command(BaseCommand):
@@ -27,6 +28,7 @@ class Command(BaseCommand):
 
         # Pull the homes
         self.pull_ygl_homes(update_timestamp)
+        self.pull_ygl_images(update_timestamp)
 
     @staticmethod
     def pull_ygl_homes(timestamp):
@@ -35,3 +37,11 @@ class Command(BaseCommand):
         """
         ygl_requester = YGLRequester(timestamp=timestamp)
         ygl_requester.parse_idx_feed()
+
+    @staticmethod
+    def pull_ygl_images(timestamp):
+        """
+        Pulls images for ygl homes
+        """
+        requester_ygl_images = YGLRequesterImage(timestamp)
+        requester_ygl_images.add_images()

@@ -23,7 +23,7 @@ class MlspinRequesterImage(object):
             images are being added to
     """
 
-    def __init__(self, last_update=timezone.now):
+    def __init__(self, last_update):
         # Create a list of all the homes.
         # If no last_update value is passed in then it defaults to filtering homes that were
         #   last updated today
@@ -93,7 +93,7 @@ class MlspinRequesterImage(object):
                             new_photos.image.save(os.path.basename(file), ImageFile(lf))
                             new_photos.save()
 
-                    print("[ UPDATED PHOTOS ] " + home.full_address)
+                    print("[ ADDED PHOTOS ] " + home.full_address)
                 else:
                     print("[ ALL SET ] " + home.full_address)
 

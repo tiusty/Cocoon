@@ -225,8 +225,8 @@ class HomeManagementModel(models.Model):
     remarks_home = models.TextField(default="")
     listing_number_home = models.IntegerField(default=-1)  # The id of the home
     listing_provider_home = models.CharField(max_length=200, choices=PROVIDER_TYPES, default="")  # The data source, i.e MLS YGL etc
-    listing_agent_home = models.CharField(max_length=200, default="")
-    listing_office_home = models.CharField(max_length=200, default="")  # The listing office, i.e William Raveis
+    listing_agent_home = models.CharField(max_length=200, default="", blank=True)
+    listing_office_home = models.CharField(max_length=200, default="", blank=True)  # The listing office, i.e William Raveis
     last_updated_home = models.DateField(default=timezone.now)
 
     @property
@@ -285,7 +285,7 @@ class RentDatabaseModel(HomeManagementModel, BuildingExteriorAmenitiesModel, Int
     """
     This model stores all the information associated with a home
     """
-    apartment_number_home = models.CharField(max_length=200)
+    apartment_number_home = models.CharField(max_length=200, blank=True)
     home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
     currently_available_home = models.BooleanField(default=False)
 
