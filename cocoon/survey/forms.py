@@ -47,14 +47,6 @@ class HomeInformationForm(ModelForm):
         queryset=HomeTypeModel.objects.all()
     )
 
-    provider_survey = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
-        queryset=HomeProviderModel.objects.all()
-    )
-
     def is_valid(self):
         valid = super(HomeInformationForm, self).is_valid()
 
@@ -278,6 +270,14 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
 
 class BrokerRentSurveyForm(RentSurveyForm):
 
+    provider_survey = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control',
+            }),
+        queryset=HomeProviderModel.objects.all()
+    )
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
@@ -340,6 +340,14 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
 
 
 class BrokerRentSurveyFormMini(RentSurveyFormMini):
+
+    provider_survey = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control',
+            }),
+        queryset=HomeProviderModel.objects.all()
+    )
 
     class Meta:
         model = RentingSurveyModel

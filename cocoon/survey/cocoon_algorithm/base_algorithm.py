@@ -83,18 +83,6 @@ class CocoonAlgorithm(object):
         for item in home_type_queries:
             query_home_type |= item
 
-        current_home_providers = []
-        for house in user_survey.provider.all():
-            current_home_providers.append(house.provider)
-
-        provider_queries = [Q(listing_provider_home=value) for value in
-                            HomeProviderModel.objects.filter(provider__in=current_home_providers)]
-
-        # Logic Or all the provider queries together, to make one query
-        if current_home_providers:
-            query_provider = provider_queries.pop()
-            for item in provider_queries:
-                query_provider |= item
 
         # Query the database
         house_query =  RentDatabaseModel.objects\
@@ -104,7 +92,21 @@ class CocoonAlgorithm(object):
             .filter(num_bedrooms_home=user_survey.num_bedrooms) \
             .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
 
-        if current_home_providers:
+        if user_survey.user_profile.user.is_broker:
+
+            current_home_providers = []
+            for house in user_survey.provider.all():
+                current_home_providers.append(house.provider)
+
+            provider_queries = [Q(listing_provider_home=value) for value in
+                                HomeProviderModel.objects.filter(provider__in=current_home_providers)]
+
+            # Logic Or all the provider queries together, to make one query
+            if current_home_providers:
+                query_provider = provider_queries.pop()
+                for item in provider_queries:
+                    query_provider |= item
+
             house_query = house_query.filter(query_provider)
 
         return house_query
