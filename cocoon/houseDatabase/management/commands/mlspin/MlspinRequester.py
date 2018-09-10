@@ -3,7 +3,7 @@ import urllib.request
 import urllib.error
 import cocoon.houseDatabase.maps_requester as geolocator
 import os, sys
-from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel
 from cocoon.houseDatabase.management.commands.mlspin._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
@@ -49,8 +49,8 @@ class MlspinRequester(object):
             self.idx_txt = idx_txt
             self.town_txt = towns_txt
 
-        if kwargs is not None:
-            self.town_txt = kwargs.pop('town_txt', None)
+            if 'town_txt' in kwargs:
+                self.town_txt = kwargs.pop('town_txt', None)
 
         # Builds a dictionary of town codes to towns
         self.towns = {}
@@ -119,7 +119,7 @@ class MlspinRequester(object):
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
                 new_listing.listing_number = int(cells[LIST_NO])
-                new_listing.listing_provider = "MLSPIN"
+                new_listing.listing_provider = HomeProviderModel.objects.get(provider="MLSPIN")
                 new_listing.listing_agent = cells[LIST_AGENT]
                 new_listing.listing_office = cells[LIST_OFFICE]
                 new_listing.last_updated = self.update_timestamp

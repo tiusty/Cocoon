@@ -8,7 +8,7 @@ import math
 
 # Import cocoon models
 from cocoon.userAuth.models import UserProfile
-from cocoon.houseDatabase.models import HomeTypeModel
+from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import CommuteType
 
 # Import Global Variables
@@ -34,6 +34,7 @@ class InitialSurveyModel(models.Model):
     created_survey = models.DateField(auto_now_add=True)
     user_profile_survey = models.ForeignKey(UserProfile)
     url = models.SlugField(max_length=100)
+    provider_home = models.ManyToManyField(HomeProviderModel)
 
     @property
     def name(self):

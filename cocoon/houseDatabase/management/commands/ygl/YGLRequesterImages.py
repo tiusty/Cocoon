@@ -2,7 +2,7 @@
 from django.core.files.images import ImageFile
 
 # Import from houseDatabase app
-from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos
+from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos, HomeProviderModel
 
 # Third party imports
 import xml.etree.ElementTree as ET
@@ -50,9 +50,11 @@ class YGLRequesterImage(object):
                 if element.tag == 'ID':
                     # If there is a match then mark a match and store the house
                     if RentDatabaseModel.objects.filter(last_updated_home=self.update_timestamp)\
-                                .filter(listing_provider_home="YGL").filter(listing_number_home=element.text).exists():
+                            .filter(listing_provider_home=HomeProviderModel.objects.get(provider="YGL"))\
+                            .filter(listing_number_home=element.text).exists():
                         house = RentDatabaseModel.objects.filter(last_updated_home=self.update_timestamp)\
-                            .filter(listing_provider_home="YGL").get(listing_number_home=element.text)
+                            .filter(listing_provider_home=HomeProviderModel.objects.get(provider="YGL"))\
+                            .get(listing_number_home=element.text)
                         id_found = True
 
                 # If a home was found then add the photos to the home

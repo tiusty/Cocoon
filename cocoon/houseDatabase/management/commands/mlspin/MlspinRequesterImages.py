@@ -1,5 +1,4 @@
 # Core Django Imports
-from django.utils import timezone
 from django.core.files.images import ImageFile
 
 # Third party imports
@@ -8,7 +7,7 @@ import tempfile
 import os
 
 # Import from houseDatabase app
-from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos
+from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos, HomeProviderModel
 
 
 class MlspinRequesterImage(object):
@@ -28,7 +27,7 @@ class MlspinRequesterImage(object):
         # If no last_update value is passed in then it defaults to filtering homes that were
         #   last updated today
         self.homes = RentDatabaseModel.objects.filter(last_updated_home=last_update) \
-            .filter(listing_provider_home="MLSPIN")
+            .filter(listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"))
 
     def add_images(self):
         # For each home see how many photos are stored

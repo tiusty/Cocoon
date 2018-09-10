@@ -38,7 +38,7 @@ class Command(BaseCommand):
         Pulls the homes from MLSpin
         """
         # Pull the MLS homes
-        mlspin_request = MlspinRequester(timestamp=timestamp)
+        mlspin_request = MlspinRequester(timestamp)
         mlspin_request.parse_idx_feed()
 
     @staticmethod
@@ -46,5 +46,5 @@ class Command(BaseCommand):
         """
         Pulls images for MLSpin homes
         """
-        requester_mlspin_images = MlspinRequesterImage(last_update=timestamp)
+        requester_mlspin_images = MlspinRequesterImage(timestamp)
         requester_mlspin_images.add_images()

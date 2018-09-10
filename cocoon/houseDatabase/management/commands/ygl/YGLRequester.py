@@ -4,7 +4,7 @@ from django.utils import timezone
 # Cocoon modules
 from cocoon.houseDatabase.constants import YGL_URL
 from cocoon.houseDatabase.models import RentDatabaseModel
-from cocoon.houseDatabase.models import YglManagementModel, HomeTypeModel
+from cocoon.houseDatabase.models import YglManagementModel, HomeTypeModel, HomeProviderModel
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 
 # Import third party libraries
@@ -112,12 +112,12 @@ class YGLRequester(object):
                     continue
 
             new_listing.home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
-            new_listing.listing_provider = "YGL"
+            new_listing.listing_provider = HomeProviderModel.objects.get(provider="YGL")
             new_listing.last_updated = self.update_timestamp
             new_listing.street_address = normalize_street_address("{0} {1}".format(street_number, street_name))
 
             # Determines if the home already exists as a YGL house
-            if RentDatabaseModel.objects.filter(listing_provider_home__contains=new_listing.listing_provider) \
+            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider) \
                     .filter(listing_number_home=new_listing.listing_number).exists():
                 existing_apartment = RentDatabaseModel.objects.get(listing_number_home=new_listing.listing_number)
 

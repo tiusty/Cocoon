@@ -30,6 +30,22 @@ class HomeTypeModel(models.Model):
         return self.home_type_survey
 
 
+class HomeProviderModel(models.Model):
+    PROVIDER_TYPES = (
+        ('MLSPIN', 'MLSPIN'),
+        ('YGL', 'YGL'),
+    )
+
+    provider = models.CharField(
+        unique=True,
+        choices=PROVIDER_TYPES,
+        max_length=200,
+    )
+
+    def __str__(self):
+        return self.provider
+
+
 class HomeBaseModel(models.Model):
     """
     Contains all the base information for a home
@@ -224,7 +240,7 @@ class HomeManagementModel(models.Model):
 
     remarks_home = models.TextField(default="")
     listing_number_home = models.IntegerField(default=-1)  # The id of the home
-    listing_provider_home = models.CharField(max_length=200, choices=PROVIDER_TYPES, default="")  # The data source, i.e MLS YGL etc
+    listing_provider_home = models.ForeignKey(HomeProviderModel)
     listing_agent_home = models.CharField(max_length=200, default="", blank=True)
     listing_office_home = models.CharField(max_length=200, default="", blank=True)  # The listing office, i.e William Raveis
     last_updated_home = models.DateField(default=timezone.now)

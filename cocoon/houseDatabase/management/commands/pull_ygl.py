@@ -35,7 +35,7 @@ class Command(BaseCommand):
         """
         Pulls the homes from YGL
         """
-        ygl_requester = YGLRequester(timestamp=timestamp)
+        ygl_requester = YGLRequester(timestamp)
         ygl_requester.parse_idx_feed()
 
     @staticmethod
