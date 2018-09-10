@@ -1,12 +1,11 @@
 from django.test import TestCase
 
-from cocoon.userAuth.forms import ApartmentHunterSignupForm, BrokerSignupForm, LoginUserForm
+# Import Cocoon Modules
+from cocoon.userAuth.constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
+from cocoon.userAuth.forms import ApartmentHunterSignupForm, BrokerSignupForm
 
-# Import cocoon global config
-from cocoon.userAuth.constants import HUNTER_CREATION_KEY
 
-
-class TestApartmentHunterSingupForm(TestCase):
+class TestApartmentHunterSignupForm(TestCase):
 
     def tests_form_valid(self):
         """
@@ -125,7 +124,7 @@ class TestApartmentHunterSingupForm(TestCase):
         self.assertEqual({'email': ['Enter a valid email address.']}, form.errors)
 
 
-class TestLoginUserForm(TestCase):
+class TTestApartmentHunterSignupForm(TestCase):
 
     def tests_form_valid(self):
         """
@@ -137,7 +136,7 @@ class TestLoginUserForm(TestCase):
         username = 'email@text.com'
         password1 = 'sometestPassword'
         password2 = 'sometestPassword'
-        creation_key = BrokerSignupForm
+        creation_key = BROKER_CREATION_KEY
 
         # Create form data
         form_data = {
@@ -195,7 +194,7 @@ class TestLoginUserForm(TestCase):
         username = 'email@text.com'
         password1 = 'sometestPassword'
         password2 = 'sometestPassword1'
-        creation_key = BrokerSignupForm
+        creation_key = BROKER_CREATION_KEY
 
         # Create form data
         form_data = {
@@ -224,7 +223,7 @@ class TestLoginUserForm(TestCase):
         username = 'email'
         password1 = 'sometestPassword'
         password2 = 'sometestPassword'
-        creation_key = BrokerSignupForm
+        creation_key = BROKER_CREATION_KEY
 
         # Create form data
         form_data = {
