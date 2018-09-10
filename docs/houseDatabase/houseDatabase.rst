@@ -51,7 +51,7 @@ pull_all_homes_images.py
 
 pull_mlspin.py
 
- * This script pulls all the homes from the MLS feed. It then will load the homes into our database. This will take a long time because there are thousands of homes. When the process of loading homes is done, the pull_mls_images script is called and loads all the images associated with the home.
+* This script pulls all the homes from the MLS feed. It then will load the homes into our database. This will take a long time because there are thousands of homes. When the process of loading homes is done, the pull_mls_images script is called and loads all the images associated with the home.
 
 pull_mlspin_images.py
 
@@ -59,7 +59,7 @@ pull_mlspin_images.py
 
 pull_ygl.py
 
- * This script pulls all the homes from the YGL feed. It then will load the homes into our database. This will take a long time because there are thousands of homes. When the process of loading homes is done, the pull_ygl_images script is called and loads all the images associated with the home.
+* This script pulls all the homes from the YGL feed. It then will load the homes into our database. This will take a long time because there are thousands of homes. When the process of loading homes is done, the pull_ygl_images script is called and loads all the images associated with the home.
 
 pull_ygl_images.py
 
