@@ -22,10 +22,10 @@ class TestPullMlspin(TestCase):
     """
     def setUp(self):
 
-        # Set up the apartment home type
-
+        # Create the manager
         MlsManagementModel.objects.create()
 
+        # Set up the apartment home type
         self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
         idx_file = open(os.path.join(os.path.dirname(__file__), "test_idx_feed.txt"), "rb")
         self.idx_data = (idx_file.read().decode("iso-8859-1"))
@@ -41,11 +41,13 @@ class TestPullMlspin(TestCase):
         # Add mock libraries
         geolocator.maps_requester.get_lat_lon_from_address = MagicMock(return_value=(42.408053, -71.163244))
 
+        # Act
         self.mls_handler.parse_idx_feed()
 
         # assert that the homes exist in the database
         self.assertEqual(RentDatabaseModel.objects.count(), 3)
 
+        # Retrieve homes
         home1 = RentDatabaseModel.objects.get(street_address_home="12 Mount Vernon St")  # 12 Mount Vernon St.
         home2 = RentDatabaseModel.objects.get(street_address_home="296 Marlborough St")  # 296 Marlborough St.
         home3 = RentDatabaseModel.objects.get(street_address_home="784 Tremont Street")  # 784 Tremont St.

@@ -29,23 +29,27 @@ class YGLRequester(object):
 
     YGL_FEED_FILE_NAME = "ygl_feed.xml"
 
-    def __init__(self, timestamp=timezone.now):
+    def __init__(self, timestamp, ygl_file=""):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
         """
 
         self.update_timestamp = timestamp
-
-        # 1. Connect to mlspin IDX (internet data exchange URL)
-        try:
-            urllib.request.urlretrieve(YGL_URL, os.path.join(os.path.dirname(__file__), self.YGL_FEED_FILE_NAME))
-        except (urllib.error.HTTPError, urllib.error.URLError):
-            print("Error connecting to YGL")
-            sys.exit()
+        ygl_data = ""
+        if not ygl_file:
+            # 1. Connect to mlspin IDX (internet data exchange URL)
+            try:
+                urllib.request.urlretrieve(YGL_URL, os.path.join(os.path.dirname(__file__), self.YGL_FEED_FILE_NAME))
+            except (urllib.error.HTTPError, urllib.error.URLError):
+                print("Error connecting to YGL")
+                sys.exit()
+            ygl_data = self.YGL_FEED_FILE_NAME
+        else:
+            ygl_data = ygl_file
 
         # 2. Read the response txt into memory
-        self.ygl_file = ET.parse(os.path.join(os.path.dirname(__file__), self.YGL_FEED_FILE_NAME))
+        self.ygl_file = ET.parse(os.path.join(os.path.dirname(__file__), ygl_data))
 
     def parse_idx_feed(self):
         root = self.ygl_file.getroot()
