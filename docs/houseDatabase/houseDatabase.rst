@@ -12,7 +12,7 @@ Models.py
 
 HomeTypeModel:
 
-*The home type model stores the possible classifications for a home.
+* The home type model stores the possible classifications for a home.
 
 HomeBaseModel:
 
