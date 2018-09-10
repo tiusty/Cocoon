@@ -6,7 +6,7 @@ from django.utils.text import slugify
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
     PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel, DestinationsModel
-from cocoon.houseDatabase.models import HomeTypeModel
+from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import CommuteType
 
 # Python global configurations
@@ -45,6 +45,14 @@ class HomeInformationForm(ModelForm):
                 'class': 'form-control',
             }),
         queryset=HomeTypeModel.objects.all()
+    )
+
+    provider_survey = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control',
+            }),
+        queryset=HomeProviderModel.objects.all()
     )
 
     def is_valid(self):
@@ -268,6 +276,18 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
                   "fitness_center_survey", "storage_unit_survey", ]
 
 
+class BrokerRentSurveyForm(RentSurveyForm):
+
+    class Meta:
+        model = RentingSurveyModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", "provider_survey"]
+
+
 class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
                          HomeInformationForm):
     """
@@ -317,6 +337,17 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
                   "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
                   "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
                   "fitness_center_survey", "storage_unit_survey", "name_survey"]
+
+
+class BrokerRentSurveyFormMini(RentSurveyFormMini):
+
+    class Meta:
+        model = RentingSurveyModel
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", "name_survey", 'provider_survey', ]
 
 
 class CommuteInformationForm(ModelForm):

@@ -22,14 +22,14 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
-from cocoon.survey.forms import RentSurveyForm, RentingDestinationsForm, RentSurveyFormMini
+from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
+    RentingDestinationsForm, RentSurveyFormMini
 
 
 @login_required
 def renting_survey(request):
     # Create the two forms,
     # RentSurveyForm contains everything except for destinations
-    form = RentSurveyForm()
 
     # DestinationFrom contains the destination
     # The reason why this is split is because the destination form can be made into a form factory
@@ -44,11 +44,18 @@ def renting_survey(request):
     # Retrieve the current profile or return a 404
     current_profile = get_object_or_404(UserProfile, user=request.user)
 
+    if current_profile.user.is_broker:
+        form_type = BrokerRentSurveyForm
+    else:
+        form_type = RentSurveyForm
+
+    form = form_type()
+
     context = {'error_message': [], 'number_of_formsets': number_of_formsets}
 
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = RentSurveyForm(request.POST)
+        form = form_type(request.POST)
 
         # check whether it is valid
         if form.is_valid():
@@ -182,6 +189,11 @@ def survey_result_rent(request, survey_url=""):
 
     user_profile = get_object_or_404(UserProfile, user=request.user)
 
+    if user_profile.user.is_broker:
+        form_type = BrokerRentSurveyFormMini
+    else:
+        form_type = RentSurveyFormMini
+
     # Tries to grab the survey. If the survey name was not passed in, then it grabs the most recent survey taken.
     try:
         survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).get(url=survey_url)
@@ -198,7 +210,7 @@ def survey_result_rent(request, survey_url=""):
             return HttpResponseRedirect(reverse('homePage:index'))
 
     # Populate form with stored data
-    form = RentSurveyFormMini(instance=survey)
+    form = form_type(instance=survey)
     number_of_forms = survey.rentingdestinationsmodel_set.count()
     DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=0,
                                                form=RentingDestinationsForm, can_delete=False)
@@ -209,7 +221,7 @@ def survey_result_rent(request, survey_url=""):
     if request.method == 'POST':
         # If a POST occurs, update the form. In the case of an error, then the survey
         # Should be populated by the POST data.
-        form = RentSurveyFormMini(request.POST, instance=survey, user=request.user)
+        form = form_type(request.POST, instance=survey, user=request.user)
         destination_form_set = DestinationFormSet(request.POST, instance=survey)
         # If the survey is valid then redirect back to the page to reload the changes
         # This will also update the house list

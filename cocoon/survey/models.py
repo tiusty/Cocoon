@@ -34,7 +34,7 @@ class InitialSurveyModel(models.Model):
     created_survey = models.DateField(auto_now_add=True)
     user_profile_survey = models.ForeignKey(UserProfile)
     url = models.SlugField(max_length=100)
-    provider_home = models.ManyToManyField(HomeProviderModel)
+    provider_survey = models.ManyToManyField(HomeProviderModel)
 
     @property
     def name(self):
@@ -59,6 +59,14 @@ class InitialSurveyModel(models.Model):
     @user_profile.setter
     def user_profile(self, new_user_profile):
         self.user_profile_survey = new_user_profile
+
+    @property
+    def provider(self):
+        return self.provider_survey
+
+    @provider.setter
+    def provider(self, new_provider):
+        self.provider_survey = new_provider
 
     def generate_slug(self):
         """
