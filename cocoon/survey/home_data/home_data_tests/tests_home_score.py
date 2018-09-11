@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 from cocoon.survey.home_data.home_score import HomeScore
 from cocoon.userAuth.models import MyUser
 from cocoon.survey.models import RentingDestinationsModel, RentingSurveyModel
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import ZipCodeBase, CommuteType
 from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, GoogleCommuteNaming
 from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED
@@ -16,11 +16,26 @@ class TestScoringMethods(TestCase):
 
     def setUp(self):
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home = RentDatabaseModel.objects.create(home_type_home=self.home_type)
+        HomeProviderModel.objects.create(provider="MLSPIN")
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
 
     def test_percent_score_positive(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 20
         total_possible_points = 30
 
@@ -34,6 +49,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_positive_eliminated(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 20
         total_possible_points = 30
 
@@ -48,6 +64,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_accumulated_points_negative(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = -20
         total_possible_points = 30
 
@@ -61,6 +78,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_accumulated_points_negative_eliminated(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = -20
         total_possible_points = 30
 
@@ -75,6 +93,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_total_possible_points_negative(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 20
         total_possible_points = -30
 
@@ -88,6 +107,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_total_possible_points_negative_eliminated(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 20
         total_possible_points = -30
 
@@ -102,6 +122,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_accumulated_points_zero(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 0
         total_possible_points = 30
 
@@ -115,6 +136,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_accumulated_points_zero_eliminated(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 0
         total_possible_points = 30
 
@@ -129,6 +151,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_total_possible_points_zero(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 30
         total_possible_points = 0
 
@@ -142,6 +165,7 @@ class TestScoringMethods(TestCase):
     def test_percent_score_total_possible_points_zero_eliminated(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 30
         total_possible_points = 0
 
@@ -156,6 +180,7 @@ class TestScoringMethods(TestCase):
     def test_eliminate_home(self):
         # Arrange // not really following methodology
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         self.assertFalse(home_score.eliminated)
         home_score.eliminate_home()
         self.assertTrue(home_score.eliminated)
@@ -163,6 +188,7 @@ class TestScoringMethods(TestCase):
     def test_user_friendly_score(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         accumulated_points = 20
         total_possible_points = 50
 
@@ -175,6 +201,7 @@ class TestScoringMethods(TestCase):
 
     def test_home_setter_constructor(self):
         # Arrange
+        self.home = self.create_home(self.home_type)
         home_score = HomeScore(self.home)
 
         # Assert
@@ -183,6 +210,7 @@ class TestScoringMethods(TestCase):
     def test_home_setter_later(self):
         # Arrange // Note really following methodology
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         self.assertIsNone(home_score.home)
         home_score.home = self.home
         self.assertIsNotNone(home_score.home)
@@ -190,6 +218,7 @@ class TestScoringMethods(TestCase):
     def test_approx_commute_times_setter_basic(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         self.assertEqual(home_score.approx_commute_times, {})
 
         # Act
@@ -202,6 +231,7 @@ class TestScoringMethods(TestCase):
     def test_approx_commute_times_setter_overwriting(self):
         # Arrange
         home_score = HomeScore()
+        self.home = self.create_home(self.home_type)
         self.assertEqual(home_score.approx_commute_times, {})
 
         # Act
@@ -220,6 +250,7 @@ class TestApproxCommute(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -262,6 +293,7 @@ class TestApproxCommute(TestCase):
             state_home=state,
             latitude_home=latitude,
             longitude_home=longitude,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
     @staticmethod
