@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Cocoon modules
 from cocoon.houseDatabase.management.commands.ygl.YGLRequester import YGLRequester
-from cocoon.houseDatabase.models import YglManagementModel, HomeTypeModel, RentDatabaseModel
+from cocoon.houseDatabase.models import YglManagementModel, HomeTypeModel, RentDatabaseModel, HomeProviderModel
 
 
 class TestYGLRequester(TestCase):
@@ -13,6 +13,7 @@ class TestYGLRequester(TestCase):
 
         # Create the manager
         YglManagementModel.objects.create()
+        HomeProviderModel.objects.create(provider="YGL")
 
         # Set up the apartment home type
         self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
@@ -46,7 +47,7 @@ class TestYGLRequester(TestCase):
         self.assertEqual(home1.num_bedrooms, 2)
         self.assertEqual(home1.num_bathrooms, 1)
         self.assertEqual(home1.listing_number, 121307521)
-        self.assertEqual(home1.listing_provider, 'YGL')
+        self.assertEqual(home1.listing_provider, HomeProviderModel.objects.get(provider="YGL"))
         self.assertEqual(home1.listing_office, '')
 
         # Assert second home
@@ -61,7 +62,7 @@ class TestYGLRequester(TestCase):
         self.assertEqual(home2.num_bedrooms, 4)
         self.assertEqual(home2.num_bathrooms, 2)
         self.assertEqual(home2.listing_number, 121307525)
-        self.assertEqual(home2.listing_provider, 'YGL')
+        self.assertEqual(home2.listing_provider, HomeProviderModel.objects.get(provider="YGL"))
         self.assertEqual(home2.listing_office, '')
 
         # Assert third home
@@ -76,6 +77,6 @@ class TestYGLRequester(TestCase):
         self.assertEqual(home3.num_bedrooms, 3)
         self.assertEqual(home3.num_bathrooms, 1)
         self.assertEqual(home3.listing_number, 121307530)
-        self.assertEqual(home3.listing_provider, 'YGL')
+        self.assertEqual(home3.listing_provider, HomeProviderModel.objects.get(provider="YGL"))
         self.assertEqual(home3.listing_office, '')
 

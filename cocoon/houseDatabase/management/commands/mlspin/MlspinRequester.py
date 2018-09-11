@@ -49,8 +49,8 @@ class MlspinRequester(object):
             self.idx_txt = idx_txt
             self.town_txt = towns_txt
 
-            if 'town_txt' in kwargs:
-                self.town_txt = kwargs.pop('town_txt', None)
+        if 'town_txt' in kwargs:
+            self.town_txt = kwargs.pop('town_txt', None)
 
         # Builds a dictionary of town codes to towns
         self.towns = {}

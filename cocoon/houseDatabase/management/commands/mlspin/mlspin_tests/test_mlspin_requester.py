@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Cocoon modules
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
 from cocoon.houseDatabase.models import MlsManagementModel
 import cocoon.houseDatabase.maps_requester as geolocator
 
@@ -24,6 +24,7 @@ class TestPullMlspin(TestCase):
 
         # Create the manager
         MlsManagementModel.objects.create()
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Set up the apartment home type
         self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
@@ -66,7 +67,7 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home1.bath_home, True)
         self.assertEqual(home1.listing_number_home, 71811023)
         self.assertEqual(home1.listing_agent_home, "BB808729")
-        self.assertEqual(home1.listing_provider_home, "MLSPIN")
+        self.assertEqual(home1.listing_provider_home, HomeProviderModel.objects.get(provider="MLSPIN"))
         self.assertEqual(home1.listing_office_home, "AN1037")
 
         # asserts for the second home
@@ -83,7 +84,7 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home2.bath_home, True)
         self.assertEqual(home2.listing_number_home, 71738853)
         self.assertEqual(home2.listing_agent_home, "BB808729")
-        self.assertEqual(home2.listing_provider_home, "MLSPIN")
+        self.assertEqual(home2.listing_provider_home, HomeProviderModel.objects.get(provider="MLSPIN"))
         self.assertEqual(home2.listing_office_home, "AN1037")
 
         # asserts for the third home
@@ -100,5 +101,5 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home3.bath_home, True)
         self.assertEqual(home3.listing_number_home, 72080819)
         self.assertEqual(home3.listing_agent_home, "BB808729")
-        self.assertEqual(home3.listing_provider_home, "MLSPIN")
+        self.assertEqual(home3.listing_provider_home, HomeProviderModel.objects.get(provider="MLSPIN"))
         self.assertEqual(home3.listing_office_home, "AN1037")
