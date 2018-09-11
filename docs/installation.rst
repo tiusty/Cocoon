@@ -118,6 +118,12 @@ Setting up the necessary Models
     * MLSManagementModel:
         * Click on MLSManagementModel, then click add
         * Just need to click save
+    * YGLManagementModel:
+        * Click on YGLManagementModel, then click add
+        * Just need to click save
+    * HomeProviderModel:
+       * Click on the HomeProviderModel:
+       * Add all the choices and save them
 
 Adding Homes to the database
 -----------------------------
