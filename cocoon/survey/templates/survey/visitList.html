@@ -15,51 +15,6 @@
 
 {% block content %}
 
-
-    {% comment %}
-        Modal assumes it is being called within a for loop
-        This Modal is for the house toggle
-
-    {% for house in user_visit_house_list %}
-
-        {% include "homes/homeModal.html" with modalId="myModalVisit" %}
-
-            ## This modal creates the delete confirmation dialog for each house
-            ## This also allows the user to delete houses from the user visit list
-            ## SAVING FOR REFERENCE IN CASE WE WANT TO BRING BACK MODALS
-
-        <div class="modal fade" id="deleteModal{{ forloop.counter }}"
-             tabindex="-1" role="dialog"
-             aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"
-                                aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">
-                            Delete Confirmation</h4>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to delete {{ house.get_address }} from the visit list?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary"
-                                data-dismiss="modal">No
-                        </button>
-                        <button type="button" class="btn btn-danger"
-                                onclick="delete_visit_house({{ house.id }}, '{% url 'survey:deleteVisitHouse' %}', '{% url 'survey:visitList' %}')">
-                            Yes
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-
-    {% endcomment %}
-
-
     <div class="jumbotron">
         <h1>Your Visit List!</h1>
         <p>Here is your list of homes that you are currently visiting or want to visit</p>
@@ -71,13 +26,6 @@
             <div class="tileTable">
                 {% for house in user_visit_house_list %}
                     {% include "homes/tiles.html" with includeScore=False theHouse=house %}
-
-                    {% comment unused template variables %}
-
-                    homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all
-
-                    {% endcomment %}
-
                 {% endfor %}
             </div>
         </div>
@@ -87,13 +35,6 @@
             <div class="favoriteTiles tileTable">
                 {% for house in user_favorite_houses %}
                     {% include "homes/tiles.html" with includeScore=False  theHouse=house%}
-
-                    {% comment unused template variables %}
-
-                    homeID=house.id homeHouse=house favoriteHouses=user_favorite_houses homeAddress=house.get_full_address homePrice=house.get_price_str housePhotos=house.housephotos_set.all
-
-                    {% endcomment %}
-
                 {% endfor %}
             </div>
         </div>

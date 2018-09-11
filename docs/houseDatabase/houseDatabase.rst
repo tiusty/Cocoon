@@ -10,45 +10,57 @@ Internal Modules
 Models.py
 ~~~~~~~~~~~
 
-* HomeTypeModel:
+HomeTypeModel:
 
-    * The home type model stores the possible classifications for a home.
+* The home type model stores the possible classifications for a home.
 
-* HomeBaseModel:
+HomeBaseModel:
 
-    * This abstract model contains data that every home has. It has the basic information
+* This abstract model contains data that every home has. It has the basic information
 
-* InteriorAmenitiesModel:
+InteriorAmenitiesModel:
 
-    * This abstract model adds in different interior amenities a home could have
+* This abstract model adds in different interior amenities a home could have
 
-* BuildingExteriorAmenitiesModel:
+BuildingExteriorAmenitiesModel:
 
-    * This abstract model adds in the different exterior amentities a home could have
+* This abstract model adds in the different exterior amentities a home could have
 
-* MLSpinDataModel:
+MLSpinDataModel:
 
-    * This abstract model adds in the data fields relevant for a MLS home. This needs to be changed to be more abstracted to support more types of homes in the future
+* This abstract model adds in the data fields relevant for a MLS home. This needs to be changed to be more abstracted to support more types of homes in the future
 
-* RentDatabaseModel:
+RentDatabaseModel:
 
-    * This is the actual model used for storing a home. It inherits all the above models to add in all the necessary fields
+* This is the actual model used for storing a home. It inherits all the above models to add in all the necessary fields
 
-* HousePhotos:
+HousePhotos:
 
-    * This model stores the photos associated with a particular home.
+* This model stores the photos associated with a particular home.
 
-* MLSManagementModel:
+MLSManagementModel:
 
-    * This model manages the information regarding the MLSpin information.
+* This model manages the information regarding the MLSpin information.
 
 Scripts
 ~~~~~~~~
 
-* pull_mlspin.py
+pull_all_homes_images.py
 
-    * This script pulls all the homes from the MLS feed. It then will load the homes into our database. This will take a long time because there are thousands of homes. When the process of loading homes is done, the pull_mls_images script is called and loads all the images associated with the home.
+* Pulls all the homes and images for all the providers
 
-* pull_mlspin_images.py
+pull_mlspin.py
 
-    * This script loads all the MLS images for homes already loaded into our locally databaes
+* This script pulls all the homes from the MLS feed. It then will load the homes into our database. This will take a long time because there are thousands of homes. When the process of loading homes is done, the pull_mls_images script is called and loads all the images associated with the home.
+
+pull_mlspin_images.py
+
+* This script loads all the MLS images for homes already loaded into our local database
+
+pull_ygl.py
+
+* This script pulls all the homes from the YGL feed. It then will load the homes into our database. This will take a long time because there are thousands of homes. When the process of loading homes is done, the pull_ygl_images script is called and loads all the images associated with the home.
+
+pull_ygl_images.py
+
+* This script loads all the YGL images for homes already loaded into our local database
