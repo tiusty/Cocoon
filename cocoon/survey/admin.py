@@ -22,7 +22,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
         (None, {'fields': ('name', 'user_profile')}),
         ('Survey', {'fields': ('home_type', 'provider', 'desired_price', 'max_price', 'min_bathrooms',
                                'max_bathrooms', )}),
-        ('Exterior Amenities', {'fields': ('parking_spot',) }),
+        ('Exterior Amenities', {'fields': ('parking_spot',)}),
         ('Created', {'fields': ('created', 'id', 'url')}),
     )
     list_display = ('name', 'user_profile', )

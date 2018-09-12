@@ -5,7 +5,6 @@ from . import views
 app_name = 'survey'
 urlpatterns = [
     url(r'^rent/$', views.renting_survey, name="rentingSurvey"),
-    # url(r'^buy/$', views.buying_survey, name="buyingSurvey"),
     url(r'^visits/$', views.visit_list, name="visitList"),
     url(r'^result/rent/$', views.survey_result_rent, name="rentSurveyResult"),
     url(r'^result/rent/(?P<survey_url>.*)/$', views.survey_result_rent, name="rentSurveyResult"),
