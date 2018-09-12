@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    InteriorAmenitiesForm, ExteriorAmenitiesForm, RentSurveyFormMini
+    ExteriorAmenitiesForm, RentSurveyFormMini
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
@@ -368,91 +368,6 @@ class TestPriceInformationForm(TestCase):
         self.assertFalse(result)
 
 
-class TestInteriorAmenitiesForm(TestCase):
-
-    def setUp(self):
-        self.air_conditioning = 0
-        self.interior_washer_dryer = 0
-        self.dish_washer = 0
-        self.bath = 0
-
-    def tests_interior_amenities_valid(self):
-        # Arrange
-        form_data = {
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath
-        }
-        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = interior_amenities_form.is_valid()
-
-        # Assert
-        self.assertTrue(result)
-
-    def tests_interior_amenities_air_conditioning_missing(self):
-        # Arrange
-        form_data = {
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath
-        }
-        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = interior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_interior_amenities_interior_washer_dryer_missing(self):
-        # Arrange
-        form_data = {
-            'air_conditioning_survey': self.air_conditioning,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath
-        }
-        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = interior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_interior_amenities_dish_washer_missing(self):
-        # Arrange
-        form_data = {
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'bath_survey': self.bath
-        }
-        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = interior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_interior_amenities_bath_missing(self):
-        # Arrange
-        form_data = {
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'bath_survey': self.bath
-        }
-        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = interior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-
 class TestExteriorAmenitiesForm(TestCase):
 
     def setUp(self):
@@ -492,114 +407,6 @@ class TestExteriorAmenitiesForm(TestCase):
             'pool_hot_tub_survey': self.pool_hot_tub,
             'fitness_center_survey': self.fitness_center,
             'storage_unit_survey': self.storage_unit
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_building_washer_dryer_missing(self):
-        # Arrange
-        form_data = {
-            'parking_spot': self.parking_spot,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_elevator_missing(self):
-        # Arrange
-        form_data = {
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_handicap_access_missing(self):
-        # Arrange
-        form_data = {
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_pool_hot_tub_missing(self):
-        # Arrange
-        form_data = {
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_fitness_center_missing(self):
-        # Arrange
-        form_data = {
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'storage_unit_survey': self.storage_unit
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_storage_unit_missing(self):
-        # Arrange
-        form_data = {
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
         }
         exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
 
@@ -735,38 +542,6 @@ class TestRentSurveyForm(TestCase):
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
-        }
-        rent_survey_form = RentSurveyForm(data=form_data)
-
-        # Act
-        result = rent_survey_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_rent_survey_missing_interior_amenities_data(self):
-        # Arrange
-        form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms': self.num_bedrooms,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': self.min_num_bathrooms,
-            'home_type': self.home_type,
-            'max_commute': self.max_commute,
-            'min_commute': self.min_commute,
-            'commute_weight': self.commute_weight,
-            'commute_type': self.commute_type,
-            'max_price': self.max_price,
-            'desired_price': self.desired_price,
-            'price_weight': self.price_weight,
             'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
