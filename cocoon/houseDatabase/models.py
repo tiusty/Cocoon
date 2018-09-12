@@ -25,10 +25,6 @@ class HomeTypeModel(models.Model):
     def __str__(self):
         return self.home_type
 
-    @property
-    def home_type(self):
-        return self.home_type
-
 
 class HomeProviderModel(models.Model):
     """
