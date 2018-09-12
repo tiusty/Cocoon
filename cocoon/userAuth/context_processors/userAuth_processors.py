@@ -55,5 +55,6 @@ def determine_user_type_processor(request):
             'is_broker': is_broker,
             'is_hunter': is_hunter,
         }
+    return {}
 
 
