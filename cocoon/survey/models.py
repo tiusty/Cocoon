@@ -198,81 +198,22 @@ class PriceInformationModel(models.Model):
         abstract = True
 
 
-class InteriorAmenitiesModel(models.Model):
-    """
-    Contains all the survey questions regarding the interior amenities
-    """
-    air_conditioning_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    interior_washer_dryer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    dish_washer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    bath_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-
-    @property
-    def air_conditioning(self):
-        return self.air_conditioning_survey
-
-    @property
-    def interior_washer_dryer(self):
-        return self.interior_washer_dryer_survey
-
-    @property
-    def dish_washer(self):
-        return self.dish_washer_survey
-
-    @property
-    def bath(self):
-        return self.bath_survey
-
-    class Meta:
-        abstract = True
-
-
 class ExteriorAmenitiesModel(models.Model):
     """
     Contains all the survey questions regarding the building/Exterior Amenities
     All Questions are hybrid weighted
     """
     parking_spot_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    building_washer_dryer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    elevator_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    handicap_access_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    pool_hot_tub_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    fitness_center_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    storage_unit_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
 
     @property
     def parking_spot(self):
         return self.parking_spot_survey
 
-    @property
-    def washer_dryer_in_building(self):
-        return self.building_washer_dryer_survey
-
-    @property
-    def elevator(self):
-        return self.elevator_survey
-
-    @property
-    def handicap_access(self):
-        return self.handicap_access_survey
-
-    @property
-    def pool_hot_tub(self):
-        return self.pool_hot_tub_survey
-
-    @property
-    def fitness_center(self):
-        return self.fitness_center_survey
-
-    @property
-    def storage_unit(self):
-        return self.storage_unit_survey
-
     class Meta:
         abstract = True
 
 
-class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceInformationModel,
+class RentingSurveyModel(ExteriorAmenitiesModel, PriceInformationModel,
                          HomeInformationModel, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.

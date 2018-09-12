@@ -22,8 +22,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
         (None, {'fields': ('name_survey', 'user_profile_survey')}),
         ('Survey', {'fields': ('home_type_survey', 'provider_survey', 'desired_price_survey', 'max_price_survey', 'min_bathrooms_survey',
                                'max_bathrooms_survey', )}),
-        ('Interior Amenities',
-         {'fields': ('air_conditioning_survey', 'interior_washer_dryer_survey',)}),
+        ('Exterior Amenities', {'fields': ('parking_spot_survey',) }),
         ('Created', {'fields': ('created_survey', 'id', 'url')}),
     )
     list_display = ('name', 'user_profile_survey', )

@@ -139,42 +139,18 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             home_data.accumulated_points = score_result * self.price_user_scale_factor * self.price_question_weight
             home_data.total_possible_points = self.price_user_scale_factor * self.price_question_weight
 
-    def run_compute_weighted_score_interior_amenities(self, air_conditioning_scale, washer_dryer_in_home_scale,
-                                                      dish_washer_scale, bath_scale):
+    def run_compute_weighted_score_exterior_amenities(self, parking_spot_scale):
         """
         Runs the interior amenities scoring.
         # TODO Think of better way to run this function since it is kinda messy
-        :param air_conditioning_scale: Int -> User scale for air_conditioning
-        :param washer_dryer_in_home_scale: Int -> User scale for washer/dryer in home
-        :param dish_washer_scale: Int -> User scale for dish washer
-        :param bath_scale: Int -> User scale for bath
+        :param parking_spot_scale: Int -> User scale for parking spot
         """
         for home_data in self.homes:
-            if not (self.compute_weighted_question_filter(air_conditioning_scale, home_data.home.air_conditioning)):
+            if not (self.compute_weighted_question_filter(parking_spot_scale, home_data.home.parking_spot)):
                 home_data.eliminate_home()
-            home_data.accumulated_points = self.compute_weighted_question_score(air_conditioning_scale,
-                                                                                home_data.home.air_conditioning)
-            home_data.total_possible_points = abs(air_conditioning_scale) * self.hybrid_question_weight
-
-            if not (self.compute_weighted_question_filter(washer_dryer_in_home_scale, home_data.home.interior_washer_dryer)):
-                home_data.eliminate_home()
-
-            home_data.accumulated_points = self.compute_weighted_question_score(washer_dryer_in_home_scale,
-                                                                                home_data.home.interior_washer_dryer)
-            home_data.total_possible_points = abs(washer_dryer_in_home_scale) * self.hybrid_question_weight
-
-            if not (self.compute_weighted_question_filter(dish_washer_scale, home_data.home.dish_washer)):
-                home_data.eliminate_home()
-
-            home_data.accumulated_points = self.compute_weighted_question_score(dish_washer_scale,
-                                                                                home_data.home.dish_washer)
-            home_data.total_possible_points = abs(dish_washer_scale) * self.hybrid_question_weight
-
-            if not (self.compute_weighted_question_filter(bath_scale, home_data.home.bath)):
-                home_data.eliminate_home()
-
-            home_data.accumulated_points = self.compute_weighted_question_score(bath_scale, home_data.home.bath)
-            home_data.total_possible_points = abs(bath_scale) * self.hybrid_question_weight
+            home_data.accumulated_points = self.compute_weighted_question_score(parking_spot_scale,
+                                                                                home_data.home.parking_spot)
+            home_data.total_possible_points = abs(parking_spot_scale) * self.hybrid_question_weight
 
     def run_sort_home_by_score(self):
         """

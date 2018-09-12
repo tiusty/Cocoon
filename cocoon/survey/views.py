@@ -137,10 +137,7 @@ def run_rent_algorithm(survey, context):
     """
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
-    rent_algorithm.run_compute_weighted_score_interior_amenities(survey.air_conditioning,
-                                                                 survey.interior_washer_dryer,
-                                                                 survey.dish_washer,
-                                                                 survey.bath)
+    rent_algorithm.run_compute_weighted_score_exterior_amenities(survey.parking_spot)
     """
     STEP 5: Now sort all the homes from best homes to worst home
     """
