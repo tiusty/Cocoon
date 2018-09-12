@@ -155,6 +155,3 @@ class YglManagementModel(models.Model):
         if YglManagementModel.objects.exists() and not self.pk:
             raise ValidationError("There should only be one MlsManagementModel object")
         return super(YglManagementModel, self).save(*args, **kwargs)
-
-
-
