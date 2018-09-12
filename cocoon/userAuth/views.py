@@ -146,6 +146,6 @@ def user_surveys(request):
 
     # Retrieve data relevant to user
     profile = UserProfile.objects.get(user=request.user)
-    rent_surveys = RentingSurveyModel.objects.filter(user_profile=profile).order_by('-created_survey')
+    rent_surveys = RentingSurveyModel.objects.filter(user_profile=profile).order_by('-created')
     context['surveys'] = rent_surveys
     return render(request, 'userAuth/user_surveys.html', context)

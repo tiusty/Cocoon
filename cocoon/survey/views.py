@@ -10,9 +10,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
 
-# Import Global config variables
-from config.settings.Global_Config import survey_types
-
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
 
@@ -67,10 +64,6 @@ def renting_survey(request):
 
             # Add the current user to the survey
             rent_survey.user_profile = current_profile
-
-            # Given the enumeration, set the survey to either rent or buy
-            # This can probably be removed after testing it
-            rent_survey.survey_type = survey_types.rent.value
 
             # Create the form destination set
             request_post = request.POST.copy()
@@ -198,7 +191,7 @@ def survey_result_rent(request, survey_url=""):
     except RentingSurveyModel.DoesNotExist:
         if RentingSurveyModel.objects.filter(user_profile=user_profile).exists():
             survey = RentingSurveyModel.objects.filter(user_profile=user_profile)\
-                .order_by('created_survey').first()
+                .order_by('created').first()
             messages.add_message(request, messages.WARNING, 'Could not find Survey, loading most recent survey')
             return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                                 kwargs={"survey_url": survey.url}))

@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.text import slugify
 
 # Python Modules
-from enum import Enum
 import math
 
 # Import cocoon models
@@ -19,42 +18,15 @@ from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY
 from .constants import MIN_PRICE_DELTA
 
 
-# TODO: Deprecate with new algorithm
-class CommutePrecision(Enum):
-    exact = 1
-    approx = 2
-
-
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
     """
     name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
-    created_survey = models.DateField(auto_now_add=True)
+    created = models.DateField(auto_now_add=True)
     user_profile = models.ForeignKey(UserProfile)
     url = models.SlugField(max_length=100)
     provider = models.ManyToManyField(HomeProviderModel)
-
-    @property
-    def created(self):
-        return self.created_survey
-
-    @property
-    def providers(self):
-        provider_set = self.provider.all()
-        if provider_set.count() == 0:
-            return "Not set"
-        else:
-            type_output = ""
-            counter = 0
-            for provider in provider_set:
-                if counter == 0:
-                    type_output = str(provider)
-                    counter += 1
-                else:
-                    type_output = str(provider) + ", " + type_output
-
-        return type_output
 
     def generate_slug(self):
         """
