@@ -45,34 +45,39 @@ class HomeProviderModel(models.Model):
         return self.provider
 
 
-class HomeBaseModel(models.Model):
+class HouseLocationInformationModel(models.Model):
     """
-    Contains all the base information for a home
+    Stores information regarding the location of the house
     """
+    apartment_number = models.CharField(max_length=200, default="", blank=True)
     street_address = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     state = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
-    price = models.IntegerField(default=-1)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
-    num_bathrooms = models.IntegerField(default=0)
-    num_bedrooms = models.IntegerField(default=0)
 
     @property
     def full_address(self):
         return self.street_address + ", " + self.city + ", " \
                + self.state + " " + self.zip_code
 
-    @property
-    def price_string(self):
-        return "$" + str(self.price)
+    class Meta:
+        abstract = True
+
+
+class HouseInteriorAmenitiesModel(models.Model):
+    """
+    Stores information about interior amenities
+    """
+    num_bathrooms = models.IntegerField(default=0)
+    num_bedrooms = models.IntegerField(default=0)
 
     class Meta:
         abstract = True
 
 
-class BuildingExteriorAmenitiesModel(models.Model):
+class HouseExteriorAmenitiesModel(models.Model):
     """
     Contains all the information for homes about the Exterior Amenities
     """
@@ -82,7 +87,7 @@ class BuildingExteriorAmenitiesModel(models.Model):
         abstract = True
 
 
-class HomeManagementModel(models.Model):
+class HouseManagementModel(models.Model):
     """
     Contains all the data related to managing the house listing
     """
@@ -97,16 +102,21 @@ class HomeManagementModel(models.Model):
         abstract = True
 
 
-class RentDatabaseModel(HomeManagementModel, BuildingExteriorAmenitiesModel, HomeBaseModel):
+class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, HouseLocationInformationModel,
+                        HouseInteriorAmenitiesModel):
     """
     This model stores all the information associated with a home
     """
-    apartment_number = models.CharField(max_length=200, blank=True)
+    price = models.IntegerField(default=-1)
     home_type = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
     currently_available = models.BooleanField(default=False)
 
     def __str__(self):
         return self.full_address
+
+    @property
+    def price_string(self):
+        return "$" + str(self.price)
 
 
 def house_directory_path(instance, filename):
