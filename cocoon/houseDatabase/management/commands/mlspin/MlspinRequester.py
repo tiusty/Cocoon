@@ -159,7 +159,7 @@ class MlspinRequester(object):
                     existing_apartment.last_updated = self.update_timestamp
                     existing_apartment.currently_available = new_listing.currently_available
                     existing_apartment.save()
-                    print("[ UPDATED ] {0}" + existing_apartment.full_address)
+                    print("[ UPDATED ] {0}".format(existing_apartment.full_address))
                 else:
                     print("[ FAILED UPDATE ] {0}".format(new_listing.full_address))
                     num_failed_to_update += 1
