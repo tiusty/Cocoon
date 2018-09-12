@@ -51,14 +51,14 @@ class TestUpdateCommutesCache(TestCase):
     def create_home(home_type, price=1500,
                     currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
         return HomeScore(RentDatabaseModel.objects.create(
-            home_type_home=home_type,
-            price_home=price,
-            currently_available_home=currently_available,
-            num_bedrooms_home=num_bedrooms,
-            num_bathrooms_home=num_bathrooms,
-            zip_code_home=zip_code,
-            state_home=state,
-            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+            home_type=home_type,
+            price=price,
+            currently_available=currently_available,
+            num_bedrooms=num_bedrooms,
+            num_bathrooms=num_bathrooms,
+            zip_code=zip_code,
+            state=state,
+            listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
     @staticmethod
@@ -232,14 +232,14 @@ class TestDriveCommuteCalculator(TestCase):
     def create_home(home_type, price=1500,
                     currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
         return HomeScore(RentDatabaseModel.objects.create(
-            home_type_home=home_type,
-            price_home=price,
-            currently_available_home=currently_available,
-            num_bedrooms_home=num_bedrooms,
-            num_bathrooms_home=num_bathrooms,
-            zip_code_home=zip_code,
-            state_home=state,
-            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN")
+            home_type=home_type,
+            price=price,
+            currently_available=currently_available,
+            num_bedrooms=num_bedrooms,
+            num_bathrooms=num_bathrooms,
+            zip_code=zip_code,
+            state=state,
+            listing_provider=HomeProviderModel.objects.get(provider="MLSPIN")
         ))
 
     @staticmethod
@@ -408,14 +408,14 @@ class TestTransitCommuteCalculator(TestCase):
     def create_home(home_type, price=1500,
                     currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
         return HomeScore(RentDatabaseModel.objects.create(
-            home_type_home=home_type,
-            price_home=price,
-            currently_available_home=currently_available,
-            num_bedrooms_home=num_bedrooms,
-            num_bathrooms_home=num_bathrooms,
-            zip_code_home=zip_code,
-            state_home=state,
-            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+            home_type=home_type,
+            price=price,
+            currently_available=currently_available,
+            num_bedrooms=num_bedrooms,
+            num_bathrooms=num_bathrooms,
+            zip_code=zip_code,
+            state=state,
+            listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
     @staticmethod

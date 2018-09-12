@@ -67,14 +67,14 @@ class CocoonAlgorithm(object):
         """
         # Query the database
         house_query =  RentDatabaseModel.objects\
-            .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
-            .filter(currently_available_home=True) \
-            .filter(num_bedrooms_home=user_survey.num_bedrooms) \
-            .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms)) \
-            .filter(home_type_home__in=user_survey.home_type.all())
+            .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
+            .filter(currently_available=True) \
+            .filter(num_bedrooms=user_survey.num_bedrooms) \
+            .filter(num_bathrooms__range=(user_survey.min_bathrooms, user_survey.max_bathrooms)) \
+            .filter(home_type__in=user_survey.home_type.all())
 
         # Only filter by the provider if the user is a broker, otherwise they get all homes regardless of provider
         if user_survey.user_profile.user.is_broker:
-            house_query = house_query.filter(listing_provider_home__in=user_survey.provider.all())
+            house_query = house_query.filter(listing_provider__in=user_survey.provider.all())
 
         return house_query

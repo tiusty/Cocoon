@@ -108,7 +108,7 @@ class Command(BaseCommand):
                         move_in_date = datetime.strptime(move_in, "%m/%d/%Y")
                         fixed_date = datetime.strftime(move_in_date, "%Y-%m-%d")
 
-                        newHouse.last_updated_home = fixed_date
+                        newHouse.last_updated = fixed_date
 
                         # assign latitude and longitude if they exist
                         try:
