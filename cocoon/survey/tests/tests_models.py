@@ -18,11 +18,11 @@ class TestRentSurveyModelMultipleNames(TestCase):
         return RentingSurveyModel.objects.create(
             name=name,
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     def testAddingHomeWithOutOneExisting(self):

@@ -16,7 +16,7 @@ class TestYGLRequester(TestCase):
         HomeProviderModel.objects.create(provider="YGL")
 
         # Set up the apartment home type
-        self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
+        self.home_type = HomeTypeModel.objects.create(home_type="Apartment")
 
     def test_pulling_homes(self):
         """

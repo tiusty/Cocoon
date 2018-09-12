@@ -46,7 +46,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.zip_code1 = '02476'
         self.commute_type1 = self.commute_type
         self.commute_weight1 = 1
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -320,7 +320,7 @@ class TestRentAlgorithmJustPrice(TestCase):
     def setUp(self):
         CommuteType.objects.create(commute_type='Driving')
         HomeProviderModel.objects.create(provider="MLSPIN")
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -591,7 +591,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
@@ -772,7 +772,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
         self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
         # Start creating the homes
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
@@ -934,7 +934,7 @@ class TestRentAlgorithmJustSortHomeByScore(TestCase):
     def setUp(self):
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
         HomeProviderModel.objects.create(provider="MLSPIN")
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -1038,8 +1038,8 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         # Create a commute type
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
         # Create possible home types
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home_type1 = HomeTypeModel.objects.create(home_type_survey='Apartment')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
+        self.home_type1 = HomeTypeModel.objects.create(home_type='Apartment')
 
         # Some house values
         self.price_min = 1000
@@ -1084,11 +1084,11 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     @staticmethod
@@ -1137,7 +1137,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                       num_bedrooms=self.num_bedrooms_min)
         # Create the survey
         survey = self.create_survey(self.user.userProfile)
-        survey.home_type_survey.set([self.home_type, self.home_type1])
+        survey.home_type.set([self.home_type, self.home_type1])
 
         # Act
         rent_algorithm.populate_survey_homes(survey)
@@ -1177,7 +1177,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                       num_bedrooms=self.num_bedrooms_min)
         # Create the survey
         survey = self.create_survey(self.user.userProfile, max_price=3000)
-        survey.home_type_survey.set([self.home_type, self.home_type1])
+        survey.home_type.set([self.home_type, self.home_type1])
 
         # Act
         rent_algorithm.populate_survey_homes(survey)
@@ -1193,7 +1193,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def setUp(self):
         # Create a user so the survey form can validate
         self.user = MyUser.objects.create(email="test@email.com")
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
@@ -1201,11 +1201,11 @@ class TestRetrieveApproximateCommutes(TestCase):
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     @staticmethod
@@ -1371,7 +1371,7 @@ class TestRetrieveExactCommutes(TestCase):
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
@@ -1379,11 +1379,11 @@ class TestRetrieveExactCommutes(TestCase):
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     @staticmethod

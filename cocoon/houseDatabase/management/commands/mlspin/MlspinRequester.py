@@ -133,7 +133,7 @@ class MlspinRequester(object):
 
                 # verifies unit is a rental (RN denotes rental in MLS feed)
                 if list_type == "RN":
-                    apartment_home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
+                    apartment_home_type = HomeTypeModel.objects.get(home_type="Apartment")
                 else:
                     # Since we only support rentals right now we don't want to retrieve any other home types
                     print("Home not a rental, continuing. Error was with line {0}".format(line))

@@ -20,9 +20,9 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     inlines = [AddressInLine]
     fieldsets = (
         (None, {'fields': ('name', 'user_profile')}),
-        ('Survey', {'fields': ('home_type_survey', 'provider', 'desired_price_survey', 'max_price_survey', 'min_bathrooms_survey',
-                               'max_bathrooms_survey', )}),
-        ('Exterior Amenities', {'fields': ('parking_spot_survey',) }),
+        ('Survey', {'fields': ('home_type', 'provider', 'desired_price', 'max_price', 'min_bathrooms',
+                               'max_bathrooms', )}),
+        ('Exterior Amenities', {'fields': ('parking_spot',) }),
         ('Created', {'fields': ('created_survey', 'id', 'url')}),
     )
     list_display = ('name', 'user_profile', )

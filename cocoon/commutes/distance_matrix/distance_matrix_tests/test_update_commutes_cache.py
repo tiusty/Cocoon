@@ -32,7 +32,7 @@ class TestUpdateCommutesCache(TestCase):
 
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
@@ -40,11 +40,11 @@ class TestUpdateCommutesCache(TestCase):
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     @staticmethod
@@ -212,7 +212,7 @@ class TestDriveCommuteCalculator(TestCase):
 
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
@@ -221,11 +221,11 @@ class TestDriveCommuteCalculator(TestCase):
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     @staticmethod
@@ -388,7 +388,7 @@ class TestTransitCommuteCalculator(TestCase):
 
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
-        self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
         self.commute_type = CommuteType.objects.create(commute_type='Transit')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
@@ -397,11 +397,11 @@ class TestTransitCommuteCalculator(TestCase):
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     @staticmethod

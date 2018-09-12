@@ -27,7 +27,7 @@ class TestPullMlspin(TestCase):
         HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Set up the apartment home type
-        self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
+        self.home_type = HomeTypeModel.objects.create(home_type="Apartment")
         idx_file = open(os.path.join(os.path.dirname(__file__), "test_idx_feed.txt"), "rb")
         self.idx_data = (idx_file.read().decode("iso-8859-1"))
 

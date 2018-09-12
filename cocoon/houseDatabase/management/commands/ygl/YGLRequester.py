@@ -111,7 +111,7 @@ class YGLRequester(object):
                     num_of_value_errors += 1
                     continue
 
-            new_listing.home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
+            new_listing.home_type = HomeTypeModel.objects.get(home_type="Apartment")
             new_listing.listing_provider = HomeProviderModel.objects.get(provider="YGL")
             new_listing.last_updated = self.update_timestamp
             new_listing.street_address = normalize_street_address("{0} {1}".format(street_number, street_name))

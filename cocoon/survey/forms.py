@@ -15,7 +15,7 @@ from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOM
 
 
 class HomeInformationForm(ModelForm):
-    num_bedrooms_survey = forms.ChoiceField(
+    num_bedrooms = forms.ChoiceField(
         choices=[(x, x) for x in range(0, MAX_NUM_BEDROOMS)],
         label="Number of Bedrooms",
         widget=forms.Select(
@@ -25,21 +25,21 @@ class HomeInformationForm(ModelForm):
         )
     )
 
-    max_bathrooms_survey = forms.IntegerField(
+    max_bathrooms = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    min_bathrooms_survey = forms.IntegerField(
+    min_bathrooms = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    home_type_survey = forms.ModelMultipleChoiceField(
+    home_type = forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control',
@@ -58,22 +58,22 @@ class HomeInformationForm(ModelForm):
         # will cause a key error
         current_form = self.cleaned_data.copy()
 
-        if int(current_form['num_bedrooms_survey']) < 0:
-            self.add_error('num_bedrooms_survey', "There can't be less than 1 bedroom")
+        if int(current_form['num_bedrooms']) < 0:
+            self.add_error('num_bedrooms', "There can't be less than 1 bedroom")
             valid = False
 
         # Make sure the bedrooms are not more than the max allowed
-        if int(current_form['num_bedrooms_survey']) > MAX_NUM_BEDROOMS:
-            self.add_error('num_bedrooms_survey', "There can't be more than " + str(MAX_NUM_BEDROOMS))
+        if int(current_form['num_bedrooms']) > MAX_NUM_BEDROOMS:
+            self.add_error('num_bedrooms', "There can't be more than " + str(MAX_NUM_BEDROOMS))
             valid = False
 
         # make sure that the max number of bathrooms is not greater than the max specified
-        if current_form['max_bathrooms_survey'] > MAX_NUM_BATHROOMS:
-            self.add_error('max_bathrooms_survey', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
+        if current_form['max_bathrooms'] > MAX_NUM_BATHROOMS:
+            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
             valid = False
 
-        if current_form['min_bathrooms_survey'] < 0:
-            self.add_error('min_bathrooms_survey', "You can't have less than 0 bathrooms")
+        if current_form['min_bathrooms'] < 0:
+            self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
             valid = False
 
         return valid
@@ -85,21 +85,21 @@ class HomeInformationForm(ModelForm):
 
 class PriceInformationForm(ModelForm):
 
-    max_price_survey = forms.IntegerField(
+    max_price = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    desired_price_survey = forms.IntegerField(
+    desired_price = forms.IntegerField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
             }),
     )
 
-    price_weight_survey = forms.ChoiceField(
+    price_weight = forms.ChoiceField(
         choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
         label="Price Weight",
         widget=forms.Select(
@@ -117,7 +117,7 @@ class ExteriorAmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the BuildingExteriorAmenitiesModel Model
     """
-    parking_spot_survey = forms.ChoiceField(
+    parking_spot = forms.ChoiceField(
         choices=HYBRID_WEIGHT_CHOICES,
         initial=0,
         label="Parking Spot",
@@ -130,7 +130,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = ExteriorAmenitiesModel
-        fields = ["parking_spot_survey", ]
+        fields = ["parking_spot", ]
 
 
 class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
@@ -141,9 +141,9 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
-                  "max_price_survey", "desired_price_survey", "price_weight_survey",
-                  "parking_spot_survey",]
+        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                  "max_price", "desired_price", "price_weight",
+                  "parking_spot",]
 
 
 class BrokerRentSurveyForm(RentSurveyForm):
@@ -159,9 +159,9 @@ class BrokerRentSurveyForm(RentSurveyForm):
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
-                  "max_price_survey", "desired_price_survey", "price_weight_survey",
-                  "parking_spot_survey", "provider"]
+        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                  "max_price", "desired_price", "price_weight",
+                  "parking_spot", "provider"]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
@@ -208,9 +208,9 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
 
     class Meta:
         model = RentingSurveyModel
-        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
-                  "max_price_survey", "desired_price_survey", "price_weight_survey",
-                  "parking_spot_survey", "name"]
+        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                  "max_price", "desired_price", "price_weight",
+                  "parking_spot", "name"]
 
 
 class BrokerRentSurveyFormMini(RentSurveyFormMini):
@@ -225,9 +225,9 @@ class BrokerRentSurveyFormMini(RentSurveyFormMini):
 
     class Meta:
         model = RentingSurveyModel
-        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
-                  "max_price_survey", "desired_price_survey", "price_weight_survey",
-                  "parking_spot_survey", "name", 'provider', ]
+        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                  "max_price", "desired_price", "price_weight",
+                  "parking_spot", "name", 'provider', ]
 
 
 class CommuteInformationForm(ModelForm):

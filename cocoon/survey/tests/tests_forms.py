@@ -19,10 +19,10 @@ class TestHomeInformationForm(TestCase):
     def setUp(self):
 
         # Create home type objects
-        HomeTypeModel.objects.create(home_type_survey="Apartment")
-        HomeTypeModel.objects.create(home_type_survey="Condo")
-        HomeTypeModel.objects.create(home_type_survey="Town House")
-        HomeTypeModel.objects.create(home_type_survey="House")
+        HomeTypeModel.objects.create(home_type="Apartment")
+        HomeTypeModel.objects.create(home_type="Condo")
+        HomeTypeModel.objects.create(home_type="Town House")
+        HomeTypeModel.objects.create(home_type="House")
 
         # Home Information form fields
         self.move_in_date_start = timezone.now()
@@ -30,17 +30,17 @@ class TestHomeInformationForm(TestCase):
         self.num_bedrooms = 1
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
-        self.home_type_survey = [HomeTypeModel.objects.get(home_type_survey="Apartment")]
+        self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
 
     def tests_home_information_form_valid(self):
         # Arrange
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -67,9 +67,9 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -84,10 +84,10 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': -1,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey
+            'num_bedrooms': -1,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -102,9 +102,9 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey
+            'num_bedrooms': self.num_bedrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -119,10 +119,10 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': MAX_NUM_BATHROOMS + 1,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': MAX_NUM_BATHROOMS + 1,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -137,9 +137,9 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'home_type_survey': self.home_type_survey
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'home_type': self.home_type
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -154,10 +154,10 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': -1,
-            'home_type_survey': self.home_type_survey
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': -1,
+            'home_type': self.home_type
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -172,9 +172,9 @@ class TestHomeInformationForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': -1,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': -1,
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -313,9 +313,9 @@ class TestPriceInformationForm(TestCase):
     def tests_price_information_valid(self):
         # Arrange
         form_data = {
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
         }
         price_information_form = PriceInformationForm(data=form_data)
 
@@ -328,8 +328,8 @@ class TestPriceInformationForm(TestCase):
     def tests_price_information_max_price_missing(self):
         # Arrange
         form_data = {
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
         }
         price_information_form = PriceInformationForm(data=form_data)
 
@@ -342,8 +342,8 @@ class TestPriceInformationForm(TestCase):
     def tests_price_information_desired_price_missing(self):
         # Arrange
         form_data = {
-            'max_price_survey': self.max_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'price_weight': self.price_weight,
         }
         price_information_form = PriceInformationForm(data=form_data)
 
@@ -356,8 +356,8 @@ class TestPriceInformationForm(TestCase):
     def tests_price_information_price_weight_missing(self):
         # Arrange
         form_data = {
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
         }
         price_information_form = PriceInformationForm(data=form_data)
 
@@ -467,7 +467,7 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_valid(self):
         # Arrange
         form_data = {
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -504,7 +504,7 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_building_washer_dryer_missing(self):
         # Arrange
         form_data = {
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
             'pool_hot_tub_survey': self.pool_hot_tub,
@@ -522,7 +522,7 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_elevator_missing(self):
         # Arrange
         form_data = {
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'handicap_access_survey': self.handicap_access,
             'pool_hot_tub_survey': self.pool_hot_tub,
@@ -540,7 +540,7 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_handicap_access_missing(self):
         # Arrange
         form_data = {
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'pool_hot_tub_survey': self.pool_hot_tub,
@@ -558,7 +558,7 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_pool_hot_tub_missing(self):
         # Arrange
         form_data = {
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -576,7 +576,7 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_fitness_center_missing(self):
         # Arrange
         form_data = {
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -594,7 +594,7 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_storage_unit_missing(self):
         # Arrange
         form_data = {
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -614,10 +614,10 @@ class TestRentSurveyForm(TestCase):
 
     def setUp(self):
         # Create home type objects
-        HomeTypeModel.objects.create(home_type_survey="Apartment")
-        HomeTypeModel.objects.create(home_type_survey="Condo")
-        HomeTypeModel.objects.create(home_type_survey="Town House")
-        HomeTypeModel.objects.create(home_type_survey="House")
+        HomeTypeModel.objects.create(home_type="Apartment")
+        HomeTypeModel.objects.create(home_type="Condo")
+        HomeTypeModel.objects.create(home_type="Town House")
+        HomeTypeModel.objects.create(home_type="House")
 
         # Home Information form fields
         self.move_in_date_start = timezone.now()
@@ -625,7 +625,7 @@ class TestRentSurveyForm(TestCase):
         self.num_bedrooms = 1
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
-        self.home_type_survey = [HomeTypeModel.objects.get(home_type_survey="Apartment")]
+        self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
 
         self.max_commute = 0
         self.min_commute = 0
@@ -656,23 +656,23 @@ class TestRentSurveyForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
             'number_destinations_filled_out': self.number_of_destinations,
             'commute_type': 1,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -695,14 +695,14 @@ class TestRentSurveyForm(TestCase):
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -723,10 +723,10 @@ class TestRentSurveyForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
@@ -735,7 +735,7 @@ class TestRentSurveyForm(TestCase):
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -756,18 +756,18 @@ class TestRentSurveyForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
-            'parking_spot_survey': self.parking_spot,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
+            'parking_spot': self.parking_spot,
             'building_washer_dryer_survey': self.building_washer_dryer,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -788,17 +788,17 @@ class TestRentSurveyForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
@@ -821,10 +821,10 @@ class TestRentSurveyMiniForm(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
 
         # Create home type objects
-        HomeTypeModel.objects.create(home_type_survey="Apartment")
-        HomeTypeModel.objects.create(home_type_survey="Condo")
-        HomeTypeModel.objects.create(home_type_survey="Town House")
-        HomeTypeModel.objects.create(home_type_survey="House")
+        HomeTypeModel.objects.create(home_type="Apartment")
+        HomeTypeModel.objects.create(home_type="Condo")
+        HomeTypeModel.objects.create(home_type="Town House")
+        HomeTypeModel.objects.create(home_type="House")
 
         # Home Information form fields
         self.move_in_date_start = timezone.now()
@@ -832,7 +832,7 @@ class TestRentSurveyMiniForm(TestCase):
         self.num_bedrooms = 1
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
-        self.home_type_survey = [HomeTypeModel.objects.get(home_type_survey="Apartment")]
+        self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
 
         self.max_commute = 0
         self.min_commute = 0
@@ -864,11 +864,11 @@ class TestRentSurveyMiniForm(TestCase):
         return RentingSurveyModel.objects.create(
             name=name,
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     def tests_saving_a_form_without_name_conflict(self):
@@ -879,25 +879,25 @@ class TestRentSurveyMiniForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
             'fitness_center_survey': self.fitness_center,
             'building_washer_dryer_survey': self.building_washer_dryer,
-            'home_type_survey': self.home_type_survey,
+            'home_type': self.home_type,
             'storage_unit_survey': self.storage_unit,
             'pool_hot_tub_survey': self.pool_hot_tub,
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
             'name': 'test_survey',
@@ -923,25 +923,25 @@ class TestRentSurveyMiniForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
             'fitness_center_survey': self.fitness_center,
             'building_washer_dryer_survey': self.building_washer_dryer,
-            'home_type_survey': self.home_type_survey,
+            'home_type': self.home_type,
             'storage_unit_survey': self.storage_unit,
             'pool_hot_tub_survey': self.pool_hot_tub,
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
             'name': 'test_survey',
@@ -966,25 +966,25 @@ class TestRentSurveyMiniForm(TestCase):
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'air_conditioning_survey': self.air_conditioning,
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
             'fitness_center_survey': self.fitness_center,
             'building_washer_dryer_survey': self.building_washer_dryer,
-            'home_type_survey': self.home_type_survey,
+            'home_type': self.home_type,
             'storage_unit_survey': self.storage_unit,
             'pool_hot_tub_survey': self.pool_hot_tub,
-            'parking_spot_survey': self.parking_spot,
+            'parking_spot': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
             'name': 'test_survey',

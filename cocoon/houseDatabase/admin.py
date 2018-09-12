@@ -49,9 +49,9 @@ class YglManagementModelAdmin(admin.ModelAdmin):
 class HomeTypeModelAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Home Type',
-         {'fields': ['home_type_survey', ]})
+         {'fields': ['home_type', ]})
     ]
-    list_display = ('home_type_survey',)
+    list_display = ('home_type',)
 
 
 class HomeProviderModelAdmin(admin.ModelAdmin):

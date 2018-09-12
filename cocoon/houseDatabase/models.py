@@ -16,7 +16,7 @@ class HomeTypeModel(models.Model):
         ('Condo', 'Condo'),
         ('Town House', 'Town House'),
     )
-    home_type_survey = models.CharField(
+    home_type = models.CharField(
         unique=True,
         choices=HOME_TYPE,
         max_length=200,
@@ -27,7 +27,7 @@ class HomeTypeModel(models.Model):
 
     @property
     def home_type(self):
-        return self.home_type_survey
+        return self.home_type
 
 
 class HomeProviderModel(models.Model):

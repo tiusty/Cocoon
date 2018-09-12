@@ -87,30 +87,10 @@ class HomeInformationModel(models.Model):
     """
     Contains basic information about a home
     """
-    num_bedrooms_survey = models.IntegerField(default=0)
-    max_bathrooms_survey = models.IntegerField(default=MAX_NUM_BATHROOMS)
-    min_bathrooms_survey = models.IntegerField(default=0)
-    home_type_survey = models.ManyToManyField(HomeTypeModel)
-
-    @property
-    def num_bedrooms(self):
-        return self.num_bedrooms_survey
-
-    @property
-    def max_bathrooms(self):
-        return self.max_bathrooms_survey
-
-    @property
-    def min_bathrooms(self):
-        return self.min_bathrooms_survey
-
-    @property
-    def home_type(self):
-        return self.home_type_survey
-
-    @home_type.setter
-    def home_type(self, new_home_type):
-        self.home_type_survey = new_home_type
+    num_bedrooms = models.IntegerField(default=0)
+    max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
+    min_bathrooms = models.IntegerField(default=0)
+    home_type = models.ManyToManyField(HomeTypeModel)
 
     @property
     def home_types(self):
@@ -137,21 +117,9 @@ class PriceInformationModel(models.Model):
     """
     Contains all the price information for a given home
     """
-    max_price_survey = models.IntegerField(default=0)
-    desired_price_survey = models.IntegerField(default=0)
-    price_weight_survey = models.IntegerField(default=0)
-
-    @property
-    def max_price(self):
-        return self.max_price_survey
-
-    @property
-    def desired_price(self):
-        return self.desired_price_survey
-
-    @property
-    def price_weight(self):
-        return self.price_weight_survey
+    max_price = models.IntegerField(default=0)
+    desired_price = models.IntegerField(default=0)
+    price_weight = models.IntegerField(default=0)
 
     @property
     def price_range(self):
@@ -174,11 +142,7 @@ class ExteriorAmenitiesModel(models.Model):
     Contains all the survey questions regarding the building/Exterior Amenities
     All Questions are hybrid weighted
     """
-    parking_spot_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-
-    @property
-    def parking_spot(self):
-        return self.parking_spot_survey
+    parking_spot = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
 
     class Meta:
         abstract = True

@@ -148,8 +148,8 @@
         {% comment %}
            The initialize values to load the cost sliders to
         {% endcomment %}
-        costSliderMaxInit = {{ form.max_price_survey.value }};
-        costSliderMinInit = {{ form.desired_price_survey.value }};
+        costSliderMaxInit = {{ form.max_price.value }};
+        costSliderMinInit = {{ form.desired_price.value }};
 
         {% comment %}
               Determines the correct commute slider values. This is just used when the page loads. This grabs the first
@@ -175,8 +175,8 @@
         {% comment %}
            The initialize values to load the bathroom sliders
         {% endcomment %}
-        bathroomsMinInit = {{ form.min_bathrooms_survey.value }};
-        bathroomsMaxInit = {{ form.max_bathrooms_survey.value }};
+        bathroomsMinInit = {{ form.min_bathrooms.value }};
+        bathroomsMaxInit = {{ form.max_bathrooms.value }};
     </script>
 
 

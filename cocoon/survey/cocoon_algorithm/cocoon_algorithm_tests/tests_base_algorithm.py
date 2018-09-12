@@ -15,11 +15,11 @@ class TestAddingHomes(TestCase):
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
-            max_price_survey=max_price,
-            desired_price_survey=desired_price,
-            max_bathrooms_survey=max_bathroom,
-            min_bathrooms_survey=min_bathroom,
-            num_bedrooms_survey=num_bedrooms,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
         )
 
     @staticmethod
@@ -44,7 +44,7 @@ class TestAddingHomes(TestCase):
         """
         # Arrange
         user = MyUser.objects.create(email="test@email.com", is_hunter=True)
-        home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        home_type = HomeTypeModel.objects.create(home_type='House')
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
@@ -68,7 +68,7 @@ class TestAddingHomes(TestCase):
         """
         # Arrange
         user = MyUser.objects.create(email="test@email.com", is_broker=True)
-        home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        home_type = HomeTypeModel.objects.create(home_type='House')
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
         survey.home_type.add(home_type)
@@ -92,7 +92,7 @@ class TestAddingHomes(TestCase):
         """
         # Arrange
         user = MyUser.objects.create(email="test@email.com", is_broker=True)
-        home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        home_type = HomeTypeModel.objects.create(home_type='House')
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
         survey.home_type.add(home_type)
@@ -116,7 +116,7 @@ class TestAddingHomes(TestCase):
         """
         # Arrange
         user = MyUser.objects.create(email="test@email.com", is_broker=True)
-        home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        home_type = HomeTypeModel.objects.create(home_type='House')
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
@@ -141,7 +141,7 @@ class TestAddingHomes(TestCase):
         """
         # Arrange
         user = MyUser.objects.create(email="test@email.com", is_broker=True)
-        home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        home_type = HomeTypeModel.objects.create(home_type='House')
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
