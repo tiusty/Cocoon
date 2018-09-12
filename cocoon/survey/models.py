@@ -29,40 +29,15 @@ class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
     """
-    name_survey = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
-    survey_type_survey = models.IntegerField(default=-1)
+    name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
     created_survey = models.DateField(auto_now_add=True)
-    user_profile_survey = models.ForeignKey(UserProfile)
+    user_profile = models.ForeignKey(UserProfile)
     url = models.SlugField(max_length=100)
-    provider_survey = models.ManyToManyField(HomeProviderModel)
-
-    @property
-    def name(self):
-        return self.name_survey
-
-    @property
-    def survey_type(self):
-        return self.survey_type_survey
-
-    @survey_type.setter
-    def survey_type(self, new_survey_type):
-        self.survey_type_survey = new_survey_type
+    provider = models.ManyToManyField(HomeProviderModel)
 
     @property
     def created(self):
         return self.created_survey
-
-    @property
-    def user_profile(self):
-        return self.user_profile_survey
-
-    @user_profile.setter
-    def user_profile(self, new_user_profile):
-        self.user_profile_survey = new_user_profile
-
-    @property
-    def provider(self):
-        return self.provider_survey
 
     @property
     def providers(self):
@@ -81,10 +56,6 @@ class InitialSurveyModel(models.Model):
 
         return type_output
 
-    @provider.setter
-    def provider(self, new_provider):
-        self.provider_survey = new_provider
-
     def generate_slug(self):
         """
         The slug should just be the name without spaces and with dashes instead.
@@ -99,9 +70,9 @@ class InitialSurveyModel(models.Model):
         self.url = self.generate_slug()
 
         # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
-        if RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile_survey)\
+        if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
                 .filter(url=self.url).exists():
-            RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile)\
+            RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
                 .filter(url=self.url).delete()
 
         # When the model is being saved, make sure to generate the slug associated with the survey.

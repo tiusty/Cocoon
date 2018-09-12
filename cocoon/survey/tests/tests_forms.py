@@ -862,8 +862,8 @@ class TestRentSurveyMiniForm(TestCase):
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2, name="Recent Rent Survey"):
         return RentingSurveyModel.objects.create(
-            name_survey=name,
-            user_profile_survey=user_profile,
+            name=name,
+            user_profile=user_profile,
             max_price_survey=max_price,
             desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
@@ -900,7 +900,7 @@ class TestRentSurveyMiniForm(TestCase):
             'parking_spot_survey': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
-            'name_survey': 'test_survey',
+            'name': 'test_survey',
         }
 
         rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
@@ -944,7 +944,7 @@ class TestRentSurveyMiniForm(TestCase):
             'parking_spot_survey': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
-            'name_survey': 'test_survey',
+            'name': 'test_survey',
         }
 
         rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
@@ -987,7 +987,7 @@ class TestRentSurveyMiniForm(TestCase):
             'parking_spot_survey': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
-            'name_survey': 'test_survey',
+            'name': 'test_survey',
         }
 
         rent_survey_form = RentSurveyFormMini(data=form_data, user=user2)

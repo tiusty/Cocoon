@@ -193,11 +193,11 @@ def survey_result_rent(request, survey_url=""):
 
     # Tries to grab the survey. If the survey name was not passed in, then it grabs the most recent survey taken.
     try:
-        survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).get(url=survey_url)
+        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(url=survey_url)
     # If the survey ID, does not exist/is not for that user, then return the most recent survey
     except RentingSurveyModel.DoesNotExist:
-        if RentingSurveyModel.objects.filter(user_profile_survey=user_profile).exists():
-            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile)\
+        if RentingSurveyModel.objects.filter(user_profile=user_profile).exists():
+            survey = RentingSurveyModel.objects.filter(user_profile=user_profile)\
                 .order_by('created_survey').first()
             messages.add_message(request, messages.WARNING, 'Could not find Survey, loading most recent survey')
             return HttpResponseRedirect(reverse('survey:rentSurveyResult',

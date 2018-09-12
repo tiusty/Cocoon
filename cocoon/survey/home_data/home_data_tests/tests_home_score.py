@@ -256,7 +256,7 @@ class TestApproxCommute(TestCase):
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
-            user_profile_survey=user_profile,
+            user_profile=user_profile,
             max_price_survey=max_price,
             desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,

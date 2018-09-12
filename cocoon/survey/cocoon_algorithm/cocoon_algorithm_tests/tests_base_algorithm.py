@@ -14,7 +14,7 @@ class TestAddingHomes(TestCase):
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
-            user_profile_survey=user_profile,
+            user_profile=user_profile,
             max_price_survey=max_price,
             desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
@@ -72,7 +72,7 @@ class TestAddingHomes(TestCase):
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
         survey.home_type.add(home_type)
-        survey.provider_survey.add(mls_provider)
+        survey.provider.add(mls_provider)
 
         # Create homes
         self.create_home(home_type, mls_provider, price=2000)
@@ -96,7 +96,7 @@ class TestAddingHomes(TestCase):
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
         survey.home_type.add(home_type)
-        survey.provider_survey.add(ygl_provider)
+        survey.provider.add(ygl_provider)
 
         # Create homes
         self.create_home(home_type, ygl_provider, price=2000)
@@ -121,7 +121,7 @@ class TestAddingHomes(TestCase):
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
         survey.home_type.add(home_type)
-        survey.provider_survey.add(mls_provider)
+        survey.provider.add(mls_provider)
 
         # Create homes
         self.create_home(home_type, ygl_provider, price=2000)
@@ -146,7 +146,7 @@ class TestAddingHomes(TestCase):
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
         survey.home_type.add(home_type)
-        survey.provider_survey.add(ygl_provider)
+        survey.provider.add(ygl_provider)
 
         # Create homes
         self.create_home(home_type, mls_provider, price=2500)

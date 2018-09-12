@@ -30,7 +30,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -589,7 +589,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
 
@@ -769,7 +769,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
         # Start creating the homes
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
@@ -1083,7 +1083,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
-            user_profile_survey=user_profile,
+            user_profile=user_profile,
             max_price_survey=max_price,
             desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
@@ -1200,7 +1200,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
-            user_profile_survey=user_profile,
+            user_profile=user_profile,
             max_price_survey=max_price,
             desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,
@@ -1378,7 +1378,7 @@ class TestRetrieveExactCommutes(TestCase):
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=2):
         return RentingSurveyModel.objects.create(
-            user_profile_survey=user_profile,
+            user_profile=user_profile,
             max_price_survey=max_price,
             desired_price_survey=desired_price,
             max_bathrooms_survey=max_bathroom,

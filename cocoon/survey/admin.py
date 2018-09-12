@@ -19,15 +19,15 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     # noinspection SpellCheckingInspection
     inlines = [AddressInLine]
     fieldsets = (
-        (None, {'fields': ('name_survey', 'user_profile_survey')}),
-        ('Survey', {'fields': ('home_type_survey', 'provider_survey', 'desired_price_survey', 'max_price_survey', 'min_bathrooms_survey',
+        (None, {'fields': ('name', 'user_profile')}),
+        ('Survey', {'fields': ('home_type_survey', 'provider', 'desired_price_survey', 'max_price_survey', 'min_bathrooms_survey',
                                'max_bathrooms_survey', )}),
         ('Exterior Amenities', {'fields': ('parking_spot_survey',) }),
         ('Created', {'fields': ('created_survey', 'id', 'url')}),
     )
-    list_display = ('name', 'user_profile_survey', )
-    list_filter = ['user_profile_survey']
-    search_fields = ('name_survey',)
+    list_display = ('name', 'user_profile', )
+    list_filter = ['user_profile']
+    search_fields = ('name',)
 
 
 class RentDestinationAdmin(admin.ModelAdmin):

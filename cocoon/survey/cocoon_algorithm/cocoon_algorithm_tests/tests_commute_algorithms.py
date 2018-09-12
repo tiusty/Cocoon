@@ -15,7 +15,7 @@ class TestApproximateCommutesFilter(TestCase):
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'
@@ -266,7 +266,7 @@ class TestComputeCommuteScore(TestCase):
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
         # Add renting destination
         self.street_address = '12 Stony Brook Rd'

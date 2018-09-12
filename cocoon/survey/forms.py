@@ -148,7 +148,7 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
 
 class BrokerRentSurveyForm(RentSurveyForm):
 
-    provider_survey = forms.ModelMultipleChoiceField(
+    provider = forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control',
@@ -161,7 +161,7 @@ class BrokerRentSurveyForm(RentSurveyForm):
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
                   "max_price_survey", "desired_price_survey", "price_weight_survey",
-                  "parking_spot_survey", "provider_survey"]
+                  "parking_spot_survey", "provider"]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
@@ -175,7 +175,7 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
         self.user = kwargs.pop('user', None)
         super(RentSurveyFormMini, self).__init__(*args, **kwargs)
 
-    name_survey = forms.CharField(
+    name = forms.CharField(
         label="Survey Name",
         initial=DEFAULT_RENT_SURVEY_NAME,
         widget=forms.TextInput(
@@ -199,9 +199,9 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
 
         # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
         #   will not conflict with a current survey. If it does, force them to choose a new name.
-        if 'name_survey' in self.changed_data:
-            if self.user.userProfile.rentingsurveymodel_set.filter(url=slugify(current_form['name_survey'])).exists():
-                self.add_error('name_survey', "You already have a very similar name, please choose a more unique name")
+        if 'name' in self.changed_data:
+            if self.user.userProfile.rentingsurveymodel_set.filter(url=slugify(current_form['name'])).exists():
+                self.add_error('name', "You already have a very similar name, please choose a more unique name")
                 valid = False
 
         return valid
@@ -210,12 +210,12 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
         model = RentingSurveyModel
         fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
                   "max_price_survey", "desired_price_survey", "price_weight_survey",
-                  "parking_spot_survey", "name_survey"]
+                  "parking_spot_survey", "name"]
 
 
 class BrokerRentSurveyFormMini(RentSurveyFormMini):
 
-    provider_survey = forms.ModelMultipleChoiceField(
+    provider = forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control',
@@ -227,7 +227,7 @@ class BrokerRentSurveyFormMini(RentSurveyFormMini):
         model = RentingSurveyModel
         fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
                   "max_price_survey", "desired_price_survey", "price_weight_survey",
-                  "parking_spot_survey", "name_survey", 'provider_survey', ]
+                  "parking_spot_survey", "name", 'provider', ]
 
 
 class CommuteInformationForm(ModelForm):
