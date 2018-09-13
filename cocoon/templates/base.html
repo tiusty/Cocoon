@@ -53,7 +53,13 @@
                 </ul>
                 <ul class="nav navbar-nav">
                     {% if user.is_authenticated %}
-                        {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:user_surveys' %}">My Surveys</a></li>{% endblock %}
+                        {% block nav-mysurvies %}
+                        {% if is_broker %}
+                            <li><a class="link" href="{% url 'userAuth:user_surveys' %}">Client Surveys</a></li>
+                        {% else %}
+                            <li><a class="link" href="{% url 'userAuth:user_surveys' %}">My Surveys</a></li>
+                        {% endif %}
+                        {% endblock %}
                         {% block nav-visitlist %}<li><a class="link" href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
                         {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
                     {% endif %}
