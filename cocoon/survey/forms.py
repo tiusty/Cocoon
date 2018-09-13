@@ -153,10 +153,6 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
 
 class BrokerRentSurveyForm(RentSurveyForm):
 
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(BrokerRentSurveyForm, self).__init__(*args, **kwargs)
-
     provider = forms.ModelMultipleChoiceField(
         widget=forms.SelectMultiple(
             attrs={
