@@ -19,7 +19,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
-from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
+from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, \
     RentingDestinationsForm, RentSurveyFormMini
 
 
@@ -52,7 +52,7 @@ def renting_survey(request):
 
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = form_type(request.POST)
+        form = form_type(request.POST, user=request.user)
 
         # check whether it is valid
         if form.is_valid():
@@ -180,7 +180,7 @@ def survey_result_rent(request, survey_url=""):
     user_profile = get_object_or_404(UserProfile, user=request.user)
 
     if user_profile.user.is_broker:
-        form_type = BrokerRentSurveyFormMini
+        form_type = BrokerRentSurveyForm
     else:
         form_type = RentSurveyFormMini
 

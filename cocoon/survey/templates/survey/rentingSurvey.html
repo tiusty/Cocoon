@@ -42,6 +42,11 @@
                         <span class="help-block">All fields are required. Each item will be an important factor which will filter the items</span>
                         <div class="form-group step_div">
                             <div class="form-group">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {{ form.name.errors }}
+                            </div>
+                            <div class="form-group">
                                 {{ form.num_bedrooms.label_tag }}
                                 {{ form.num_bedrooms }}
                                 {{ form.num_bedrooms.errors }}
