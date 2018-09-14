@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 # Cocoon Modules
-from cocoon.houseDatabase.management.commands.mlspin.MlspinRequesterImages import MlspinRequesterImage
+from cocoon.houseDatabase.management.commands.ygl.YGLRequesterImages import YGLRequesterImage
 
 
 class Command(BaseCommand):
@@ -26,12 +26,12 @@ class Command(BaseCommand):
         update_timestamp = timezone.now()
 
         # Pull the images
-        self.pull_mlspin_images(update_timestamp)
+        self.pull_ygl_images(update_timestamp)
 
     @staticmethod
-    def pull_mlspin_images(timestamp):
+    def pull_ygl_images(timestamp):
         """
-        Pulls images for MLSpin homes
+        Pulls images for ygl homes
         """
-        requester_mlspin_images = MlspinRequesterImage(timestamp)
-        requester_mlspin_images.add_images()
+        requester_ygl_images = YGLRequesterImage(timestamp)
+        requester_ygl_images.add_images()

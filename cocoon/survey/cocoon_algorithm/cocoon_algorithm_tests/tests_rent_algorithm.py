@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, Mock, patch, call
 import cocoon.houseDatabase.maps_requester as geolocator
 
 # Import external models
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel, HomeProviderModel
 from cocoon.commutes.distance_matrix import commute_cache_updater
 from cocoon.commutes.models import ZipCodeBase, CommuteType
 from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
@@ -26,6 +26,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
     def setUp(self):
         # Create a commute type
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        HomeProviderModel.objects.create(provider="MLSPIN")
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
@@ -45,16 +46,30 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.zip_code1 = '02476'
         self.commute_type1 = self.commute_type
         self.commute_weight1 = 1
-
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
 
     def test_run_compute_approximate_commute_filter_no_eliminations(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.approx_commute_range = 20
+
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the first commuter destination
         self.min_commute = 20
@@ -111,6 +126,9 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.approx_commute_range = 10
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the first commuter destination
         self.min_commute = 20
@@ -167,6 +185,9 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.approx_commute_range = 0
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the first commuter destination
         self.min_commute = 60
@@ -228,6 +249,9 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Arrange
         rent_algorithm = RentAlgorithm()
         rent_algorithm.approx_commute_range = 20
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the first commuter destination
         self.min_commute = 20
@@ -295,14 +319,29 @@ class TestRentAlgorithmJustPrice(TestCase):
 
     def setUp(self):
         CommuteType.objects.create(commute_type='Driving')
+        HomeProviderModel.objects.create(provider="MLSPIN")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home = HomeScore(RentDatabaseModel.objects.create(price_home=1000, home_type_home=self.home_type))
-        self.home1 = HomeScore(RentDatabaseModel.objects.create(price_home=1500, home_type_home=self.home_type))
-        self.home2 = HomeScore(RentDatabaseModel.objects.create(price_home=2000, home_type_home=self.home_type))
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
 
     def test_run_compute_price_score_working(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type, price=1000)
+        self.home1 = self.create_home(self.home_type, price=1500)
+        self.home2 = self.create_home(self.home_type, price=2000)
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
@@ -336,6 +375,9 @@ class TestRentAlgorithmJustPrice(TestCase):
     def test_run_compute_price_score_one_elimination_desired_price(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type, price=1000)
+        self.home1 = self.create_home(self.home_type, price=1500)
+        self.home2 = self.create_home(self.home_type, price=2000)
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
@@ -375,6 +417,9 @@ class TestRentAlgorithmJustPrice(TestCase):
     def test_run_compute_price_score_two_eliminations_min_price(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type, price=1000)
+        self.home1 = self.create_home(self.home_type, price=1500)
+        self.home2 = self.create_home(self.home_type, price=2000)
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
@@ -413,6 +458,9 @@ class TestRentAlgorithmJustPrice(TestCase):
     def test_run_compute_price_score_one_elimination_max_price(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type, price=1000)
+        self.home1 = self.create_home(self.home_type, price=1500)
+        self.home2 = self.create_home(self.home_type, price=2000)
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
@@ -452,6 +500,9 @@ class TestRentAlgorithmJustPrice(TestCase):
     def test_run_compute_price_score_two_elimination_max_price(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type, price=1000)
+        self.home1 = self.create_home(self.home_type, price=1500)
+        self.home2 = self.create_home(self.home_type, price=2000)
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
@@ -489,6 +540,9 @@ class TestRentAlgorithmJustPrice(TestCase):
     def test_run_compute_price_score_working_varied_user_scale_positive(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type, price=1000)
+        self.home1 = self.create_home(self.home_type, price=1500)
+        self.home2 = self.create_home(self.home_type, price=2000)
         rent_algorithm.homes = self.home
         rent_algorithm.homes = self.home1
         rent_algorithm.homes = self.home2
@@ -531,15 +585,13 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
     def setUp(self):
         # Create a commute type
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        HomeProviderModel.objects.create(provider="MLSPIN")
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile_survey=self.user_profile)
 
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
@@ -554,6 +606,20 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
             min_commute=min_commute,
         )
 
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
+
     def test_run_compute_commute_score_approximate_working(self):
         """
         This tests to make sure when given correctly values, everything works properly. Kinda of a sanity check unit
@@ -561,6 +627,9 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         """
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the destinations
         self.destination = self.create_destination(self.commute_type, min_commute=50, max_commute=110, commute_weight=1)
@@ -627,6 +696,9 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         """
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the destinations
         self.destination = self.create_destination(self.commute_type, min_commute=0, max_commute=100, commute_weight=5)
@@ -692,6 +764,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
     def setUp(self):
         # Create a commute type
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
@@ -700,9 +773,6 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 
         # Start creating the homes
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
@@ -717,9 +787,26 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
             min_commute=min_commute,
         )
 
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
+
     def test_run_compute_commute_score_exact_working(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the destinations
         self.destination = self.create_destination(self.commute_type, min_commute=3, max_commute=76, commute_weight=1)
@@ -780,6 +867,9 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
     def test_run_compute_commute_score_exact_working_large_user_scale_factor(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
 
         # Create the destinations
         self.destination = self.create_destination(self.commute_type, min_commute=30, max_commute=100, commute_weight=5)
@@ -843,14 +933,29 @@ class TestRentAlgorithmJustSortHomeByScore(TestCase):
 
     def setUp(self):
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        HomeProviderModel.objects.create(provider="MLSPIN")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
-        self.home = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home1 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
-        self.home2 = HomeScore(RentDatabaseModel.objects.create(home_type_home=self.home_type))
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
 
     def test_run_sort_home_by_score(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
         # Home 0
         rent_algorithm.homes = self.home
         rent_algorithm.homes[0].accumulated_points = 60
@@ -875,6 +980,9 @@ class TestRentAlgorithmJustSortHomeByScore(TestCase):
     def test_run_sort_home_by_score_homes_equal_different_total_possible_points(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
         # Home 0
         rent_algorithm.homes = self.home
         rent_algorithm.homes[0].accumulated_points = 60
@@ -899,6 +1007,9 @@ class TestRentAlgorithmJustSortHomeByScore(TestCase):
     def test_run_sort_home_by_score_some_negative(self):
         # Arrange
         rent_algorithm = RentAlgorithm()
+        self.home = self.create_home(self.home_type)
+        self.home1 = self.create_home(self.home_type)
+        self.home2 = self.create_home(self.home_type)
         # Home 0
         rent_algorithm.homes = self.home
         rent_algorithm.homes[0].accumulated_points = 60
@@ -944,33 +1055,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
         # Create a user so the survey form can validate
         self.user = MyUser.objects.create(email="test@email.com")
-
-        # Make some homes
-        self.home = RentDatabaseModel.objects.create(home_type_home=self.home_type,
-                                                     price_home=self.price_min,
-                                                     currently_available_home=True,
-                                                     num_bathrooms_home=self.num_bathrooms_min,
-                                                     num_bedrooms_home=self.num_bedrooms_min)
-        self.home1 = RentDatabaseModel.objects.create(home_type_home=self.home_type,
-                                                      price_home=self.price_middle,
-                                                      currently_available_home=True,
-                                                      num_bathrooms_home=self.num_bathrooms_middle,
-                                                      num_bedrooms_home=self.num_bedrooms_max)
-        self.home2 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
-                                                      price_home=self.price_max,
-                                                      currently_available_home=False,
-                                                      num_bathrooms_home=self.num_bathrooms_min,
-                                                      num_bedrooms_home=self.num_bedrooms_min)
-        self.home3 = RentDatabaseModel.objects.create(home_type_home=self.home_type1,
-                                                      price_home=self.price_min,
-                                                      currently_available_home=False,
-                                                      num_bathrooms_home=self.num_bathrooms_max,
-                                                      num_bedrooms_home=self.num_bedrooms_max)
-        self.home4 = RentDatabaseModel.objects.create(home_type_home=self.home_type,
-                                                      price_home=self.price_max,
-                                                      currently_available_home=True,
-                                                      num_bathrooms_home=self.num_bathrooms_min,
-                                                      num_bedrooms_home=self.num_bedrooms_min)
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Create some destination variables
         self.street_address = "12 Stony Brook Rd"
@@ -979,6 +1064,20 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.zip_code = '02476'
 
         MlsManagementModel.objects.create()
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type_home=home_type,
+            price_home=price,
+            currently_available_home=currently_available,
+            num_bedrooms_home=num_bedrooms,
+            num_bathrooms_home=num_bathrooms,
+            zip_code_home=zip_code,
+            state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -1013,6 +1112,29 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         """
         # Arrange
         rent_algorithm = RentAlgorithm()
+        # Make some homes
+        self.home = self.create_home(self.home_type,
+                                     price=self.price_min,
+                                     num_bathrooms=self.num_bathrooms_min,
+                                     num_bedrooms=self.num_bedrooms_min)
+        self.home1 = self.create_home(self.home_type,
+                                      price=self.price_middle,
+                                      num_bathrooms=self.num_bathrooms_middle,
+                                      num_bedrooms=self.num_bedrooms_max)
+        self.home2 = self.create_home(self.home_type,
+                                      price=self.price_max,
+                                      num_bathrooms=self.num_bathrooms_min,
+                                      num_bedrooms=self.num_bedrooms_min,
+                                      currently_available=False)
+        self.home3 = self.create_home(self.home_type,
+                                      price=self.price_min,
+                                      num_bathrooms=self.num_bathrooms_max,
+                                      num_bedrooms=self.num_bedrooms_max,
+                                      currently_available=False)
+        self.home4 = self.create_home(self.home_type,
+                                      price=self.price_max,
+                                      num_bathrooms=self.num_bathrooms_min,
+                                      num_bedrooms=self.num_bedrooms_min)
         # Create the survey
         survey = self.create_survey(self.user.userProfile)
         survey.home_type_survey.set([self.home_type, self.home_type1])
@@ -1022,7 +1144,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
         # Assert
         self.assertEqual(1, len(rent_algorithm.homes))
-        self.assertEqual(self.home, rent_algorithm.homes[0].home)
+        self.assertEqual(self.home.home, rent_algorithm.homes[0].home)
 
     def tests_populate_survey_homes_2_bedrooms_higher_max_price(self):
         """
@@ -1030,6 +1152,29 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         """
         # Arrange
         rent_algorithm = RentAlgorithm()
+        # Make some homes
+        self.home = self.create_home(self.home_type,
+                                     price=self.price_min,
+                                     num_bathrooms=self.num_bathrooms_min,
+                                     num_bedrooms=self.num_bedrooms_min)
+        self.home1 = self.create_home(self.home_type,
+                                      price=self.price_middle,
+                                      num_bathrooms=self.num_bathrooms_middle,
+                                      num_bedrooms=self.num_bedrooms_max)
+        self.home2 = self.create_home(self.home_type,
+                                      price=self.price_max,
+                                      num_bathrooms=self.num_bathrooms_min,
+                                      num_bedrooms=self.num_bedrooms_min,
+                                      currently_available=False)
+        self.home3 = self.create_home(self.home_type,
+                                      price=self.price_min,
+                                      num_bathrooms=self.num_bathrooms_max,
+                                      num_bedrooms=self.num_bedrooms_max,
+                                      currently_available=False)
+        self.home4 = self.create_home(self.home_type,
+                                      price=self.price_max,
+                                      num_bathrooms=self.num_bathrooms_min,
+                                      num_bedrooms=self.num_bedrooms_min)
         # Create the survey
         survey = self.create_survey(self.user.userProfile, max_price=3000)
         survey.home_type_survey.set([self.home_type, self.home_type1])
@@ -1039,8 +1184,8 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
         # Assert
         self.assertEqual(2, len(rent_algorithm.homes))
-        self.assertEqual(self.home, rent_algorithm.homes[0].home)
-        self.assertEqual(self.home4, rent_algorithm.homes[1].home)
+        self.assertEqual(self.home.home, rent_algorithm.homes[0].home)
+        self.assertEqual(self.home4.home, rent_algorithm.homes[1].home)
 
 
 class TestRetrieveApproximateCommutes(TestCase):
@@ -1049,6 +1194,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Create a user so the survey form can validate
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -1087,6 +1233,7 @@ class TestRetrieveApproximateCommutes(TestCase):
             num_bathrooms_home=num_bathrooms,
             zip_code_home=zip_code,
             state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
     def test_retrieve_approx_commutes_driving_transit_one_home_and_destination_not_eliminated(self):
@@ -1225,6 +1372,7 @@ class TestRetrieveExactCommutes(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -1266,6 +1414,7 @@ class TestRetrieveExactCommutes(TestCase):
             state_home=state,
             street_address_home=street_address,
             city_home=city,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
     @skip("Renable when mocked")

@@ -199,7 +199,7 @@ class TestCommuteInformationForm(TestCase):
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
-            'commute_type': self.commute_type
+            'commute_type': self.commute_type.pk,
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -695,38 +695,6 @@ class TestRentSurveyForm(TestCase):
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
-            'max_price_survey': self.max_price,
-            'desired_price_survey': self.desired_price,
-            'price_weight_survey': self.price_weight,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
-            'parking_spot_survey': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
-        }
-        rent_survey_form = RentSurveyForm(data=form_data)
-
-        # Act
-        result = rent_survey_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_rent_survey_missing_commute_information_data(self):
-        # Arrange
-        form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms_survey': self.num_bedrooms,
-            'max_bathrooms_survey': self.max_num_bathrooms,
-            'min_bathrooms_survey': self.min_num_bathrooms,
-            'home_type_survey': self.home_type_survey,
             'max_price_survey': self.max_price,
             'desired_price_survey': self.desired_price,
             'price_weight_survey': self.price_weight,

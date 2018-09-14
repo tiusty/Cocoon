@@ -8,7 +8,7 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 
 class MyUserManager(BaseUserManager):
 
-    def _create_user(self, email, password, is_superuser, is_admin,**extra_fields):
+    def _create_user(self, email, password, is_superuser, is_admin, **extra_fields):
         """
         Creates and saves a User with the given email and password
         :param email:

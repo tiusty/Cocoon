@@ -4,14 +4,14 @@ from django.forms import ModelForm
 from django.utils.text import slugify
 
 # Survey models
-from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, RentingDestinationsModel, \
-    PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel, DestinationsModel
-from cocoon.houseDatabase.models import HomeTypeModel
+from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
+    RentingDestinationsModel, PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel, DestinationsModel
+from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import CommuteType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
-    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES, DEFAULT_COMMUTE_TYPE
+    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
 
 
 class HomeInformationForm(ModelForm):
@@ -268,6 +268,26 @@ class RentSurveyForm(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformat
                   "fitness_center_survey", "storage_unit_survey", ]
 
 
+class BrokerRentSurveyForm(RentSurveyForm):
+
+    provider_survey = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control',
+            }),
+        queryset=HomeProviderModel.objects.all()
+    )
+
+    class Meta:
+        model = RentingSurveyModel
+        # Make sure to set the name later, in the survey result if they want to save the result
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", "provider_survey"]
+
+
 class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInformationForm,
                          HomeInformationForm):
     """
@@ -317,6 +337,25 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, InteriorAmenitiesForm, PriceInfo
                   "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
                   "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
                   "fitness_center_survey", "storage_unit_survey", "name_survey"]
+
+
+class BrokerRentSurveyFormMini(RentSurveyFormMini):
+
+    provider_survey = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control',
+            }),
+        queryset=HomeProviderModel.objects.all()
+    )
+
+    class Meta:
+        model = RentingSurveyModel
+        fields = ["num_bedrooms_survey", "max_bathrooms_survey", "min_bathrooms_survey", "home_type_survey",
+                  "max_price_survey", "desired_price_survey", "price_weight_survey", "air_conditioning_survey",
+                  "interior_washer_dryer_survey", "dish_washer_survey", "bath_survey", "parking_spot_survey",
+                  "building_washer_dryer_survey", "elevator_survey", "handicap_access_survey", "pool_hot_tub_survey",
+                  "fitness_center_survey", "storage_unit_survey", "name_survey", 'provider_survey', ]
 
 
 class CommuteInformationForm(ModelForm):

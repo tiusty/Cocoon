@@ -30,6 +30,25 @@ class HomeTypeModel(models.Model):
         return self.home_type_survey
 
 
+class HomeProviderModel(models.Model):
+    """
+    Class stores all the different providers that are used
+    """
+    PROVIDER_TYPES = (
+        ('MLSPIN', 'MLSPIN'),
+        ('YGL', 'YGL'),
+    )
+
+    provider = models.CharField(
+        unique=True,
+        choices=PROVIDER_TYPES,
+        max_length=200,
+    )
+
+    def __str__(self):
+        return self.provider
+
+
 class HomeBaseModel(models.Model):
     """
     Contains all the base information for a home
@@ -180,6 +199,10 @@ class BuildingExteriorAmenitiesModel(models.Model):
     def parking_spot(self):
         return self.parking_spot_home
 
+    @parking_spot.setter
+    def parking_spot(self, has_parking_spot):
+        self.parking_spot_home = has_parking_spot
+
     @property
     def building_washer_dryer(self):
         return self.building_washer_dryer_home
@@ -208,15 +231,15 @@ class BuildingExteriorAmenitiesModel(models.Model):
         abstract = True
 
 
-class MLSpinDataModel(models.Model):
+class HomeManagementModel(models.Model):
     """
-    Contains all the data related to the MLS pin
+    Contains all the data related to managing the house listing
     """
     remarks_home = models.TextField(default="")
-    listing_number_home = models.IntegerField(default=-1)
-    listing_provider_home = models.CharField(max_length=200)
-    listing_agent_home = models.CharField(max_length=200)
-    listing_office_home = models.CharField(max_length=200)
+    listing_number_home = models.IntegerField(default=-1)  # The id of the home
+    listing_provider_home = models.ForeignKey(HomeProviderModel)
+    listing_agent_home = models.CharField(max_length=200, default="", blank=True)
+    listing_office_home = models.CharField(max_length=200, default="", blank=True)  # The listing office, i.e William Raveis
     last_updated_home = models.DateField(default=timezone.now)
 
     @property
@@ -271,11 +294,11 @@ class MLSpinDataModel(models.Model):
         abstract = True
 
 
-class RentDatabaseModel(MLSpinDataModel, BuildingExteriorAmenitiesModel, InteriorAmenitiesModel, HomeBaseModel):
+class RentDatabaseModel(HomeManagementModel, BuildingExteriorAmenitiesModel, InteriorAmenitiesModel, HomeBaseModel):
     """
     This model stores all the information associated with a home
     """
-    apartment_number_home = models.CharField(max_length=200)
+    apartment_number_home = models.CharField(max_length=200, blank=True)
     home_type_home = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
     currently_available_home = models.BooleanField(default=False)
 
@@ -326,7 +349,7 @@ class HousePhotos(models.Model):
 
 class MlsManagementModel(models.Model):
     """
-    Model that stores general database-wide information
+    Model that stores general mls information information
     """
 
     last_updated_mls = models.DateField(default=timezone.now)
@@ -335,5 +358,19 @@ class MlsManagementModel(models.Model):
         if MlsManagementModel.objects.exists() and not self.pk:
             raise ValidationError("There should only be one MlsManagementModel object")
         return super(MlsManagementModel, self).save(*args, **kwargs)
+
+
+class YglManagementModel(models.Model):
+    """
+    Model that stores general ygl information information
+    """
+
+    last_updated_ygl = models.DateField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        if YglManagementModel.objects.exists() and not self.pk:
+            raise ValidationError("There should only be one MlsManagementModel object")
+        return super(YglManagementModel, self).save(*args, **kwargs)
+
 
 

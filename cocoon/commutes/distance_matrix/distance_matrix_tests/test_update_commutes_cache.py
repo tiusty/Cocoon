@@ -19,7 +19,7 @@ from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Trans
 from cocoon.survey.home_data.home_score import HomeScore
 
 # Import Destination model
-from cocoon.survey.models import RentingSurveyModel, HomeTypeModel, CommuteType
+from cocoon.survey.models import RentingSurveyModel, HomeTypeModel, CommuteType, HomeProviderModel
 
 # Import houseDatabase object
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -33,6 +33,7 @@ class TestUpdateCommutesCache(TestCase):
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -57,6 +58,7 @@ class TestUpdateCommutesCache(TestCase):
             num_bathrooms_home=num_bathrooms,
             zip_code_home=zip_code,
             state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
     @staticmethod
@@ -212,6 +214,7 @@ class TestDriveCommuteCalculator(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -236,6 +239,7 @@ class TestDriveCommuteCalculator(TestCase):
             num_bathrooms_home=num_bathrooms,
             zip_code_home=zip_code,
             state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN")
         ))
 
     @staticmethod
@@ -386,6 +390,7 @@ class TestTransitCommuteCalculator(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type_survey='House')
         self.commute_type = CommuteType.objects.create(commute_type='Transit')
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -410,6 +415,7 @@ class TestTransitCommuteCalculator(TestCase):
             num_bathrooms_home=num_bathrooms,
             zip_code_home=zip_code,
             state_home=state,
+            listing_provider_home=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
     @staticmethod

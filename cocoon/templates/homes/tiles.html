@@ -182,6 +182,7 @@ context.
         <span class="infoBit">{{ theHouse.price_string }}</span>
         {% if is_broker %}
             <span class="infoBit addressBit">{{ theHouse.full_address }}</span>
+            <span class="infoBit addressbit">{{ theHouse.listing_provider }}</span>
         {% endif %}
         {% for key, value in commuteExact.items %}
         <span class="infoBit commuteExactbit">Exact: {{ value|floatformat:"0" }}</span>

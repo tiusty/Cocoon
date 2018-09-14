@@ -8,7 +8,7 @@ import math
 
 # Import cocoon models
 from cocoon.userAuth.models import UserProfile
-from cocoon.houseDatabase.models import HomeTypeModel
+from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import CommuteType
 
 # Import Global Variables
@@ -34,6 +34,7 @@ class InitialSurveyModel(models.Model):
     created_survey = models.DateField(auto_now_add=True)
     user_profile_survey = models.ForeignKey(UserProfile)
     url = models.SlugField(max_length=100)
+    provider_survey = models.ManyToManyField(HomeProviderModel)
 
     @property
     def name(self):
@@ -58,6 +59,31 @@ class InitialSurveyModel(models.Model):
     @user_profile.setter
     def user_profile(self, new_user_profile):
         self.user_profile_survey = new_user_profile
+
+    @property
+    def provider(self):
+        return self.provider_survey
+
+    @property
+    def providers(self):
+        provider_set = self.provider.all()
+        if provider_set.count() == 0:
+            return "Not set"
+        else:
+            type_output = ""
+            counter = 0
+            for provider in provider_set:
+                if counter == 0:
+                    type_output = str(provider)
+                    counter += 1
+                else:
+                    type_output = str(provider) + ", " + type_output
+
+        return type_output
+
+    @provider.setter
+    def provider(self, new_provider):
+        self.provider_survey = new_provider
 
     def generate_slug(self):
         """
@@ -110,6 +136,10 @@ class HomeInformationModel(models.Model):
     @property
     def home_type(self):
         return self.home_type_survey
+
+    @home_type.setter
+    def home_type(self, new_home_type):
+        self.home_type_survey = new_home_type
 
     @property
     def home_types(self):

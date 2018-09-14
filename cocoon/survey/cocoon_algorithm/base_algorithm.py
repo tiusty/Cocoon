@@ -1,11 +1,8 @@
 # Import Python Modules
 from django.utils import timezone
 
-# Import Django modules
-from django.db.models import Q
-
 # Import houseDatabase modules
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel
+from cocoon.houseDatabase.models import RentDatabaseModel
 
 # Import HomeScore class
 from cocoon.survey.home_data.home_score import HomeScore
@@ -68,27 +65,16 @@ class CocoonAlgorithm(object):
         :param user_survey: (RentingSurveyModel): The survey filled out by the user
         :return: (RentDataBaseModel Queryset): All the homes that fit the static filter
         """
-
-        # Find all the home types the user desires
-        current_home_types = []
-        for home in user_survey.home_type.all():
-            current_home_types.append(home.home_type)
-
-        # Create queries for all the user home types desired
-        home_type_queries = [Q(home_type_home=value) for value in
-                             HomeTypeModel.objects.filter(home_type_survey__in=current_home_types)]
-
-        # Logic Or all the home type queries together, to make one query
-        query_home_type = home_type_queries.pop()
-        for item in home_type_queries:
-            query_home_type |= item
-
         # Query the database
-        return RentDatabaseModel.objects \
+        house_query =  RentDatabaseModel.objects\
             .filter(price_home__range=(user_survey.min_price, user_survey.max_price)) \
-            .filter(query_home_type) \
             .filter(currently_available_home=True) \
-            .filter(last_updated_home__range=(MlsManagementModel.objects.all().first().last_updated_mls,
-                                              MlsManagementModel.objects.all().first().last_updated_mls)) \
             .filter(num_bedrooms_home=user_survey.num_bedrooms) \
-            .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms))
+            .filter(num_bathrooms_home__range=(user_survey.min_bathrooms, user_survey.max_bathrooms)) \
+            .filter(home_type_home__in=user_survey.home_type.all())
+
+        # Only filter by the provider if the user is a broker, otherwise they get all homes regardless of provider
+        if user_survey.user_profile.user.is_broker:
+            house_query = house_query.filter(listing_provider_home__in=user_survey.provider.all())
+
+        return house_query

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?> <YGLFeed version="2.0" generated_at="2018-09-09">
+    <Rentals>
+        <Rental>
+            <ID>121307521</ID>
+            <Source>YGL Network</Source>
+            <ContactName><![CDATA[Cocoon]]></ContactName>
+            <ContactPhone><![CDATA[6178940615]]></ContactPhone>
+            <ContactEmail><![CDATA[fed10219ar121307521rl@yglmail.com]]></ContactEmail>
+            <StreetNumber><![CDATA[7]]></StreetNumber>
+            <StreetName><![CDATA[Lothian Rd.]]></StreetName>
+            <City><![CDATA[Boston]]></City>
+            <Neighborhood><![CDATA[Brighton]]></Neighborhood>
+            <State><![CDATA[MA]]></State>
+            <Zip><![CDATA[02135]]></Zip>
+            <UnitNumber><![CDATA[7]]></UnitNumber>
+            <Latitude>42.340347</Latitude>
+            <Longitude>-71.153633</Longitude>
+            <BuildingType>Apartment Complex</BuildingType>
+            <DisplayAddress><![CDATA[No]]></DisplayAddress>
+            <Beds>2</Beds>
+            <Baths>1</Baths>
+            <AvailableDate>09/01/2018</AvailableDate>
+            <Price>2000</Price>
+            <Fee>One Month</Fee>
+            <Pet>No Pet</Pet>
+            <UnitLevel>2</UnitLevel>
+            <Parking>Street</Parking>
+            <IncludeElectricity></IncludeElectricity>
+            <IncludeGas></IncludeGas>
+            <IncludeHeat>1</IncludeHeat>
+            <IncludeHotWater>1</IncludeHotWater>
+            <Features><![CDATA[Bright/ Natural Light,Dishwasher,Foyer,Gas Stove,Hardwood Floors,Modern Bath,Modern Kitchen,New Appliances,New Kitchen Tile,Sunny,Laundry in Building,Near MBTA,Near Parks,New Common Areas,Wired for Cable,Wired for Internet]]></Features>
+            <Photos>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W57028e7b9bf82.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W57028e78655d7.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W57028e7b09727.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W57028e799bb32.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W57028e7a6e91a.jpg]]></Photo>
+            </Photos>
+            <Url><![CDATA[http://104772.speedhatch.com/rentals/121307521]]></Url>
+            <LastModifiedDate>2018-09-07 16:28:33</LastModifiedDate><CreationDate>2018-09-07 16:28:33</CreationDate></Rental>
+        <Rental>
+            <ID>121307525</ID>
+            <Source>YGL Network</Source>
+            <ContactName><![CDATA[Cocoon]]></ContactName>
+            <ContactPhone><![CDATA[6178940615]]></ContactPhone>
+            <ContactEmail><![CDATA[fed10219ar121307525rl@yglmail.com]]></ContactEmail>
+            <StreetNumber><![CDATA[16]]></StreetNumber>
+            <StreetName><![CDATA[Wadsworth St.]]></StreetName>
+            <City><![CDATA[Boston]]></City>
+            <Neighborhood><![CDATA[Allston]]></Neighborhood>
+            <State><![CDATA[MA]]></State>
+            <Zip><![CDATA[02134]]></Zip>
+            <Latitude>42.355179</Latitude>
+            <Longitude>-71.125954</Longitude>
+            <BuildingType>Townhouse</BuildingType>
+            <DisplayAddress><![CDATA[No]]></DisplayAddress>
+            <Beds>4</Beds>
+            <Baths>2.5</Baths>
+            <AvailableDate>09/01/2018</AvailableDate>
+            <Price>5000</Price>
+            <Fee>One Month</Fee>
+            <Pet>No Pet</Pet>
+            <SquareFootage><![CDATA[2400]]></SquareFootage>
+            <Parking>For Rent</Parking>
+            <IncludeElectricity></IncludeElectricity>
+            <IncludeGas></IncludeGas>
+            <IncludeHeat></IncludeHeat>
+            <IncludeHotWater></IncludeHotWater>
+            <Features><![CDATA[Central Air,Duplex,Furnished,Granite Counter Tops,Huge Closets,Laundry in Unit,Marble Bath,New Construction,Recessed Lighting,Stainless Steel Appliance(s),Vaulted Ceilings]]></Features>
+            <Photos>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3acf011c.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3ad5fb3a.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3adc5a97.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3ae5d0b1.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3aef3e42.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3af7bbf7.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b02bbbd.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b0ac85c.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b1171dd.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b17095f.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b25c0ef.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b370823.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b45ddbb.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b5445ea.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b631227.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b6aa76e.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3b87eb99.jpg]]></Photo>
+                <Photo><![CDATA[http://ygl-photos.s3.amazonaws.com/25W512cf3bacf3ae.jpg]]></Photo>
+            </Photos>
+            <Url><![CDATA[http://104772.speedhatch.com/rentals/121307525]]></Url>
+            <LastModifiedDate>2018-09-07 16:28:33</LastModifiedDate><CreationDate>2018-09-07 16:28:33</CreationDate></Rental>
+        <Rental>
+            <ID>121307530</ID>
+            <Source>YGL Network</Source>
+            <ContactName><![CDATA[Cocoon]]></ContactName>
+            <ContactPhone><![CDATA[6178940615]]></ContactPhone>
+            <ContactEmail><![CDATA[fed10219ar121307530rl@yglmail.com]]></ContactEmail>
+            <StreetNumber><![CDATA[31]]></StreetNumber>
+            <StreetName><![CDATA[Claymoss Rd.]]></StreetName>
+            <City><![CDATA[Boston]]></City>
+            <Neighborhood><![CDATA[Brighton]]></Neighborhood>
+            <State><![CDATA[MA]]></State>
+            <Zip><![CDATA[02135]]></Zip>
+            <UnitNumber><![CDATA[1]]></UnitNumber>
+            <Latitude>42.344400</Latitude>
+            <Longitude>-71.145100</Longitude>
+            <DisplayAddress><![CDATA[No]]></DisplayAddress>
+            <Beds>3</Beds>
+            <Baths>1</Baths>
+            <AvailableDate>09/01/2018</AvailableDate>
+            <Price>2700</Price>
+            <Fee>One Month</Fee>
+            <Pet>No Pet</Pet>
+            <UnitLevel>1</UnitLevel>
+            <Parking>Included</Parking>
+            <IncludeElectricity></IncludeElectricity>
+            <IncludeGas></IncludeGas>
+            <IncludeHeat></IncludeHeat>
+            <IncludeHotWater></IncludeHotWater>
+            <Features><![CDATA[Dining Room,Eat-in Kitchen,Porch]]></Features>
+            <Photos>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010da44afb.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010db2158f.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010dc23164.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d01101d4c15.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010dd5ee03.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010de9786b.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d0110c4f006.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d0110e1f360.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d0112f0fcf9.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e2a7dac.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e362259.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e415153.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e4d7339.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e5a3c1e.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e693ad6.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e775a83.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e880906.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010e9e81bb.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010eaa499e.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010eb6f760.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010ec3f599.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010ecd0dad.jpg]]></Photo>
+                <Photo><![CDATA[https://ygl-photos.s3.amazonaws.com/25W53d010ee115d4.jpg]]></Photo>
+            </Photos>
+            <Url><![CDATA[http://104772.speedhatch.com/rentals/121307530]]></Url>
+            <LastModifiedDate>2018-09-07 16:28:33</LastModifiedDate><CreationDate>2018-09-07 16:28:33</CreationDate></Rental>
+    </Rentals>
+</YGLFeed>
