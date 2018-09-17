@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.text import slugify
 
 # Python Modules
-from enum import Enum
 import math
 
 # Import cocoon models
@@ -19,50 +18,15 @@ from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY
 from .constants import MIN_PRICE_DELTA
 
 
-# TODO: Deprecate with new algorithm
-class CommutePrecision(Enum):
-    exact = 1
-    approx = 2
-
-
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
     """
-    name_survey = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
-    survey_type_survey = models.IntegerField(default=-1)
-    created_survey = models.DateField(auto_now_add=True)
-    user_profile_survey = models.ForeignKey(UserProfile)
+    name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
+    created = models.DateField(auto_now_add=True)
+    user_profile = models.ForeignKey(UserProfile)
     url = models.SlugField(max_length=100)
-    provider_survey = models.ManyToManyField(HomeProviderModel)
-
-    @property
-    def name(self):
-        return self.name_survey
-
-    @property
-    def survey_type(self):
-        return self.survey_type_survey
-
-    @survey_type.setter
-    def survey_type(self, new_survey_type):
-        self.survey_type_survey = new_survey_type
-
-    @property
-    def created(self):
-        return self.created_survey
-
-    @property
-    def user_profile(self):
-        return self.user_profile_survey
-
-    @user_profile.setter
-    def user_profile(self, new_user_profile):
-        self.user_profile_survey = new_user_profile
-
-    @property
-    def provider(self):
-        return self.provider_survey
+    provider = models.ManyToManyField(HomeProviderModel)
 
     @property
     def providers(self):
@@ -81,10 +45,6 @@ class InitialSurveyModel(models.Model):
 
         return type_output
 
-    @provider.setter
-    def provider(self, new_provider):
-        self.provider_survey = new_provider
-
     def generate_slug(self):
         """
         The slug should just be the name without spaces and with dashes instead.
@@ -99,9 +59,9 @@ class InitialSurveyModel(models.Model):
         self.url = self.generate_slug()
 
         # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
-        if RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile_survey)\
+        if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
                 .filter(url=self.url).exists():
-            RentingSurveyModel.objects.filter(user_profile_survey=self.user_profile)\
+            RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
                 .filter(url=self.url).delete()
 
         # When the model is being saved, make sure to generate the slug associated with the survey.
@@ -116,30 +76,10 @@ class HomeInformationModel(models.Model):
     """
     Contains basic information about a home
     """
-    num_bedrooms_survey = models.IntegerField(default=0)
-    max_bathrooms_survey = models.IntegerField(default=MAX_NUM_BATHROOMS)
-    min_bathrooms_survey = models.IntegerField(default=0)
-    home_type_survey = models.ManyToManyField(HomeTypeModel)
-
-    @property
-    def num_bedrooms(self):
-        return self.num_bedrooms_survey
-
-    @property
-    def max_bathrooms(self):
-        return self.max_bathrooms_survey
-
-    @property
-    def min_bathrooms(self):
-        return self.min_bathrooms_survey
-
-    @property
-    def home_type(self):
-        return self.home_type_survey
-
-    @home_type.setter
-    def home_type(self, new_home_type):
-        self.home_type_survey = new_home_type
+    num_bedrooms = models.IntegerField(default=0)
+    max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
+    min_bathrooms = models.IntegerField(default=0)
+    home_type = models.ManyToManyField(HomeTypeModel)
 
     @property
     def home_types(self):
@@ -166,21 +106,9 @@ class PriceInformationModel(models.Model):
     """
     Contains all the price information for a given home
     """
-    max_price_survey = models.IntegerField(default=0)
-    desired_price_survey = models.IntegerField(default=0)
-    price_weight_survey = models.IntegerField(default=0)
-
-    @property
-    def max_price(self):
-        return self.max_price_survey
-
-    @property
-    def desired_price(self):
-        return self.desired_price_survey
-
-    @property
-    def price_weight(self):
-        return self.price_weight_survey
+    max_price = models.IntegerField(default=0)
+    desired_price = models.IntegerField(default=0)
+    price_weight = models.IntegerField(default=0)
 
     @property
     def price_range(self):
@@ -198,81 +126,18 @@ class PriceInformationModel(models.Model):
         abstract = True
 
 
-class InteriorAmenitiesModel(models.Model):
-    """
-    Contains all the survey questions regarding the interior amenities
-    """
-    air_conditioning_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    interior_washer_dryer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    dish_washer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    bath_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-
-    @property
-    def air_conditioning(self):
-        return self.air_conditioning_survey
-
-    @property
-    def interior_washer_dryer(self):
-        return self.interior_washer_dryer_survey
-
-    @property
-    def dish_washer(self):
-        return self.dish_washer_survey
-
-    @property
-    def bath(self):
-        return self.bath_survey
-
-    class Meta:
-        abstract = True
-
-
 class ExteriorAmenitiesModel(models.Model):
     """
     Contains all the survey questions regarding the building/Exterior Amenities
     All Questions are hybrid weighted
     """
-    parking_spot_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    building_washer_dryer_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    elevator_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    handicap_access_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    pool_hot_tub_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    fitness_center_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-    storage_unit_survey = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
-
-    @property
-    def parking_spot(self):
-        return self.parking_spot_survey
-
-    @property
-    def washer_dryer_in_building(self):
-        return self.building_washer_dryer_survey
-
-    @property
-    def elevator(self):
-        return self.elevator_survey
-
-    @property
-    def handicap_access(self):
-        return self.handicap_access_survey
-
-    @property
-    def pool_hot_tub(self):
-        return self.pool_hot_tub_survey
-
-    @property
-    def fitness_center(self):
-        return self.fitness_center_survey
-
-    @property
-    def storage_unit(self):
-        return self.storage_unit_survey
+    parking_spot = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
 
     class Meta:
         abstract = True
 
 
-class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel, PriceInformationModel,
+class RentingSurveyModel(ExteriorAmenitiesModel, PriceInformationModel,
                          HomeInformationModel, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.

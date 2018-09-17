@@ -15,20 +15,19 @@ class AddressInLine(admin.StackedInline):
 
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
-    readonly_fields = ("created_survey", 'id', 'url')
+    readonly_fields = ("created", 'id', 'url')
     # noinspection SpellCheckingInspection
     inlines = [AddressInLine]
     fieldsets = (
-        (None, {'fields': ('name_survey', 'user_profile_survey')}),
-        ('Survey', {'fields': ('home_type_survey', 'provider_survey', 'desired_price_survey', 'max_price_survey', 'min_bathrooms_survey',
-                               'max_bathrooms_survey', )}),
-        ('Interior Amenities',
-         {'fields': ('air_conditioning_survey', 'interior_washer_dryer_survey',)}),
-        ('Created', {'fields': ('created_survey', 'id', 'url')}),
+        (None, {'fields': ('name', 'user_profile')}),
+        ('Survey', {'fields': ('home_type', 'provider', 'desired_price', 'max_price', 'min_bathrooms',
+                               'max_bathrooms', )}),
+        ('Exterior Amenities', {'fields': ('parking_spot',)}),
+        ('Created', {'fields': ('created', 'id', 'url')}),
     )
-    list_display = ('name', 'user_profile_survey', )
-    list_filter = ['user_profile_survey']
-    search_fields = ('name_survey',)
+    list_display = ('name', 'user_profile', )
+    list_filter = ['user_profile']
+    search_fields = ('name',)
 
 
 class RentDestinationAdmin(admin.ModelAdmin):

@@ -41,10 +41,9 @@
                                    aria-expanded="false">{{ user.email }} <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-header">Account</li>
-                                    <li class="dropdown-header"><a href="{% url 'userAuth:logoutPage' %}">Logout</a>
-                                    </li>
                                     <li class="dropdown-header"><a href="{% url 'userAuth:user_profile' %}">User
                                         Profile</a></li>
+                                    <li class="dropdown-header"><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
                             </ul>
                         </li>
                     {% else %}
@@ -64,7 +63,7 @@
             </div><!--/.container-fluid -->
         </nav>
         {% for message in messages %}
-            <div class="alert {{ message.tags }} alert-dismissible message_timeout" role="alert" style="text-align: center; margin-bottom: 0px">
+            <div class="alert {{ message.tags }} alert-dismissible message_timeout" role="alert" style="text-align: center; margin-bottom: 0">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -87,7 +86,7 @@
 {% block footer %}
 
     <footer class="footer">
-       Copyright Cocoon 2017. All rights reserved.
+       Copyright Cocoon 2018. All rights reserved.
     </footer>
 
 {% endblock %}

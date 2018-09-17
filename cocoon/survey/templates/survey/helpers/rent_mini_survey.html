@@ -19,45 +19,43 @@
         {% csrf_token %}
         <div class="form-group step_div">
             <div class="form-group">
-                {{ form.name_survey.label_tag }}
-                {{ form.name_survey }}
-                {{ form.name_survey.errors }}
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                {{ form.name.errors }}
             </div>
             <div class="form-group">
-                {{ form.num_bedrooms_survey.label_tag }}
-                {{ form.num_bedrooms_survey }}
-                {{ form.num_bedrooms_survey.errors }}
+                {{ form.num_bedrooms.label_tag }}
+                {{ form.num_bedrooms }}
+                {{ form.num_bedrooms.errors }}
             </div>
             <div class="form-group">
-                {{ form.home_type_survey.label_tag }}
-                {{ form.home_type_survey }}
-                {{ form.home_type_survey.errors }}
+                {{ form.home_type.label_tag }}
+                {{ form.home_type }}
+                {{ form.home_type.errors }}
             </div>
             <div class="form-group">
                 <label for="amountCost">Cost Per Month:</label>
                 <input type="text" id="amountCost" name="amountCost" readonly
                        size="30" style="border:0; color:#f6931f; font-weight:bold;">
                 <div id="cost"></div>
-                {{ form.desired_price_survey }}
-                {{ form.max_price_survey }}
+                {{ form.desired_price }}
+                {{ form.max_price }}
             </div>
             <div class="form-group">
-                {{ form.price_weight_survey.label_tag }}
-                {{ form.price_weight_survey }}
-                {{ form.price_weight_survey.errors }}
+                {{ form.price_weight.label_tag }}
+                {{ form.price_weight }}
+                {{ form.price_weight.errors }}
             </div>
             <div class="form-group">
-                {{ form.provider_survey.label_tag }}
-                {{ form.provider_survey }}
-                {{ form.provider_survey.errors }}
+                {{ form.provider.label_tag }}
+                {{ form.provider }}
+                {{ form.provider.errors }}
             </div>
             <br>
             {% comment %}
                 Adds in the commuter form to the mini survey
             {% endcomment %}
             {% include "survey/helpers/commuter_form.html" %}
-            <br>
-            <br>
         </div>
         <div class="form-group">
             <div class="panel-group" id="accordion">
@@ -99,10 +97,10 @@
                                 <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
                                        style="border:0; color:#f6931f; font-weight:bold;">
                             <div id="bathrooms"></div>
-                            {{ form.min_bathrooms_survey }}
-                            {{ form.max_bathrooms_survey }}
-                            {{ form.min_bathrooms_survey.errors }}
-                            {{ form.max_bathrooms_survey.errors }}
+                            {{ form.min_bathrooms }}
+                            {{ form.max_bathrooms }}
+                            {{ form.min_bathrooms.errors }}
+                            {{ form.max_bathrooms.errors }}
                             </p>
                         </div>
                     </div>
@@ -117,9 +115,9 @@
                     <div id="collapse2" class="panel-collapse collapse">
                         <div class="panel-body">
                             <p>
-                                {{ form.parking_spot_survey.label_tag }}
-                                {{ form.parking_spot_survey }}
-                                {{ form.parking_spot_survey.errors }}
+                                {{ form.parking_spot.label_tag }}
+                                {{ form.parking_spot }}
+                                {{ form.parking_spot.errors }}
                             </p>
                             <p>
                                 {{ form.building_washer_dryer_survey.label_tag }}

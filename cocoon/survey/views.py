@@ -10,9 +10,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
 
-# Import Global config variables
-from config.settings.Global_Config import survey_types
-
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
 
@@ -67,10 +64,6 @@ def renting_survey(request):
 
             # Add the current user to the survey
             rent_survey.user_profile = current_profile
-
-            # Given the enumeration, set the survey to either rent or buy
-            # This can probably be removed after testing it
-            rent_survey.survey_type = survey_types.rent.value
 
             # Create the form destination set
             request_post = request.POST.copy()
@@ -137,10 +130,7 @@ def run_rent_algorithm(survey, context):
     """
     rent_algorithm.run_compute_commute_score_approximate()
     rent_algorithm.run_compute_price_score()
-    rent_algorithm.run_compute_weighted_score_interior_amenities(survey.air_conditioning,
-                                                                 survey.interior_washer_dryer,
-                                                                 survey.dish_washer,
-                                                                 survey.bath)
+    rent_algorithm.run_compute_weighted_score_exterior_amenities(survey.parking_spot)
     """
     STEP 5: Now sort all the homes from best homes to worst home
     """
@@ -196,12 +186,12 @@ def survey_result_rent(request, survey_url=""):
 
     # Tries to grab the survey. If the survey name was not passed in, then it grabs the most recent survey taken.
     try:
-        survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile).get(url=survey_url)
+        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(url=survey_url)
     # If the survey ID, does not exist/is not for that user, then return the most recent survey
     except RentingSurveyModel.DoesNotExist:
-        if RentingSurveyModel.objects.filter(user_profile_survey=user_profile).exists():
-            survey = RentingSurveyModel.objects.filter(user_profile_survey=user_profile)\
-                .order_by('created_survey').first()
+        if RentingSurveyModel.objects.filter(user_profile=user_profile).exists():
+            survey = RentingSurveyModel.objects.filter(user_profile=user_profile)\
+                .order_by('created').first()
             messages.add_message(request, messages.WARNING, 'Could not find Survey, loading most recent survey')
             return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                                 kwargs={"survey_url": survey.url}))

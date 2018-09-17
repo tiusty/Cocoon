@@ -133,7 +133,7 @@ class MlspinRequester(object):
 
                 # verifies unit is a rental (RN denotes rental in MLS feed)
                 if list_type == "RN":
-                    apartment_home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
+                    apartment_home_type = HomeTypeModel.objects.get(home_type="Apartment")
                 else:
                     # Since we only support rentals right now we don't want to retrieve any other home types
                     print("Home not a rental, continuing. Error was with line {0}".format(line))
@@ -148,23 +148,23 @@ class MlspinRequester(object):
                 num_of_value_errors += 1
                 continue
 
-            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider) \
-                    .filter(listing_number_home=new_listing.listing_number):
+            if RentDatabaseModel.objects.filter(listing_provider=new_listing.listing_provider) \
+                    .filter(listing_number=new_listing.listing_number):
                 # If the apartment already exists on MLSpin, verify that the address is the same, if it is then continue
                 #   otherwise throw an error (just for testing purposes to see if it happens). If we decide this is a
                 #   non-issue, we can take this out
-                existing_apartment = RentDatabaseModel.objects.get(listing_number_home=new_listing.listing_number)
+                existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
                 if existing_apartment.full_address == new_listing.full_address:
                     existing_apartment.apartment_number = cells[UNIT_NO].lower()
                     existing_apartment.last_updated = self.update_timestamp
                     existing_apartment.currently_available = new_listing.currently_available
                     existing_apartment.save()
-                    print("[ UPDATED ] {0}" + existing_apartment.full_address)
+                    print("[ UPDATED ] {0}".format(existing_apartment.full_address))
                 else:
                     print("[ FAILED UPDATE ] {0}".format(new_listing.full_address))
                     num_failed_to_update += 1
-            elif RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address) \
-                    .filter(apartment_number_home=new_listing.apartment_number_home):
+            elif RentDatabaseModel.objects.filter(street_address=new_listing.street_address) \
+                    .filter(apartment_number=new_listing.apartment_number):
                 print("[ DUPLICATE ] {0}".format(new_listing.full_address))
                 num_of_duplicates += 1
             else:

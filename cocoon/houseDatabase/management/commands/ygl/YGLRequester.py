@@ -111,15 +111,15 @@ class YGLRequester(object):
                     num_of_value_errors += 1
                     continue
 
-            new_listing.home_type = HomeTypeModel.objects.get(home_type_survey="Apartment")
+            new_listing.home_type = HomeTypeModel.objects.get(home_type="Apartment")
             new_listing.listing_provider = HomeProviderModel.objects.get(provider="YGL")
             new_listing.last_updated = self.update_timestamp
             new_listing.street_address = normalize_street_address("{0} {1}".format(street_number, street_name))
 
             # Determines if the home already exists as a YGL house
-            if RentDatabaseModel.objects.filter(listing_provider_home=new_listing.listing_provider) \
-                    .filter(listing_number_home=new_listing.listing_number).exists():
-                existing_apartment = RentDatabaseModel.objects.get(listing_number_home=new_listing.listing_number)
+            if RentDatabaseModel.objects.filter(listing_provider=new_listing.listing_provider) \
+                    .filter(listing_number=new_listing.listing_number).exists():
+                existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
 
                 # If it does, then make sure the street addresses line up before updating the home
                 if existing_apartment.full_address == new_listing.full_address:
@@ -134,8 +134,8 @@ class YGLRequester(object):
                     print("[ FAILED UPDATE ] {0}".format(existing_apartment.full_address))
 
             # If the home isn't an YGL house, then check to see if it could exist in another provider
-            elif RentDatabaseModel.objects.filter(street_address_home=new_listing.street_address) \
-                    .filter(apartment_number_home=new_listing.apartment_number_home):
+            elif RentDatabaseModel.objects.filter(street_address=new_listing.street_address) \
+                    .filter(apartment_number=new_listing.apartment_number):
                 print("[ DUPLICATE ] " + new_listing.full_address)
                 num_of_duplicates += 1
             else:

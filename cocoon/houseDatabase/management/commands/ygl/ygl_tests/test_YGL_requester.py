@@ -16,7 +16,7 @@ class TestYGLRequester(TestCase):
         HomeProviderModel.objects.create(provider="YGL")
 
         # Set up the apartment home type
-        self.home_type = HomeTypeModel.objects.create(home_type_survey="Apartment")
+        self.home_type = HomeTypeModel.objects.create(home_type="Apartment")
 
     def test_pulling_homes(self):
         """
@@ -29,9 +29,9 @@ class TestYGLRequester(TestCase):
         ygl_requester.parse_idx_feed()
 
         # Retrieve homes
-        home1 = RentDatabaseModel.objects.get(street_address_home="7 Lothian Rd")
-        home2 = RentDatabaseModel.objects.get(street_address_home="16 Wadsworth St")
-        home3 = RentDatabaseModel.objects.get(street_address_home="31 Claymoss Rd")
+        home1 = RentDatabaseModel.objects.get(street_address="7 Lothian Rd")
+        home2 = RentDatabaseModel.objects.get(street_address="16 Wadsworth St")
+        home3 = RentDatabaseModel.objects.get(street_address="31 Claymoss Rd")
 
         # Assert
 
