@@ -154,7 +154,9 @@ def run_rent_algorithm(survey, context):
 
     # Set template variables
     context['commuters'] = rent_algorithm.destinations
-    context['houseList'] = rent_algorithm.homes[:50]
+
+    # Only return homes that the score is 0 or above
+    context['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
 
 
 # Assumes the survey_slug will be passed by the URL if not, then it grabs the most recent survey.
