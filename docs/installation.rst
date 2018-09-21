@@ -102,6 +102,15 @@ Instructions are from this website_:
 
 Setting up the necessary Models
 ---------------------------------
+
+* First commit the cocoon models to the django database
+    
+    ::
+    
+        cd ~/work/Cocoon  
+        python manage.py makemigrations  
+        python manage.py migrate  
+
 * To Access anything you need to create a super user account for you local server
     * Go to the terminal:
 
