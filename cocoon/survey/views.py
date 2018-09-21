@@ -244,6 +244,8 @@ def survey_result_rent(request, survey_url=""):
     context['number_of_formsets'] = number_of_forms
     context['number_of_destinations'] = number_of_forms
     context['mini_form'] = True
+    messages.add_message(request, messages.INFO, "We've scoured the market to pick your personalized short list of "
+                                                 "the best places, now it's your turn to pick your favorites")
     return render(request, 'survey/surveyResultRent.html', context)
 
 
