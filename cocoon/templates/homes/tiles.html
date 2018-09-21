@@ -176,15 +176,11 @@ context.
         {# Below are placeholder strings    #}
 
         <span class="infoBit">{{ theHouse.price_string }}</span>
+        <span class="infoBit">{{ theHouse.home_type }}</span>
         {% if is_broker %}
             <span class="infoBit addressBit">{{ theHouse.full_address }}</span>
             <span class="infoBit addressbit">{{ theHouse.listing_provider }}</span>
         {% endif %}
-        {% for key, value in commuteExact.items %}
-        <span class="infoBit commuteExactbit">Exact: {{ value|floatformat:"0" }}</span>
-        {% endfor %}
-        <span class="infoBit"></span>
-
     </div>
 
     {% for image in theHouse.housephotos_set.all|slice:":2" %}
