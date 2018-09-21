@@ -124,8 +124,7 @@
                         </script>
 
                         {% for home_score in houseList %}
-
-                            {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score %}
+                            {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score homeGrade=home_score.letter_grade %}
 
                             <script>
                                 var lat = {{ home_score.home.latitude|safe }};

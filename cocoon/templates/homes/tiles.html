@@ -34,17 +34,17 @@ context.
                 {% if includeScore %}
 
                 <span class="expanded-tile-text expanded-score
-                                            {% if homeScore > 86 %}
+                                            {% if homeScore > 90 %}
                                                 great-match
-                                            {% elif homeScore > 79 %}
+                                            {% elif homeScore > 80 %}
                                                 good-match
-                                            {% elif homeScore > 69 %}
+                                            {% elif homeScore > 70 %}
                                                 acceptable-match
-                                            {% elif homeScore > 59 %}
+                                            {% elif homeScore > 60 %}
                                                 bad-match
                                             {% else %}
                                                 terrible-match
-                                            {% endif %}">{{ homeScore }}</span>
+                                            {% endif %}">{{ homeGrade }}</span>
                 {% endif %}
 
                 <span id="glyph{{ theHouse.id }}"
@@ -145,17 +145,17 @@ context.
 
       {% if includeScore %}
         <span class="scoreText
-                {% if homeScore > 86 %}
+                {% if homeScore > 90 %}
                     great-match
-                {% elif homeScore > 79 %}
+                {% elif homeScore > 80 %}
                     good-match
-                {% elif homeScore > 69 %}
+                {% elif homeScore > 70 %}
                     acceptable-match
-                {% elif homeScore > 59 %}
+                {% elif homeScore > 60 %}
                     bad-match
                 {% else %}
                     terrible-match
-                {% endif %}">{{ homeScore }}
+                {% endif %}">{{ homeGrade }}
         </span>
     {% endif %}
 

@@ -237,3 +237,38 @@ class HomeScore(object):
         :return: (int) The score percent rounded to the nearest int
         """
         return round(self.percent_score())
+
+    def letter_grade(self):
+        if self.percent_score() > 97:
+            return "A+"
+        elif self.percent_score() > 93:
+            return "A"
+        elif self.percent_score() > 90:
+            return "A-"
+        elif self.percent_score() > 87:
+            return "B+"
+        elif self.percent_score() > 83:
+            return "B"
+        elif self.percent_score() > 80:
+            return "B-"
+        elif self.percent_score() > 77:
+            return "C+"
+        elif self.percent_score() > 73:
+            return "C"
+        elif self.percent_score() > 70:
+            return "C-"
+        elif self.percent_score() > 66:
+            return "D+"
+        elif self.percent_score() > 63:
+            return "D"
+        elif self.percent_score() > 60:
+            return "D-"
+        elif self.percent_score() > 57:
+            return "F+"
+        elif self.percent_score() > 54:
+            return "F"
+        elif self.percent_score() >= 0:
+            return "F-"
+        else:
+            return "N/A"
+
