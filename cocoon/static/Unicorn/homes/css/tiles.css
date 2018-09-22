@@ -1,0 +1,373 @@
+/*
+
+ Styling for tiles and expanded tiles. Should be linked by
+ any page that includes the tiles subtemplate
+
+ */
+
+
+/*****************************
+
+EXPANDED TILE STYLING
+
+ ****************************/
+
+.expanded-row-top {
+    min-width: 450px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2% 2%;
+    height: 50px;
+}
+
+.expanded-close, .contact-button {
+    display: block;
+}
+
+.expanded-close {
+    font-size: 32px;
+    align-self: flex-start;
+    color: #26A69A;
+}
+
+.expanded-close:hover {
+    color: #009688;
+}
+
+.expanded-tile-container {
+    width: 100%;
+    padding: 8px !important;
+}
+
+.expanded-tile-contents {
+    display: flex;
+    width: 100%;
+    min-width: 450px;
+    flex-direction: column;
+    /*max-height: 900px;*/
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-content: center;
+    padding: 5%;
+}
+
+.expanded-tile-text {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+    /* #############
+
+        FLEX CHILDREN
+
+       ############# */
+
+.expanded-score {
+    flex: 0;
+    flex-basis: 10%;
+    align-self: stretch;
+    padding-left: 10%;
+    font-family: 'Lobster', cursive;
+    font-size: 42px;
+
+}
+
+.expanded-glyph {
+    flex: 0;
+    flex-basis: 10%;
+    font-size: 3em !important;
+    padding-left: 10%;
+    align-self: flex-start;
+}
+
+.expanded-close:hover {
+    cursor: pointer !important;
+}
+
+.expanded-info {
+    flex: 0;
+    flex-basis: 20%;
+    width: 100%;
+    align-self: center;
+    margin-top: 5px;
+    margin-bottom: 5%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#myCarousel {
+    align-self: center;
+    width: 85%;
+}
+
+tr {
+    padding-bottom: 5px;
+    display: block;
+    width: 100%;
+}
+
+tr:nth-child(even) {
+    background-color: #efefef;
+}
+
+td.value {
+    display: inline-block;
+    width: 55%;
+    font-weight: normal;
+    text-align: left;
+    color: #26A69A;
+    padding: 8px;
+}
+
+td.remarks {
+    font-size: 10px;
+}
+
+.expanded-info-table {
+    border: 2px #777 !important;
+    display: table;
+    width: 90%;
+    margin: 0 auto;
+    padding: 8px !important;
+    border-collapse: collapse;
+}
+
+td.category {
+    display: inline-block;
+    width: 30%;
+    font-weight: bold;
+}
+
+
+
+
+/*****************************
+
+STYLING NEW TILE RESULTS
+
+ ****************************/
+
+/* Pushing old styling down
+    TODO: remove this code
+*/
+
+.tileTable {
+    margin: 0 auto;
+    max-width: 700px;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    max-height: 90vh;
+}
+
+/* scrolling on small screens */
+.tile {
+    height: 115px;
+    width: 100%;
+    min-width: 450px;
+    margin-bottom: 1%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: space-around;
+    border: 1px solid #c65c3b;
+    padding: 0;
+    background-color: #f7f7f7;
+}
+
+.tile-expanded {
+    width: 100%;
+    height: auto;
+    min-width: 450px;
+    margin-bottom: 2%;
+    border: 1px solid #c65c3b;
+    background-color: #f7f7f7;
+}
+
+.tile:hover {
+    background-color: #efefef;
+    cursor: pointer;
+}
+
+.glyphicon-heart {
+    font-size: 26px;
+    color: #c65c3b;
+}
+
+.glyphicon-heart-empty {
+    font-size: 26px;
+    color: #c65c3b;
+}
+
+.scoreItem {
+    flex-grow: 0;
+    flex-basis: 16%;
+    flex-shrink: 0;
+    border-right: 1px dotted #a13718;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    font-family: 'Pacifico', cursive;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: space-between;
+
+}
+
+.scoreText {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 28px;
+    font-family: 'Lobster', cursive;
+    color: #efefef;
+
+}
+
+.infoItem {
+    flex-grow: 0;
+    flex-basis: 30%;
+    flex-shrink: 0;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
+
+}
+.thumbnailItem {
+    padding: 4px;
+    display: flex;
+    vertical-align: middle;
+    /*flex-grow: 3;*/
+    /*flex-basis: 30%;*/
+    overflow: hidden;
+}
+
+.thumbnailImage {
+    max-width:100%;
+    max-height:100%;
+}
+
+.thumbnailItem-hover {
+    padding: 1px !important;
+}
+
+#thumbnailItem1 {
+    /*margin-right: 4px;*/
+}
+
+.thumbnailItem1-hover {
+    margin-right: 0 !important;
+}
+
+.thumbnailImage {
+    vertical-align: middle;
+    float: right;
+    width: 100%;
+    min-height: 115px;
+    height: auto;
+    min-width: 100px;
+    max-width: 100%;
+    /*max-height: 100%;*/
+}
+
+.thumbnailImage-hover {
+    max-width: 109%;
+    width: 109%;
+    /*max-height: 106%;*/
+    /*transition: height .1s;*/
+    /*transition: width .1s;*/
+}
+
+.infoBit {
+    width: 80%;
+    font-size: 14px;
+    display: block;
+    text-align: center;
+}
+
+.infoBit-hover {
+    width: 80%;
+    transition: width .1s;
+    transition: font-size .1s;
+}
+
+.scoreText-hover {
+    font-size: 34px !important;
+    transition: font-size .1s;
+}
+
+.great-match {
+    color: green !important;
+}
+
+.good-match {
+    color: #CDDC39 !important;
+}
+
+.acceptable-match {
+    color: #FFC107 !important;
+}
+
+.bad-match {
+    color: #FF6D00 !important;
+}
+
+.terrible-match {
+    color: #DD2C00 !important;
+}
+
+
+@media (max-width: 1150px) {
+
+    .tile {
+        height: 100px;
+    }
+
+    .scoreText {
+
+    }
+
+    .infoBit {
+        font-size: 12px;
+    }
+
+    .thumbnailImage {
+        min-height: 100px;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .tileTable {
+        min-height: 350px;
+    }
+
+    .tile {
+        height: 115px;
+    }
+
+    .infoBit {
+        font-size: 11px;
+    }
+
+    .thumbnailImage {
+        min-height: 115px;
+    }
+}
+
+@media (max-width: 550px) {
+
+    .tile {
+        height: 90px;
+    }
+
+    .thumbnailImage {
+        min-height: 90px;
+    }
+}

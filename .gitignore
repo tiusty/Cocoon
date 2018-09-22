@@ -4,14 +4,37 @@
 # IntelliJ Idea workspace configuration #
 .idea/
 
+# Ignore the settings file
+config/settings/secrets.json
+
+# Ignore the other apache files that isn't the template file
+config/apache2/*.conf
+
+# Html files in the docs
+docs/*.html
+
 # Migration folders #
-userAuth/migrations
-houseDatabase/migrations
-homePage/migrations
-survey/migrations
+cocoon/userAuth/migrations
+cocoon/houseDatabase/migrations
+cocoon/homePage/migrations
+cocoon/survey/migrations
+cocoon/commutes/migrations
+
+# Visual Studio Code Settings #
+.vscode/
 
 # Home MLSpin feed #
-houseDatabase/management/commands/idx_feed.txt
+cocoon/houseDatabase/management/commands/mlspin/idx_feed.txt
+
+# Home YGL feed
+cocoon/houseDatabase/management/commands/ygl/ygl_feed.xml
+
+# Media folder #
+cocoon/media
 
 # Sqlite database #
 db.sqlite3
+
+# The log file generated #
+logCocoon.log
+

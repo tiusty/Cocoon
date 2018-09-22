@@ -1,0 +1,103 @@
+{% extends "bootstrapJQuery.html" %}
+{% load static %}
+{% block title %}Cocoon{% endblock %}
+
+{% block head %}
+  {{ block.super }}
+  {% comment %} Domain Verfication{% endcomment %}
+  <meta name="google-site-verification" content="EZpbJ3VrkWORskv6xVg5hoxs3cjmN7UBjbKu6AZW4C8"/>
+  <!-- JQuery UI style sheet, mostly used for slider ui -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- Style sheets for template page -->
+  <link href="{% static 'survey/css/dashboard.css' %}" rel="stylesheet">
+  <link href="{% static 'homePage/landingPage.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+  <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+
+    <!-- Indicators, which go here, were removed. -->
+
+    <div class="jumbotron">
+      {% if  user.is_authenticated %}
+        <h1>Hey {{ user.first_name }}</h1>
+      {% else %}
+        <h1>Welcome to Cocoon!</h1>
+      {% endif %}
+      <p class="lead"></p>
+      {% if not user.is_authenticated %}
+        <p>Please sign in:
+          <a href="{% url "userAuth:loginPage" %}">
+            <button class="login-button btn btn-primary">Login</button>
+          </a>
+        </p>
+      {% else %}
+        <p>Please click below to get started!</p>
+      {% endif %}
+    </div>
+
+    <img class="landingImage" src="{% static 'stockHomes/landing_image.jpeg' %}" alt>
+
+  </div>
+
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% if error_message %}
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-6" style="color:red">
+        <p><strong>{{ error_message }}</strong></p>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="selectSurvey">
+    <h2>Take a survey now</h2>
+    <div class="surveyButton">
+      <p><a href="{% url 'survey:rentingSurvey' %}">
+        <button class="submitButton btn-lg btn-primary">Start</button>
+      </a></p>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-text"><span>Start and end your search for an <span class="inline-emphasis">apartment</span> on Cocoon!</span>
+    </div>
+    <div class="icon-container">
+      <img class="infographic" src="{% static 'infographics/vector_apartment.svg' %}">
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-text"><span>Complete our <span
+        class="inline-emphasis">survey</span> detailing your every need!</span></div>
+    <div class="icon-container">
+      <img class="infographic" src="{% static 'infographics/vector_survey.svg' %}">
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-text"><span>Let us <span class="inline-emphasis">rank</span> the best rentals based on your needs!</span>
+    </div>
+    <div class="icon-container">
+      <img class="infographic survey-results" src="{% static 'infographics/vector_ranking.svg' %}">
+    </div>
+  </div>
+
+
+  </div>
+
+
+
+{% endblock %}
+
+{% block endScripts %}
+  {{ block.super }}
+  <script src="{% static 'homePage/carousel.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,230 @@
+{% extends "bootstrapJQuery.html" %}
+{% load static %}
+{% block title %}Survey Result{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <!-- JQuery UI style sheet, mostly used for slider ui -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- Style sheets for template page -->
+    <link href="{% static 'Unicorn/homes/css/tiles.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/GoogleMapStyle.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/sidebarnav.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/compiledResults.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block container_type %}
+    container-fluid
+{% endblock %}
+
+{% block content %}
+    <div class="row" id="row-main">
+
+        {% comment %}
+            Adds in the rent_mini_survey
+        {% endcomment %}
+        {% include "survey/helpers/rent_mini_survey.html" %}
+
+        <div class="nopadding-row row main" id="contentSurvey">
+
+            {% comment %}
+                Adds any error messages associated with the page
+            {% endcomment %}
+            {% if error_message %}
+                <div class="col-sm-12" style="text-align:center">
+                    <div style="color:red">
+                        <p><strong>
+                            {% for error in error_message %}
+                                {{ error }}
+                            {% endfor %}
+                        </strong></p>
+                    </div>
+                </div>
+            {% endif %}
+
+
+            {% comment %}
+                Adds the button to get the list view for the homes
+            {% endcomment %}
+            <div class="nopadding-row row">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <button class="btn expand-btn" onclick="toggleList()">List View</button>
+                    </div>
+                </div>
+
+                {% comment %}
+                    Adds the template code for the list view pop down. It is hidden by default and must be triggered
+                       by clicking the button
+                {% endcomment %}
+                {% include 'survey/helpers/list_view.html' %}
+
+                {% comment %}
+                    Adds the button to open the rent mini survey
+                {% endcomment %}
+                <div class="nopadding col-sm-6">
+                    <h1 class="page-header">
+                        <span style="margin-left:10px;font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Edit Survey</span>
+                    </h1>
+                    <div class="map_wrapper">
+                        <div id="map"></div>
+                    </div>
+
+                </div>
+
+                {% comment %}
+                    Displays the homes with the information for the user
+                {% endcomment %}
+                <div class="resultTiles col-sm-6">
+                    <h1 class="page-header">Home List</h1>
+
+                    <div class="tileTable">
+                        <script>
+
+                            // initializing the pin object
+                            function locationPin(lat, lon, id, score, fillColor) {
+                                this.latitude = lat;
+                                this.longitude = lon;
+                                this.pinID = id;
+                                this.label = score;
+                                this.color = fillColor;
+                            }
+
+                            function colorFromScore(score) {
+                                if (score > 86) {
+                                    return 'green';
+                                } else if (score > 79) {
+                                    return '#CDDC39';
+                                } else if (score > 69) {
+                                    return '#FFC107';
+                                } else if (score > 59) {
+                                    return '#FF6D00';
+                                } else {
+                                    return '#DD2C00';
+                                }
+                            }
+
+                            var myLocations = [];
+
+                        </script>
+
+                        {% for home_score in houseList %}
+
+                            {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score %}
+
+                            <script>
+                                var lat = {{ home_score.home.latitude|safe }};
+                                var lon = {{ home_score.home.longitude|safe }};
+                                var id = {{ forloop.counter }};
+                                var score = {{ home_score.user_friendly_score }};
+                                var color = colorFromScore({{ home_score.user_friendly_score }});
+
+                                // associate a pin with each result
+                                myLocations.push(new locationPin(lat, lon, id, score.toString(), color.toString()));
+
+                            </script>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block endScripts %}
+    {{ block.super }}
+
+    {% comment %}Variables for google map generating with markers and for sliders {% endcomment %}
+    <script>
+        {% comment endScritps %}
+        // Deprecating computing commute time and distance in favor of doing in on the server side
+        // Going to keep the portions that create the markers on the map
+        {% endcomment %}
+        var myStreetAddresses = [{% for commuter in commuters %}"{{ commuter.full_address }}",{% endfor %}];
+
+        {% comment %}
+           The initialize values to load the cost sliders to
+        {% endcomment %}
+        costSliderMaxInit = {{ form.max_price.value }};
+        costSliderMinInit = {{ form.desired_price.value }};
+
+        {% comment %}
+              Determines the correct commute slider values. This is just used when the page loads. This grabs the first
+                  form in the formset and sets the max and commute values to it. This is because the first form is the
+                  form that is loaded. After that, the loaded javascript takes care of the values.
+
+              The double for loop is needed because the first one just extracts the first form.
+              The second one extras the items from the dictionary for the initial values of the form fields.
+
+              Only save the javascript variables if the values exist in the formset
+        {% endcomment %}
+        {% for dest_form in form_destination|slice:"1" %}
+            {% for key, value in dest_form.initial.items %}
+                {% ifequal key "min_commute" %}
+                    commuteSliderMinInit = {{ value }};
+                {% endifequal %}
+                {% ifequal key "max_commute" %}
+                    commuteSliderMaxInit = {{ value }};
+                {% endifequal %}
+            {% endfor %}
+        {% endfor %}
+
+        {% comment %}
+           The initialize values to load the bathroom sliders
+        {% endcomment %}
+        bathroomsMinInit = {{ form.min_bathrooms.value }};
+        bathroomsMaxInit = {{ form.max_bathrooms.value }};
+    </script>
+
+
+    <script src="{% static 'survey/javascript/rent_survey_mini_form.js' %}"></script>
+    <script src="{% static 'survey/tileCarousel.js' %}"></script>
+
+    {% comment %}Loads Javascript files necessary for Ajac requests{% endcomment %}
+    {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
+    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+    {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
+    <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
+    {% comment %}This script adds the set_favorite function which allows the user to toggle a home in their favorites list{% endcomment %}
+    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
+
+    {% comment %}Loads the sliders {% endcomment %}
+    <script src="{% static 'survey/costSlider.js' %}"></script>
+    <script src="{% static 'survey/commuteSlider.js' %}"></script>
+    <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
+
+    <!-- Loading scripts at the end to increase loading times -->
+    <script src="{% static 'survey/moveInDatePicker.js' %}"></script>
+    <script src="{% static 'survey/tileInteraction.js' %}"></script>
+    <script src="{% static 'survey/survey_result.js' %}"></script>
+    <script src="{% static 'survey/addMarkers.js' %}"></script>
+    <script src="{% static 'survey/addGoogleMap.js' %}"></script>
+    <script src="{% static 'survey/expandTile.js' %}"></script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&callback=initMap"
+            type="text/javascript"></script>
+
+    <!-- JQuery UI for sliders -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+    <script src="{% static 'survey/markerclusterer.js' %}"></script>
+    <script src="{% static 'survey/displaylist.js' %}">
+
+    </script>
+
+    <script>
+
+
+        var markerCluster = new MarkerClusterer(map, markers, {
+            imagePath: "{% static 'survey/images/m' %}"
+        });
+
+    </script>
+
+
+
+{% endblock %}

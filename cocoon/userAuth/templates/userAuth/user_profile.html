@@ -1,0 +1,92 @@
+{% extends "bootstrapJQuery.html" %}
+{% load static %}
+{% block title %}User Profile{% endblock %}
+
+
+{% block head %}
+    {{ block.super }}
+    <!-- Custom StyleSheets -->
+    <link rel="stylesheet" href="{% static 'userAuth/css/user_profile.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+    {% comment %}
+        Displays any error messages associated with the form
+    {% endcomment %}
+    <div class="row">
+        <div class="col-sm-12">
+            {% if error_message %}
+                <div class="row">
+                    <div class="col-sm-offset-3 col-sm-6" style="color:red">
+                        <p><strong>{{ error_message }}</strong></p>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% comment %}
+        This block contains the picture and button associated with the profile
+    {% endcomment %}
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card hovercard">
+                <div class="card-background">
+                    <img class="card-bkimg" alt="" src="{% static 'userAuth/cityBackground.jpg' %}">
+                </div>
+                <div class="useravatar">
+                    <img alt="" src="{% static 'userAuth/unicornProfilePic.jpeg' %}">
+                </div>
+                <div class="card-info"><span class="card-title">{{ userProfile.user.get_full_name }}</span>
+                </div>
+            </div>
+            <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
+                <div class="btn-group" role="group">
+                    <button type="button" id="stars"
+                            class="btn btn-primary"
+                            href="#tab1" data-toggle="tab"><span
+                            class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        <div class="hidden-xs">Profile</div>
+                    </button>
+                </div>
+            </div>
+
+            {% comment %}
+                This part contains the data associated with the user profile.
+            {% endcomment %}
+            <div class="well">
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="tab1">
+                        <div class="row">
+                            <h3 class="col-sm-12">Account Setting</h3>
+                            <div class="col-sm-9 col-sm-offset-3">
+                                <form class="form-horizontal" action="{% url 'userAuth:user_profile' %}"
+                                      method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        {{ form.as_p }}
+                                    </div>
+                                    <p>Number of Rent Surveys: {{ numRentSurveys }}</p>
+                                    <p>Account type: </p>
+                                    <ul style="list-style-type:none">
+                                        <li>{% if userProfile.user.is_broker %} Broker {% endif %}</li>
+                                        <li>{% if userProfile.user.is_hunter %} Hunter {% endif %}</li>
+                                    </ul>
+                                    <div class="form-group">
+                                        <button type="submit" id="Submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align:center">
+                <a href="{% url 'userAuth:change_password' %}">Reset your Password</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

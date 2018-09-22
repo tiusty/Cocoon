@@ -1,0 +1,161 @@
+{% comment Header %}
+    This html file contains the layout for the navbar mini survey in the survey results page.
+
+    This contains the entire form including the submit button
+
+    Template Variables:
+        form: (RentSurveyFormMini) -> The survey that is being displayed
+
+
+    Javascript files:
+        rent_survey_mini_form.js should be included as well to have all the functionality
+
+{% endcomment %}
+<div id="sidebarSurvey" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <form action="{% url 'survey:rentSurveyResult' survey_url=survey.url %}" method="post">
+        {{ form.non_field_errors }}
+        {{ form.errors }}
+        {% csrf_token %}
+        <div class="form-group step_div">
+            <div class="form-group">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+            <div class="form-group">
+                {{ form.num_bedrooms.label_tag }}
+                {{ form.num_bedrooms }}
+                {{ form.num_bedrooms.errors }}
+            </div>
+            <div class="form-group">
+                {{ form.home_type.label_tag }}
+                {{ form.home_type }}
+                {{ form.home_type.errors }}
+            </div>
+            <div class="form-group">
+                <label for="amountCost">Cost Per Month:</label>
+                <input type="text" id="amountCost" name="amountCost" readonly
+                       size="30" style="border:0; color:#f6931f; font-weight:bold;">
+                <div id="cost"></div>
+                {{ form.desired_price }}
+                {{ form.max_price }}
+            </div>
+            <div class="form-group">
+                {{ form.price_weight.label_tag }}
+                {{ form.price_weight }}
+                {{ form.price_weight.errors }}
+            </div>
+            <div class="form-group">
+                {{ form.provider.label_tag }}
+                {{ form.provider }}
+                {{ form.provider.errors }}
+            </div>
+            <br>
+            {% comment %}
+                Adds in the commuter form to the mini survey
+            {% endcomment %}
+            {% include "survey/helpers/commuter_form.html" %}
+        </div>
+        <div class="form-group">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                Interior Amenities</a>
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <p>
+                                {{ form.air_conditioning_survey.label_tag }}
+                                {{ form.air_conditioning_survey }}
+                                {{ form.air_conditioning_survey.errors }}
+                            </p>
+
+                            <p>
+                                {{ form.interior_washer_dryer_survey.label_tag }}
+                                {{ form.interior_washer_dryer_survey }}
+                                {{ form.interior_washer_dryer_survey.errors }}
+                            </p>
+
+                            <p>
+                                {{ form.dish_washer_survey.label_tag }}
+                                {{ form.dish_washer_survey }}
+                                {{ form.dish_washer_survey.errors }}
+                            </p>
+
+                            <p>
+                                {{ form.bath_survey.label_tag }}
+                                {{ form.bath_survey }}
+                                {{ form.bath_survey.errors }}
+                            </p>
+
+                            <p>
+                                <label for="amountBathrooms"># Bathrooms:</label>
+                                <input type="text" id="amountBathrooms" name="amountBathrooms" readonly
+                                       style="border:0; color:#f6931f; font-weight:bold;">
+                            <div id="bathrooms"></div>
+                            {{ form.min_bathrooms }}
+                            {{ form.max_bathrooms }}
+                            {{ form.min_bathrooms.errors }}
+                            {{ form.max_bathrooms.errors }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                Building/Exterior Amentities</a>
+                        </h4>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <p>
+                                {{ form.parking_spot.label_tag }}
+                                {{ form.parking_spot }}
+                                {{ form.parking_spot.errors }}
+                            </p>
+                            <p>
+                                {{ form.building_washer_dryer_survey.label_tag }}
+                                {{ form.building_washer_dryer_survey }}
+                                {{ form.building_washer_dryer_survey.errors }}
+                            </p>
+                            <p>
+                                {{ form.elevator_survey.label_tag }}
+                                {{ form.elevator_survey }}
+                                {{ form.elevator_survey.errors }}
+                            </p>
+                            <p>
+                                {{ form.handicap_access_survey.label_tag }}
+                                {{ form.handicap_access_survey }}
+                                {{ form.handicap_access_survey.errors }}
+                            </p>
+                            <p>
+                                {{ form.pool_hot_tub_survey.label_tag }}
+                                {{ form.pool_hot_tub_survey }}
+                                {{ form.pool_hot_tub_survey.errors }}
+                            </p>
+                            <p>
+                                {{ form.fitness_center_survey.label_tag }}
+                                {{ form.fitness_center_survey }}
+                                {{ form.fitness_center_survey.errors }}
+                            </p>
+                            <p>
+                                {{ form.storage_unit_survey.label_tag }}
+                                {{ form.storage_unit_survey }}
+                                {{ form.storage_unit_survey.errors }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
+        </div>
+    </form>
+</div>

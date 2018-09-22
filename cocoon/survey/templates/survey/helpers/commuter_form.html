@@ -1,0 +1,124 @@
+{% comment Header %}
+    This html file contains the code for the commuter_form. The commuter form is a subsection of the fully rent
+        survey form. Therefore this is not meant to be called independently of the rent survey form. This should
+        be included within the rent survey form, thus why it is a form-group and does not contain a form tag. This
+        file also works for both the mini survey and the normal survey. In the mini survey certain elements are removed
+        such as the auto complete field and javascript functions that are no longer needed
+
+    Template Variables:
+        form: (RentSurveyFormMini) -> The survey that is being displayed
+        mini_form: (boolean) -> A boolean that determines if the survey is a mini survey or not
+        number_of_destinations: (int) -> The number of commuters selected by the user
+        number_of_formsets: (int) -> The number of commuters allowed by the user
+
+{% endcomment %}
+
+{%  if not mini_form %}
+{% comment %}
+    The autocomplete field is for populating the address, city, state and zip_code porition of the survey.
+        This is only populated in the main survey but not the mini survey
+        If this is the main survey then the javascript files:
+            1. address_autocomplete.js
+        Is needed. Furture the javascript google api key should be present in the scripts
+{% endcomment %}
+<div id="form-group locationField">
+    <label for="autocomplete">Address:</label>
+    <br>
+    <input id="autocomplete" placeholder="Enter your address" type="text" autocomplete="disabled" size="40">
+    <br>
+    <br>
+</div>
+{% endif %}
+
+<div class="form-group">
+    {% comment %}
+        This form-group contains the rentingdestination model form. This form group includes the functionality to adding
+            a dynamic amount of coummters. There are a couple key functions.
+            1. Tabs are used to seperate commuters and clicking on the different tabs loads the different commuters
+            2. There is a plug and minus tab which is able to add and remove commuters from the list.
+    {% endcomment %}
+    <div>
+        {% comment %}
+            This input stores how many forms are desired. A form is desired if it is an active tab and being displayed.
+                Only desired forms should be validated and saved.
+        {% endcomment %}
+        <input name="number_destinations_filled_out" value="{{ number_of_destinations }}" id="id_number_destinations_filled_out" class="form-control" type="hidden">
+
+        {% comment %}
+            This is the commute slider code. This requires the commute slider javascript
+                file to have the slider functionality to work correctly
+        {% endcomment %}
+        <label for="amountCommute">Commute:</label>
+        <input type="text" id="amountCommute" name="amountCommute" readonly
+               style="border:0; color:#f6931f; font-weight:bold;">
+        <div id="commute"></div>
+        <br>
+
+        {% comment %}
+            This contains the tabs for the different commuters. When the + sign is clicked,
+                then another form is created. When the 0 sign is clicked, it deletes a form.
+        {% endcomment %}
+        <ul class="nav nav-tabs">
+            {% comment %}
+                The minus button is not needed in the mini survey because commuters are not allowed to be
+                    edited by the user in the mini survey
+            {% endcomment %}
+            {%  if not mini_form %}
+            <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
+                    {{ number_of_formsets }})"></span></a></li>
+            {% endif %}
+            {% for num_forms in form_destination %}
+                <li
+                        {% if forloop.counter == 1 %}
+                            class="active"
+                        {% elif forloop.counter <= number_of_destinations %}
+                            class=""
+                        {% else %}
+                            class="hide"
+                        {% endif %}
+                            id="form_destination_tabs_{{ forloop.counter }}">
+
+                    <a data-toggle="tab"
+                       href="#form_destination_section_{{ forloop.counter }}"
+                        onclick="
+                        {% comment %}
+                            Since editing of the commuters are not allowed in the mini survey, remove the
+                                clean_autocomplete functionality since the javascript file won't be included
+                                and will cause an error.
+                        {% endcomment %}
+                        {% if not mini_form %}
+                        clean_autocomplete();
+                        {% endif %}
+                        set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
+            {% endfor %}
+            {% comment %}
+                The plus button is not needed in the mini survey because commuters are not allowed to be
+                    edited by the user in the mini survey
+            {% endcomment %}
+            {%  if not mini_form %}
+            <li
+                    {% if number_of_destinations >= number_of_formsets %}
+                        class='hide'
+                    {% endif %}
+                        id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
+                    {{ number_of_formsets }})"></span></a></li>
+            {% endif %}
+        </ul>
+        <div id="form_destination_div" class="tab-content">
+            {{ form.number_destinations_filled_out }}
+            {{ form_destination.management_form }}
+            {% for form in form_destination %}
+                <div id="form_destination_section_{{ forloop.counter }}"
+                        {% if forloop.counter == 1 %}
+                     class="tab-pane fade in active">
+                        {% else %}
+                            class="tab-pane fade">
+                        {% endif %}
+                <br>
+                {{ form.as_table }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
