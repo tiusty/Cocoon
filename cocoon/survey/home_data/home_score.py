@@ -267,8 +267,8 @@ class HomeScore(object):
             return "F+"
         elif self.percent_score() > 54:
             return "F"
-        elif self.percent_score() >= 0:
+        elif self.percent_score() > 0:
             return "F-"
         else:
-            return "N/A"
+            return "N/R"
 

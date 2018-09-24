@@ -62,11 +62,18 @@
                     {% include 'survey/helpers/list_view.html' %}
                 {% endif %}
 
+                {% comment %}
+                    This includes the code to add the survey instructions to the html page
+                {% endcomment %}
                 <div class="col-sm-6">
                     {% include 'survey/helpers/survey_result_instructions.html' %}
                 </div>
+
+                {% comment %}
+                    This adds the next button so users can proceed to schedule homes
+                {% endcomment %}
                 <div class="col-sm-6">
-                    <a href="{% url 'survey:visitList' %}" class="btn btn expand-btn pull-right" role="button">Next</a>
+                    <a href="{% url 'survey:visitList' %}" class="btn btn expand-btn pull-right" role="button">Schedule Tours!</a>
                 </div>
             </div>
 
