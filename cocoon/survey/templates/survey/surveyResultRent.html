@@ -130,7 +130,7 @@
                                 var lat = {{ home_score.home.latitude|safe }};
                                 var lon = {{ home_score.home.longitude|safe }};
                                 var id = {{ forloop.counter }};
-                                var score = {{ home_score.user_friendly_score }};
+                                var score = "{{ home_score.letter_grade }}";
                                 var color = colorFromScore({{ home_score.user_friendly_score }});
 
                                 // associate a pin with each result
