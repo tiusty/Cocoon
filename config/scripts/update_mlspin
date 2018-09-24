@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# This script is meant to run on the server
-
-source /home/ubuntu/work/CocoonEnvs/bin/activate
-python /home/ubuntu/work/Cocoon/manage.py pull_mlspin
