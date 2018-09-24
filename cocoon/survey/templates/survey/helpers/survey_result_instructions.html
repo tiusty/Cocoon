@@ -1,63 +1,67 @@
+{% comment Header %}
+    This helper html file pulls in the instructions modal for the survey results page
+
+    This html page currently contains the button associated with loading the instruction
+
+
+    css files:
+        survey_results_instructions.css should be included as well to have the correct styling
+
+    Javascript files:
+        survey_result_instruction.js should be included as well to have all the functionality
+
+{% endcomment %}
+
 <!-- Trigger/Open The Modal -->
 <button class="btn expand-btn" id="myBtn"> Instructions</button>
-
-
-
 
 <div class="container modal" id="myModal">
     <!-- Modal content -->
     <div class="modal-content">
         <span class="close">&times;</span>
 
-  <div class="document">
+        <div class="document">
 
-    <h1 class="instructions_header">Learn how to find your ideal home</h1>
+            <h1 class="instructions_header">Learn how to find your ideal home</h1>
 
-    <hr class="brace">
+            <hr class="brace">
 
-    <div class="document__content">
-        <div class="row">
-            <div class="col-sm-6">
+            <div class="document__content">
+                <div class="row">
+                    <div class="col-sm-6">
 
-                <h3>Information:</h3>
-                <p class="instructions_text">Homes are ranked starting with the best fit home on the top</p>
+                        <h3>Information:</h3>
+                        <p class="instructions_text">Homes are ranked starting with the best fit home on the top</p>
 
-                <p class="instructions_text">You can edit the survey at any time by clicking the edit survey button</p>
+                        <p class="instructions_text">You can edit the survey at any time by clicking the edit survey
+                            button</p>
 
-            </div>
-            <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-6">
 
-                <h3>Steps:</h3>
-                <p class="instructions_text">1. Keep track of your favorite homes by clicking the heart on the home</p>
-                <p class="instructions_text">2. (optional) Change survey parameters to find more favorite homes</p>
-                <p class="instructions_text">3. Click the next button to schedule tour of your favorite homes</p>
+                        <h3>Steps:</h3>
+                        <p class="instructions_text">1. Keep track of your favorite homes by clicking the heart on the
+                            home</p>
+                        <p class="instructions_text">2. (optional) Change survey parameters to find more favorite
+                            homes</p>
+                        <p class="instructions_text">3. Click the next button to schedule tour of your favorite
+                            homes</p>
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6">
-                <h3>FAQ:</h3>
-                <p class="instructions_text">Why are all my score zero?</p>
-                <p class="instructions_text">You probably set no weights and thus all homes are evaluated evenly that hit the minimum criteria</p>
-                <p class="instructions_text">What does the score mean?</p>
-                <p class="instructions_text">It is a score out of 100 that determines the fit. 100 is a perfect score and the lower the score the less of a fit the home is</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>FAQ:</h3>
+                        <p class="instructions_text">Why are all my score zero?</p>
+                        <p class="instructions_text">You probably set no weights and thus all homes are evaluated evenly
+                            that hit the minimum criteria</p>
+                        <p class="instructions_text">What does the score mean?</p>
+                        <p class="instructions_text">It is a score out of 100 that determines the fit. 100 is a perfect
+                            score and the lower the score the less of a fit the home is</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-  </div>
 </div>
-
-
-      {% if is_hunter %}
-          <p>Information:
-            The homes are ranked starting with the best fit home on the top
-
-            You can edit the survey at any time by clicking the edit survey button
-
-          Steps:
-            1. Please favorite homes that you would like to visit
-            2. Once you select all the homes you may want to visit please click next
-          </p>
-      {% endif %}
-  </div>
 
