@@ -28,12 +28,12 @@ class Command(BaseCommand):
         update_timestamp = timezone.now()
 
         # Pull the homes
-        self.pull_mlspin_homes(update_timestamp)
         self.pull_ygl_homes(update_timestamp)
+        self.pull_mlspin_homes(update_timestamp)
 
         # Pull the images
-        self.pull_mlspin_images(update_timestamp)
         self.pull_ygl_images(update_timestamp)
+        self.pull_mlspin_images(update_timestamp)
 
     @staticmethod
     def pull_mlspin_homes(timestamp):
