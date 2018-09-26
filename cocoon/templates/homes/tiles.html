@@ -26,10 +26,6 @@ context.
             <div class="expanded-row-top">
                                             <span onclick="minimize(this)"
                                                   class="expanded-close glyphicon glyphicon-resize-small"></span>
-                <button type="button"
-                        onclick="set_visit_house({{ theHouse.id }}, '{% url 'survey:setVisitHouse' %}')"
-                        class="contact-button btn btn-primary">Contact Agent
-                </button>
             </div>
             <div class="expanded-tile-contents">
 
@@ -38,17 +34,17 @@ context.
                 {% if includeScore %}
 
                 <span class="expanded-tile-text expanded-score
-                                            {% if homeScore > 86 %}
+                                            {% if homeScore > 90 %}
                                                 great-match
-                                            {% elif homeScore > 79 %}
+                                            {% elif homeScore > 80 %}
                                                 good-match
-                                            {% elif homeScore > 69 %}
+                                            {% elif homeScore > 70 %}
                                                 acceptable-match
-                                            {% elif homeScore > 59 %}
+                                            {% elif homeScore > 60 %}
                                                 bad-match
                                             {% else %}
                                                 terrible-match
-                                            {% endif %}">{{ homeScore }}</span>
+                                            {% endif %}">{{ homeGrade }}</span>
                 {% endif %}
 
                 <span id="glyph{{ theHouse.id }}"
@@ -86,10 +82,6 @@ context.
                         <tr>
                             <td class="expanded-tile-text category">Home type</td>
                             <td class="expanded-tile-text value">{{ theHouse.home_type }}</td>
-                        </tr>
-                        <tr>
-                            <td class="expanded-tile-text category">A/C</td>
-                            <td class="expanded-tile-text value">{{ theHouse.air_conditioning }}</td>
                         </tr>
                         <tr>
                             <td class="expanded-tile-text category">Remarks</td>
@@ -149,17 +141,17 @@ context.
 
       {% if includeScore %}
         <span class="scoreText
-                {% if homeScore > 86 %}
+                {% if homeScore > 90 %}
                     great-match
-                {% elif homeScore > 79 %}
+                {% elif homeScore > 80 %}
                     good-match
-                {% elif homeScore > 69 %}
+                {% elif homeScore > 70 %}
                     acceptable-match
-                {% elif homeScore > 59 %}
+                {% elif homeScore > 60 %}
                     bad-match
                 {% else %}
                     terrible-match
-                {% endif %}">{{ homeScore }}
+                {% endif %}">{{ homeGrade }}
         </span>
     {% endif %}
 
@@ -180,15 +172,11 @@ context.
         {# Below are placeholder strings    #}
 
         <span class="infoBit">{{ theHouse.price_string }}</span>
+        <span class="infoBit">{{ theHouse.home_type }}</span>
         {% if is_broker %}
             <span class="infoBit addressBit">{{ theHouse.full_address }}</span>
             <span class="infoBit addressbit">{{ theHouse.listing_provider }}</span>
         {% endif %}
-        {% for key, value in commuteExact.items %}
-        <span class="infoBit commuteExactbit">Exact: {{ value|floatformat:"0" }}</span>
-        {% endfor %}
-        <span class="infoBit"></span>
-
     </div>
 
     {% for image in theHouse.housephotos_set.all|slice:":2" %}

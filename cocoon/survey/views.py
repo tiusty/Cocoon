@@ -154,7 +154,9 @@ def run_rent_algorithm(survey, context):
 
     # Set template variables
     context['commuters'] = rent_algorithm.destinations
-    context['houseList'] = rent_algorithm.homes[:50]
+
+    # Only return homes that the score is 0 or above
+    context['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
 
 
 # Assumes the survey_slug will be passed by the URL if not, then it grabs the most recent survey.
@@ -242,6 +244,8 @@ def survey_result_rent(request, survey_url=""):
     context['number_of_formsets'] = number_of_forms
     context['number_of_destinations'] = number_of_forms
     context['mini_form'] = True
+    messages.add_message(request, messages.INFO, "We've scoured the market to pick your personalized short list of "
+                                                 "the best places, now it's your turn to pick your favorites")
     return render(request, 'survey/surveyResultRent.html', context)
 
 

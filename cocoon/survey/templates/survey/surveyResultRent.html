@@ -13,6 +13,7 @@
     <link href="{% static 'survey/css/GoogleMapStyle.css' %}" rel="stylesheet">
     <link href="{% static 'survey/css/sidebarnav.css' %}" rel="stylesheet">
     <link href="{% static 'survey/css/compiledResults.css' %}" rel="stylesheet">
+    <link href="{% static 'survey/css/survey_result_instructions.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block container_type %}
@@ -44,22 +45,41 @@
                 </div>
             {% endif %}
 
-
             {% comment %}
-                Adds the button to get the list view for the homes
-            {% endcomment %}
-            <div class="nopadding-row row">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <button class="btn expand-btn" onclick="toggleList()">List View</button>
-                    </div>
-                </div>
-
-                {% comment %}
                     Adds the template code for the list view pop down. It is hidden by default and must be triggered
                        by clicking the button
                 {% endcomment %}
-                {% include 'survey/helpers/list_view.html' %}
+
+
+            <div class="row">
+                {% if is_broker %}
+                    {% comment %}
+                    Adds the button to get the list view for the homes
+                {% endcomment %}
+                    <div class="col-sm-6">
+                        <button class="btn expand-btn" onclick="toggleList()">List View</button>
+                    </div>
+                    {% include 'survey/helpers/list_view.html' %}
+                {% endif %}
+
+                {% comment %}
+                    This includes the code to add the survey instructions to the html page
+                {% endcomment %}
+                <div class="col-sm-6">
+                    {% include 'survey/helpers/survey_result_instructions.html' %}
+                </div>
+
+                {% comment %}
+                    This adds the next button so users can proceed to schedule homes
+                {% endcomment %}
+                <div class="col-sm-6">
+                    <a href="{% url 'survey:visitList' %}" class="btn btn expand-btn pull-right" role="button">Schedule Tours!</a>
+                </div>
+            </div>
+
+
+            <div class="nopadding-row row">
+
 
                 {% comment %}
                     Adds the button to open the rent mini survey
@@ -111,14 +131,13 @@
                         </script>
 
                         {% for home_score in houseList %}
-
-                            {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score %}
+                            {% include "homes/tiles.html" with commuteApprox=home_score.approx_commute_times commuteExact=home_score.exact_commute_times includeScore=True theHouse=home_score.home homeScore=home_score.user_friendly_score homeGrade=home_score.letter_grade %}
 
                             <script>
                                 var lat = {{ home_score.home.latitude|safe }};
                                 var lon = {{ home_score.home.longitude|safe }};
                                 var id = {{ forloop.counter }};
-                                var score = {{ home_score.user_friendly_score }};
+                                var score = "{{ home_score.letter_grade }}";
                                 var color = colorFromScore({{ home_score.user_friendly_score }});
 
                                 // associate a pin with each result
@@ -128,6 +147,7 @@
 
                         {% endfor %}
                     </div>
+
                 </div>
             </div>
         </div>
@@ -203,6 +223,7 @@
     <script src="{% static 'survey/addMarkers.js' %}"></script>
     <script src="{% static 'survey/addGoogleMap.js' %}"></script>
     <script src="{% static 'survey/expandTile.js' %}"></script>
+    <script src="{% static 'survey/javascript/survey_results_instructions.js' %}"></script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&callback=initMap"
             type="text/javascript"></script>

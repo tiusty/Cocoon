@@ -1,0 +1,66 @@
+{% comment Header %}
+    This helper html file pulls in the instructions modal for the survey results page
+
+    This html page currently contains the button associated with loading the instruction
+
+
+    css files:
+        survey_results_instructions.css should be included as well to have the correct styling
+
+    Javascript files:
+        survey_result_instruction.js should be included as well to have all the functionality
+
+{% endcomment %}
+
+<!-- Trigger/Open The Modal -->
+<button class="btn expand-btn" id="myBtn"> Instructions</button>
+
+<div class="container modal" id="myModal">
+    <!-- Modal content -->
+    <div class="modal-content">
+
+        <div class="document">
+
+            <h1 class="instructions_header">Learn how to find your ideal home</h1>
+
+            <hr class="brace">
+
+            <div class="document__content">
+                <div class="row">
+                    <div class="col-sm-6">
+
+                        <h3>Information:</h3>
+                        <p class="instructions_text">Homes are ranked starting with the best fit home on the top</p>
+
+                        <p class="instructions_text">You can edit the survey at any time by clicking the edit survey
+                            button</p>
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <h3>Steps:</h3>
+                        <p class="instructions_text">1. Keep track of your favorite homes by clicking the heart on the
+                            home</p>
+                        <p class="instructions_text">2. (optional) Change survey parameters to find more favorite
+                            homes</p>
+                        <p class="instructions_text">3. Click the "Schedule Tours" button to schedule tour of your favorite
+                            homes. Make sure to select a few homes first before scheduling a tour.</p>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>FAQ:</h3>
+                        <p class="instructions_text">Why are all my scores N/R?</p>
+                        <p class="instructions_text">A score is not ranked if there were no weighted factors for that home.
+                        Please adds some weights so we can determine which home is best for you. N/R stands for "Not Ranked"</p>
+                        <p class="instructions_text">What does the score mean?</p>
+                        <p class="instructions_text">It is a score out of 100 that determines the fit. 100 is a perfect
+                            score and the lower the score the less of a fit the home is</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
