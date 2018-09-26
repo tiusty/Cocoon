@@ -40,13 +40,12 @@ class MlspinRequester(object):
                 sys.exit()
 
             # 2. Read the response txt into memory
-            idx_file = open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb")
-            idx_txt = (idx_file.read().decode("iso-8859-1"))
+            with open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "r") as fp:
+                self.idx_txt = fp.readlines()
 
             towns_file = open(os.path.join(os.path.dirname(__file__), "towns.txt"), "rb")
             towns_txt = (towns_file.read().decode("iso-8859-1"))
 
-            self.idx_txt = idx_txt
             self.town_txt = towns_txt
 
         if 'town_txt' in kwargs:
@@ -65,7 +64,7 @@ class MlspinRequester(object):
 
     def parse_idx_feed(self):
 
-        lines = self.idx_txt.split('\r\n')
+        lines = self.idx_txt
         print("Attempting to add *" + str(len(lines)) + "* apartments to the db...")
         print("An equivalent number of requests will be made to the geocoder")
 
@@ -77,7 +76,7 @@ class MlspinRequester(object):
         num_failed_to_geolocate = 0
         num_not_for_rental = 0
 
-        for line in lines[1:-1]:  # skips the col headers
+        for line in lines[1:]:  # skips the col headers
             num_houses += 1
             new_listing = RentDatabaseModel()
 

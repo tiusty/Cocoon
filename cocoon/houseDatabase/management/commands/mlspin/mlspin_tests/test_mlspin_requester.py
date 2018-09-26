@@ -28,8 +28,9 @@ class TestPullMlspin(TestCase):
 
         # Set up the apartment home type
         self.home_type = HomeTypeModel.objects.create(home_type="Apartment")
-        idx_file = open(os.path.join(os.path.dirname(__file__), "test_idx_feed.txt"), "rb")
-        self.idx_data = (idx_file.read().decode("iso-8859-1"))
+        with open(os.path.join(os.path.dirname(__file__), "test_idx_feed.txt"), "r") as fp:
+            self.idx_data = fp.readlines()
+        # self.idx_data = (idx_file.read().decode("iso-8859-1"))
 
         towns_file = open(os.path.join(os.path.dirname(__file__), "test_towns.txt"), "rb")
         self.towns_data = (towns_file.read().decode("iso-8859-1"))
@@ -64,7 +65,6 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home1.state, "MA")
         self.assertEqual(home1.num_bedrooms, 2)
         self.assertEqual(home1.num_bathrooms, 1)
-        self.assertEqual(home1.bath_home, True)
         self.assertEqual(home1.listing_number, 71811023)
         self.assertEqual(home1.listing_agent, "BB808729")
         self.assertEqual(home1.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
@@ -81,7 +81,6 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home2.state, "MA")
         self.assertEqual(home2.num_bedrooms, 1)
         self.assertEqual(home2.num_bathrooms, 1)
-        self.assertEqual(home2.bath_home, True)
         self.assertEqual(home2.listing_number, 71738853)
         self.assertEqual(home2.listing_agent, "BB808729")
         self.assertEqual(home2.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
@@ -98,7 +97,6 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home3.state, "MA")
         self.assertEqual(home3.num_bedrooms, 1)
         self.assertEqual(home3.num_bathrooms, 1)
-        self.assertEqual(home3.bath_home, True)
         self.assertEqual(home3.listing_number, 72080819)
         self.assertEqual(home3.listing_agent, "BB808729")
         self.assertEqual(home3.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
