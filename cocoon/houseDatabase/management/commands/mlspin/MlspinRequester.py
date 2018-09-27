@@ -1,6 +1,7 @@
 # noinspection PyPackageRequirements
 import urllib.request
 import urllib.error
+from django.db import IntegrityError
 import cocoon.houseDatabase.maps_requester as geolocator
 import os, sys
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel
@@ -40,8 +41,8 @@ class MlspinRequester(object):
                 sys.exit()
 
             # 2. Read the response txt into memory
-            with open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "r") as fp:
-                self.idx_txt = fp.readlines()
+            with open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb") as fp:
+                self.idx_txt = fp.read().decode("iso-8859-1").splitlines()
 
             towns_file = open(os.path.join(os.path.dirname(__file__), "towns.txt"), "rb")
             towns_txt = (towns_file.read().decode("iso-8859-1"))
@@ -184,9 +185,11 @@ class MlspinRequester(object):
                 new_listing.latitude = lat
                 new_listing.longitude = lng
                 # After all the data is added, save the home to the database
-                new_listing.save()
-
-                print("[ ADDING   ]" + new_listing.full_address)
+                try:
+                    new_listing.save()
+                    print("[ ADDING ] " + new_listing.full_address)
+                except IntegrityError:
+                    print("[ Integrity Error ] ")
 
         manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = self.update_timestamp
