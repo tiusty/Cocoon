@@ -1,4 +1,4 @@
-# Django modules
+ # Django modules
 from django import forms
 from django.forms import ModelForm
 from django.utils.text import slugify

@@ -54,7 +54,7 @@ Setting up Software
         ::
 
                 cd ~/work/Cocoon/config/settings
-                cp secret.json.template secret.json
+                cp secrets.json.template secret.json
 
 Creating the Postgres Database
 ------------------------------

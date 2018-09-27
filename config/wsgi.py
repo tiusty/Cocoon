@@ -14,7 +14,7 @@ from django.core.wsgi import get_wsgi_application
 from django.core.exceptions import ImproperlyConfigured
 
 # Opens the secrets file and loads the values
-with open(os.path.expanduser("~") + '/work/Cocoon/config/settings/secrets.json') as f:
+with open(os.path.expanduser("~") + '/Desktop/Cocoon/config/settings/secret.json') as f:
         secrets = json.loads(f.read())
 
 
