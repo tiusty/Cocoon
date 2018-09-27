@@ -1,5 +1,6 @@
 # Django Modules
 from django.utils import timezone
+from django.db import IntegrityError
 
 # Cocoon modules
 from cocoon.houseDatabase.constants import YGL_URL
@@ -139,8 +140,11 @@ class YGLRequester(object):
                 print("[ DUPLICATE ] " + new_listing.full_address)
                 num_of_duplicates += 1
             else:
-                new_listing.save()
-                print("[ ADDING ] " + new_listing.full_address)
+                try:
+                    new_listing.save()
+                    print("[ ADDING ] " + new_listing.full_address)
+                except IntegrityError:
+                    print("[ Integrity Error ] ")
 
         manager = YglManagementModel.objects.all().first()
         manager.last_updated_ygl = self.update_timestamp
