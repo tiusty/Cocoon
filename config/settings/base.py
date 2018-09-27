@@ -183,11 +183,19 @@ LOGGING = {
             'formatter': 'verbose',
         },
 
+        # An email is only sent if the log comes when Debug=False
+        'mail_admins_info': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'verbose',
+        },
+
         # Stores results if the log is greater than warn
         # Allows for easily seeing if warn errors occurred
         'file': {
             'level': 'WARNING',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'logCocoon.log',
             'formatter': 'verbose',
             'maxBytes': 1024 * 1024 * 15,  # 15MB
@@ -198,6 +206,11 @@ LOGGING = {
 
         'django': {
             'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+        },
+
+        'django.security.DisallowedHost': {
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
         },
 
@@ -264,6 +277,13 @@ LOGGING = {
         'cocoon.houseDatabase': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
+        },
+
+        # HouseDatabase app logger
+        'cocoon.houseDatabase.management.commands': {
+            'handlers': ['console', 'mail_admins', 'mail_admins_info', 'file'],
+            'level': 'INFO',
             'propagate': False,
         },
     },

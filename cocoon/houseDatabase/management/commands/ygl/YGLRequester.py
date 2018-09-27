@@ -17,6 +17,10 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from pytz import timezone as pytimezone
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
 
 class YGLRequester(object):
     """
@@ -154,9 +158,9 @@ class YGLRequester(object):
 
         print("")
         print("RESULTS:")
-        print("Number of houses in database: {0}".format(num_houses))
-        print("Update timestamp: {0}".format(self.update_timestamp.date()))
-        print("Number of duplicates: {0}".format(num_of_duplicates))
-        print("Number of value errors: {0}".format(num_of_value_errors))
-        print("Number of failed updated houses: {0}".format(num_failed_to_update))
-        print("Number of integrity error is: {0}".format(num_integrity_error))
+        logger.info("Number of houses in database: {0}".format(num_houses)
+                    + "Update timestamp: {0}".format(self.update_timestamp.date()) +
+                    "Number of duplicates: {0}".format(num_of_duplicates) +
+                     "Number of value errors: {0}".format(num_of_value_errors) +
+                     "Number of failed updated houses: {0}".format(num_failed_to_update) +
+                     "Number of integrity error is: {0}".format(num_integrity_error))

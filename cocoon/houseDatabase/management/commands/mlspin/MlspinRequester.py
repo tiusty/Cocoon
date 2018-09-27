@@ -11,6 +11,9 @@ from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 class MlspinRequester(object):
     """
@@ -199,11 +202,11 @@ class MlspinRequester(object):
 
         print("")
         print("RESULTS:")
-        print("Number of houses in database: {0}".format(num_houses))
-        print("Update timestamp: {0}".format(self.update_timestamp.date()))
-        print("Number of duplicates: {0}".format(num_of_duplicates))
-        print("Number of value errors: {0}".format(num_of_value_errors))
-        print("Number of failed updated houses: {0}".format(num_failed_to_update))
-        print("Number of failed geolocates: {0}".format(num_failed_to_geolocate))
-        print("Number of houses not for rental: {0}".format(num_not_for_rental))
-        print("Number of integrity error is: {0}".format(num_integrity_error))
+        logger.info("Number of houses in database: {0}".format(num_houses) +
+                    "Update timestamp: {0}".format(self.update_timestamp.date()) +
+                    "Number of duplicates: {0}".format(num_of_duplicates) +
+                    "Number of value errors: {0}".format(num_of_value_errors) +
+                    "Number of failed updated houses: {0}".format(num_failed_to_update) +
+                    "Number of failed geolocates: {0}".format(num_failed_to_geolocate) +
+                    "Number of houses not for rental: {0}".format(num_not_for_rental) +
+                    "Number of integrity error is: {0}".format(num_integrity_error))
