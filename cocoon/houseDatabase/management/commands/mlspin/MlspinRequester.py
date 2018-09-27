@@ -202,11 +202,11 @@ class MlspinRequester(object):
 
         print("")
         print("RESULTS:")
-        logger.info("Number of houses in database: {0}".format(num_houses) +
-                    "Update timestamp: {0}".format(self.update_timestamp.date()) +
-                    "Number of duplicates: {0}".format(num_of_duplicates) +
-                    "Number of value errors: {0}".format(num_of_value_errors) +
-                    "Number of failed updated houses: {0}".format(num_failed_to_update) +
-                    "Number of failed geolocates: {0}".format(num_failed_to_geolocate) +
-                    "Number of houses not for rental: {0}".format(num_not_for_rental) +
-                    "Number of integrity error is: {0}".format(num_integrity_error))
+        logger.info("\nNumber of houses in database: {0}\n".format(num_houses) +
+                    "Update timestamp: {0}\n".format(self.update_timestamp.date()) +
+                    "Number of duplicates: {0}\n".format(num_of_duplicates) +
+                    "Number of value errors: {0}\n".format(num_of_value_errors) +
+                    "Number of failed updated houses: {0}\n".format(num_failed_to_update) +
+                    "Number of failed geolocates: {0}\n".format(num_failed_to_geolocate) +
+                    "Number of houses not for rental: {0}\n".format(num_not_for_rental) +
+                    "Number of integrity error is: {0}\n".format(num_integrity_error))
