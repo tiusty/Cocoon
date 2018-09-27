@@ -76,6 +76,7 @@ class MlspinRequester(object):
         num_failed_to_update = 0
         num_failed_to_geolocate = 0
         num_not_for_rental = 0
+        num_integrity_error = 0
 
         for line in lines[1:]:  # skips the col headers
             num_houses += 1
@@ -190,6 +191,7 @@ class MlspinRequester(object):
                     print("[ ADDING ] " + new_listing.full_address)
                 except IntegrityError:
                     print("[ Integrity Error ] ")
+                    num_integrity_error += 1
 
         manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = self.update_timestamp
@@ -204,3 +206,4 @@ class MlspinRequester(object):
         print("Number of failed updated houses: {0}".format(num_failed_to_update))
         print("Number of failed geolocates: {0}".format(num_failed_to_geolocate))
         print("Number of houses not for rental: {0}".format(num_not_for_rental))
+        print("Number of integrity error is: {0}".format(num_integrity_error))

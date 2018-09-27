@@ -60,6 +60,7 @@ class YGLRequester(object):
         num_of_duplicates = 0
         num_of_value_errors = 0
         num_failed_to_update = 0
+        num_integrity_error = 0
 
         # Loop through every home
         for house in root.iter('Rental'):
@@ -145,6 +146,7 @@ class YGLRequester(object):
                     print("[ ADDING ] " + new_listing.full_address)
                 except IntegrityError:
                     print("[ Integrity Error ] ")
+                    num_integrity_error += 1
 
         manager = YglManagementModel.objects.all().first()
         manager.last_updated_ygl = self.update_timestamp
@@ -157,3 +159,4 @@ class YGLRequester(object):
         print("Number of duplicates: {0}".format(num_of_duplicates))
         print("Number of value errors: {0}".format(num_of_value_errors))
         print("Number of failed updated houses: {0}".format(num_failed_to_update))
+        print("Number of integrity error is: {0}".format(num_integrity_error))
