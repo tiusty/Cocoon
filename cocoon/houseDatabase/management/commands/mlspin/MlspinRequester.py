@@ -83,6 +83,7 @@ class MlspinRequester(object):
         num_integrity_error = 0
         num_added_homes = 0
         num_updated_homes = 0
+        num_homes_not_enough_cells = 0
 
         for line in lines[1:]:  # skips the col headers
             num_houses += 1
@@ -95,6 +96,7 @@ class MlspinRequester(object):
             #   be added to the database. Otherwise it will cause an exception
             if len(cells) < 28:
                 print("Removing home not enough cells")
+                num_homes_not_enough_cells += 1
                 continue
 
             # Make sure there are no commas in the street name
@@ -225,4 +227,5 @@ class MlspinRequester(object):
                     "Number of failed updated houses: {0}\n".format(num_failed_to_update) +
                     "Number of failed geolocates: {0}\n".format(num_failed_to_geolocate) +
                     "Number of houses not for rental: {0}\n".format(num_not_for_rental) +
-                    "Number of integrity error is: {0}\n".format(num_integrity_error))
+                    "Number of integrity error is: {0}\n".format(num_integrity_error) +
+                    "Number of homes that don't have enough cells: {0}\n".format(num_homes_not_enough_cells))
