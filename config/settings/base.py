@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'cocoon.houseDatabase',
     'cocoon.commutes',
     'storages',
+    'rest_framework',
+    'cocoon.signatures',
 ]
 
 MIDDLEWARE = [
