@@ -15,6 +15,7 @@ from cocoon.houseDatabase.management.commands.helpers.data_input_normalization i
 import logging
 logger = logging.getLogger(__name__)
 
+
 class MlspinRequester(object):
     """
     This class contains the logic for parsing the IDX (Internet Data Exchange)
@@ -87,6 +88,12 @@ class MlspinRequester(object):
 
             # Parse IDX feed to put each item into an array
             cells = line.split('|')
+
+            # If the home doesn't have enough cells then something is wrong with the listing and it won't
+            #   be added to the database. Otherwise it will cause an exception
+            if len(cells) < 28:
+                print("Removing home not enough cells")
+                continue
 
             # Make sure there are no commas in the street name
             cells[STREET_NAME].replace(',', '')
