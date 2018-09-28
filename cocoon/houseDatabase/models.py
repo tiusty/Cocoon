@@ -71,6 +71,10 @@ class HouseLocationInformationModel(UpdateBase, models.Model):
                + self.state + " " + self.zip_code
 
     def update(self, update_model):
+        """
+        Given another model, updates current model with fields from the new model
+        :param update_model: (HouseLocationInformationModel) -> The model to use to update current model
+        """
         super(HouseLocationInformationModel, self).update(update_model)
         self.apartment_number = update_model.apartment_number
         self.street_address = update_model.street_address
@@ -92,6 +96,10 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
     num_bedrooms = models.IntegerField(default=0)
 
     def update(self, update_model):
+        """
+        Given another model, updates current model with fields from the new model
+        :param update_model: (HouseInteriorAmenitiesModel) -> The model to use to update current model
+        """
         super(HouseInteriorAmenitiesModel, self).update(update_model)
         self.num_bathrooms = update_model.num_bathrooms
         self.num_bedrooms = update_model.num_bedrooms
@@ -107,6 +115,10 @@ class HouseExteriorAmenitiesModel(UpdateBase, models.Model):
     parking_spot = models.BooleanField(default=False)
 
     def update(self, update_model):
+        """
+        Given another model, updates current model with fields from the new model
+        :param update_model: (HouseExteriorAmenitiesModel) -> The model to use to update current model
+        """
         super(HouseExteriorAmenitiesModel, self).update(update_model)
         self.parking_spot = update_model.parking_spot
 
@@ -126,6 +138,10 @@ class HouseManagementModel(UpdateBase, models.Model):
     last_updated = models.DateField(default=timezone.now)
 
     def update(self, update_model):
+        """
+        Given another model, updates current model with fields from the new model
+        :param update_model: (HouseManagementModel) -> The model to use to update current model
+        """
         super(HouseManagementModel, self).update(update_model)
         self.remarks = update_model.remarks
         self.listing_number = update_model.listing_number
@@ -151,6 +167,11 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
         return self.full_address
 
     def update(self, update_model):
+        """
+        Given another model, updates current model with fields from the new model
+        Calls into all its inherited classes to update the corresponding fields
+        :param update_model: (RentDatabaseModel) -> The model to use to update current model
+        """
         super(RentDatabaseModel, self).update(update_model)
         self.price = update_model.price
         self.home_type = update_model.home_type
