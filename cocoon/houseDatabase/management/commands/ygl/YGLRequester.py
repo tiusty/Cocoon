@@ -130,9 +130,10 @@ class YGLRequester(object):
                 existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
 
                 # If it does, then make sure the street addresses line up before updating the home
-                if existing_apartment.full_address == new_listing.full_address:
-                    existing_apartment.last_updated = self.update_timestamp
-                    existing_apartment.currently_available = new_listing.currently_available
+                if existing_apartment.full_address == new_listing.full_address \
+                        and existing_apartment == new_listing.apartment_number:
+                    # Since the apartments are the same, just update the values in the existing apartment
+                    existing_apartment.update(new_listing)
                     existing_apartment.save()
                     print("[ UPDATED ] {0}".format(existing_apartment.full_address))
                     num_updated_homes += 1

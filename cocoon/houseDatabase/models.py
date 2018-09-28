@@ -45,7 +45,15 @@ class HomeProviderModel(models.Model):
         return self.provider
 
 
-class HouseLocationInformationModel(models.Model):
+# This is used as a "hack" so that every abstract model class has a base class that contains
+#   the update function. This way when the chain of super's is done being called, it will call
+#   into this base class which will prevent the super function from breaking
+class UpdateBase:
+    def update(self, old_model):
+        pass
+
+
+class HouseLocationInformationModel(UpdateBase, models.Model):
     """
     Stores information regarding the location of the house
     """
@@ -62,32 +70,51 @@ class HouseLocationInformationModel(models.Model):
         return self.street_address + ", " + self.city + ", " \
                + self.state + " " + self.zip_code
 
+    def update(self, old_model):
+        super(HouseLocationInformationModel, self).update(old_model)
+        self.apartment_number = old_model.apartment_number
+        self.street_address = old_model.street_address
+        self.city = old_model.city
+        self.state = old_model.state
+        self.zip_code = old_model.zip_code
+        self.latitude = old_model.latitude
+        self.longitude = old_model.longitude
+
     class Meta:
         abstract = True
 
 
-class HouseInteriorAmenitiesModel(models.Model):
+class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
     """
     Stores information about interior amenities
     """
     num_bathrooms = models.IntegerField(default=0)
     num_bedrooms = models.IntegerField(default=0)
 
+    def update(self, old_model):
+        super(HouseInteriorAmenitiesModel, self).update(old_model)
+        self.num_bathrooms = old_model.num_bathrooms
+        self.num_bedrooms = old_model.num_bedrooms
+
     class Meta:
         abstract = True
 
 
-class HouseExteriorAmenitiesModel(models.Model):
+class HouseExteriorAmenitiesModel(UpdateBase, models.Model):
     """
     Contains all the information for homes about the Exterior Amenities
     """
     parking_spot = models.BooleanField(default=False)
 
+    def update(self, old_model):
+        super(HouseExteriorAmenitiesModel, self).update(old_model)
+        self.parking_spot = old_model.parking_spot
+
     class Meta:
         abstract = True
 
 
-class HouseManagementModel(models.Model):
+class HouseManagementModel(UpdateBase, models.Model):
     """
     Contains all the data related to managing the house listing
     """
@@ -97,6 +124,15 @@ class HouseManagementModel(models.Model):
     listing_agent = models.CharField(max_length=200, default="", blank=True)
     listing_office = models.CharField(max_length=200, default="", blank=True)  # The listing office, i.e William Raveis
     last_updated = models.DateField(default=timezone.now)
+
+    def update(self, old_model):
+        super(HouseManagementModel, self).update(old_model)
+        self.remarks = old_model.remarks
+        self.listing_number = old_model.listing_number
+        self.listing_provider = old_model.listing_provider
+        self.listing_agent = old_model.listing_agent
+        self.listing_office = old_model.listing_office
+        self.last_updated = old_model.last_updated
 
     class Meta:
         abstract = True
@@ -113,6 +149,12 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
 
     def __str__(self):
         return self.full_address
+
+    def update(self, old_model):
+        super(RentDatabaseModel, self).update(old_model)
+        self.price = old_model.price
+        self.home_type = old_model.home_type
+        self.currently_available = old_model.currently_available
 
     @property
     def price_string(self):
