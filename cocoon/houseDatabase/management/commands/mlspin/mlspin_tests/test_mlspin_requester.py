@@ -69,6 +69,7 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home1.listing_agent, "BB808729")
         self.assertEqual(home1.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
         self.assertEqual(home1.listing_office, "AN1037")
+        self.assertTrue(home1.parking_spot)
 
         # asserts for the second home
         self.assertEqual(home2.street_address, "296 Marlborough St")
@@ -85,6 +86,7 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home2.listing_agent, "BB808729")
         self.assertEqual(home2.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
         self.assertEqual(home2.listing_office, "AN1037")
+        self.assertFalse(home2.parking_spot)
 
         # asserts for the third home
         self.assertEqual(home3.street_address, "784 Tremont Street")
@@ -101,3 +103,4 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home3.listing_agent, "BB808729")
         self.assertEqual(home3.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
         self.assertEqual(home3.listing_office, "AN1037")
+        self.assertTrue(home3.parking_spot)

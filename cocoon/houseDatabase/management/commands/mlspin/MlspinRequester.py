@@ -143,7 +143,8 @@ class MlspinRequester(object):
                 new_listing.apartment_number = cells[UNIT_NO].lower()
 
                 # Set Exterior Amenities fields
-
+                if int(cells[PARKING_SPACES]) > 0:
+                    new_listing.parking_spot = True
 
                 # Create the new home
                 # Define the home type
