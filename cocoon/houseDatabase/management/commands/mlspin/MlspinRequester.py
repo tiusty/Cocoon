@@ -81,6 +81,8 @@ class MlspinRequester(object):
         num_failed_to_geolocate = 0
         num_not_for_rental = 0
         num_integrity_error = 0
+        num_added_homes = 0
+        num_updated_homes = 0
 
         for line in lines[1:]:  # skips the col headers
             num_houses += 1
@@ -138,6 +140,9 @@ class MlspinRequester(object):
                 # Set RentDatabaseModel fields
                 new_listing.apartment_number = cells[UNIT_NO].lower()
 
+                # Set Exterior Amenities fields
+
+
                 # Create the new home
                 # Define the home type
                 list_type = cells[PROP_TYPE]
@@ -171,6 +176,7 @@ class MlspinRequester(object):
                     existing_apartment.currently_available = new_listing.currently_available
                     existing_apartment.save()
                     print("[ UPDATED ] {0}".format(existing_apartment.full_address))
+                    num_updated_homes += 1
                 else:
                     print("[ FAILED UPDATE ] {0}".format(new_listing.full_address))
                     num_failed_to_update += 1
@@ -198,6 +204,7 @@ class MlspinRequester(object):
                 # After all the data is added, save the home to the database
                 try:
                     new_listing.save()
+                    num_added_homes += 1
                     print("[ ADDING ] " + new_listing.full_address)
                 except IntegrityError:
                     print("[ Integrity Error ] ")
@@ -210,6 +217,8 @@ class MlspinRequester(object):
         print("")
         print("RESULTS:")
         logger.info("\nNumber of houses in database: {0}\n".format(num_houses) +
+                    "Num added homes: {0}\n".format(num_added_homes) +
+                    "Num updated homes: {0}\n".format(num_updated_homes) +
                     "Update timestamp: {0}\n".format(self.update_timestamp.date()) +
                     "Number of duplicates: {0}\n".format(num_of_duplicates) +
                     "Number of value errors: {0}\n".format(num_of_value_errors) +

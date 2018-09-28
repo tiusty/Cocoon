@@ -65,6 +65,8 @@ class YGLRequester(object):
         num_of_value_errors = 0
         num_failed_to_update = 0
         num_integrity_error = 0
+        num_updated_homes = 0
+        num_added_homes = 0
 
         # Loop through every home
         for house in root.iter('Rental'):
@@ -133,6 +135,7 @@ class YGLRequester(object):
                     existing_apartment.currently_available = new_listing.currently_available
                     existing_apartment.save()
                     print("[ UPDATED ] {0}".format(existing_apartment.full_address))
+                    num_updated_homes += 1
 
                 # If the street addresses don't line up, then mark it as an error
                 else:
@@ -148,6 +151,7 @@ class YGLRequester(object):
                 try:
                     new_listing.save()
                     print("[ ADDING ] " + new_listing.full_address)
+                    num_added_homes += 1
                 except IntegrityError:
                     print("[ Integrity Error ] ")
                     num_integrity_error += 1
@@ -159,6 +163,8 @@ class YGLRequester(object):
         print("")
         print("RESULTS:")
         logger.info("\nNumber of houses in database: {0}\n".format(num_houses) +
+                    "Num added homes: {0}\n".format(num_added_homes) +
+                    "Num updated homes: {0}\n".format(num_updated_homes) +
                     "Update timestamp: {0}\n".format(self.update_timestamp.date()) +
                     "Number of duplicates: {0}\n".format(num_of_duplicates) +
                     "Number of value errors: {0}\n".format(num_of_value_errors) +
