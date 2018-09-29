@@ -131,7 +131,7 @@ class YGLRequester(object):
 
                 # If it does, then make sure the street addresses line up before updating the home
                 if existing_apartment.full_address == new_listing.full_address \
-                        and existing_apartment == new_listing.apartment_number:
+                        and existing_apartment.apartment_number == new_listing.apartment_number:
                     # Since the apartments are the same, just update the values in the existing apartment
                     existing_apartment.update(new_listing)
                     existing_apartment.save()
