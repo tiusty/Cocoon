@@ -14,11 +14,24 @@ class Itinerary(models.Model):
    	3. Homes - Alex was relunctant on making this a ManyToMany
     """
     user = models.ForeignKey('MyUser', on_delete=models.CASCADE)
-    itinerary_file = models.FileField(Field.null, on_delete=models.CASCADE)
+    itinerary_file = models.FileField(blank=True)
     agent = models.ForeignKey('MyUser', on_delete=models.CASCADE)
-    start_time = models.DateTime(default=timezone.now)
-    available_start_time = models.DateField(default=timezone.now)
+    selected_start_time = models.ForeignKey('StartTime', on_delete=models.CASCADE)
+    available_start_times = models.ForeignKey('EndTime', on_delete=models.CASCADE)
     homes = models.ManyToMAny(RentDatabaseModel)
 
     def __str__(self):
         return self.itinerary_file
+
+class StartTime(models.Model):
+	start_time = models.DateField(default=timezone.now)
+
+	def __str__(self):
+		return self.start_time
+
+class EndTime(models.Model):
+	end_time = models.DateField(default=timezone.now)
+
+	def __str__(self):
+		return self.end_time
+ 
