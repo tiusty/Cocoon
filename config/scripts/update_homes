@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# This script is meant to run on the server
+# This should be called on a crontab once a day
+# This will load/update all the homes in the database
+
+source /home/ubuntu/.virtualenvs/Cocoon/bin/activate
+export DJANGO_SETTINGS_MODULE=config.settings.production
+python /home/ubuntu/work/Cocoon/manage.py pull_all_homes_images

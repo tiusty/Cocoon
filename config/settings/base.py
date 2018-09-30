@@ -183,11 +183,22 @@ LOGGING = {
             'formatter': 'verbose',
         },
 
+        # An email is only sent if the log comes when Debug=False
+        # This mail_admin logger is different from the previous, because
+        #   this will email on log level of info. This is useful so I can
+        #   receive the results of pulling the mls + ygl every morning via email
+        'mail_admins_info': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'verbose',
+        },
+
         # Stores results if the log is greater than warn
         # Allows for easily seeing if warn errors occurred
         'file': {
             'level': 'WARNING',
-            'class':'logging.handlers.RotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'logCocoon.log',
             'formatter': 'verbose',
             'maxBytes': 1024 * 1024 * 15,  # 15MB
@@ -198,6 +209,14 @@ LOGGING = {
 
         'django': {
             'handlers': ['console', 'mail_admins', 'file'],
+            'level': 'DEBUG',
+        },
+
+        # I was getting spammed with DisallowedHost errors, so now
+        #   these errors only get sent to the logging file and does not
+        #   send me a billion emails
+        'django.security.DisallowedHost': {
+            'handlers': ['console', 'file'],
             'level': 'DEBUG',
         },
 
@@ -264,6 +283,15 @@ LOGGING = {
         'cocoon.houseDatabase': {
             'handlers': ['console', 'mail_admins', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
+        },
+
+        # HouseDatabase app logger
+        # This captures the mlspin + ygl logging specifically. I want
+        #   these logs emailed to me
+        'cocoon.houseDatabase.management.commands': {
+            'handlers': ['console', 'mail_admins', 'mail_admins_info', 'file'],
+            'level': 'INFO',
             'propagate': False,
         },
     },
