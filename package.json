@@ -1,0 +1,39 @@
+{
+  "name": "Cocoon",
+  "version": "1.0.0",
+  "description": "This is the new iteration of the HomeMe project, now called Cocoon that Uses the Django framework instead of using Revel Golang framework",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "webpack --mode development ./cocoon/frontend/src/index.js --output ./cocoon/frontend/static/frontend/main.js",
+    "build": "webpack --mode production ./cocoon/frontend/src/index.js --output ./cocoon/frontend/static/frontend/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiusty/Cocoon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tiusty/Cocoon/issues"
+  },
+  "homepage": "https://github.com/tiusty/Cocoon#readme",
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "weak-key": "^1.0.1",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2"
+  }
+}

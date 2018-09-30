@@ -1,0 +1,24 @@
+{% extends 'bootstrapJQuery.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Django DRF - React : Quickstart - Valentino G. - www.valentinog.com</title>
+{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <div id="app" class="columns"><!-- React --></div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block endScripts %}
+    <script src="{% static "frontend/main.js" %}"></script>
+{% endblock %}
