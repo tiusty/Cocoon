@@ -60,6 +60,10 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    @property
+    def full_name(self):
+        return "{0} {1}".format(self.first_name, self.last_name)
+
     def get_full_name(self):
         # The user is identified by their email address
         return self.first_name + " " + self.last_name

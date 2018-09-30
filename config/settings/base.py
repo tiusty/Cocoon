@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'cocoon.houseDatabase',
     'cocoon.commutes',
     'storages',
+    'cocoon.scheduler',
 ]
 
 MIDDLEWARE = [
