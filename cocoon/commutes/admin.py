@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # Commute imports
-from .models import ZipCodeBase, ZipCodeChild, CommuteType
+from .models import ZipCodeBase, ZipCodeChild, CommuteType, TransitType
 
 
 class ZipCodeChildInLine(admin.StackedInline):
@@ -28,6 +28,14 @@ class CommuteTypeAdmin(admin.ModelAdmin):
     ]
     list_display = ('commute_type',)
 
+class TransitTypeAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Transit Type',
+         {'fields': ['transit_type', ]})
+    ]
+    list_display = ('transit_type',)
+
 
 admin.site.register(ZipCodeBase, ZipCodeAdmin)
 admin.site.register(CommuteType, CommuteTypeAdmin)
+admin.site.register(TransitType, TransitTypeAdmin)

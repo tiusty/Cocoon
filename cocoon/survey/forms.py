@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
     RentingDestinationsModel, PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel
 from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
-from cocoon.commutes.models import CommuteType
+from cocoon.commutes.models import CommuteType, TransitType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -278,6 +278,16 @@ class CommuteInformationForm(ModelForm):
         queryset=CommuteType.objects.all(),
         label="Commute Type",
         widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    transit_type = forms.ModelChoiceField(
+        queryset=TransitType.objects.all(),
+        label="Transit Type",
+        widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control'
             }

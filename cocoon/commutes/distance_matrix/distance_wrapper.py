@@ -113,9 +113,9 @@ class DistanceWrapper:
         # maximizes 100 elements while retaining 25 origin/dest limit
         destination_number = min(25, len(destinations))
         origin_number = min((100 / destination_number), 25)
-        transit_option = ""
+        transit_option = []
         if(mode == "Bus" or mode == "Subway" or mode == "Train"):
-            transit_option = mode
+            transit_option.append(mode.lower())
             mode = 'transit'
 
         while origin_list:

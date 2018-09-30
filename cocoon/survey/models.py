@@ -8,7 +8,7 @@ import math
 # Import cocoon models
 from cocoon.userAuth.models import UserProfile
 from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
-from cocoon.commutes.models import CommuteType
+from cocoon.commutes.models import CommuteType, TransitType
 
 # Import Global Variables
 from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, \
@@ -180,6 +180,7 @@ class CommuteInformationModel(models.Model):
     min_commute = models.IntegerField()
     commute_weight = models.IntegerField()
     commute_type = models.ForeignKey(CommuteType)
+    transit_type = models.ForeignKey(TransitType)
 
     @property
     def commute_range(self):

@@ -15,14 +15,10 @@ class CommuteType(models.Model):
 
     COMMUTE_TYPES = (
         ('Driving', 'Driving'),
-        ('Bus', 'Bus'),
-        ('Rail', 'Rail'),
-        ('Subway', 'Subway'),
-        ('Train', 'Train'),
-        ('Tram', 'Tram'),
         ('Walking', 'Walking'),
         ('Bicycling', 'Bicycling'),
     )
+
     commute_type = models.CharField(
         unique=True,
         choices=COMMUTE_TYPES,
@@ -31,6 +27,23 @@ class CommuteType(models.Model):
 
     def __str__(self):
         return self.commute_type
+
+
+class TransitType(models.Model):
+    TRANSIT_TYPES = (
+        ('Bus', 'Bus'),
+        ('Subway', 'Subway'),
+        ('Train', 'Train')
+    )
+
+    transit_type = models.CharField(
+        unique=True,
+        choices=TRANSIT_TYPES,
+        max_length=200,
+    )
+
+    def __str__(self):
+        return self.transit_type
 
 
 class ZipCodeBase(models.Model):
