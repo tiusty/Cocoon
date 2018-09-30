@@ -15,7 +15,7 @@ class ItineraryModel(models.Model):
            self.itinerary: (FileField) -> The location of the itinerary stored on s3. Gives a step by step
                 plan for the agent
            self.agent: (ForeignKey('MyUser') -> The agent that will be conducting the tour for the client
-           self.estimated_tour_duration: (IntegerField) -> The tour duration stored in seconds
+           self.tour_duration_seconds: (IntegerField) -> The tour duration stored in seconds
            self.selected_start_time (OneToOneField) -> Stores the selected time that the agent selected for the tour
            self.available_start_times (ForeignKey) -> Stores the avaiable times that the user can go on a tour
            self.homes (ManytoManyField) -> Stores the homes that are associated with this itinerary
