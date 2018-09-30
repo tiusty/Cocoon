@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'storages',
     'rest_framework',
     'cocoon.signatures',
+    'cocoon.frontend',
 ]
 
 MIDDLEWARE = [
