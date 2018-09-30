@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 // Import sub components
 import Signatures from './signatures/Main'
 import Survey from './survey/Main'
+import UserAuth from './userAuth/Main'
 
 class Home extends Component {
     render(){
@@ -20,6 +21,7 @@ const Main = () => (
                 <Route exact path='/react/' component={Home}/>
                 <Route path='/react/signatures' component={Signatures}/>
                 <Route path='/react/survey' component={Survey}/>
+                <Route path='/react/userAuth' component={UserAuth}/>
             </Switch>
         </BrowserRouter>
     </main>
