@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 // Import sub components
 import Signatures from './signatures/Main'
+import Survey from './survey/Main'
 
 class Home extends Component {
     render(){
@@ -12,34 +13,16 @@ class Home extends Component {
     }
 }
 
-const Car = () => (
-  <div>
-    <h1>Welcome to the Tornadoes Website!</h1>
-  </div>
-);
-
-class About extends Component {
-    render(){
-        return (<h1>About page</h1>);
-    }
-}
-
-
-// The Main component renders one of the three provided
-// Routes (provided that one matches). Both the /roster
-// and /schedule routes will match any pathname that starts
-// with /roster or /schedule. The / route will only match
-// when the pathname is exactly the string "/"
 const Main = () => (
-  <main>
-      <BrowserRouter>
-          <Switch>
-      <Route exact path='/react/' component={Home}/>
-      <Route path='/react/signatures' component={Signatures}/>
-      <Route path='/react/about' component={About}/>
-          </Switch>
-      </BrowserRouter>
-  </main>
+    <main>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path='/react/' component={Home}/>
+                <Route path='/react/signatures' component={Signatures}/>
+                <Route path='/react/survey' component={Survey}/>
+            </Switch>
+        </BrowserRouter>
+    </main>
 );
 
 export default Main
