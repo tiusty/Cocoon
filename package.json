@@ -7,8 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "webpack --mode development ./cocoon/frontend/src/index.js --output ./project/frontend/static/frontend/main.js",
-    "build": "webpack --mode production ./cocoon/frontend/src/index.js --output ./project/frontend/static/frontend/main.js"
+    "dev": "webpack --mode development ./cocoon/frontend/src/index.js --output ./cocoon/frontend/static/frontend/main.js",
+    "build": "webpack --mode production ./cocoon/frontend/src/index.js --output ./cocoon/frontend/static/frontend/main.js"
   },
   "repository": {
     "type": "git",
