@@ -1,6 +1,7 @@
 # noinspection PyPackageRequirements
 import urllib.request
 import urllib.error
+from django.db import IntegrityError
 import cocoon.houseDatabase.maps_requester as geolocator
 import os, sys
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel
@@ -9,6 +10,10 @@ from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
+
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 
 class MlspinRequester(object):
@@ -40,13 +45,12 @@ class MlspinRequester(object):
                 sys.exit()
 
             # 2. Read the response txt into memory
-            idx_file = open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb")
-            idx_txt = (idx_file.read().decode("iso-8859-1"))
+            with open(os.path.join(os.path.dirname(__file__), "idx_feed.txt"), "rb") as fp:
+                self.idx_txt = fp.read().decode("iso-8859-1").splitlines()
 
             towns_file = open(os.path.join(os.path.dirname(__file__), "towns.txt"), "rb")
             towns_txt = (towns_file.read().decode("iso-8859-1"))
 
-            self.idx_txt = idx_txt
             self.town_txt = towns_txt
 
         if 'town_txt' in kwargs:
@@ -65,7 +69,7 @@ class MlspinRequester(object):
 
     def parse_idx_feed(self):
 
-        lines = self.idx_txt.split('\r\n')
+        lines = self.idx_txt
         print("Attempting to add *" + str(len(lines)) + "* apartments to the db...")
         print("An equivalent number of requests will be made to the geocoder")
 
@@ -76,13 +80,24 @@ class MlspinRequester(object):
         num_failed_to_update = 0
         num_failed_to_geolocate = 0
         num_not_for_rental = 0
+        num_integrity_error = 0
+        num_added_homes = 0
+        num_updated_homes = 0
+        num_homes_not_enough_cells = 0
 
-        for line in lines[1:-1]:  # skips the col headers
+        for line in lines[1:]:  # skips the col headers
             num_houses += 1
             new_listing = RentDatabaseModel()
 
             # Parse IDX feed to put each item into an array
             cells = line.split('|')
+
+            # If the home doesn't have enough cells then something is wrong with the listing and it won't
+            #   be added to the database. Otherwise it will cause an exception
+            if len(cells) < 28:
+                print("Removing home not enough cells")
+                num_homes_not_enough_cells += 1
+                continue
 
             # Make sure there are no commas in the street name
             cells[STREET_NAME].replace(',', '')
@@ -127,6 +142,10 @@ class MlspinRequester(object):
                 # Set RentDatabaseModel fields
                 new_listing.apartment_number = cells[UNIT_NO].lower()
 
+                # Set Exterior Amenities fields
+                if int(cells[PARKING_SPACES]) > 0:
+                    new_listing.parking_spot = True
+
                 # Create the new home
                 # Define the home type
                 list_type = cells[PROP_TYPE]
@@ -154,12 +173,14 @@ class MlspinRequester(object):
                 #   otherwise throw an error (just for testing purposes to see if it happens). If we decide this is a
                 #   non-issue, we can take this out
                 existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
-                if existing_apartment.full_address == new_listing.full_address:
-                    existing_apartment.apartment_number = cells[UNIT_NO].lower()
-                    existing_apartment.last_updated = self.update_timestamp
-                    existing_apartment.currently_available = new_listing.currently_available
+                if existing_apartment.full_address == new_listing.full_address \
+                        and existing_apartment.apartment_number == new_listing.apartment_number:
+                    # Since the apartments are the same
+                    #   Update the existing apartment with the fields stored in the new listing
+                    existing_apartment.update(new_listing)
                     existing_apartment.save()
                     print("[ UPDATED ] {0}".format(existing_apartment.full_address))
+                    num_updated_homes += 1
                 else:
                     print("[ FAILED UPDATE ] {0}".format(new_listing.full_address))
                     num_failed_to_update += 1
@@ -185,9 +206,13 @@ class MlspinRequester(object):
                 new_listing.latitude = lat
                 new_listing.longitude = lng
                 # After all the data is added, save the home to the database
-                new_listing.save()
-
-                print("[ ADDING   ]" + new_listing.full_address)
+                try:
+                    new_listing.save()
+                    num_added_homes += 1
+                    print("[ ADDING ] " + new_listing.full_address)
+                except IntegrityError:
+                    print("[ Integrity Error ] ")
+                    num_integrity_error += 1
 
         manager = MlsManagementModel.objects.all().first()
         manager.last_updated_mls = self.update_timestamp
@@ -195,10 +220,14 @@ class MlspinRequester(object):
 
         print("")
         print("RESULTS:")
-        print("Number of houses in database: {0}".format(num_houses))
-        print("Update timestamp: {0}".format(self.update_timestamp.date()))
-        print("Number of duplicates: {0}".format(num_of_duplicates))
-        print("Number of value errors: {0}".format(num_of_value_errors))
-        print("Number of failed updated houses: {0}".format(num_failed_to_update))
-        print("Number of failed geolocates: {0}".format(num_failed_to_geolocate))
-        print("Number of houses not for rental: {0}".format(num_not_for_rental))
+        logger.info("\nNumber of houses in database: {0}\n".format(num_houses) +
+                    "Num added homes: {0}\n".format(num_added_homes) +
+                    "Num updated homes: {0}\n".format(num_updated_homes) +
+                    "Update timestamp: {0}\n".format(self.update_timestamp.date()) +
+                    "Number of duplicates: {0}\n".format(num_of_duplicates) +
+                    "Number of value errors: {0}\n".format(num_of_value_errors) +
+                    "Number of failed updated houses: {0}\n".format(num_failed_to_update) +
+                    "Number of failed geolocates: {0}\n".format(num_failed_to_geolocate) +
+                    "Number of houses not for rental: {0}\n".format(num_not_for_rental) +
+                    "Number of integrity error is: {0}\n".format(num_integrity_error) +
+                    "Number of homes that don't have enough cells: {0}\n".format(num_homes_not_enough_cells))

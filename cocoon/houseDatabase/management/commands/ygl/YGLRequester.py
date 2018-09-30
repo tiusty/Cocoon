@@ -1,5 +1,6 @@
 # Django Modules
 from django.utils import timezone
+from django.db import IntegrityError
 
 # Cocoon modules
 from cocoon.houseDatabase.constants import YGL_URL
@@ -15,6 +16,10 @@ import urllib.error
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from pytz import timezone as pytimezone
+
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 
 class YGLRequester(object):
@@ -59,6 +64,9 @@ class YGLRequester(object):
         num_of_duplicates = 0
         num_of_value_errors = 0
         num_failed_to_update = 0
+        num_integrity_error = 0
+        num_updated_homes = 0
+        num_added_homes = 0
 
         # Loop through every home
         for house in root.iter('Rental'):
@@ -122,11 +130,13 @@ class YGLRequester(object):
                 existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
 
                 # If it does, then make sure the street addresses line up before updating the home
-                if existing_apartment.full_address == new_listing.full_address:
-                    existing_apartment.last_updated = self.update_timestamp
-                    existing_apartment.currently_available = new_listing.currently_available
+                if existing_apartment.full_address == new_listing.full_address \
+                        and existing_apartment.apartment_number == new_listing.apartment_number:
+                    # Since the apartments are the same, just update the values in the existing apartment
+                    existing_apartment.update(new_listing)
                     existing_apartment.save()
                     print("[ UPDATED ] {0}".format(existing_apartment.full_address))
+                    num_updated_homes += 1
 
                 # If the street addresses don't line up, then mark it as an error
                 else:
@@ -139,8 +149,13 @@ class YGLRequester(object):
                 print("[ DUPLICATE ] " + new_listing.full_address)
                 num_of_duplicates += 1
             else:
-                new_listing.save()
-                print("[ ADDING ] " + new_listing.full_address)
+                try:
+                    new_listing.save()
+                    print("[ ADDING ] " + new_listing.full_address)
+                    num_added_homes += 1
+                except IntegrityError:
+                    print("[ Integrity Error ] ")
+                    num_integrity_error += 1
 
         manager = YglManagementModel.objects.all().first()
         manager.last_updated_ygl = self.update_timestamp
@@ -148,8 +163,11 @@ class YGLRequester(object):
 
         print("")
         print("RESULTS:")
-        print("Number of houses in database: {0}".format(num_houses))
-        print("Update timestamp: {0}".format(self.update_timestamp.date()))
-        print("Number of duplicates: {0}".format(num_of_duplicates))
-        print("Number of value errors: {0}".format(num_of_value_errors))
-        print("Number of failed updated houses: {0}".format(num_failed_to_update))
+        logger.info("\nNumber of houses in database: {0}\n".format(num_houses) +
+                    "Num added homes: {0}\n".format(num_added_homes) +
+                    "Num updated homes: {0}\n".format(num_updated_homes) +
+                    "Update timestamp: {0}\n".format(self.update_timestamp.date()) +
+                    "Number of duplicates: {0}\n".format(num_of_duplicates) +
+                    "Number of value errors: {0}\n".format(num_of_value_errors) +
+                    "Number of failed updated houses: {0}\n".format(num_failed_to_update) +
+                    "Number of integrity error is: {0}\n".format(num_integrity_error))
