@@ -23,13 +23,28 @@ class ItineraryModel(models.Model):
     client = models.ForeignKey('MyUser', on_delete=models.CASCADE)
     itinerary = models.FileField(blank=True)
     agent = models.ForeignKey('MyUser', on_delete=models.CASCADE, blank=True)
-    estimated_tour_duration = models.IntegerField(default=0)
+    tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.OneToOneField('TimeModel', on_delete=models.CASCADE, blank=True)
     available_start_times = models.ForeignKey('TimeModel', on_delete=models.CASCADE, blank=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
 
     def __str__(self):
         return "{0} Itinerary".format(self.client.full_name)
+
+    @property
+    def tour_duration_minutes(self):
+        """
+        Returns the tour duration in number of minutes
+        """
+        return self.tour_duration_seconds/60
+
+    @property
+    def tour_duration_hours(self):
+        """
+        Returns the tour duration in number of hours
+        :return:
+        """
+        return self.tour_duration_minutes/60
 
 
 class TimeModel(models.Model):
