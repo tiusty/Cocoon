@@ -15,7 +15,11 @@ class CommuteType(models.Model):
 
     COMMUTE_TYPES = (
         ('Driving', 'Driving'),
-        ('Transit', 'Transit'),
+        ('Bus', 'Bus'),
+        ('Rail', 'Rail'),
+        ('Subway', 'Subway'),
+        ('Train', 'Train'),
+        ('Tram', 'Tram'),
         ('Walking', 'Walking'),
         ('Bicycling', 'Bicycling'),
     )

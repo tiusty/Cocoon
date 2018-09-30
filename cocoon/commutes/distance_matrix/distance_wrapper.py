@@ -113,6 +113,10 @@ class DistanceWrapper:
         # maximizes 100 elements while retaining 25 origin/dest limit
         destination_number = min(25, len(destinations))
         origin_number = min((100 / destination_number), 25)
+        transit_option = ""
+        if(mode == "Bus" or mode == "Subway" or mode == "Train"):
+            transit_option = mode
+            mode = 'transit'
 
         while origin_list:
             # only computes for the first destination_number destinations
@@ -121,7 +125,8 @@ class DistanceWrapper:
                                                             destinations[:destination_number],
                                                             units=self.units,
                                                             # make sure the mode is lower case
-                                                            mode=mode.lower())
+                                                            mode=mode.lower(),
+                                                            transit_mode=transit_option)
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin
             for res in response_list:

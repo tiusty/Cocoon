@@ -1,4 +1,4 @@
-# Django modules
+ # Django modules
 from django import forms
 from django.forms import ModelForm
 from django.utils.text import slugify
@@ -138,6 +138,11 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
     """
     Rent Survey is the rent survey on the main survey page
     """
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(RentSurveyForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
@@ -156,12 +161,43 @@ class BrokerRentSurveyForm(RentSurveyForm):
         queryset=HomeProviderModel.objects.all()
     )
 
+    name = forms.CharField(
+        label="Clients Name",
+        initial=DEFAULT_RENT_SURVEY_NAME,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter the name of the survey',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    def is_valid(self):
+        valid = super(BrokerRentSurveyForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
+        #   will not conflict with a current survey. If it does, force them to choose a new name.
+        if 'name' in self.changed_data:
+            if self.user.userProfile.rentingsurveymodel_set.filter(url=slugify(current_form['name'])).exists():
+                self.add_error('name', "You already have a very similar name, please choose a more unique name")
+                valid = False
+
+        return valid
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "provider"]
+                  "parking_spot", "provider", "name"]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
@@ -211,23 +247,6 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "parking_spot", "name"]
-
-
-class BrokerRentSurveyFormMini(RentSurveyFormMini):
-
-    provider = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
-        queryset=HomeProviderModel.objects.all()
-    )
-
-    class Meta:
-        model = RentingSurveyModel
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
-                  "max_price", "desired_price", "price_weight",
-                  "parking_spot", "name", 'provider', ]
 
 
 class CommuteInformationForm(ModelForm):
