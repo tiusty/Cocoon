@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^', include('cocoon.signatures.urls')),
     url(r'^', include('cocoon.homePage.urls')),
+    url(r'^', include('cocoon.frontend.urls')),
     url(r'^userAuth/', include('cocoon.userAuth.urls')),
     url(r'^survey/', include('cocoon.survey.urls')),
     url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
