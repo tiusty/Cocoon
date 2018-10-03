@@ -175,6 +175,26 @@ class MlspinRequester(object):
                 existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
                 if existing_apartment.full_address == new_listing.full_address \
                         and existing_apartment.apartment_number == new_listing.apartment_number:
+
+                    # if the lat and long is not set for the existing apartment, then set the new_listing lat and long
+                    #   so that it is updated when the existing apartment gets updated
+                    if existing_apartment.latitude <= 0 or existing_apartment.longitude <= 0:
+                        # If it is a new home then get the lat and long of the home.
+                        latlng = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(new_listing.full_address)
+
+                        if latlng == -1:
+                            print("Could not generate Lat and Long for apartment {0}, which had line {1} in IDX feed".format(
+                                new_listing.full_address, line
+                            ))
+                            num_failed_to_geolocate += 1
+                            continue
+                        else:
+                            lat = latlng[0]
+                            lng = latlng[1]
+
+                        new_listing.latitude = lat
+                        new_listing.longitude = lng
+
                     # Since the apartments are the same
                     #   Update the existing apartment with the fields stored in the new listing
                     existing_apartment.update(new_listing)
