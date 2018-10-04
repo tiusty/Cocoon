@@ -175,6 +175,12 @@ class MlspinRequester(object):
                 existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
                 if existing_apartment.full_address == new_listing.full_address \
                         and existing_apartment.apartment_number == new_listing.apartment_number:
+
+                    # The lat and long is the only thing that is not computed for each new_listing since it costs money
+                    #   Therefore assume the old lat and long values are correct (Should not change)
+                    new_listing.latitude = existing_apartment.latitude
+                    new_listing.longitude = existing_apartment.longitude
+
                     # Since the apartments are the same
                     #   Update the existing apartment with the fields stored in the new listing
                     existing_apartment.update(new_listing)
