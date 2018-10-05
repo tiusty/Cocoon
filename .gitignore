@@ -19,6 +19,7 @@ cocoon/houseDatabase/migrations
 cocoon/homePage/migrations
 cocoon/survey/migrations
 cocoon/commutes/migrations
+cocoon/scheduler/migrations
 
 # Visual Studio Code Settings #
 .vscode/

@@ -6,6 +6,13 @@ from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 
 
+class TimeModel(models.Model):
+    time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.time
+
+
 class ItineraryModel(models.Model):
     """
        Model for Itinerary. These are based on the interface designed on the Google Doc.
@@ -20,12 +27,13 @@ class ItineraryModel(models.Model):
            self.available_start_times (ForeignKey) -> Stores the avaiable times that the user can go on a tour
            self.homes (ManytoManyField) -> Stores the homes that are associated with this itinerary
     """
-    client = models.ForeignKey('MyUser', on_delete=models.CASCADE)
+    client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
     itinerary = models.FileField(blank=True)
-    agent = models.ForeignKey('MyUser', on_delete=models.CASCADE, blank=True)
+    agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.CASCADE, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
-    selected_start_time = models.OneToOneField('TimeModel', on_delete=models.CASCADE, blank=True)
-    available_start_times = models.ForeignKey('TimeModel', on_delete=models.CASCADE, blank=True)
+    selected_start_time = models.OneToOneField(TimeModel, on_delete=models.CASCADE, blank=True, null=True)
+    available_start_times = models.ForeignKey(TimeModel, related_name='start_times', on_delete=models.CASCADE,
+                                              null=True, blank=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
 
     def __str__(self):
@@ -45,10 +53,3 @@ class ItineraryModel(models.Model):
         :return:
         """
         return self.tour_duration_minutes/60
-
-
-class TimeModel(models.Model):
-    time = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return self.time
