@@ -287,13 +287,12 @@ class CommuteInformationForm(ModelForm):
     transit_type = forms.ModelChoiceField(
         queryset=TransitType.objects.all(),
         label="Transit Type",
-        widget=forms.SelectMultiple(
+        widget=forms.Select(
             attrs={
                 'class': 'form-control'
             }
         ),
     )
-
     class Meta:
         model = CommuteInformationModel
         fields = '__all__'

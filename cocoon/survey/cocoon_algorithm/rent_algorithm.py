@@ -115,12 +115,13 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
                 destination_address = destination.full_address
 
-                print(destination.transit_type.transit_type)
+                transit_option = []
+                transit_option.append(destination.transit_type.transit_type)
 
                 results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
                                                                                 [destination_address],
+                                                                                transit_option=transit_option,
                                                                                 mode=destination.commute_type.commute_type)
-
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):
                     # update exact commute time with in minutes

@@ -35,7 +35,6 @@ class TransitTypeAdmin(admin.ModelAdmin):
     ]
     list_display = ('transit_type',)
 
-
 admin.site.register(ZipCodeBase, ZipCodeAdmin)
 admin.site.register(CommuteType, CommuteTypeAdmin)
 admin.site.register(TransitType, TransitTypeAdmin)

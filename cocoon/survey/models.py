@@ -180,7 +180,7 @@ class CommuteInformationModel(models.Model):
     min_commute = models.IntegerField()
     commute_weight = models.IntegerField()
     commute_type = models.ForeignKey(CommuteType)
-    transit_type = models.ForeignKey(TransitType)
+    transit_type = models.ForeignKey(TransitType, null=True)
 
     @property
     def commute_range(self):

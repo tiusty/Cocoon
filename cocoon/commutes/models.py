@@ -30,6 +30,7 @@ class CommuteType(models.Model):
 
 
 class TransitType(models.Model):
+
     TRANSIT_TYPES = (
         ('Bus', 'Bus'),
         ('Subway', 'Subway'),
