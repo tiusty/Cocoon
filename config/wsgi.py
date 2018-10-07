@@ -12,9 +12,10 @@ import json
 
 from django.core.wsgi import get_wsgi_application
 from django.core.exceptions import ImproperlyConfigured
+from config.settings.base import BASE_DIR
 
 # Opens the secrets file and loads the values
-with open(os.path.expanduser("~") + '/work/Cocoon/config/settings/secrets.json') as f:
+with open(os.path.join(BASE_DIR, 'settings/secrets.json')) as f:
         secrets = json.loads(f.read())
 
 
