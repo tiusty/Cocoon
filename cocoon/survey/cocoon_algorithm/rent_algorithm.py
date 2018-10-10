@@ -116,7 +116,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 destination_address = destination.full_address
 
                 transit_option = []
-                transit_option.append(destination.transit_type.transit_type)
+                for item in destination.transit_type.all():
+                    transit_option.append(str(item))
 
                 results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
                                                                                 [destination_address],

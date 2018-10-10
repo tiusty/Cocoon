@@ -284,10 +284,10 @@ class CommuteInformationForm(ModelForm):
         ),
     )
 
-    transit_type = forms.ModelChoiceField(
+    transit_type = forms.ModelMultipleChoiceField(
         queryset=TransitType.objects.all(),
         label="Transit Type",
-        widget=forms.Select(
+        widget=forms.SelectMultiple(
             attrs={
                 'class': 'form-control'
             }

@@ -87,7 +87,7 @@ class DistanceWrapper:
         # list of lists of durations from origin to destinations
         return distance_list
 
-    def get_durations_and_distances(self, origins, destinations, transit_option, mode="driving"):
+    def get_durations_and_distances(self, origins, destinations, transit_option=[], mode="driving"):
         """
         Gets the distance matrix corresponding to a destination and an arbitrary number of origins.
         Segments requests to the distance matrix API to include a maximum of 25 origins and returns
