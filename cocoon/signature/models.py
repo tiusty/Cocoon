@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 class HunterDocManagerModel(models.Model):
     user = models.OneToOneField(MyUser, related_name="doc_manager", on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.user.full_name
+
     def is_all_documents_signed(self):
         # If the number of documents is less than the number of template documents
         #   then automatically there are unsigned documents
@@ -40,9 +43,14 @@ class HunterDocManagerModel(models.Model):
 
 
 class HunterDocTemplateModel(models.Model):
+    """
+        Atributes:
+            self.template_type (string) -> What the template corresponds to, i.e pre_tour forms, renting forms etc
+            self.tempalte_id (string) -> The template id from docusign that corresponds to the type of template
+    """
     PRE_TOUR = 'pt'
     DOC_TYPE = (
-        (PRE_TOUR, 'Pretour'),
+        (PRE_TOUR, 'Pretour forms'),
     )
 
     template_type = models.CharField(
@@ -53,9 +61,15 @@ class HunterDocTemplateModel(models.Model):
     )
     template_id = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.get_template_type_display()
+
 
 class HunterDocModel(models.Model):
     doc_manager = models.ForeignKey(HunterDocManagerModel, related_name="documents", on_delete=models.CASCADE)
     template = models.ForeignKey(HunterDocTemplateModel, related_name="templates", on_delete=models.CASCADE)
     is_signed = models.BooleanField(default=False)
     envelope_id = models.CharField(max_length=200)
+
+    def __str__(self):
+        return "{0} Document".format(self.template.get_template_type_display())
