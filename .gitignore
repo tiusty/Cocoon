@@ -1,5 +1,6 @@
 # Compiled Source #
 *.pyc
+*.swp
 
 # IntelliJ Idea workspace configuration #
 .idea/
@@ -20,6 +21,7 @@ cocoon/homePage/migrations
 cocoon/survey/migrations
 cocoon/commutes/migrations
 cocoon/scheduler/migrations
+cocoon/signature/migrations
 
 # Visual Studio Code Settings #
 .vscode/
