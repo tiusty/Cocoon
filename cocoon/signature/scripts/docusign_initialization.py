@@ -46,12 +46,18 @@ envelope_definition.template_id = template_id
 # create a template role with a valid template_id and role_name and assign signer info
 t_role = docusign.TemplateRole()
 t_role.role_name = template_role_name
-t_role.name ='Pat Developer'
+t_role.name ='Alex Agudelo'
 t_role.email = user_name
+
+# create a template role with a valid template_id and role_name and assign signer info
+t_role2 = docusign.TemplateRole()
+t_role2.role_name = template_role_name
+t_role2.name ='Tomas Jurgenson'
+t_role2.email = "agudelo.a@gatech.edu"
 
 # create a list of template roles and add our newly created role
 # assign template role(s) to the envelope
-envelope_definition.template_roles = [t_role]
+envelope_definition.template_roles = [t_role, t_role2]
 
 # send the envelope by setting |status| to "sent". To save as a draft set to "created"
 envelope_definition.status = 'sent'

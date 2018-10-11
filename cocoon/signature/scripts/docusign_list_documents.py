@@ -15,7 +15,8 @@ redirect_uri = "https://bostoncocoon.com"
 private_key_filename = "docusign_private_key.txt"
 user_id = "4d882612-2587-4842-b32b-8d7e24458aba"
 template_id = "e998b44f-28cb-4d20-ad67-97a033cbbab1"
-envelope_id = "5983f2d4-96de-456e-b629-33a1b6783026"
+envelope_id = "3b87405b-4988-4f42-a984-9c0bb6048c4b"
+account_id = "6769317"
 
 api_client = docusign.ApiClient(base_url)
 
@@ -53,10 +54,13 @@ try:
     assert (docs_list.envelope_id == envelope_id)
 
     print("EnvelopeDocumentsResult: ", end="")
-    pprint(docs_list)
+    # pprint(docs_list)
 
     # The status of whether or not it is signed can be retrieved from here
-    print(envelopes_api.get_envelope("6769317", envelope_id))
+    # print(envelopes_api.get_envelope(account_id, envelope_id))
+
+    # Lists recipients of an envelope and you can check whether or not it has been signed
+    print(envelopes_api.list_recipients(account_id, envelope_id))
 
 except ApiException as e:
     print("\nException when calling DocuSign API: %s" % e)
