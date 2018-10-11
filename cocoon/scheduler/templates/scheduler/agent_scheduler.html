@@ -1,0 +1,21 @@
+{% extends "bootstrapJQuery.html" %}
+{% load static %}
+{% block title %}Available Itineraries{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <!-- Custom StyleSheets -->
+{% endblock %}
+
+{% block content %}
+
+    <h1>This is a test because this text should show up regardless of the context so long as we were logged in as the correct user!!</h1>
+
+{% endblock %}
+
+{% block endScripts %}
+    {{ block.super }}
+
+    <!-- Custom Javascript -->
+    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+{% endblock %}
