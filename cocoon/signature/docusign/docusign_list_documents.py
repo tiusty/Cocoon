@@ -16,9 +16,8 @@ class DocusignListDocuments(DocusignLogin):
         super().__init__()
         self.set_up_docusign_api()
         self.account_id = ACCOUNT_ID
-        self.envelope_id = "3b87405b-4988-4f42-a984-9c0bb6048c4b"
 
-    def list_documents(self):
+    def list_documents(self, envelope_id):
 
         auth_api = AuthenticationApi()
         envelopes_api = EnvelopesApi()
@@ -36,7 +35,7 @@ class DocusignListDocuments(DocusignLogin):
 
             docs_list = envelopes_api.list_documents(login_accounts[0].account_id, self.envelope_id)
             assert docs_list is not None
-            assert (docs_list.envelope_id == self.envelope_id)
+            assert (docs_list.envelope_id == envelope_id)
 
             print("EnvelopeDocumentsResult: ", end="")
             # pprint(docs_list)
@@ -45,11 +44,26 @@ class DocusignListDocuments(DocusignLogin):
             # print(envelopes_api.get_envelope(account_id, envelope_id))
 
             # Lists recipients of an envelope and you can check whether or not it has been signed
-            print(envelopes_api.list_recipients(self.account_id, self.envelope_id))
+            print(envelopes_api.list_recipients(self.account_id, envelope_id))
 
         except ApiException as e:
             print("\nException when calling DocuSign API: %s" % e)
             assert e is None  # make the test case fail in case of an API exception
+
+    def determine_is_signed(self, envelope_id):
+
+        envelopes_api = EnvelopesApi()
+
+        try:
+            if envelopes_api.list_recipients(self.account_id, envelope_id).signers[0].status == 'completed':
+                return True
+            else:
+                return False
+
+        except ApiException as e:
+            print("\nException when calling DocuSign API: %s" % e)
+            assert e is None  # make the test case fail in case of an API exception
+
 
 
 

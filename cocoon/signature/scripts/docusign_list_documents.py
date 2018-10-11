@@ -1,8 +1,11 @@
 from cocoon.signature.docusign.docusign_list_documents import DocusignListDocuments
 
 print('hi')
-list = DocusignListDocuments()
-list.list_documents()
+list = DocusignListDocuments('ebd91598-100d-4455-8b18-a2b83ae3a960')
+if list.determine_is_signed():
+    print('signed')
+else:
+    print('not signed')
 
 # from __future__ import absolute_import, print_function
 # from pprint import pprint
