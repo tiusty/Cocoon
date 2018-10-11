@@ -17,4 +17,4 @@ def agent_scheduler(request):
         context = {'itineraries': available_itineraries}
     else:
         raise Http404("This page does not exist")
-    return render(request, 'scheduler/agent_scheduler.html')
+    return render(request, 'scheduler/agent_scheduler.html', context)

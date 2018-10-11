@@ -9,7 +9,60 @@
 
 {% block content %}
 
-    <h1>This is a test because this text should show up regardless of the context so long as we were logged in as the correct user!!</h1>
+    <h1>Avaiable Itineraries</h1>
+
+    {% for itn in itineraries %}
+        <div style="padding:15px;border:2px dotted teal;margin:10px">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ itn.client.email }}</td>
+                    <td>{{ itn.client.get_full_name }}</td>
+                </tr>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for home in itn.homes.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ home.full_address }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Start Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for time in itn.available_start_times.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ time.time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </tbody>
+        </table>
+        </div>
+    {% endfor %}
 
 {% endblock %}
 
