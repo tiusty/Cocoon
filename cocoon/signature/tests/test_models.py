@@ -175,4 +175,29 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
 
+    def test_create_pre_tour_documents_send(self):
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        HunterDocTemplateModel.create_pre_tour_template()
+
+        # Act
+        result = manager.create_pre_tour_documents()
+
+        # Assert
+        self.assertTrue(result)
+        self.assertEqual(HunterDocModel.objects.count(), 1)
+        self.assertEqual(HunterDocModel.objects.first().template,
+                         HunterDocTemplateModel.objects.get(template_type=HunterDocTemplateModel.PRE_TOUR))
+
+    def test_create_pre_tour_documents_template_does_not_exist(self):
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+
+        # Act
+        result = manager.create_pre_tour_documents()
+
+        # Assert
+        self.assertFalse(result)
 

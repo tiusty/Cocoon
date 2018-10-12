@@ -61,7 +61,7 @@ class HunterDocManagerModel(models.Model):
         template = self.retrieve_pre_tour_template()
         if template is not None:
                 docusign = DocusignWrapper()
-                envelope_id = docusign.send_document_for_signatures(PRE_TOUR_TEMPLATE_ID,
+                envelope_id = docusign.send_document_for_signatures(template.template_id,
                                                                     self.user.email,
                                                                     self.user.full_name)
                 if envelope_id is not None:
@@ -108,6 +108,15 @@ class HunterDocTemplateModel(models.Model):
         default=PRE_TOUR,
     )
     template_id = models.CharField(max_length=200)
+
+    @staticmethod
+    def create_pre_tour_template():
+        """
+        Creates the pre_tour_template with the correct template_id
+        """
+        if not HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR).exists():
+            HunterDocTemplateModel.objects.create(template_type=HunterDocTemplateModel.PRE_TOUR,
+                                                  template_id=PRE_TOUR_TEMPLATE_ID)
 
     def __str__(self):
         return self.get_template_type_display()
