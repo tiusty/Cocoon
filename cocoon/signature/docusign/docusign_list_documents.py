@@ -10,7 +10,7 @@ from cocoon.signature.docusign.docusign_base import DocusignLogin
 from cocoon.signature.constants import ACCOUNT_ID
 
 
-class DocusignListDocuments(DocusignLogin):
+class DocusignWrapper(DocusignLogin):
 
     def __init__(self):
         super().__init__()

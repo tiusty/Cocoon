@@ -2,7 +2,7 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 
 # Import docusign wrapper classes
-from cocoon.signature.docusign.docusign_list_documents import DocusignListDocuments
+from cocoon.signature.docusign.docusign_list_documents import DocusignWrapper
 
 # Cocoon modules
 from cocoon.userAuth.models import MyUser
@@ -44,8 +44,11 @@ class HunterDocManagerModel(models.Model):
             logger.warning("is_pre_tour_signed else statement reached")
             return False
 
+    def create_pre_tour_documents(self):
+        pass
+
     def update_all_is_signed(self):
-        docusign = DocusignListDocuments()
+        docusign = DocusignWrapper()
         for document in self.documents.all():
             document.is_signed = docusign.determine_is_signed(document.envelope_id)
 
