@@ -31,26 +31,60 @@ class HunterDocManagerModel(models.Model):
         return True
 
     def is_pre_tour_signed(self):
-        try:
-            template = HunterDocTemplateModel.objects.get(template_type=HunterDocTemplateModel.PRE_TOUR)
-        except HunterDocTemplateModel.DoesNotExist:
-            logger.warning("Tried to retrieve the pre_tour_template but it did not exist")
-            return False
-
-        if self.documents.filter(template=template).exists():
-            doc = get_object_or_404(HunterDocModel, template=template)
-            return doc.is_signed
+        """
+        Determines if the pre_tour document is signed.
+        :return: (boolean) -> True: The document is signed
+                              False: The document is not signed
+        """
+        template = self.retrieve_pre_tour_template()
+        if template is not None:
+            if self.documents.filter(template=template).exists():
+                try:
+                    doc = get_object_or_404(HunterDocModel, template=template)
+                    return doc.is_signed
+                except HunterDocModel.DoesNotExist:
+                    return False
+            else:
+                return False
         else:
-            logger.warning("is_pre_tour_signed else statement reached")
             return False
 
     def create_pre_tour_documents(self):
-        pass
+        """
+        Creates the pre_tour document. This will create the object in the database as well as send a request to docusign
+        If the request is successfully sent and the envelope_id is generated, then the object in the database is created.
+        Otherwise the object is not created in the database
+        """
+        template = self.retrieve_pre_tour_template()
+        if template is not None:
+                docusign = DocusignWrapper()
+                envelope_id = docusign.send_document_for_signatures("e998b44f-28cb-4d20-ad67-97a033cbbab1",
+                                                                    self.user.email,
+                                                                    self.user.full_name)
+                if envelope_id is not None:
+                    self.documents.create(envelope_id=envelope_id, template=template)
+                    return True
+
+                return False
+        else:
+            return False
 
     def update_all_is_signed(self):
+        """
+        Retrieves all the documents that the user has and checks in docusign for the status of the document
+            If the status is complete then the document is signed, otherwise it is not signed
+        """
         docusign = DocusignWrapper()
         for document in self.documents.all():
             document.is_signed = docusign.determine_is_signed(document.envelope_id)
+
+    @staticmethod
+    def retrieve_pre_tour_template():
+        try:
+            return HunterDocTemplateModel.objects.get(template_type=HunterDocTemplateModel.PRE_TOUR)
+        except HunterDocTemplateModel.DoesNotExist:
+            logger.error("Tried to retrieve the pre_tour_template but it did not exist")
+            return None
 
 
 class HunterDocTemplateModel(models.Model):
