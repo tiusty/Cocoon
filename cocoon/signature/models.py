@@ -7,6 +7,9 @@ from cocoon.signature.docusign.docusign_list_documents import DocusignWrapper
 # Cocoon modules
 from cocoon.userAuth.models import MyUser
 
+# Import constants
+from cocoon.signature.constants import PRE_TOUR_TEMPLATE_ID
+
 # Load the logger
 import logging
 logger = logging.getLogger(__name__)
@@ -58,7 +61,7 @@ class HunterDocManagerModel(models.Model):
         template = self.retrieve_pre_tour_template()
         if template is not None:
                 docusign = DocusignWrapper()
-                envelope_id = docusign.send_document_for_signatures("e998b44f-28cb-4d20-ad67-97a033cbbab1",
+                envelope_id = docusign.send_document_for_signatures(PRE_TOUR_TEMPLATE_ID,
                                                                     self.user.email,
                                                                     self.user.full_name)
                 if envelope_id is not None:

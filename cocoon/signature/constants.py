@@ -6,3 +6,6 @@ REDIRECT_URI = "https://bostoncocoon.com"
 PRIVATE_KEY_FILENAME = "docusign_private_key.txt"
 USER_ID = "4d882612-2587-4842-b32b-8d7e24458aba"
 ACCOUNT_ID = "6769317"
+
+# Template IDs
+PRE_TOUR_TEMPLATE_ID = 'fbe57a3d-1a9a-4242-bb05-abae8cd82be5'
