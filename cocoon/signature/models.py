@@ -40,14 +40,11 @@ class HunterDocManagerModel(models.Model):
                               False: The document is not signed
         """
         template = self.retrieve_pre_tour_template()
-        if template is not None:
-            if self.documents.filter(template=template).exists():
-                try:
-                    doc = get_object_or_404(HunterDocModel, template=template)
-                    return doc.is_signed
-                except HunterDocModel.DoesNotExist:
-                    return False
-            else:
+        if self.documents.filter(template=template).exists():
+            try:
+                doc = get_object_or_404(HunterDocModel, template=template)
+                return doc.is_signed
+            except HunterDocModel.DoesNotExist:
                 return False
         else:
             return False
@@ -59,25 +56,19 @@ class HunterDocManagerModel(models.Model):
         Otherwise the object is not created in the database
         """
         template = self.retrieve_pre_tour_template()
-        if template is not None:
-                docusign = DocusignWrapper()
-                envelope_id = docusign.send_document_for_signatures(template.template_id,
-                                                                    self.user.email,
-                                                                    self.user.full_name)
-                if envelope_id is not None:
-                    self.documents.create(envelope_id=envelope_id, template=template)
-                    return True
+        docusign = DocusignWrapper()
+        envelope_id = docusign.send_document_for_signatures(template.template_id,
+                                                            self.user.email,
+                                                            self.user.full_name)
+        if envelope_id is not None:
+            self.documents.create(envelope_id=envelope_id, template=template)
+            return True
 
-                return False
-        else:
-            return False
+        return False
 
     def pre_tour_forms_created(self):
         template = self.retrieve_pre_tour_template()
-        if template is not None:
-            return self.documents.filter(template=template).exists()
-        else:
-            return False
+        return self.documents.filter(template=template).exists()
 
     def update_all_is_signed(self):
         """
@@ -91,11 +82,11 @@ class HunterDocManagerModel(models.Model):
 
     @staticmethod
     def retrieve_pre_tour_template():
-        try:
-            return HunterDocTemplateModel.objects.get(template_type=HunterDocTemplateModel.PRE_TOUR)
-        except HunterDocTemplateModel.DoesNotExist:
-            logger.error("Tried to retrieve the pre_tour_template but it did not exist")
-            return None
+        (template, created) = HunterDocTemplateModel.objects.get_or_create(
+            template_type=HunterDocTemplateModel.PRE_TOUR,
+            template_id=PRE_TOUR_TEMPLATE_ID,
+        )
+        return template
 
 
 class HunterDocTemplateModel(models.Model):
