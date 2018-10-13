@@ -2,7 +2,7 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 
 # Import docusign wrapper classes
-from cocoon.signature.docusign.docusign_list_documents import DocusignWrapper
+from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
 
 # Cocoon modules
 from cocoon.userAuth.models import MyUser
