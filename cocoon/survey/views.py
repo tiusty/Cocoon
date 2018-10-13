@@ -10,6 +10,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
 
+# Import Signatures modules
+from cocoon.signature.models import HunterDocManagerModel
+
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
 
@@ -254,6 +257,12 @@ def visit_list(request):
     context = {
         'error_message': []
     }
+
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    manager = get_object_or_404(HunterDocManagerModel, user=user_profile.user)
+    pre_tour_signed = manager.is_pre_tour_signed()
+
+    context['pre_tour_signed'] = pre_tour_signed
 
     return render(request, 'survey/visitList.html', context)
 
