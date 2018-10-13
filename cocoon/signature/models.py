@@ -87,6 +87,7 @@ class HunterDocManagerModel(models.Model):
         docusign = DocusignWrapper()
         for document in self.documents.all():
             document.is_signed = docusign.determine_is_signed(document.envelope_id)
+            document.save()
 
     @staticmethod
     def retrieve_pre_tour_template():

@@ -441,3 +441,65 @@ def delete_visit_house(request):
         return HttpResponse(json.dumps({"result": "Method Not POST"}),
                             content_type="application/json",
                             )
+
+
+@login_required
+def send_documents(request):
+    """
+    :param request: The HTTP request
+    :return: An HTTP response which returns a JSON
+        result:
+            0- failures
+            1- success
+        message:
+            - the message asscoiated with the request
+    """
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                try:
+                    doc_manager = user_profile.user.doc_manager
+                    if not doc_manager.pre_tour_forms_created():
+                        if doc_manager.create_pre_tour_documents():
+                            return HttpResponse(json.dumps({"result": "1",
+                                                            "message": "Document Created"}),
+                                                content_type="application/json", )
+                        else:
+                            return HttpResponse(json.dumps({"result": "0",
+                                                            "message": "Document already exists"}),
+                                                content_type="application/json", )
+                    else:
+                        doc_manager.update_all_is_signed()
+                        if doc_manager.is_pre_tour_signed():
+                            return HttpResponse(json.dumps({"result": "2",
+                                                            "message": "Document signed!"}),
+                                                content_type="application/json", )
+                        else:
+                            return HttpResponse(json.dumps({"result": "1",
+                                                            "message": "Document still not signed"}),
+                                                content_type="application/json", )
+
+                except HunterDocManagerModel.DoesNotExist:
+                    return HttpResponse(json.dumps({
+                        "result": "0",
+                        "message": "Could not retrieve Home"}),
+                                        content_type="application/json",
+                                        )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "0",
+                                                "message": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result" : "0",
+                                            "message": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "0",
+                                        "message": "Method Not POST"}),
+                            content_type="application/json",
+                            )
