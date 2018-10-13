@@ -3,9 +3,6 @@ import docusign_esign as docusign
 from docusign_esign import AuthenticationApi, TemplatesApi, EnvelopesApi
 from docusign_esign.rest import ApiException
 
-# Import third party modules
-from pprint import pprint
-
 # Import Cocoon modules
 from cocoon.signature.docusign.docusign_base import DocusignLogin
 

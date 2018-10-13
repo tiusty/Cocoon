@@ -20,7 +20,10 @@ class DocusignLogin(object):
     def set_up_docusign_api(self):
         api_client = docusign.ApiClient(self.base_url)
         oauth_login_url = api_client.get_jwt_uri(self.integrator_key, self.redirect_uri, self.oauth_base_url)
-        print(oauth_login_url)
+
+        # Print only needed for first time use
+        # On first time put link into URL to allow permission
+        # print(oauth_login_url)
 
         # configure the ApiClient to asynchronously get an access token and store it
         api_client.configure_jwt_authorization_flow(self.private_key_filename, self.oauth_base_url, self.integrator_key,
