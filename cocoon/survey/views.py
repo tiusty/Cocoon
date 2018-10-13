@@ -452,7 +452,7 @@ def send_documents(request):
             0- failures
             1- success
         message:
-            - the message asscoiated with the request
+            - the message associated with the request
     """
     if request.method == "POST":
         # Only care if the user is authenticated
