@@ -263,6 +263,7 @@ def visit_list(request):
     pre_tour_signed = manager.is_pre_tour_signed()
 
     context['pre_tour_signed'] = pre_tour_signed
+    context['pre_tour_forms_created'] = manager.pre_tour_forms_created()
 
     return render(request, 'survey/visitList.html', context)
 

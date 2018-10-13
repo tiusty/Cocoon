@@ -72,6 +72,13 @@ class HunterDocManagerModel(models.Model):
         else:
             return False
 
+    def pre_tour_forms_created(self):
+        template = self.retrieve_pre_tour_template()
+        if template is not None:
+            return self.documents.filter(template=template).exists()
+        else:
+            return False
+
     def update_all_is_signed(self):
         """
         Retrieves all the documents that the user has and checks in docusign for the status of the document

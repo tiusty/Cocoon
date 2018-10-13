@@ -28,6 +28,9 @@
                 {% endif %}
     ">Schedule the Homes!
             </button>
+        {% if not pre_tour_forms_created %}
+            <button class="btn expand-btn">Send forms to email!</button>
+        {% endif %}
         </div>
         <div class="col-sm-6">
             <button class="btn expand-btn">Refresh Document Status</button>
