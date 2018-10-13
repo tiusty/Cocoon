@@ -468,7 +468,7 @@ def send_documents(request):
                                                             "message": "Document Created"}),
                                                 content_type="application/json", )
                         else:
-                            return HttpResponse(json.dumps({"result": "0",
+                            return HttpResponse(json.dumps({"result": "1",
                                                             "message": "Document already exists"}),
                                                 content_type="application/json", )
                     else:

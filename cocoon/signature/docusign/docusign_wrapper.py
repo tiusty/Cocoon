@@ -26,38 +26,20 @@ class DocusignWrapper(DocusignLogin):
 
     def list_documents(self, envelope_id):
 
-        auth_api = AuthenticationApi()
         envelopes_api = EnvelopesApi()
 
         try:
-            login_info = auth_api.login()
-            assert login_info is not None
-            assert len(login_info.login_accounts) > 0
-            login_accounts = login_info.login_accounts
-            assert login_accounts[0].account_id is not None
-
-            base_url, _ = login_accounts[0].base_url.split('/v2')
-            self.api_client.host = base_url
-            docusign.configuration.api_client = self.api_client
-
-            docs_list = envelopes_api.list_documents(login_accounts[0].account_id, self.envelope_id)
-            assert docs_list is not None
-            assert (docs_list.envelope_id == envelope_id)
-
-            print("EnvelopeDocumentsResult: ", end="")
-            # pprint(docs_list)
-
-            # The status of whether or not it is signed can be retrieved from here
-            # print(envelopes_api.get_envelope(account_id, envelope_id))
-
             # Lists recipients of an envelope and you can check whether or not it has been signed
             print(envelopes_api.list_recipients(self.account_id, envelope_id))
 
         except ApiException as e:
-            print("\nException when calling DocuSign API: %s" % e)
+            logger.error("\nException in {0} when calling DocuSign API: {1}"
+                         .format(DocusignWrapper.list_documents.__name__,
+                                 e))
             assert e is None  # make the test case fail in case of an API exception
 
-    def send_document_for_signatures(self, template_id, email, user_full_name):
+    @staticmethod
+    def send_document_for_signatures(template_id, email, user_full_name):
 
         # Create the role name
         template_role_name = 'Needs to sign'
@@ -88,27 +70,26 @@ class DocusignWrapper(DocusignLogin):
 
         try:
             login_info = auth_api.login(api_password='true', include_account_id_guid='true')
-            assert login_info is not None
-            assert len(login_info.login_accounts) > 0
+            assert login_info is not None, "Login_info is None"
+            assert len(login_info.login_accounts) > 0, "There are 0 accounts"
             login_accounts = login_info.login_accounts
-            assert login_accounts[0].account_id is not None
-
-            base_url, _ = login_accounts[0].base_url.split('/v2')
-            self.api_client.host = base_url
-            docusign.configuration.api_client = self.api_client
+            assert login_accounts[0].account_id is not None, "Account id is None"
 
             envelope_summary = envelopes_api.create_envelope(login_accounts[0].account_id, envelope_definition=envelope_definition)
-            assert envelope_summary is not None
-            assert envelope_summary.envelope_id is not None
-            assert envelope_summary.status == 'sent'
+            assert envelope_summary is not None, "Envelope_summary is None"
+            assert envelope_summary.envelope_id is not None, "Envelope id is None"
+            assert envelope_summary.status == 'sent', "Envelop status != sent"
 
-            print("EnvelopeSummary: ", end="")
-            pprint(envelope_summary)
+            logger.debug(envelope_summary)
             return envelope_summary.envelope_id
 
         except ApiException as e:
-            print("\nException when calling DocuSign API: %s" % e)
-            assert e is None # make the test case fail in case of an API exception
+            logger.error("\nException when calling DocuSign API: %s" % e)
+            return None
+
+        except AssertionError as e:
+            logger.error("\nAssertionError in {0}: {1}".format(DocusignWrapper.send_document_for_signatures.__name__,
+                                                                 e))
             return None
 
     def determine_is_signed(self, envelope_id):
@@ -122,10 +103,7 @@ class DocusignWrapper(DocusignLogin):
                 return False
 
         except ApiException as e:
-            logger.warning("\nException when calling DocuSign API: %s" % e)
+            logger.error("\nException in {0} when calling DocuSign API: {1}"
+                         .format(DocusignWrapper.determine_is_signed.__name__,
+                                 e))
             return False
-
-
-
-
-
