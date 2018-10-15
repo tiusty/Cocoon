@@ -258,11 +258,15 @@ def visit_list(request):
         'error_message': []
     }
 
+    # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
     manager = get_object_or_404(HunterDocManagerModel, user=user_profile.user)
-    pre_tour_signed = manager.is_pre_tour_signed()
 
-    context['pre_tour_signed'] = pre_tour_signed
+    # Since the page is loading, update all the signed documents to see if the status has changed
+    manager.update_all_is_signed()
+
+    # Create context to update the html based on the status of the documents
+    context['pre_tour_signed'] = manager.is_pre_tour_signed()
     context['pre_tour_forms_created'] = manager.pre_tour_forms_created()
 
     return render(request, 'survey/visitList.html', context)
