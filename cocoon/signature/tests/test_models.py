@@ -4,6 +4,14 @@ from django.test import TestCase
 # Import Cocoon modules
 from cocoon.signature.models import HunterDocModel, HunterDocTemplateModel, HunterDocManagerModel
 from cocoon.userAuth.models import MyUser
+from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
+from cocoon.signature.docusign.docusign_base import DocusignLogin
+
+# Import third party modules
+from unittest.mock import MagicMock
+
+# Import Constants
+from cocoon.signature.constants import PRE_TOUR_TEMPLATE_ID
 
 
 class TestSignatureModelsAllDocuments(TestCase):
@@ -122,7 +130,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="test@test.com")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.objects.create(template_id="123")
+        template = HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
 
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
@@ -135,7 +143,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="test@test.com")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.objects.create(template_id="123")
+        template = HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
 
         # Act
         manager.documents.create(template=template, envelope_id="123", is_signed=True)
@@ -151,7 +159,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="test@test.com")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.objects.create(template_id="123")
+        template = HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
 
         # Act
         manager.documents.create(template=template, envelope_id="123", is_signed=False)
@@ -180,6 +188,8 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
         HunterDocTemplateModel.create_pre_tour_template()
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.send_document_for_signatures = MagicMock(return_value="123")
 
         # Act
         result = manager.create_pre_tour_documents()
@@ -191,13 +201,19 @@ class TestSignatureModelsPreTourDocuments(TestCase):
                          HunterDocTemplateModel.objects.get(template_type=HunterDocTemplateModel.PRE_TOUR))
 
     def test_create_pre_tour_documents_template_does_not_exist(self):
+        """
+        Since the template is created when it is accessed, this should pass and return true
+        :return:
+        """
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.send_document_for_signatures = MagicMock(return_value="123")
 
         # Act
         result = manager.create_pre_tour_documents()
 
         # Assert
-        self.assertFalse(result)
+        self.assertTrue(result)
 
