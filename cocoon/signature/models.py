@@ -16,12 +16,26 @@ logger = logging.getLogger(__name__)
 
 
 class HunterDocManagerModel(models.Model):
+    """
+    Each Hunter has a corresponding Document manager. This stores all the documents that are linked to a
+        particular user
+
+    Attributes:
+        self.user: (OneToOneField) -> A link to the user that the doc manager is related to
+    """
     user = models.OneToOneField(MyUser, related_name="doc_manager", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.full_name
 
     def is_all_documents_signed(self):
+        """
+        Returns where or not all the documents for the given doc manager is signed.
+            Each user only has one doc manager so this also determines whether or not
+            the user signed all their paper work
+        :return: (Boolean) -> True: The user signed all the documents
+                              False: The user has not signed all the documents
+        """
         # If the number of documents is less than the number of template documents
         #   then automatically there are unsigned documents
         if HunterDocTemplateModel.objects.count() > self.documents.count():
@@ -54,6 +68,9 @@ class HunterDocManagerModel(models.Model):
         Creates the pre_tour document. This will create the object in the database as well as send a request to docusign
         If the request is successfully sent and the envelope_id is generated, then the object in the database is created.
         Otherwise the object is not created in the database
+
+        :return: (boolean) -> True: The document was successfully created
+                              False: The document was not successfully created
         """
         template = self.retrieve_pre_tour_template()
         docusign = DocusignWrapper()
@@ -67,6 +84,12 @@ class HunterDocManagerModel(models.Model):
         return False
 
     def pre_tour_forms_created(self):
+        """
+        Returns whether or not the pre_tours forms are created. This does not
+            say anything about whether or not the forms were signed
+        :return: (boolean) -> True: The pre_tour forms were created
+                              False: The pre_tour forms were not created
+        """
         template = self.retrieve_pre_tour_template()
         return self.documents.filter(template=template).exists()
 
@@ -91,13 +114,14 @@ class HunterDocManagerModel(models.Model):
 
 class HunterDocTemplateModel(models.Model):
     """
-        Atributes:
+        This stores the template id for the document. This is where the forms were generated from
+        Attributes:
             self.template_type (string) -> What the template corresponds to, i.e pre_tour forms, renting forms etc
             self.tempalte_id (string) -> The template id from docusign that corresponds to the type of template
     """
     PRE_TOUR = 'pt'
     DOC_TYPE = (
-        (PRE_TOUR, 'Pretour forms'),
+        (PRE_TOUR, 'Pre-tour forms'),
     )
 
     template_type = models.CharField(
@@ -122,6 +146,16 @@ class HunterDocTemplateModel(models.Model):
 
 
 class HunterDocModel(models.Model):
+    """
+    This stores information specific to a document. This stores what the template for the document is, which user
+        it is associated with, what the enevelope ID to find it on Docusign and whether or not the document is signed
+
+    Attributes:
+        self.doc_manager: (ForeignKey(HunterDocManager)) -> The associated doc manager that the document is linked to
+        self.template: (ForeignKey(HunterDocTemplateModel)) -> The template that is associated with the document
+        self.is_signed: (Boolean) -> Whether or not the document is signed
+        self.envelope_id: (string) -> The envelope id corresponding to the docuement on docusign
+    """
     doc_manager = models.ForeignKey(HunterDocManagerModel, related_name="documents", on_delete=models.CASCADE)
     template = models.ForeignKey(HunterDocTemplateModel, related_name="documents", on_delete=models.CASCADE)
     is_signed = models.BooleanField(default=False)
