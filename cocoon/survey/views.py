@@ -260,7 +260,9 @@ def visit_list(request):
 
     # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
-    manager = get_object_or_404(HunterDocManagerModel, user=user_profile.user)
+    manager = HunterDocManagerModel.objects.get_or_create(
+        user=user_profile.user,
+    )
 
     # Since the page is loading, update all the signed documents to see if the status has changed
     manager.update_all_is_signed()

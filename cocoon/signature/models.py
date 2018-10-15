@@ -123,7 +123,7 @@ class HunterDocTemplateModel(models.Model):
 
 class HunterDocModel(models.Model):
     doc_manager = models.ForeignKey(HunterDocManagerModel, related_name="documents", on_delete=models.CASCADE)
-    template = models.ForeignKey(HunterDocTemplateModel, related_name="templates", on_delete=models.CASCADE)
+    template = models.ForeignKey(HunterDocTemplateModel, related_name="documents", on_delete=models.CASCADE)
     is_signed = models.BooleanField(default=False)
     envelope_id = models.CharField(max_length=200)
 
