@@ -260,7 +260,7 @@ def visit_list(request):
 
     # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
-    manager = HunterDocManagerModel.objects.get_or_create(
+    (manager, _) = HunterDocManagerModel.objects.get_or_create(
         user=user_profile.user,
     )
 

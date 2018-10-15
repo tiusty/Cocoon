@@ -1,12 +1,14 @@
 # load django modules
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 # Load Cocoon Modules
 from cocoon.signature.models import HunterDocManagerModel, HunterDocTemplateModel
 from cocoon.userAuth.models import UserProfile
 
 
+@login_required
 def signature_page(request):
     context = {
         'error_message': []
@@ -17,6 +19,9 @@ def signature_page(request):
     (manager, _) = HunterDocManagerModel.objects.get_or_create(
         user=user_profile.user,
     )
+
+    # Update all the documents status before loading
+    manager.update_all_is_signed()
 
     # Retrieve all the template types
     template_types = HunterDocTemplateModel.objects.all()
