@@ -30,8 +30,8 @@ def signature_page(request):
     # Either stores the corresponding document with a True or
     #   stores False and then the template type that is missing
     for template in template_types:
-        if manager.documents.filter(template=template).exists():
-            docs.append((True, manager.documents.filter(template=template).first()))
+        if manager.documents.filter(template=template).filter(user=user_profile.user).exists():
+            docs.append((True, manager.documents.filter(template=template).filter(user=user_profile.user).first()))
         else:
             docs.append((False, template))
 
