@@ -133,8 +133,9 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
     def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_hunter = True
-        HunterDocManagerModel.objects.create(user=user)
         user.save()
+        manager = HunterDocManagerModel.objects.create(user=user)
+        manager.save()
         return user
 
 

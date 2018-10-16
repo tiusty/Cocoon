@@ -56,7 +56,7 @@ class HunterDocManagerModel(models.Model):
         template = self.retrieve_pre_tour_template()
         if self.documents.filter(template=template).exists():
             try:
-                doc = get_object_or_404(HunterDocModel, template=template, user=self.user)
+                doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
                 return doc.is_signed
             except HunterDocModel.DoesNotExist:
                 return False
