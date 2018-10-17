@@ -176,7 +176,7 @@ class HunterDocModel(models.Model):
         self.doc_manager: (ForeignKey(HunterDocManager)) -> The associated doc manager that the document is linked to
         self.template: (ForeignKey(HunterDocTemplateModel)) -> The template that is associated with the document
         self.is_signed: (Boolean) -> Whether or not the document is signed
-        self.envelope_id: (string) -> The envelope id corresponding to the docuement on docusign
+        self.envelope_id: (string) -> The envelope id corresponding to the document on docusign
     """
     doc_manager = models.ForeignKey(HunterDocManagerModel, related_name="documents", on_delete=models.CASCADE)
     template = models.ForeignKey(HunterDocTemplateModel, related_name="documents", on_delete=models.CASCADE)

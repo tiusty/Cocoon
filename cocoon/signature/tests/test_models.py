@@ -270,7 +270,6 @@ class TestSignatureModelsPreTourDocuments(TestCase):
     def test_create_pre_tour_documents_template_does_not_exist(self):
         """
         Since the template is created when it is accessed, this should pass and return true
-        :return:
         """
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
@@ -283,4 +282,21 @@ class TestSignatureModelsPreTourDocuments(TestCase):
 
         # Assert
         self.assertTrue(result)
+
+    def test_create_pre_tour_documents_envelope_id_none(self):
+        """
+        Tests that if the docusign api for creating the envelope_id fails and none is returned,
+            then create_pre_tour_documents returns false
+        """
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.send_document_for_signatures = MagicMock(return_value=None)
+
+        # Act
+        result = manager.create_pre_tour_documents()
+
+        # Assert
+        self.assertFalse(result)
 
