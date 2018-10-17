@@ -108,6 +108,11 @@ class HunterDocManagerModel(models.Model):
                     HunterDocManagerModel.resend_pre_tour_forms.__name__
                 ))
                 return False
+            except HunterDocModel.MultipleObjectsReturned:
+                logger.error("Multiple objects returned in: {0}".format(
+                    HunterDocManagerModel.resend_pre_tour_forms.__name__
+                ))
+                return False
             return docusign.resend_envelope(envelope_id)
 
     def update_all_is_signed(self):
