@@ -34,7 +34,7 @@ class TestSignatureModelsAllDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="test@test.com")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.objects.create(template_id="123")
+        HunterDocTemplateModel.objects.create(template_id="123")
 
         # Act/Assert
         self.assertFalse(manager.is_all_documents_signed())
@@ -153,7 +153,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="test@test.com")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
+        HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
 
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
@@ -299,4 +299,3 @@ class TestSignatureModelsPreTourDocuments(TestCase):
 
         # Assert
         self.assertFalse(result)
-

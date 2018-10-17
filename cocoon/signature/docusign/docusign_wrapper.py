@@ -144,8 +144,8 @@ class DocusignWrapper(DocusignLogin):
                                                                         recipients=recipients,
                                                                         resend_envelope='true')
             assert recipients_update_summary is not None, "Recipients update summary is None"
-            assert len(recipients_update_summary.recipient_update_results) > 0, "Length of recipient_update_results is " \
-                                                                                "not >0"
+            assert len(recipients_update_summary.recipient_update_results) > 0, "Length of recipient_update_results" \
+                                                                                "is not >0"
             assert ("SUCCESS" == recipients_update_summary.recipient_update_results[0].error_details.error_code), \
                 "The error code" \
                 "was not success"
