@@ -2,7 +2,8 @@ from __future__ import absolute_import, print_function
 import docusign_esign as docusign
 
 # Import constants
-from cocoon.signature.constants import INTEGRATOR_KEY, BASE_URL, OAUTH_BASE_URL, REDIRECT_URI, PRIVATE_KEY_FILENAME, USER_ID
+from cocoon.signature.constants import INTEGRATOR_KEY, BASE_URL, OAUTH_BASE_URL, REDIRECT_URI, PRIVATE_KEY_FILENAME, \
+    USER_ID
 
 
 class DocusignLogin(object):

@@ -2,7 +2,7 @@ from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
 
 print('hi')
 docusign = DocusignWrapper()
-result = docusign.send_document_for_signatures('e998b44f-28cb-4d20-ad67-97a033cbbab1', "awagud12@gmail.com", "Alex The Best")
+result = docusign.resend_envelope('9079a344-0bac-4a3d-89b7-f4d1babf249f')
 print(result)
 # from __future__ import absolute_import, print_function
 # from pprint import pprint

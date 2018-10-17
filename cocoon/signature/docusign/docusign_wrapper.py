@@ -104,3 +104,37 @@ class DocusignWrapper(DocusignLogin):
                          .format(DocusignWrapper.determine_is_signed.__name__,
                                  e))
             return False
+
+    def resend_envelope(self, envelope_id):
+        """
+        Resends the envelope to the user if they need it again (i.e they deleted it or something)
+
+        :param envelope_id: (string) -> The envelope_id stored on docusign
+        :return: (boolean) -> True: The document was successfully resent
+                              False; The document was not able to be resent
+        """
+        envelopes_api = EnvelopesApi()
+
+        try:
+            # Add the signer (it is 1 since there should only be one signer per document)
+            signer = docusign.Signer()
+            # signer.email = "agudelo.a@gatech.edu"
+            # signer.name = 'Alex Agudelo 2asdfsdf'
+            signer.recipient_id = 1
+
+            recipients = docusign.Recipients()
+            recipients.signers = [signer]
+
+            recipients_update_summary = envelopes_api.update_recipients(self.account_id, envelope_id, recipients=recipients,
+                                                                        resend_envelope='true')
+            assert recipients_update_summary is not None
+            assert len(recipients_update_summary.recipient_update_results) > 0
+            assert ("SUCCESS" == recipients_update_summary.recipient_update_results[0].error_details.error_code);
+            print("RecipientsUpdateSummary: ", end="")
+            return True
+
+        except ApiException as e:
+            logger.error("\nException in {0} when calling DocuSign API: {1}"
+                         .format(DocusignWrapper.resend_envelope.__name__,
+                                 e))
+            return False
