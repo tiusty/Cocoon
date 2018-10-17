@@ -93,6 +93,23 @@ class HunterDocManagerModel(models.Model):
         template = self.retrieve_pre_tour_template()
         return self.documents.filter(template=template).exists()
 
+    def resend_pre_tour_forms(self):
+        """
+        Re-sends the pre tour forms to the user.
+        This is used in case they lost it etc and need it resent to their email
+        """
+        template = self.retrieve_pre_tour_template()
+        docusign = DocusignWrapper()
+        if self.documents.filter(template=template).exists():
+            try:
+                envelope_id = self.documents.get(template=template)
+            except HunterDocModel.DoesNotExist:
+                logger.error("Tried to return Document that does not exist: {0}".format(
+                    HunterDocManagerModel.resend_pre_tour_forms.__name__
+                ))
+                return False
+            return docusign.resend_envelope(envelope_id)
+
     def update_all_is_signed(self):
         """
         Retrieves all the documents that the user has and checks in docusign for the status of the document
