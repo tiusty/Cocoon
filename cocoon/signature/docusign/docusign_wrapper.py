@@ -1,6 +1,6 @@
 # Import Docusign Modules
 import docusign_esign as docusign
-from docusign_esign import AuthenticationApi, TemplatesApi, EnvelopesApi
+from docusign_esign import AuthenticationApi, EnvelopesApi
 from docusign_esign.rest import ApiException
 
 # Import Cocoon modules
@@ -80,7 +80,8 @@ class DocusignWrapper(DocusignLogin):
             login_accounts = login_info.login_accounts
             assert login_accounts[0].account_id is not None, "Account id is None"
 
-            envelope_summary = envelopes_api.create_envelope(login_accounts[0].account_id, envelope_definition=envelope_definition)
+            envelope_summary = envelopes_api.create_envelope(login_accounts[0].account_id,
+                                                             envelope_definition=envelope_definition)
             assert envelope_summary is not None, "Envelope_summary is None"
             assert envelope_summary.envelope_id is not None, "Envelope id is None"
             assert envelope_summary.status == 'sent', "Envelop status != sent"
@@ -94,7 +95,7 @@ class DocusignWrapper(DocusignLogin):
 
         except AssertionError as e:
             logger.error("\nAssertionError in {0}: {1}".format(DocusignWrapper.send_document_for_signatures.__name__,
-                                                                 e))
+                                                               e))
             return None
 
     def determine_is_signed(self, envelope_id):
@@ -139,11 +140,15 @@ class DocusignWrapper(DocusignLogin):
             recipients = docusign.Recipients()
             recipients.signers = [signer]
 
-            recipients_update_summary = envelopes_api.update_recipients(self.account_id, envelope_id, recipients=recipients,
+            recipients_update_summary = envelopes_api.update_recipients(self.account_id, envelope_id,
+                                                                        recipients=recipients,
                                                                         resend_envelope='true')
-            assert recipients_update_summary is not None
-            assert len(recipients_update_summary.recipient_update_results) > 0
-            assert ("SUCCESS" == recipients_update_summary.recipient_update_results[0].error_details.error_code);
+            assert recipients_update_summary is not None, "Recipients update summary is None"
+            assert len(recipients_update_summary.recipient_update_results) > 0, "Length of recipient_update_results is " \
+                                                                                "not >0"
+            assert ("SUCCESS" == recipients_update_summary.recipient_update_results[0].error_details.error_code), \
+                "The error code" \
+                "was not success"
             print("RecipientsUpdateSummary: ", end="")
             return True
 
