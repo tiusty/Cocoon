@@ -127,6 +127,13 @@ class HunterDocManagerModel(models.Model):
 
     @staticmethod
     def retrieve_pre_tour_template():
+        """
+        Wrapper class to retrieve the pre_tour template
+
+        This will either return the template if it exists, or creates it with the correct
+            template_id if it doesn't exist
+        :return:
+        """
         (template, created) = HunterDocTemplateModel.objects.get_or_create(
             template_type=HunterDocTemplateModel.PRE_TOUR,
             template_id=PRE_TOUR_TEMPLATE_ID,
