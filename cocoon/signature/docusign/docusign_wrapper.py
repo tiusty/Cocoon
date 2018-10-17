@@ -37,6 +37,14 @@ class DocusignWrapper(DocusignLogin):
 
     @staticmethod
     def send_document_for_signatures(template_id, email, user_full_name):
+        """
+        Creates a document for the user to sign
+
+        :param template_id: (string) -> The docusign template to use for the documents
+        :param email: (string) -> The user email to send the documents to
+        :param user_full_name: (string) -> The full name of the user
+        :return: (string|None) -> Returns either the envelope_id of the created documents or None if there was a failure
+        """
 
         # Create the role name
         template_role_name = 'Needs to sign'
@@ -90,6 +98,12 @@ class DocusignWrapper(DocusignLogin):
             return None
 
     def determine_is_signed(self, envelope_id):
+        """
+        Queries docusign for a particular envelope to see if the user signed it or not
+        :param envelope_id: (String) -> The envelope_id of the document that is being checked
+        :return: (boolean) -> True: The document is signed
+                              False: The document is not signed or error
+        """
 
         envelopes_api = EnvelopesApi()
 
