@@ -1,21 +1,15 @@
-/**
- * created by awagu on 5/15/2017.
- */
 /*
-    function: set_favorite(num, url)
+    function: send_documents(url)
 
     arguments:
-    1. num: this is the id of the home that will be added as a favorite
-    2. url: this is the url that the ajax request will be sent to
+    1. url: this is the url that the ajax request will be sent to
 
     description:
-    this function creates an ajax request that will toggle a home in the users favorite list.
-    if the home is already in the list then it will remove the home from the list,
-    if the home is not in the list, then it will add the home to the list
+    This function either creates the documents if they are not created yet, or will
+        query docusign to see if the documents have already been signed
 
  */
 function send_documents(url) {
-    console.log("send Documents");
     $.ajax({
         url: url,
         type: "post", //http method
