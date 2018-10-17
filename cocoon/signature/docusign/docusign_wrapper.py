@@ -15,14 +15,29 @@ logger = logging.getLogger(__name__)
 
 
 class DocusignWrapper(DocusignLogin):
+    """
+    Docusign Wrapper class that encapsolates some of the functionality of docusign
+
+    Attributes:
+        self.account_id: (string) -> The account id on docusign
+    """
 
     def __init__(self):
         super().__init__()
+
+        # Setups the api connection
         self.set_up_docusign_api()
+
+        # Sets the account ID
         self.account_id = ACCOUNT_ID
 
     def list_documents(self, envelope_id):
+        """
+        Just prints out all the information associated with an envelope on docusign
+        :param envelope_id: (string) -> The envelope_id for the envelope that is desired
+        """
 
+        # Initializes the envelope
         envelopes_api = EnvelopesApi()
 
         try:
@@ -70,16 +85,19 @@ class DocusignWrapper(DocusignLogin):
         # send the envelope by setting |status| to "sent". To save as a draft set to "created"
         envelope_definition.status = 'sent'
 
+        # Initialize the auth and envelope api
         auth_api = AuthenticationApi()
         envelopes_api = EnvelopesApi()
 
         try:
+            # Login into the api
             login_info = auth_api.login(api_password='true', include_account_id_guid='true')
             assert login_info is not None, "Login_info is None"
             assert len(login_info.login_accounts) > 0, "There are 0 accounts"
             login_accounts = login_info.login_accounts
             assert login_accounts[0].account_id is not None, "Account id is None"
 
+            # Create and send the envelope to the user
             envelope_summary = envelopes_api.create_envelope(login_accounts[0].account_id,
                                                              envelope_definition=envelope_definition)
             assert envelope_summary is not None, "Envelope_summary is None"
@@ -87,6 +105,8 @@ class DocusignWrapper(DocusignLogin):
             assert envelope_summary.status == 'sent', "Envelop status != sent"
 
             logger.debug(envelope_summary)
+
+            # Returns the envelope_id so that it can be stored in the database
             return envelope_summary.envelope_id
 
         except ApiException as e:
@@ -106,9 +126,12 @@ class DocusignWrapper(DocusignLogin):
                               False: The document is not signed or error
         """
 
+        # Initialize the envelope api
         envelopes_api = EnvelopesApi()
 
         try:
+            # Queries docusign for the envelope and checks the status of the document
+            #   if it is completed, then it is signed, otherwise it still hasn't been signed
             if envelopes_api.list_recipients(self.account_id, envelope_id).signers[0].status == 'completed':
                 return True
             else:
@@ -128,18 +151,20 @@ class DocusignWrapper(DocusignLogin):
         :return: (boolean) -> True: The document was successfully resent
                               False; The document was not able to be resent
         """
+
+        # Initialize the envelope api
         envelopes_api = EnvelopesApi()
 
         try:
             # Add the signer (it is 1 since there should only be one signer per document)
             signer = docusign.Signer()
-            # signer.email = "agudelo.a@gatech.edu"
-            # signer.name = 'Alex Agudelo 2asdfsdf'
             signer.recipient_id = 1
 
+            # Add the signer to a recipient list
             recipients = docusign.Recipients()
             recipients.signers = [signer]
 
+            # Queries docusign and tells it to resend that envelope
             recipients_update_summary = envelopes_api.update_recipients(self.account_id, envelope_id,
                                                                         recipients=recipients,
                                                                         resend_envelope='true')
@@ -150,6 +175,7 @@ class DocusignWrapper(DocusignLogin):
                 "The error code" \
                 "was not success"
             print("RecipientsUpdateSummary: ", end="")
+
             return True
 
         except ApiException as e:

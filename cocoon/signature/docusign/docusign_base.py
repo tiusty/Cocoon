@@ -7,6 +7,17 @@ from cocoon.signature.constants import INTEGRATOR_KEY, BASE_URL, OAUTH_BASE_URL,
 
 
 class DocusignLogin(object):
+    """
+    The Base docusign class that initializes the api call and ensures that the connection is setup
+
+    Attributes:
+        self.integrator_key: (string) -> The integrator key from docusign
+        self.base_url: (string) -> The base url to the docusign api
+        self.oauth_base_url: (string) -> The url to the authentication to docusign
+        self.redirect_uri: (string) -> A redirect uri (not sure the full purpose of it)
+        self.private_key_filename: (string) -> The path to the docusign private key
+        self.user_id: (string) -> The user_id associated with our docusign account
+    """
 
     def __init__(self):
         self.integrator_key = INTEGRATOR_KEY
@@ -15,7 +26,6 @@ class DocusignLogin(object):
         self.redirect_uri = REDIRECT_URI
         self.private_key_filename = PRIVATE_KEY_FILENAME
         self.user_id = USER_ID
-
         self.api_client = None
 
     def set_up_docusign_api(self):
