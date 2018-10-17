@@ -47,7 +47,7 @@ class ItineraryModel(models.Model):
 
 class TimeModel(models.Model):
     time = models.DateTimeField(default=timezone.now)
-    itinerary_model = models.ForeignKey(ItineraryModel, related_name='itinerary_model', on_delete=models.CASCADE)
+    itinerary_model = models.ForeignKey(ItineraryModel, related_name='available_start_times', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.time
