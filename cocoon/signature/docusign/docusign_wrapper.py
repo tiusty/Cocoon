@@ -122,7 +122,7 @@ class DocusignWrapper(DocusignLogin):
 
     def resend_envelope(self, envelope_id):
         """
-        Resends the envelope to the user if they need it again (i.e they deleted it or something)
+        Re-sends the envelope to the user if they need it again (i.e they deleted it or something)
 
         :param envelope_id: (string) -> The envelope_id stored on docusign
         :return: (boolean) -> True: The document was successfully resent
