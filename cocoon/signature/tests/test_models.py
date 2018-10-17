@@ -107,6 +107,29 @@ class TestSignatureModelsAllDocuments(TestCase):
         # Assert
         self.assertFalse(manager.is_all_documents_signed())
 
+    def test_is_all_signed_multiple_users(self):
+        """
+        Tests that if there are multiple users, the users documents don't conflict. I.e the user with all
+            the documents signed returns true and the other returns false
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        user1 = MyUser.objects.create(email="test@test1.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        manager1 = HunterDocManagerModel.objects.create(user=user1)
+        template = HunterDocManagerModel.retrieve_pre_tour_template()
+        template2 = HunterDocTemplateModel.objects.create(template_type="tb", template_id="123")
+
+        # Act
+        manager.documents.create(template=template, envelope_id="123", is_signed=True)
+        manager.documents.create(template=template2, envelope_id="122", is_signed=False)
+        manager1.documents.create(template=template, envelope_id='321', is_signed=True)
+        manager1.documents.create(template=template2, envelope_id='324', is_signed=True)
+
+        # Assert
+        self.assertFalse(manager.is_all_documents_signed())
+        self.assertTrue(manager1.is_all_documents_signed())
+
 
 class TestSignatureModelsPreTourDocuments(TestCase):
 
@@ -183,7 +206,51 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
 
+    def test_is_pre_tour_signed_multiple_users_one_does_not_exist(self):
+        """
+        Tests that if there are different users, if one has it signed and one does not have a doc created,
+            then the user that has it signed returns true and the other is false
+        :return:
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        user1 = MyUser.objects.create(email="test@test1.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        manager1 = HunterDocManagerModel.objects.create(user=user1)
+        template = HunterDocManagerModel.retrieve_pre_tour_template()
+
+        # Act
+        manager1.documents.create(template=template, envelope_id="123", is_signed=True)
+
+        # Assert
+        self.assertFalse(manager.is_pre_tour_signed())
+        self.assertTrue(manager1.is_pre_tour_signed())
+
+    def test_is_pre_tour_signed_multiple_users(self):
+        """
+        Tests that if each user has a pre tour document, then if one is signed and one isn't,
+            the correct validation is returned from is_pre_tour_signed
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        user1 = MyUser.objects.create(email="test@test1.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        manager1 = HunterDocManagerModel.objects.create(user=user1)
+        template = HunterDocManagerModel.retrieve_pre_tour_template()
+
+        # Act
+        manager.documents.create(template=template, envelope_id="123", is_signed=False)
+        manager1.documents.create(template=template, envelope_id="123", is_signed=True)
+
+        # Assert
+        self.assertFalse(manager.is_pre_tour_signed())
+        self.assertTrue(manager1.is_pre_tour_signed())
+
     def test_create_pre_tour_documents_send(self):
+        """
+        Tests that if the document is sent and the enevelope is retrieved then the document
+            is created in the database
+        """
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
