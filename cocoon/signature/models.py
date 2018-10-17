@@ -132,7 +132,7 @@ class HunterDocManagerModel(models.Model):
 
         This will either return the template if it exists, or creates it with the correct
             template_id if it doesn't exist
-        :return:
+        :return: (HunterDocTemplateModel) -> Returns the pre tour template model
         """
         (template, created) = HunterDocTemplateModel.objects.get_or_create(
             template_type=HunterDocTemplateModel.PRE_TOUR,
@@ -165,10 +165,13 @@ class HunterDocTemplateModel(models.Model):
     def create_pre_tour_template():
         """
         Creates the pre_tour_template with the correct template_id
+        :return: (HunterDocTemplateModel) -> The created template
         """
-        if not HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR).exists():
-            HunterDocTemplateModel.objects.create(template_type=HunterDocTemplateModel.PRE_TOUR,
-                                                  template_id=PRE_TOUR_TEMPLATE_ID)
+        (template, created) = HunterDocTemplateModel.objects.get_or_create(
+            template_type=HunterDocTemplateModel.PRE_TOUR,
+            template_id=PRE_TOUR_TEMPLATE_ID,
+        )
+        return template
 
     def __str__(self):
         return self.get_template_type_display()
