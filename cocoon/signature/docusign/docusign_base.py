@@ -1,4 +1,7 @@
+# Third Party imports
 from __future__ import absolute_import, print_function
+
+# Docusign imports
 import docusign_esign as docusign
 
 # Import constants
