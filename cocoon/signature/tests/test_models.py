@@ -327,6 +327,21 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         self.assertFalse(manager.is_pre_tour_signed())
         self.assertTrue(manager1.is_pre_tour_signed())
 
+    def test_is_pre_tour_signed_document_does_not_exist(self):
+        """
+        Tests that if is_pre_tour_signed is called and the document doesn't exist, then false is returned
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
+
+        # Act
+        result = manager.is_pre_tour_signed()
+
+        # Assert
+        self.assertFalse(result)
+
     def test_create_pre_tour_documents_send(self):
         """
         Tests that if the document is sent and the enevelope is retrieved then the document
