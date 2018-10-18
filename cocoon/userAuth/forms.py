@@ -129,7 +129,7 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_hunter = True
         user.save()
@@ -168,7 +168,7 @@ class BrokerSignupForm(BaseRegisterForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_broker = True
         user.save()

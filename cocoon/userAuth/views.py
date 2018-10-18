@@ -48,7 +48,7 @@ def loginPage(request):
                 # return invalid user
                 context['error_message'].append('Unable to login in with Email/Password combo')
         else:
-            context['error_message'].append('Unable to login in, refill out the form')
+            context['error_message'].append("Could not login. Please verify your email if you haven't yet")
 
     context['form'] = form
     return render(request, 'userAuth/login.html', context)
@@ -92,7 +92,8 @@ class ApartmentHunterSignupView(CreateView):
             mail_subject, message, to=[to_email]
         )
         email.send()
-        messages.info(self.request, "Please confirm your email address to complete registration")
+        messages.info(self.request, "Please confirm your email address to complete registration. "
+                                    "Make sure to check the spam folder")
         return HttpResponseRedirect(reverse('homePage:index'))
 
 
@@ -109,8 +110,26 @@ class BrokerSignupView(CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+        current_site = get_current_site(self.request)
+        mail_subject = 'Activate your Cocoon Account'
+        message = render_to_string(
+            'userAuth/email/account_activate_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            }
+        )
+        to_email = user.email
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.send()
+        messages.info(self.request, "Please confirm your email address to complete registration. "
+                                    "Make sure to check the spam folder")
         return HttpResponseRedirect(reverse('homePage:index'))
 
 
