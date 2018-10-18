@@ -97,6 +97,8 @@ class HunterDocManagerModel(models.Model):
         """
         Re-sends the pre tour forms to the user.
         This is used in case they lost it etc and need it resent to their email
+        :return: (boolean) -> True: If the pre tour documents are resent
+                              False: IF the pre tour documents are not resent
         """
         template = self.retrieve_pre_tour_template()
         docusign = DocusignWrapper()

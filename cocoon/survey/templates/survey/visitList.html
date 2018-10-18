@@ -32,7 +32,7 @@
         </div>
         {% if not pre_tour_signed %}
         <div class="col-sm-6">
-            <button class="btn expand-btn" id="refresh_docs" onclick="send_documents('{% url 'survey:sendDocuments' %}');">
+            <button class="btn expand-btn" id="refresh_docs" onclick="check_pre_tour_documents('{% url 'survey:checkPretourDocuments' %}');">
                 {% if not pre_tour_forms_created %}
                     Send Documents
                 {% else %}
@@ -74,7 +74,7 @@
     {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
     <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
-    <script src="{% static 'survey/javascript/ajax/send_documents.js' %}"></script>
+    <script src="{% static 'survey/javascript/ajax/check_pre_tour_documents.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables removing homes from the users visit list{% endcomment %}
     <script src="{% static 'Unicorn/homes/javascript/delete_visit_house.js' %}"></script>
     {# Necessary imports for the global tiles #}

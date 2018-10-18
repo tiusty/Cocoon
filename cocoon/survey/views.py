@@ -450,13 +450,16 @@ def delete_visit_house(request):
 
 
 @login_required
-def send_documents(request):
+def check_pre_tour_documents(request):
     """
+    This function is a ajax request that either sends the documents if they are not created
+        or will check the status of the documents if they are already sent
     :param request: The HTTP request
     :return: An HTTP response which returns a JSON
         result:
             0- failures
-            1- success
+            1- success - Pre-tour document is not signed but is sent (either just sent or already had been sent)
+            2 - success - Pre-tour document signed
         message:
             - the message associated with the request
     """
@@ -491,7 +494,7 @@ def send_documents(request):
                 except HunterDocManagerModel.DoesNotExist:
                     return HttpResponse(json.dumps({
                         "result": "0",
-                        "message": "Could not retrieve Home"}),
+                        "message": "Could not retrieve doc_manager"}),
                                         content_type="application/json",
                                         )
             except UserProfile.DoesNotExist:
@@ -501,6 +504,58 @@ def send_documents(request):
                                     )
         else:
             return HttpResponse(json.dumps({"result" : "0",
+                                            "message": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "0",
+                                        "message": "Method Not POST"}),
+                            content_type="application/json",
+                            )
+
+
+@login_required
+def resend_pre_tour_forms(request):
+    """
+    This ajax request will resend the pre-tour documents to the users email
+    :param request: The HTTP request
+    :return: An HTTP response which returns a JSON
+        result:
+            0- failures
+            1- success - The document was resent to the user
+        message:
+            - the message associated with the request
+    """
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                try:
+                    doc_manager = user_profile.user.doc_manager
+                    if doc_manager.resend_pre_tour_forms():
+                        return HttpResponse(json.dumps({"result": "1",
+                                                        "message": "Document resent"}),
+                                            content_type="application/json", )
+                    else:
+                        return HttpResponse(json.dumps({"result": "0",
+                                                        "message": "Document not resent"}),
+                                            content_type="application/json", )
+
+                except HunterDocManagerModel.DoesNotExist:
+                    return HttpResponse(json.dumps({
+                        "result": "0",
+                        "message": "Could not retrieve doc_manager"}),
+                        content_type="application/json",
+                    )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "0",
+                                                "message": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result": "0",
                                             "message": "User not authenticated"}),
                                 content_type="application/json",
                                 )

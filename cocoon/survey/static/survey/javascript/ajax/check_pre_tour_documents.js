@@ -1,5 +1,5 @@
 /*
-    function: send_documents(url)
+    function: check_pre_tour_documents(url)
 
     arguments:
     1. url: this is the url that the ajax request will be sent to
@@ -9,7 +9,7 @@
         query docusign to see if the documents have already been signed
 
  */
-function send_documents(url) {
+function check_pre_tour_documents(url) {
     $.ajax({
         url: url,
         type: "post", //http method
