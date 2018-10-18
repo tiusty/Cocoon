@@ -104,7 +104,8 @@ class HunterDocManagerModel(models.Model):
         docusign = DocusignWrapper()
         if self.documents.filter(template=template).exists():
             try:
-                envelope_id = self.documents.get(template=template)
+                document = self.documents.get(template=template)
+                envelope_id = document.envelope_id
             except HunterDocModel.DoesNotExist:
                 logger.error("Tried to return Document that does not exist: {0}".format(
                     HunterDocManagerModel.resend_pre_tour_forms.__name__

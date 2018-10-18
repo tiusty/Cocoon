@@ -515,7 +515,7 @@ def check_pre_tour_documents(request):
 
 
 @login_required
-def resend_pre_tour_forms(request):
+def resend_pre_tour_documents(request):
     """
     This ajax request will resend the pre-tour documents to the users email
     :param request: The HTTP request
