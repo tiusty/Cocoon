@@ -9,8 +9,15 @@ from django.contrib import messages
 from django.views.generic import CreateView, TemplateView
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
+
+# Used for email verification
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_text
+from .tokens import account_activation_token
+from django.core.mail import EmailMessage
 
 
 def index(request):
@@ -67,8 +74,25 @@ class ApartmentHunterSignupView(CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+        current_site = get_current_site(self.request)
+        mail_subject = 'Activate your Cocoon Account'
+        message = render_to_string(
+            'userAuth/email/account_activate_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            }
+        )
+        to_email = user.email
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+        email.send()
+        messages.info(self.request, "Please confirm your email address to complete registration")
         return HttpResponseRedirect(reverse('homePage:index'))
 
 
@@ -87,6 +111,23 @@ class BrokerSignupView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
+        return HttpResponseRedirect(reverse('homePage:index'))
+
+
+def activate_account(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = MyUser.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, MyUser.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        messages.info(request, "Thank you for verifying your email")
+        return HttpResponseRedirect(reverse('homePage:index'))
+    else:
+        messages.error(request, "The activation link is invalid")
         return HttpResponseRedirect(reverse('homePage:index'))
 
 
