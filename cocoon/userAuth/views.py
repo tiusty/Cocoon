@@ -74,6 +74,12 @@ class ApartmentHunterSignupView(CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
+        """
+        When the hunter creates an account make sure to set the user.is_active = false
+            and then send an email to their account so they can validate the account
+        :param form: (ApartmentHunterSignupForm) -> The hunter signup form with their info
+        :return: (HttpResponseRedirect) -> Send them to the home page with the valid message
+        """
         user = form.save(commit=False)
         user.is_active = False
         user.save()
@@ -110,6 +116,12 @@ class BrokerSignupView(CreateView):
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
+        """
+        When the Broker creates an account make sure to set the user.is_active = false
+            and then send an email to their account so they can validate the account
+        :param form: (BrokerSignupForm) -> The broker signup form with their info
+        :return: (HttpResponseRedirect) -> Send them to the home page with the valid message
+        """
         user = form.save(commit=False)
         user.is_active = False
         user.save()
@@ -134,6 +146,14 @@ class BrokerSignupView(CreateView):
 
 
 def activate_account(request, uidb64, token):
+    """
+    Given a uidb and token from an email authentication link make sure the token etc is valid
+        and then if it is then activate the user account and login them in
+    :param request: (request) -> The http request
+    :param uidb64: (string) -> The user id hashed
+    :param token: (string) -> The token that validates the link to the user account
+    :return: (httpredirect) -> To the home page
+    """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = MyUser.objects.get(pk=uid)
