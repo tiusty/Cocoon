@@ -43,8 +43,8 @@
 
                     </button>
 
-                    <button class="btn expand-btn
-                    {% if not pre_tour_forms_created %} hide {% endif %}" id="resendDocs"
+                    <button class="btn expand-btn"
+                    {% if not pre_tour_forms_created %}style="display: none;"{% endif %} id="resendDocs"
                             onclick="resend_pre_tour_documents('{% url 'survey:resendPretourDocuments' %}')">
                     Resend Documents to email
                     </button>
