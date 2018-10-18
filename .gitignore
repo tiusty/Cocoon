@@ -14,6 +14,7 @@ config/apache2/*.conf
 # Ignore all keys in the key directory
 config/keys/*
 !config/keys/__init__.py
+!config/keys/keys_filepaths.py
 
 # Html files in the docs
 docs/*.html

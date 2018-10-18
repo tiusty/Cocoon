@@ -5,8 +5,9 @@ from __future__ import absolute_import, print_function
 import docusign_esign as docusign
 
 # Import constants
-from cocoon.signature.constants import INTEGRATOR_KEY, BASE_URL, OAUTH_BASE_URL, REDIRECT_URI, PRIVATE_KEY_FILENAME, \
+from cocoon.signature.constants import INTEGRATOR_KEY, BASE_URL, OAUTH_BASE_URL, REDIRECT_URI, \
     USER_ID
+from config.keys.keys_filepaths import KEY_FILE_PATHS
 
 
 class DocusignLogin(object):
@@ -27,7 +28,7 @@ class DocusignLogin(object):
         self.base_url = BASE_URL
         self.oauth_base_url = OAUTH_BASE_URL
         self.redirect_uri = REDIRECT_URI
-        self.private_key_filename = PRIVATE_KEY_FILENAME
+        self.private_key_filename = KEY_FILE_PATHS['DOCUSIGN_PRIVATE_KEY']
         self.user_id = USER_ID
         self.api_client = None
 
