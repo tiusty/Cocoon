@@ -66,8 +66,8 @@ class HunterDocManagerModel(models.Model):
     def create_pre_tour_documents(self):
         """
         Creates the pre_tour document. This will create the object in the database as well as send a request to docusign
-        If the request is successfully sent and the envelope_id is generated, then the object in the database is created.
-        Otherwise the object is not created in the database
+        If the request is successfully sent and the envelope_id is generated, then the object in the database is
+        created. Otherwise the object is not created in the database
 
         :return: (boolean) -> True: The document was successfully created
                               False: The document was not successfully created

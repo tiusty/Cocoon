@@ -196,8 +196,8 @@ class TestSignatureModelsAllDocuments(TestCase):
         user = MyUser.objects.create(email="test@test.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
-        doc = manager.documents.create(template=template, envelope_id='123', is_signed=False)
-        doc1 = manager.documents.create(template=template, envelope_id='321', is_signed=False)
+        manager.documents.create(template=template, envelope_id='123', is_signed=False)
+        manager.documents.create(template=template, envelope_id='321', is_signed=False)
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -334,7 +334,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="test@test.com")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
+        HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
 
         # Act
         result = manager.is_pre_tour_signed()
@@ -464,7 +464,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.create_pre_tour_template()
+        HunterDocTemplateModel.create_pre_tour_template()
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -486,8 +486,8 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.create_pre_tour_template()
-        doc = manager.documents.create(template=template, envelope_id='123')
-        doc1 = manager.documents.create(template=template, envelope_id='321')
+        manager.documents.create(template=template, envelope_id='123')
+        manager.documents.create(template=template, envelope_id='321')
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()

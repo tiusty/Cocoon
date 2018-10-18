@@ -42,4 +42,3 @@ class DocusignLogin(object):
 
         self.api_client = api_client
         docusign.configuration.api_client = api_client
-
