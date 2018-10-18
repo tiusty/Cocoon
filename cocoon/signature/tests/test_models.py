@@ -8,7 +8,7 @@ from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
 from cocoon.signature.docusign.docusign_base import DocusignLogin
 
 # Import third party modules
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
 # Import Constants
 from cocoon.signature.constants import PRE_TOUR_TEMPLATE_ID
@@ -129,6 +129,87 @@ class TestSignatureModelsAllDocuments(TestCase):
         # Assert
         self.assertFalse(manager.is_all_documents_signed())
         self.assertTrue(manager1.is_all_documents_signed())
+
+    def test_update_all_is_signed_both_signed(self):
+        """
+        Tests that if documents state have been changed to signed or not, then the database
+            updates the documents is_signed accordingly
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
+        doc = manager.documents.create(template=template, envelope_id='123', is_signed=True)
+        doc1 = manager.documents.create(template=template, envelope_id='321', is_signed=False)
+
+        # Magic mock to prevent remote api call
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.determine_is_signed = MagicMock(return_value=True)
+
+        # Act
+        manager.update_all_is_signed()
+
+        # Update the documents
+        doc = HunterDocModel.objects.get(id=doc.id)
+        doc1 = HunterDocModel.objects.get(id=doc1.id)
+
+        # Assert
+        self.assertTrue(doc.is_signed)
+        self.assertTrue(doc1.is_signed)
+
+    def test_update_all_is_signed_both_not_signed(self):
+        """
+        Tests that if documents state have been changed to signed or not, then the database
+            updates the documents is_signed accordingly
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
+        doc = manager.documents.create(template=template, envelope_id='123', is_signed=True)
+        doc1 = manager.documents.create(template=template, envelope_id='321', is_signed=False)
+
+        # Magic mock to prevent remote api call
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.determine_is_signed = MagicMock(return_value=False)
+
+        # Act
+        manager.update_all_is_signed()
+
+        # Update the documents
+        doc = HunterDocModel.objects.get(id=doc.id)
+        doc1 = HunterDocModel.objects.get(id=doc1.id)
+
+        # Assert
+        self.assertFalse(doc.is_signed)
+        self.assertFalse(doc1.is_signed)
+
+    def test_update_all_is_signed_one_signed_one_not(self):
+        """
+        Tests that if one document is returned from docusign as being signed and one as not,
+            then there will be one document that is signed and one not
+
+        Note: It is hard to assert which one because in the database query the return of the documents are not
+            necessarily in a set order so it is hard to determine which document will actually end up getting signed
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
+        doc = manager.documents.create(template=template, envelope_id='123', is_signed=False)
+        doc1 = manager.documents.create(template=template, envelope_id='321', is_signed=False)
+
+        # Magic mock to prevent remote api call
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.determine_is_signed = Mock()
+        DocusignWrapper.determine_is_signed.side_effect = [True, False]
+
+        # Act
+        manager.update_all_is_signed()
+
+        # Assert
+        self.assertEqual(HunterDocModel.objects.filter(is_signed=True).count(), 1)
+        self.assertEqual(HunterDocModel.objects.filter(is_signed=False).count(), 1)
 
 
 class TestSignatureModelsPreTourDocuments(TestCase):
