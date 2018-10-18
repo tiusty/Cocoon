@@ -93,7 +93,7 @@ class HunterDocManagerModel(models.Model):
         template = self.retrieve_pre_tour_template()
         return self.documents.filter(template=template).exists()
 
-    def resend_pre_tour_forms(self):
+    def resend_pre_tour_documents(self):
         """
         Re-sends the pre tour forms to the user.
         This is used in case they lost it etc and need it resent to their email
@@ -108,15 +108,17 @@ class HunterDocManagerModel(models.Model):
                 envelope_id = document.envelope_id
             except HunterDocModel.DoesNotExist:
                 logger.error("Tried to return Document that does not exist: {0}".format(
-                    HunterDocManagerModel.resend_pre_tour_forms.__name__
+                    HunterDocManagerModel.resend_pre_tour_documents.__name__
                 ))
                 return False
             except HunterDocModel.MultipleObjectsReturned:
                 logger.error("Multiple objects returned in: {0}".format(
-                    HunterDocManagerModel.resend_pre_tour_forms.__name__
+                    HunterDocManagerModel.resend_pre_tour_documents.__name__
                 ))
                 return False
             return docusign.resend_envelope(envelope_id)
+        else:
+            return False
 
     def update_all_is_signed(self):
         """

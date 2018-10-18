@@ -299,3 +299,107 @@ class TestSignatureModelsPreTourDocuments(TestCase):
 
         # Assert
         self.assertFalse(result)
+
+    def test_pre_tour_forms_created(self):
+        """
+        Tests that if a pretour document exists in the manager for that user then this will
+            return true
+        """
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.create_pre_tour_template()
+        manager.documents.create(template=template)
+
+        # Act
+        result = manager.pre_tour_forms_created()
+
+        # Assert
+        self.assertTrue(result)
+
+    def test_pre_tour_forms_created_wrong_user(self):
+        """
+        Tests that if one user has the pre_tour documents created and the other doesn't. Then
+            there isn't any conflict across user accounts
+        """
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com")
+        user1 = MyUser.objects.create(email="awagud121@gmail.com")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        manager1 = HunterDocManagerModel.objects.create(user=user1)
+        template = HunterDocTemplateModel.create_pre_tour_template()
+        manager.documents.create(template=template)
+
+        # Act
+        result = manager.pre_tour_forms_created()
+        result1 = manager1.pre_tour_forms_created()
+
+        # Assert
+        self.assertTrue(result)
+        self.assertFalse(result1)
+
+    def test_resend_pre_tour_documents_exists(self):
+        """
+        Tests that if the user wants to resend the pre_tour_forms then if the document exists
+            the document is sent
+        """
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.create_pre_tour_template()
+        doc = manager.documents.create(template=template, envelope_id='123')
+
+        # Magic mock to prevent remote api call
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.resend_envelope = MagicMock(return_value=True)
+
+        # Act
+        result = manager.resend_pre_tour_documents()
+
+        # Assert
+        self.assertTrue(result)
+        DocusignWrapper.resend_envelope.assert_called_once_with(doc.envelope_id)
+
+    def test_resend_pre_tour_documents_not_exist(self):
+        """
+        Tests that if the user wants to resend the documents but the document doesn't exist,
+            then it can't be sent and false is returned
+        """
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.create_pre_tour_template()
+
+        # Magic mock to prevent remote api call
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.resend_envelope = MagicMock(return_value=True)
+
+        # Act
+        result = manager.resend_pre_tour_documents()
+
+        # Assert
+        self.assertFalse(result)
+        DocusignWrapper.resend_envelope.assert_not_called()
+
+    def test_resend_pre_tour_documents_multiple_documents(self):
+        """
+        Tests that if the user wants to resend the documents but for some reason multiple
+            documents are returned, then false is returned
+        """
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.create_pre_tour_template()
+        doc = manager.documents.create(template=template, envelope_id='123')
+        doc1 = manager.documents.create(template=template, envelope_id='321')
+
+        # Magic mock to prevent remote api call
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.resend_envelope = MagicMock(return_value=True)
+
+        # Act
+        result = manager.resend_pre_tour_documents()
+
+        # Assert
+        self.assertFalse(result)
+        DocusignWrapper.resend_envelope.assert_not_called()

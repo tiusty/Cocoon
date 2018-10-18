@@ -534,7 +534,7 @@ def resend_pre_tour_documents(request):
                 user_profile = UserProfile.objects.get(user=request.user)
                 try:
                     doc_manager = user_profile.user.doc_manager
-                    if doc_manager.resend_pre_tour_forms():
+                    if doc_manager.resend_pre_tour_documents():
                         return HttpResponse(json.dumps({"result": "1",
                                                         "message": "Document resent"}),
                                             content_type="application/json", )
