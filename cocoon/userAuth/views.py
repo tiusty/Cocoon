@@ -175,8 +175,8 @@ def activate_account(request, uidb64, token):
         user = MyUser.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, MyUser.DoesNotExist):
         user = None
-    if user is not None and account_activation_token.check_token(user, token):
 
+    if user is not None and account_activation_token.check_token(user, token):
         # If the user and the token is valid then active the user and log the user in
         user.is_active = True
         user.save()
