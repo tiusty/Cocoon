@@ -185,8 +185,8 @@ def activate_account(request, uidb64, token):
         # Return the message to inform the user of the status of the account
         messages.info(request, "Thank you for verifying your email")
         return HttpResponseRedirect(reverse('homePage:index'))
-    else:
 
+    else:
         # Return a message saying the account link was not valid
         messages.error(request, "The activation link is invalid")
         return HttpResponseRedirect(reverse('homePage:index'))
