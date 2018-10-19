@@ -130,9 +130,12 @@ class BrokerSignupView(CreateView):
         :param form: (BrokerSignupForm) -> The broker signup form with their info
         :return: (HttpResponseRedirect) -> Send them to the home page with the valid message
         """
+        # Create user with commit=False so active can be set to false before saving in the database
         user = form.save(commit=False)
         user.is_active = False
         user.save()
+
+        # Create the email context that is sent to the user
         current_site = get_current_site(self.request)
         mail_subject = 'Activate your Cocoon Account'
         message = render_to_string(
@@ -147,7 +150,11 @@ class BrokerSignupView(CreateView):
         email = EmailMessage(
             mail_subject, message, to=[to_email]
         )
+
+        # Send the email to the user
         email.send()
+
+        # Send message to next page informing the user of the status of the account
         messages.info(self.request, "Please confirm your email address to complete registration. "
                                     "Make sure to check the spam folder")
         return HttpResponseRedirect(reverse('homePage:index'))
