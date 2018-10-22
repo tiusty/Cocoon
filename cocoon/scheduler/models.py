@@ -15,10 +15,10 @@ class TimeModel(models.Model):
             self.itinerary (ForeignKey) -> The associated itinerary
     """
     time = models.DateTimeField(default=timezone.now)
-    itinerary = models.ForeignKey('ItineraryModel', related_name='start_times', on_delete=models.PROTECT, blank=False, null=False)
+    itinerary = models.ForeignKey('ItineraryModel', related_name='start_times', on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):
-        return self.time
+        return str(self.time)
 
 
 class ItineraryModel(models.Model):
@@ -36,9 +36,9 @@ class ItineraryModel(models.Model):
     """
     client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
     itinerary = models.FileField(blank=True)
-    agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.CASCADE, blank=True, null=True)
+    agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
-    selected_start_time = models.OneToOneField('TimeModel', on_delete=models.CASCADE, blank=True, null=True)
+    selected_start_time = models.OneToOneField('TimeModel', on_delete=models.SET_NULL, blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
 
     def __str__(self):
