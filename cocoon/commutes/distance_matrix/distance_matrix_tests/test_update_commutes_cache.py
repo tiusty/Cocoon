@@ -80,7 +80,7 @@ class TestUpdateCommutesCache(TestCase):
         Tests to make sure if the destination selects driving, that driving is actually selected
         """
         # Arrange
-        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
@@ -105,7 +105,7 @@ class TestUpdateCommutesCache(TestCase):
         Tests to make sure if the destination selects transit, that transit is actually selected
         """
         # Arrange
-        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
@@ -130,7 +130,7 @@ class TestUpdateCommutesCache(TestCase):
         Tests to make sure if the destination selects bicycling, that bicycling is actually selected
         """
         # Arrange
-        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
@@ -155,7 +155,7 @@ class TestUpdateCommutesCache(TestCase):
         Tests to make sure if the destination selects walking, that waking is actually selected
         """
         # Arrange
-        commute_type = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
@@ -181,10 +181,10 @@ class TestUpdateCommutesCache(TestCase):
             the appropriate functions
         """
         # Arrange
-        commute_driving = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
-        commute_transit = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
-        commute_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
-        commute_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        commute_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        commute_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
+        commute_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
+        commute_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_driving)
@@ -213,7 +213,7 @@ class TestDriveCommuteCalculator(TestCase):
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
@@ -389,7 +389,7 @@ class TestTransitCommuteCalculator(TestCase):
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
-        self.commute_type = CommuteType.objects.create(commute_type='Transit')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod

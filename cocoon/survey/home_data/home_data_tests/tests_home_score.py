@@ -249,7 +249,7 @@ class TestApproxCommute(TestCase):
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
@@ -330,7 +330,7 @@ class TestApproxCommute(TestCase):
         # Arrange
         home = self.create_home(self.home_type)
         survey = self.create_survey(self.user.userProfile)
-        commute_type_transit = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
+        commute_type_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
         destination = self.create_destination(survey, commute_type_transit)
         home.zip_code_approximation = MagicMock()
         home.lat_lng_approximation = MagicMock()
@@ -346,7 +346,7 @@ class TestApproxCommute(TestCase):
         # Arrange
         home = self.create_home(self.home_type)
         survey = self.create_survey(self.user.userProfile)
-        commute_type_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         destination = self.create_destination(survey, commute_type_bicycling)
         latlng = (5,10)
         home.zip_code_approximation = MagicMock()
@@ -363,7 +363,7 @@ class TestApproxCommute(TestCase):
         # Arrange
         home = self.create_home(self.home_type)
         survey = self.create_survey(self.user.userProfile)
-        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         destination = self.create_destination(survey, commute_type_walking)
         latlng = (5,10)
         home.zip_code_approximation = MagicMock()
@@ -477,7 +477,7 @@ class TestApproxCommute(TestCase):
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
-        commute_type_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         destination = self.create_destination(survey, commute_type_bicycling)
 
         # Act
@@ -495,7 +495,7 @@ class TestApproxCommute(TestCase):
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
-        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         destination = self.create_destination(survey, commute_type_walking)
 
         # Act
@@ -510,7 +510,7 @@ class TestApproxCommute(TestCase):
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type, latitude=42.408021, longitude=-71.163222)
-        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         destination = self.create_destination(survey, commute_type_walking)
 
         # Act

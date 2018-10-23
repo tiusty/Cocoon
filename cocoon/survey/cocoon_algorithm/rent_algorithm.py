@@ -8,6 +8,9 @@ from cocoon.survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
 from cocoon.survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
+# Import Commutes modules
+from cocoon.commutes.models import CommuteType
+
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper, Distance_Matrix_Exception
 from cocoon.commutes.distance_matrix import commute_cache_updater
@@ -86,8 +89,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
             # If the commute type is walking or bicycling then we need to generate a lat and lng for the destination
             # We do it here so we can save the lat and lng for every home
-            if destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING or \
-                    destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
+            if destination.commute_type.commute_type == CommuteType.BICYCLING or \
+                    destination.commute_type.commute_type == CommuteType.WALKING:
                 # Pulls lat/lon based on address
                 lat_lng_result = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(destination.full_address)
 
@@ -100,13 +103,44 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 if not home.populate_approx_commutes(home.home, destination, lat_lng_dest=lat_lng):
                     home.eliminate_home()
 
+    @staticmethod
+    def query_exact_commutes(origin_addresses, destination_address, commute_type):
+        """
+        Queries the distance matrix api to retrieve the exact commute. This does the translation from our database
+            naming of commutes to the Google distance matrix naming of commutes
+        :param origin_addresses: (string) -> The list of origins in distance matrix accepted format
+        :param destination_address: (string) -> The destination that the user desires
+        :param commute_type:
+        :return:
+        """
+        distance_matrix_requester = DistanceWrapper()
+
+        if commute_type == CommuteType.DRIVING:
+            results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
+                                                                            [destination_address],
+                                                                            mode=GoogleCommuteNaming.DRIVING)
+        elif commute_type == CommuteType.TRANSIT:
+            results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
+                                                                            [destination_address],
+                                                                            mode=GoogleCommuteNaming.TRANSIT)
+        elif commute_type == CommuteType.BICYCLING:
+            results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
+                                                                            [destination_address],
+                                                                            mode=GoogleCommuteNaming.BICYCLING)
+        elif commute_type == CommuteType.WALKING:
+            results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
+                                                                            [destination_address],
+                                                                            mode=GoogleCommuteNaming.WALKING)
+        else:
+            results = []
+
+        return results
+
     def retrieve_exact_commutes(self):
         """
         updates the exact_commute_minutes property for the top homes, based on a global variable
         in Global_Config. Uses the distance_matrix wrapper.
         """
-        distance_matrix_requester = DistanceWrapper()
-
         for destination in self.destinations:
             try:
                 # map list of HomeScore objects to full addresses
@@ -115,9 +149,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
                 destination_address = destination.full_address
 
-                results = distance_matrix_requester.get_durations_and_distances(origin_addresses,
-                                                                                [destination_address],
-                                                                                mode=destination.commute_type.commute_type)
+                results = self.query_exact_commutes(origin_addresses, destination_address,
+                                                    destination.commute_type.commute_type)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):

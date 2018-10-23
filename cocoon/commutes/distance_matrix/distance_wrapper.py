@@ -95,6 +95,8 @@ class DistanceWrapper:
 
         :params origins: list of origins in a distance matrix accepted format
         :params destinations: the destination in a distance matrix accepted format
+        :param mode: (string) -> Must be the mode using the google distance defined mode i.e from the
+            GoogleCommuteNaming class
         :returns a list of lists of tuples containing the duration and distance between the origins and the
         destination(s). Each inner list corresponds to an origin and each of its tuples corresponds to a pairing
         between that origin and one of its destinations.
@@ -120,8 +122,7 @@ class DistanceWrapper:
                                                             origin_list[:origin_number],
                                                             destinations[:destination_number],
                                                             units=self.units,
-                                                            # make sure the mode is lower case
-                                                            mode=mode.lower())
+                                                            mode=mode)
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin
             for res in response_list:
@@ -132,29 +133,38 @@ class DistanceWrapper:
         # in minutes to all of its destinations
         return distance_matrix_list
 
+
 class Distance_Matrix_Exception(Exception):
     pass
+
 
 class Invalid_Request_Exception(Distance_Matrix_Exception):
     pass
 
+
 class Max_Elements_Exceeded_Exception(Distance_Matrix_Exception):
     pass
+
 
 class Over_Query_Limit_Exception(Distance_Matrix_Exception):
     pass
 
+
 class Request_Denied_Exception(Distance_Matrix_Exception):
     pass
+
 
 class Unknown_Error_Exception(Distance_Matrix_Exception):
     pass
 
+
 class Not_Found_Exception(Distance_Matrix_Exception):
     pass
 
+
 class Zero_Results_Exception(Distance_Matrix_Exception):
     pass
+
 
 class Max_Route_Length_Exception(Distance_Matrix_Exception):
     pass

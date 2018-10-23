@@ -1,4 +1,4 @@
-from cocoon.commutes.models import ZipCodeBase, ZipCodeChild
+from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
 from cocoon.commutes.constants import GoogleCommuteNaming
 from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED, EXTRA_DISTANCE_LAT_LNG_APPROX
@@ -116,13 +116,13 @@ class HomeScore(object):
         :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
         :return (Boolean): True if a valid pair match is found, False otherwise.
         """
-        if destination.commute_type.commute_type == GoogleCommuteNaming.DRIVING:
+        if destination.commute_type.commute_type == CommuteType.DRIVING:
             return self.zip_code_approximation(home.zip_code, destination)
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.TRANSIT:
+        elif destination.commute_type.commute_type == CommuteType.TRANSIT:
             return self.zip_code_approximation(home.zip_code, destination)
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING:
+        elif destination.commute_type.commute_type == CommuteType.BICYCLING:
             return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_BICYCLING_SPEED)
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
+        elif destination.commute_type.commute_type == CommuteType.WALKING:
             return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
 
     def lat_lng_approximation(self, home, destination, lat_lng_dest, average_speed):

@@ -25,7 +25,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
@@ -318,7 +318,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 class TestRentAlgorithmJustPrice(TestCase):
 
     def setUp(self):
-        CommuteType.objects.create(commute_type='Driving')
+        CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
 
@@ -584,7 +584,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
@@ -763,7 +763,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Create a user and survey so we can create renting destination models
@@ -932,7 +932,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 class TestRentAlgorithmJustSortHomeByScore(TestCase):
 
     def setUp(self):
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
 
@@ -1036,7 +1036,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         # Create possible home types
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         self.home_type1 = HomeTypeModel.objects.create(home_type='Apartment')
@@ -1093,8 +1093,10 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
     @staticmethod
     def create_destination(survey, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
-                           zip_code="02476", commute_type=CommuteType.objects.get(commute_type="Driving"),
+                           zip_code="02476", commute_type=None,
                            commute_weight=0, max_commute=60, min_commute=0):
+        if commute_type is None:
+            commute_type = CommuteType.objects.get(commute_type=CommuteType.DRIVING)
         return survey.rentingdestinationsmodel_set.create(
             street_address=street_address,
             city=city,
@@ -1242,7 +1244,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         eliminated, then the home is not eliminated
         """
         # Arrange
-        commute_type_driving = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
+        commute_type_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         survey = self.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type_driving)
@@ -1274,7 +1276,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         eliminated, then the home is not eliminated and the correct lat_lng is generated and passed
         """
         # Arrange
-        commute_type_walking = CommuteType.objects.create(commute_type=GoogleCommuteNaming.WALKING)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         survey = self.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type_walking)
@@ -1310,9 +1312,9 @@ class TestRetrieveApproximateCommutes(TestCase):
             a lat and long
         """
         # Arrange
-        commute_type_driving = CommuteType.objects.create(commute_type=GoogleCommuteNaming.DRIVING)
-        commute_type_transit = CommuteType.objects.create(commute_type=GoogleCommuteNaming.TRANSIT)
-        commute_type_bicycling = CommuteType.objects.create(commute_type=GoogleCommuteNaming.BICYCLING)
+        commute_type_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        commute_type_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         survey = self.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type)
         home1 = self.create_home(self.home_type)
@@ -1370,7 +1372,7 @@ class TestRetrieveExactCommutes(TestCase):
 
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
