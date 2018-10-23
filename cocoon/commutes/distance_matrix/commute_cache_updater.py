@@ -6,7 +6,6 @@ from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
 
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import Distance_Matrix_Exception
-from cocoon.commutes.distance_matrix import compute_approximates
 from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 
 # Load the logger
