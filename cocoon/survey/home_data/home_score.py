@@ -124,6 +124,8 @@ class HomeScore(object):
             return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_BICYCLING_SPEED)
         elif destination.commute_type.commute_type == CommuteType.WALKING:
             return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
+        else:
+            return True
 
     def lat_lng_approximation(self, home, destination, lat_lng_dest, average_speed):
         """
