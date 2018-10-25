@@ -32,8 +32,6 @@ def update_commutes_cache(homes, destinations, accuracy=CommuteAccuracy.DEFAULT)
             Bicycling(homes, destination, accuracy=accuracy).run()
         elif destination.commute_type.commute_type == CommuteType.WALKING:
             Walking(homes, destination, accuracy=accuracy).run()
-        else:
-            logger.error("Unknown commute_type: {0}".format(destination.commute_type))
 
 
 class CommuteCalculator(object):

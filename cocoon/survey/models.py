@@ -154,6 +154,14 @@ class RentingSurveyModel(ExteriorAmenitiesModel, PriceInformationModel,
         return "{0}: {1}".format(user_short_name, survey_name)
 
 
+class TenantModel(models.Model):
+    first_name = models.CharField(max_length=200, blank=True, default="")
+    last_name = models.CharField(max_length=200, blank=True, default="")
+    is_student = models.BooleanField(default=False)
+    survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
+    commute_type = models.ForeignKey(CommuteType)
+
+
 class DestinationsModel(models.Model):
     street_address = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
@@ -176,10 +184,9 @@ class CommuteInformationModel(models.Model):
     """
     Contains all the commute information for a given home
     """
-    max_commute = models.IntegerField()
-    min_commute = models.IntegerField()
-    commute_weight = models.IntegerField()
-    commute_type = models.ForeignKey(CommuteType)
+    max_commute = models.IntegerField(default=0)
+    min_commute = models.IntegerField(default=0)
+    commute_weight = models.IntegerField(default=0)
 
     @property
     def commute_range(self):
@@ -205,7 +212,9 @@ class CommuteInformationModel(models.Model):
 
 
 class RentingDestinationsModel(DestinationsModel, CommuteInformationModel):
-    survey = models.ForeignKey(RentingSurveyModel)
+    tenant = models.OneToOneField(TenantModel, related_name="commute", null=True, blank=True)
 
     def __str__(self):
         return self.street_address
+
+

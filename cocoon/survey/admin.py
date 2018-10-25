@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
+from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel, TenantModel
 
 # Register your models here.
 
@@ -11,13 +11,11 @@ class ChoiceInline(admin.TabularInline):
 
 class AddressInLine(admin.StackedInline):
     model = RentingDestinationsModel
-    extra = 0
 
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
     readonly_fields = ("created", 'id', 'url')
     # noinspection SpellCheckingInspection
-    inlines = [AddressInLine]
     fieldsets = (
         (None, {'fields': ('name', 'user_profile')}),
         ('Survey', {'fields': ('home_type', 'provider', 'desired_price', 'max_price', 'min_bathrooms',
@@ -33,10 +31,19 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
 class RentDestinationAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Rent Destination',
-         {'fields': ['survey', 'street_address', 'max_commute', 'min_commute', 'commute_weight', 'commute_type',]})
+         {'fields': ['street_address', 'max_commute', 'min_commute', 'commute_weight', 'commute_type',]})
     ]
-    list_display = ('survey',)
+
+class TenantModelAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Tenant',
+         {
+             'fields': ['first_name'],
+         })
+    ]
+    inlines = [AddressInLine]
 
 
 admin.site.register(RentingSurveyModel, RentingSurveyModelAdmin)
 admin.site.register(RentingDestinationsModel, RentDestinationAdmin)
+admin.site.register(TenantModel, TenantModelAdmin)
