@@ -1,10 +1,7 @@
 from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
-from cocoon.commutes.constants import GoogleCommuteNaming
 from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED, EXTRA_DISTANCE_LAT_LNG_APPROX
 import geopy.distance
-
-import math
 
 
 class HomeScore(object):

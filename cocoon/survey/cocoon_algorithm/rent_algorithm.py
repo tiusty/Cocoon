@@ -17,7 +17,7 @@ from cocoon.commutes.distance_matrix import commute_cache_updater
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
 # Import Constants from commute module
-from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
+from cocoon.commutes.constants import CommuteAccuracy
 
 # Import Geolocator
 import cocoon.houseDatabase.maps_requester as geolocator
