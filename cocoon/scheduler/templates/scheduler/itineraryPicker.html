@@ -5,14 +5,17 @@
 {% block head %}
     {{ block.super }}
     <!-- Custom StyleSheets -->
+    <link rel="stylesheet" href="{% static 'scheduler/itineraryPicker.css' %}">
 {% endblock %}
 
 {% block content %}
 
-    <h1>Avaiable Itineraries</h1>
+    <div class="jumbotron">
+        <h1>Avaiable Itineraries</h1>
+    </div>
 
     {% for itn in itineraries %}
-        <div style="padding:15px;border:2px dotted teal;margin:10px">
+        <div class="itinerary-result">
         <table class="table">
             <thead>
                 <tr>
@@ -51,7 +54,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for time in itn.available_start_times.all %}
+                        {% for time in itn.start_times.all %}
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ time.time }}</td>
@@ -61,6 +64,9 @@
                 </table>
             </tbody>
         </table>
+
+        <button class="button">Claim</button>
+
         </div>
     {% endfor %}
 
