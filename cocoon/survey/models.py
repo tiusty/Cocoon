@@ -25,6 +25,7 @@ class InitialSurveyModel(models.Model):
     name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
     created = models.DateField(auto_now_add=True)
     user_profile = models.ForeignKey(UserProfile)
+    number_of_tenants = models.IntegerField(default=1)
     url = models.SlugField(max_length=100)
     provider = models.ManyToManyField(HomeProviderModel)
 

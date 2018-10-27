@@ -143,12 +143,21 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
     """
     Rent Survey is the rent survey on the main survey page
     """
+    number_of_tenants = forms.ChoiceField(
+        choices=[(x, x) for x in range(0, MAX_TENANTS_FOR_ONE_SURVEY)],
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+    )
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot",]
+                  "parking_spot", "number_of_tenants"]
 
 
 class BrokerRentSurveyForm(RentSurveyForm):
@@ -232,7 +241,7 @@ class BrokerRentSurveyFormMini(RentSurveyFormMini):
         model = RentingSurveyModel
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "name", 'provider', ]
+                  "parking_spot", "name", 'provider']
 
 
 class CommuteInformationForm(ModelForm):

@@ -50,6 +50,11 @@
                                 {{ form.num_bedrooms.errors }}
                             </div>
                             <div class="form-group">
+                                {{ form.number_of_tenants.label_tag }}
+                                {{ form.number_of_tenants }}
+                                {{ form.number_of_tenants.errors }}
+                            </div>
+                            <div class="form-group">
                                 {{ form.home_type.label_tag }}
                                 <span class="glyphicon glyphicon-info-sign"  data-toggle="tooltip" data-placement="left" title="Select the types of homes desired"></span>
                                 {{ form.home_type }}
