@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 
 # Cocoon Modules
-from cocoon.commutes.models import CommuteType
+from ...models import CommuteType
 
 
 class Command(BaseCommand):
