@@ -30,4 +30,4 @@ class Command(BaseCommand):
         Create the commute type objects if they don't exist
         """
         for commute_type in CommuteType.COMMUTE_TYPES:
-            CommuteType.objects.get_or_create(commute_type=commute_type)
+            CommuteType.objects.get_or_create(commute_type=commute_type[0])

@@ -27,13 +27,19 @@ class Command(BaseCommand):
         # Create home types if they don't exist
         self.create_home_type_objects()
 
+        # Create the YGL management model
+        self.create_ygl_management_objects()
+
+        # Create the MLSpin management model
+        self.create_mlspin_management_objects()
+
     @staticmethod
     def create_home_provider_objects():
         """
         Creates the home provider objects for Cocoon if they don't exist
         """
         for provider in HomeProviderModel.PROVIDER_TYPES:
-            HomeProviderModel.objects.get_or_create(provider=provider)
+            HomeProviderModel.objects.get_or_create(provider=provider[0])
 
     @staticmethod
     def create_home_type_objects():
@@ -41,7 +47,7 @@ class Command(BaseCommand):
         Creates the home type objects fro Cocoon if they don't exist
         """
         for home_type in HomeTypeModel.HOME_TYPE:
-            HomeTypeModel.objects.get_or_create(home_type=home_type)
+            HomeTypeModel.objects.get_or_create(home_type=home_type[0])
 
     @staticmethod
     def create_ygl_management_objects():
