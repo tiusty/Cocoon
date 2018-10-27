@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^logout/$', views.logoutPage, name='logoutPage'),
     url(r'^profile$', views.user_profile, name='user_profile'),
     url(r'^surveys', views.user_surveys, name='user_surveys'),
+    url(r'^termsofuse', views.TermsOfUse.as_view(), name='terms_of_use'),
 ]
