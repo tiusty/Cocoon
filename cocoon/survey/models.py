@@ -159,7 +159,6 @@ class TenantModel(models.Model):
     last_name = models.CharField(max_length=200, blank=True, default="")
     is_student = models.BooleanField(default=False)
     survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
-    commute_type = models.ForeignKey(CommuteType)
 
 
 class DestinationsModel(models.Model):
