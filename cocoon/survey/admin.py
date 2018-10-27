@@ -13,6 +13,11 @@ class AddressInLine(admin.StackedInline):
     model = RentingDestinationsModel
 
 
+class TenantInLine(admin.TabularInline):
+    model = TenantModel
+    extra = 0
+
+
 class RentingSurveyModelAdmin(admin.ModelAdmin):
     readonly_fields = ("created", 'id', 'url')
     # noinspection SpellCheckingInspection
@@ -26,6 +31,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     list_display = ('name', 'user_profile', )
     list_filter = ['user_profile']
     search_fields = ('name',)
+    inlines = [TenantInLine]
 
 
 class RentDestinationAdmin(admin.ModelAdmin):
@@ -34,11 +40,12 @@ class RentDestinationAdmin(admin.ModelAdmin):
          {'fields': ['street_address', 'max_commute', 'min_commute', 'commute_weight', 'commute_type',]})
     ]
 
+
 class TenantModelAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Tenant',
          {
-             'fields': ['first_name'],
+             'fields': ['first_name', 'last_name', 'is_student', 'commute_type', 'survey'],
          })
     ]
     inlines = [AddressInLine]
