@@ -20,7 +20,7 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING):
     :param destinations: (list(destination)) -> list of values that is accepted by the distance matrix
     :param mode: (CommuteType.MODE) -> The commute type that is stored in the commute type format
     :return: (list(tuple)) -> A list of tuples containing the duration and distance between each destination
-        and the origin.
+        and the origin. If the commute type is not recognized then an empty list is returned
     """
     wrapper = DistanceWrapper()
     if mode == CommuteType.DRIVING:
