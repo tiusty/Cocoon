@@ -328,7 +328,7 @@ class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
         exclude = ['survey']
 
 
-class TenantForm(ModelForm):
+class TenantForm(DestinationForm, CommuteInformationForm):
     class Meta:
         model = TenantModel
         fields = ['street_address', 'city', 'state', 'zip_code', 'max_commute',

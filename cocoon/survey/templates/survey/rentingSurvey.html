@@ -34,12 +34,6 @@
             <div class="row">
 
                 <form class="form-horizontal" id="my_form" action="{% url 'survey:rentingSurvey' %}" method="post">
-                    {{ form.non_field_errors }}
-                    {{ form.errors }}
-                    {{ tenants.management_form }}
-                    {% for tenant in tenants %}
-                        {{ tenant }}
-                    {% endfor %}
 
                 {% for destination in destinations %}
                     {{ destination }}
@@ -88,7 +82,7 @@
                         </div>
                         <br>
 
-                        <h3>Commute</h3>
+                        <h3>Tenants</h3>
                         <span class="help-block">Please enter up to {{ number_of_formsets }} commutes to locations you need to go to.
                             This can be your work, school or somewhere you commute to regularily</span>
                         <div class="form-group step_div">

@@ -42,7 +42,7 @@
             This input stores how many forms are desired. A form is desired if it is an active tab and being displayed.
                 Only desired forms should be validated and saved.
         {% endcomment %}
-        <input name="number_destinations_filled_out" value="{{ number_of_destinations }}" id="id_number_destinations_filled_out" class="form-control" type="hidden">
+        <input name="number_destinations_filled_out" value="4" id="id_number_destinations_filled_out" class="form-control" type="hidden">
 
         {% comment %}
             This is the commute slider code. This requires the commute slider javascript
@@ -63,51 +63,23 @@
                 The minus button is not needed in the mini survey because commuters are not allowed to be
                     edited by the user in the mini survey
             {% endcomment %}
-            {%  if not mini_form %}
-            <li id='form_destination_minus_span'><a><span  class="glyphicon glyphicon-minus" onclick="add_destination_form(-1,
-                    {{ number_of_formsets }})"></span></a></li>
-            {% endif %}
-            {% for num_forms in form_destination %}
+            {% for tenant in tenants %}
                 <li
                         {% if forloop.counter == 1 %}
                             class="active"
-                        {% elif forloop.counter <= number_of_destinations %}
-                            class=""
                         {% else %}
-                            class="hide"
+                            class=""
                         {% endif %}
                             id="form_destination_tabs_{{ forloop.counter }}">
 
                     <a data-toggle="tab"
                        href="#form_destination_section_{{ forloop.counter }}"
-                        onclick="
-                        {% comment %}
-                            Since editing of the commuters are not allowed in the mini survey, remove the
-                                clean_autocomplete functionality since the javascript file won't be included
-                                and will cause an error.
-                        {% endcomment %}
-                        {% if not mini_form %}
-                        clean_autocomplete();
-                        {% endif %}
-                        set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
+                        ><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
-            {% comment %}
-                The plus button is not needed in the mini survey because commuters are not allowed to be
-                    edited by the user in the mini survey
-            {% endcomment %}
-            {%  if not mini_form %}
-            <li
-                    {% if number_of_destinations >= number_of_formsets %}
-                        class='hide'
-                    {% endif %}
-                        id='form_destination_add_span'><a><span  class="glyphicon glyphicon-plus" onclick="add_destination_form(1,
-                    {{ number_of_formsets }})"></span></a></li>
-            {% endif %}
         </ul>
         <div id="form_destination_div" class="tab-content">
-            {{ form.number_destinations_filled_out }}
             {{ form_destination.management_form }}
-            {% for form in form_destination %}
+            {% for form in tenants %}
                 <div id="form_destination_section_{{ forloop.counter }}"
                         {% if forloop.counter == 1 %}
                      class="tab-pane fade in active">
