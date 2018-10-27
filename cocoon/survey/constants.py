@@ -16,3 +16,6 @@ AVERAGE_BICYCLING_SPEED = 10
 
 # extra distance to add to take into account going around roads and rivers
 EXTRA_DISTANCE_LAT_LNG_APPROX = 4  # In miles
+
+# The maximum number of people for a single survey
+MAX_TENANTS_FOR_ONE_SURVEY = 4

@@ -21,7 +21,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
-from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
+from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyFormMini, \
     RentingDestinationsForm, RentSurveyFormMini, TenantFormSet
 
 
@@ -31,9 +31,16 @@ class RentingSurvey(CreateView):
     template_name = 'survey/rentingSurvey.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Need to add the Tenant Form set to the context
+        """
         data = super(RentingSurvey, self).get_context_data(**kwargs)
+
+        # If the request is a post, then populate the tenant form set
         if self.request.POST:
             data['tenants'] = TenantFormSet(self.request.POST)
+
+        # Otherwise if it is just a get, then just create a new form set
         else:
             data['tenants'] = TenantFormSet()
         return data
@@ -41,13 +48,20 @@ class RentingSurvey(CreateView):
     def form_valid(self, form):
         context = self.get_context_data()
         tenants = context['tenants']
+
+        # Makes sure that the tenant form is valid before saving
         if tenants.is_valid():
+
+            # Save the survey
             with transaction.atomic():
                 form.instance.user_profile = get_object_or_404(UserProfile, user=self.request.user)
                 self.object = form.save()
+
+            # Now save the the tenants
             tenants.instance = self.object
             tenants.save()
         else:
+            # If there is an error then re-render the survey page
             return self.render_to_response(self.get_context_data(form=form))
 
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',

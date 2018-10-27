@@ -14,6 +14,9 @@ from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOM
     WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
 from django.forms.models import inlineformset_factory
 
+# import constants
+from cocoon.survey.constants import MAX_TENANTS_FOR_ONE_SURVEY
+
 
 class HomeInformationForm(ModelForm):
     num_bedrooms = forms.ChoiceField(
@@ -328,6 +331,8 @@ class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
 class TenantForm(ModelForm):
     class Meta:
         model = TenantModel
-        fields = '__all__'
+        fields = ['street_address', 'city', 'state', 'zip_code', 'max_commute',
+                  'min_commute', 'commute_weight', 'commute_type']
 
-TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm, extra=4)
+
+TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm, extra=MAX_TENANTS_FOR_ONE_SURVEY)
