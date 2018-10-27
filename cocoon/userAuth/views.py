@@ -11,13 +11,6 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 
-# Used for email verification
-from django.template.loader import render_to_string
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_text
-from .tokens import account_activation_token
-from django.core.mail import EmailMessage
 
 
 def index(request):
@@ -82,28 +75,7 @@ class ApartmentHunterSignupView(CreateView):
         """
 
         # Create user with commit=False so active can be set to false before saving in the database
-        user = form.save(commit=False)
-        user.is_active = False
-        user.save()
-
-        # Create the email context that is sent to the user
-        current_site = get_current_site(self.request)
-        mail_subject = 'Activate your Cocoon Account'
-        message = render_to_string(
-            'userAuth/email/account_activate_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            }
-        )
-        to_email = user.email
-        email = EmailMessage(
-            mail_subject, message, to=[to_email]
-        )
-
-        # Send the email to the user
-        email.send()
+        form.save(request=self.request)
 
         # Send message to next page informing the user of the status of the account
         messages.info(self.request, "Please confirm your email address to complete registration. "
