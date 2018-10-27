@@ -154,6 +154,15 @@ class RentingSurveyModel(ExteriorAmenitiesModel, PriceInformationModel,
         return "{0}: {1}".format(user_short_name, survey_name)
 
 
+class TenantPersonalInformationModel(models.Model):
+    first_name = models.CharField(max_length=200, blank=True, default="")
+    last_name = models.CharField(max_length=200, blank=True, default="")
+    is_student = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
 class DestinationsModel(models.Model):
     street_address = models.CharField(max_length=200, default="", blank=True)
     city = models.CharField(max_length=200, default="", blank=True)
@@ -204,10 +213,7 @@ class CommuteInformationModel(models.Model):
         abstract = True
 
 
-class TenantModel(DestinationsModel, CommuteInformationModel):
-    first_name = models.CharField(max_length=200, blank=True, default="")
-    last_name = models.CharField(max_length=200, blank=True, default="")
-    is_student = models.BooleanField(default=False)
+class TenantModel(DestinationsModel, CommuteInformationModel, TenantPersonalInformationModel):
     survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
 
 

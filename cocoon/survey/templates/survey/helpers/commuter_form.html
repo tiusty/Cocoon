@@ -78,7 +78,7 @@
             {% endfor %}
         </ul>
         <div id="form_destination_div" class="tab-content">
-            {{ form_destination.management_form }}
+            {{ tenants.management_form }}
             {% for form in tenants %}
                 <div id="form_destination_section_{{ forloop.counter }}"
                         {% if forloop.counter == 1 %}

@@ -5,7 +5,8 @@ from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
-    RentingDestinationsModel, PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel
+    RentingDestinationsModel, PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel, \
+    TenantPersonalInformationModel
 from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import CommuteType
 
@@ -321,6 +322,38 @@ class DestinationForm(ModelForm):
         fields = '__all__'
 
 
+class TenantPersonalInformationForm(ModelForm):
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'First Name',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Last Name',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    is_student = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Student?',
+            }),
+        )
+
+    class Meta:
+        model = TenantPersonalInformationModel
+        fields = '__all__'
+
+
 class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
 
     class Meta:
@@ -328,10 +361,10 @@ class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
         exclude = ['survey']
 
 
-class TenantForm(DestinationForm, CommuteInformationForm):
+class TenantForm(DestinationForm, CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
-        fields = ['street_address', 'city', 'state', 'zip_code', 'max_commute',
+        fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
                   'min_commute', 'commute_weight', 'commute_type']
 
 
