@@ -154,18 +154,11 @@ class RentingSurveyModel(ExteriorAmenitiesModel, PriceInformationModel,
         return "{0}: {1}".format(user_short_name, survey_name)
 
 
-class TenantModel(models.Model):
-    first_name = models.CharField(max_length=200, blank=True, default="")
-    last_name = models.CharField(max_length=200, blank=True, default="")
-    is_student = models.BooleanField(default=False)
-    survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
-
-
 class DestinationsModel(models.Model):
-    street_address = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    state = models.CharField(max_length=200)
-    zip_code = models.CharField(max_length=200)
+    street_address = models.CharField(max_length=200, default="", blank=True)
+    city = models.CharField(max_length=200, default="", blank=True)
+    state = models.CharField(max_length=200, default="", blank=True)
+    zip_code = models.CharField(max_length=200, default="", blank=True)
 
     @property
     def full_address(self):
@@ -186,6 +179,7 @@ class CommuteInformationModel(models.Model):
     max_commute = models.IntegerField(default=0)
     min_commute = models.IntegerField(default=0)
     commute_weight = models.IntegerField(default=0)
+    commute_type = models.ForeignKey(CommuteType)
 
     @property
     def commute_range(self):
@@ -210,8 +204,14 @@ class CommuteInformationModel(models.Model):
         abstract = True
 
 
+class TenantModel(DestinationsModel, CommuteInformationModel):
+    first_name = models.CharField(max_length=200, blank=True, default="")
+    last_name = models.CharField(max_length=200, blank=True, default="")
+    is_student = models.BooleanField(default=False)
+    survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
+
+
 class RentingDestinationsModel(DestinationsModel, CommuteInformationModel):
-    tenant = models.OneToOneField(TenantModel, related_name="commute", null=True, blank=True)
 
     def __str__(self):
         return self.street_address

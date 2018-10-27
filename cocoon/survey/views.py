@@ -20,7 +20,7 @@ from cocoon.userAuth.models import UserProfile
 
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
-from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
+from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
     RentingDestinationsForm, RentSurveyFormMini, TenantFormSet
 
@@ -41,12 +41,14 @@ class RentingSurvey(CreateView):
     def form_valid(self, form):
         context = self.get_context_data()
         tenants = context['tenants']
-        with transaction.atomic():
-            form.instance.user_profile = get_object_or_404(UserProfile, user=self.request.user)
-            self.object = form.save()
         if tenants.is_valid():
+            with transaction.atomic():
+                form.instance.user_profile = get_object_or_404(UserProfile, user=self.request.user)
+                self.object = form.save()
             tenants.instance = self.object
             tenants.save()
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                             kwargs={"survey_url": self.model.url}))

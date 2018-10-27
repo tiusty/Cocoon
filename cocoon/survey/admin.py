@@ -4,15 +4,6 @@ from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel, T
 # Register your models here.
 
 
-class ChoiceInline(admin.TabularInline):
-    model = RentingSurveyModel
-    extra = 3
-
-
-class AddressInLine(admin.StackedInline):
-    model = RentingDestinationsModel
-
-
 class TenantInLine(admin.TabularInline):
     model = TenantModel
     extra = 0
@@ -34,23 +25,16 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     inlines = [TenantInLine]
 
 
-class RentDestinationAdmin(admin.ModelAdmin):
-    fieldsets = [
-        ('Rent Destination',
-         {'fields': ['street_address', 'max_commute', 'min_commute', 'commute_weight', 'commute_type',]})
-    ]
-
-
 class TenantModelAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Tenant',
          {
              'fields': ['first_name', 'last_name', 'is_student', 'survey'],
-         })
+         }),
+        ('Rent Destination',
+         {'fields': ['street_address', 'max_commute', 'min_commute', 'commute_weight', 'commute_type',]})
     ]
-    inlines = [AddressInLine]
 
 
 admin.site.register(RentingSurveyModel, RentingSurveyModelAdmin)
-admin.site.register(RentingDestinationsModel, RentDestinationAdmin)
 admin.site.register(TenantModel, TenantModelAdmin)
