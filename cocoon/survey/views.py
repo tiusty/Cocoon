@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView
 from django.db import transaction
 
 # Import House Database modules
@@ -48,9 +48,6 @@ class RentingSurvey(CreateView):
             tenants.instance = self.object
             tenants.save()
 
-        return super(RentingSurvey, self).form_valid(form)
-
-    def get_success_url(self):
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                             kwargs={"survey_url": self.model.url}))
 

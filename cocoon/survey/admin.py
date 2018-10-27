@@ -45,7 +45,7 @@ class TenantModelAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Tenant',
          {
-             'fields': ['first_name', 'last_name', 'is_student', 'commute_type', 'survey'],
+             'fields': ['first_name', 'last_name', 'is_student', 'survey'],
          })
     ]
     inlines = [AddressInLine]
