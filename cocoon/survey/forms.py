@@ -270,6 +270,7 @@ class CommuteInformationForm(ModelForm):
     )
 
     commute_type = forms.ModelChoiceField(
+        required=True,
         queryset=CommuteType.objects.all(),
         label="Commute Type",
         widget=forms.Select(
@@ -378,4 +379,5 @@ class TenantForm(DestinationForm, CommuteInformationForm, TenantPersonalInformat
                   'min_commute', 'commute_weight', 'commute_type']
 
 
-TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm, extra=MAX_TENANTS_FOR_ONE_SURVEY)
+TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
+                                      extra=2, can_delete=False)

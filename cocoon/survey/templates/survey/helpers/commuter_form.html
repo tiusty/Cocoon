@@ -74,7 +74,11 @@
 
                     <a data-toggle="tab"
                        href="#form_destination_section_{{ forloop.counter }}"
-                        ><b>Commuter {{ forloop.counter }}</b></a></li>
+                        onclick="
+                                {% if not mini_form %}
+                        clean_autocomplete();
+                        {% endif %}
+                        set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
         </ul>
         <div id="form_destination_div" class="tab-content">
