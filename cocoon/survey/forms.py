@@ -5,13 +5,14 @@ from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
-    RentingDestinationsModel, PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel
+    RentingDestinationsModel, PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel
 from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import CommuteType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
     WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
+from django.forms.models import inlineformset_factory
 
 
 class HomeInformationForm(ModelForm):
@@ -322,3 +323,11 @@ class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
     class Meta:
         model = RentingDestinationsModel
         exclude = ['survey']
+
+
+class TenantForm(ModelForm):
+    class Meta:
+        model = TenantModel
+        fields = '__all__'
+
+TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm, extra=4)

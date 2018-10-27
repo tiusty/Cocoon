@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
+from django.views.generic import CreateView, TemplateView
+from django.db import transaction
 
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -20,7 +22,37 @@ from cocoon.userAuth.models import UserProfile
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
 from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
-    RentingDestinationsForm, RentSurveyFormMini
+    RentingDestinationsForm, RentSurveyFormMini, TenantFormSet
+
+
+class RentingSurvey(CreateView):
+    model = RentingSurveyModel
+    form_class = RentSurveyForm
+    template_name = 'survey/rentingSurvey.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(RentingSurvey, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['tenants'] = TenantFormSet(self.request.POST)
+        else:
+            data['tenants'] = TenantFormSet()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        tenants = context['tenants']
+        with transaction.atomic():
+            form.instance.user_profile = get_object_or_404(UserProfile, user=self.request.user)
+            self.object = form.save()
+        if tenants.is_valid():
+            tenants.instance = self.object
+            tenants.save()
+
+        return super(RentingSurvey, self).form_valid(form)
+
+    def get_success_url(self):
+        return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                            kwargs={"survey_url": self.model.url}))
 
 
 @login_required
