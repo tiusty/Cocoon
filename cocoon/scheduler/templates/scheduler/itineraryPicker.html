@@ -9,43 +9,25 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="jumbotron">
-        <h1>Avaiable Itineraries</h1>
-    </div>
-
-    {% for itn in itineraries %}
-        <div class="itinerary-result">
-        <table class="table">
+    <div class="itinerary-buckets">
+        <div class="itinerary-bucket unclaimed-container">
+            <h2>Unclaimed Itineraries</h2>
+            {% for itn in unclaimed_itineraries %}
+                <div class="itinerary-flex-container">
+                    <table class="table">
             <thead>
                 <tr>
                     <th scope="col">Email</th>
                     <th scope="col">Name</th>
+                    <th scope="col">Duration (hr.)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>{{ itn.client.email }}</td>
                     <td>{{ itn.client.get_full_name }}</td>
+                    <td>{{ itn.tour_duration_hours }}</td>
                 </tr>
-
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Address</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for home in itn.homes.all %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ home.full_address }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
             <table class="table">
                     <thead>
                         <tr>
@@ -64,12 +46,50 @@
                 </table>
             </tbody>
         </table>
-
-        <button class="button">Claim</button>
-
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
 
+        <div class="itinerary-bucket claimed-container">
+            <h2>Claimed Itineraries</h2>
+            {% for itn in claimed_itineraries %}
+                <div class="itinerary-flex-container">
+                    <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Duration (hr.)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ itn.client.email }}</td>
+                    <td>{{ itn.client.get_full_name }}</td>
+                    <td>{{ itn.tour_duration_hours }}</td>
+                </tr>
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Start Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for time in itn.start_times.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ time.time }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </tbody>
+        </table>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block endScripts %}
