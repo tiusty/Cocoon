@@ -342,6 +342,7 @@ class TenantPersonalInformationForm(ModelForm):
     )
 
     is_student = forms.BooleanField(
+        required=False,
         widget=forms.CheckboxInput(
             attrs={
                 'class': 'form-control',
