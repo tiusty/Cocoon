@@ -15,77 +15,43 @@
             {% for itn in unclaimed_itineraries %}
                 <div class="itinerary-flex-container">
                     <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Email</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Duration (hr.)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ itn.client.email }}</td>
-                    <td>{{ itn.client.get_full_name }}</td>
-                    <td>{{ itn.tour_duration_hours }}</td>
-                </tr>
-            <table class="table">
-                    <thead>
+                        <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Start Time</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Duration (hr.)</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for time in itn.start_times.all %}
+                        </thead>
+                        <tbody>
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ time.time }}</td>
+                            <td>{{ itn.client.email }}</td>
+                            <td>{{ itn.client.get_full_name }}</td>
+                            <td>{{ itn.tour_duration_hours }}</td>
                         </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </tbody>
-        </table>
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="itinerary-bucket claimed-container">
-            <h2>Claimed Itineraries</h2>
-            {% for itn in claimed_itineraries %}
-                <div class="itinerary-flex-container">
-                    <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Email</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Duration (hr.)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ itn.client.email }}</td>
-                    <td>{{ itn.client.get_full_name }}</td>
-                    <td>{{ itn.tour_duration_hours }}</td>
-                </tr>
-            <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Start Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for time in itn.start_times.all %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ time.time }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </tbody>
-        </table>
+                        <table class="table">
+                            <thead>
+                            Available Start Times
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Start Time</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for time in itn.start_times.all %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ time.time }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        </tbody>
+                    </table>
+                    {% if itn.is_claimed %}
+                        <button id="claim-{{ itn.id }}" class="btn btn-disabled">Unavailable</button>
+                    {% else %}
+                        <button id="claim-{{ itn.id }}" class="btn expand-btn" onclick="claim_itinerary({{ itn.id }}, '{% url 'scheduler:claimItinerary' %}')">Claim</button>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
@@ -96,5 +62,6 @@
     {{ block.super }}
 
     <!-- Custom Javascript -->
+    <script src="{% static 'scheduler/js/claim_itinerary.js' %}"></script>
     <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
 {% endblock %}

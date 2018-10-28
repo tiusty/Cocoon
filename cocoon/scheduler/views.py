@@ -46,7 +46,6 @@ def view_tours(request):
 # AJAX Request Handlers
 ########################################
 
-
 @login_required
 def claim_itinerary(request):
     """
@@ -97,6 +96,13 @@ def claim_itinerary(request):
 
 @login_required
 def select_start_time(request):
+    """
+    This ajax function selects a start time for an agent
+    :param request: Http request
+    :return:
+        0 -> succes, itinerary was claimed
+        1 -> itinerary was already claimed
+    """
 
     if request.method == "POST":
         # Only care if the user is authenticated

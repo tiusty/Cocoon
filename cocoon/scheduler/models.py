@@ -58,3 +58,19 @@ class ItineraryModel(models.Model):
         :return:
         """
         return self.tour_duration_minutes/60
+
+    @property
+    def is_claimed(self):
+        """
+        Returns if the itinerary has been claimed (has an agent)
+        :return:
+        """
+        return self.agent != None
+
+    @property
+    def is_scheduled(self):
+        """
+        Returns if the itinerary has been schedueld (has a start time)
+        :return:
+        """
+        return self.selected_start_time != None
