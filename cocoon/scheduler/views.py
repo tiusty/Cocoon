@@ -41,13 +41,62 @@ def view_tours(request):
         raise Http404("This page does not exist")
     return render(request, 'scheduler/viewTours.html', context)
 
+
+########################################
+# AJAX Request Handlers
+########################################
+
+
 @login_required
 def claim_itinerary(request):
     """
-    This ajax function adds a house to the users visit list
+    This ajax function associates an agent to an itinerary
     :param request: Http request
-    :return: 1 means the home has successfully added
+    :return:
+        0 -> succes, itinerary was claimed
+        1 -> itinerary was already claimed
     """
+
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            try:
+                current_profile = get_object_or_404(UserProfile, user=request.user)
+                if current_profile.user.is_broker or current_profile.user.is_admin:
+                    itinerary_id = request.POST.get('itinerary_id')
+                    try:
+                        itinerary = ItineraryModel.objects.get(id=itinerary_id)
+                        if itinerary.agent is None:
+                            itinerary.agent = current_profile.user
+                            itinerary.save()
+                            return HttpResponse(json.dumps({"result": "0",
+                                                            "itineraryId": itinerary_id,
+                                                            }), content_type="application/json")
+                        else:
+                            return HttpResponse(json.dumps({"result": "1"}),
+                                                content_type="application/json")
+                    except ItineraryModel.DoesNotExist:
+                        return HttpResponse(json.dumps({"result": "Could not find itinerary"}),
+                                            content_type="application/json")
+                else:
+                    return HttpResponse(json.dumps({"result: User does not have priviledges"},
+                                                    content_type="application/json"))
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "Method Not POST"}),
+                            content_type="application/json",
+                            )
+
+
+@login_required
+def select_start_time(request):
 
     if request.method == "POST":
         # Only care if the user is authenticated
