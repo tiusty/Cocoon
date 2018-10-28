@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import transaction
 from django.utils import timezone
 
 # Import cocoon models
@@ -73,3 +74,13 @@ class ItineraryModel(models.Model):
         :return:
         """
         return self.selected_start_time != None
+
+    @transaction.atomic
+    def select_start_time(self, start_time):
+        self.selected_start_time = start_time
+        self.save()
+
+    @transaction.atomic
+    def associate_agent(self, agent):
+        self.agent = agent
+        self.save()

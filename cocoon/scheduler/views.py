@@ -67,8 +67,7 @@ def claim_itinerary(request):
                     try:
                         itinerary = ItineraryModel.objects.get(id=itinerary_id)
                         if itinerary.agent is None:
-                            itinerary.agent = current_profile.user
-                            itinerary.save()
+                            itinerary.associate_agent(current_profile.user)
                             return HttpResponse(json.dumps({"result": "0",
                                                             "itineraryId": itinerary_id,
                                                             }), content_type="application/json")
@@ -119,8 +118,7 @@ def select_start_time(request):
                         time = TimeModel.objects.get(id=time_id)
                         itinerary = ItineraryModel.objects.get(id=itinerary_id)
                         if (itinerary.agent == current_profile.user) and (itinerary.selected_start_time is None):
-                            itinerary.selected_start_time = time.time
-                            itinerary.save()
+                            itinerary.select_start_time(time.time)
 
                             # TODO - Email the user with the confirmation
 
