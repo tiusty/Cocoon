@@ -3,11 +3,12 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.db import models
 
 # Models
 from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import UserProfile
-from cocoon.scheduler.models import ItineraryModel
+from cocoon.scheduler.models import ItineraryModel, TimeModel
 
 # Python Modules
 import json
@@ -34,7 +35,7 @@ def view_tours(request):
     if current_profile.user.is_broker or current_profile.user.is_admin:
         context = {}
         unscheduled_itineraries = ItineraryModel.objects.filter(agent=current_profile.user, selected_start_time=None)
-        scheduled_itineraries = ItineraryModel.objects.fillter(agent=current_profile.user).exclude(selected_start_time=None)
+        scheduled_itineraries = ItineraryModel.objects.filter(agent=current_profile.user).exclude(selected_start_time=None)
         context['unscheduled_itineraries'] = unscheduled_itineraries
         context['scheduled_itineraries'] = scheduled_itineraries
     else:
@@ -78,7 +79,7 @@ def claim_itinerary(request):
                         return HttpResponse(json.dumps({"result": "Could not find itinerary"}),
                                             content_type="application/json")
                 else:
-                    return HttpResponse(json.dumps({"result: User does not have priviledges"},
+                    return HttpResponse(json.dumps({"result: User does not have privileges"},
                                                     content_type="application/json"))
             except UserProfile.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
@@ -110,23 +111,33 @@ def select_start_time(request):
             try:
                 current_profile = get_object_or_404(UserProfile, user=request.user)
                 if current_profile.user.is_broker or current_profile.user.is_admin:
+
+                    time_id = request.POST.get('time_id')
                     itinerary_id = request.POST.get('itinerary_id')
+
                     try:
+                        time = TimeModel.objects.get(id=time_id)
                         itinerary = ItineraryModel.objects.get(id=itinerary_id)
-                        if itinerary.agent is None:
-                            itinerary.agent = current_profile.user
+                        if (itinerary.agent == current_profile.user) and (itinerary.selected_start_time is None):
+                            itinerary.selected_start_time = time.time
                             itinerary.save()
+
+                            # TODO - Email the user with the confirmation
+
                             return HttpResponse(json.dumps({"result": "0",
-                                                            "itineraryId": itinerary_id,
+                                                            "timeId": time.id,
                                                             }), content_type="application/json")
                         else:
+                            print(itinerary.agent)
+                            print(current_profile.user)
+                            print(time.time)
                             return HttpResponse(json.dumps({"result": "1"}),
                                                 content_type="application/json")
-                    except ItineraryModel.DoesNotExist:
-                        return HttpResponse(json.dumps({"result": "Could not find itinerary"}),
+                    except (ItineraryModel.DoesNotExist, TimeModel.DoesNotExist):
+                        return HttpResponse(json.dumps({"result": "Could not find itinerary data"}),
                                             content_type="application/json")
                 else:
-                    return HttpResponse(json.dumps({"result: User does not have priviledges"},
+                    return HttpResponse(json.dumps({"result: User does not have privileges"},
                                                     content_type="application/json"))
             except UserProfile.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),

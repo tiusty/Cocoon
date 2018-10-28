@@ -50,7 +50,7 @@
                     {% if itn.is_claimed %}
                         <button id="claim-{{ itn.id }}" class="btn btn-disabled">Unavailable</button>
                     {% else %}
-                        <button id="claim-{{ itn.id }}" class="btn expand-btn" onclick="claim_itinerary({{ itn.id }}, '{% url 'scheduler:claimItinerary' %}')">Claim</button>
+                        <button id="claim-{{ itn.id }}" class="btn expand-btn" onclick="claimItinerary({{ itn.id }}, '{% url 'scheduler:claimItinerary' %}')">Claim</button>
                     {% endif %}
                 </div>
             {% endfor %}

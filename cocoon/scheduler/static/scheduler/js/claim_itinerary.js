@@ -4,7 +4,7 @@
  * @param id - id of the itinerary being claimed
  * @param url - url handled by the correct view function
  */
-function claim_itinerary(id, url) {
+function claimItinerary(id, url) {
     $('#claim-' + id).text("Loading...");
 
     $.ajax({

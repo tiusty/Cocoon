@@ -24,7 +24,6 @@ class TimeModel(models.Model):
 class ItineraryModel(models.Model):
     """
        Model for Itinerary. These are based on the interface designed on the Google Doc.
-
        Attributes:
            self.client: (ForeignKey('MyUser') -> The user that is associated with the itinerary
            self.itinerary: (FileField) -> The location of the itinerary stored on s3. Gives a step by step
@@ -38,7 +37,7 @@ class ItineraryModel(models.Model):
     itinerary = models.FileField(blank=True)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
-    selected_start_time = models.OneToOneField('TimeModel', on_delete=models.SET_NULL, blank=True, null=True)
+    selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
 
     def __str__(self):
