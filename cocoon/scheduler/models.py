@@ -1,6 +1,9 @@
 from django.db import models
 from django.db import transaction
 from django.utils import timezone
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
 
 # Import cocoon models
 from cocoon.userAuth.models import MyUser
@@ -79,6 +82,25 @@ class ItineraryModel(models.Model):
     def select_start_time(self, start_time):
         self.selected_start_time = start_time
         self.save()
+
+        message = render_to_string(
+            'scheduler/email/itinerary_confirmation_email.html',
+            {
+                'user': self.client.first_name,
+                'agent_name': self.agent.first_name,
+                'agent_email': self.agent.email,
+                'start_time': self.selected_start_time,
+                'homes': self.homes,
+            }
+        )
+        subject = 'Tour confirmed for %s'%(str(self.selected_start_time))
+        recipient = self.client.email
+        email = EmailMessage(
+            subject, message, to=[recipient]
+        )
+
+        # send confirmation email to user
+        email.send()
 
     @transaction.atomic
     def associate_agent(self, agent):

@@ -93,7 +93,6 @@ def claim_itinerary(request):
                             content_type="application/json",
                             )
 
-
 @login_required
 def select_start_time(request):
     """
@@ -119,8 +118,6 @@ def select_start_time(request):
                         itinerary = ItineraryModel.objects.get(id=itinerary_id)
                         if (itinerary.agent == current_profile.user) and (itinerary.selected_start_time is None):
                             itinerary.select_start_time(time.time)
-
-                            # TODO - Email the user with the confirmation
 
                             return HttpResponse(json.dumps({"result": "0",
                                                             "timeId": time.id,

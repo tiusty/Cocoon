@@ -1,0 +1,18 @@
+{% autoescape off %}
+
+<div class="email-container">
+    Hey {{ user }},
+    Your itinerary has been confirmed for {{ start_time }}.
+
+    Your tours will be given by {{ agent_name }}. You can direct
+    any questions to {{ agent_email }}. You will be visiting the
+    following locations:
+
+    <ul>
+        {% for home in homes.all %}
+            <li>{{ home }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endautoescape %}
