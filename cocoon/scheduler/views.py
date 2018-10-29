@@ -42,10 +42,29 @@ def view_tours(request):
         raise Http404("This page does not exist")
     return render(request, 'scheduler/viewTours.html', context)
 
-
 ########################################
 # AJAX Request Handlers
 ########################################
+
+@login_required
+def unschedule_itinerary(request):
+    itinerary_id = request.POST.get('itinerary_id')
+    current_profile = get_object_or_404(UserProfile, user=request.user)
+    if current_profile.user.is_hunter:
+        try:
+            itinerary = ItineraryModel.objects.get(id=itinerary_id)
+            itinerary.unschedule_itinerary(request=request)
+            return HttpResponse(json.dumps({"result": "0"}),
+                                content_type="application/json",
+                                )
+        except ItineraryModel.DoesNotExist:
+            return HttpResponse(json.dumps({"result": "1"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "1"}),
+                            content_type="application/json",
+                            )
 
 @login_required
 def claim_itinerary(request):

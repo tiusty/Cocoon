@@ -67,6 +67,7 @@ TEMPLATES = [
                 'cocoon.userAuth.context_processors.userAuth_processors.add_favorite_homes_processor',
                 'cocoon.userAuth.context_processors.userAuth_processors.add_visit_home_list_processor',
                 'cocoon.userAuth.context_processors.userAuth_processors.determine_user_type_processor',
+                'cocoon.userAuth.context_processors.userAuth_processors.add_itineraries_processor',
             ],
         },
     },

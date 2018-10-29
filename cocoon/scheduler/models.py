@@ -3,7 +3,7 @@ from django.db import transaction
 from django.utils import timezone
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-
+from django.contrib.sites.shortcuts import get_current_site
 
 # Import cocoon models
 from cocoon.userAuth.models import MyUser
@@ -109,7 +109,32 @@ class ItineraryModel(models.Model):
         self.save()
 
     @transaction.atomic
-    def unschedule_itinerary(self):
-        self.agent = None
+    def unschedule_itinerary(self, **kwargs):
+        unscheduled_time = self.selected_start_time
+        unscheduled_available_time = self.start_times.filter(time=unscheduled_time).first()
+        if unscheduled_available_time:
+            unscheduled_available_time.delete()
         self.selected_start_time = None
         self.save()
+
+        domain = kwargs.pop('request', None)
+        current_site = get_current_site(domain)
+        message = render_to_string(
+            'scheduler/email/itinerary_cancellation_email.html',
+            {
+                'user': self.client.first_name,
+                'agent_name': self.agent.first_name,
+                'domain': current_site.domain,
+                'agent_email': self.agent.email,
+                'start_time': unscheduled_time,
+            }
+        )
+        subject = 'Tour with %s cancelled' % (str(self.client.first_name))
+        recipient = self.agent.email
+        email = EmailMessage(
+            subject=subject, body=message, to=[recipient]
+        )
+        email.content_subtype = "html"
+
+        # send confirmation email to user
+        email.send()

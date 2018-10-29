@@ -40,6 +40,12 @@
         </div>
     </div>
 
+    <div class="scheduled-itinerary">
+        {% for itn in scheduled_itineraries %}
+            <button class="btn expand-btn" onclick="unscheduleItinerary({{ itn.id }}, '{% url 'scheduler:unscheduleItinerary' %}')">Cancel Itinerary on {{ itn.selected_start_time }}</button>
+        {% endfor %}
+    </div>
+
 {% endblock %}
 
 {% block endScripts %}
@@ -59,6 +65,6 @@
     <script src="{% static 'survey/survey_result.js' %}"></script>
     <script src="{% static 'survey/favoritesTiles.js' %}"></script>
     <script src="{% static 'survey/unfavorite.js' %}"></script>
-
+    <script src="{% static 'scheduler/js/unschedule_itinerary.js' %}"></script>
 
 {% endblock %}
