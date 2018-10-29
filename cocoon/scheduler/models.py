@@ -96,8 +96,9 @@ class ItineraryModel(models.Model):
         subject = 'Tour confirmed for %s'%(str(self.selected_start_time))
         recipient = self.client.email
         email = EmailMessage(
-            subject, message, to=[recipient]
+            subject=subject, body=message, to=[recipient]
         )
+        email.content_subtype = "html"
 
         # send confirmation email to user
         email.send()
@@ -105,4 +106,10 @@ class ItineraryModel(models.Model):
     @transaction.atomic
     def associate_agent(self, agent):
         self.agent = agent
+        self.save()
+
+    @transaction.atomic
+    def unschedule_itinerary(self):
+        self.agent = None
+        self.selected_start_time = None
         self.save()
