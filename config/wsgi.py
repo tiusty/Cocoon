@@ -14,9 +14,15 @@ from django.core.wsgi import get_wsgi_application
 from django.core.exceptions import ImproperlyConfigured
 from config.settings.base import BASE_DIR
 
+from config.keys.keys_filepaths import KEY_FILE_PATHS
+
 # Opens the secrets file and loads the values
 with open(os.path.join(BASE_DIR, 'settings/secrets.json')) as f:
         secrets = json.loads(f.read())
+
+# Tests loading all the keys to make sure they exists (does not verify that they are valid)
+for key, path in KEY_FILE_PATHS.items():
+    assert os.path.exists(path), "File: {0} does not exist at path {1}".format(key, path)
 
 
 # Function loads a value from the secrets file

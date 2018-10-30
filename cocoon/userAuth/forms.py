@@ -2,6 +2,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.db import transaction
 from .models import MyUser, UserProfile
 from django import forms
+from cocoon.signature.models import HunterDocManagerModel
 
 from .constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
 
@@ -164,6 +165,7 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         # Send the email to the user
         email.send()
 
+        HunterDocManagerModel.objects.get_or_create(user=user)
         return user
 
 

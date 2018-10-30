@@ -47,6 +47,13 @@ def loginPage(request):
     return render(request, 'userAuth/login.html', context)
 
 
+class TermsOfUse(TemplateView):
+    """
+    Shows the terms and use page for Cocoon
+    """
+    template_name = 'userAuth/terms_and_conditions.html'
+
+
 class SignUpView(TemplateView):
     """
     Redirects user to sign up page which gives them options for what to sign up as

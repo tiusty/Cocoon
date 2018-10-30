@@ -23,7 +23,7 @@ class ItineraryModel(models.Model):
     itinerary = models.FileField(blank=True)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
-    selected_start_time = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    selected_start_time = models.DateTimeField(blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
 
     def __str__(self):

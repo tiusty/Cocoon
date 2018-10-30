@@ -17,4 +17,5 @@ urlpatterns = [
     # Email verification
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate_account, name='activateAccount'),
+    url(r'^termsofuse', views.TermsOfUse.as_view(), name='terms_of_use'),
 ]

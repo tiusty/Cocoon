@@ -1,11 +1,11 @@
-import unittest
+from django.test import TestCase
 from unittest.mock import MagicMock
 from cocoon.commutes.distance_matrix.distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
     Over_Query_Limit_Exception, Max_Elements_Exceeded_Exception, Unknown_Error_Exception, Zero_Results_Exception, \
     distance_matrix, DistanceWrapper
 
 
-class TestDistanceWrapper(unittest.TestCase):
+class TestDistanceWrapper(TestCase):
 
     def setUp(self):
         self.wrapper = DistanceWrapper()
