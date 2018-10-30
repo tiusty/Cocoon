@@ -147,7 +147,8 @@ def activate_account(request, uidb64, token):
         # If the user and the token is valid then active the user and log the user in
         user.is_verified = True
         user.save()
-        login(request, user)
+        if not request.user.is_authenticated:
+            login(request, user)
 
         # Return the message to inform the user of the status of the account
         messages.info(request, "Thank you for verifying your email")
