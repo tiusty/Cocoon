@@ -10,7 +10,7 @@ class TestApproximateCommutesFilter(TestCase):
 
     def setUp(self):
         # The actually commute type doesn't matter for the tests
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
 
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
@@ -261,7 +261,7 @@ class TestComputeCommuteScore(TestCase):
 
     def setUp(self):
         # The actually commute type doesn't matter for the tests
-        self.commute_type = CommuteType.objects.create(commute_type='Driving')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
 
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
