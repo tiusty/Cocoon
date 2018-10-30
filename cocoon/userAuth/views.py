@@ -12,12 +12,9 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 
 # Used for email verification
-from django.template.loader import render_to_string
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_text
 from .tokens import account_activation_token
-from django.core.mail import EmailMessage
 
 
 def index(request):
@@ -67,6 +64,12 @@ class SignUpView(TemplateView):
     """
     template_name = 'userAuth/signup.html'
 
+    def get(self, request, **kwargs):
+        if self.request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('homePage:index'))
+        else:
+            return super().get(request, **kwargs)
+
 
 class ApartmentHunterSignupView(CreateView):
     """
@@ -75,6 +78,12 @@ class ApartmentHunterSignupView(CreateView):
     model = MyUser
     form_class = ApartmentHunterSignupForm
     template_name = 'userAuth/signup_form.html'
+
+    def get(self, request, **kwargs):
+        if self.request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('homePage:index'))
+        else:
+            return super().get(request, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'hunter'
@@ -105,6 +114,12 @@ class BrokerSignupView(CreateView):
     model = MyUser
     form_class = BrokerSignupForm
     template_name = 'userAuth/signup_form.html'
+
+    def get(self, request, **kwargs):
+        if self.request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('homePage:index'))
+        else:
+            return super().get(request, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'broker'
