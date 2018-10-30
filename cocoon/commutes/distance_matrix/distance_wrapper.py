@@ -89,6 +89,11 @@ class DistanceWrapper:
 
     def get_durations_and_distances(self, origins, destinations, mode="driving"):
         """
+        NOTE: THIS SHOULD NOT BE CALLED DIRECTLY
+
+        To update the cache please use the commute_cache_updater
+        To retrieve an exact commute please use the commute_retriever function
+
         Gets the distance matrix corresponding to a destination and an arbitrary number of origins.
         Segments requests to the distance matrix API to include a maximum of 25 origins and returns
         the consolidated results.

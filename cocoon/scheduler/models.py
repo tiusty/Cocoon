@@ -6,21 +6,6 @@ from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 
 
-class TimeModel(models.Model):
-    """
-        Model for a proposed itinerary start time.
-
-        Attributes:
-            self.time (DateTimeField) -> The available start time proposed by the client
-            self.itinerary (ForeignKey) -> The associated itinerary
-    """
-    time = models.DateTimeField(default=timezone.now)
-    itinerary = models.ForeignKey('ItineraryModel', related_name='start_times', on_delete=models.CASCADE, blank=False, null=False)
-
-    def __str__(self):
-        return str(self.time)
-
-
 class ItineraryModel(models.Model):
     """
        Model for Itinerary. These are based on the interface designed on the Google Doc.
@@ -38,7 +23,7 @@ class ItineraryModel(models.Model):
     itinerary = models.FileField(blank=True)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
-    selected_start_time = models.OneToOneField('TimeModel', on_delete=models.SET_NULL, blank=True, null=True)
+    selected_start_time = models.DateTimeField(blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
 
     def __str__(self):
@@ -58,3 +43,19 @@ class ItineraryModel(models.Model):
         :return:
         """
         return self.tour_duration_minutes/60
+
+
+class TimeModel(models.Model):
+    """
+        Model for a proposed itinerary start time.
+
+        Attributes:
+            self.time (DateTimeField) -> The available start time proposed by the client
+            self.itinerary (ForeignKey) -> The associated itinerary
+    """
+    time = models.DateTimeField(default=timezone.now)
+    itinerary = models.ForeignKey(ItineraryModel, related_name='start_times', on_delete=models.CASCADE, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.time)
+

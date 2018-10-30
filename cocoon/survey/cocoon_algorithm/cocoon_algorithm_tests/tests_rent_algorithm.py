@@ -10,7 +10,7 @@ import cocoon.houseDatabase.maps_requester as geolocator
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel, HomeProviderModel
 from cocoon.commutes.distance_matrix import commute_cache_updater
 from cocoon.commutes.models import ZipCodeBase, CommuteType
-from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
+from cocoon.commutes.constants import CommuteAccuracy
 # Import survey python modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.home_data.home_score import HomeScore

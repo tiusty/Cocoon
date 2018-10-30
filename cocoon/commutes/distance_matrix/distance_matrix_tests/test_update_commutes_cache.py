@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 
 # Import Commute modules
 from cocoon.commutes.models import ZipCodeBase
-from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy, GoogleCommuteNaming
+from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy
 
 # Import Distance matrix classes
 from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Transit, Bicycling, Walking, \

@@ -8,7 +8,7 @@ from cocoon.userAuth.models import MyUser
 from cocoon.survey.models import RentingDestinationsModel, RentingSurveyModel
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import ZipCodeBase, CommuteType
-from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, GoogleCommuteNaming
+from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE
 from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED
 
 

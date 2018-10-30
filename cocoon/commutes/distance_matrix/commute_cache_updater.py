@@ -78,8 +78,7 @@ class Driving(CommuteCalculator):
         # 2: Use approx handler to compute the failed home distances and update db
         for destination_zip, origin_list in failed_home_dict.items():
             try:
-                self.generate_approximation_pair(origin_list, destination_zip,
-                                                 self.destination.commute_type)
+                self.generate_approximation_pair(origin_list, destination_zip)
             except Distance_Matrix_Exception as e:
                 logger.warning("Caught: {0}".format(e.__class__.__name__))
 
