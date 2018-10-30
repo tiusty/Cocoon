@@ -50,6 +50,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_broker = models.BooleanField(default=False)
     is_hunter = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=True)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
 

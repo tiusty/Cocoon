@@ -89,7 +89,8 @@ class ApartmentHunterSignupView(CreateView):
         """
 
         # Create user with commit=False so active can be set to false before saving in the database
-        form.save(request=self.request)
+        user = form.save(request=self.request)
+        login(self.request, user)
 
         # Send message to next page informing the user of the status of the account
         messages.info(self.request, "Please confirm your email address to complete registration. "
@@ -117,28 +118,8 @@ class BrokerSignupView(CreateView):
         :return: (HttpResponseRedirect) -> Send them to the home page with the valid message
         """
         # Create user with commit=False so active can be set to false before saving in the database
-        user = form.save(commit=False)
-        user.is_active = False
-        user.save()
-
-        # Create the email context that is sent to the user
-        current_site = get_current_site(self.request)
-        mail_subject = 'Activate your Cocoon Account'
-        message = render_to_string(
-            'userAuth/email/account_activate_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            }
-        )
-        to_email = user.email
-        email = EmailMessage(
-            mail_subject, message, to=[to_email]
-        )
-
-        # Send the email to the user
-        email.send()
+        user = form.save(request=self.request)
+        login(self.request, user)
 
         # Send message to next page informing the user of the status of the account
         messages.info(self.request, "Please confirm your email address to complete registration. "
@@ -164,7 +145,7 @@ def activate_account(request, uidb64, token):
 
     if user is not None and account_activation_token.check_token(user, token):
         # If the user and the token is valid then active the user and log the user in
-        user.is_active = True
+        user.is_verified = True
         user.save()
         login(request, user)
 
