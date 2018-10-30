@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from django.db import transaction
 from django.contrib.auth import login
 
@@ -26,7 +26,7 @@ from cocoon.userAuth.models import UserProfile
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyFormMini, \
-    RentingDestinationsForm, RentSurveyFormMini, TenantFormSet
+    RentingDestinationsForm, RentSurveyFormMini, TenantFormSet, TenantFormSetResults
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
@@ -94,6 +94,57 @@ class RentingSurvey(CreateView):
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                             kwargs={"survey_url": self.model.url}))
 
+
+class RentingResultSurvey(UpdateView):
+    model = RentingSurveyModel
+    form_class = RentSurveyForm
+    template_name = 'survey/surveyResultRent.html'
+    slug_field = 'url'
+    slug_url_kwarg = 'survey_url'
+    context_object_name = 'survey'
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def get_context_data(self, **kwargs):
+        """
+        Need to add the Tenant Form set to the context
+        """
+        data = super(RentingResultSurvey, self).get_context_data(**kwargs)
+
+        # If the request is a post, then populate the tenant form set
+        if self.request.POST:
+            data['tenants'] = TenantFormSetResults(self.request.POST, instance=self.object)
+
+        # Otherwise if it is just a get, then just create a new form set
+        else:
+            data['tenants'] = TenantFormSetResults(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        tenants = context['tenants']
+
+        # Makes sure that the tenant form is valid before saving
+        if tenants.is_valid():
+
+            user = self.request.user
+
+            # Save the survey
+            with transaction.atomic():
+                form.instance.user_profile = get_object_or_404(UserProfile, user=user)
+                object = form.save()
+
+            # Now save the the tenants
+            tenants.instance = object
+            tenants.save()
+        else:
+            # If there is an error then re-render the survey page
+            return self.render_to_response(self.get_context_data(form=form))
+
+        return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                            kwargs={"survey_url": self.object.url}))
 
 def run_rent_algorithm(survey, context):
     """

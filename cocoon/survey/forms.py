@@ -381,3 +381,5 @@ class TenantForm(DestinationForm, CommuteInformationForm, TenantPersonalInformat
 
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                       extra=2, can_delete=False)
+TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
+                                      extra=0, can_delete=False)
