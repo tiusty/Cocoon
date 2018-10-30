@@ -20,13 +20,20 @@ config/keys/*
 docs/*.html
 
 # Migration folders #
-cocoon/userAuth/migrations
-cocoon/houseDatabase/migrations
-cocoon/homePage/migrations
-cocoon/survey/migrations
-cocoon/commutes/migrations
-cocoon/scheduler/migrations
-cocoon/signature/migrations
+cocoon/userAuth/migrations/*
+!cocoon/userAuth/migrations/__init__.py
+cocoon/houseDatabase/migrations/*
+!cocoon/houseDatabase/migrations/__init__.py
+cocoon/homePage/migrations/*
+!cocoon/homePage/migrations/__init__.py
+cocoon/survey/migrations/*
+!cocoon/survey/migrations/__init__.py
+cocoon/commutes/migrations/*
+!cocoon/commutes/migrations/__init__.py
+cocoon/scheduler/migrations/*
+!cocoon/scheduler/migrations/__init__.py
+cocoon/signature/migrations/*
+!cocoon/signature/migrations/__init__.py
 
 # Visual Studio Code Settings #
 .vscode/
