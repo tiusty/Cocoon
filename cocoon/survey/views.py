@@ -61,6 +61,7 @@ class RentingSurvey(CreateView):
 
         does_user_signup = False
         sign_up_form_valid = True
+        user_signup = None
 
         if 'user_creation' in context.values():
             does_user_signup = True
@@ -495,7 +496,7 @@ def check_pre_tour_documents(request):
                                     content_type="application/json",
                                     )
         else:
-            return HttpResponse(json.dumps({"result" : "0",
+            return HttpResponse(json.dumps({"result": "0",
                                             "message": "User not authenticated"}),
                                 content_type="application/json",
                                 )
