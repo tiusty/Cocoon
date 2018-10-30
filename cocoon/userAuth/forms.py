@@ -2,6 +2,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.db import transaction
 from .models import MyUser, UserProfile
 from django import forms
+from cocoon.signature.models import HunterDocManagerModel
 
 from .constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
 
@@ -129,10 +130,12 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_hunter = True
         user.save()
+        manager = HunterDocManagerModel.objects.create(user=user)
+        manager.save()
         return user
 
 
@@ -168,7 +171,7 @@ class BrokerSignupForm(BaseRegisterForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_broker = True
         user.save()
