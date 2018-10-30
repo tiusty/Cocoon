@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.forms import inlineformset_factory
 from django.views.generic import CreateView
 from django.db import transaction
+from django.contrib.auth import login
 
 # Import Signatures modules
 from cocoon.signature.models import HunterDocManagerModel
@@ -27,6 +28,8 @@ from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyFormMini, \
     RentingDestinationsForm, RentSurveyFormMini, TenantFormSet
 
+from cocoon.userAuth.forms import ApartmentHunterSignupForm
+
 
 class RentingSurvey(CreateView):
     model = RentingSurveyModel
@@ -42,27 +45,47 @@ class RentingSurvey(CreateView):
         # If the request is a post, then populate the tenant form set
         if self.request.POST:
             data['tenants'] = TenantFormSet(self.request.POST)
+            if not self.request.user.is_authenticated():
+                data['user_creation'] = ApartmentHunterSignupForm(self.request.POST)
 
         # Otherwise if it is just a get, then just create a new form set
         else:
             data['tenants'] = TenantFormSet()
+            if not self.request.user.is_authenticated():
+                data['user_creation'] = ApartmentHunterSignupForm()
         return data
 
     def form_valid(self, form):
         context = self.get_context_data()
         tenants = context['tenants']
 
+        does_user_signup = False
+        sign_up_form_valid = True
+
+        if 'user_creation' in context.values():
+            does_user_signup = True
+            user_signup = context['user_creation']
+            if not user_signup.is_valid():
+                sign_up_form_valid = False
+
         # Makes sure that the tenant form is valid before saving
-        if tenants.is_valid():
+        if tenants.is_valid() and sign_up_form_valid:
+
+            user = self.request.user
+
+            if does_user_signup:
+                user = user_signup.save(request=self.request)
 
             # Save the survey
             with transaction.atomic():
-                form.instance.user_profile = get_object_or_404(UserProfile, user=self.request.user)
+                form.instance.user_profile = get_object_or_404(UserProfile, user=user)
                 self.object = form.save()
 
             # Now save the the tenants
             tenants.instance = self.object
             tenants.save()
+
+            login(self.request, user)
         else:
             # If there is an error then re-render the survey page
             return self.render_to_response(self.get_context_data(form=form))
