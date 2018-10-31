@@ -42,6 +42,30 @@ def view_tours(request):
         raise Http404("This page does not exist")
     return render(request, 'scheduler/viewTours.html', context)
 
+@login_required
+def add_itineraries_processor(request):
+    """
+    A helper function intended for use in other views to add the
+    given user's itineraries to the current context
+    :param request: The current http request
+    :return: The context containing the user's itineraries
+    """
+    if request.user.is_authenticated():
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        itineraries = ItineraryModel.objects.filter(client=user_profile.user)
+        unscheduled_itineraries = itineraries.filter(selected_start_time=None)
+        scheduled_itineraries = itineraries.exclude(selected_start_time=None)
+        return {
+            'unscheduled_itineraries': unscheduled_itineraries,
+            'scheduled_itineraries': scheduled_itineraries,
+        }
+    else:
+        return {
+            'scheduled_itineraries': None,
+            'unscheduled_itineraries': None,
+        }
+
+
 ########################################
 # AJAX Request Handlers
 ########################################

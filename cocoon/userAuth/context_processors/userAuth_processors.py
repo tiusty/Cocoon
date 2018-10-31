@@ -21,28 +21,7 @@ def add_favorite_homes_processor(request):
         return {
             'user_favorite_houses': None
         }
-
-def add_itineraries_processor(request):
-    """
-    This context processor adds all the itineraries, distinguished
-    by whether an agent as scheduled the itinerary
-    :param request: The current http request
-    :return: The new context containing the user's itineraries
-    """
-    if request.user.is_authenticated():
-        user_profile = get_object_or_404(UserProfile, user=request.user)
-        itineraries = ItineraryModel.objects.filter(client=user_profile.user)
-        unscheduled_itineraries = itineraries.filter(selected_start_time=None)
-        scheduled_itineraries = itineraries.exclude(selected_start_time=None)
-        return {
-            'unscheduled_itineraries': unscheduled_itineraries,
-            'scheduled_itineraries': scheduled_itineraries,
-        }
-    else:
-        return {
-            'scheduled_itineraries': None,
-            'unscheduled_itineraries': None,
-        }
+    
 
 def add_visit_home_list_processor(request):
     """
