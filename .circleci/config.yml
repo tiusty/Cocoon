@@ -49,6 +49,7 @@ jobs:
       - run:
           name: run makemigrations
           command: |
+            . venv/bin/activate
             python manage.py makemigrations
             python manage.py migrate
       - run:
