@@ -118,8 +118,8 @@ class DistanceWrapper:
         origin_list = origins
 
         # maximizes 100 elements while retaining 25 origin/dest limit
-        destination_number = min(25, len(destinations))
-        origin_number = min((100 / destination_number), 25)
+        destination_number = int(min(25, len(destinations)))
+        origin_number = int(min((100 / destination_number), 25))
 
         while origin_list:
             # only computes for the first destination_number destinations
