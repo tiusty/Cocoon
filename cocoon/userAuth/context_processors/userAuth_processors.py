@@ -21,7 +21,7 @@ def add_favorite_homes_processor(request):
         return {
             'user_favorite_houses': None
         }
-    
+
 
 def add_visit_home_list_processor(request):
     """
