@@ -43,7 +43,7 @@ def view_tours(request):
     return render(request, 'scheduler/viewTours.html', context)
 
 @login_required
-def add_itineraries_processor(request):
+def get_user_itineraries(request):
     """
     A helper function intended for use in other views to add the
     given user's itineraries to the current context

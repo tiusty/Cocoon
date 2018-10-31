@@ -22,6 +22,8 @@ from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
 from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
     RentingDestinationsForm, RentSurveyFormMini
 
+from cocoon.scheduler import views
+
 
 @login_required
 def renting_survey(request):
@@ -251,9 +253,9 @@ def survey_result_rent(request, survey_url=""):
 
 @login_required
 def visit_list(request):
-    context = {
-        'error_message': []
-    }
+
+    context = views.get_user_itineraries(request)
+    context['error_message'] = []
 
     return render(request, 'survey/visitList.html', context)
 
