@@ -47,6 +47,16 @@ jobs:
       # https://pytest.org
       # https://nose.readthedocs.io
       - run:
+          name: run makemigrations
+          command: |
+            . venv/bin/activate
+            python manage.py makemigrations
+      - run:
+          name: run migrate
+          command: |
+            . venv/bin/activate
+            python manage.py migrate
+      - run:
           name: run tests
           command: |
             . venv/bin/activate
