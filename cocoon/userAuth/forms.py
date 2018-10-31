@@ -2,8 +2,21 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.db import transaction
 from .models import MyUser, UserProfile
 from django import forms
+from cocoon.signature.models import HunterDocManagerModel
 
 from .constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
+
+# Used for email verification
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from .tokens import account_activation_token
+from django.core.mail import EmailMessage
+
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 
 class LoginUserForm(AuthenticationForm):
@@ -97,6 +110,31 @@ class BaseRegisterForm(UserCreationForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
 
+def send_verification_email(domain, user):
+
+    if domain is not None:
+        # Create the email context that is sent to the user
+        current_site = get_current_site(domain)
+        mail_subject = 'Activate your Cocoon Account'
+        message = render_to_string(
+            'userAuth/email/account_activate_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            }
+        )
+        to_email = user.email
+        email = EmailMessage(
+            mail_subject, message, to=[to_email]
+        )
+
+        # Send the email to the user
+        email.send()
+    else:
+        logger.error("In {0}, domain is None".format(send_verification_email.__name__))
+
+
 class ApartmentHunterSignupForm(BaseRegisterForm):
 
     creation_key = forms.CharField(
@@ -129,10 +167,16 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_hunter = True
+        user.is_verified = False
         user.save()
+
+        domain = kwargs.pop('request', None)
+        send_verification_email(domain, user)
+
+        HunterDocManagerModel.objects.get_or_create(user=user)
         return user
 
 
@@ -168,10 +212,16 @@ class BrokerSignupForm(BaseRegisterForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_broker = True
+        user.is_verified = False
         user.save()
+
+        domain = kwargs.pop('request', None)
+        send_verification_email(domain, user)
+
+        HunterDocManagerModel.objects.get_or_create(user=user)
         return user
 
 

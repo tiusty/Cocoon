@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^deleteSurvey/$', views.delete_survey, name="surveyDelete"),
     url(r'^setVisitHome/$', views.set_visit_house, name="setVisitHouse"),
     url(r'^deleteVisitHome/$', views.delete_visit_house, name="deleteVisitHouse"),
+    url(r'^check_pre_tour_documents/$', views.check_pre_tour_documents, name="checkPretourDocuments"),
+    url(r'^resend_pre_tour_documents/$', views.resend_pre_tour_documents, name="resendPretourDocuments"),
 ]

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'cocoon.commutes',
     'storages',
     'cocoon.scheduler',
+    'cocoon.signature',
 ]
 
 MIDDLEWARE = [

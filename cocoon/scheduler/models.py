@@ -10,21 +10,6 @@ from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 
 
-class TimeModel(models.Model):
-    """
-        Model for a proposed itinerary start time.
-
-        Attributes:
-            self.time (DateTimeField) -> The available start time proposed by the client
-            self.itinerary (ForeignKey) -> The associated itinerary
-    """
-    time = models.DateTimeField(default=timezone.now)
-    itinerary = models.ForeignKey('ItineraryModel', related_name='start_times', on_delete=models.CASCADE, blank=False, null=False)
-
-    def __str__(self):
-        return str(self.time)
-
-
 class ItineraryModel(models.Model):
     """
        Model for Itinerary. These are based on the interface designed on the Google Doc.
@@ -138,3 +123,18 @@ class ItineraryModel(models.Model):
 
         # send confirmation email to user
         email.send()
+        
+        
+class TimeModel(models.Model):
+    """
+        Model for a proposed itinerary start time.
+
+        Attributes:
+            self.time (DateTimeField) -> The available start time proposed by the client
+            self.itinerary (ForeignKey) -> The associated itinerary
+    """
+    time = models.DateTimeField(default=timezone.now)
+    itinerary = models.ForeignKey(ItineraryModel, related_name='start_times', on_delete=models.CASCADE, blank=False, null=False)
+
+    def __str__(self):
+        return str(self.time)

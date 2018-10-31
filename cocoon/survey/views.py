@@ -10,6 +10,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
 
+# Import Signatures modules
+from cocoon.signature.models import HunterDocManagerModel
+
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
 
@@ -257,6 +260,19 @@ def visit_list(request):
     context = views.get_user_itineraries(request)
     context['error_message'] = []
 
+    # Retrieve the models
+    user_profile = get_object_or_404(UserProfile, user=request.user)
+    (manager, _) = HunterDocManagerModel.objects.get_or_create(
+        user=user_profile.user,
+    )
+
+    # Since the page is loading, update all the signed documents to see if the status has changed
+    manager.update_all_is_signed()
+
+    # Create context to update the html based on the status of the documents
+    context['pre_tour_signed'] = manager.is_pre_tour_signed()
+    context['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+
     return render(request, 'survey/visitList.html', context)
 
 
@@ -431,5 +447,122 @@ def delete_visit_house(request):
                                 )
     else:
         return HttpResponse(json.dumps({"result": "Method Not POST"}),
+                            content_type="application/json",
+                            )
+
+
+@login_required
+def check_pre_tour_documents(request):
+    """
+    This function is a ajax request that either sends the documents if they are not created
+        or will check the status of the documents if they are already sent
+    :param request: The HTTP request
+    :return: An HTTP response which returns a JSON
+        result:
+            0- failures
+            1- success - Pre-tour document is not signed but is sent (either just sent or already had been sent)
+            2 - success - Pre-tour document signed
+        message:
+            - the message associated with the request
+    """
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                try:
+                    doc_manager = user_profile.user.doc_manager
+                    if not doc_manager.pre_tour_forms_created():
+                        if doc_manager.create_pre_tour_documents():
+                            return HttpResponse(json.dumps({"result": "1",
+                                                            "message": "Document Created"}),
+                                                content_type="application/json", )
+                        else:
+                            return HttpResponse(json.dumps({"result": "1",
+                                                            "message": "Document already exists"}),
+                                                content_type="application/json", )
+                    else:
+                        doc_manager.update_all_is_signed()
+                        if doc_manager.is_pre_tour_signed():
+                            return HttpResponse(json.dumps({"result": "2",
+                                                            "message": "Document signed!"}),
+                                                content_type="application/json", )
+                        else:
+                            return HttpResponse(json.dumps({"result": "1",
+                                                            "message": "Document still not signed"}),
+                                                content_type="application/json", )
+
+                except HunterDocManagerModel.DoesNotExist:
+                    return HttpResponse(json.dumps({
+                        "result": "0",
+                        "message": "Could not retrieve doc_manager"}),
+                                        content_type="application/json",
+                                        )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "0",
+                                                "message": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result" : "0",
+                                            "message": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "0",
+                                        "message": "Method Not POST"}),
+                            content_type="application/json",
+                            )
+
+
+@login_required
+def resend_pre_tour_documents(request):
+    """
+    This ajax request will resend the pre-tour documents to the users email
+    :param request: The HTTP request
+    :return: An HTTP response which returns a JSON
+        result:
+            0- failures
+            1- success - The document was resent to the user
+        message:
+            - the message associated with the request
+    """
+    if request.method == "POST":
+        # Only care if the user is authenticated
+        if request.user.is_authenticated():
+            # Get the id that is associated with the AJAX request
+            try:
+                user_profile = UserProfile.objects.get(user=request.user)
+                try:
+                    doc_manager = user_profile.user.doc_manager
+                    if doc_manager.resend_pre_tour_documents():
+                        return HttpResponse(json.dumps({"result": "1",
+                                                        "message": "Document resent"}),
+                                            content_type="application/json", )
+                    else:
+                        return HttpResponse(json.dumps({"result": "0",
+                                                        "message": "Document not resent"}),
+                                            content_type="application/json", )
+
+                except HunterDocManagerModel.DoesNotExist:
+                    return HttpResponse(json.dumps({
+                        "result": "0",
+                        "message": "Could not retrieve doc_manager"}),
+                        content_type="application/json",
+                    )
+            except UserProfile.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "0",
+                                                "message": "Could not retrieve User Profile"}),
+                                    content_type="application/json",
+                                    )
+        else:
+            return HttpResponse(json.dumps({"result": "0",
+                                            "message": "User not authenticated"}),
+                                content_type="application/json",
+                                )
+    else:
+        return HttpResponse(json.dumps({"result": "0",
+                                        "message": "Method Not POST"}),
                             content_type="application/json",
                             )
