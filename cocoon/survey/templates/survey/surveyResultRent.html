@@ -163,7 +163,7 @@
         // Deprecating computing commute time and distance in favor of doing in on the server side
         // Going to keep the portions that create the markers on the map
         {% endcomment %}
-        var myStreetAddresses = [{% for commuter in commuters %}"{{ commuter.full_address }}",{% endfor %}];
+        var myStreetAddresses = [{% for commuter in survey.tenants.all %}"{{ commuter.full_address }}",{% endfor %}];
 
         {% comment %}
            The initialize values to load the cost sliders to
@@ -181,7 +181,7 @@
 
               Only save the javascript variables if the values exist in the formset
         {% endcomment %}
-        {% for dest_form in form_destination|slice:"1" %}
+        {% for dest_form in tenants|slice:"1" %}
             {% for key, value in dest_form.initial.items %}
                 {% ifequal key "min_commute" %}
                     commuteSliderMinInit = {{ value }};
