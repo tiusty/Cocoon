@@ -60,7 +60,7 @@ class TestHomeInformationForm(TestCase):
         result = home_information_form.is_valid()
 
         # Assert
-        self.assertFalse(result)
+        self.assertTrue(result)
 
     def tests_home_information_form_num_bedrooms_missing(self):
         # Arrange
