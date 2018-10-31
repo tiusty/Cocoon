@@ -604,38 +604,3 @@ def resend_pre_tour_documents(request):
                                         "message": "Method Not POST"}),
                             content_type="application/json",
                             )
-
-
-@login_required
-def run_algorithm(request):
-    if request.method == "POST":
-        # Only care if the user is authenticated
-        if request.user.is_authenticated():
-            # Get the id that is associated with the AJAX request
-            try:
-                user_profile = UserProfile.objects.get(user=request.user)
-                try:
-                    favorites_list = user_profile.user.favorites
-                    print(favorites_list)
-
-                except HunterDocManagerModel.DoesNotExist:
-                    return HttpResponse(json.dumps({
-                        "result": "0",
-                        "message": "Could not retrieve doc_manager"}),
-                        content_type="application/json",
-                    )
-            except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "0",
-                                                "message": "Could not retrieve User Profile"}),
-                                    content_type="application/json",
-                                    )
-        else:
-            return HttpResponse(json.dumps({"result": "0",
-                                            "message": "User not authenticated"}),
-                                content_type="application/json",
-                                )
-    else:
-        return HttpResponse(json.dumps({"result": "0",
-                                        "message": "Method Not POST"}),
-                            content_type="application/json",
-                            )
