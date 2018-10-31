@@ -53,11 +53,14 @@ jobs:
             python manage.py makemigrations
             python manage.py migrate
       - run:
+          name: run migrate
+          command: |
+            . venv/bin/activate
+            python manage.py migrate
+      - run:
           name: run tests
           command: |
             . venv/bin/activate
-            python manage.py makemigrations
-            python manage.py migrate
             python manage.py test
 
       - store_test_results:
