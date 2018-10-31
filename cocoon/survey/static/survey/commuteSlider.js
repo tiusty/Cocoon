@@ -29,22 +29,15 @@ $( function() {
     });
     // Retrieve the current active commuter number
     var active_form_num = retrieve_active_commuter();
-    var number_of_tenants = $('#id_number_destinations_filled_out').val();
-    for(var i =0; i< number_of_tenants; i++)
-    {
         // Set the max and min input values which will be changed with the slider
-        console.log(i);
-        var max_commute_id = "#id_tenants-" + i + "-max_commute";
-        var min_commute_id = "#id_tenants-" + i + "-min_commute";
-
-        // Set the display of the slider to visually show the values.
-        // The values are pulled from the current values of the max and min fields of the current commuter
-        set_slider_display($("#commute").slider("values", 0), $("#commute").slider("values", 1));
-
-        // Set the new min and max values to the current slider values
-        $(min_commute_id).val($("#commute").slider("values", 0));
-        $(max_commute_id).val($("#commute").slider("values", 1));
-    }
+    var max_commute_id = "#id_tenants_set-" + active_form_num + "-max_commute";
+    var min_commute_id = "#id_tenants_set-" + active_form_num + "-min_commute";
+     // Set the display of the slider to visually show the values.
+    // The values are pulled from the current values of the max and min fields of the current commuter
+    set_slider_display($("#commute").slider("values", 0), $("#commute").slider("values", 1));
+     // Set the new min and max values to the current slider values
+    $(min_commute_id).val( $("#commute").slider("values", 0));
+    $(max_commute_id).val( $("#commute").slider("values", 1));
 } );
 
 function retrieve_active_commuter() {
