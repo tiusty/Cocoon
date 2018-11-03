@@ -159,7 +159,6 @@ class RentingResultSurvey(UpdateView):
         rent_algorithm = RentAlgorithm()
         rent_algorithm.run(self.object)
         data['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
-        data['mini_form'] = True
 
         # If the request is a post, then populate the tenant form set
         if self.request.POST:

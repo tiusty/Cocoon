@@ -7,13 +7,11 @@
 
     Template Variables:
         form: (RentSurveyFormMini) -> The survey that is being displayed
-        mini_form: (boolean) -> A boolean that determines if the survey is a mini survey or not
         number_of_destinations: (int) -> The number of commuters selected by the user
         number_of_formsets: (int) -> The number of commuters allowed by the user
 
 {% endcomment %}
 
-{#{%  if not mini_form %}#}
 {% comment %}
     The autocomplete field is for populating the address, city, state and zip_code porition of the survey.
         This is only populated in the main survey but not the mini survey
@@ -28,7 +26,6 @@
     <br>
     <br>
 </div>
-{#{% endif %}#}
 
 <div class="form-group">
     {% comment %}
@@ -77,9 +74,7 @@
                     <a data-toggle="tab"
                        href="#form_destination_section_{{ forloop.counter }}"
                         onclick="
-{#                                {% if not mini_form %}#}
                         clean_autocomplete();
-{#                        {% endif %}#}
                         set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
         </ul>
