@@ -12,7 +12,6 @@ $( function() {
 
             // Retrieve the current active commuter number
             var active_form_num = retrieve_active_commuter();
-            console.log("load");
 
             // Set the max and min input values which will be changed with the slider
             var max_commute_id = "#id_tenants-" + active_form_num + "-max_commute";
@@ -30,8 +29,8 @@ $( function() {
     // Retrieve the current active commuter number
     var active_form_num = retrieve_active_commuter();
         // Set the max and min input values which will be changed with the slider
-    var max_commute_id = "#id_tenants_set-" + active_form_num + "-max_commute";
-    var min_commute_id = "#id_tenants_set-" + active_form_num + "-min_commute";
+    var max_commute_id = "#id_tenants-" + active_form_num + "-max_commute";
+    var min_commute_id = "#id_tenants-" + active_form_num + "-min_commute";
      // Set the display of the slider to visually show the values.
     // The values are pulled from the current values of the max and min fields of the current commuter
     set_slider_display($("#commute").slider("values", 0), $("#commute").slider("values", 1));
