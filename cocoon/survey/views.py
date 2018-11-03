@@ -96,7 +96,10 @@ def renting_survey(request):
     context['form'] = form
     context['form_destination'] = destination_form_set
     context['number_of_destinations'] = number_of_destinations
-    return render(request, 'survey/rentingSurvey.html', context)
+
+    context['component'] = 'survey'
+    context['props'] = 'test'
+    return render(request, 'survey/reactRentingSurvey.html', context)
 
 
 def run_rent_algorithm(survey, context):

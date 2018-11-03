@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>{% block title %} Current Page {% endblock %}</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
+
+    {% if not user.is_authenticated %}
+
+        <link rel="stylesheet" href="{% static 'homePage/not_logged.css' %}">
+
+    {% endif %}
+
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'Unicorn/main/main.css' %}">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% endblock %}
+</head>
+<body>
+
+<div id="siteWrapper" class="{% block container_type %}container{% endblock %}">
+    {% block nav_bar %}
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid nav-container">
+                <div class="navbar-header">
+                    <a href="{% url 'homePage:index' %}"><img class="nav-logo" src="{% static 'homePage/cocoon_logo_white.png' %}"></a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'homePage:index' %}">Cocoon</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user.is_authenticated %}
+                            <li class="login-block dropdown">
+                                <a href="#" class="welcome-text dropdown-toggle link" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true"
+                                   aria-expanded="false">{{ user.email }} <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-header">Account</li>
+                                    <li class="dropdown-header"><a href="{% url 'userAuth:user_profile' %}">User
+                                        Profile</a></li>
+                                    <li class="dropdown-header"><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                            <li><a class="register-link" href="{% url 'userAuth:signup' %}"><button class="btn-primary btn login-button signup-button">Sign Up</button></a></li>
+                            <li><a class="register-link" href="{% url 'userAuth:loginPage' %}"><button class="btn-primary btn login-button signup-button signup-button-right">Login</button></a></li>
+                    {% endif %}
+                </ul>
+                <ul class="nav navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:user_surveys' %}">My Surveys</a></li>{% endblock %}
+                        {% block nav-visitlist %}<li><a class="link" href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
+                        {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
+                    {% endif %}
+                </ul>
+
+                </div><!--/.nav-collapse -->
+            </div><!--/.container-fluid -->
+        </nav>
+        {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible message_timeout" role="alert" style="text-align: center; margin-bottom: 0">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endblock nav_bar %}
+
+    <div id="reactWrapper"></div>
+
+
+</div>
+
+
+{% block endScripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'Unicorn/main/navbar.js' %}"></script>
+    <script>
+        window.props = '{{props}}';
+        window.react_mount = document.getElementById('reactWrapper');
+        window.component = '{{component}}';
+
+    </script>
+    <script src="{% static 'js/bundle.js' %}"></script>
+{% endblock %}
+
+{% block footer %}
+
+    <footer class="footer">
+       Copyright Cocoon 2018. All rights reserved.
+    </footer>
+
+{% endblock %}
+
+</body>
+</html>
