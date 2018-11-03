@@ -211,7 +211,58 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
                   "parking_spot", "name"]
 
 
-class CommuteInformationForm(ModelForm):
+class DestinationForm(ModelForm):
+    street_address = forms.CharField(
+        required=False,
+        label="Destination",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Street Address',
+                'readonly': 'readonly',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    city = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'City',
+                'readonly': 'readonly',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    state = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'State',
+                'readonly': 'readonly',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    zip_code = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Zip Code',
+                'readonly': 'readonly',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    class Meta:
+        model = DestinationsModel
+        fields = '__all__'
+
+
+class CommuteInformationForm(DestinationForm):
 
     max_commute = forms.IntegerField(
         widget=forms.HiddenInput(
@@ -247,55 +298,43 @@ class CommuteInformationForm(ModelForm):
         ),
     )
 
+    def is_valid(self):
+        valid = super().is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        if 'commute_type' in current_form:
+
+            # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
+            #   will not conflict with a current survey. If it does, force them to choose a new name.
+            if current_form['commute_type'] != CommuteType.objects.get_or_create(commute_type=CommuteType.WORK_FROM_HOME)[0]:
+
+                if not current_form['street_address']:
+                    self.add_error('street_address', "Street Address Required")
+                    valid = False
+
+                if not current_form['city']:
+                    self.add_error('city', "City Required")
+                    valid = False
+
+                if not current_form['state']:
+                    self.add_error('state', "State required")
+                    valid = False
+
+                if not current_form['zip_code']:
+                    self.add_error('zip_code', "Zip Code Required")
+                    valid = False
+
+        return valid
+
     class Meta:
         model = CommuteInformationModel
-        fields = '__all__'
-
-
-class DestinationForm(ModelForm):
-    street_address = forms.CharField(
-        label="Destination",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Street Address',
-                'readonly': 'readonly',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
-    )
-
-    city = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'City',
-                'readonly': 'readonly',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
-    )
-
-    state = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'State',
-                'readonly': 'readonly',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
-    )
-
-    zip_code = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Zip Code',
-                'readonly': 'readonly',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
-    )
-
-    class Meta:
-        model = DestinationsModel
         fields = '__all__'
 
 
@@ -332,14 +371,14 @@ class TenantPersonalInformationForm(ModelForm):
         fields = '__all__'
 
 
-class TenantForm(DestinationForm, CommuteInformationForm, TenantPersonalInformationForm):
+class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
         fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
                   'min_commute', 'commute_weight', 'commute_type']
 
 
-class TenantFormMini(DestinationForm, CommuteInformationForm):
+class TenantFormMini(CommuteInformationForm):
     class Meta:
         model = TenantModel
         fields = ['street_address', 'city', 'state', 'zip_code', 'max_commute',

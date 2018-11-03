@@ -53,8 +53,9 @@ class RentingSurvey(CreateView):
                 for field in self.request.POST:
                     if 'tenants-' + str(x) in field:
                        del request_post[field]
+            self.request.POST = request_post
             # Populate the formset with the undesired formsets stripped away
-            data['tenants'] = TenantFormSet(request_post)
+            data['tenants'] = TenantFormSet(self.request.POST)
 
             # If the user is not signed in then add then create the signup form with
             #   the request.POST elements
@@ -62,7 +63,7 @@ class RentingSurvey(CreateView):
                 data['user_creation'] = ApartmentHunterSignupForm(self.request.POST)
 
             # Determine the desired amount of tenants from the request.POST
-            data['num_of_tenants'] = int(request_post['number_of_tenants'])
+            data['num_of_tenants'] = int(self.request.POST['number_of_tenants'])
 
         # Otherwise if it is just a get, then just create a new form set
         else:
