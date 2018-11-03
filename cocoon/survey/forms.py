@@ -314,8 +314,7 @@ class CommuteInformationForm(DestinationForm):
 
         if 'commute_type' in current_form:
 
-            # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
-            #   will not conflict with a current survey. If it does, force them to choose a new name.
+            # only when the commute type is not work from home are these fields needed
             if current_form['commute_type'] != CommuteType.objects.get_or_create(commute_type=CommuteType.WORK_FROM_HOME)[0]:
 
                 if not current_form['street_address']:
