@@ -406,14 +406,7 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
                   'min_commute', 'commute_weight', 'commute_type']
 
 
-class TenantFormMini(CommuteInformationForm):
-    class Meta:
-        model = TenantModel
-        fields = ['street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type']
-
-
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                       extra=4, can_delete=False)
-TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantFormMini,
+TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                              extra=0, can_delete=False)
