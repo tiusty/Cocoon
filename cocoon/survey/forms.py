@@ -265,6 +265,7 @@ class DestinationForm(ModelForm):
 class CommuteInformationForm(DestinationForm):
 
     max_commute = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -272,6 +273,7 @@ class CommuteInformationForm(DestinationForm):
     )
 
     min_commute = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -279,6 +281,7 @@ class CommuteInformationForm(DestinationForm):
     )
 
     commute_weight = forms.ChoiceField(
+        required=False,
         choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
         label="Commute Weight",
         widget=forms.Select(
@@ -330,6 +333,35 @@ class CommuteInformationForm(DestinationForm):
                 if not current_form['zip_code']:
                     self.add_error('zip_code', "Zip Code Required")
                     valid = False
+
+                if current_form['commute_weight'] is not None:
+                    if int(current_form['commute_weight']) < 0:
+                        self.add_error('commute_weight', "Commute weight must be positive")
+                        valid = False
+                else:
+                    self.add_error('commute_weight', "Commute weight needed")
+                    valid = False
+
+                if current_form['max_commute'] is not None:
+                    if int(current_form['max_commute']) < 0:
+                        self.add_error('max_commute', "Max Commute needs to be above 0")
+                        valid = False
+                else:
+                    self.add_error('max_commute', "Max Commute Needed")
+                    valid = False
+
+                if current_form['min_commute'] is not None:
+                    if int(current_form['min_commute']) < 0:
+                        self.add_error('min_commute', "Min commute needs to be above 0")
+                        valid = False
+                else:
+                    self.add_error('min_commute', "Min Commute Needed")
+                    valid = False
+
+                if current_form['min_commute'] is not None and current_form['max_commute'] is not None:
+                    if int(current_form['min_commute']) > int(current_form['max_commute']):
+                        self.add_error('max_commute', "Max commute needs to be above min commute")
+                        valid = False
 
         return valid
 

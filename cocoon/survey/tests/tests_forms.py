@@ -191,31 +191,188 @@ class TestCommuteInformationForm(TestCase):
         self.max_commute = 0
         self.min_commute = 0
         self.commute_weight = 0
-        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        self.driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        self.bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
+        self.transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
+        self.walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
 
-    def tests_commute_information_valid(self):
+    def tests_commute_information_driving_valid(self):
+        """
+        Tests that given all the required fields the commute form validates
+        """
+
+        commute_types = [self.driving, self.transit, self.walking, self.bicycling]
+        result = True
+
+        for commute_type in commute_types:
+            # Arrange
+            form_data = {
+                'max_commute': self.max_commute,
+                'min_commute': self.min_commute,
+                'commute_weight': self.commute_weight,
+                'commute_type': commute_type.pk,
+                'street_address': "Test Address",
+                'city': 'test city',
+                'state': 'test state',
+                'zip_code': 'test zip_code',
+            }
+            commute_information_form = CommuteInformationForm(data=form_data)
+
+            # Act
+            result = commute_information_form.is_valid() and result
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_commute_information_driving_missing_street_address(self):
+        """
+        Tests that if the commute type is driving then if street address is missing
+            the form will not validate
+        """
         # Arrange
         form_data = {
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
-            'commute_type': self.commute_type.pk,
+            'commute_type': self.driving.pk,
+            'city': 'test city',
+            'state': 'test state',
+            'zip_code': 'test zip_code',
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
         # Act
         result = commute_information_form.is_valid()
-        print(commute_information_form.errors)
 
         # Assert
-        self.assertTrue(result)
+        self.assertFalse(result)
+
+    def tests_commute_information_driving_missing_city(self):
+        """
+        Tests that if the commute type is driving then if city is missing
+            the form will not validate
+        """
+        # Arrange
+        form_data = {
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.driving.pk,
+            'street_address': "Test Address",
+            'state': 'test state',
+            'zip_code': 'test zip_code',
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_driving_missing_state(self):
+        """
+        Tests that if the commute type is driving then if the state is missing
+            the form will not validate
+        """
+        # Arrange
+        form_data = {
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.driving.pk,
+            'street_address': "Test Address",
+            'city': 'test city',
+            'zip_code': 'test zip_code',
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_driving_missing_zip_code(self):
+        """
+        Tests that if the commute type is driving then if the zip_code is missing
+            the form will not validate
+        """
+        # Arrange
+        form_data = {
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.driving.pk,
+            'street_address': "Test Address",
+            'city': 'test city',
+            'state': 'test state',
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_driving_missing_min_commute(self):
+        """
+        Tests that if min_commute is missing and the commute type is driving then the form
+            returns False
+        """
+        # Arrange
+        form_data = {
+            'max_commute': self.max_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.driving.pk,
+            'street_address': "Test Address",
+            'city': 'test city',
+            'state': 'test state',
+            'zip_code': 'test zip_code',
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_commute_information_driving_missing_max_commute(self):
+        """
+        Tests that if max_commute is missing and the commute type is driving then the form
+            returns False
+        """
+        # Arrange
+        form_data = {
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.driving.pk,
+            'street_address': "Test Address",
+            'city': 'test city',
+            'state': 'test state',
+            'zip_code': 'test zip_code',
+        }
+        commute_information_form = CommuteInformationForm(data=form_data)
+
+        # Act
+        result = commute_information_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+
+
+
+
 
     def tests_commute_information_max_commute_missing(self):
         # Arrange
         form_data = {
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
-            'commute_type': self.commute_type
+            'commute_type': self.driving.pk
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
@@ -230,7 +387,7 @@ class TestCommuteInformationForm(TestCase):
         form_data = {
             'max_commute': self.max_commute,
             'commute_weight': self.commute_weight,
-            'commute_type': self.commute_type
+            'commute_type': self.driving.pk
         }
         commute_information_form = CommuteInformationForm(data=form_data)
 
