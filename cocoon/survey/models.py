@@ -27,24 +27,6 @@ class InitialSurveyModel(models.Model):
     user_profile = models.ForeignKey(UserProfile)
     number_of_tenants = models.IntegerField(default=1)
     url = models.SlugField(max_length=100)
-    provider = models.ManyToManyField(HomeProviderModel)
-
-    @property
-    def providers(self):
-        provider_set = self.provider.all()
-        if provider_set.count() == 0:
-            return "Not set"
-        else:
-            type_output = ""
-            counter = 0
-            for provider in provider_set:
-                if counter == 0:
-                    type_output = str(provider)
-                    counter += 1
-                else:
-                    type_output = str(provider) + ", " + type_output
-
-        return type_output
 
     def generate_slug(self):
         """
