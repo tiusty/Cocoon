@@ -85,13 +85,6 @@
         </ul>
         <div id="form_destination_div" class="tab-content">
             {{ tenants.management_form }}
-{#            {{ tenants.errors }}#}
-
-            {% for dict in tenants.errors %}
-                {% for error in dict.values %}
-                    {{ error }}
-                {% endfor %}
-            {% endfor %}
             {% for form in tenants %}
                 <div id="form_destination_section_{{ forloop.counter }}"
                         {% if forloop.counter == 1 %}
@@ -101,7 +94,14 @@
                         {% else %}
                             class="tab-pane fade">
                         {% endif %}
+
+
                 <br>
+                {% for dict in tenants.errors.counter %}
+                    {% for error in dict.values %}
+                        {{ error }}
+                    {% endfor %}
+                {% endfor %}
                 {{ form.as_table }}
                 </div>
             {% endfor %}

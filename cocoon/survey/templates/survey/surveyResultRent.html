@@ -163,7 +163,11 @@
         // Deprecating computing commute time and distance in favor of doing in on the server side
         // Going to keep the portions that create the markers on the map
         {% endcomment %}
-        var myStreetAddresses = [{% for commuter in survey.tenants.all %}"{{ commuter.full_address }}",{% endfor %}];
+        var myStreetAddresses = [{% for commuter in survey.tenants.all %}
+            {% if commuter.street_address %}
+                "{{ commuter.full_address }}",
+            {% endif %}
+        {% endfor %}];
 
         {% comment %}
            The initialize values to load the cost sliders to
