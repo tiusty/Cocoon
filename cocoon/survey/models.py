@@ -216,11 +216,3 @@ class CommuteInformationModel(models.Model):
 
 class TenantModel(DestinationsModel, CommuteInformationModel, TenantPersonalInformationModel):
     survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
-
-
-class RentingDestinationsModel(DestinationsModel, CommuteInformationModel):
-
-    def __str__(self):
-        return self.street_address
-
-

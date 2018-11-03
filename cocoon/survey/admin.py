@@ -1,5 +1,5 @@
 from django.contrib import admin
-from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel, TenantModel
+from cocoon.survey.models import RentingSurveyModel, TenantModel
 
 # Register your models here.
 

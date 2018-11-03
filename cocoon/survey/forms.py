@@ -5,9 +5,9 @@ from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
-    RentingDestinationsModel, PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel, \
+    PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel, \
     TenantPersonalInformationModel
-from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
+from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 
 # Python global configurations

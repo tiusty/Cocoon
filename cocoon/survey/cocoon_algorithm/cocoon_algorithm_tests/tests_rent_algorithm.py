@@ -14,7 +14,7 @@ from cocoon.commutes.constants import CommuteAccuracy
 # Import survey python modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.home_data.home_score import HomeScore
-from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
+from cocoon.survey.models import RentingSurveyModel
 from cocoon.userAuth.models import MyUser, UserProfile
 
 
@@ -1097,7 +1097,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                            commute_weight=0, max_commute=60, min_commute=0):
         if commute_type is None:
             commute_type = CommuteType.objects.get(commute_type=CommuteType.DRIVING)
-        return survey.rentingdestinationsmodel_set.create(
+        return survey.tenants.create(
             street_address=street_address,
             city=city,
             state=state,

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 from cocoon.survey.home_data.home_score import HomeScore
 from cocoon.userAuth.models import MyUser
-from cocoon.survey.models import RentingDestinationsModel, RentingSurveyModel
+from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
 from cocoon.commutes.models import ZipCodeBase, CommuteType
 from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE
