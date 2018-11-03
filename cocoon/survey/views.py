@@ -25,7 +25,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
-from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults
+from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
@@ -37,24 +37,52 @@ class RentingSurvey(CreateView):
 
     def get_context_data(self, **kwargs):
         """
-        Need to add the Tenant Form set to the context
+        Adds the TenantFormSet, and the user creation form to the context
         """
         data = super(RentingSurvey, self).get_context_data(**kwargs)
 
         # If the request is a post, then populate the tenant form set
         if self.request.POST:
-            data['tenants'] = TenantFormSet(self.request.POST)
+
+            # This is a hack to remove the forms that are not desired by the user
+            #   Basically the number of tenants is read from the input, then
+            #   all the forms that are beyond the desired amount of tenants
+            #   is deleted from the request.POST (a copy of it)
+            request_post = self.request.POST.copy()
+            for x in range(int(request_post['number_of_tenants']), 5):
+                for field in self.request.POST:
+                    if 'tenants-' + str(x) in field:
+                       del request_post[field]
+            # Populate the formset with the undesired formsets stripped away
+            data['tenants'] = TenantFormSet(request_post)
+
+            # If the user is not signed in then add then create the signup form with
+            #   the request.POST elements
             if not self.request.user.is_authenticated():
                 data['user_creation'] = ApartmentHunterSignupForm(self.request.POST)
 
+            # Determine the desired amount of tenants from the request.POST
+            data['num_of_tenants'] = int(request_post['number_of_tenants'])
+
         # Otherwise if it is just a get, then just create a new form set
         else:
+
+            # Create a blank Tenant form set
             data['tenants'] = TenantFormSet()
+
+            # The default value is 1
+            data['num_of_tenants'] = 1
+
+            # If the user is not logged in then generate a signup form
             if not self.request.user.is_authenticated():
                 data['user_creation'] = ApartmentHunterSignupForm()
         return data
 
     def form_valid(self, form):
+        """
+        Runs if the RentSurveyForm is valid
+        :param form: (RentSurveyForm) -> The form associated with the page
+        """
         context = self.get_context_data()
         tenants = context['tenants']
 
@@ -62,22 +90,25 @@ class RentingSurvey(CreateView):
         sign_up_form_valid = True
         user_signup = None
 
+        # Determines if there is a signup form associated with the request
+        # If there is then the signup form must also be valid
         if 'user_creation' in context.values():
             does_user_signup = True
             user_signup = context['user_creation']
             if not user_signup.is_valid():
                 sign_up_form_valid = False
 
-        # Makes sure that the tenant form is valid before saving
+        # Makes sure that the tenant form and the signup form are valid before saving
         if tenants.is_valid() and sign_up_form_valid:
 
             user = self.request.user
 
+            # If the user is signing up then save that form and return the user to log them in
             if does_user_signup:
                 user = user_signup.save(request=self.request)
                 login(self.request, user)
 
-            # Save the survey
+            # Save the rent survey
             with transaction.atomic():
                 form.instance.user_profile = get_object_or_404(UserProfile, user=user)
                 object = form.save()
@@ -90,30 +121,38 @@ class RentingSurvey(CreateView):
             # If there is an error then re-render the survey page
             return self.render_to_response(self.get_context_data(form=form))
 
+        # Redirect to survey results page on success
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                             kwargs={"survey_url": object.url}))
 
 
 class RentingResultSurvey(UpdateView):
     model = RentingSurveyModel
-    form_class = RentSurveyForm
+    form_class = RentSurveyFormMini
     template_name = 'survey/surveyResultRent.html'
     slug_field = 'url'
     slug_url_kwarg = 'survey_url'
     context_object_name = 'survey'
 
     def get(self, request, **kwargs):
+        """
+        Add a message to the user whenever the page is loaded
+        """
         messages.add_message(request, messages.INFO, "We've scoured the market to pick your personalized short list of "
                                                      "the best places, now it's your turn to pick your favorites")
         return super().get(request, **kwargs)
 
     def get_queryset(self):
+        """
+        The survey must be associated with the currently logged in user
+        """
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return RentingSurveyModel.objects.filter(user_profile=user_profile)
 
     def get_context_data(self, **kwargs):
         """
-        Need to add the Tenant Form set to the context
+        Adds the tenant form context
+        Also runs the algorithm and returns the homes to the template
         """
         data = super(RentingResultSurvey, self).get_context_data(**kwargs)
         rent_algorithm = RentAlgorithm()

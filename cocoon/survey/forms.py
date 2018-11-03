@@ -144,11 +144,13 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
     Rent Survey is the rent survey on the main survey page
     """
     number_of_tenants = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, MAX_TENANTS_FOR_ONE_SURVEY)],
+        choices=[(x, x) for x in range(1, MAX_TENANTS_FOR_ONE_SURVEY)],
         widget=forms.Select(
             attrs={
                 'class': 'form-control',
-            }
+                'onchange': 'updateNumTenants()',
+            },
+
         ),
     )
 
@@ -337,7 +339,14 @@ class TenantForm(DestinationForm, CommuteInformationForm, TenantPersonalInformat
                   'min_commute', 'commute_weight', 'commute_type']
 
 
+class TenantFormMini(DestinationForm, CommuteInformationForm):
+    class Meta:
+        model = TenantModel
+        fields = ['street_address', 'city', 'state', 'zip_code', 'max_commute',
+                  'min_commute', 'commute_weight', 'commute_type']
+
+
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
-                                      extra=2, can_delete=False)
-TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
+                                      extra=4, can_delete=False)
+TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantFormMini,
                                              extra=0, can_delete=False)

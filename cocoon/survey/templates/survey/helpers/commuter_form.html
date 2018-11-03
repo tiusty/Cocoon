@@ -67,6 +67,8 @@
                 <li
                         {% if forloop.counter == 1 %}
                             class="active"
+                        {% elif forloop.counter > num_of_tenants %}
+                            class="hide"
                         {% else %}
                             class=""
                         {% endif %}
@@ -87,6 +89,8 @@
                 <div id="form_destination_section_{{ forloop.counter }}"
                         {% if forloop.counter == 1 %}
                      class="tab-pane fade in active">
+                        {% elif forloop.counter > num_of_tenants %}
+                            class="tab-pane fade hide">
                         {% else %}
                             class="tab-pane fade">
                         {% endif %}
