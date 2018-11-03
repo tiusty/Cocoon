@@ -13,20 +13,28 @@ class CommuteType(models.Model):
     If another commute type gets added, it should get added to the COMMUTE_TYPES field
     """
 
+    WORK_FROM_HOME = 'wh'
+    DRIVING = 'dr'
+    TRANSIT = 'tr'
+    WALKING = 'wk'
+    BICYCLING = 'bk'
+
     COMMUTE_TYPES = (
-        ('Driving', 'Driving'),
-        ('Transit', 'Transit'),
-        ('Walking', 'Walking'),
-        ('Bicycling', 'Bicycling'),
+        (WORK_FROM_HOME, 'Work From Home'),
+        (DRIVING, 'Driving'),
+        (TRANSIT, 'Transit'),
+        (WALKING, 'Walking'),
+        (BICYCLING, 'Biking'),
     )
+
     commute_type = models.CharField(
         unique=True,
         choices=COMMUTE_TYPES,
-        max_length=200,
+        max_length=2,
     )
 
     def __str__(self):
-        return self.commute_type
+        return self.get_commute_type_display()
 
 
 class ZipCodeBase(models.Model):
