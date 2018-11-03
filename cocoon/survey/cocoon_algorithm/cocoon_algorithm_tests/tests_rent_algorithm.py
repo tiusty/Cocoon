@@ -74,7 +74,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 20
         self.max_commute = 80
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -88,7 +88,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the second commuter destination
         self.min_commute1 = 40
         self.max_commute1 = 90
-        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+        self.destination1 = self.survey.tenants.create(
             street_address=self.street_address1,
             city=self.city1,
             state=self.state1,
@@ -133,7 +133,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 20
         self.max_commute = 60
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -147,7 +147,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the second commuter destination
         self.min_commute1 = 10
         self.max_commute1 = 80
-        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+        self.destination1 = self.survey.tenants.create(
             street_address=self.street_address1,
             city=self.city1,
             state=self.state1,
@@ -192,7 +192,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 60
         self.max_commute = 60
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -206,7 +206,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the second commuter destination
         self.min_commute1 = 80
         self.max_commute1 = 80
-        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+        self.destination1 = self.survey.tenants.create(
             street_address=self.street_address1,
             city=self.city1,
             state=self.state1,
@@ -256,7 +256,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 20
         self.max_commute = 80
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -270,7 +270,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the second commuter destination
         self.min_commute1 = 30
         self.max_commute1 = 60
-        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+        self.destination1 = self.survey.tenants.create(
             street_address=self.street_address1,
             city=self.city1,
             state=self.state1,
@@ -595,7 +595,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return self.survey.rentingdestinationsmodel_set.create(
+        return self.survey.tenants.create(
             street_address=street_address,
             city=city,
             state=state,
@@ -776,7 +776,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return self.survey.rentingdestinationsmodel_set.create(
+        return self.survey.tenants.create(
             street_address=street_address,
             city=city,
             state=state,
@@ -1213,7 +1213,7 @@ class TestRetrieveApproximateCommutes(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.rentingdestinationsmodel_set.create(
+        return survey.tenants.create(
             street_address=street_address,
             city=city,
             state=state,
@@ -1391,7 +1391,7 @@ class TestRetrieveExactCommutes(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.rentingdestinationsmodel_set.create(
+        return survey.tenants.create(
             street_address=street_address,
             city=city,
             state=state,

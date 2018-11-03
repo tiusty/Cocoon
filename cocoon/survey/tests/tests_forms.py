@@ -485,12 +485,14 @@ class TestRentSurveyForm(TestCase):
             'handicap_access_survey': self.handicap_access,
             'pool_hot_tub_survey': self.pool_hot_tub,
             'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
+            'storage_unit_survey': self.storage_unit,
+            'number_of_tenants': 2
         }
         rent_survey_form = RentSurveyForm(data=form_data)
 
         # Act
         result = rent_survey_form.is_valid()
+        print(rent_survey_form.errors)
 
         # Assert
         self.assertTrue(result)

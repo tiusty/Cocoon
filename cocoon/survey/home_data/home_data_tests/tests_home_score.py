@@ -267,7 +267,7 @@ class TestApproxCommute(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.rentingdestinationsmodel_set.create(
+        return survey.tenants.create(
             street_address=street_address,
             city=city,
             state=state,
