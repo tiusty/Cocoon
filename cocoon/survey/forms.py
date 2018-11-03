@@ -160,24 +160,6 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
                   "parking_spot", "number_of_tenants"]
 
 
-class BrokerRentSurveyForm(RentSurveyForm):
-
-    provider = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
-        queryset=HomeProviderModel.objects.all()
-    )
-
-    class Meta:
-        model = RentingSurveyModel
-        # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
-                  "max_price", "desired_price", "price_weight",
-                  "parking_spot", "provider"]
-
-
 class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
                          HomeInformationForm):
     """
@@ -225,23 +207,6 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "parking_spot", "name"]
-
-
-class BrokerRentSurveyFormMini(RentSurveyFormMini):
-
-    provider = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
-        queryset=HomeProviderModel.objects.all()
-    )
-
-    class Meta:
-        model = RentingSurveyModel
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
-                  "max_price", "desired_price", "price_weight",
-                  "parking_spot", "name", 'provider']
 
 
 class CommuteInformationForm(ModelForm):
@@ -365,13 +330,6 @@ class TenantPersonalInformationForm(ModelForm):
         fields = '__all__'
 
 
-class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
-
-    class Meta:
-        model = RentingDestinationsModel
-        exclude = ['survey']
-
-
 class TenantForm(DestinationForm, CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
@@ -382,4 +340,4 @@ class TenantForm(DestinationForm, CommuteInformationForm, TenantPersonalInformat
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                       extra=2, can_delete=False)
 TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
-                                      extra=0, can_delete=False)
+                                             extra=0, can_delete=False)

@@ -25,8 +25,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
-from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyFormMini, \
-    RentingDestinationsForm, RentSurveyFormMini, TenantFormSet, TenantFormSetResults
+from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
@@ -81,10 +80,10 @@ class RentingSurvey(CreateView):
             # Save the survey
             with transaction.atomic():
                 form.instance.user_profile = get_object_or_404(UserProfile, user=user)
-                self.object = form.save()
+                object = form.save()
 
             # Now save the the tenants
-            tenants.instance = self.object
+            tenants.instance = object
             tenants.save()
 
         else:
@@ -92,7 +91,7 @@ class RentingSurvey(CreateView):
             return self.render_to_response(self.get_context_data(form=form))
 
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                            kwargs={"survey_url": self.object.url}))
+                                            kwargs={"survey_url": object.url}))
 
 
 class RentingResultSurvey(UpdateView):
