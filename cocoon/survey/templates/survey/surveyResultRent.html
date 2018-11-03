@@ -228,8 +228,14 @@
     <script src="{% static 'survey/addGoogleMap.js' %}"></script>
     <script src="{% static 'survey/expandTile.js' %}"></script>
     <script src="{% static 'survey/javascript/survey_results_instructions.js' %}"></script>
+    <script src="{% static 'survey/google_api_requests/address_autocomplete.js' %}"></script>
+
+    <script>function initialize() {
+    initMap();
+    initAutocomplete();
+    } </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&callback=initMap"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&libraries=places&callback=initialize"
             type="text/javascript"></script>
 
     <!-- JQuery UI for sliders -->

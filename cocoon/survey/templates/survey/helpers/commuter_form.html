@@ -13,7 +13,7 @@
 
 {% endcomment %}
 
-{%  if not mini_form %}
+{#{%  if not mini_form %}#}
 {% comment %}
     The autocomplete field is for populating the address, city, state and zip_code porition of the survey.
         This is only populated in the main survey but not the mini survey
@@ -28,7 +28,7 @@
     <br>
     <br>
 </div>
-{% endif %}
+{#{% endif %}#}
 
 <div class="form-group">
     {% comment %}
@@ -77,9 +77,9 @@
                     <a data-toggle="tab"
                        href="#form_destination_section_{{ forloop.counter }}"
                         onclick="
-                                {% if not mini_form %}
+{#                                {% if not mini_form %}#}
                         clean_autocomplete();
-                        {% endif %}
+{#                        {% endif %}#}
                         set_slider_values(this);"><b>Commuter {{ forloop.counter }}</b></a></li>
             {% endfor %}
         </ul>
