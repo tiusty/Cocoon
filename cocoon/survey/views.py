@@ -93,7 +93,7 @@ class RentingSurvey(CreateView):
 
         # Determines if there is a signup form associated with the request
         # If there is then the signup form must also be valid
-        if 'user_creation' in context.values():
+        if 'user_creation' in context:
             does_user_signup = True
             user_signup = context['user_creation']
             if not user_signup.is_valid():
