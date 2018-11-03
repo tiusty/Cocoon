@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Survey from './pages/survey';
+import Survey from './pages/survey/index';
 
 const pages = {
     'survey': Survey

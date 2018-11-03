@@ -7,8 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "webpack --mode development ./cocoon/src/index.js --output ./cocoon/static/js/bundle.js --watch",
-    "build": "webpack --mode production ./cocoon/src/index.js --output ./cocoon/static/js/bundle.js",
+    "dev": "webpack --mode development ./cocoon/frontend/src/index.js --output ./cocoon/frontend/static/frontend/js/bundle.js --watch",
+    "build": "webpack --mode production ./cocoon/frontend/src/index.js --output ./cocoon/frontend/static/frontend/js/bundle.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
