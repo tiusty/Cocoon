@@ -14,7 +14,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     # noinspection SpellCheckingInspection
     fieldsets = (
         (None, {'fields': ('name', 'user_profile')}),
-        ('Survey', {'fields': ('home_type', 'provider', 'desired_price', 'max_price', 'min_bathrooms',
+        ('Survey', {'fields': ('home_type', 'desired_price', 'max_price', 'min_bathrooms',
                                'max_bathrooms', )}),
         ('Exterior Amenities', {'fields': ('parking_spot',)}),
         ('Created', {'fields': ('created', 'id', 'url')}),
