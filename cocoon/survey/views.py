@@ -167,6 +167,9 @@ class RentingResultSurvey(UpdateView):
         # Otherwise if it is just a get, then just create a new form set
         else:
             data['tenants'] = TenantFormSetResults(instance=self.object)
+
+        favorite_homes = self.object.favorites.all()
+        data['user_favorite_houses'] = favorite_homes
         return data
 
     def form_valid(self, form):
