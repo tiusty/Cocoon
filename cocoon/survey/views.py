@@ -227,7 +227,6 @@ class RentingResultSurvey(UpdateView):
 class VisitList(ListView):
 
     model = RentingSurveyModel
-    paginate_by = 10
     template_name = 'survey/visitList.html'
     context_object_name = 'surveys'
 
