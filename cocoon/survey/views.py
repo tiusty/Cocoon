@@ -111,10 +111,29 @@ class RentingSurvey(CreateView):
             # Save the rent survey
             with transaction.atomic():
                 form.instance.user_profile = get_object_or_404(UserProfile, user=user)
-                object = form.save()
+
+                # Creates a the survey name based on the people in the roommate group
+                survey_name = "Roommate Group:"
+                counter = 0
+                # Depending on whether it is the last/first roommate then the formatting of the string is different
+                for tenant in tenants:
+                    counter = counter + 1
+                    if counter is 1:
+                        survey_name = survey_name + " {0}".format(tenant.cleaned_data['first_name'])
+                    elif counter >= context['num_of_tenants']:
+                        survey_name = survey_name + " and {0}".format(tenant.cleaned_data['first_name'])
+                        break
+                    else:
+                        survey_name = survey_name + ", {0}".format(tenant.cleaned_data['first_name'])
+
+                # Set the form name
+                form.instance.name = survey_name
+
+                # Now the form can be saved
+                survey = form.save()
 
             # Now save the the tenants
-            tenants.instance = object
+            tenants.instance = survey
             tenants.save()
 
         else:
@@ -123,7 +142,7 @@ class RentingSurvey(CreateView):
 
         # Redirect to survey results page on success
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                            kwargs={"survey_url": object.url}))
+                                            kwargs={"survey_url": survey.url}))
 
 
 class RentingResultSurvey(UpdateView):
@@ -141,6 +160,14 @@ class RentingResultSurvey(UpdateView):
         messages.add_message(request, messages.INFO, "We've scoured the market to pick your personalized short list of "
                                                      "the best places, now it's your turn to pick your favorites")
         return super().get(request, **kwargs)
+
+    def get_form_kwargs(self):
+        """
+        Adds the user to the kwargs of the form so it can be accessed in validation
+        """
+        kwargs = super(RentingResultSurvey, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_queryset(self):
         """
