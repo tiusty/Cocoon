@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, ListView
 from django.db import transaction
@@ -51,7 +50,7 @@ class RentingSurvey(CreateView):
             for x in range(int(request_post['number_of_tenants']), 5):
                 for field in self.request.POST:
                     if 'tenants-' + str(x) in field:
-                       del request_post[field]
+                        del request_post[field]
             self.request.POST = request_post
             # Populate the formset with the undesired formsets stripped away
             data['tenants'] = TenantFormSet(self.request.POST)
@@ -210,10 +209,10 @@ class RentingResultSurvey(UpdateView):
             # Save the survey
             with transaction.atomic():
                 form.instance.user_profile = get_object_or_404(UserProfile, user=user)
-                object = form.save()
+                survey = form.save()
 
             # Now save the the tenants
-            tenants.instance = object
+            tenants.instance = survey
             tenants.save()
         else:
             # If there is an error then re-render the survey page
