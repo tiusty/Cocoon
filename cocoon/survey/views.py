@@ -143,6 +143,14 @@ class RentingResultSurvey(UpdateView):
                                                      "the best places, now it's your turn to pick your favorites")
         return super().get(request, **kwargs)
 
+    def get_form_kwargs(self):
+        """
+        Adds the user to the kwargs of the form so it can be accessed in validation
+        """
+        kwargs = super(RentingResultSurvey, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def get_queryset(self):
         """
         The survey must be associated with the currently logged in user
