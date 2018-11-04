@@ -52,29 +52,30 @@
             </div>
         {% endif %}
     </div>
-    <div class="row">
+    <br>
+    <br>
+    {% for survey in surveys %}
+    <div class="row" style="outline-style: dotted; padding-left: 10px; padding-bottom: 10px">
+        <h2>{{ survey.name }}</h2>
         <div class="col-md-6">
-            <p>The Short List (These are homes you plan on visiting)</p>
+            <h4>Favorites (These are homes you like and want to keep track of)</h4>
+            <div class="favoriteTiles tileTable">
+                {% for favorite in survey.favorites.all %}
+                    {% include "homes/tiles.html" with user_favorite_houses=survey.favorites.all survey_id=survey.id includeScore=False  theHouse=favorite %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4>The Short List (These are homes you plan on visiting)</h4>
             <div class="tileTable">
-                {% for survey in surveys %}
                     {% for visit in survey.visit_list.all %}
                         {% include "homes/tiles.html" with user_favorite_houses=survey.visit_list.all survey_id=survey.id includeScore=False  theHouse=favorite %}
                     {% endfor %}
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <p>Favorites (These are homes you like and want to keep track of)</p>
-            <div class="favoriteTiles tileTable">
-                {% for survey in surveys %}
-                    {% for favorite in survey.favorites.all %}
-                        {% include "homes/tiles.html" with user_favorite_houses=survey.favorites.all survey_id=survey.id includeScore=False  theHouse=favorite %}
-                    {% endfor %}
-                {% endfor %}
             </div>
         </div>
     </div>
+        <br>
+    {% endfor %}
 
 {% endblock %}
 
