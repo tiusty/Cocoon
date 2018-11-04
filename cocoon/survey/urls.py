@@ -5,7 +5,7 @@ from . import views
 app_name = 'survey'
 urlpatterns = [
     url(r'^rent/$', views.RentingSurvey.as_view(), name="rentingSurvey"),
-    url(r'^visits/$', views.visit_list, name="visitList"),
+    url(r'^visits/$', views.VisitList.as_view(), name="visitList"),
     url(r'^rent/(?P<survey_url>.*)/$', views.RentingResultSurvey.as_view(), name="rentSurveyResult"),
     # Ajax requests
     url(r'^setFavorite/$', views.set_favorite, name="setFavorite"),

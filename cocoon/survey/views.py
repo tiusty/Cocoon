@@ -8,8 +8,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
-from django.forms import inlineformset_factory
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 from django.db import transaction
 from django.contrib.auth import login
 
@@ -198,26 +197,32 @@ class RentingResultSurvey(UpdateView):
                                             kwargs={"survey_url": self.object.url}))
 
 
-@login_required
-def visit_list(request):
-    context = {
-        'error_message': []
-    }
+class VisitList(ListView):
 
-    # Retrieve the models
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    (manager, _) = HunterDocManagerModel.objects.get_or_create(
-        user=user_profile.user,
-    )
+    model = RentingSurveyModel
+    paginate_by = 2
+    template_name = 'survey/visitList.html'
+    context_object_name = 'surveys'
 
-    # Since the page is loading, update all the signed documents to see if the status has changed
-    manager.update_all_is_signed()
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
 
-    # Create context to update the html based on the status of the documents
-    context['pre_tour_signed'] = manager.is_pre_tour_signed()
-    context['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+    def get_context_data(self, **kwargs):
+        data = super(VisitList, self).get_context_data(**kwargs)
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        (manager, _) = HunterDocManagerModel.objects.get_or_create(
+            user=user_profile.user,
+        )
 
-    return render(request, 'survey/visitList.html', context)
+        # Since the page is loading, update all the signed documents to see if the status has changed
+        manager.update_all_is_signed()
+
+        # Create context to update the html based on the status of the documents
+        data['pre_tour_signed'] = manager.is_pre_tour_signed()
+        data['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+
+        return data
 
 
 #######################################################
@@ -245,6 +250,7 @@ def set_favorite(request):
         if request.user.is_authenticated():
             # Get the id that is associated with the AJAX request
             house_id = request.POST.get('fav')
+            survey_id = request.POST.get('survey')
             # Retrieve the house associated with that id
             try:
                 house = RentDatabaseModel.objects.get(id=house_id)
@@ -252,18 +258,25 @@ def set_favorite(request):
                     user_profile = UserProfile.objects.get(user=request.user)
                     # If the house is already in the database then remove it and return 0
                     # Which means that it is no longer in the favorites
-                    if user_profile.favorites.filter(id=house_id).exists():
-                        user_profile.favorites.remove(house)
-                        return HttpResponse(json.dumps({"result": "0"}),
+                    try:
+                        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(id=survey_id)
+                        if survey.favorites.filter(id=house_id).exists():
+                            survey.favorites.remove(house)
+                            return HttpResponse(json.dumps({"result": "0"}),
+                                                content_type="application/json",
+                                                )
+                        # If the  house is not in the Many to Many then add it and
+                        # return 1 which means it is currently in the favorites
+                        else:
+                            survey.favorites.add(house)
+                            return HttpResponse(json.dumps({"result": "1"}),
+                                                content_type="application/json",
+                                                )
+                    except RentingSurveyModel.DoesNotExist:
+                        return HttpResponse(json.dumps({"result": "Survey Does not exist"}),
                                             content_type="application/json",
                                             )
-                    # If the  house is not in the Many to Many then add it and
-                    # return 1 which means it is currently in the favorites
-                    else:
-                        user_profile.favorites.add(house)
-                        return HttpResponse(json.dumps({"result": "1"}),
-                                            content_type="application/json",
-                                            )
+
                 except UserProfile.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
                                         content_type="application/json",
