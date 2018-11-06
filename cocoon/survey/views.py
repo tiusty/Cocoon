@@ -1,5 +1,6 @@
 # Import Python Modules
 import json
+from silk.profiling.profiler import silk_profile
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
@@ -189,6 +190,7 @@ class RentingResultSurvey(UpdateView):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return RentingSurveyModel.objects.filter(user_profile=user_profile)
 
+    @silk_profile(name='RentingResultSurvey')
     def get_context_data(self, **kwargs):
         """
         Adds the tenant form context
