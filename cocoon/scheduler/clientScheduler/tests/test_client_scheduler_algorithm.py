@@ -27,7 +27,10 @@ class TestClientSchedulerAlgorithm(TestCase):
                                  [1, 1, 1, 1, 0]]
 
         equal_path = self.algorithm.calculate_path(distance_matrix_equal)
+        edge_weights = self.algorithm.get_edge_weights()
+
         self.assertEqual(equal_path, [0, 1, 2, 3, 4])
+        self.assertEqual(edge_weights, [0,1,1,1,1])
 
     def test_increasing_distance(self):
         '''
@@ -49,7 +52,9 @@ class TestClientSchedulerAlgorithm(TestCase):
                                       [5, 10, 15, 20, 0]]
 
         increasing_path = self.algorithm.calculate_path(distance_matrix_increasing)
+        edge_weights = self.algorithm.get_edge_weights()
         self.assertEqual(increasing_path, [0, 1, 2, 3, 4])
+        self.assertEqual(edge_weights, [0, 2, 8, 9, 20])
 
     def test_decreasing_distance(self):
         '''
@@ -70,7 +75,9 @@ class TestClientSchedulerAlgorithm(TestCase):
                                       [21, 16, 11, 5, 0]]
 
         decreasing_path = self.algorithm.calculate_path(distance_matrix_decreasing)
+        edge_weights = self.algorithm.get_edge_weights()
         self.assertEqual(decreasing_path, [3, 4, 2, 1, 0])
+        self.assertEqual(edge_weights, [0, 5, 11, 14, 20])
 
     def test_3x3_matrix(self):
         '''
@@ -88,7 +95,9 @@ class TestClientSchedulerAlgorithm(TestCase):
                                [1, 1, 0]]
 
         small_matrix_path = self.algorithm.calculate_path(distance_matrix_3x3)
+        edge_weights = self.algorithm.get_edge_weights()
         self.assertEqual(small_matrix_path, [0,1,2])
+        self.assertEqual(edge_weights, [0,1,1])
 
     def test_closer_father_homes(self):
         '''
@@ -105,7 +114,10 @@ class TestClientSchedulerAlgorithm(TestCase):
                                           [10, 15, 0]]
 
         closer_farther_path = self.algorithm.calculate_path(distance_matrix_closer_farther)
+        edge_weights = self.algorithm.get_edge_weights()
         self.assertEqual(closer_farther_path, [0,1,2])
+        self.assertEqual(edge_weights, [0, 1, 15])
+
 
     def test_closer_farther_opposite(self):
         '''
@@ -123,5 +135,6 @@ class TestClientSchedulerAlgorithm(TestCase):
                                     [1, 1, 0]]
 
         opposite_path = self.algorithm.calculate_path(distance_matrix_opposite)
+        edge_weights = self.algorithm.get_edge_weights()
         self.assertEqual(opposite_path, [0,2,1])
-
+        self.assertEqual(edge_weights, [0, 1, 1])

@@ -7,13 +7,14 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
     def __init__(self):
         self.wrapper = DistanceWrapper()
+        clientSchedulerAlgorithm.__init__(self)
 
     def build_homes_matrix(self, homes_list):
         """
         builds the homes matrix using the DistanceWrapper for now. Basically computes the distances using the Google Distance Matrix API and stores it.
 
         :param homes_list: List of strings containing home addresses used to compute the optimal itinerary
-        :return: homes_matrix: a 2x2 matrix of distances found using the DistanceWrapper() to indicate the distances betweeen any two homes
+        :return: (list): homes_matrix a 2x2 matrix of distances found using the DistanceWrapper() to indicate the distances betweeen any two homes
         """
 
         homes_matrix = []
@@ -40,13 +41,13 @@ class ClientScheduler(clientSchedulerAlgorithm):
         args:
         :param homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
         :param shortest_path: List of indices that denote the shortest path, which is the output of the algorithm
-        :return: interpreted_route: List of strings containing the addresses in order of the shortest possible path, human readable
+        :return: (list): interpreted_route List of strings containing the addresses in order of the shortest possible path, human readable
         """
 
         interepreted_route = []
 
         for item in shortest_path:
-            interepreted_route.append(homes_list[item])
+            interepreted_route.append((homes_list[item[0]], item[1]))
 
         return interepreted_route
 
@@ -57,10 +58,17 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         args:
         :param homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
-        :return: shortest_path: List of indices that denote the shortest path, which is the output of the algorithms
+        :return: (list): shortest_path List of indices that denote the shortest path, which is the output of the algorithms
         """
 
         homes_matrix = self.build_homes_matrix(homes_list)
         shortest_path = self.calculate_path(homes_matrix)
+        edge_weights = self.get_edge_weights()
 
-        return shortest_path
+        tuple_list_edges = []
+
+        for i in range(len(shortest_path)):
+            temp_tuple = (shortest_path[i], edge_weights[i])
+            tuple_list_edges.append(temp_tuple)
+
+        return tuple_list_edges

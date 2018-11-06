@@ -1,5 +1,9 @@
 # Import Python Modules
 import json
+import os
+import string
+
+from datetime import datetime
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
@@ -9,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
+from django.core.files.base import ContentFile
 
 # Import Signatures modules
 from cocoon.signature.models import HunterDocManagerModel
@@ -24,6 +29,12 @@ from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
 from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
     RentingDestinationsForm, RentSurveyFormMini
+
+# Import Scheduler algorithm
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+
+# Import Itinerary model
+from cocoon.scheduler.models import ItineraryModel
 
 
 @login_required
@@ -70,7 +81,7 @@ def renting_survey(request):
 
             # Create the form destination set
             request_post = request.POST.copy()
-            for x in range (number_of_destinations, number_of_formsets):
+            for x in range(number_of_destinations, number_of_formsets):
                 for field in request.POST:
                     if 'rentingdestinationsmodel_set-' + str(x) in field:
                         del request_post[field]
@@ -173,7 +184,6 @@ def survey_result_rent(request, survey_url=""):
     :param survey_url: (string): This is the survey slug to determine which survey to load
     :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
         etc. If something goes wrong then it may redirect back to the survey homePage
-
     ToDo:
     1. Set a limit on the number of homes that are used for commute times. I would say 50 max, then
         only return the top 20-30 homes to the user
@@ -195,7 +205,7 @@ def survey_result_rent(request, survey_url=""):
     # If the survey ID, does not exist/is not for that user, then return the most recent survey
     except RentingSurveyModel.DoesNotExist:
         if RentingSurveyModel.objects.filter(user_profile=user_profile).exists():
-            survey = RentingSurveyModel.objects.filter(user_profile=user_profile)\
+            survey = RentingSurveyModel.objects.filter(user_profile=user_profile) \
                 .order_by('created').first()
             messages.add_message(request, messages.WARNING, 'Could not find Survey, loading most recent survey')
             return HttpResponseRedirect(reverse('survey:rentSurveyResult',
@@ -254,17 +264,56 @@ def survey_result_rent(request, survey_url=""):
 
 @login_required
 def visit_list(request):
+    """
+        AJAX request used to run the client scheduler algorithm and also render the visitList.html page. This is
+        the main driver function that uses all methods of the client scheduler algorithm and outputs the itinerary
+        list file to s3 and populates an instance of the itinerary model.
+        :param request: The HTTP request
+        :return: HttpResponse if everything goes well. It returns a lot of context variables.
+        If something goes wrong then it may redirect back to the survey homePage
+        """
     context = {
         'error_message': []
     }
-
     # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
     (manager, _) = HunterDocManagerModel.objects.get_or_create(
         user=user_profile.user,
     )
 
-    # Since the page is loading, update all the signed documents to see if the status has changed
+    # Run the client scheduler algorithm
+    homes_list = []
+    for home in user_profile.favorites.all():
+        homes_list.append(str(home))
+
+    client_scheduler_alg = ClientScheduler()
+    shortest_path = client_scheduler_alg.run_client_scheduler_algorithm(homes_list)
+    print(shortest_path)
+    interpreted_route = client_scheduler_alg.interpret_algorithm_output(homes_list, shortest_path)
+
+    # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
+    # Add 20 minutes to each home
+    s = ""
+    for item in interpreted_route:
+        s += item[0]
+        s += " "
+        s += str(item[1]/60 + 20)
+        s += "\n"
+
+    # Update Itinerary Model
+    # File name is unique based on user and current time (making it impossible to have duplicates)
+
+    try:
+        itinerary_model = ItineraryModel.objects.get(client=request.user)
+
+    except ItineraryModel.DoesNotExist:
+        itinerary_model = ItineraryModel(client=request.user, selected_start_time=datetime.now())
+
+    itinerary_model.itinerary.save(os.path.basename("itinerary_route_" + str(request.user)) + "_" + str(datetime.now()),
+                                   ContentFile(s))
+    itinerary_model.save()
+
+    # Since the page is loading, update all the signed documents to see if the status has changeds
     manager.update_all_is_signed()
 
     # Create context to update the html based on the status of the documents
@@ -390,6 +439,7 @@ def set_visit_house(request):
                 try:
                     home = RentDatabaseModel.objects.get(id=home_id)
                     user_profile.visit_list.add(home)
+
                     return HttpResponse(json.dumps({"result": "1",
                                                     "homeId": home_id}),
                                         content_type="application/json", )
@@ -495,15 +545,15 @@ def check_pre_tour_documents(request):
                     return HttpResponse(json.dumps({
                         "result": "0",
                         "message": "Could not retrieve doc_manager"}),
-                                        content_type="application/json",
-                                        )
+                        content_type="application/json",
+                    )
             except UserProfile.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "0",
                                                 "message": "Could not retrieve User Profile"}),
                                     content_type="application/json",
                                     )
         else:
-            return HttpResponse(json.dumps({"result" : "0",
+            return HttpResponse(json.dumps({"result": "0",
                                             "message": "User not authenticated"}),
                                 content_type="application/json",
                                 )
