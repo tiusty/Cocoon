@@ -288,17 +288,27 @@ def visit_list(request):
 
     client_scheduler_alg = ClientScheduler()
     shortest_path = client_scheduler_alg.run_client_scheduler_algorithm(homes_list)
+    print(shortest_path)
     interpreted_route = client_scheduler_alg.interpret_algorithm_output(homes_list, shortest_path)
 
     # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
+    # Add 20 minutes to each home
     s = ""
     for item in interpreted_route:
-        s += item
+        s += item[0]
+        s += " "
+        s += str(item[1]/60 + 20)
         s += "\n"
 
     # Update Itinerary Model
     # File name is unique based on user and current time (making it impossible to have duplicates)
-    itinerary_model = ItineraryModel(client=request.user, selected_start_time=datetime.now())
+
+    try:
+        itinerary_model = ItineraryModel.objects.get(client=request.user)
+
+    except ItineraryModel.DoesNotExist:
+        itinerary_model = ItineraryModel(client=request.user, selected_start_time=datetime.now())
+
     itinerary_model.itinerary.save(os.path.basename("itinerary_route_" + str(request.user)) + "_" + str(datetime.now()),
                                    ContentFile(s))
     itinerary_model.save()

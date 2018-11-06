@@ -52,3 +52,7 @@ db.sqlite3
 
 # The log file generated #
 logCocoon.log
+
+#DS store (mac)
+.DS_Store
+config/.DS_Store
