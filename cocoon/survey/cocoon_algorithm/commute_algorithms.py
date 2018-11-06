@@ -56,7 +56,7 @@ class CommuteAlgorithm(object):
 
     def populate_commute_algorithm(self, user_survey):
         # Retrieves all the destinations that the user recorded
-        self.destinations = user_survey.rentingdestinationsmodel_set.all()
+        self.destinations = user_survey.tenants.all()
 
     def compute_approximate_commute_filter(self, approx_commute_times):
         """
