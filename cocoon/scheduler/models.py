@@ -52,6 +52,8 @@ class ItineraryModel(models.Model):
         """
         Returns if the itinerary has been claimed (has an agent)
         :return:
+            True if the itinerary is claimed (associated with an agent)
+            False otherwise (available for an agent to claim)
         """
         return self.agent != None
 
@@ -95,6 +97,15 @@ class ItineraryModel(models.Model):
 
     @transaction.atomic
     def unschedule_itinerary(self, **kwargs):
+        """
+        Removes the selected start time from an itinerary and emails the
+        relevant agent. Note that the associated agent is not removed
+        from the itinerary (it is still claimed)
+
+        :param kwargs:
+            request - the request passed down from the view function that
+            called this method - for retrieving the absolute url
+        """
         unscheduled_time = self.selected_start_time
         unscheduled_available_time = self.start_times.filter(time=unscheduled_time).first()
         if unscheduled_available_time:
