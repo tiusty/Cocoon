@@ -68,7 +68,7 @@
             <h4>The Short List (These are homes you plan on visiting)</h4>
             <div class="tileTable">
                     {% for visit in survey.visit_list.all %}
-                        {% include "homes/tiles.html" with user_favorite_houses=survey.visit_list.all survey_id=survey.id includeScore=False  theHouse=visit %}
+                        {% include "homes/tiles.html" with user_favorite_houses=survey.favorites.all survey_id=survey.id includeScore=False  theHouse=visit %}
                     {% endfor %}
             </div>
         </div>
