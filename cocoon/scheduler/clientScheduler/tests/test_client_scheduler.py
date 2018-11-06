@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .client_scheduler import clientSchedulerAlgorithm
+from cocoon.scheduler.clientScheduler.client_scheduler import clientSchedulerAlgorithm
 
 
 class TestClientSchedulerAlgorithm(TestCase):
