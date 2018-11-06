@@ -31,6 +31,7 @@ class CommuteType(models.Model):
         unique=True,
         choices=COMMUTE_TYPES,
         max_length=2,
+        db_index=True,
     )
 
     def __str__(self):
@@ -41,7 +42,7 @@ class ZipCodeBase(models.Model):
     """
     This is the base zip-code which is what all the child zip_codes are computed relative too.
     """
-    zip_code = models.CharField(max_length=20, unique=True)
+    zip_code = models.CharField(max_length=20, unique=True, db_index=True)
 
     def __str__(self):
         return self.zip_code
@@ -53,8 +54,8 @@ class ZipCodeChild(models.Model):
     base zip-code. Each base zip-code will have a bunch of child zip-codes. For each base zip-code, there
     can be a child zip-code for each commute type.
     """
-    zip_code = models.CharField(max_length=20)
-    base_zip_code = models.ForeignKey('ZipCodeBase', on_delete=models.CASCADE)
+    zip_code = models.CharField(max_length=20, db_index=True)
+    base_zip_code = models.ForeignKey('ZipCodeBase', on_delete=models.CASCADE, db_index=True)
     commute_time_seconds = models.IntegerField(default=-1)
     commute_distance_meters = models.IntegerField(default=-1)
     last_date_updated = models.DateField(default=timezone.now)

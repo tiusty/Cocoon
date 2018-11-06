@@ -1,5 +1,6 @@
 # Import commutes models
 from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
+import time
 
 # Constant value imports
 from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
@@ -10,6 +11,7 @@ from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 
 # Load the logger
 import logging
+from silk.profiling.profiler import silk_profile
 logger = logging.getLogger(__name__)
 
 
@@ -66,14 +68,15 @@ class Driving(CommuteCalculator):
         If a pair doesn't exist, it will add the pair to a list and then at the end compute the
         approximation for the missing pairs
         """
+        start_time = time.time()
+        print("STEP 2.0.0: time elapsed: {:.2f}s".format(time.time() - start_time))
         failed_home_dict = dict()
-        failed_list = []
-        for home_score in self.homes:
-            if not self.does_pair_exist(home_score.home):
-                failed_list.append((home_score.home.zip_code, home_score.home.state))
+        failed_list = self.does_pair_exist(self.homes)
+        print("STEP 2.0.1: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         # Add to the dictionary of failed homes
         failed_home_dict[(self.destination.zip_code, self.destination.state)] = failed_list
+        print("STEP 2.0.2: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         # 2: Use approx handler to compute the failed home distances and update db
         for destination_zip, origin_list in failed_home_dict.items():
@@ -81,30 +84,37 @@ class Driving(CommuteCalculator):
                 self.generate_approximation_pair(origin_list, destination_zip)
             except Distance_Matrix_Exception as e:
                 logger.warning("Caught: {0}".format(e.__class__.__name__))
+        print("STEP 2.0.3: time elapsed: {:.2f}s".format(time.time() - start_time))
 
-    def does_pair_exist(self, home):
+    @silk_profile(name='doesPairExist')
+    def does_pair_exist(self, homes):
         """
         This function given a pair of locations, checks to see if the combination exists in the cache already.
         If it does, then the cache doesn't need to be added, if it doesn't, then it returns false.
         It also does a check to see how old the pair is, and if it is too old, then it will return false.
         :param home: (homeScore) -> The home that is being computed
         """
-        parent_zip_code_dictionary = ZipCodeBase.objects.filter(zip_code__exact=home.zip_code)
-        if parent_zip_code_dictionary.exists():
-            for parent in parent_zip_code_dictionary:
-                zip_code_dictionary = ZipCodeChild.objects.filter(
-                    base_zip_code_id=parent).filter(zip_code__exact=self.destination.zip_code) \
-                    .filter(commute_type=self.destination.commute_type)
-                if zip_code_dictionary.exists():
-                    for match in zip_code_dictionary:
-                        if match.zip_code_cache_still_valid():
-                            return True
-                        else:
-                            return False
-                else:
-                    return False
+        failed_list = []
+        dest_zips = ZipCodeBase.objects.filter(zip_code__exact=self.destination.zip_code)
+        if dest_zips.exists():
+            for dest_zip in dest_zips:
+                child_zips = ZipCodeChild.objects.filter(base_zip_code=dest_zip).\
+                    filter(commute_type=self.destination.commute_type).\
+                    values_list('zip_code')
+                for home in homes:
+                    home_exist = False
+                    for zip_code in child_zips:
+                        if home.home.zip_code in zip_code:
+                            home_exist = True
+                    if not home_exist:
+                        if not (home.home.zip_code, home.home.state) in failed_list:
+                            failed_list.append((home.home.zip_code, home.home.state))
         else:
-            return False
+            for home in homes:
+                if not (home.home.zip_code, home.home.state) in failed_list:
+                    failed_list.append((home.home.zip_code, home.home.state))
+
+        return failed_list
 
     def generate_approximation_pair(self, origins_zips_states, destination_zip_state):
         """
@@ -131,10 +141,10 @@ class Driving(CommuteCalculator):
         if results:
             # iterates both lists simultaneously
             for origin, result in zip(origins_zips_states, results):
-                if ZipCodeBase.objects.filter(zip_code=origin[0]).exists():
-                    zip_code_dictionary = ZipCodeBase.objects.get(zip_code=origin[0])
+                if ZipCodeBase.objects.filter(zip_code=destination_zip_state[0]).exists():
+                    zip_code_dictionary = ZipCodeBase.objects.get(zip_code=destination_zip_state[0])
                     zip_dest = zip_code_dictionary.zipcodechild_set.filter(
-                        zip_code=destination_zip_state[0],
+                        zip_code=origin[0],
                         commute_type=self.destination.commute_type)
 
                     # If the zip code doesn't exist or is not valid then compute the approximate distance
@@ -143,7 +153,7 @@ class Driving(CommuteCalculator):
                         if zip_dest.exists():
                             zip_dest.delete()
                         zip_code_dictionary.zipcodechild_set.create(
-                            zip_code=destination_zip_state[0],
+                            zip_code=origin[0],
                             commute_type=self.destination.commute_type,
                             commute_distance_meters=result[0][1],
                             commute_time_seconds=result[0][0],
@@ -151,7 +161,7 @@ class Driving(CommuteCalculator):
                 else:
                     ZipCodeBase.objects.create(zip_code=origin[0]) \
                         .zipcodechild_set.create(
-                        zip_code=destination_zip_state[0],
+                        zip_code=origin[0],
                         commute_type=self.destination.commute_type,
                         commute_distance_meters=result[0][1],
                         commute_time_seconds=result[0][0],
