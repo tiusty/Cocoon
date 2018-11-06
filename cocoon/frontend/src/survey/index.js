@@ -1,9 +1,10 @@
 import React from 'react';
 import { Component } from 'react';
+import ReactDOM from "react-dom";
 
 import './survey.css';
 
-export default class Survey extends Component {
+class Survey extends Component {
     componentDidMount = () => {
         console.log('rendered!');
     }
@@ -14,3 +15,8 @@ export default class Survey extends Component {
         );
     }
 }
+
+ReactDOM.render(
+    React.createElement(Survey, window.props),
+    window.react_mount
+);
