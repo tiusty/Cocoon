@@ -368,21 +368,37 @@ def set_visit_house(request):
         # Only care if the user is authenticated
         if request.user.is_authenticated():
             # Get the id that is associated with the AJAX request
-            home_id = request.POST.get('visit_id')
+            house_id = request.POST.get('visit_id')
+            survey_id = request.POST.get('survey')
             try:
-                user_profile = UserProfile.objects.get(user=request.user)
+                house = RentDatabaseModel.objects.get(id=house_id)
                 try:
-                    home = RentDatabaseModel.objects.get(id=home_id)
-                    user_profile.visit_list.add(home)
-                    return HttpResponse(json.dumps({"result": "1",
-                                                    "homeId": home_id}),
-                                        content_type="application/json", )
-                except RentDatabaseModel.DoesNotExist:
-                    return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
+                    user_profile = UserProfile.objects.get(user=request.user)
+                    try:
+                        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(id=survey_id)
+                        if survey.visit_list.filter(id=house_id).exists():
+                            survey.visit_list.remove(house)
+                            return HttpResponse(json.dumps({"result": "0"}),
+                                                content_type="application/json",
+                                                )
+                        # If the  house is not in the Many to Many then add it and
+                        # return 1 which means it is currently in the favorites
+                        else:
+                            survey.visit_list.add(house)
+                            return HttpResponse(json.dumps({"result": "1"}),
+                                                content_type="application/json",
+                                                )
+                    except RentingSurveyModel.DoesNotExist:
+                        return HttpResponse(json.dumps({"result": "Survey Does not exist"}),
+                                            content_type="application/json",
+                                            )
+                except UserProfile.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
                                         content_type="application/json",
                                         )
-            except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+            # Return an error is the house cannot be found
+            except RentDatabaseModel.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
                                     content_type="application/json",
                                     )
         else:

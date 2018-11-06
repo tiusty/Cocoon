@@ -27,6 +27,8 @@ context.
                                             <span onclick="minimize(this)"
                                                   class="expanded-close glyphicon glyphicon-resize-small"></span>
             </div>
+            <button class="btn expand-btn" onclick="set_visit_house({{ theHouse.id }}, {{ survey_id }},
+                    '{% url 'survey:setVisitHouse' %}')" id="myBtn"> Add to visit list</button>
             <div class="expanded-tile-contents">
 
                 {#  TODO: Populate this with actual template information   #}
