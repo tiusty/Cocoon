@@ -54,7 +54,7 @@ class TestClientSchedulerAlgorithm(TestCase):
         increasing_path = self.algorithm.calculate_path(distance_matrix_increasing)
         edge_weights = self.algorithm.get_edge_weights()
         self.assertEqual(increasing_path, [0, 1, 2, 3, 4])
-        self.assertEqual(edge_weights, [0, 2, 8, 9, 20])
+        self.assertEqual(edge_weights, [0, 2, 8, 14, 20])
 
     def test_decreasing_distance(self):
         '''
