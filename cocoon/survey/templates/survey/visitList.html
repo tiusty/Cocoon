@@ -6,8 +6,8 @@
     {{ block.super }}
 
     <!-- Style sheets for template page -->
-    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
-    <link href="{% static 'Unicorn/homes/css/tiles.css' %}" rel="stylesheet">
+    <link href="{% static 'cocoon/tile/css/homeModal.css' %}" rel="stylesheet">
+    <link href="{% static 'cocoon/tile/css/tiles.css' %}" rel="stylesheet">
     <link href="{% static 'survey/visit_list_tiles.css' %}" rel="stylesheet">
     {#    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">#}
 
@@ -84,14 +84,14 @@
 
     <!-- Custom Javascript -->
     {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
-    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/getCookie.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
-    <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
-    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/set_visit_house.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/set_favorite.js' %}"></script>
     <script src="{% static 'survey/javascript/ajax/check_pre_tour_documents.js' %}"></script>
     <script src="{% static 'survey/javascript/ajax/resend_pre_tour_documents.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables removing homes from the users visit list{% endcomment %}
-    <script src="{% static 'Unicorn/homes/javascript/delete_visit_house.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/delete_visit_house.js' %}"></script>
     {# Necessary imports for the global tiles #}
     <script src="{% static 'survey/tileCarousel.js' %}"></script>
     <script src="{% static 'survey/tileInteraction.js' %}"></script>
