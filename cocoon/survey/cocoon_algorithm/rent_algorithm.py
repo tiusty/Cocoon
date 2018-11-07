@@ -151,10 +151,13 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 #   are more direct when walking.
                 distance += extra_distance * average_speed/AVERAGE_BICYCLING_SPEED
             if average_speed is not 0:
+                # If the speed is not zero (to prevent divide by zero, then add the commute time to
+                #   the home
                 commute_time_hours = distance / average_speed
                 commute_time = commute_time_hours * 60
                 home.approx_commute_times[destination] = commute_time
             else:
+                # If there was a divide by zero then just eliminate the home
                 home.eliminate_home()
 
     @staticmethod

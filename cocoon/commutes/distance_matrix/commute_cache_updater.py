@@ -95,7 +95,8 @@ class Driving(CommuteCalculator):
                 filter(commute_type=self.destination.commute_type). \
                 values_list('zip_code', 'last_date_updated')
 
-            # Build the list of child_zip_codes so it is more easily accessible later
+            # Create a python list of zip_codes and their corresponding generation date
+            # i.e list[(zip_code, datetime)]
             child_zip_codes = []
             for zip_code, last_update in child_zips:
                 child_zip_codes.append((zip_code, last_update))
