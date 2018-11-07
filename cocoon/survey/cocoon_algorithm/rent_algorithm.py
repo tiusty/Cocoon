@@ -9,7 +9,6 @@ from cocoon.survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 # Import Commutes modules
-from cocoon.commutes.models import CommuteType
 from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
 # Import DistanceWrapper
@@ -22,6 +21,8 @@ from cocoon.commutes.constants import CommuteAccuracy
 from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED, EXTRA_DISTANCE_LAT_LNG_APPROX
 
 # Import Geolocator
+
+import geopy.distance
 import cocoon.houseDatabase.maps_requester as geolocator
 from config.settings.Global_Config import gmaps_api_key
 import time
@@ -122,38 +123,40 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         elif destination.commute_type.commute_type == CommuteType.WALKING:
             self.lat_lng_approximation(homes, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
 
-    def lat_lng_approximation(self, home, destination, lat_lng_dest, average_speed):
+    @staticmethod
+    def lat_lng_approximation(homes, destination, lat_lng_dest, average_speed):
         """
         This function given a home and a destination will determine the distance between the two homes based off of the
             lat and lng points. Then once the distance is determined, then the commute time is determined based off of
             the average speed.
-        :param home: (list[homeScore]) -> The home that the user is computing for
+        :param homes: (list[homeScore]) -> The home that the user is computing for
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
         :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
         :param average_speed: (int) -> The average speed in mph that the person moves for the given mode of transport
         :return: (Boolean): -> True: The home approximation was found and added
                                False: The home was not able to have a approximation created
         """
-        # Stores the lat and lng points for the home
-        lat_lng_home = (home.latitude, home.longitude)
 
-        # Returns the distance from the two lat lng points in miles
-        distance = geopy.distance.geodesic(lat_lng_home, lat_lng_dest).miles
+        for home in homes:
+            # Stores the lat and lng points for the home
+            lat_lng_home = (home.latitude, home.longitude)
 
-        # If the distance is less than a mile then don't add any distance since it is already so close
-        if distance > 1:
-            # Extra distance is determined by giving more distance to homes farther away
-            extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/distance)
-            # This normalizes the value since walking needs less of a weight than biking since homes
-            #   are more direct when walking.
-            distance += extra_distance * average_speed/AVERAGE_BICYCLING_SPEED
-        if average_speed is not 0:
-            commute_time_hours = distance / average_speed
-            commute_time = commute_time_hours * 60
-        else:
-            return False
-        self.approx_commute_times[destination] = commute_time
-        return True
+            # Returns the distance from the two lat lng points in miles
+            distance = geopy.distance.geodesic(lat_lng_home, lat_lng_dest).miles
+
+            # If the distance is less than a mile then don't add any distance since it is already so close
+            if distance > 1:
+                # Extra distance is determined by giving more distance to homes farther away
+                extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/distance)
+                # This normalizes the value since walking needs less of a weight than biking since homes
+                #   are more direct when walking.
+                distance += extra_distance * average_speed/AVERAGE_BICYCLING_SPEED
+            if average_speed is not 0:
+                commute_time_hours = distance / average_speed
+                commute_time = commute_time_hours * 60
+                home.approx_commute_times[destination] = commute_time
+            else:
+                home.eliminate_home()
 
     @staticmethod
     def zip_code_approximation(homes, destination):

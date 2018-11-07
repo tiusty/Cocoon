@@ -1,7 +1,3 @@
-
-import geopy.distance
-
-
 class HomeScore(object):
     # noinspection SpellCheckingInspection
     """
