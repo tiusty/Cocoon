@@ -53,7 +53,7 @@ class AgentSchedulerViewTests(TestCase):
         broker_user.save()
         return broker_user
 
-    def get_admin(password):
+    def get_admin(self, password):
         admin_user = MyUser.objects.create_superuser(email="admin@test.com", password=password)
         return admin_user
 
