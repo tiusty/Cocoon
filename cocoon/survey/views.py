@@ -9,7 +9,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
-from django.forms import inlineformset_factory
 from django.views.generic import CreateView, UpdateView
 from django.db import transaction
 from django.contrib.auth import login
@@ -53,7 +52,7 @@ class RentingSurvey(CreateView):
             for x in range(int(request_post['number_of_tenants']), 5):
                 for field in self.request.POST:
                     if 'tenants-' + str(x) in field:
-                       del request_post[field]
+                        del request_post[field]
             self.request.POST = request_post
             # Populate the formset with the undesired formsets stripped away
             data['tenants'] = TenantFormSet(self.request.POST)

@@ -1,6 +1,5 @@
 # Import commutes models
 from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
-import time
 
 # Constant value imports
 from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
@@ -11,7 +10,6 @@ from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 
 # Load the logger
 import logging
-# from silk.profiling.profiler import silk_profile
 logger = logging.getLogger(__name__)
 
 
@@ -65,18 +63,13 @@ class Driving(CommuteCalculator):
     def check_all_combinations(self):
         """
         This function checks every combination possible given multiple homes for a destination.
-        If a pair doesn't exist, it will add the pair to a list and then at the end compute the
-        approximation for the missing pairs
+        Pairs that don't exist are passed to the generate_approximation_pair to create the pair in the database
         """
-        start_time = time.time()
-        print("STEP 2.0.0: time elapsed: {:.2f}s".format(time.time() - start_time))
         failed_home_dict = dict()
         failed_list = self.does_pair_exist(self.homes)
-        print("STEP 2.0.1: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         # Add to the dictionary of failed homes
         failed_home_dict[(self.destination.zip_code, self.destination.state)] = failed_list
-        print("STEP 2.0.2: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         # 2: Use approx handler to compute the failed home distances and update db
         for destination_zip, origin_list in failed_home_dict.items():
@@ -84,34 +77,45 @@ class Driving(CommuteCalculator):
                 self.generate_approximation_pair(origin_list, destination_zip)
             except Distance_Matrix_Exception as e:
                 logger.warning("Caught: {0}".format(e.__class__.__name__))
-        print("STEP 2.0.3: time elapsed: {:.2f}s".format(time.time() - start_time))
 
-    # @silk_profile(name='doesPairExist')
     def does_pair_exist(self, homes):
         """
-        This function given a pair of locations, checks to see if the combination exists in the cache already.
-        If it does, then the cache doesn't need to be added, if it doesn't, then it returns false.
-        It also does a check to see how old the pair is, and if it is too old, then it will return false.
-        :param home: (homeScore) -> The home that is being computed
+        Given a list of homes, it determines if a zip_code pair exists between each home and destination.
+            If not then it adds the pair to the failed list so the pair can be generated
+        :param homes: (list[homeScore]) -> Homes that are being checked for zip-code pairs
+        :return: (list[(string, string)] Returns a list of (zip_code, state) tuples of pairs that don't exist
+            in the cache
         """
         failed_list = []
-        dest_zips = ZipCodeBase.objects.filter(zip_code__exact=self.destination.zip_code)
-        if dest_zips.exists():
-            for dest_zip in dest_zips:
-                child_zips = ZipCodeChild.objects.filter(base_zip_code=dest_zip).\
-                    filter(commute_type=self.destination.commute_type).\
-                    values_list('zip_code')
-                for home in homes:
-                    home_exist = False
-                    for zip_code in child_zips:
-                        if home.home.zip_code in zip_code:
-                            home_exist = True
-                            break
-                    if not home_exist:
-                        if not (home.home.zip_code, home.home.state) in failed_list:
-                            failed_list.append((home.home.zip_code, home.home.state))
-        else:
+        try:
+            dest_zip = ZipCodeBase.objects.filter(zip_code__exact=self.destination.zip_code)
+
+            # Generates a queryset of all the child zip_codes that exist for this destination
+            child_zips = ZipCodeChild.objects.filter(base_zip_code=dest_zip). \
+                filter(commute_type=self.destination.commute_type). \
+                values('zip_code')
+
+            # Build the list of child_zip_codes so it is more easily accessible later
+            child_zip_codes = []
+            for zip_code in child_zips:
+                child_zip_codes.append(zip_code.get("zip_code"))
+
+            # For every home, see if the home zip_code matches one of the zip_codes in the child_zip codes
+            #   If not then add it to the failed_list
             for home in homes:
+
+                # Check to see if the home zip_code is within the child_zip_code
+                if home.home.zip_code not in child_zip_codes:
+
+                    # If it doesn't exist and it isn't already in the failed list then add it to the failed list
+                    if not (home.home.zip_code, home.home.state) in failed_list:
+                        failed_list.append((home.home.zip_code, home.home.state))
+
+        # If the ZipCodeBase doesn't exist then none of the children exist so add them all to the
+        #   failed list
+        except ZipCodeBase.DoesNotExist:
+            for home in homes:
+                # Make sure there are no duplicate entries
                 if not (home.home.zip_code, home.home.state) in failed_list:
                     failed_list.append((home.home.zip_code, home.home.state))
 
