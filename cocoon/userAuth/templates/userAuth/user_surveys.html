@@ -117,7 +117,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% with survey.rentingdestinationsmodel_set.all as destAddresses %}
+                                                {% with survey.tenants.all as destAddresses %}
                                                     {% for destAddress in destAddresses %}
                                                         <tr>
                                                             <td>

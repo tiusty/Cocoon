@@ -5,13 +5,18 @@ from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
-    RentingDestinationsModel, PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel
-from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
+    PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel, \
+    TenantPersonalInformationModel
+from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
     WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
+from django.forms.models import inlineformset_factory
+
+# import constants
+from cocoon.survey.constants import MAX_TENANTS_FOR_ONE_SURVEY
 
 
 class HomeInformationForm(ModelForm):
@@ -138,22 +143,15 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
     """
     Rent Survey is the rent survey on the main survey page
     """
-    class Meta:
-        model = RentingSurveyModel
-        # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
-                  "max_price", "desired_price", "price_weight",
-                  "parking_spot",]
-
-
-class BrokerRentSurveyForm(RentSurveyForm):
-
-    provider = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
+    number_of_tenants = forms.ChoiceField(
+        choices=[(x, x) for x in range(1, MAX_TENANTS_FOR_ONE_SURVEY)],
+        widget=forms.Select(
             attrs={
                 'class': 'form-control',
-            }),
-        queryset=HomeProviderModel.objects.all()
+                'onchange': 'updateNumTenants()',
+            },
+
+        ),
     )
 
     class Meta:
@@ -161,7 +159,7 @@ class BrokerRentSurveyForm(RentSurveyForm):
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "provider"]
+                  "parking_spot", "number_of_tenants"]
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
@@ -213,65 +211,9 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
                   "parking_spot", "name"]
 
 
-class BrokerRentSurveyFormMini(RentSurveyFormMini):
-
-    provider = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
-        queryset=HomeProviderModel.objects.all()
-    )
-
-    class Meta:
-        model = RentingSurveyModel
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
-                  "max_price", "desired_price", "price_weight",
-                  "parking_spot", "name", 'provider', ]
-
-
-class CommuteInformationForm(ModelForm):
-
-    max_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    min_commute = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    commute_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
-        label="Commute Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    commute_type = forms.ModelChoiceField(
-        queryset=CommuteType.objects.all(),
-        label="Commute Type",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
-    )
-
-    class Meta:
-        model = CommuteInformationModel
-        fields = '__all__'
-
-
 class DestinationForm(ModelForm):
     street_address = forms.CharField(
+        required=False,
         label="Destination",
         widget=forms.TextInput(
             attrs={
@@ -283,6 +225,7 @@ class DestinationForm(ModelForm):
     )
 
     city = forms.CharField(
+        required=False,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -293,6 +236,7 @@ class DestinationForm(ModelForm):
     )
 
     state = forms.CharField(
+        required=False,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -303,6 +247,7 @@ class DestinationForm(ModelForm):
     )
 
     zip_code = forms.CharField(
+        required=False,
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
@@ -317,8 +262,150 @@ class DestinationForm(ModelForm):
         fields = '__all__'
 
 
-class RentingDestinationsForm(DestinationForm, CommuteInformationForm):
+class CommuteInformationForm(DestinationForm):
+
+    max_commute = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    min_commute = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    commute_weight = forms.ChoiceField(
+        required=False,
+        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
+        label="Commute Weight",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    commute_type = forms.ModelChoiceField(
+        required=True,
+        queryset=CommuteType.objects.all(),
+        label="Commute Type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    def is_valid(self):
+        valid = super().is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        if 'commute_type' in current_form:
+
+            # only when the commute type is not work from home are these fields needed
+            if current_form['commute_type'] != CommuteType.objects.get_or_create(commute_type=CommuteType.WORK_FROM_HOME)[0]:
+
+                if not current_form['street_address']:
+                    self.add_error('street_address', "Street Address Required")
+                    valid = False
+
+                if not current_form['city']:
+                    self.add_error('city', "City Required")
+                    valid = False
+
+                if not current_form['state']:
+                    self.add_error('state', "State required")
+                    valid = False
+
+                if not current_form['zip_code']:
+                    self.add_error('zip_code', "Zip Code Required")
+                    valid = False
+
+                if not current_form['commute_weight']:
+                    self.add_error('commute_weight', "Commute weight needed")
+                    valid = False
+
+                if current_form['max_commute'] is not None:
+                    if int(current_form['max_commute']) < 0:
+                        self.add_error('max_commute', "Max Commute needs to be above 0")
+                        valid = False
+                else:
+                    self.add_error('max_commute', "Max Commute Needed")
+                    valid = False
+
+                if current_form['min_commute'] is not None:
+                    if int(current_form['min_commute']) < 0:
+                        self.add_error('min_commute', "Min commute needs to be above 0")
+                        valid = False
+                else:
+                    self.add_error('min_commute', "Min Commute Needed")
+                    valid = False
+
+                if current_form['min_commute'] is not None and current_form['max_commute'] is not None:
+                    if int(current_form['min_commute']) > int(current_form['max_commute']):
+                        self.add_error('max_commute', "Max commute needs to be above min commute")
+                        valid = False
+
+        return valid
 
     class Meta:
-        model = RentingDestinationsModel
-        exclude = ['survey']
+        model = CommuteInformationModel
+        fields = '__all__'
+
+
+class TenantPersonalInformationForm(ModelForm):
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'First Name',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Last Name',
+            }),
+        max_length=MAX_TEXT_INPUT_LENGTH,
+    )
+
+    is_student = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Student?',
+            }),
+        )
+
+    class Meta:
+        model = TenantPersonalInformationModel
+        fields = '__all__'
+
+
+class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
+    class Meta:
+        model = TenantModel
+        fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
+                  'min_commute', 'commute_weight', 'commute_type']
+
+
+TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
+                                      extra=4, can_delete=False)
+TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
+                                             extra=0, can_delete=False)

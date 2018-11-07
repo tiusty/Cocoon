@@ -34,8 +34,7 @@
             <div class="row">
 
                 <form class="form-horizontal" id="my_form" action="{% url 'survey:rentingSurvey' %}" method="post">
-                    {{ form.non_field_errors }}
-                    {{ form.errors }}
+
                     {% csrf_token %}
                     <div class="col-sm-offset-3 col-sm-6">
                         <h3>Essentials</h3>
@@ -45,6 +44,11 @@
                                 {{ form.num_bedrooms.label_tag }}
                                 {{ form.num_bedrooms }}
                                 {{ form.num_bedrooms.errors }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.number_of_tenants.label_tag }}
+                                {{ form.number_of_tenants }}
+                                {{ form.number_of_tenants.errors }}
                             </div>
                             <div class="form-group">
                                 {{ form.home_type.label_tag }}
@@ -72,10 +76,14 @@
                                 {{ form.provider }}
                                 {{ form.provider.errors }}
                             </div>
+                            <div class="form-group">
+                                {{ form.provider }}
+                                {{ form.provider.errors }}
+                            </div>
                         </div>
                         <br>
 
-                        <h3>Commute</h3>
+                        <h3>Tenants</h3>
                         <span class="help-block">Please enter up to {{ number_of_formsets }} commutes to locations you need to go to.
                             This can be your work, school or somewhere you commute to regularily</span>
                         <div class="form-group step_div">
@@ -191,6 +199,8 @@
                             </div>
                         </div>
 
+                        {{ user_creation.as_p }}
+
                         <div class="form-group">
                             <button type="submit" id="Submit" class="btn btn-primary">Submit Survey</button>
                         </div>
@@ -235,6 +245,7 @@
 <script src="{% static 'survey/commuteSlider.js' %}"></script>
 <script src="{% static 'survey/bathroomsSlider.js' %}"></script>
 <script src="{% static 'survey/destinationToggle.js' %}"></script>
+<script src="{% static 'survey/javascript/updateNumTenants.js' %}"></script>
 {% comment %} This javascript file needs to before the call the initAutocomplete to remove race condition{% endcomment %}
 <script src="{% static 'survey/google_api_requests/address_autocomplete.js' %}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&libraries=places&callback=initAutocomplete"

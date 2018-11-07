@@ -30,8 +30,8 @@ function add_destination_form(form_add_value, number_of_formsets) {
         //  slider values
         if (destination_form_number === 0)
         {
-            var max_commute_id = "#id_rentingdestinationsmodel_set-0-max_commute";
-            var min_commute_id = "#id_rentingdestinationsmodel_set-0-min_commute";
+            var max_commute_id = "#id_tenants-0-max_commute";
+            var min_commute_id = "#id_tenants-0-min_commute";
 
             $(min_commute_id).val($("#commute").slider("values", 0));
             $(max_commute_id).val($("#commute").slider("values", 1));
