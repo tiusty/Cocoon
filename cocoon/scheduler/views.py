@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.db import models
 
 # Models
@@ -26,7 +26,7 @@ def agent_scheduler(request):
         context['claimed_itineraries'] = claimed_itineraries
 
     else:
-        raise Http404("This page does not exist")
+        return HttpResponseNotFound()
     return render(request, 'scheduler/itineraryPicker.html', context)
 
 @login_required()
@@ -39,7 +39,7 @@ def view_tours(request):
         context['unscheduled_itineraries'] = unscheduled_itineraries
         context['scheduled_itineraries'] = scheduled_itineraries
     else:
-        raise Http404("This page does not exist")
+        return HttpResponseNotFound()
     return render(request, 'scheduler/viewTours.html', context)
 
 @login_required
@@ -77,6 +77,9 @@ def unschedule_itinerary(request):
     if current_profile.user.is_hunter:
         try:
             itinerary = ItineraryModel.objects.get(id=itinerary_id)
+            if itinerary.client.id != current_profile.user.id:
+                return HttpResponse(json.dumps({"result": "1"}),
+                                    content_type="application/json")
             itinerary.unschedule_itinerary(request=request)
             return HttpResponse(json.dumps({"result": "0"}),
                                 content_type="application/json",

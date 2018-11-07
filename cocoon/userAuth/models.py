@@ -24,6 +24,7 @@ class MyUserManager(BaseUserManager):
         if not email:
             raise ValueError('The given email must be set')
         email = self.normalize_email(email)
+        print(**extra_fields)
         user = self.model(email=email, is_active=True,
                           is_superuser=is_superuser, is_admin=is_admin,
                           last_login=now,
