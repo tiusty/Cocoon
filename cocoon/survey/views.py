@@ -204,7 +204,7 @@ class RentingResultSurvey(UpdateView):
         data = super(RentingResultSurvey, self).get_context_data(**kwargs)
 
         form_invalid = kwargs.pop('invalid_form', False)
-        # only run the algorithm if the form was submitted and valid
+        # Only run the Algorithm if the form was either invalid or it was a get method
         #   We don't want to run the algorithm on form valid
         if form_invalid or not self.request.POST:
             rent_algorithm = RentAlgorithm()
