@@ -66,7 +66,7 @@ class Driving(CommuteCalculator):
         Pairs that don't exist are passed to the generate_approximation_pair to create the pair in the database
         """
         failed_home_dict = dict()
-        failed_list = self.does_pair_exist(self.homes)
+        failed_list = self.find_missing_pairs(self.homes)
 
         # Add to the dictionary of failed homes
         failed_home_dict[(self.destination.zip_code, self.destination.state)] = failed_list
@@ -78,7 +78,7 @@ class Driving(CommuteCalculator):
             except Distance_Matrix_Exception as e:
                 logger.warning("Caught: {0}".format(e.__class__.__name__))
 
-    def does_pair_exist(self, homes):
+    def find_missing_pairs(self, homes):
         """
         Given a list of homes, it determines if a zip_code pair exists between each home and destination.
             If not then it adds the pair to the failed list so the pair can be generated
@@ -176,7 +176,7 @@ class Driving(CommuteCalculator):
 
     def run(self):
         """
-        The generic run method that each chlid class should have. Starts the execution of the class
+        The generic run method that each child class should have. Starts the execution of the class
         """
         if self.accuracy == CommuteAccuracy.EXACT:
             """

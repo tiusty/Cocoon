@@ -271,7 +271,7 @@ class TestDriveCommuteCalculator(TestCase):
         parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_type)
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertTrue(result)
@@ -291,7 +291,7 @@ class TestDriveCommuteCalculator(TestCase):
         parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_type)
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertFalse(result)
@@ -312,7 +312,7 @@ class TestDriveCommuteCalculator(TestCase):
                                            timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE + 1))
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertFalse(result)
@@ -329,7 +329,7 @@ class TestDriveCommuteCalculator(TestCase):
         commute_calculator = Driving([home_score], destination)
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertFalse(result)
@@ -447,7 +447,7 @@ class TestTransitCommuteCalculator(TestCase):
         parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_type)
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertTrue(result)
@@ -467,7 +467,7 @@ class TestTransitCommuteCalculator(TestCase):
         parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_type)
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertFalse(result)
@@ -488,7 +488,7 @@ class TestTransitCommuteCalculator(TestCase):
                                                              timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE + 1))
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertFalse(result)
@@ -505,7 +505,7 @@ class TestTransitCommuteCalculator(TestCase):
         commute_calculator = Transit([home_score], destination)
 
         # Act
-        result = commute_calculator.does_pair_exist(home_score.home)
+        result = commute_calculator.find_missing_pairs(home_score.home)
 
         # Assert
         self.assertFalse(result)
