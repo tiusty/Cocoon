@@ -163,7 +163,11 @@
         // Deprecating computing commute time and distance in favor of doing in on the server side
         // Going to keep the portions that create the markers on the map
         {% endcomment %}
-        var myStreetAddresses = [{% for commuter in commuters %}"{{ commuter.full_address }}",{% endfor %}];
+        var myStreetAddresses = [{% for commuter in survey.tenants.all %}
+            {% if commuter.street_address %}
+                "{{ commuter.full_address }}",
+            {% endif %}
+        {% endfor %}];
 
         {% comment %}
            The initialize values to load the cost sliders to
@@ -181,7 +185,7 @@
 
               Only save the javascript variables if the values exist in the formset
         {% endcomment %}
-        {% for dest_form in form_destination|slice:"1" %}
+        {% for dest_form in tenants|slice:"1" %}
             {% for key, value in dest_form.initial.items %}
                 {% ifequal key "min_commute" %}
                     commuteSliderMinInit = {{ value }};
@@ -224,8 +228,14 @@
     <script src="{% static 'survey/addGoogleMap.js' %}"></script>
     <script src="{% static 'survey/expandTile.js' %}"></script>
     <script src="{% static 'survey/javascript/survey_results_instructions.js' %}"></script>
+    <script src="{% static 'survey/google_api_requests/address_autocomplete.js' %}"></script>
+
+    <script>function initialize() {
+    initMap();
+    initAutocomplete();
+    } </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&callback=initMap"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&libraries=places&callback=initialize"
             type="text/javascript"></script>
 
     <!-- JQuery UI for sliders -->

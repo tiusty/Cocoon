@@ -26,7 +26,7 @@ class TestApproximateCommutesFilter(TestCase):
         self.commute_weight = 0
         self.min_commute = 40
         self.max_commute = 80
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -45,7 +45,7 @@ class TestApproximateCommutesFilter(TestCase):
         self.commute_weight1 = 1
         self.min_commute1 = 10
         self.max_commute1 = 70
-        self.destination1 = self.survey.rentingdestinationsmodel_set.create(
+        self.destination1 = self.survey.tenants.create(
             street_address=self.street_address1,
             city=self.city1,
             state=self.state1,
@@ -283,7 +283,7 @@ class TestComputeCommuteScore(TestCase):
 
         self.min_commute = 30
         self.max_commute = 80
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -307,7 +307,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 30
         commute_time = 20
 
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -331,7 +331,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 30
         commute_time = 100
 
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -355,7 +355,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 80
         commute_time = 50
 
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,
@@ -379,7 +379,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 80
         commute_time = 80
 
-        self.destination = self.survey.rentingdestinationsmodel_set.create(
+        self.destination = self.survey.tenants.create(
             street_address=self.street_address,
             city=self.city,
             state=self.state,

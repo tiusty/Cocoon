@@ -86,19 +86,20 @@ function fillInAddress() {
         if (place.address_components[i].types[0] === "postal_code")
         {
             var val = place.address_components[i][componentForm["postal_code"]];
-            document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-zip_code').value = val;
+            document.getElementById('id_tenants-' + active_form_num + '-zip_code').value = val;
         }
 
         if (place.address_components[i].types[0] === "administrative_area_level_1")
         {
             var val = place.address_components[i][componentForm["administrative_area_level_1"]];
-            document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-state').value = val;
+            document.getElementById('id_tenants-' + active_form_num + '-state').value = val;
         }
 
         if (place.address_components[i].types[0] === "locality")
         {
+            console.log(active_form_num);
             var val = place.address_components[i][componentForm["locality"]];
-            document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-city').value = val;
+            document.getElementById('id_tenants-' + active_form_num + '-city').value = val;
         }
 
     }
@@ -117,7 +118,7 @@ function fillInAddress() {
     }
 
     // Now concatenate the street_num and street address to store the full address
-    document.getElementById('id_rentingdestinationsmodel_set-' + active_form_num + '-street_address').value = full_street_address;
+    document.getElementById('id_tenants-' + active_form_num + '-street_address').value = full_street_address;
 
   }
 
