@@ -307,7 +307,7 @@ def visit_list(request):
         itinerary_model = ItineraryModel.objects.get(client=request.user)
 
     except ItineraryModel.DoesNotExist:
-        itinerary_model = ItineraryModel(client=request.user, selected_start_time=datetime.now())
+        itinerary_model = ItineraryModel(client=request.user)
 
     itinerary_model.itinerary.save(os.path.basename("itinerary_route_" + str(request.user)) + "_" + str(datetime.now()),
                                    ContentFile(s))

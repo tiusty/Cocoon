@@ -7,7 +7,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
     def __init__(self):
         self.wrapper = DistanceWrapper()
-        clientSchedulerAlgorithm.__init__(self)
+        super().__init__()
 
     def build_homes_matrix(self, homes_list):
         """
