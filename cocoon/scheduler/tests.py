@@ -58,7 +58,7 @@ class AgentSchedulerViewTests(TestCase):
         return admin_user
 
     def test_agent_scheduler(self):
-        claimed_itineraries, unclaimed_itineraries = setup_test_itineraries()
+        claimed_itineraries, unclaimed_itineraries = self.setup_test_itineraries()
 
         # should respond with redirect to logged out user
         response = self.client.get(reverse('scheduler:agentScheduler'))
