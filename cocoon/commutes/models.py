@@ -92,8 +92,8 @@ class ZipCodeChild(models.Model):
     def zip_code_cache_valid_check(last_date_updated):
         """
         This function tests whether or not the zip code should be recalculated.
-        The time is set by the value in constants.py. This also allows a value to be passed in if
-
+        The time is set by the value in constants.py.
+        :param: (Datetime) -> The date time to test to see if that time is still valid
         :return: (Boolean) -> True: The cache is still valid
                               False: The cache is no longer valid
         """
