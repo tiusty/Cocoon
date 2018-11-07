@@ -17,8 +17,7 @@ from cocoon.survey.home_data.home_score import HomeScore
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.userAuth.models import MyUser, UserProfile
 
-
-# Import DistanceWrapper
+from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED
 
 
 class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
@@ -1348,6 +1347,259 @@ class TestRetrieveApproximateCommutes(TestCase):
              call(homes, destination1, lat_lng_dest=""),
              call(homes, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
         )
+
+
+class TestApproxCommute(TestCase):
+
+    def setUp(self):
+        self.user = MyUser.objects.create(email="test@email.com")
+        self.home_type = HomeTypeModel.objects.create(home_type='House')
+        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        HomeProviderModel.objects.create(provider="MLSPIN")
+
+    @staticmethod
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
+                      num_bedrooms=2):
+        return RentingSurveyModel.objects.create(
+            user_profile=user_profile,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
+        )
+
+    @staticmethod
+    def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
+                           zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+
+        )
+
+    @staticmethod
+    def create_home(home_type, price=1500,
+                    currently_available=True, num_bedrooms=2, num_bathrooms=2,
+                    zip_code="02476", state="MA", latitude=0.0, longitude=0.0):
+        return HomeScore(RentDatabaseModel.objects.create(
+            home_type=home_type,
+            price=price,
+            currently_available=currently_available,
+            num_bedrooms=num_bedrooms,
+            num_bathrooms=num_bathrooms,
+            zip_code=zip_code,
+            state=state,
+            latitude=latitude,
+            longitude=longitude,
+            listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"),
+        ))
+
+    @staticmethod
+    def create_zip_code_dictionary(zip_code):
+        return ZipCodeBase.objects.create(zip_code=zip_code)
+
+    @staticmethod
+    def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,
+                                         commute_distance, commute_type, last_updated=timezone.now()):
+        parent_zip_code_dictionary.zipcodechild_set.create(
+            zip_code=zip_code,
+            commute_time_seconds=commute_time,
+            commute_distance_meters=commute_distance,
+            commute_type=commute_type,
+            last_date_updated=last_updated,
+        )
+
+    def test_populate_approx_commute_times_transit(self):
+        # Arrange
+        home = self.create_home(self.home_type)
+        survey = self.create_survey(self.user.userProfile)
+        commute_type_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
+        destination = self.create_destination(survey, commute_type_transit)
+
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.zip_code_approximation = MagicMock()
+        rent_algorithm.lat_lng_approximation = MagicMock()
+
+        homes = [home]
+
+        # Act
+        rent_algorithm.populate_approx_commutes(homes, destination)
+
+        # Assert
+        rent_algorithm.zip_code_approximation.assert_called_once_with(homes, destination)
+        rent_algorithm.lat_lng_approximation.assert_not_called()
+
+    def test_populate_approx_commute_times_bicycling(self):
+        # Arrange
+        home = self.create_home(self.home_type)
+        survey = self.create_survey(self.user.userProfile)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
+        destination = self.create_destination(survey, commute_type_bicycling)
+        latlng = (5, 10)
+
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.zip_code_approximation = MagicMock()
+        rent_algorithm.lat_lng_approximation = MagicMock()
+
+        homes = [home]
+
+        # Act
+        rent_algorithm.populate_approx_commutes(homes, destination, lat_lng_dest=latlng)
+
+        # Assert
+        rent_algorithm.zip_code_approximation.assert_not_called()
+        rent_algorithm.lat_lng_approximation.assert_called_once_with(homes, destination, latlng, AVERAGE_BICYCLING_SPEED)
+
+    def test_populate_approx_commute_times_walking(self):
+        # Arrange
+        home = self.create_home(self.home_type)
+        survey = self.create_survey(self.user.userProfile)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+        latlng = (5, 10)
+
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.zip_code_approximation = MagicMock()
+        rent_algorithm.lat_lng_approximation = MagicMock()
+
+        homes = [home]
+
+        # Act
+        rent_algorithm.populate_approx_commutes(homes, destination, lat_lng_dest=latlng)
+
+        # Assert
+        rent_algorithm.zip_code_approximation.assert_not_called()
+        rent_algorithm.lat_lng_approximation.assert_called_once_with(homes, destination, latlng, AVERAGE_WALKING_SPEED)
+
+    def test_zip_code_approximation_combo_exists(self):
+        """
+        Tests that if the zip_combo exists then it will extract it from the zip-code database and use the values
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
+        zip_code = '02476'
+        home = self.create_home(self.home_type, zip_code=zip_code)
+        home1 = self.create_home(self.home_type, zip_code='02474')
+        commute_distance = 100
+        commute_time_seconds = 376
+
+        homes = [home, home1]
+
+        # Create the zip-code dictionary
+        parent_zip_code = self.create_zip_code_dictionary(destination.zip_code)
+        self.create_zip_code_dictionary_child(parent_zip_code, zip_code, commute_time_seconds,
+                                              commute_distance, self.commute_type)
+        self.create_zip_code_dictionary_child(parent_zip_code, '02474', commute_time_seconds,
+                                              commute_distance, self.commute_type)
+
+        # Act
+        RentAlgorithm.zip_code_approximation(homes, destination)
+
+        # Assert
+        # Convert to minutes because that is what is returned
+        self.assertEqual(home.approx_commute_times, {destination: commute_time_seconds / 60})
+        self.assertEqual(home1.approx_commute_times, {destination: commute_time_seconds / 60})
+
+    def test_zip_code_approximation_child_does_not_exist(self):
+        """
+        Tests that if the parent zip code exists but not the child, then the function will return false
+            and the home will not be added to the list of commute times
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
+        zip_code = '02476'
+        home = self.create_home(self.home_type)
+        homes = [home]
+
+        # Create the zip-code dictionary
+        self.create_zip_code_dictionary(zip_code)
+
+        # Act
+        RentAlgorithm.zip_code_approximation(homes, destination)
+
+        # Assert
+        # Convert to minutes because that is what is returned
+        self.assertEqual(home.approx_commute_times, {})
+
+    def test_zip_code_approximation_neither_exist(self):
+        """
+        Tests that if the parent/child zip code approximation doesn't exist then the function will return false and
+            the commute is not added to the approx_commute_times
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
+        zip_code = '02476'
+        home = self.create_home(self.home_type)
+        homes = [home]
+
+        # Act
+        RentAlgorithm.zip_code_approximation(homes, destination)
+
+        # Assert
+        # Convert to minutes because that is what is returned
+        self.assertEqual(home.approx_commute_times, {})
+
+    def test_lat_lng_approximation_bicycling(self):
+        """
+        Tests that the lat_lng approximation for for bicycling
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
+        commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
+        destination = self.create_destination(survey, commute_type_bicycling)
+        homes = [home]
+
+        # Act
+        RentAlgorithm.lat_lng_approximation(homes, destination, (42.4080528, -71.1632442),
+                                            average_speed=AVERAGE_BICYCLING_SPEED)
+
+        # Assert
+        self.assertAlmostEqual(home.approx_commute_times[destination], 17.8878, places=3)
+
+    def test_lat_lng_approximation_walking(self):
+        """
+        Tests that the lat lng approximation works for walking
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+        homes = [home]
+
+        # Act
+        RentAlgorithm.lat_lng_approximation(homes, destination, (42.4080528, -71.1632442),
+                                            average_speed=AVERAGE_WALKING_SPEED)
+
+        # Assert
+        self.assertAlmostEqual(home.approx_commute_times[destination], 39.6506, places=3)
+
+    def test_lat_lng_approximation_average_speed_zero(self):
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.408021, longitude=-71.163222)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+        homes = [home]
+
+        # Act
+        RentAlgorithm.lat_lng_approximation(homes, destination, (42.415656, -71.165393),
+                                            average_speed=0)
+
+        # Assert
+        self.assertEqual(home.approx_commute_times, {})
+
 
 # TODO fix exact commutes to use mocking
 class TestRetrieveExactCommutes(TestCase):
