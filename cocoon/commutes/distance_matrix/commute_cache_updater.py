@@ -166,7 +166,7 @@ class Driving(CommuteCalculator):
                             commute_time_seconds=result[0][0],
                         )
                 else:
-                    ZipCodeBase.objects.create(zip_code=origin[0]) \
+                    ZipCodeBase.objects.create(zip_code=destination_zip_state[0]) \
                         .zipcodechild_set.create(
                         zip_code=origin[0],
                         commute_type=self.destination.commute_type,
