@@ -263,7 +263,7 @@ def visit_list(request):
         'error_message': []
     }
 
-    context = scheduler_views.get_user_itineraries(request)
+    context.update(scheduler_views.get_user_itineraries(request))
 
     # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
