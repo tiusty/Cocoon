@@ -224,6 +224,12 @@ li.dropdown-header {
     border-color: #d43f3a !important;
 }
 
+.btn-disabled {
+    background-color: #fff !important;
+    border: 1px solid #9d9d9d !important;
+    color: #9d9d9d !important;
+}
+
 .btn-danger:focus,
 .btn-danger.focus {
     color: #fff;
@@ -281,6 +287,13 @@ fieldset[disabled] .btn-danger.focus {
 .btn-danger .badge {
     color: #d9534f !important;
     background-color: #fff;
+}
+
+.btn-disabled:hover, .btn-disabled:active, btn-disabled:focus {
+    cursor: pointer;
+    background-color: #fff !important;
+    border: 1px solid #9d9d9d !important;
+    color: #9d9d9d !important;
 }
 
 /*********************************

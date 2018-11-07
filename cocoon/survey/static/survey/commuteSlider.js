@@ -9,12 +9,13 @@ $( function() {
         values: [ commuteSliderMinInit, commuteSliderMaxInit ],
         slide: function( event, ui ) {
 
+
             // Retrieve the current active commuter number
             var active_form_num = retrieve_active_commuter();
 
             // Set the max and min input values which will be changed with the slider
-            var max_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-max_commute";
-            var min_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-min_commute";
+            var max_commute_id = "#id_tenants-" + active_form_num + "-max_commute";
+            var min_commute_id = "#id_tenants-" + active_form_num + "-min_commute";
 
             // Set the display of the slider to visually show the values
             set_slider_display(ui.values[0], ui.values[1]);
@@ -25,19 +26,15 @@ $( function() {
             $(max_commute_id).val(ui.values[1]);
         }
     });
-
     // Retrieve the current active commuter number
     var active_form_num = retrieve_active_commuter();
-
-    // Set the max and min input values which will be changed with the slider
-    var max_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-max_commute";
-    var min_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-min_commute";
-
-    // Set the display of the slider to visually show the values.
+        // Set the max and min input values which will be changed with the slider
+    var max_commute_id = "#id_tenants-" + active_form_num + "-max_commute";
+    var min_commute_id = "#id_tenants-" + active_form_num + "-min_commute";
+     // Set the display of the slider to visually show the values.
     // The values are pulled from the current values of the max and min fields of the current commuter
     set_slider_display($("#commute").slider("values", 0), $("#commute").slider("values", 1));
-
-    // Set the new min and max values to the current slider values
+     // Set the new min and max values to the current slider values
     $(min_commute_id).val( $("#commute").slider("values", 0));
     $(max_commute_id).val( $("#commute").slider("values", 1));
 } );
@@ -152,8 +149,8 @@ function set_slider_values(thisVal) {
     }
 
     // Set the max and min input values which will be changed with the slider
-    var max_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-max_commute";
-    var min_commute_id = "#id_rentingdestinationsmodel_set-" + active_form_num + "-min_commute";
+    var max_commute_id = "#id_tenants-" + active_form_num + "-max_commute";
+    var min_commute_id = "#id_tenants-" + active_form_num + "-min_commute";
 
     // Sets initial values to the fields if they are currently blank. Since when a form is
     //  deleted it clears out the fields, when a new one is selected it, needs to populate

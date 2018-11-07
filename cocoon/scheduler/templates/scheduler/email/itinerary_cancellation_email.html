@@ -1,0 +1,8 @@
+<div class="email-container">
+    Hey {{ agent_name }},
+    Your tour with {{ user }} for {{ start_time }} has been cancelled.
+
+    You still have the tour claimed, so please head back to
+    http://{{ domain }}{% url 'scheduler:myTours' %} to
+    select a different available time.
+</div>

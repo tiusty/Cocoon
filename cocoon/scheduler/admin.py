@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import ItineraryModel
 from .models import TimeModel
+from .models import RentDatabaseModel
 
 # Register your models here.
 
@@ -9,15 +10,7 @@ class TimeInline(admin.StackedInline):
     extra = 0
 
 class ItineraryAdmin(admin.ModelAdmin):
-    fieldsets = [
-        ('Client',
-         {'fields': ('client', 'homes')}
-         ),
-        ('Tour',
-         {'fields': ('itinerary', 'tour_duration_seconds')}),
-        ('Agent',
-         {'fields': ('agent', 'selected_start_time')})
-    ]
+    raw_id_fields = ('homes',)
 
     inlines = [TimeInline]
 
