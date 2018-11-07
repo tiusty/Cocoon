@@ -26,6 +26,9 @@ from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
 
+# import scheduler views
+from cocoon.scheduler import views as scheduler_views
+
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
 
@@ -254,7 +257,7 @@ class RentingResultSurvey(UpdateView):
 @login_required
 def visit_list(request):
 
-    context = views.get_user_itineraries(request)
+    context = scheduler_views.get_user_itineraries(request)
     context['error_message'] = []
 
     # Retrieve the models
