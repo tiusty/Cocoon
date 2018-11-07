@@ -1,4 +1,5 @@
 from cocoon.userAuth.models import UserProfile
+from cocoon.scheduler.models import ItineraryModel, TimeModel
 
 from django.shortcuts import get_object_or_404
 
