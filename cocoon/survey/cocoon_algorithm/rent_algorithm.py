@@ -21,7 +21,6 @@ from cocoon.commutes.constants import CommuteAccuracy
 from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED, EXTRA_DISTANCE_LAT_LNG_APPROX
 
 # Import Geolocator
-
 import geopy.distance
 import cocoon.houseDatabase.maps_requester as geolocator
 from config.settings.Global_Config import gmaps_api_key
@@ -200,6 +199,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     # If no result was returned, i.e the zip_code pair doesn't exist, then just eliminate the home
                     home.eliminate_home()
 
+        # If the ZipCodeBase doesn't exist then... just don't compute, it should be there if the update_cache function
+        # is called before this
         except ZipCodeBase.DoesNotExist:
             pass
 

@@ -203,6 +203,8 @@ class RentingResultSurvey(UpdateView):
         # Otherwise if it is just a get, then just create a new form set
         else:
             data['tenants'] = TenantFormSetResults(instance=self.object)
+            # only run the algorithm if it wasn't a POST method
+            #   We don't want to run the algorithm on form submit
             rent_algorithm = RentAlgorithm()
             rent_algorithm.run(self.object)
             data['houseList'] = [x for x in rent_algorithm.homes[:25] if x.percent_score() >= 0]
