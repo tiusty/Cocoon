@@ -7,41 +7,6 @@ from cocoon.userAuth.models import MyUser, MyUserManager
 from cocoon.scheduler.models import TimeModel, ItineraryModel
 from cocoon.scheduler import views
 
-def setup_test_itineraries(num_claimed=2, num_unclaimed=2):
-    """
-    Created scheduled and unscheduled itineraries for testing purposes
-
-    :param num_claimed: number of claimed itineraries that will be created
-    :param num_unclaimed: number of unclaimed itineraries that will be created
-
-    :return:
-        tuple containing list of claimed itineraries and list of unclaimed itineraries
-    """
-    agent = MyUser.objects.create(email="test@email.com", is_broker=True)
-    client = MyUser.objects.create(email="client@email.com", is_hunter=True)
-    claimed_itineraries = [ItineraryModel.objects.create(client=client, agent=agent) for i in range(num_claimed)]
-    unclaimed_itineraries = [ItineraryModel.objects.create(client=client) for i in range(num_unclaimed)]
-    return (claimed_itineraries, unclaimed_itineraries)
-
-def get_hunter(email, password):
-    hunter_user = MyUser.objects.create_user(email=email, password=password)
-    hunter_user.is_hunter = True
-    hunter_user.is_admin = False
-    hunter_user.is_broker = False
-    hunter_user.is_superuser = False
-    hunter_user.save()
-    return hunter_user
-
-def get_broker(email, password):
-    broker_user = MyUser.objects.create_user(email=email, password=password)
-    broker_user.is_broker = True
-    broker_user.is_admin = True
-    broker_user.save()
-    return broker_user
-
-def get_admin(password):
-    admin_user = MyUser.objects.create_superuser(email="admin@test.com", password=password)
-    return admin_user
 
 class AgentSchedulerViewTests(TestCase):
     """
@@ -51,9 +16,46 @@ class AgentSchedulerViewTests(TestCase):
         self.password = "password"
         self.hunter_email = "hunter@email.com"
         self.broker_email = "broker@email.com"
-        self.hunter = get_hunter(self.hunter_email, self.password)
-        self.broker = get_broker(self.broker_email, self.password)
-        self.admin = get_admin(self.password)
+        self.hunter = self.get_hunter(self.hunter_email, self.password)
+        self.broker = self.get_broker(self.broker_email, self.password)
+        self.admin = self.get_admin(self.password)
+
+        def setup_test_itineraries(self, num_claimed=2, num_unclaimed=2):
+            """
+            Created scheduled and unscheduled itineraries for testing purposes
+
+            :param num_claimed: number of claimed itineraries that will be created
+            :param num_unclaimed: number of unclaimed itineraries that will be created
+
+            :return:
+                tuple containing list of claimed itineraries and list of unclaimed itineraries
+            """
+            agent = MyUser.objects.create(email="test@email.com", is_broker=True)
+            client = MyUser.objects.create(email="client@email.com", is_hunter=True)
+            claimed_itineraries = [ItineraryModel.objects.create(client=client, agent=agent) for i in
+                                   range(num_claimed)]
+            unclaimed_itineraries = [ItineraryModel.objects.create(client=client) for i in range(num_unclaimed)]
+            return (claimed_itineraries, unclaimed_itineraries)
+
+        def get_hunter(self, email, password):
+            hunter_user = MyUser.objects.create_user(email=email, password=password)
+            hunter_user.is_hunter = True
+            hunter_user.is_admin = False
+            hunter_user.is_broker = False
+            hunter_user.is_superuser = False
+            hunter_user.save()
+            return hunter_user
+
+        def get_broker(self, email, password):
+            broker_user = MyUser.objects.create_user(email=email, password=password)
+            broker_user.is_broker = True
+            broker_user.is_admin = True
+            broker_user.save()
+            return broker_user
+
+        def get_admin(password):
+            admin_user = MyUser.objects.create_superuser(email="admin@test.com", password=password)
+            return admin_user
 
     def test_agent_scheduler(self):
         claimed_itineraries, unclaimed_itineraries = setup_test_itineraries()
@@ -130,7 +132,7 @@ class AgentSchedulerViewTests(TestCase):
 
         # user cannot unschedule another user's itinerary
         scheduled_itinerary = ItineraryModel.objects.create(agent=self.broker, client=self.hunter, selected_start_time=timezone.now())
-        alt_user = get_hunter("hunter2@email.com", self.password)
+        alt_user = self.get_hunter("hunter2@email.com", self.password)
         self.client.login(username=alt_user.email, password=self.password)
         self.assertEqual(get_user(self.client), alt_user)
         response = self.client.post(reverse('scheduler:unscheduleItinerary'), {'itinerary_id': scheduled_itinerary.id})
@@ -150,7 +152,7 @@ class AgentSchedulerViewTests(TestCase):
         self.client.logout()
 
         # agent cannot claim a claimed itinerary
-        alt_agent = get_broker("broker2@email.com", self.password)
+        alt_agent = self.get_broker("broker2@email.com", self.password)
         self.client.login(username=alt_agent.email, password=self.password)
         self.assertEqual(get_user(self.client), alt_agent)
         response = self.client.post(reverse('scheduler:claimItinerary'), {'itinerary_id': unclaimed_itinerary.id})
