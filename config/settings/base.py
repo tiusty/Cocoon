@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'storages',
     'cocoon.scheduler',
     'cocoon.signature',
-    'silk',
+    # 'silk',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +48,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'silk.middleware.SilkyMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -311,4 +311,4 @@ MESSAGE_TAGS = {
 }
 
 # Enables profiler using silky
-SILKY_PYTHON_PROFILER = True
+# SILKY_PYTHON_PROFILER = True

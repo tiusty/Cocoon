@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
 
     # Profiling url
-    url(r'^silk', include('silk.urls', namespace='silk')),
+    # url(r'^silk', include('silk.urls', namespace='silk')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = 'cocoon.views.error_404_view'

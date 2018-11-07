@@ -11,7 +11,7 @@ from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 
 # Load the logger
 import logging
-from silk.profiling.profiler import silk_profile
+# from silk.profiling.profiler import silk_profile
 logger = logging.getLogger(__name__)
 
 
@@ -86,7 +86,7 @@ class Driving(CommuteCalculator):
                 logger.warning("Caught: {0}".format(e.__class__.__name__))
         print("STEP 2.0.3: time elapsed: {:.2f}s".format(time.time() - start_time))
 
-    @silk_profile(name='doesPairExist')
+    # @silk_profile(name='doesPairExist')
     def does_pair_exist(self, homes):
         """
         This function given a pair of locations, checks to see if the combination exists in the cache already.
@@ -106,6 +106,7 @@ class Driving(CommuteCalculator):
                     for zip_code in child_zips:
                         if home.home.zip_code in zip_code:
                             home_exist = True
+                            break
                     if not home_exist:
                         if not (home.home.zip_code, home.home.state) in failed_list:
                             failed_list.append((home.home.zip_code, home.home.state))

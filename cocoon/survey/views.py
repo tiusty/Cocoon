@@ -1,6 +1,6 @@
 # Import Python Modules
 import json
-from silk.profiling.profiler import silk_profile
+# from silk.profiling.profiler import silk_profile
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
