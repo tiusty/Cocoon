@@ -1416,6 +1416,25 @@ class TestApproxCommute(TestCase):
             last_date_updated=last_updated,
         )
 
+    def test_populate_approx_commute_times_driving(self):
+        # Arrange
+        home = self.create_home(self.home_type)
+        survey = self.create_survey(self.user.userProfile)
+        destination = self.create_destination(survey, self.commute_type)
+
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.zip_code_approximation = MagicMock()
+        rent_algorithm.lat_lng_approximation = MagicMock()
+
+        homes = [home]
+
+        # Act
+        rent_algorithm.populate_approx_commutes(homes, destination)
+
+        # Assert
+        rent_algorithm.zip_code_approximation.assert_called_once_with(homes, destination)
+        rent_algorithm.lat_lng_approximation.assert_not_called()
+
     def test_populate_approx_commute_times_transit(self):
         # Arrange
         home = self.create_home(self.home_type)
@@ -1518,7 +1537,8 @@ class TestApproxCommute(TestCase):
         destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
         zip_code = '02476'
         home = self.create_home(self.home_type)
-        homes = [home]
+        home1 = self.create_home(self.home_type)
+        homes = [home, home1]
 
         # Create the zip-code dictionary
         self.create_zip_code_dictionary(zip_code)
@@ -1529,6 +1549,7 @@ class TestApproxCommute(TestCase):
         # Assert
         # Convert to minutes because that is what is returned
         self.assertEqual(home.approx_commute_times, {})
+        self.assertEqual(home1.approx_commute_times, {})
 
     def test_zip_code_approximation_neither_exist(self):
         """
@@ -1584,6 +1605,26 @@ class TestApproxCommute(TestCase):
 
         # Assert
         self.assertAlmostEqual(home.approx_commute_times[destination], 39.6506, places=3)
+
+    def test_lat_lng_approximation_walking_multiple_homes(self):
+        """
+        Tests that the lat lng approximation works for walking with multiple homes
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
+        home1 = self.create_home(self.home_type, latitude=42.36, longitude=-71.2)
+        commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
+        destination = self.create_destination(survey, commute_type_walking)
+        homes = [home, home1]
+
+        # Act
+        RentAlgorithm.lat_lng_approximation(homes, destination, (42.4080528, -71.1632442),
+                                            average_speed=AVERAGE_WALKING_SPEED)
+
+        # Assert
+        self.assertAlmostEqual(home.approx_commute_times[destination], 39.6506, places=3)
+        self.assertAlmostEqual(home1.approx_commute_times[destination], 93.9631, places=3)
 
     def test_lat_lng_approximation_average_speed_zero(self):
         # Arrange
