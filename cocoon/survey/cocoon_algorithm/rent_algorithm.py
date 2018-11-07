@@ -139,7 +139,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
 
         for home in homes:
             # Stores the lat and lng points for the home
-            lat_lng_home = (home.latitude, home.longitude)
+            lat_lng_home = (home.home.latitude, home.home.longitude)
 
             # Returns the distance from the two lat lng points in miles
             distance = geopy.distance.geodesic(lat_lng_home, lat_lng_dest).miles
@@ -217,7 +217,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 destination_address = destination.full_address
 
                 results = retrieve_exact_commute(origin_addresses, [destination_address],
-                                                 destination.commute_type.commute_type)
+                                                 destination.commute_type)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):

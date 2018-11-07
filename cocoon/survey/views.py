@@ -195,9 +195,6 @@ class RentingResultSurvey(UpdateView):
         Also runs the algorithm and returns the homes to the template
         """
         data = super(RentingResultSurvey, self).get_context_data(**kwargs)
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.run(self.object)
-        data['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
 
         # If the request is a post, then populate the tenant form set
         if self.request.POST:
@@ -206,6 +203,9 @@ class RentingResultSurvey(UpdateView):
         # Otherwise if it is just a get, then just create a new form set
         else:
             data['tenants'] = TenantFormSetResults(instance=self.object)
+            rent_algorithm = RentAlgorithm()
+            rent_algorithm.run(self.object)
+            data['houseList'] = [x for x in rent_algorithm.homes[:25] if x.percent_score() >= 0]
         return data
 
     def form_valid(self, form):
