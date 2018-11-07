@@ -1,15 +1,12 @@
 # Import Django Unittest library
 from django.test import TestCase
 
-# Import django libraries
-from django.utils import timezone
-
 # Import python libraries
 from unittest.mock import MagicMock
 
 # Import Commute modules
 from cocoon.commutes.models import ZipCodeBase
-from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE, CommuteAccuracy
+from cocoon.commutes.constants import CommuteAccuracy
 
 # Import Distance matrix classes
 from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Transit, Bicycling, Walking, \
@@ -346,7 +343,7 @@ class TestDriveCommuteCalculator(TestCase):
 
         commute_calculator = Driving([home_score], destination)
 
-        parent_zip = ZipCodeBase.objects.create(zip_code='02476')
+        ZipCodeBase.objects.create(zip_code='02476')
 
         # Act
         homes = [home_score, home_score1, home_score2]
@@ -397,7 +394,7 @@ class TestDriveCommuteCalculator(TestCase):
 
         commute_calculator = Driving([home_score], destination)
 
-        parent_zip = ZipCodeBase.objects.create(zip_code='02476')
+        ZipCodeBase.objects.create(zip_code='02476')
 
         # Act
         homes = [home_score, home_score1, home_score2, home_score3]
@@ -462,7 +459,8 @@ class TestTransitCommuteCalculator(TestCase):
     def setUp(self):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
-        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
+        self.commute_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        self.commute_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
@@ -505,83 +503,155 @@ class TestTransitCommuteCalculator(TestCase):
             min_commute=min_commute,
         )
 
-    def test_does_pair_exist_true(self):
+    def test_find_missing_pairs_all_exist_all_same_commute(self):
         """
-        Tests that if the zip code pair exists for the home and the destination, then the does_exist_pair
-            function returns true
+        Tests that if all the zipcodes pair exist for that commute then there is no failed homes
         """
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type, zip_code='02476')
-        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+        home_score1 = self.create_home(self.home_type, zip_code='02475')
+        home_score2 = self.create_home(self.home_type, zip_code='02474')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02476')
 
-        commute_calculator = Transit([home_score], destination)
+        commute_calculator = Driving([home_score], destination)
+
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_type)
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02475', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02476', commute_type=self.commute_driving)
 
         # Act
-        result = commute_calculator.find_missing_pairs(home_score.home)
+        homes = [home_score, home_score1, home_score2]
+        result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertTrue(result)
+        self.assertEqual(result, [])
 
-    def test_does_pair_exist_false(self):
+    def test_find_missing_pairs_some_exist_all_same_commute(self):
         """
-        Tests that if the zip code pair exists for the home and the destination, then the does_exist_pair
-            function returns true
+        Tests that if some of the pairs do not exist, then those homes show up in the failed list
         """
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type, zip_code='02476')
-        destination = self.create_destination(survey, self.commute_type, zip_code='02475')
+        home_score1 = self.create_home(self.home_type, zip_code='02475')
+        home_score2 = self.create_home(self.home_type, zip_code='02474')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02476')
 
-        commute_calculator = Transit([home_score], destination)
+        commute_calculator = Driving([home_score], destination)
+
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_type)
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_driving)
 
         # Act
-        result = commute_calculator.find_missing_pairs(home_score.home)
+        homes = [home_score, home_score1, home_score2]
+        result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertFalse(result)
+        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+                                  (home_score1.home.zip_code, home_score1.home.state)])
 
-    def test_zip_code_pair_exists_but_not_valid(self):
+    def test_find_missing_pairs_some_exist_all_different_commutes(self):
         """
-        Tests that if the pair exists but is out of date, then the does pair exists will return false
+        Tests that if some of the pairs exist in a different commute type then those homes should
+            show up in the failed homes
         """
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type, zip_code='02476')
-        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+        home_score1 = self.create_home(self.home_type, zip_code='02475')
+        home_score2 = self.create_home(self.home_type, zip_code='02474')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02476')
 
-        commute_calculator = Transit([home_score], destination)
+        commute_calculator = Driving([home_score], destination)
+
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_type,
-                                           last_date_updated=timezone.now() -
-                                                             timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE + 1))
+        parent_zip.zipcodechild_set.create(zip_code='02476', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_bicycling)
+        parent_zip.zipcodechild_set.create(zip_code='02475', commute_type=self.commute_bicycling)
 
         # Act
-        result = commute_calculator.find_missing_pairs(home_score.home)
+        homes = [home_score, home_score1, home_score2]
+        result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertFalse(result)
+        self.assertEqual(result, [(home_score1.home.zip_code, home_score1.home.state),
+                                  (home_score2.home.zip_code, home_score2.home.state)])
 
-    def test_zip_code_pair_no_zip_codes(self):
+    def test_find_missing_pairs_none_exist(self):
         """
-        Tests that if there are no zip codes in the database, then the does pair exist will return false
+        Tests that if none of the pairs exist then all of them are in the failed homes list
         """
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type, zip_code='02476')
-        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+        home_score1 = self.create_home(self.home_type, zip_code='02475')
+        home_score2 = self.create_home(self.home_type, zip_code='02474')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02476')
 
-        commute_calculator = Transit([home_score], destination)
+        commute_calculator = Driving([home_score], destination)
+
+        ZipCodeBase.objects.create(zip_code='02476')
 
         # Act
-        result = commute_calculator.find_missing_pairs(home_score.home)
+        homes = [home_score, home_score1, home_score2]
+        result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertFalse(result)
+        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+                                  (home_score1.home.zip_code, home_score1.home.state),
+                                  (home_score2.home.zip_code, home_score2.home.state)])
+
+    def test_find_missing_pairs_parent_zip_code_does_not_exist(self):
+        """
+        Tests that if the parent zip_code object doesn't exist then all the homes are added to the
+            failed list
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type, zip_code='02476')
+        home_score1 = self.create_home(self.home_type, zip_code='02475')
+        home_score2 = self.create_home(self.home_type, zip_code='02474')
+        home_score3 = self.create_home(self.home_type, zip_code='02111')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02476')
+
+        commute_calculator = Driving([home_score], destination)
+
+        # Act
+        homes = [home_score, home_score1, home_score2, home_score3]
+        result = commute_calculator.find_missing_pairs(homes)
+
+        # Assert
+        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+                                  (home_score1.home.zip_code, home_score1.home.state),
+                                  (home_score2.home.zip_code, home_score2.home.state),
+                                  (home_score3.home.zip_code, home_score3.home.state)])
+
+    def test_find_missing_pairs_no_duplicates_in_failed_list(self):
+        """
+        Tests that if there are multiple failed homes with the same zip_code then make sure
+            they aren't duplicated
+        """
+        # Arrange
+        survey = self.create_survey(self.user.userProfile)
+        home_score = self.create_home(self.home_type, zip_code='02476')
+        home_score1 = self.create_home(self.home_type, zip_code='02476')
+        home_score2 = self.create_home(self.home_type, zip_code='02474')
+        home_score3 = self.create_home(self.home_type, zip_code='02474')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02476')
+
+        commute_calculator = Driving([home_score], destination)
+
+        ZipCodeBase.objects.create(zip_code='02476')
+
+        # Act
+        homes = [home_score, home_score1, home_score2, home_score3]
+        result = commute_calculator.find_missing_pairs(homes)
+
+        # Assert
+        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+                                  (home_score3.home.zip_code, home_score3.home.state)])
 
     def test_run_approximate(self):
         """
@@ -591,7 +661,7 @@ class TestTransitCommuteCalculator(TestCase):
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type, zip_code='02476')
-        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02474')
 
         commute_calculator = Transit([home_score], destination, accuracy=CommuteAccuracy.APPROXIMATE)
 
@@ -613,7 +683,7 @@ class TestTransitCommuteCalculator(TestCase):
         # Arrange
         survey = self.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type, zip_code='02476')
-        destination = self.create_destination(survey, self.commute_type, zip_code='02474')
+        destination = self.create_destination(survey, self.commute_driving, zip_code='02474')
 
         commute_calculator = Transit([home_score], destination, accuracy=CommuteAccuracy.EXACT)
 
