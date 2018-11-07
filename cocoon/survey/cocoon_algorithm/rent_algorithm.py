@@ -87,10 +87,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         First the function updates all the caches for the new homes and destinations. Then it will populate the rent
             algorithm with valid commutes
         """
-        start_time = time.time()
-        print("STEP 2.0: time elapsed: {:.2f}s".format(time.time() - start_time))
         commute_cache_updater.update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
-        print("STEP 2.1: time elapsed: {:.2f}s".format(time.time() - start_time))
         for destination in self.destinations:
             lat_lng=""
 
@@ -107,34 +104,30 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                     lat_lng = (lat_lng_result[0], lat_lng_result[1])
 
             self.populate_approx_commutes(self.homes, destination, lat_lng_dest=lat_lng)
-        print("STEP 2.2: time elapsed: {:.2f}s".format(time.time() - start_time))
 
     def populate_approx_commutes(self, homes, destination, lat_lng_dest=""):
         """
         Based on the commute type of the destination, this function determines the algorithm method that will
             be used to generate the approximation
-        :param home: (RentDatabaseModel) -> The home that the user is computing for
+        :param homes: (list[HomeScore]) -> The homes that the user is computing for
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
         :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
-        :return (Boolean): True if a valid pair match is found, False otherwise.
         """
         if destination.commute_type.commute_type == CommuteType.DRIVING:
-            return self.zip_code_approximation(homes, destination)
+            self.zip_code_approximation(homes, destination)
         elif destination.commute_type.commute_type == CommuteType.TRANSIT:
-            return self.zip_code_approximation(homes, destination)
+            self.zip_code_approximation(homes, destination)
         elif destination.commute_type.commute_type == CommuteType.BICYCLING:
-            return self.lat_lng_approximation(homes, destination, lat_lng_dest, AVERAGE_BICYCLING_SPEED)
+            self.lat_lng_approximation(homes, destination, lat_lng_dest, AVERAGE_BICYCLING_SPEED)
         elif destination.commute_type.commute_type == CommuteType.WALKING:
-            return self.lat_lng_approximation(homes, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
-        else:
-            return True
+            self.lat_lng_approximation(homes, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
 
     def lat_lng_approximation(self, home, destination, lat_lng_dest, average_speed):
         """
         This function given a home and a destination will determine the distance between the two homes based off of the
             lat and lng points. Then once the distance is determined, then the commute time is determined based off of
             the average speed.
-        :param home: (RentDatabaseModel) -> The home that the user is computing for
+        :param home: (list[homeScore]) -> The home that the user is computing for
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
         :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
         :param average_speed: (int) -> The average speed in mph that the person moves for the given mode of transport
@@ -162,39 +155,50 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         self.approx_commute_times[destination] = commute_time
         return True
 
-    def zip_code_approximation(self, homes, destination):
+    @staticmethod
+    def zip_code_approximation(homes, destination):
         """
         This is the zip_code_approximation algorithm. This assumes that the zip-code cache is already updated
             and that all the valid pairs are already generated. This just goes through and finds the valid pairs
             for the given zip_code and the destination
-        :param origin_zip: (string) -> The zip code of the origin, i.e home
+        :param homes: (list(HomeScore) -> The homes that the user is computing for
         :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
-        :return (Boolean): True if a valid pair exists, False otherwise.
         """
-        dest_zips = ZipCodeBase.objects.filter(zip_code__exact=destination.zip_code)
-        if dest_zips.exists():
-            for dest_zip in dest_zips:
-                child_zips = ZipCodeChild.objects.filter(base_zip_code=dest_zip). \
-                    filter(commute_type=destination.commute_type). \
-                    values_list('zip_code', 'commute_time_seconds')
-                for home in homes:
-                    home_exist = False
-                    home_commute_time = 0
-                    for zip_code, commute_time in child_zips:
-                        if home.home.zip_code in zip_code:
-                            home_exist = True
-                            home_commute_time = commute_time
-                            break
-                    if not home_exist:
-                        home.eliminate_home()
-                    else:
-                        home.approx_commute_times[destination] = home_commute_time/60
 
+        try:
+            # Retrieve the destination zip_code object if it exists
+            destination_zip = ZipCodeBase.objects.get(zip_code=destination.zip_code)
 
+            # Retrieve all the child zip_codes for the destination commute_type
+            child_zips = ZipCodeChild.objects.filter(base_zip_code=destination_zip). \
+                filter(commute_type=destination.commute_type). \
+                values_list('zip_code', 'commute_time_seconds')
 
+            # Create a python list of zip_codes and their corresponding commute times
+            # i.e list[(zip_code, commute_time_seconds)]
+            child_zip_codes = []
+            for zip_code, distance in child_zips:
+                child_zip_codes.append((zip_code, distance))
 
-        else:
-            return False
+            # For every home check to see if a zip code pair exists and then store the commute time
+            for home in homes:
+
+                # list comprehension to see if the home zip_code exists within the child zip_codes
+                result = [item for item in child_zip_codes if item[0] == home.home.zip_code]
+
+                # If there was a match, (there should only be one)
+                if result:
+                    # Store the commute time associated with the zip_code
+                    # Note the list comprehension returns a list of tuples though there should only be one
+                    #   element in the list, thus [0] and then the second element of the tuple is the commute_time
+                    #   in seconds so thus the [1], then to get minutes divide by 60
+                    home.approx_commute_times[destination] = result[0][1]/60
+                else:
+                    # If no result was returned, i.e the zip_code pair doesn't exist, then just eliminate the home
+                    home.eliminate_home()
+
+        except ZipCodeBase.DoesNotExist:
+            pass
 
     def retrieve_exact_commutes(self):
         """
