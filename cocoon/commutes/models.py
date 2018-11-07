@@ -31,7 +31,6 @@ class CommuteType(models.Model):
         unique=True,
         choices=COMMUTE_TYPES,
         max_length=2,
-        db_index=True,
     )
 
     def __str__(self):
