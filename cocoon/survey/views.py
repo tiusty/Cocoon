@@ -236,9 +236,9 @@ class RentingResultSurvey(UpdateView):
 
 @login_required
 def visit_list(request):
-    context = {
-        'error_message': []
-    }
+
+    context = views.get_user_itineraries(request)
+    context['error_message'] = []
 
     # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
