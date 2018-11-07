@@ -107,6 +107,8 @@ class Driving(CommuteCalculator):
                 # list comprehension to see if the home zip_code exists within the child zip_codes
                 result = [item for item in child_zip_codes if item[0] == home.home.zip_code]
 
+                # If there is not pair or the pair is out of date then mark the pair as failed
+                #   so it gets regenerated
                 if not result or not ZipCodeChild.zip_code_cache_valid_check(result[0][1]):
                     if not (home.home.zip_code, home.home.state) in failed_list:
                         failed_list.append((home.home.zip_code, home.home.state))
