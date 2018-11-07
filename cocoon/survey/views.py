@@ -244,7 +244,7 @@ class RentingResultSurvey(UpdateView):
             tenants.instance = object
             tenants.save()
         else:
-            # If there are any others then the form is not valid
+            # If there are any errors then the form is not valid
             return self.form_invalid(form=form)
         messages.add_message(self.request, messages.SUCCESS, "Survey Updated!")
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
