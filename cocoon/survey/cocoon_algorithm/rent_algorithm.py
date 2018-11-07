@@ -24,7 +24,6 @@ from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPE
 import geopy.distance
 import cocoon.houseDatabase.maps_requester as geolocator
 from config.settings.Global_Config import gmaps_api_key
-import time
 
 
 class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, CommuteAlgorithm, CocoonAlgorithm):
@@ -89,14 +88,15 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         commute_cache_updater.update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
         for destination in self.destinations:
-            lat_lng=""
+            lat_lng = ""
 
             # If the commute type is walking or bicycling then we need to generate a lat and lng for the destination
             # We do it here so we can save the lat and lng for every home
             if destination.commute_type.commute_type == CommuteType.BICYCLING or \
                     destination.commute_type.commute_type == CommuteType.WALKING:
                 # Pulls lat/lon based on address
-                lat_lng_result = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(destination.full_address)
+                lat_lng_result = geolocator.maps_requester(gmaps_api_key).\
+                    get_lat_lon_from_address(destination.full_address)
 
                 if lat_lng_result == -1:
                     continue
@@ -215,7 +215,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         for destination in self.destinations:
             try:
                 # map list of HomeScore objects to full addresses
-                origin_addresses = list(map(lambda house:house.home.full_address,
+                origin_addresses = list(map(lambda house: house.home.full_address,
                                         self.homes[:number_of_exact_commutes_computed]))
 
                 destination_address = destination.full_address
@@ -264,56 +264,45 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         self.homes = self.insertion_sort(self.homes)
 
     def run(self, survey):
-        start_time = time.time()
         """
         STEP 1: Populate the rent_algorithm with all the information from the survey
         """
         self.populate_with_survey_information(survey)
-        print("STEP 1: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         """
         STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
         This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
         """
         self.retrieve_all_approximate_commutes()
-        print("STEP 2: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         """
         STEP 3: Remove homes that are too far away using approximate commutes
         """
         self.run_compute_approximate_commute_filter()
-        print("STEP 3: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         """
         STEP 4: Generate scores based on hybrid questions
         """
         self.run_compute_commute_score_approximate()
-        print("STEP 4.1: time elapsed: {:.2f}s".format(time.time() - start_time))
         self.run_compute_price_score()
-        print("STEP 4.2: time elapsed: {:.2f}s".format(time.time() - start_time))
         self.run_compute_weighted_score_exterior_amenities(survey.parking_spot)
-        print("STEP 4.3: time elapsed: {:.2f}s".format(time.time() - start_time))
         """
         STEP 5: Now sort all the homes from best homes to worst home
         """
         self.run_sort_home_by_score()
-        print("STEP 5: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         """
         STEP 6: Compute the exact commute time/distance for best homes
         """
         self.retrieve_exact_commutes()
-        print("STEP 6: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         """
         STEP 7: Score the top homes based on the exact commute time/distance
         """
         self.run_compute_commute_score_exact()
-        print("STEP 7: time elapsed: {:.2f}s".format(time.time() - start_time))
 
         """
         STEP 8: Reorder homes again now with the full data
         """
         # Now reorder all the homes with the new information
         self.run_sort_home_by_score()
-        print("STEP 8: time elapsed: {:.2f}s".format(time.time() - start_time))
