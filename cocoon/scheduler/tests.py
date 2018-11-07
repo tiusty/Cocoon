@@ -1,7 +1,4 @@
-import json
-
 from django.test import TestCase
-from django.test import Client
 from django.urls import reverse
 from django.contrib.auth import login, get_user
 from django.utils import timezone
