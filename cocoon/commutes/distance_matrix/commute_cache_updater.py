@@ -6,7 +6,7 @@ from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
 
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import Distance_Matrix_Exception
-from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
 # Load the logger
 import logging
@@ -136,12 +136,11 @@ class Driving(CommuteCalculator):
             destination = ("20344", California)
             commute_type = "driving"
         """
-        wrapper = DistanceWrapper()
 
         # map (zip, state) tuples list to a list of "state+zip" strings
-        results = wrapper.get_durations_and_distances(list(map(lambda x: x[1]+"+"+x[0], origins_zips_states)),
-                                                      [destination_zip_state[1]+"+"+destination_zip_state[0]],
-                                                      mode=self.google_commute_name)
+        results = retrieve_exact_commute(list(map(lambda x: x[1] + "+" + x[0], origins_zips_states)),
+                                         [destination_zip_state[1] + "+" + destination_zip_state[0]],
+                                         mode=self.destination.commute_type)
 
         if results:
             # iterates both lists simultaneously
