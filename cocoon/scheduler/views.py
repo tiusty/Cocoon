@@ -169,16 +169,13 @@ def select_start_time(request):
                                                             "timeId": time.id,
                                                             }), content_type="application/json")
                         else:
-                            print(itinerary.agent)
-                            print(current_profile.user)
-                            print(time.time)
                             return HttpResponse(json.dumps({"result": "1"}),
                                                 content_type="application/json")
                     except (ItineraryModel.DoesNotExist, TimeModel.DoesNotExist):
                         return HttpResponse(json.dumps({"result": "Could not find itinerary data"}),
                                             content_type="application/json")
                 else:
-                    return HttpResponse(json.dumps({"result: User does not have privileges"},
+                    return HttpResponse(json.dumps({"result: User does not have pri1vileges"},
                                                     content_type="application/json"))
             except UserProfile.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
