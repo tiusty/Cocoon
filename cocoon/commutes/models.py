@@ -86,7 +86,18 @@ class ZipCodeChild(models.Model):
         :return: (Boolean) -> True: The cache is still valid
                               False: The cache is no longer valid
         """
-        if timezone.now().date() > self.last_date_updated + timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE):
+        return self.zip_code_cache_valid_check(self.last_date_updated)
+
+    @staticmethod
+    def zip_code_cache_valid_check(last_date_updated):
+        """
+        This function tests whether or not the zip code should be recalculated.
+        The time is set by the value in constants.py. This also allows a value to be passed in if
+
+        :return: (Boolean) -> True: The cache is still valid
+                              False: The cache is no longer valid
+        """
+        if timezone.now().date() > last_date_updated + timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE):
             return False
         else:
             return True

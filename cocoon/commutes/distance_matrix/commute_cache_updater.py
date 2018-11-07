@@ -93,21 +93,21 @@ class Driving(CommuteCalculator):
             # Generates a queryset of all the child zip_codes that exist for this destination
             child_zips = ZipCodeChild.objects.filter(base_zip_code=dest_zip). \
                 filter(commute_type=self.destination.commute_type). \
-                values('zip_code')
+                values_list('zip_code', 'last_date_updated')
 
             # Build the list of child_zip_codes so it is more easily accessible later
             child_zip_codes = []
-            for zip_code in child_zips:
-                child_zip_codes.append(zip_code.get("zip_code"))
+            for zip_code, last_update in child_zips:
+                child_zip_codes.append((zip_code, last_update))
 
             # For every home, see if the home zip_code matches one of the zip_codes in the child_zip codes
             #   If not then add it to the failed_list
             for home in homes:
 
-                # Check to see if the home zip_code is within the child_zip_code
-                if home.home.zip_code not in child_zip_codes:
+                # list comprehension to see if the home zip_code exists within the child zip_codes
+                result = [item for item in child_zip_codes if item[0] == home.home.zip_code]
 
-                    # If it doesn't exist and it isn't already in the failed list then add it to the failed list
+                if not result or not ZipCodeChild.zip_code_cache_valid_check(result[0][1]):
                     if not (home.home.zip_code, home.home.state) in failed_list:
                         failed_list.append((home.home.zip_code, home.home.state))
 
