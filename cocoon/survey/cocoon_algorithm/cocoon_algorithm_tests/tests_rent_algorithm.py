@@ -1238,7 +1238,7 @@ class TestRetrieveApproximateCommutes(TestCase):
             listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
-    def test_retrieve_approx_commutes_driving_transit_one_home_and_destination_not_eliminated(self):
+    def test_retrieve_approx_commutes_driving_transit(self):
         """
         This tests that is one home is inputted and one destination with driving or transit and the home is not
         eliminated, then the home is not eliminated
@@ -1253,11 +1253,12 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [home]
         rent_algorithm.destinations = [destination]
+        homes = [home]
 
         # Mock the functions to just test this one function
 
         # Tests that the home is valid and is not eliminated
-        home.populate_approx_commutes = MagicMock(return_value=True)
+        rent_algorithm.populate_approx_commutes = MagicMock()
         # Doesn't have a return but prevents updating the database unnecessarily
         commute_cache_updater.update_commutes_cache = MagicMock()
 
@@ -1265,12 +1266,11 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        commute_cache_updater.update_commutes_cache.assert_called_once_with([home], [destination],
+        commute_cache_updater.update_commutes_cache.assert_called_once_with(homes, [destination],
                                                                             accuracy=CommuteAccuracy.APPROXIMATE)
-        home.populate_approx_commutes.assert_called_once_with(home.home, destination, lat_lng_dest="")
-        self.assertFalse(home.eliminated)
+        rent_algorithm.populate_approx_commutes.assert_called_once_with(homes, destination, lat_lng_dest="")
 
-    def test_retrieve_approx_commutes_walking_one_home_and_destination_not_eliminated(self):
+    def test_retrieve_approx_commutes_walking(self):
         """
         This tests that is one home is inputted and one destination with bicycling or waking and the home is not
         eliminated, then the home is not eliminated and the correct lat_lng is generated and passed
@@ -1285,11 +1285,12 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [home]
         rent_algorithm.destinations = [destination]
+        homes = [home]
 
         # Mock the functions to just test this one function
 
         # Tests that the home is valid and is not eliminated
-        home.populate_approx_commutes = MagicMock(return_value=True)
+        rent_algorithm.populate_approx_commutes = MagicMock(return_value=True)
         # Doesn't have a return but prevents updating the database unnecessarily
         commute_cache_updater.update_commutes_cache = MagicMock()
         # Prevent google maps query
@@ -1299,17 +1300,14 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        commute_cache_updater.update_commutes_cache.assert_called_once_with([home], [destination],
+        commute_cache_updater.update_commutes_cache.assert_called_once_with(homes, [destination],
                                                                             accuracy=CommuteAccuracy.APPROXIMATE)
-        home.populate_approx_commutes.assert_called_once_with(home.home, destination,
+        rent_algorithm.populate_approx_commutes.assert_called_once_with(homes, destination,
                                                               lat_lng_dest=(42.4080528, -71.1632442))
-        self.assertFalse(home.eliminated)
 
-    def test_retrieve_approx_commutes_driving_several_homes_and_destinations_some_not_eliminated_drive_transit_bicycling(self):
+    def test_retrieve_approx_commutes_some_dest_driving_some_biking(self):
         """
-        Checks that if several homes and destinations are put in, then the correct homes are eliminated and
-            the correct functions calls are made. Also tests that for the bicycling case that the homes generate
-            a lat and long
+        Checks to
         """
         # Arrange
         commute_type_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
@@ -1327,13 +1325,12 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [home, home1, home2]
         rent_algorithm.destinations = [destination, destination1, destination2]
+        homes = [home, home1, home2]
 
         # Mock the functions to just test this one function
 
         # Tests that the home is valid and is not eliminated
-        home.populate_approx_commutes = MagicMock(return_value=True)
-        home1.populate_approx_commutes = MagicMock(return_value=False)
-        home2.populate_approx_commutes = MagicMock(return_value=True)
+        rent_algorithm.populate_approx_commutes = MagicMock()
         # Doesn't have a return but prevents updating the database unnecessarily
         commute_cache_updater.update_commutes_cache = MagicMock()
         # Prevent google maps query
@@ -1343,29 +1340,14 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        commute_cache_updater.update_commutes_cache.assert_called_once_with([home, home1, home2],
+        commute_cache_updater.update_commutes_cache.assert_called_once_with(homes,
                                                                             [destination, destination1, destination2],
                                                                             accuracy=CommuteAccuracy.APPROXIMATE)
-        home.populate_approx_commutes.assert_has_calls(
-            [call(home.home, destination, lat_lng_dest=""),
-             call(home.home, destination1, lat_lng_dest=""),
-             call(home.home, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
+        rent_algorithm.populate_approx_commutes.assert_has_calls(
+            [call(homes, destination, lat_lng_dest=""),
+             call(homes, destination1, lat_lng_dest=""),
+             call(homes, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
         )
-        home1.populate_approx_commutes.assert_has_calls(
-             [call(home1.home, destination, lat_lng_dest=""),
-              call(home1.home, destination1, lat_lng_dest=""),
-              call(home1.home, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
-        )
-        home2.populate_approx_commutes.assert_has_calls(
-             [call(home2.home, destination, lat_lng_dest=""),
-              call(home2.home, destination1, lat_lng_dest=""),
-              call(home2.home, destination2, lat_lng_dest=(42.4080528, -71.1632442))]
-        )
-
-        self.assertFalse(home.eliminated)
-        self.assertTrue(home1.eliminated)
-        self.assertFalse(home2.eliminated)
-
 
 # TODO fix exact commutes to use mocking
 class TestRetrieveExactCommutes(TestCase):

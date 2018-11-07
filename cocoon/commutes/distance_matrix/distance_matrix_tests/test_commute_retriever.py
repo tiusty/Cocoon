@@ -23,7 +23,6 @@ class TestRetrieveExactCommute(TestCase):
         retrieve_exact_commute([], [], commute_driving)
 
         # Assert
-        # DistanceWrapper.get_durations_and_distances.assert_called_with()
         mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.DRIVING)
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
