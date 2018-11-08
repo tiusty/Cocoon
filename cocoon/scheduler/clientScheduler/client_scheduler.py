@@ -1,20 +1,29 @@
+# import python modules
+
+from datetime import datetime
+import os
+
+
 # import distance matrix wrapper
-from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 from cocoon.scheduler.clientScheduler.base_algorithm import clientSchedulerAlgorithm
+from cocoon.scheduler.models import ItineraryModel, itinerary_directory_path
+
+# import django modules
+from django.core.files.base import ContentFile
 
 
 class ClientScheduler(clientSchedulerAlgorithm):
 
     def __init__(self):
-        self.wrapper = DistanceWrapper()
         super().__init__()
 
     def build_homes_matrix(self, homes_list):
         """
         builds the homes matrix using the DistanceWrapper for now. Basically computes the distances using the Google Distance Matrix API and stores it.
 
-        :param homes_list: List of strings containing home addresses used to compute the optimal itinerary
-        :return: (list): homes_matrix a 2x2 matrix of distances found using the DistanceWrapper() to indicate the distances betweeen any two homes
+        :param (list) homes_list: List of strings containing home addresses used to compute the optimal itinerary
+        :return: (list): homes_matrix a nxn matrix of distances found using the DistanceWrapper() to indicate the distances betweeen any two homes
         """
 
         homes_matrix = []
@@ -23,9 +32,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             home_one_distances = []
 
-            result_distance_wrapper = self.wrapper.get_durations_and_distances(origins=[home_one],
-                                                                               destinations=homes_list)
-
+            result_distance_wrapper = retrieve_exact_commute(origins=[home_one], destinations=homes_list)
+            print(result_distance_wrapper)
             for source, time in result_distance_wrapper[0]:
                 home_one_distances.append(time)
 
@@ -38,8 +46,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
         Interprets the shortest path using the home list to make it ready for output onto the main site
         args:
-        :param homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
-        :param shortest_path: List of indices that denote the shortest path, which is the output of the algorithm
+        :param (list) homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
+        :param (list) shortest_path: List of indices that denote the shortest path, which is the output of the algorithm
         :return: (list): interpreted_route List of strings containing the addresses in order of the shortest possible path, human readable
         """
 
@@ -71,3 +79,36 @@ class ClientScheduler(clientSchedulerAlgorithm):
             tuple_list_edges.append(temp_tuple)
 
         return tuple_list_edges
+
+    def run(self, homes_list, user):
+        """
+        Algorithm runner
+        args:
+        :param: (list) homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
+        :param: (request.user) user: user
+        """
+        shortest_path = self.run_client_scheduler_algorithm(homes_list)
+        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
+
+        # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
+        # Add 20 minutes to each home
+        s = ""
+        for item in interpreted_route:
+            s += item[0]
+            s += " "
+            s += str(item[1] / 60 + 20)
+            s += "\n"
+
+        # Update Itinerary Model
+        # File name is unique based on user and current time (making it impossible to have duplicates)
+
+        try:
+            itinerary_model = ItineraryModel.objects.get(client=user)
+
+        except ItineraryModel.DoesNotExist:
+            itinerary_model = ItineraryModel(client=user)
+
+        itinerary_model.itinerary.save(
+            os.path.basename(itinerary_directory_path(user)),
+            ContentFile(s))
+        itinerary_model.save()

@@ -16,7 +16,6 @@ from django.forms import inlineformset_factory
 from django.views.generic import CreateView, UpdateView
 from django.db import transaction
 from django.contrib.auth import login
-from django.core.files.base import ContentFile
 
 # Import Signatures modules
 from cocoon.signature.models import HunterDocManagerModel
@@ -277,31 +276,7 @@ def visit_list(request):
         homes_list.append(str(home))
 
     client_scheduler_alg = ClientScheduler()
-    shortest_path = client_scheduler_alg.run_client_scheduler_algorithm(homes_list)
-    print(shortest_path)
-    interpreted_route = client_scheduler_alg.interpret_algorithm_output(homes_list, shortest_path)
-
-    # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
-    # Add 20 minutes to each home
-    s = ""
-    for item in interpreted_route:
-        s += item[0]
-        s += " "
-        s += str(item[1]/60 + 20)
-        s += "\n"
-
-    # Update Itinerary Model
-    # File name is unique based on user and current time (making it impossible to have duplicates)
-
-    try:
-        itinerary_model = ItineraryModel.objects.get(client=request.user)
-
-    except ItineraryModel.DoesNotExist:
-        itinerary_model = ItineraryModel(client=request.user, selected_start_time=datetime.now())
-
-    itinerary_model.itinerary.save(os.path.basename("itinerary_route_" + str(request.user)) + "_" + str(datetime.now()),
-                                   ContentFile(s))
-    itinerary_model.save()
+    client_scheduler_alg.run(homes_list, request.user)
 
     # Since the page is loading, update all the signed documents to see if the status has changeds
     manager.update_all_is_signed()

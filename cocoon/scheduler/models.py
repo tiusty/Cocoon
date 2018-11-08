@@ -1,3 +1,6 @@
+# import python modules
+from datetime import datetime
+
 from django.db import models
 from django.db import transaction
 from django.utils import timezone
@@ -135,7 +138,9 @@ class ItineraryModel(models.Model):
         # send confirmation email to user
         email.send()
         
-        
+def itinerary_directory_path(user):
+    return "itinerary_route_" + str(user) + "_" + str(datetime.now())
+
 class TimeModel(models.Model):
     """
         Model for a proposed itinerary start time.

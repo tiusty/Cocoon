@@ -13,7 +13,7 @@ class clientSchedulerAlgorithm:
         :return: (int): starting_point - the Global Minimum. This is the smallest possible distance, so the algorithm will start
         from this address
         '''
-        min_time = homes_matrix[0][1]
+        min_time = 1000000
         starting_point = -1
         for i in range(len(homes_matrix)):
             for j in range(len(homes_matrix[0])):
