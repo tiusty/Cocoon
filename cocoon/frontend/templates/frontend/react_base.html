@@ -1,0 +1,9 @@
+{% load static %}
+<script>
+    window.props = '{{props}}';
+    window.react_mount = document.getElementById('reactWrapper');
+    window.component = '{{component}}';
+</script>
+
+{#Need way to insert window.component into string#}
+{#<script src="{% static 'frontend/js/survey.bundle.js' %}"></script>#}
