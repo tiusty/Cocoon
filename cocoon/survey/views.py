@@ -13,6 +13,9 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.urls import reverse
 from django.forms import inlineformset_factory
+from django.views.generic import CreateView, UpdateView
+from django.db import transaction
+from django.contrib.auth import login
 from django.core.files.base import ContentFile
 
 # Import Signatures modules
@@ -26,9 +29,8 @@ from cocoon.userAuth.models import UserProfile
 
 # Import Survey algorithm modules
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
-from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
-from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
-    RentingDestinationsForm, RentSurveyFormMini
+from cocoon.survey.models import RentingSurveyModel
+from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
 
 # Import Scheduler algorithm
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
@@ -37,229 +39,214 @@ from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 from cocoon.scheduler.models import ItineraryModel
 
 
-@login_required
-def renting_survey(request):
-    # Create the two forms,
-    # RentSurveyForm contains everything except for destinations
+# import scheduler views
+from cocoon.scheduler import views as scheduler_views
 
-    # DestinationFrom contains the destination
-    # The reason why this is split is because the destination form can be made into a form factory
-    # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
-    # Multiple DestinationsModel on the frontend
-    number_of_formsets = 4
-    number_of_destinations = 1
-    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=number_of_formsets,
-                                               form=RentingDestinationsForm, can_delete=False)
-    destination_form_set = DestinationFormSet()
+from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
-    # Retrieve the current profile or return a 404
-    current_profile = get_object_or_404(UserProfile, user=request.user)
 
-    if current_profile.user.is_broker:
-        form_type = BrokerRentSurveyForm
-    else:
-        form_type = RentSurveyForm
+class RentingSurvey(CreateView):
+    model = RentingSurveyModel
+    form_class = RentSurveyForm
+    template_name = 'survey/rentingSurvey.html'
 
-    form = form_type()
+    def get_context_data(self, **kwargs):
+        """
+        Adds the TenantFormSet, and the user creation form to the context
+        """
+        data = super(RentingSurvey, self).get_context_data(**kwargs)
 
-    context = {'error_message': [], 'number_of_formsets': number_of_formsets}
+        # If the request is a post, then populate the tenant form set
+        if self.request.POST:
 
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = form_type(request.POST)
+            # This is a hack to remove the forms that are not desired by the user
+            #   Basically the number of tenants is read from the input, then
+            #   all the forms that are beyond the desired amount of tenants
+            #   is deleted from the request.POST (a copy of it)
+            request_post = self.request.POST.copy()
+            for x in range(int(request_post['number_of_tenants']), 5):
+                for field in self.request.POST:
+                    if 'tenants-' + str(x) in field:
+                       del request_post[field]
+            self.request.POST = request_post
+            # Populate the formset with the undesired formsets stripped away
+            data['tenants'] = TenantFormSet(self.request.POST)
 
-        # check whether it is valid
-        if form.is_valid():
-            number_of_destinations = int(request.POST['number_destinations_filled_out'])
+            # If the user is not signed in then add then create the signup form with
+            #   the request.POST elements
+            if not self.request.user.is_authenticated():
+                data['user_creation'] = ApartmentHunterSignupForm(self.request.POST)
 
-            # process the data in form.cleaned_data as required
-            rent_survey = form.save(commit=False)
-            # Need to retrieve the current userProfile to link the survey to
+            # Determine the desired amount of tenants from the request.POST
+            data['num_of_tenants'] = int(self.request.POST['number_of_tenants'])
 
-            # Add the current user to the survey
-            rent_survey.user_profile = current_profile
-
-            # Create the form destination set
-            request_post = request.POST.copy()
-            for x in range(number_of_destinations, number_of_formsets):
-                for field in request.POST:
-                    if 'rentingdestinationsmodel_set-' + str(x) in field:
-                        del request_post[field]
-
-            destination_form_set = DestinationFormSet(request_post, instance=rent_survey)
-
-            if destination_form_set.is_valid():
-
-                # Only if all the forms validate will we save it to the database
-                rent_survey.save()
-                form.save_m2m()
-                destination_form_set.save()
-
-                # redirect to survey result on success:
-                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_url": rent_survey.url}))
-
-            else:
-                context['error_message'] = "The destination set did not validate"
-                context['error_message'] = destination_form_set.errors
+        # Otherwise if it is just a get, then just create a new form set
         else:
-            # If the destination form is not valid, also do a quick test of the survey field to
-            # Inform the user if the survey is also invalid
-            context['error_message'].append('The survey did not validate')
 
-    context['form'] = form
-    context['form_destination'] = destination_form_set
-    context['number_of_destinations'] = number_of_destinations
-    return render(request, 'survey/rentingSurvey.html', context)
+            # Create a blank Tenant form set
+            data['tenants'] = TenantFormSet()
 
+            # The default value is 1
+            data['num_of_tenants'] = 1
 
-def run_rent_algorithm(survey, context):
-    """
-    Runs the rent algorithm when the survey is being processed.
-    :param survey: (RentingSurveyModel): The survey that the user filled out
-    :param context: (dictionary): The context for the template
-    """
+            # If the user is not logged in then generate a signup form
+            if not self.request.user.is_authenticated():
+                data['user_creation'] = ApartmentHunterSignupForm()
+        return data
 
-    # Initialize the rent_algorithm class with empty data
-    rent_algorithm = RentAlgorithm()
+    def form_valid(self, form):
+        """
+        Runs if the RentSurveyForm is valid
+        :param form: (RentSurveyForm) -> The form associated with the page
+        """
+        context = self.get_context_data()
+        tenants = context['tenants']
 
-    """
-    STEP 1: Populate the rent_algorithm with all the information from the survey
-    """
-    rent_algorithm.populate_with_survey_information(survey)
+        does_user_signup = False
+        sign_up_form_valid = True
+        user_signup = None
 
-    """
-    STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
-    This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
-    """
-    rent_algorithm.retrieve_all_approximate_commutes()
+        # Determines if there is a signup form associated with the request
+        # If there is then the signup form must also be valid
+        if 'user_creation' in context:
+            does_user_signup = True
+            user_signup = context['user_creation']
+            if not user_signup.is_valid():
+                sign_up_form_valid = False
 
-    """
-    STEP 3: Remove homes that are too far away using approximate commutes
-    """
-    rent_algorithm.run_compute_approximate_commute_filter()
+        # Makes sure that the tenant form and the signup form are valid before saving
+        if tenants.is_valid() and sign_up_form_valid:
 
-    """
-    STEP 4: Generate scores based on hybrid questions
-    """
-    rent_algorithm.run_compute_commute_score_approximate()
-    rent_algorithm.run_compute_price_score()
-    rent_algorithm.run_compute_weighted_score_exterior_amenities(survey.parking_spot)
-    """
-    STEP 5: Now sort all the homes from best homes to worst home
-    """
-    rent_algorithm.run_sort_home_by_score()
+            user = self.request.user
 
-    """
-    STEP 6: Compute the exact commute time/distance for best homes
-    """
-    rent_algorithm.retrieve_exact_commutes()
+            # If the user is signing up then save that form and return the user to log them in
+            if does_user_signup:
+                user = user_signup.save(request=self.request)
+                login(self.request, user)
 
-    """
-    STEP 7: Score the top homes based on the exact commute time/distance
-    """
-    rent_algorithm.run_compute_commute_score_exact()
+            # Save the rent survey
+            with transaction.atomic():
+                form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
-    """
-    STEP 8: Reorder homes again now with the full data
-    """
-    # Now reorder all the homes with the new information
-    rent_algorithm.run_sort_home_by_score()
+                # Creates a the survey name based on the people in the roommate group
+                survey_name = "Roommate Group:"
+                counter = 1
+                # Depending on whether it is the last/first roommate then the formatting of the string is different
+                for tenant in tenants:
 
-    # Set template variables
-    context['commuters'] = rent_algorithm.destinations
+                    # If only the user
+                    if counter is 1 and counter is context['num_of_tenants']:
+                        survey_name = survey_name + " Just Me"
+                        break
 
-    # Only return homes that the score is 0 or above
-    context['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
+                    # Write me for the user as the first person in the roomate group
+                    elif counter is 1:
+                        survey_name = survey_name + " Me,"
 
+                    # End condition for the last roomate
+                    elif counter >= context['num_of_tenants']:
+                        survey_name = survey_name + " and {0}".format(tenant.cleaned_data['first_name'])
+                        break
 
-# Assumes the survey_slug will be passed by the URL if not, then it grabs the most recent survey.
-# If it can't find the most recent survey it redirects back to the survey
-@login_required
-def survey_result_rent(request, survey_url=""):
-    """
-    Survey result rent is the heart of the website where the survey is grabbed and the housing list is created
-    Based on the results of the survey. This is specifically for the rent survey
-    :param request: (Http Request): The HTTP request object
-    :param survey_url: (string): This is the survey slug to determine which survey to load
-    :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
-        etc. If something goes wrong then it may redirect back to the survey homePage
-    ToDo:
-    1. Set a limit on the number of homes that are used for commute times. I would say 50 max, then
-        only return the top 20-30 homes to the user
-    """
-    context = {
-        'error_message': [],
-    }
+                    # Adds another roommate to the group
+                    else:
+                        survey_name = survey_name + ", {0}".format(tenant.cleaned_data['first_name'])
 
-    user_profile = get_object_or_404(UserProfile, user=request.user)
+                    counter = counter + 1
 
-    if user_profile.user.is_broker:
-        form_type = BrokerRentSurveyFormMini
-    else:
-        form_type = RentSurveyFormMini
+                # Set the form name
+                form.instance.name = survey_name
 
-    # Tries to grab the survey. If the survey name was not passed in, then it grabs the most recent survey taken.
-    try:
-        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(url=survey_url)
-    # If the survey ID, does not exist/is not for that user, then return the most recent survey
-    except RentingSurveyModel.DoesNotExist:
-        if RentingSurveyModel.objects.filter(user_profile=user_profile).exists():
-            survey = RentingSurveyModel.objects.filter(user_profile=user_profile) \
-                .order_by('created').first()
-            messages.add_message(request, messages.WARNING, 'Could not find Survey, loading most recent survey')
-            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                kwargs={"survey_url": survey.url}))
+                # Now the form can be saved
+                survey = form.save()
+
+            # Now save the the tenants
+            tenants.instance = survey
+            tenants.save()
+
         else:
-            messages.add_message(request, messages.ERROR, 'Could not find Survey')
-            return HttpResponseRedirect(reverse('homePage:index'))
+            # If there is an error then re-render the survey page
+            return self.render_to_response(self.get_context_data(form=form))
 
-    # Populate form with stored data
-    form = form_type(instance=survey)
-    number_of_forms = survey.rentingdestinationsmodel_set.count()
-    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=0,
-                                               form=RentingDestinationsForm, can_delete=False)
-    destination_form_set = DestinationFormSet(instance=survey)
+        # Redirect to survey results page on success
+        return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                            kwargs={"survey_url": survey.url}))
 
-    # If a POST message occurs (They submit the mini form) then process it
-    # If it fails then keep loading survey result and pass the error messages
-    if request.method == 'POST':
-        # If a POST occurs, update the form. In the case of an error, then the survey
-        # Should be populated by the POST data.
-        form = form_type(request.POST, instance=survey, user=request.user)
-        destination_form_set = DestinationFormSet(request.POST, instance=survey)
-        # If the survey is valid then redirect back to the page to reload the changes
-        # This will also update the house list
-        if form.is_valid():
-            if destination_form_set.is_valid():
-                form.save()
-                destination_form_set.save()
-                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_url": survey.url}))
-            else:
-                context['error_message'].append("There are form errors in destinatino form")
-                context['error_message'].append(destination_form_set.errors)
+
+class RentingResultSurvey(UpdateView):
+    model = RentingSurveyModel
+    form_class = RentSurveyFormMini
+    template_name = 'survey/surveyResultRent.html'
+    slug_field = 'url'
+    slug_url_kwarg = 'survey_url'
+    context_object_name = 'survey'
+
+    def get(self, request, **kwargs):
+        """
+        Add a message to the user whenever the page is loaded
+        """
+        messages.add_message(request, messages.INFO, "We've scoured the market to pick your personalized short list of "
+                                                     "the best places, now it's your turn to pick your favorites")
+        return super().get(request, **kwargs)
+
+    def get_form_kwargs(self):
+        """
+        Adds the user to the kwargs of the form so it can be accessed in validation
+        """
+        kwargs = super(RentingResultSurvey, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_queryset(self):
+        """
+        The survey must be associated with the currently logged in user
+        """
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def get_context_data(self, **kwargs):
+        """
+        Adds the tenant form context
+        Also runs the algorithm and returns the homes to the template
+        """
+        data = super(RentingResultSurvey, self).get_context_data(**kwargs)
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.run(self.object)
+        data['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
+
+        # If the request is a post, then populate the tenant form set
+        if self.request.POST:
+            data['tenants'] = TenantFormSetResults(self.request.POST, instance=self.object)
+
+        # Otherwise if it is just a get, then just create a new form set
         else:
-            context['error_message'].append("There are form errors")
-            try:
-                survey = RentingSurveyModel.objects.get(id=survey.id)
-                # Think of better solution for problem
-            except RentingSurveyModel.DoesNotExist:
-                print("Something really went wrong")
-                messages.add_message(request, messages.ERROR, 'Could not find Survey')
-                return HttpResponseRedirect(reverse('survey:rentSurveyResult'))
+            data['tenants'] = TenantFormSetResults(instance=self.object)
+        return data
 
-    # Now start executing the Algorithm
-    run_rent_algorithm(survey, context)
-    context['survey'] = survey
-    context['form'] = form
-    context['form_destination'] = destination_form_set
-    context['number_of_formsets'] = number_of_forms
-    context['number_of_destinations'] = number_of_forms
-    context['mini_form'] = True
-    messages.add_message(request, messages.INFO, "We've scoured the market to pick your personalized short list of "
-                                                 "the best places, now it's your turn to pick your favorites")
-    return render(request, 'survey/surveyResultRent.html', context)
+    def form_valid(self, form):
+        context = self.get_context_data()
+        tenants = context['tenants']
+
+        # Makes sure that the tenant form is valid before saving
+        if tenants.is_valid():
+
+            user = self.request.user
+
+            # Save the survey
+            with transaction.atomic():
+                form.instance.user_profile = get_object_or_404(UserProfile, user=user)
+                object = form.save()
+
+            # Now save the the tenants
+            tenants.instance = object
+            tenants.save()
+        else:
+            # If there is an error then re-render the survey page
+            return self.render_to_response(self.get_context_data(form=form))
+
+        messages.add_message(self.request, messages.SUCCESS, "Survey Updated!")
+        return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                            kwargs={"survey_url": self.object.url}))
 
 
 @login_required
@@ -275,6 +262,9 @@ def visit_list(request):
     context = {
         'error_message': []
     }
+
+    context.update(scheduler_views.get_user_itineraries(request))
+
     # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
     (manager, _) = HunterDocManagerModel.objects.get_or_create(
@@ -307,7 +297,7 @@ def visit_list(request):
         itinerary_model = ItineraryModel.objects.get(client=request.user)
 
     except ItineraryModel.DoesNotExist:
-        itinerary_model = ItineraryModel(client=request.user)
+        itinerary_model = ItineraryModel(client=request.user, selected_start_time=datetime.now())
 
     itinerary_model.itinerary.save(os.path.basename("itinerary_route_" + str(request.user)) + "_" + str(datetime.now()),
                                    ContentFile(s))
@@ -439,7 +429,6 @@ def set_visit_house(request):
                 try:
                     home = RentDatabaseModel.objects.get(id=home_id)
                     user_profile.visit_list.add(home)
-
                     return HttpResponse(json.dumps({"result": "1",
                                                     "homeId": home_id}),
                                         content_type="application/json", )

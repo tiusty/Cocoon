@@ -25,25 +25,8 @@ class InitialSurveyModel(models.Model):
     name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
     created = models.DateField(auto_now_add=True)
     user_profile = models.ForeignKey(UserProfile)
+    number_of_tenants = models.IntegerField(default=1)
     url = models.SlugField(max_length=100)
-    provider = models.ManyToManyField(HomeProviderModel)
-
-    @property
-    def providers(self):
-        provider_set = self.provider.all()
-        if provider_set.count() == 0:
-            return "Not set"
-        else:
-            type_output = ""
-            counter = 0
-            for provider in provider_set:
-                if counter == 0:
-                    type_output = str(provider)
-                    counter += 1
-                else:
-                    type_output = str(provider) + ", " + type_output
-
-        return type_output
 
     def generate_slug(self):
         """
@@ -154,11 +137,20 @@ class RentingSurveyModel(ExteriorAmenitiesModel, PriceInformationModel,
         return "{0}: {1}".format(user_short_name, survey_name)
 
 
+class TenantPersonalInformationModel(models.Model):
+    first_name = models.CharField(max_length=200, blank=True, default="")
+    last_name = models.CharField(max_length=200, blank=True, default="")
+    is_student = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
 class DestinationsModel(models.Model):
-    street_address = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    state = models.CharField(max_length=200)
-    zip_code = models.CharField(max_length=200)
+    street_address = models.CharField(max_length=200, default="", blank=True)
+    city = models.CharField(max_length=200, default="", blank=True)
+    state = models.CharField(max_length=200, default="", blank=True)
+    zip_code = models.CharField(max_length=200, default="", blank=True)
 
     @property
     def full_address(self):
@@ -176,9 +168,9 @@ class CommuteInformationModel(models.Model):
     """
     Contains all the commute information for a given home
     """
-    max_commute = models.IntegerField()
-    min_commute = models.IntegerField()
-    commute_weight = models.IntegerField()
+    max_commute = models.IntegerField(default=0)
+    min_commute = models.IntegerField(default=0)
+    commute_weight = models.IntegerField(default=0)
     commute_type = models.ForeignKey(CommuteType)
 
     @property
@@ -204,8 +196,5 @@ class CommuteInformationModel(models.Model):
         abstract = True
 
 
-class RentingDestinationsModel(DestinationsModel, CommuteInformationModel):
-    survey = models.ForeignKey(RentingSurveyModel)
-
-    def __str__(self):
-        return self.street_address
+class TenantModel(DestinationsModel, CommuteInformationModel, TenantPersonalInformationModel):
+    survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")

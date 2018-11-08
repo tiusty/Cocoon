@@ -159,3 +159,47 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         best home to worst
         """
         self.homes = self.insertion_sort(self.homes)
+
+    def run(self, survey):
+        """
+        STEP 1: Populate the rent_algorithm with all the information from the survey
+        """
+        self.populate_with_survey_information(survey)
+
+        """
+        STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
+        This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
+        """
+        self.retrieve_all_approximate_commutes()
+
+        """
+        STEP 3: Remove homes that are too far away using approximate commutes
+        """
+        self.run_compute_approximate_commute_filter()
+
+        """
+        STEP 4: Generate scores based on hybrid questions
+        """
+        self.run_compute_commute_score_approximate()
+        self.run_compute_price_score()
+        self.run_compute_weighted_score_exterior_amenities(survey.parking_spot)
+        """
+        STEP 5: Now sort all the homes from best homes to worst home
+        """
+        self.run_sort_home_by_score()
+
+        """
+        STEP 6: Compute the exact commute time/distance for best homes
+        """
+        self.retrieve_exact_commutes()
+
+        """
+        STEP 7: Score the top homes based on the exact commute time/distance
+        """
+        self.run_compute_commute_score_exact()
+
+        """
+        STEP 8: Reorder homes again now with the full data
+        """
+        # Now reorder all the homes with the new information
+        self.run_sort_home_by_score()
