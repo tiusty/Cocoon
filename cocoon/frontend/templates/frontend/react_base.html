@@ -1,8 +1,12 @@
 {% load static %}
 <script>
-    window.props = '{{props}}';
     window.react_mount = document.getElementById('reactWrapper');
     window.component = '{{component}}';
+    {% if user.is_authenticated %}
+            window.props = true;
+        {% else %}
+            window.props = false;
+    {% endif %}
 </script>
 
 {#Need way to insert window.component into string#}
