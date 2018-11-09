@@ -1,10 +1,6 @@
 from django.test import TestCase
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
-from unittest.mock import MagicMock
 from unittest.mock import patch
-
-# import distance matrix wrapper
-from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
 class TestClientScheduler(TestCase):
 
