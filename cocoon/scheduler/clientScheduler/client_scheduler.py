@@ -31,7 +31,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
             home_one_distances = []
 
             result_distance_wrapper = retrieve_exact_commute([home_one], homes_list)
-            print(result_distance_wrapper)
             for source, time in result_distance_wrapper[0]:
                 home_one_distances.append(time)
 
