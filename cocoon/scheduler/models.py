@@ -13,6 +13,9 @@ from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 
 
+def itinerary_directory_path(instance, filename):
+    return "itinerary/{0}/{1}".format(instance.client.id, str(instance.id) + "_" + filename)
+
 class ItineraryModel(models.Model):
     """
        Model for Itinerary. These are based on the interface designed on the Google Doc.
@@ -26,7 +29,7 @@ class ItineraryModel(models.Model):
            self.homes (ManytoManyField) -> Stores the homes that are associated with this itinerary
     """
     client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
-    itinerary = models.FileField(blank=True)
+    itinerary = models.FileField(blank=True, upload_to=itinerary_directory_path)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
@@ -137,9 +140,7 @@ class ItineraryModel(models.Model):
 
         # send confirmation email to user
         email.send()
-        
-def itinerary_directory_path(user):
-    return "itinerary_route_" + str(user) + "_" + str(datetime.now())
+
 
 class TimeModel(models.Model):
     """

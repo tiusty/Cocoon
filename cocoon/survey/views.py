@@ -273,7 +273,7 @@ def visit_list(request):
     # Run the client scheduler algorithm
     homes_list = []
     for home in user_profile.favorites.all():
-        homes_list.append(str(home))
+        homes_list.append(home)
 
     client_scheduler_alg = ClientScheduler()
     client_scheduler_alg.run(homes_list, request.user)

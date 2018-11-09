@@ -15,8 +15,6 @@ from django.core.files.base import ContentFile
 
 class ClientScheduler(clientSchedulerAlgorithm):
 
-    def __init__(self):
-        super().__init__()
 
     def build_homes_matrix(self, homes_list):
         """
@@ -32,7 +30,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             home_one_distances = []
 
-            result_distance_wrapper = retrieve_exact_commute(origins=[home_one], destinations=homes_list)
+            result_distance_wrapper = retrieve_exact_commute([home_one], homes_list)
             print(result_distance_wrapper)
             for source, time in result_distance_wrapper[0]:
                 home_one_distances.append(time)
@@ -87,8 +85,12 @@ class ClientScheduler(clientSchedulerAlgorithm):
         :param: (list) homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
         :param: (request.user) user: user
         """
-        shortest_path = self.run_client_scheduler_algorithm(homes_list)
-        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
+        destination_addresses = []
+        for item in homes_list:
+            destination_addresses.append(item.full_address)
+
+        shortest_path = self.run_client_scheduler_algorithm(destination_addresses)
+        interpreted_route = self.interpret_algorithm_output(destination_addresses, shortest_path)
 
         # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
         # Add 20 minutes to each home
@@ -108,7 +110,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
         except ItineraryModel.DoesNotExist:
             itinerary_model = ItineraryModel(client=user)
 
-        itinerary_model.itinerary.save(
-            os.path.basename(itinerary_directory_path(user)),
-            ContentFile(s))
+        itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
+        for home in homes_list:
+            itinerary_model.homes.add(home)
+
         itinerary_model.save()
