@@ -52,3 +52,6 @@ db.sqlite3
 
 # The log file generated #
 logCocoon.log
+
+# NPM node modules #
+node_modules

@@ -25,6 +25,9 @@ from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
 
+# import scheduler views
+from cocoon.scheduler import views as scheduler_views
+
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
 
@@ -38,6 +41,8 @@ class RentingSurvey(CreateView):
         Adds the TenantFormSet, and the user creation form to the context
         """
         data = super(RentingSurvey, self).get_context_data(**kwargs)
+        data['component'] = 'survey'
+        data['props'] = 'test'
 
         # If the request is a post, then populate the tenant form set
         if self.request.POST:
@@ -191,16 +196,28 @@ class RentingResultSurvey(UpdateView):
         """
         Adds the tenant form context
         Also runs the algorithm and returns the homes to the template
+
+        The Rent Algorithm is only run when the request is not POST (i.e loading the page)
+            or when the form is invalid (i.e to reload the page with errors)
+            On form_valid it is not rendered because it will be redirected back to the page
+                and thus the get method will run the algorithm (thus prevents running it twice)
+
+        kwargs:
+            invalid_form: -> Determines if the get_context_data is being called from form_invalid
         """
         data = super(RentingResultSurvey, self).get_context_data(**kwargs)
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.run(self.object)
-        data['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
+
+        form_invalid = kwargs.pop('invalid_form', False)
+        # Only run the Algorithm if the form was either invalid or it was a get method
+        #   We don't want to run the algorithm on form valid
+        if form_invalid or not self.request.POST:
+            rent_algorithm = RentAlgorithm()
+            rent_algorithm.run(self.object)
+            data['houseList'] = [x for x in rent_algorithm.homes[:25] if x.percent_score() >= 0]
 
         # If the request is a post, then populate the tenant form set
         if self.request.POST:
             data['tenants'] = TenantFormSetResults(self.request.POST, instance=self.object)
-
         # Otherwise if it is just a get, then just create a new form set
         else:
             data['tenants'] = TenantFormSetResults(instance=self.object)
@@ -208,6 +225,13 @@ class RentingResultSurvey(UpdateView):
         favorite_homes = self.object.favorites.all()
         data['user_favorite_houses'] = favorite_homes
         return data
+
+    def form_invalid(self, form):
+        """
+        If the form is invalid, re-render the context data with the
+        data-filled form and errors.
+        """
+        return self.render_to_response(self.get_context_data(form=form, invalid_form=True))
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -227,9 +251,8 @@ class RentingResultSurvey(UpdateView):
             tenants.instance = survey
             tenants.save()
         else:
-            # If there is an error then re-render the survey page
-            return self.render_to_response(self.get_context_data(form=form))
-
+            # If there are any errors then the form is not valid
+            return self.form_invalid(form=form)
         messages.add_message(self.request, messages.SUCCESS, "Survey Updated!")
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                             kwargs={"survey_url": self.object.url}))
@@ -258,6 +281,7 @@ class VisitList(ListView):
         # Create context to update the html based on the status of the documents
         data['pre_tour_signed'] = manager.is_pre_tour_signed()
         data['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+        data.update(scheduler_views.get_user_itineraries(self.request))
 
         return data
 
