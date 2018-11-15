@@ -179,25 +179,19 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 filter(commute_type=destination.commute_type). \
                 values_list('zip_code', 'commute_time_seconds')
 
-            # Create a python list of zip_codes and their corresponding commute times
-            # i.e list[(zip_code, commute_time_seconds)]
-            child_zip_codes = []
-            for zip_code, distance in child_zips:
-                child_zip_codes.append((zip_code, distance))
+            # Dictionary Compression to retrieve the values from the QuerySet
+            child_zip_codes = {zip_code: commute_time_seconds for zip_code, commute_time_seconds in child_zips}
 
             # For every home check to see if a zip code pair exists and then store the commute time
             for home in homes:
 
-                # list comprehension to see if the home zip_code exists within the child zip_codes
-                result = [item for item in child_zip_codes if item[0] == home.home.zip_code]
+                # Determines if the home exists in the dictionary on child_zip_codes
+                result = home.home.zip_code in child_zip_codes
 
                 # If there was a match, (there should only be one)
                 if result:
                     # Store the commute time associated with the zip_code
-                    # Note the list comprehension returns a list of tuples though there should only be one
-                    #   element in the list, thus [0] and then the second element of the tuple is the commute_time
-                    #   in seconds so thus the [1], then to get minutes divide by 60
-                    home.approx_commute_times[destination] = result[0][1]/60
+                    home.approx_commute_times[destination] = child_zip_codes[home.home.zip_code]/60
                 else:
                     # If no result was returned, i.e the zip_code pair doesn't exist, then just eliminate the home
                     home.eliminate_home()
