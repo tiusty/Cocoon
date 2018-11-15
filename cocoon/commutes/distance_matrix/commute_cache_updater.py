@@ -83,10 +83,12 @@ class Driving(CommuteCalculator):
         Given a list of homes, it determines if a zip_code pair exists between each home and destination.
             If not then it adds the pair to the failed list so the pair can be generated
         :param homes: (list[homeScore]) -> Homes that are being checked for zip-code pairs
-        :return: (list[(string, string)] Returns a list of (zip_code, state) tuples of pairs that don't exist
+        :return: (list[(string, string)] Returns a set of (zip_code, state) tuples of pairs that don't exist
             in the cache
         """
-        failed_list = []
+        # The reason a set is used is because this prevents adding duplicate entries because
+        #   adding an entry that already exists does nothing
+        failed_list = set()
         try:
             dest_zip = ZipCodeBase.objects.filter(zip_code__exact=self.destination.zip_code)
 
@@ -108,16 +110,13 @@ class Driving(CommuteCalculator):
                 # If there is not pair or the pair is out of date then mark the pair as failed
                 #   so it gets regenerated
                 if not result or not ZipCodeChild.zip_code_cache_valid_check(child_zip_codes[home.home.zip_code]):
-                    if not (home.home.zip_code, home.home.state) in failed_list:
-                        failed_list.append((home.home.zip_code, home.home.state))
+                    failed_list.add((home.home.zip_code, home.home.state))
 
         # If the ZipCodeBase doesn't exist then none of the children exist so add them all to the
         #   failed list
         except ZipCodeBase.DoesNotExist:
             for home in homes:
-                # Make sure there are no duplicate entries
-                if not (home.home.zip_code, home.home.state) in failed_list:
-                    failed_list.append((home.home.zip_code, home.home.state))
+                failed_list.add((home.home.zip_code, home.home.state))
 
         return failed_list
 
