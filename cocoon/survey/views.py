@@ -281,6 +281,8 @@ class VisitList(ListView):
         # Create context to update the html based on the status of the documents
         data['pre_tour_signed'] = manager.is_pre_tour_signed()
         data['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+
+        # Get the user itineraries
         data.update(scheduler_views.get_user_itineraries(self.request))
 
         return data
