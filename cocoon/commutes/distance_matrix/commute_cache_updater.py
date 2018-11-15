@@ -95,22 +95,19 @@ class Driving(CommuteCalculator):
                 filter(commute_type=self.destination.commute_type). \
                 values_list('zip_code', 'last_date_updated')
 
-            # Create a python list of zip_codes and their corresponding generation date
-            # i.e list[(zip_code, datetime)]
-            child_zip_codes = []
-            for zip_code, last_update in child_zips:
-                child_zip_codes.append((zip_code, last_update))
+            # Dictionary Compression to retrieve the values from the QuerySet
+            child_zip_codes = {zip_code: last_update for zip_code, last_update in child_zips}
 
             # For every home, see if the home zip_code matches one of the zip_codes in the child_zip codes
             #   If not then add it to the failed_list
             for home in homes:
 
-                # list comprehension to see if the home zip_code exists within the child zip_codes
-                result = [item for item in child_zip_codes if item[0] == home.home.zip_code]
+                # Determines if the home exists in the dictionary on child_zip_codes
+                result = home.home.zip_code in child_zip_codes
 
                 # If there is not pair or the pair is out of date then mark the pair as failed
                 #   so it gets regenerated
-                if not result or not ZipCodeChild.zip_code_cache_valid_check(result[0][1]):
+                if not result or not ZipCodeChild.zip_code_cache_valid_check(child_zip_codes[home.home.zip_code]):
                     if not (home.home.zip_code, home.home.state) in failed_list:
                         failed_list.append((home.home.zip_code, home.home.state))
 
