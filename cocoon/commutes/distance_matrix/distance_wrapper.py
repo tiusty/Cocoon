@@ -87,7 +87,7 @@ class DistanceWrapper:
         # list of lists of durations from origin to destinations
         return distance_list
 
-    def get_durations_and_distances(self, origins, destinations, mode="driving"):
+    def get_durations_and_distances(self, origins, destinations, mode="driving", traffic_option=False):
         """
         NOTE: THIS SHOULD NOT BE CALLED DIRECTLY
 
@@ -121,13 +121,20 @@ class DistanceWrapper:
         destination_number = min(25, len(destinations))
         origin_number = min((100 / destination_number), 25)
 
+        # traffic option set to best_guess (default)
+        traffic_model_in="best_guess"
+        if traffic_option:
+            traffic_model_in="pessimistic"
+        print(traffic_model_in)
         while origin_list:
             # only computes for the first destination_number destinations
             response_json = distance_matrix.distance_matrix(self.client,
                                                             origin_list[:origin_number],
                                                             destinations[:destination_number],
                                                             units=self.units,
-                                                            mode=mode)
+                                                            mode=mode,
+                                                            traffic_model=traffic_model_in,
+                                                            )
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin
             for res in response_list:

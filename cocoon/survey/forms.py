@@ -301,6 +301,15 @@ class CommuteInformationForm(DestinationForm):
         ),
     )
 
+    traffic_option = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Consider Traffic?',
+            }),
+    )
+
     def is_valid(self):
         valid = super().is_valid()
 
