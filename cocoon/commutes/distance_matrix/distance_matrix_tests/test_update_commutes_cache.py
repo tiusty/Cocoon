@@ -277,7 +277,7 @@ class TestDriveCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [])
+        self.assertEqual(result, set())
 
     def test_find_missing_pairs_some_exist_all_same_commute(self):
         """
@@ -300,8 +300,8 @@ class TestDriveCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
-                                  (home_score1.home.zip_code, home_score1.home.state)])
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
+                                  (home_score1.home.zip_code, home_score1.home.state)})
 
     def test_find_missing_pairs_some_exist_all_different_commutes(self):
         """
@@ -327,8 +327,8 @@ class TestDriveCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score1.home.zip_code, home_score1.home.state),
-                                  (home_score2.home.zip_code, home_score2.home.state)])
+        self.assertEqual(result, {(home_score1.home.zip_code, home_score1.home.state),
+                                  (home_score2.home.zip_code, home_score2.home.state)})
 
     def test_find_missing_pairs_none_exist(self):
         """
@@ -350,9 +350,9 @@ class TestDriveCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
                                   (home_score1.home.zip_code, home_score1.home.state),
-                                  (home_score2.home.zip_code, home_score2.home.state)])
+                                  (home_score2.home.zip_code, home_score2.home.state)})
 
     def test_find_missing_pairs_parent_zip_code_does_not_exist(self):
         """
@@ -374,10 +374,10 @@ class TestDriveCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
                                   (home_score1.home.zip_code, home_score1.home.state),
                                   (home_score2.home.zip_code, home_score2.home.state),
-                                  (home_score3.home.zip_code, home_score3.home.state)])
+                                  (home_score3.home.zip_code, home_score3.home.state)})
 
     def test_find_missing_pairs_no_duplicates_in_failed_list(self):
         """
@@ -401,8 +401,8 @@ class TestDriveCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
-                                  (home_score3.home.zip_code, home_score3.home.state)])
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
+                                  (home_score3.home.zip_code, home_score3.home.state)})
 
     def test_run_approximate(self):
         """
@@ -526,7 +526,7 @@ class TestTransitCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [])
+        self.assertEqual(result, set())
 
     def test_find_missing_pairs_some_exist_all_same_commute(self):
         """
@@ -549,8 +549,8 @@ class TestTransitCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
-                                  (home_score1.home.zip_code, home_score1.home.state)])
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
+                                  (home_score1.home.zip_code, home_score1.home.state)})
 
     def test_find_missing_pairs_some_exist_all_different_commutes(self):
         """
@@ -576,8 +576,8 @@ class TestTransitCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score1.home.zip_code, home_score1.home.state),
-                                  (home_score2.home.zip_code, home_score2.home.state)])
+        self.assertEqual(result, {(home_score1.home.zip_code, home_score1.home.state),
+                                  (home_score2.home.zip_code, home_score2.home.state)})
 
     def test_find_missing_pairs_none_exist(self):
         """
@@ -599,9 +599,9 @@ class TestTransitCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
                                   (home_score1.home.zip_code, home_score1.home.state),
-                                  (home_score2.home.zip_code, home_score2.home.state)])
+                                  (home_score2.home.zip_code, home_score2.home.state)})
 
     def test_find_missing_pairs_parent_zip_code_does_not_exist(self):
         """
@@ -623,10 +623,10 @@ class TestTransitCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
                                   (home_score1.home.zip_code, home_score1.home.state),
                                   (home_score2.home.zip_code, home_score2.home.state),
-                                  (home_score3.home.zip_code, home_score3.home.state)])
+                                  (home_score3.home.zip_code, home_score3.home.state)})
 
     def test_find_missing_pairs_no_duplicates_in_failed_list(self):
         """
@@ -650,8 +650,8 @@ class TestTransitCommuteCalculator(TestCase):
         result = commute_calculator.find_missing_pairs(homes)
 
         # Assert
-        self.assertEqual(result, [(home_score.home.zip_code, home_score.home.state),
-                                  (home_score3.home.zip_code, home_score3.home.state)])
+        self.assertEqual(result, {(home_score.home.zip_code, home_score.home.state),
+                                  (home_score3.home.zip_code, home_score3.home.state)})
 
     def test_run_approximate(self):
         """
