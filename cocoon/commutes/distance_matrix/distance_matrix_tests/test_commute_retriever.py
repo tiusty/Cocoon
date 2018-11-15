@@ -16,33 +16,44 @@ class TestRetrieveExactCommute(TestCase):
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
     def test_mode_driving(self, mock_os):
+        # Arrange
+        commute_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+
         # Act
-        retrieve_exact_commute([], [], mode=CommuteType.DRIVING)
+        retrieve_exact_commute([], [], commute_driving)
 
         # Assert
-        # DistanceWrapper.get_durations_and_distances.assert_called_with()
         mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.DRIVING)
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
     def test_mode_transit(self, mock_os):
+        # Arrange
+        commute_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
+
         # Act
-        retrieve_exact_commute([], [], mode=CommuteType.TRANSIT)
+        retrieve_exact_commute([], [], commute_transit)
 
         # Assert
         mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.TRANSIT)
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
     def test_mode_bicycling(self, mock_os):
+        # Arrange
+        commute_bike = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
+
         # Act
-        retrieve_exact_commute([], [], mode=CommuteType.BICYCLING)
+        retrieve_exact_commute([], [], commute_bike)
 
         # Assert
         mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.BICYCLING)
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
     def test_mode_walking(self, mock_os):
+        # Arrange
+        commute_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
+
         # Act
-        retrieve_exact_commute([], [], mode=CommuteType.WALKING)
+        retrieve_exact_commute([], [], commute_walking)
 
         # Assert
         mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.WALKING)
