@@ -7,7 +7,7 @@ import os, sys
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel
 from cocoon.houseDatabase.management.commands.mlspin._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
-from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
+from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 
@@ -220,9 +220,9 @@ class MlspinRequester(object):
                     print("[ Integrity Error ] ")
                     num_integrity_error += 1
 
-        manager = MlsManagementModel.objects.all().first()
-        manager.last_updated_mls = self.update_timestamp
-        manager.save()
+        provider = HomeProviderModel.objects.get(provider="MLSPIN")
+        provider.last_updated = self.update_timestamp
+        provider.save()
 
         print("")
         print("RESULTS:")

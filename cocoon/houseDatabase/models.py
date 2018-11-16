@@ -41,6 +41,8 @@ class HomeProviderModel(models.Model):
         max_length=200,
     )
 
+    last_updated = models.DateField(default=timezone.now)
+
     def __str__(self):
         return self.provider
 
@@ -193,28 +195,3 @@ class HousePhotos(models.Model):
     def __str__(self):
         return self.image.name
 
-
-class MlsManagementModel(models.Model):
-    """
-    Model that stores general mls information information
-    """
-
-    last_updated_mls = models.DateField(default=timezone.now)
-
-    def save(self, *args, **kwargs):
-        if MlsManagementModel.objects.exists() and not self.pk:
-            raise ValidationError("There should only be one MlsManagementModel object")
-        return super(MlsManagementModel, self).save(*args, **kwargs)
-
-
-class YglManagementModel(models.Model):
-    """
-    Model that stores general ygl information information
-    """
-
-    last_updated_ygl = models.DateField(default=timezone.now)
-
-    def save(self, *args, **kwargs):
-        if YglManagementModel.objects.exists() and not self.pk:
-            raise ValidationError("There should only be one MlsManagementModel object")
-        return super(YglManagementModel, self).save(*args, **kwargs)

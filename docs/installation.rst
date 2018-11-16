@@ -131,12 +131,6 @@ Setting up the necessary Models
     * Home Type Models:
         * Click on Home Type Models, then add Home Type Model
         * Create at least apartment, but you can create all 4 if you want
-    * MLSManagementModel:
-        * Click on MLSManagementModel, then click add
-        * Just need to click save
-    * YGLManagementModel:
-        * Click on YGLManagementModel, then click add
-        * Just need to click save
     * HomeProviderModel:
        * Click on the HomeProviderModel:
        * Add all the choices and save them

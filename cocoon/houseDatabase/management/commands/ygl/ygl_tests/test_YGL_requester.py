@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Cocoon modules
 from cocoon.houseDatabase.management.commands.ygl.YGLRequester import YGLRequester
-from cocoon.houseDatabase.models import YglManagementModel, HomeTypeModel, RentDatabaseModel, HomeProviderModel
+from cocoon.houseDatabase.models import HomeTypeModel, RentDatabaseModel, HomeProviderModel
 
 
 class TestYGLRequester(TestCase):
@@ -12,7 +12,6 @@ class TestYGLRequester(TestCase):
     def setUp(self):
 
         # Create the manager
-        YglManagementModel.objects.create()
         HomeProviderModel.objects.create(provider="YGL")
 
         # Set up the apartment home type

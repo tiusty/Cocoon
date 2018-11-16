@@ -1,8 +1,10 @@
 # Import Python Modules
 from django.utils import timezone
+from django.db.models import F
 
 # Import houseDatabase modules
 from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.houseDatabase.models import HomeProviderModel
 
 # Import HomeScore class
 from cocoon.survey.home_data.home_score import HomeScore
@@ -69,6 +71,7 @@ class CocoonAlgorithm(object):
         house_query =  RentDatabaseModel.objects\
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(currently_available=True) \
+            .filter(last_updated=HomeProviderModel.objects.get(pk=F('listing_provider')).last_updated) \
             .filter(num_bedrooms=user_survey.num_bedrooms) \
             .filter(num_bathrooms__range=(user_survey.min_bathrooms, user_survey.max_bathrooms)) \
             .filter(home_type__in=user_survey.home_type.all())
