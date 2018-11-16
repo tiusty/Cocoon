@@ -306,6 +306,7 @@ class VisitList(ListView):
         for home in survey.visit_list.all():
             homes_list.append(home)
 
+        # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler()
         client_scheduler_alg.run(homes_list, self.request.user)
         messages.info(request, "Itinerary created")
