@@ -11,7 +11,7 @@ from cocoon.scheduler.models import ItineraryModel, itinerary_directory_path
 
 # import django modules
 from django.core.files.base import ContentFile
-
+from cocoon.commutes.models import CommuteType
 
 class ClientScheduler(clientSchedulerAlgorithm):
 
@@ -30,7 +30,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             home_one_distances = []
 
-            result_distance_wrapper = retrieve_exact_commute([home_one], homes_list)
+            result_distance_wrapper = retrieve_exact_commute([home_one], homes_list, 'DRIVING')
             for source, time in result_distance_wrapper[0]:
                 home_one_distances.append(time)
 
