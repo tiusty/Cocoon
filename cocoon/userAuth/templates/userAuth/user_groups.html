@@ -1,0 +1,32 @@
+{% extends "bootstrapJQuery.html" %}
+{% load static %}
+{% block title %}Unicorn{% endblock %}
+{% block head %}
+    {{ block.super }}
+    <!-- JQuery UI style sheet, mostly used for slider ui -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'survey/rentingSurvey.css' %}">
+{% endblock %}
+
+{% block nav-survey %}<li class="active"><a>Survey</a></li>{% endblock %}
+
+{% block content %}
+    <div id="reactWrapper"></div>
+{% endblock %}
+
+
+{% block endScripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>
+    {% include 'frontend/react_base.html' %}
+    <script src="{% static 'frontend/js/userAuth.bundle.js' %}"></script>
+{% endblock %}
+
+{% block footer %}
+
+    <footer class="footer">
+        Copyright Cocoon 2018. All rights reserved.
+    </footer>
+
+{% endblock %}

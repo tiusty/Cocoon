@@ -6,19 +6,54 @@ from cocoon.userAuth.models import UserProfile, MyUser
 from cocoon.survey.models import RentingSurveyModel
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, ListView
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
+from django.shortcuts import get_object_or_404
 
 # Used for email verification
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_text
 from .tokens import account_activation_token
 
+# Import Cocoon Modules
+from cocoon.signature.models import HunterDocManagerModel
+from cocoon.scheduler import views as scheduler_views
+
 
 def index(request):
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
+
+
+class VisitList(ListView):
+
+    model = RentingSurveyModel
+    template_name = 'userAuth/user_groups.html'
+    context_object_name = 'surveys'
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def get_context_data(self, **kwargs):
+        data = super(VisitList, self).get_context_data(**kwargs)
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        (manager, _) = HunterDocManagerModel.objects.get_or_create(
+            user=user_profile.user,
+        )
+
+        # Since the page is loading, update all the signed documents to see if the status has changed
+        manager.update_all_is_signed()
+
+        # Create context to update the html based on the status of the documents
+        data['pre_tour_signed'] = manager.is_pre_tour_signed()
+        data['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+
+        # Get the user itineraries
+        data.update(scheduler_views.get_user_itineraries(self.request))
+
+        return data
 
 
 def loginPage(request):

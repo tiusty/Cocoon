@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^logout/$', views.logoutPage, name='logoutPage'),
     url(r'^profile$', views.user_profile, name='user_profile'),
     url(r'^surveys', views.user_surveys, name='user_surveys'),
+    url(r'^groups/$', views.VisitList.as_view(), name='roommate_groups'),
 
     # Email verification
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
