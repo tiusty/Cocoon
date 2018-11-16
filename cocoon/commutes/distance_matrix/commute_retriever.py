@@ -33,3 +33,4 @@ def retrieve_exact_commute(origins, destinations, mode):
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING)
     else:
         return []
+

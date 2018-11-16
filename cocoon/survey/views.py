@@ -1,5 +1,9 @@
 # Import Python Modules
 import json
+import os
+import string
+
+from datetime import datetime
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
@@ -24,6 +28,13 @@ from cocoon.userAuth.models import UserProfile
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
+
+# Import Scheduler algorithm
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+
+# Import Itinerary model
+from cocoon.scheduler.models import ItineraryModel
+
 
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
@@ -287,6 +298,18 @@ class VisitList(ListView):
 
         return data
 
+    def post(self, request, *args, **kwargs):
+        # Run the client scheduler algorithm
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_profile)
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        client_scheduler_alg = ClientScheduler()
+        client_scheduler_alg.run(homes_list, self.request.user)
+        return HttpResponseRedirect(reverse('survey:visitList'))
+
 
 #######################################################
 # Ajax Requests below
@@ -533,8 +556,8 @@ def check_pre_tour_documents(request):
                     return HttpResponse(json.dumps({
                         "result": "0",
                         "message": "Could not retrieve doc_manager"}),
-                                        content_type="application/json",
-                                        )
+                        content_type="application/json",
+                    )
             except UserProfile.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "0",
                                                 "message": "Could not retrieve User Profile"}),
