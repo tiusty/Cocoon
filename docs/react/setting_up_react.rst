@@ -4,8 +4,10 @@ Setting up React
 
 Install npm
 --------------
+
 1. Go to the website
-* https://nodejs.org/en/
+ * https://nodejs.org/en/
+
 2. Download npm
 
 Install depedencies
