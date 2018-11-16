@@ -53,6 +53,9 @@ db.sqlite3
 # The log file generated #
 logCocoon.log
 
-#DS store (mac)
+# NPM node modules #
+node_modules
+
+# DS Store
 .DS_Store
 config/.DS_Store
