@@ -3,9 +3,9 @@
     window.react_mount = document.getElementById('reactWrapper');
     window.component = '{{component}}';
     {% if user.is_authenticated %}
-            window.props = true;
+            window.isUser = true;
         {% else %}
-            window.props = false;
+            window.isUser = false;
     {% endif %}
 </script>
 

@@ -44,7 +44,7 @@ class RentingSurvey(CreateView):
         """
         data = super(RentingSurvey, self).get_context_data(**kwargs)
         data['component'] = 'survey'
-        data['props'] = 'test'
+        # data['props'] = RentSurveyForm
 
         # If the request is a post, then populate the tenant form set
         if self.request.POST:
