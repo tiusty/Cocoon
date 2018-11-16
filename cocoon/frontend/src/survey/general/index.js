@@ -162,4 +162,3 @@ export default class General extends Component {
         );
     }
 }
-1
