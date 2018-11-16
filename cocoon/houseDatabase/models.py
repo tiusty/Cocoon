@@ -194,27 +194,14 @@ class HousePhotos(models.Model):
         return self.image.name
 
 
-class MlsManagementModel(models.Model):
+class ListingManagementModel(models.Model):
     """
-    Model that stores general mls information information
+    Model that stores general listing information
     """
 
-    last_updated_mls = models.DateField(default=timezone.now)
+    last_updated_listings = models.DateField(default=timezone.now)
 
     def save(self, *args, **kwargs):
-        if MlsManagementModel.objects.exists() and not self.pk:
-            raise ValidationError("There should only be one MlsManagementModel object")
-        return super(MlsManagementModel, self).save(*args, **kwargs)
-
-
-class YglManagementModel(models.Model):
-    """
-    Model that stores general ygl information information
-    """
-
-    last_updated_ygl = models.DateField(default=timezone.now)
-
-    def save(self, *args, **kwargs):
-        if YglManagementModel.objects.exists() and not self.pk:
-            raise ValidationError("There should only be one MlsManagementModel object")
-        return super(YglManagementModel, self).save(*args, **kwargs)
+        if ListingManagementModel.objects.exists() and not self.pk:
+            raise ValidationError("There should only be one ListingManagementModel object")
+        return super(ListingManagementModel, self).save(*args, **kwargs)

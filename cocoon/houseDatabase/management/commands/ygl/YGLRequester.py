@@ -5,7 +5,7 @@ from django.db import IntegrityError
 # Cocoon modules
 from cocoon.houseDatabase.constants import YGL_URL
 from cocoon.houseDatabase.models import RentDatabaseModel
-from cocoon.houseDatabase.models import YglManagementModel, HomeTypeModel, HomeProviderModel
+from cocoon.houseDatabase.models import ListingManagementModel, HomeTypeModel, HomeProviderModel
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 
 # Import third party libraries
@@ -157,8 +157,8 @@ class YGLRequester(object):
                     print("[ Integrity Error ] ")
                     num_integrity_error += 1
 
-        manager = YglManagementModel.objects.all().first()
-        manager.last_updated_ygl = self.update_timestamp
+        manager = ListingManagementModel.objects.all().first()
+        manager.last_updated_listings = self.update_timestamp
         manager.save()
 
         print("")

@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 
 # Cocoon Modules
-from ...models import HomeProviderModel, HomeTypeModel, YglManagementModel, MlsManagementModel
+from ...models import HomeProviderModel, HomeTypeModel, ListingManagementModel
 
 
 class Command(BaseCommand):
@@ -27,11 +27,8 @@ class Command(BaseCommand):
         # Create home types if they don't exist
         self.create_home_type_objects()
 
-        # Create the YGL management model
-        self.create_ygl_management_objects()
-
-        # Create the MLSpin management model
-        self.create_mlspin_management_objects()
+        # Create the listing management model
+        self.create_listing_management_objects()
 
     @staticmethod
     def create_home_provider_objects():
@@ -50,15 +47,8 @@ class Command(BaseCommand):
             HomeTypeModel.objects.get_or_create(home_type=home_type[0])
 
     @staticmethod
-    def create_ygl_management_objects():
+    def create_listing_management_objects():
         """
-        Creates the YGL management model if it doesn't exist
+        Creates the listing management model if it doesn't exist
         """
-        YglManagementModel.objects.get_or_create()
-
-    @staticmethod
-    def create_mlspin_management_objects():
-        """
-        Creates the MLS management model if it doesn't exist
-        """
-        MlsManagementModel.objects.get_or_create()
+        ListingManagementModel.objects.get_or_create()

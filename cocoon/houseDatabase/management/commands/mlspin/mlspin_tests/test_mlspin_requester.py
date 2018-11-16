@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Cocoon modules
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
-from cocoon.houseDatabase.models import MlsManagementModel
+from cocoon.houseDatabase.models import ListingManagementModel
 import cocoon.houseDatabase.maps_requester as geolocator
 
 # Import script to pull MLSPIN data
@@ -23,7 +23,7 @@ class TestPullMlspin(TestCase):
     def setUp(self):
 
         # Create the manager
-        MlsManagementModel.objects.create()
+        ListingManagementModel.objects.create()
         HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Set up the apartment home type
