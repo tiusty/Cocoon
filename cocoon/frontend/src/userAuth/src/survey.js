@@ -1,10 +1,9 @@
 import React from 'react'
 import { Component } from 'react';
 
-class Home extends Component {
+class Survey extends Component {
     render(){
         return (<h1>Home Page</h1>);
     }
 }
-export default Home
-
+export default Survey

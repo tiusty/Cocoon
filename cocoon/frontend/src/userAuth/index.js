@@ -3,19 +3,20 @@ import { Component } from 'react';
 import ReactDOM from "react-dom";
 
 import './userAuth.css';
-import Main from './main'
+import Main from './src/main'
 
 class UserAuth extends Component {
     componentDidMount = () => {
         console.log('rendered!');
-    }
+    };
 
     render(){
         return (
-           <Main />
+           <Main/>
         );
     }
 }
+
 
 ReactDOM.render(
     React.createElement(UserAuth, window.props),
