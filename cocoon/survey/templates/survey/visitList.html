@@ -54,23 +54,31 @@
     <br>
     <br>
     {% for survey in surveys %}
-    <div class="row" style="outline-style: dotted; padding-left: 10px; padding-bottom: 10px">
+    <div class="row" style="outline-style: dotted; padding-left: 10px; padding-bottom: 10px; padding-right: 10px">
         <h2>{{ survey.name }}</h2>
         <div class="col-md-6">
-            <h4>Favorites (These are homes you like and want to keep track of)</h4>
-            <div class="favoriteTiles tileTable">
+            <h2 style="text-decoration: underline">Favorites:</h2>
                 {% for favorite in survey.favorites.all %}
                     {% include "homes/tiles.html" with user_favorite_houses=survey.favorites.all survey_id=survey.id includeScore=False  theHouse=favorite %}
+                    {% empty %}
+                    <h3>Please load your survey and add favorite homes</h3>
                 {% endfor %}
-            </div>
         </div>
-        <div class="col-md-6">
-            <h4>The Short List (These are homes you plan on visiting)</h4>
-            <div class="tileTable">
+        <div class="col-md-5">
+            <h2 style="text-decoration: underline">Visit List:</h2>
                     {% for visit in survey.visit_list.all %}
                         {% include "homes/tiles.html" with user_favorite_houses=survey.favorites.all survey_id=survey.id includeScore=False  theHouse=visit %}
+                    {% empty %}
+                        <h3>Please add homes to your visit list!</h3>
                     {% endfor %}
-            </div>
+        </div>
+        <div class="col-md-1">
+            {% if survey.visit_list.exists %}
+            <form action="{% url 'survey:visitList' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-primary" name="submit-button" type="submit" value="{{ survey.id }}">Schedule</button>
+            </form>
+            {% endif %}
         </div>
     </div>
         <br>
