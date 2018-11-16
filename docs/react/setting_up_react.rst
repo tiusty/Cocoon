@@ -27,9 +27,10 @@ Have npm watch for changes
 
 To Build the Production files
 --------------------------------
-# This creates minified version of files
+* This creates minified version of files
 
 1. run:
+
     ::
 
         npm run build
