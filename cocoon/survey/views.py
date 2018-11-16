@@ -1,5 +1,9 @@
 # Import Python Modules
 import json
+import os
+import string
+
+from datetime import datetime
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
@@ -25,6 +29,13 @@ from cocoon.userAuth.models import UserProfile
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
+
+# Import Scheduler algorithm
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+
+# Import Itinerary model
+from cocoon.scheduler.models import ItineraryModel
+
 
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
@@ -258,9 +269,19 @@ class RentingResultSurvey(UpdateView):
 
 @login_required
 def visit_list(request):
+    """
+        AJAX request used to run the client scheduler algorithm and also render the visitList.html page. This is
+        the main driver function that uses all methods of the client scheduler algorithm and outputs the itinerary
+        list file to s3 and populates an instance of the itinerary model.
+        :param request: The HTTP request
+        :return: HttpResponse if everything goes well. It returns a lot of context variables.
+        If something goes wrong then it may redirect back to the survey homePage
+        """
+    context = {
+        'error_message': []
+    }
 
-    context = scheduler_views.get_user_itineraries(request)
-    context['error_message'] = []
+    context.update(scheduler_views.get_user_itineraries(request))
 
     # Retrieve the models
     user_profile = get_object_or_404(UserProfile, user=request.user)
@@ -268,7 +289,15 @@ def visit_list(request):
         user=user_profile.user,
     )
 
-    # Since the page is loading, update all the signed documents to see if the status has changed
+    # Run the client scheduler algorithm
+    homes_list = []
+    for home in user_profile.favorites.all():
+        homes_list.append(home)
+
+    client_scheduler_alg = ClientScheduler()
+    client_scheduler_alg.run(homes_list, request.user)
+
+    # Since the page is loading, update all the signed documents to see if the status has changeds
     manager.update_all_is_signed()
 
     # Create context to update the html based on the status of the documents
@@ -499,8 +528,8 @@ def check_pre_tour_documents(request):
                     return HttpResponse(json.dumps({
                         "result": "0",
                         "message": "Could not retrieve doc_manager"}),
-                                        content_type="application/json",
-                                        )
+                        content_type="application/json",
+                    )
             except UserProfile.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "0",
                                                 "message": "Could not retrieve User Profile"}),
