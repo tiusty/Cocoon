@@ -7,7 +7,7 @@ import math
 
 # Import cocoon models
 from cocoon.userAuth.models import UserProfile
-from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
+from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel, RentDatabaseModel
 from cocoon.commutes.models import CommuteType
 
 # Import Global Variables
@@ -26,6 +26,8 @@ class InitialSurveyModel(models.Model):
     created = models.DateField(auto_now_add=True)
     user_profile = models.ForeignKey(UserProfile)
     number_of_tenants = models.IntegerField(default=1)
+    favorites = models.ManyToManyField(RentDatabaseModel, related_name="favorite_list", blank=True)
+    visit_list = models.ManyToManyField(RentDatabaseModel, related_name="visit_list", blank=True)
     url = models.SlugField(max_length=100)
 
     def generate_slug(self):

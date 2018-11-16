@@ -27,6 +27,8 @@ context.
                                             <span onclick="minimize(this)"
                                                   class="expanded-close glyphicon glyphicon-resize-small"></span>
             </div>
+            <button class="btn expand-btn" onclick="set_visit_house({{ theHouse.id }}, {{ survey_id }},
+                    '{% url 'survey:setVisitHouse' %}')" id="myBtn"> Add to visit list</button>
             <div class="expanded-tile-contents">
 
                 {#  TODO: Populate this with actual template information   #}
@@ -48,7 +50,7 @@ context.
                 {% endif %}
 
                 <span id="glyph{{ theHouse.id }}"
-                      onclick="set_favorite({{ theHouse.id }}, '{% url 'survey:setFavorite' %}');"
+                      onclick="set_favorite({{ theHouse.id }}, {{ survey_id }}, '{% url 'survey:setFavorite' %}');"
                         {% if theHouse in user_favorite_houses %}
                       class="expanded-glyph glyphicon glyphicon-heart"
                       style="cursor:pointer"
@@ -156,7 +158,7 @@ context.
     {% endif %}
 
         <span id="glyph{{ theHouse.id }}"
-              onclick="set_favorite({{ theHouse.id }}, '{% url 'survey:setFavorite' %}');"
+              onclick="set_favorite({{ theHouse.id }}, {{ survey_id }}, '{% url 'survey:setFavorite' %}');"
                 {% if theHouse in user_favorite_houses %}
               class="heartGlyph glyphicon glyphicon-heart"
               style="cursor:pointer"

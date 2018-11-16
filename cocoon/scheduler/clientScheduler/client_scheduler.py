@@ -84,33 +84,31 @@ class ClientScheduler(clientSchedulerAlgorithm):
         :param: (list) homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
         :param: (request.user) user: user
         """
-        destination_addresses = []
-        for item in homes_list:
-            destination_addresses.append(item.full_address)
 
-        shortest_path = self.run_client_scheduler_algorithm(destination_addresses)
-        interpreted_route = self.interpret_algorithm_output(destination_addresses, shortest_path)
+        if not ItineraryModel.objects.filter(client=user).exists():
+            destination_addresses = []
+            for item in homes_list:
+                destination_addresses.append(item.full_address)
 
-        # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
-        # Add 20 minutes to each home
-        s = ""
-        for item in interpreted_route:
-            s += item[0]
-            s += " "
-            s += str(item[1] / 60 + 20)
-            s += "\n"
+            shortest_path = self.run_client_scheduler_algorithm(destination_addresses)
+            interpreted_route = self.interpret_algorithm_output(destination_addresses, shortest_path)
 
-        # Update Itinerary Model
-        # File name is unique based on user and current time (making it impossible to have duplicates)
+            # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
+            # Add 20 minutes to each home
+            s = ""
+            for item in interpreted_route:
+                s += item[0]
+                s += " "
+                s += str(item[1] / 60 + 20)
+                s += "\n"
 
-        try:
-            itinerary_model = ItineraryModel.objects.get(client=user)
+            # Update Itinerary Model
+            # File name is unique based on user and current time (making it impossible to have duplicates)
 
-        except ItineraryModel.DoesNotExist:
-            itinerary_model = ItineraryModel(client=user)
+            itinerary_model = ItineraryModel.objects.create(client=user)
 
-        itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
-        for home in homes_list:
-            itinerary_model.homes.add(home)
+            itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
+            for home in homes_list:
+                itinerary_model.homes.add(home)
 
-        itinerary_model.save()
+            itinerary_model.save()
