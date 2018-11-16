@@ -5,7 +5,7 @@ import os
 
 
 # import distance matrix wrapper
-from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute_commute
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 from cocoon.scheduler.clientScheduler.base_algorithm import clientSchedulerAlgorithm
 from cocoon.scheduler.models import ItineraryModel, itinerary_directory_path
 
@@ -29,8 +29,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
         for home_one in homes_list:
 
             home_one_distances = []
-
-            result_distance_wrapper = retrieve_exact_commute_commute([home_one], homes_list, CommuteType.DRIVING)
+            commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
+            result_distance_wrapper = retrieve_exact_commute([home_one], homes_list, commute_type)
             for source, time in result_distance_wrapper[0]:
                 home_one_distances.append(time)
 
