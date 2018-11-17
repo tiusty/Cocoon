@@ -4,11 +4,12 @@ import axios from 'axios'
 
 
 import Survey from "./survey";
+import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
 
 class Surveys extends Component {
     state = {
         surveys: [],
-        endpoint: 'http://127.0.0.1:8000/survey/api/userSurveys/',
+        endpoint: userAuth_endpoints['userSurveys'],
     };
 
     constructor(props) {

@@ -4,9 +4,10 @@ import HomeTile from "./homeTile";
 import axios from 'axios'
 
 import './survey.css'
+import survey_endpoints from '../../endpoints/survey_endpoints'
 
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 
 class Survey extends Component {
@@ -118,7 +119,7 @@ class Survey extends Component {
     };
 
     handleLoad = () => {
-        return "/survey/rent/" + this.state.url + "/";
+        return survey_endpoints['rentSurveyResult'] + this.state.url + "/";
     };
 
     render(){
