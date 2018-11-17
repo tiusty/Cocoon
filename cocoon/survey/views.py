@@ -34,7 +34,7 @@ from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 
 # Import Itinerary model
 from cocoon.scheduler.models import ItineraryModel
-from cocoon.survey.serializers import RentSurveySerializer
+from cocoon.survey.serializers import RentSurveySerializer, VisitListSerializer
 
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
@@ -320,16 +320,7 @@ class VisitList(ListView):
         return HttpResponseRedirect(reverse('survey:visitList'))
 
 
-class RentSurveyViewSet(viewsets.ModelViewSet):
-
-    serializer_class = RentSurveySerializer
-
-    def get_queryset(self):
-        user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        return RentingSurveyModel.objects.filter(user_profile=user_profile)
-
-
-class RentSurveyUpdateViewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
 
     serializer_class = RentSurveySerializer
 
@@ -354,16 +345,15 @@ class RentSurveyUpdateViewSet(mixins.UpdateModelMixin, mixins.ListModelMixin, mi
         try:
             home = survey.visit_list.get(id=self.request.data['home_id'])
             survey.visit_list.remove(home)
-            return Response({"result": "1"})
         except RentDatabaseModel.DoesNotExist:
             try:
                 home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
                 survey.visit_list.add(home)
-                return Response({"result": "0"})
             except RentDatabaseModel.DoesNotExist:
-                return Response({"result": "2"})
+                pass
 
-
+        serializer = RentSurveySerializer(survey)
+        return Response(serializer.data)
 
 
 #######################################################
