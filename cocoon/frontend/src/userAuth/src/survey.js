@@ -23,6 +23,36 @@ class Survey extends Component {
                 commute_type: "Driving",
                 images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
             } ,
+            {
+                id: 3,
+                address: "48 Stony Brook Rd",
+                commute_type: "Driving",
+                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
+            } ,
+            {
+                id: 4,
+                address: "48 Stony Brook Rd",
+                commute_type: "Driving",
+                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
+            } ,
+            {
+                id: 5,
+                address: "48 Stony Brook Rd",
+                commute_type: "Driving",
+                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
+            } ,
+            {
+                id: 6,
+                address: "48 Stony Brook Rd",
+                commute_type: "Driving",
+                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
+            } ,
+            {
+                id: 7,
+                address: "48 Stony Brook Rd",
+                commute_type: "Driving",
+                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
+            } ,
         ],
         visit_list:  [
             {
@@ -52,7 +82,10 @@ class Survey extends Component {
                 visit_list.splice(home_index, 1);
             }
         } else {
-            visit_list.push(home)
+            if (visit_list.length < 6)
+            {
+                visit_list.push(home)
+            }
         }
 
         this.setState({visit_list})
