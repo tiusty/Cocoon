@@ -34,7 +34,7 @@ class HomeTile extends Component {
                 heart_class += " glyphicon-heart-empty"
             }
 
-            heart_span = <span className={heart_class} onClick={this.toggleHeart}> </span>;
+            heart_span = <span className={heart_class} onClick={() => this.props.onFavoriteClick(home)}> </span>;
         }
 
         let visit_span = '';

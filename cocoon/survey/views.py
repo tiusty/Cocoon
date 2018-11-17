@@ -342,15 +342,27 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         pk = kwargs.pop('pk', None)
         survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
-        try:
-            home = survey.visit_list.get(id=self.request.data['home_id'])
-            survey.visit_list.remove(home)
-        except RentDatabaseModel.DoesNotExist:
+
+        if 'visit' in self.request.data['type']:
             try:
-                home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
-                survey.visit_list.add(home)
+                home = survey.visit_list.get(id=self.request.data['home_id'])
+                survey.visit_list.remove(home)
             except RentDatabaseModel.DoesNotExist:
-                pass
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.visit_list.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
+        elif 'favorite' in self.request.data['type']:
+            try:
+                home = survey.favorites.get(id=self.request.data['home_id'])
+                survey.favorites.remove(home)
+            except RentDatabaseModel.DoesNotExist:
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.favorites.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
 
         serializer = RentSurveySerializer(survey)
         return Response(serializer.data)

@@ -35,13 +35,31 @@ class Survey extends Component {
         let endpoint = this.props.endpoint + this.state.id + "/";
         axios.put(endpoint,
             {
-                home_id: home.id
+                home_id: home.id,
+                type: 'visit'
 
             })
             .catch(error => console.log('BAD', error))
             .then(response =>
                 this.setState({
                     visit_list: response.data.visit_list
+                })
+            );
+    };
+
+    handleFavoriteClick = (home) => {
+        // Function sends a home and toggles that home in the visit_list
+        let endpoint = this.props.endpoint + this.state.id + "/";
+        axios.put(endpoint,
+            {
+                home_id: home.id,
+                type: 'favorite',
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    favorites: response.data.favorites
                 })
             );
     };
@@ -57,6 +75,7 @@ class Survey extends Component {
                         favorite={this.inFavorites(home)}
                         visit={this.state.visit_list.filter(c => c.id === home.id).length >0}
                         onVisitClick={this.handleVisitClick}
+                        onFavoriteClick={this.handleFavoriteClick}
                         show_heart={true}
                         show_score={false}
                         show_visit={true}
