@@ -15,6 +15,7 @@ class Survey extends Component {
         id: this.props.survey_id,
         name: "",
         url: "",
+        price: 0,
         favorites:  [],
         visit_list:  [],
     };

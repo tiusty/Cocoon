@@ -1,21 +1,30 @@
 from rest_framework import serializers
 
 from cocoon.survey.models import RentingSurveyModel
-from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel
+
+
+class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = HomeTypeModel
+        fields = ('home_type',)
 
 
 class FavoritesSerializer(serializers.HyperlinkedModelSerializer):
+    home_type = HomeTypeSerializer(read_only=True)
 
     class Meta:
         model = RentDatabaseModel
-        fields = ('id', 'street_address')
+        fields = ('id', 'street_address', 'price', 'home_type')
 
 
 class VisitListSerializer(serializers.HyperlinkedModelSerializer):
+    home_type = HomeTypeSerializer(read_only=True)
 
     class Meta:
         model = RentDatabaseModel
-        fields = ('id',)
+        fields = ('id', 'price', 'home_type')
 
 
 class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
