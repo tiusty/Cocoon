@@ -35,7 +35,11 @@
     font-size: 28px;
     font-family: 'Lobster', cursive;
     color: #efefef;
+}
 
+.scoreText-hover {
+    font-size: 34px !important;
+    transition: font-size .1s;
 }
 
 /* Heart Icon */
@@ -69,6 +73,9 @@
     text-align: center;
 }
 
+.homeBit-hover {
+    width: 80%;
+}
 
 /* Image formatting */
 .thumbnailDiv {
@@ -80,6 +87,10 @@
     overflow: hidden;
 }
 
+.thumbnailDiv-hover {
+    padding: 1px !important;
+}
+
 .thumbnailImage {
     vertical-align: middle;
     float: right;
@@ -89,4 +100,9 @@
     min-width: 100px;
     max-width: 100%;
     max-height:100%;
+}
+
+.thumbnailImage-hover {
+    max-width: 109%;
+    width: 109%;
 }

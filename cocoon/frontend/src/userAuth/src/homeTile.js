@@ -4,12 +4,20 @@ import { Component } from 'react';
 import './homeTile.css'
 
 class HomeTile extends Component {
+    state = {
+        hover: false,
+    };
 
-    static renderScore(home) {
+    renderScore(home) {
         let homeScore = '';
 
+        let classes = "scoreText ";
+        if (this.state.hover) {
+           classes += "scoreText-hover"
+        }
+
         if (home.grade) {
-            homeScore = <span className="scoreText">{home.grade}</span>
+            homeScore = <span className={classes}>{home.grade}</span>
         }
 
         return (
@@ -20,34 +28,49 @@ class HomeTile extends Component {
         );
     }
 
-    static renderInfo(home) {
+    renderInfo(home) {
+        let bit_classes = "homeBit ";
+        if (this.state.hover) {
+            bit_classes += "homeBit-hover";
+        }
         return (
             <div className="homeInfo">
-                <span className="homeBit">{home.price}</span>
+                <span className={bit_classes}>{home.price}</span>
             </div>
         );
     }
 
-    static renderImages(home) {
+    renderImages(home) {
+        let div_classes = "col-md-5 thumbnailDiv ";
+        let image_classes = "thumbnailImage ";
+        if (this.state.hover) {
+            div_classes += "thumbnailDiv-hover";
+            image_classes += "thumbnailImage-hover";
+        }
 
         return (
             <React.Fragment>
             { home.images.map(image =>
-                <div className="thumbnailDiv col-md-6">
-                    <img className="thumbnailImage" src={image}></img>
+                <div className={div_classes}>
+                    <img className={image_classes} src={image}/>
                 </div>
             )}
             </React.Fragment>
         );
     }
 
+    toggleHover = () => {
+        let hover = !this.state.hover;
+        this.setState({hover})
+    };
+
     render(){
         const { home } = this.props;
         return (
-            <div className="tile">
-                {HomeTile.renderScore(home)}
-                {HomeTile.renderInfo(home)}
-                {HomeTile.renderImages(home)}
+            <div className="tile" onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}>
+                {this.renderScore(home)}
+                {this.renderInfo(home)}
+                {this.renderImages(home)}
             </div>
         );
     }
