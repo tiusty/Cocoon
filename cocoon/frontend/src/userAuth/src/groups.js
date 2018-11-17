@@ -2,15 +2,26 @@ import React from 'react'
 import { Component } from 'react';
 
 
-import Counters from "./counters";
+import Survey from "./survey";
 
 class RoommateGroup extends Component {
     state = {
-        counters: [
-            { id: 1, value: 4 },
-            { id: 2, value: 0 },
-            { id: 3, value: 0 },
-            { id: 4, value: 0 },
+        surveys: [
+            {
+                id: 1,
+                name: "First Survey",
+                favorites:  [
+                    {
+                        id: 1,
+                        address: "12 Stony Brook Rd",
+                        commute_type: "Driving"
+                    } ,
+                ],
+            },
+            {id: 2,
+                name: "Second Survey",
+                favorites: [],
+            },
         ]
     };
 
@@ -24,27 +35,9 @@ class RoommateGroup extends Component {
         console.log('App - Mounted')
     }
 
-    handleIncrement = counter => {
-        // Clone counters (using spread function)
-        const counters = [...this.state.counters];
-        const index = counters.indexOf(counter);
-        counters[index] = {...counter};
-        counters[index].value++;
-        this.setState({counters});
-    };
-
     handleDelete = (counterId) => {
-        const counters = this.state.counters.filter(c => c.id !== counterId);
-        this.setState({ counters });
-    };
-
-    handleReset = () => {
-      const counters = this.state.counters.map(c => {
-          c.value = 0;
-          return c;
-      });
-
-        this.setState({counters})
+        const surveys = this.state.surveys.filter(c => c.id !== counterId);
+        this.setState({ surveys });
     };
 
     render() {
@@ -52,13 +45,14 @@ class RoommateGroup extends Component {
         return (
 
             <React.Fragment>
-                <h1>{this.state.counters.filter(c => c.value > 0).length}</h1>
-                <Counters
-                    onReset={this.handleReset}
-                    onIncrement={this.handleIncrement}
-                    onDelete={this.handleDelete}
-                    counters={this.state.counters}
-                />
+                { this.state.surveys.map(survey =>
+                    <Survey
+                        key={survey.id}
+                        onDelete={this.handleDelete}
+                        survey={survey}
+                    />
+
+                )}
             </React.Fragment>
         );
     }
