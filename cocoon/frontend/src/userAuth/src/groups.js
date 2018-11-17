@@ -7,7 +7,8 @@ import Survey from "./survey";
 
 class Surveys extends Component {
     state = {
-        surveys: []
+        surveys: [],
+        endpoint: 'http://127.0.0.1:8000/survey/api/userSurveys/',
     };
 
     constructor(props) {
@@ -24,7 +25,7 @@ class Surveys extends Component {
 
     componentDidMount() {
         // Ajax call
-        axios.get('http://127.0.0.1:8000/survey/api/userSurveys/')
+        axios.get(this.state.endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState( {surveys: this.handleData(response.data)})
@@ -44,6 +45,7 @@ class Surveys extends Component {
                         key={survey.id}
                         onDelete={this.handleDelete}
                         survey_id={survey.id}
+                        endpoint={this.state.endpoint}
                     />
 
                 )}

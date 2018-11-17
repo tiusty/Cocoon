@@ -18,7 +18,7 @@ class Survey extends Component {
     };
 
     componentDidMount() {
-        let endpoint = "http://127.0.0.1:8000/survey/api/userSurveys/" + this.state.id;
+        let endpoint = this.props.endpoint + this.state.id;
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
             .then(response =>
@@ -32,7 +32,7 @@ class Survey extends Component {
 
     handleVisitClick = (home) => {
         // Function sends a home and toggles that home in the visit_list
-        let endpoint = "http://127.0.0.1:8000/survey/api/userSurveys/" + this.state.id + "/";
+        let endpoint = this.props.endpoint + this.state.id + "/";
         axios.put(endpoint,
             {
                 home_id: home.id
