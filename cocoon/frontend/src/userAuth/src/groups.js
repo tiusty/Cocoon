@@ -4,7 +4,7 @@ import { Component } from 'react';
 
 import Survey from "./survey";
 
-class RoommateGroup extends Component {
+class Surveys extends Component {
     state = {
         surveys: [
             {id: 1},
@@ -43,5 +43,5 @@ class RoommateGroup extends Component {
         );
     }
 }
-export default RoommateGroup
+export default Surveys
 
