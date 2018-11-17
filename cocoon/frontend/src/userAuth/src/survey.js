@@ -14,6 +14,7 @@ class Survey extends Component {
                     <HomeTile
                         key={home.id}
                         home={home}
+                        favorite={true}
                     />
                 )}
             </div>
@@ -28,6 +29,7 @@ class Survey extends Component {
                     <HomeTile
                         key={home.id}
                         home={home}
+                        favorite={true}
                     />
                 )}
             </div>
