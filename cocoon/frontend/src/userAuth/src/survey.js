@@ -130,6 +130,7 @@ class Survey extends Component {
                     <div className="col-md-2">
                         <button onClick={this.handleLoad} className="btn btn-primary btn-sm m-2">Load</button>
                         <button onClick={() => onDelete(this.state.id)} className="btn btn-danger btn-sm m-2">Delete</button>
+                        <button className="btn btn-success btn-sm m-2">Schedule Group!</button>
                     </div>
                 </div>
                 <div className="row">
