@@ -74,7 +74,6 @@ class HomeTile extends Component {
     }
 
     renderImages(home) {
-
         if (home.images) {
             let div_classes = "col-md-5 thumbnailDiv ";
             let image_classes = "thumbnailImage ";
@@ -83,11 +82,12 @@ class HomeTile extends Component {
                 image_classes += "thumbnailImage-hover";
             }
 
+            // Only renders first 2 photos
             return (
                 <React.Fragment>
-                    { home.images.map(image =>
-                        <div key={image} className={div_classes}>
-                            <img className={image_classes} src={image}/>
+                    { home.images.slice(0,2).map(image =>
+                        <div key={image.id} className={div_classes}>
+                            <img className={image_classes} src={image.image}/>
                         </div>
                     )}
                 </React.Fragment>
@@ -95,11 +95,6 @@ class HomeTile extends Component {
 
         }
     }
-
-    toggleHeart = () => {
-        let heartState = !this.state.heartState;
-        this.setState({heartState})
-    };
 
     toggleHover = () => {
         let hover = !this.state.hover;
