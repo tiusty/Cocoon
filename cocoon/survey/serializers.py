@@ -25,4 +25,4 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = RentingSurveyModel
-        fields = ('id', 'name', 'visit_list', 'favorites')
+        fields = ('id', 'name', 'visit_list', 'favorites', 'url')

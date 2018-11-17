@@ -13,6 +13,7 @@ class Survey extends Component {
     state = {
         id: this.props.survey_id,
         name: "",
+        url: "",
         favorites:  [],
         visit_list:  [],
     };
@@ -26,6 +27,7 @@ class Survey extends Component {
                     name: response.data.name,
                     favorites: response.data.favorites,
                     visit_list: response.data.visit_list,
+                    url: response.data.url,
                 }),
             )
     }
@@ -116,7 +118,7 @@ class Survey extends Component {
     };
 
     handleLoad = () => {
-        console.log('Load survey', this.state.id)
+        return "/survey/rent/" + this.state.url + "/";
     };
 
     render(){
@@ -128,7 +130,7 @@ class Survey extends Component {
                         <h1>{this.state.name}</h1>
                     </div>
                     <div className="col-md-2">
-                        <button onClick={this.handleLoad} className="btn btn-primary btn-sm m-2">Load</button>
+                        <a href={this.handleLoad()} className="btn btn-primary active">Load</a>
                         <button onClick={() => onDelete(this.state.id)} className="btn btn-danger btn-sm m-2">Delete</button>
                         <button className="btn btn-success btn-sm m-2">Schedule Group!</button>
                     </div>
