@@ -25,9 +25,9 @@ class Survey extends Component {
             } ,
             {
                 id: 3,
-                address: "48 Stony Brook Rd",
+                address: "36 Stony Brook Rd",
                 commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
+                images: ['/media/houseDatabase/30/30_12_x0GmdOn.jpg', '/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
             } ,
             {
                 id: 4,
@@ -99,24 +99,26 @@ class Survey extends Component {
                     <HomeTile
                         key={home.id}
                         home={home}
-                        favorite={true}
+                        favorite={this.inFavorites(home)}
+                        visit={this.state.visit_list.filter(c => c.id === home.id).length >0}
+                        onVisitClick={this.handleVisitClick}
                         show_heart={true}
                         show_score={false}
-                        visit={this.state.visit_list.filter(c => c.id === home.id).length >0}
                         show_visit={true}
-                        onVisitClick={this.handleVisitClick}
                     />
                 )}
             </div>
         );
     };
 
-    isHomeFavorites(home) {
-        // checks to see if the visit home exists within the favorite homes by searching by house id
-        // If it does, then the home should be marked as a favorite
-        let favorite_home = this.state.favorites.filter(c => c.id === home.id);
-        return favorite_home.length > 0;
+    inFavorites(home) {
+        // Checks to see if the home exists within the favorites list
+        return this.state.favorites.filter(c => c.id === home.id).length > 0;
+    }
 
+    inVisitList(home) {
+        // Checks to see if the home exists within the visit_list
+        return this.state.visit_list.filter(c => c.id === home.id).length >0;
     }
 
     renderVisitList() {
@@ -127,12 +129,12 @@ class Survey extends Component {
                     <HomeTile
                         key={home.id}
                         home={home}
-                        favorite={this.isHomeFavorites(home)}
+                        favorite={this.inFavorites(home)}
+                        visit={this.inVisitList(home)}
+                        onVisitClick={this.handleVisitClick}
                         show_score={false}
                         show_heart={false}
-                        visit={true}
                         show_visit={true}
-                        onVisitClick={this.handleVisitClick}
                     />
                 )}
             </div>
