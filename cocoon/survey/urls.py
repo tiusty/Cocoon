@@ -1,6 +1,12 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from . import views
+
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'surveys', views.RentSurveyViewSet, base_name='survey')
+router.register(r'surveysAll', views.RentSurveyViewSetAll, base_name='survey')
 
 app_name = 'survey'
 urlpatterns = [
@@ -15,4 +21,7 @@ urlpatterns = [
     url(r'^deleteVisitHome/$', views.delete_visit_house, name="deleteVisitHouse"),
     url(r'^check_pre_tour_documents/$', views.check_pre_tour_documents, name="checkPretourDocuments"),
     url(r'^resend_pre_tour_documents/$', views.resend_pre_tour_documents, name="resendPretourDocuments"),
+
+    # Api
+    url(r'^', include(router.urls))
 ]

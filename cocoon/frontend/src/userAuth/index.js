@@ -7,7 +7,6 @@ import Main from './src/main'
 
 class UserAuth extends Component {
     componentDidMount = () => {
-        console.log('rendered!');
     };
 
     render(){

@@ -7,7 +7,7 @@ import './survey.css'
 class Survey extends Component {
     state = {
         id: this.props.survey_id,
-        name: "Roommate Group: Me, and Tomas",
+        name: "Roommate Group: Me, and Tomasasdf",
         favorites:  [
             {
                 id: 1,
@@ -69,6 +69,29 @@ class Survey extends Component {
             } ,
         ],
     };
+
+    componentDidMount() {
+        console.log('Component Did Mount', this.state.id)
+        let enpoint = "http://127.0.0.1:8000/survey/surveysAll/" + this.state.id;
+        console.log(enpoint)
+        fetch(enpoint)
+            .then(response => {
+                if (response.status !== 200) {
+                    console.log("something went wrong in here")
+                }
+                return response.json()
+            })
+            .then(data =>
+                this.setState({
+                    name: data.name,
+                    favorites: data.favorites,
+                    visit_list: data.visit_list,
+                }),
+                // this.setState({favorites: data.favorites}),
+                // this.setState({visit_list: data.visit_list}),
+
+            )
+    }
 
     handleVisitClick = (home) => {
         let visit_list = [...this.state.visit_list];

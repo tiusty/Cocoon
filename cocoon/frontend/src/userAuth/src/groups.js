@@ -6,20 +6,23 @@ import Survey from "./survey";
 
 class Surveys extends Component {
     state = {
-        surveys: [
-            {id: 1},
-            {id: 2},
-        ]
+        surveys: []
     };
 
     constructor(props) {
         super(props);
-        console.log('App - Constructor', this.props)
     }
 
     componentDidMount() {
         // Ajax call
-        console.log('App - Mounted')
+        fetch('http://127.0.0.1:8000/survey/surveys/')
+            .then(response => {
+                if (response.status !== 200) {
+                    console.log("something went wrong")
+                }
+                return response.json()
+            })
+            .then(data => this.setState({ surveys: data}))
     }
 
     handleDelete = (counterId) => {
@@ -28,7 +31,6 @@ class Surveys extends Component {
     };
 
     render() {
-        console.log('App - Rendered')
         return (
             <React.Fragment>
                 { this.state.surveys.map(survey =>

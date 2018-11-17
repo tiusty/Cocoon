@@ -73,22 +73,26 @@ class HomeTile extends Component {
     }
 
     renderImages(home) {
-        let div_classes = "col-md-5 thumbnailDiv ";
-        let image_classes = "thumbnailImage ";
-        if (this.state.hover) {
-            div_classes += "thumbnailDiv-hover";
-            image_classes += "thumbnailImage-hover";
-        }
 
-        return (
-            <React.Fragment>
-            { home.images.map(image =>
-                <div className={div_classes}>
-                    <img className={image_classes} src={image}/>
-                </div>
-            )}
-            </React.Fragment>
-        );
+        if (home.images) {
+            let div_classes = "col-md-5 thumbnailDiv ";
+            let image_classes = "thumbnailImage ";
+            if (this.state.hover) {
+                div_classes += "thumbnailDiv-hover";
+                image_classes += "thumbnailImage-hover";
+            }
+
+            return (
+                <React.Fragment>
+                    { home.images.map(image =>
+                        <div key={image} className={div_classes}>
+                            <img className={image_classes} src={image}/>
+                        </div>
+                    )}
+                </React.Fragment>
+            );
+
+        }
     }
 
     toggleHeart = () => {

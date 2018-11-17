@@ -34,12 +34,17 @@ from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 
 # Import Itinerary model
 from cocoon.scheduler.models import ItineraryModel
+from cocoon.survey.serializers import RentSurveySerailzer, RentSurveySerializerAll
 
 
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
+
+# Rest Framework
+from rest_framework import viewsets
+from rest_framework.response import Response
 
 
 class RentingSurvey(CreateView):
@@ -311,6 +316,25 @@ class VisitList(ListView):
         client_scheduler_alg.run(homes_list, self.request.user)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
+
+
+class RentSurveyViewSet(viewsets.ModelViewSet):
+
+    serializer_class = RentSurveySerailzer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+
+class RentSurveyViewSetAll(viewsets.ViewSet):
+
+    def retrieve(self, request, pk=None):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+        serializer = RentSurveySerializerAll(survey)
+        return Response(serializer.data)
+
 
 
 #######################################################
