@@ -9,11 +9,23 @@ class RoommateGroup extends Component {
         surveys: [
             {
                 id: 1,
-                name: "First Survey",
+                name: "Roommate Group: Me, and Tomas",
                 favorites:  [
                     {
                         id: 1,
                         address: "12 Stony Brook Rd",
+                        commute_type: "Driving"
+                    } ,
+                    {
+                        id: 2,
+                        address: "48 Stony Brook Rd",
+                        commute_type: "Driving"
+                    } ,
+                ],
+                visit_list:  [
+                    {
+                        id: 1,
+                        address: "36 Stony Brook Rd",
                         commute_type: "Driving"
                     } ,
                 ],
@@ -21,6 +33,7 @@ class RoommateGroup extends Component {
             {id: 2,
                 name: "Second Survey",
                 favorites: [],
+                visit_list: [],
             },
         ]
     };
@@ -43,7 +56,6 @@ class RoommateGroup extends Component {
     render() {
         console.log('App - Rendered')
         return (
-
             <React.Fragment>
                 { this.state.surveys.map(survey =>
                     <Survey
