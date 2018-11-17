@@ -14,19 +14,24 @@ class RoommateGroup extends Component {
                     {
                         id: 1,
                         address: "12 Stony Brook Rd",
-                        commute_type: "Driving"
+                        commute_type: "Driving",
+                        grade: 'A',
+                        price: 1500,
+                        images: ['/media/houseDatabase/30/30_12_x0GmdOn.jpg', '/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
                     } ,
                     {
                         id: 2,
                         address: "48 Stony Brook Rd",
-                        commute_type: "Driving"
+                        commute_type: "Driving",
+                        images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
                     } ,
                 ],
                 visit_list:  [
                     {
                         id: 1,
                         address: "36 Stony Brook Rd",
-                        commute_type: "Driving"
+                        commute_type: "Driving",
+                        images: [],
                     } ,
                 ],
             },
