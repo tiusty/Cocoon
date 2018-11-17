@@ -13,16 +13,26 @@ class Surveys extends Component {
         super(props);
     }
 
+    handleData(data) {
+        let survey_ids = [];
+        data.map(c =>
+            survey_ids.push( { id: c.id} )
+        );
+        return survey_ids
+    }
+
     componentDidMount() {
         // Ajax call
-        fetch('http://127.0.0.1:8000/survey/surveys/')
+        fetch('http://127.0.0.1:8000/survey/api/userSurveys/')
             .then(response => {
                 if (response.status !== 200) {
                     console.log("something went wrong")
                 }
                 return response.json()
             })
-            .then(data => this.setState({ surveys: data}))
+            .then(data =>
+                this.setState( {surveys: this.handleData(data)})
+            )
     }
 
     handleDelete = (counterId) => {

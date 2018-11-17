@@ -7,74 +7,14 @@ import './survey.css'
 class Survey extends Component {
     state = {
         id: this.props.survey_id,
-        name: "Roommate Group: Me, and Tomasasdf",
-        favorites:  [
-            {
-                id: 1,
-                address: "12 Stony Brook Rd",
-                commute_type: "Driving",
-                grade: 'A',
-                price: 1500,
-                images: ['/media/houseDatabase/30/30_12_x0GmdOn.jpg', '/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-            {
-                id: 2,
-                address: "48 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-            {
-                id: 3,
-                address: "36 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_12_x0GmdOn.jpg', '/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-            {
-                id: 4,
-                address: "48 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-            {
-                id: 5,
-                address: "48 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-            {
-                id: 6,
-                address: "48 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-            {
-                id: 7,
-                address: "48 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-        ],
-        visit_list:  [
-            {
-                id: 2,
-                address: "48 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-            {
-                id: 3,
-                address: "36 Stony Brook Rd",
-                commute_type: "Driving",
-                images: ['/media/houseDatabase/30/30_12_x0GmdOn.jpg', '/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-            } ,
-        ],
+        name: "",
+        favorites:  [],
+        visit_list:  [],
     };
 
     componentDidMount() {
-        console.log('Component Did Mount', this.state.id)
-        let enpoint = "http://127.0.0.1:8000/survey/surveysAll/" + this.state.id;
-        console.log(enpoint)
-        fetch(enpoint)
+        let endpoint = "http://127.0.0.1:8000/survey/api/userSurveys/" + this.state.id;
+        fetch(endpoint)
             .then(response => {
                 if (response.status !== 200) {
                     console.log("something went wrong in here")
@@ -87,9 +27,6 @@ class Survey extends Component {
                     favorites: data.favorites,
                     visit_list: data.visit_list,
                 }),
-                // this.setState({favorites: data.favorites}),
-                // this.setState({visit_list: data.visit_list}),
-
             )
     }
 

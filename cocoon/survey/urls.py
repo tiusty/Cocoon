@@ -5,8 +5,7 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'surveys', views.RentSurveyViewSet, base_name='survey')
-router.register(r'surveysAll', views.RentSurveyViewSetAll, base_name='survey')
+router.register(r'userSurveys', views.RentSurveyViewSet, base_name='user_survey')
 
 app_name = 'survey'
 urlpatterns = [
@@ -23,5 +22,5 @@ urlpatterns = [
     url(r'^resend_pre_tour_documents/$', views.resend_pre_tour_documents, name="resendPretourDocuments"),
 
     # Api
-    url(r'^', include(router.urls))
+    url(r'^api/', include(router.urls))
 ]
