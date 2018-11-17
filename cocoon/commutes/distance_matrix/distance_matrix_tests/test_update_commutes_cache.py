@@ -28,7 +28,7 @@ from cocoon.userAuth.models import MyUser
 class TestUpdateCommutesCache(TestCase):
 
     def setUp(self):
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
@@ -61,7 +61,16 @@ class TestUpdateCommutesCache(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.tenants.create()
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     def test_one_destination_driving(self):
         """
@@ -199,7 +208,7 @@ class TestUpdateCommutesCache(TestCase):
 class TestDriveCommuteCalculator(TestCase):
 
     def setUp(self):
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         self.commute_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.commute_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
@@ -234,7 +243,16 @@ class TestDriveCommuteCalculator(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.tenants.create()
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     def test_find_missing_pairs_all_exist_all_same_commute(self):
         """
@@ -250,9 +268,9 @@ class TestDriveCommuteCalculator(TestCase):
         commute_calculator = Driving([home_score], destination)
 
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02475', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02476', commute_type=self.commute_driving)
 
         # Act
         homes = [home_score, home_score1, home_score2]
@@ -275,7 +293,7 @@ class TestDriveCommuteCalculator(TestCase):
         commute_calculator = Driving([home_score], destination)
 
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create()
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_driving)
 
         # Act
         homes = [home_score, home_score1, home_score2]
@@ -300,9 +318,9 @@ class TestDriveCommuteCalculator(TestCase):
         commute_calculator = Driving([home_score], destination)
 
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
+        parent_zip.zipcodechild_set.create(zip_code='02476', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_bicycling)
+        parent_zip.zipcodechild_set.create(zip_code='02475', commute_type=self.commute_bicycling)
 
         # Act
         homes = [home_score, home_score1, home_score2]
@@ -439,7 +457,7 @@ class TestTransitCommuteCalculator(TestCase):
     """
 
     def setUp(self):
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         self.commute_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.commute_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
@@ -474,7 +492,16 @@ class TestTransitCommuteCalculator(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.tenants.create()
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     def test_find_missing_pairs_all_exist_all_same_commute(self):
         """
@@ -490,9 +517,9 @@ class TestTransitCommuteCalculator(TestCase):
         commute_calculator = Driving([home_score], destination)
 
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02475', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02476', commute_type=self.commute_driving)
 
         # Act
         homes = [home_score, home_score1, home_score2]
@@ -515,7 +542,7 @@ class TestTransitCommuteCalculator(TestCase):
         commute_calculator = Driving([home_score], destination)
 
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create()
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_driving)
 
         # Act
         homes = [home_score, home_score1, home_score2]
@@ -540,9 +567,9 @@ class TestTransitCommuteCalculator(TestCase):
         commute_calculator = Driving([home_score], destination)
 
         parent_zip = ZipCodeBase.objects.create(zip_code='02476')
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
-        parent_zip.zipcodechild_set.create()
+        parent_zip.zipcodechild_set.create(zip_code='02476', commute_type=self.commute_driving)
+        parent_zip.zipcodechild_set.create(zip_code='02474', commute_type=self.commute_bicycling)
+        parent_zip.zipcodechild_set.create(zip_code='02475', commute_type=self.commute_bicycling)
 
         # Act
         homes = [home_score, home_score1, home_score2]

@@ -27,7 +27,7 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
         # Create a user and survey so we can create renting destination models
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
@@ -73,12 +73,30 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 20
         self.max_commute = 80
-        self.destination = self.survey.tenants.create()
+        self.destination = self.survey.tenants.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
 
         # Create the second commuter destination
         self.min_commute1 = 40
         self.max_commute1 = 90
-        self.destination1 = self.survey.tenants.create()
+        self.destination1 = self.survey.tenants.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
 
         # Set commutes times from each home to the each commuters destination
         self.home.approx_commute_times = {self.destination: 50}
@@ -114,12 +132,30 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 20
         self.max_commute = 60
-        self.destination = self.survey.tenants.create()
+        self.destination = self.survey.tenants.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
 
         # Create the second commuter destination
         self.min_commute1 = 10
         self.max_commute1 = 80
-        self.destination1 = self.survey.tenants.create()
+        self.destination1 = self.survey.tenants.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
 
         # Set commutes times from each home to the each commuters destination
         self.home.approx_commute_times = {self.destination: 50}
@@ -155,12 +191,30 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 60
         self.max_commute = 60
-        self.destination = self.survey.tenants.create()
+        self.destination = self.survey.tenants.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
 
         # Create the second commuter destination
         self.min_commute1 = 80
         self.max_commute1 = 80
-        self.destination1 = self.survey.tenants.create()
+        self.destination1 = self.survey.tenants.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
 
         # Set commutes times from each home to the each commuters destination
         self.home.approx_commute_times = {self.destination: 50}
@@ -201,12 +255,30 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Create the first commuter destination
         self.min_commute = 20
         self.max_commute = 80
-        self.destination = self.survey.tenants.create()
+        self.destination = self.survey.tenants.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=self.max_commute,
+            min_commute=self.min_commute,
+        )
 
         # Create the second commuter destination
         self.min_commute1 = 30
         self.max_commute1 = 60
-        self.destination1 = self.survey.tenants.create()
+        self.destination1 = self.survey.tenants.create(
+            street_address=self.street_address1,
+            city=self.city1,
+            state=self.state1,
+            zip_code=self.zip_code1,
+            commute_type=self.commute_type1,
+            commute_weight=self.commute_weight1,
+            max_commute=self.max_commute1,
+            min_commute=self.min_commute1,
+        )
 
         # Set commutes times from each home to the each commuters destination
         self.home.approx_commute_times = {self.destination: 50}
@@ -514,7 +586,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
         # Create a user and survey so we can create renting destination models
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
@@ -522,7 +594,16 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return self.survey.tenants.create()
+        return self.survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -685,7 +766,7 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
         HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Create a user and survey so we can create renting destination models
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
@@ -694,7 +775,16 @@ class TestRentAlgorithmJustExactCommuteScore(TestCase):
 
     def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return self.survey.tenants.create()
+        return self.survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -963,7 +1053,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.num_bathrooms_max = 4
 
         # Create a user so the survey form can validate
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         HomeProviderModel.objects.create(provider="MLSPIN")
 
         # Create some destination variables
@@ -1006,7 +1096,16 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                            commute_weight=0, max_commute=60, min_commute=0):
         if commute_type is None:
             commute_type = CommuteType.objects.get(commute_type=CommuteType.DRIVING)
-        return survey.tenants.create()
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     def tests_populate_survey_homes_2_bedrooms(self):
         """
@@ -1094,7 +1193,7 @@ class TestRetrieveApproximateCommutes(TestCase):
 
     def setUp(self):
         # Create a user so the survey form can validate
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
@@ -1113,7 +1212,16 @@ class TestRetrieveApproximateCommutes(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.tenants.create()
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -1244,7 +1352,7 @@ class TestRetrieveApproximateCommutes(TestCase):
 class TestApproxCommute(TestCase):
 
     def setUp(self):
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
@@ -1264,7 +1372,17 @@ class TestApproxCommute(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.tenants.create()
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+
+        )
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -1290,7 +1408,13 @@ class TestApproxCommute(TestCase):
     @staticmethod
     def create_zip_code_dictionary_child(parent_zip_code_dictionary, zip_code, commute_time,
                                          commute_distance, commute_type, last_updated=timezone.now()):
-        parent_zip_code_dictionary.zipcodechild_set.create()
+        parent_zip_code_dictionary.zipcodechild_set.create(
+            zip_code=zip_code,
+            commute_time_seconds=commute_time,
+            commute_distance_meters=commute_distance,
+            commute_type=commute_type,
+            last_date_updated=last_updated,
+        )
 
     def test_populate_approx_commute_times_driving(self):
         # Arrange
@@ -1522,7 +1646,7 @@ class TestApproxCommute(TestCase):
 class TestRetrieveExactCommutes(TestCase):
 
     def setUp(self):
-        self.user = MyUser.objects.create()
+        self.user = MyUser.objects.create(email="test@email.com")
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
@@ -1542,7 +1666,16 @@ class TestRetrieveExactCommutes(TestCase):
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return survey.tenants.create()
+        return survey.tenants.create(
+            street_address=street_address,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            commute_type=commute_type,
+            commute_weight=commute_weight,
+            max_commute=max_commute,
+            min_commute=min_commute,
+        )
 
     @staticmethod
     def create_home(home_type, price=1500,
