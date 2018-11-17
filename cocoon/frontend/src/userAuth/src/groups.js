@@ -7,39 +7,8 @@ import Survey from "./survey";
 class RoommateGroup extends Component {
     state = {
         surveys: [
-            {
-                id: 1,
-                name: "Roommate Group: Me, and Tomas",
-                favorites:  [
-                    {
-                        id: 1,
-                        address: "12 Stony Brook Rd",
-                        commute_type: "Driving",
-                        grade: 'A',
-                        price: 1500,
-                        images: ['/media/houseDatabase/30/30_12_x0GmdOn.jpg', '/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-                    } ,
-                    {
-                        id: 2,
-                        address: "48 Stony Brook Rd",
-                        commute_type: "Driving",
-                        images: ['/media/houseDatabase/30/30_11_uZOt5KX.jpg'],
-                    } ,
-                ],
-                visit_list:  [
-                    {
-                        id: 1,
-                        address: "36 Stony Brook Rd",
-                        commute_type: "Driving",
-                        images: [],
-                    } ,
-                ],
-            },
-            {id: 2,
-                name: "Second Survey",
-                favorites: [],
-                visit_list: [],
-            },
+            {id: 1},
+            {id: 2},
         ]
     };
 
@@ -66,7 +35,7 @@ class RoommateGroup extends Component {
                     <Survey
                         key={survey.id}
                         onDelete={this.handleDelete}
-                        survey={survey}
+                        survey_id={survey.id}
                     />
 
                 )}
