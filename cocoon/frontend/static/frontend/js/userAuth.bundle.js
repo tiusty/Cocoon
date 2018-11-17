@@ -94,7 +94,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar survey_endpoints = {\n  'rentSurveyResult': 'http://127.0.0.1:8000/survey/rent/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (survey_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/survey_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar survey_endpoints = {\n  'rentSurveyResult': '/survey/rent/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (survey_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/survey_endpoints.js?");
 
 /***/ }),
 
@@ -106,7 +106,7 @@ eval("__webpack_require__.r(__webpack_exports__);\nvar survey_endpoints = {\n  '
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar userAuth_endpoints = {\n  'userSurveys': 'http://127.0.0.1:8000/survey/api/userSurveys/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (userAuth_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/userAuth_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar userAuth_endpoints = {\n  'userSurveys': '/survey/api/userSurveys/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (userAuth_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/userAuth_endpoints.js?");
 
 /***/ }),
 
