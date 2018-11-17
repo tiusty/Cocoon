@@ -141,6 +141,10 @@ class Survey extends Component {
         );
     };
 
+    handleLoad = () => {
+        console.log('Load survey', this.state.id)
+    };
+
     render(){
         const { onDelete } = this.props;
         return (
@@ -150,6 +154,7 @@ class Survey extends Component {
                         <h1>{this.state.name}</h1>
                     </div>
                     <div className="col-md-2">
+                        <button onClick={this.handleLoad} className="btn btn-primary btn-sm m-2">Load</button>
                         <button onClick={() => onDelete(this.state.id)} className="btn btn-danger btn-sm m-2">Delete</button>
                     </div>
                 </div>
