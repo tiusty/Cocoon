@@ -155,20 +155,10 @@ class Driving(CommuteCalculator):
                     if not zip_dest.exists() or not zip_dest.first().zip_code_cache_still_valid():
                         if zip_dest.exists():
                             zip_dest.delete()
-                        zip_code_dictionary.zipcodechild_set.create(
-                            zip_code=origin[0],
-                            commute_type=self.destination.commute_type,
-                            commute_distance_meters=result[0][1],
-                            commute_time_seconds=result[0][0],
-                        )
+                        zip_code_dictionary.zipcodechild_set.create()
                 else:
                     ZipCodeBase.objects.create(zip_code=destination_zip_state[0]) \
-                        .zipcodechild_set.create(
-                        zip_code=origin[0],
-                        commute_type=self.destination.commute_type,
-                        commute_distance_meters=result[0][1],
-                        commute_time_seconds=result[0][0],
-                    )
+                        .zipcodechild_set.create()
 
     def run_exact_commute_cache(self):
         pass

@@ -6,6 +6,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'userSurveys', views.RentSurveyViewSet, base_name='user_survey')
+router.register(r'userSurveysUpdate', views.RentSurveyUpdateViewSet, base_name='user_surve')
 
 app_name = 'survey'
 urlpatterns = [

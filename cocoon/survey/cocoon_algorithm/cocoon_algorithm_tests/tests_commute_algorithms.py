@@ -13,7 +13,7 @@ class TestApproximateCommutesFilter(TestCase):
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
 
         # Create a user and survey so we can create renting destination models
-        self.user = MyUser.objects.create(email="test@email.com")
+        self.user = MyUser.objects.create()
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
@@ -26,16 +26,7 @@ class TestApproximateCommutesFilter(TestCase):
         self.commute_weight = 0
         self.min_commute = 40
         self.max_commute = 80
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
+        self.destination = self.survey.tenants.create()
 
         self.street_address1 = '8 Stony Brook Rd'
         self.city1 = 'Arlington'
@@ -45,16 +36,7 @@ class TestApproximateCommutesFilter(TestCase):
         self.commute_weight1 = 1
         self.min_commute1 = 10
         self.max_commute1 = 70
-        self.destination1 = self.survey.tenants.create(
-            street_address=self.street_address1,
-            city=self.city1,
-            state=self.state1,
-            zip_code=self.zip_code1,
-            commute_type=self.commute_type1,
-            commute_weight=self.commute_weight1,
-            max_commute=self.max_commute1,
-            min_commute=self.min_commute1,
-        )
+        self.destination1 = self.survey.tenants.create()
 
     def test_adding_positive_approx_commute_range(self):
         # Arrange
@@ -264,7 +246,7 @@ class TestComputeCommuteScore(TestCase):
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
 
         # Create a user and survey so we can create renting destination models
-        self.user = MyUser.objects.create(email="test@email.com")
+        self.user = MyUser.objects.create()
         self.user_profile = UserProfile.objects.get(user=self.user)
         self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
 
@@ -283,16 +265,7 @@ class TestComputeCommuteScore(TestCase):
 
         self.min_commute = 30
         self.max_commute = 80
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
+        self.destination = self.survey.tenants.create()
 
         # Act
         commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
@@ -307,16 +280,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 30
         commute_time = 20
 
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
+        self.destination = self.survey.tenants.create()
 
         # Act
         commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
@@ -331,16 +295,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 30
         commute_time = 100
 
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
+        self.destination = self.survey.tenants.create()
 
         # Act
         commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
@@ -355,16 +310,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 80
         commute_time = 50
 
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
+        self.destination = self.survey.tenants.create()
 
         # Act
         commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
@@ -379,16 +325,7 @@ class TestComputeCommuteScore(TestCase):
         self.min_commute = 80
         commute_time = 80
 
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
+        self.destination = self.survey.tenants.create()
 
         # Act
         commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)

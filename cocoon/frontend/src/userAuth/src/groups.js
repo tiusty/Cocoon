@@ -1,5 +1,6 @@
 import React from 'react'
 import { Component } from 'react';
+import axios from 'axios'
 
 
 import Survey from "./survey";
@@ -23,16 +24,11 @@ class Surveys extends Component {
 
     componentDidMount() {
         // Ajax call
-        fetch('http://127.0.0.1:8000/survey/api/userSurveys/')
+        axios.get('http://127.0.0.1:8000/survey/api/userSurveys/')
+            .catch(error => console.log('Bad', error))
             .then(response => {
-                if (response.status !== 200) {
-                    console.log("something went wrong")
-                }
-                return response.json()
+                this.setState( {surveys: this.handleData(response.data)})
             })
-            .then(data =>
-                this.setState( {surveys: this.handleData(data)})
-            )
     }
 
     handleDelete = (counterId) => {

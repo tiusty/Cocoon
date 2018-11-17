@@ -42,12 +42,7 @@ class ZipCodeTest(TestCase):
         :param commute_type: Commute Type Enum -> Enum for the different commute types
         :return:
         """
-        parent_zip_code_dictionary.zipcodechild_set.create(
-            zip_code=zip_code,
-            commute_time_seconds=commute_time,
-            commute_distance_meters=commute_distance,
-            commute_type=commute_type,
-        )
+        parent_zip_code_dictionary.zipcodechild_set.create()
 
     def test_zip_code_dictionary_parent_working(self):
         # Arrange/ Act

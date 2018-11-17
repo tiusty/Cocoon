@@ -809,7 +809,7 @@ class TestRentSurveyMiniForm(TestCase):
     def setUp(self):
 
         # Creating user
-        self.user = MyUser.objects.create(email="test@email.com")
+        self.user = MyUser.objects.create()
 
         # Create home type objects
         HomeTypeModel.objects.create(home_type="Apartment")
@@ -952,7 +952,7 @@ class TestRentSurveyMiniForm(TestCase):
         """
         # Arrange
         self.create_survey(self.user.userProfile, name='test_survey')
-        user2 = MyUser.objects.create(email="test2@gmail.com")
+        user2 = MyUser.objects.create()
 
         form_data = {
             'move_in_date_start_survey': self.move_in_date_start,

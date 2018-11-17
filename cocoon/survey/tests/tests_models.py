@@ -10,7 +10,7 @@ class TestRentSurveyModelMultipleNames(TestCase):
 
     def setUp(self):
         # Create user for survey
-        self.user = MyUser.objects.create(email="test@email.com")
+        self.user = MyUser.objects.create()
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -91,7 +91,7 @@ class TestRentSurveyModelMultipleNames(TestCase):
             have the same name, then it should not touch them, aka delete them
         """
         # Arrange
-        user2 = MyUser.objects.create(email="test2@test.com")
+        user2 = MyUser.objects.create()
 
         # Create the first survey
         survey = self.create_survey(self.user.userProfile, name="Recent Rent Survey")
@@ -107,8 +107,8 @@ class TestRentSurveyModelMultipleNames(TestCase):
         Tests that even with 3 users, the condition still holds
         """
         # Arrange
-        user2 = MyUser.objects.create(email="test2@test.com")
-        user3 = MyUser.objects.create(email="test3@test.com")
+        user2 = MyUser.objects.create()
+        user3 = MyUser.objects.create()
 
         # Create the first survey
         survey = self.create_survey(self.user.userProfile, name="Recent Rent Survey")
@@ -127,8 +127,8 @@ class TestRentSurveyModelMultipleNames(TestCase):
             the functionality works
         """
         # Arrange
-        user2 = MyUser.objects.create(email="test2@test.com")
-        user3 = MyUser.objects.create(email="test3@test.com")
+        user2 = MyUser.objects.create()
+        user3 = MyUser.objects.create()
 
         # Create the first survey
         survey = self.create_survey(self.user.userProfile, name="Recent Rent Survey")
@@ -166,7 +166,7 @@ class TestRentSurveyModelMultipleNames(TestCase):
             are from different users, then they both will exist
         """
         # Arrange
-        user2 = MyUser.objects.create(email="test2@test.com")
+        user2 = MyUser.objects.create()
         # Create the first survey
         survey1 = self.create_survey(self.user.userProfile, name="Recents")
 

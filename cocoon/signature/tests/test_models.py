@@ -21,7 +21,7 @@ class TestSignatureModelsAllDocuments(TestCase):
         Tests that if there are no documents in the template model then is_all_signed returns True
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
 
         # Act/Assert
@@ -32,7 +32,7 @@ class TestSignatureModelsAllDocuments(TestCase):
         Tests that if there is one document template and no documents then is_all_signed is false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         HunterDocTemplateModel.objects.create(template_id="123")
 
@@ -45,12 +45,12 @@ class TestSignatureModelsAllDocuments(TestCase):
             then the is_all_signed returns true
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123")
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=True)
+        manager.documents.create()
 
         # Assert
         self.assertTrue(manager.is_all_documents_signed())
@@ -61,12 +61,12 @@ class TestSignatureModelsAllDocuments(TestCase):
             then return false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123")
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=False)
+        manager.documents.create()
 
         # Assert
         self.assertFalse(manager.is_all_documents_signed())
@@ -77,14 +77,14 @@ class TestSignatureModelsAllDocuments(TestCase):
         then the is_all_signed returns true
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123")
         template2 = HunterDocTemplateModel.objects.create(template_type="tb", template_id="123")
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=True)
-        manager.documents.create(template=template2, envelope_id="122", is_signed=True)
+        manager.documents.create()
+        manager.documents.create()
 
         # Assert
         self.assertTrue(manager.is_all_documents_signed())
@@ -95,14 +95,14 @@ class TestSignatureModelsAllDocuments(TestCase):
             then is_all_signed returns false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123")
         template2 = HunterDocTemplateModel.objects.create(template_type="tb", template_id="123")
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=True)
-        manager.documents.create(template=template2, envelope_id="122", is_signed=False)
+        manager.documents.create()
+        manager.documents.create()
 
         # Assert
         self.assertFalse(manager.is_all_documents_signed())
@@ -113,18 +113,18 @@ class TestSignatureModelsAllDocuments(TestCase):
             the documents signed returns true and the other returns false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
-        user1 = MyUser.objects.create(email="test@test1.com")
+        user = MyUser.objects.create()
+        user1 = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
         template = HunterDocManagerModel.retrieve_pre_tour_template()
         template2 = HunterDocTemplateModel.objects.create(template_type="tb", template_id="123")
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=True)
-        manager.documents.create(template=template2, envelope_id="122", is_signed=False)
-        manager1.documents.create(template=template, envelope_id='321', is_signed=True)
-        manager1.documents.create(template=template2, envelope_id='324', is_signed=True)
+        manager.documents.create()
+        manager.documents.create()
+        manager1.documents.create()
+        manager1.documents.create()
 
         # Assert
         self.assertFalse(manager.is_all_documents_signed())
@@ -136,11 +136,11 @@ class TestSignatureModelsAllDocuments(TestCase):
             updates the documents is_signed accordingly
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
-        doc = manager.documents.create(template=template, envelope_id='123', is_signed=True)
-        doc1 = manager.documents.create(template=template, envelope_id='321', is_signed=False)
+        doc = manager.documents.create()
+        doc1 = manager.documents.create()
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -163,11 +163,11 @@ class TestSignatureModelsAllDocuments(TestCase):
             updates the documents is_signed accordingly
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
-        doc = manager.documents.create(template=template, envelope_id='123', is_signed=True)
-        doc1 = manager.documents.create(template=template, envelope_id='321', is_signed=False)
+        doc = manager.documents.create()
+        doc1 = manager.documents.create()
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -193,11 +193,11 @@ class TestSignatureModelsAllDocuments(TestCase):
             necessarily in a set order so it is hard to determine which document will actually end up getting signed
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
-        manager.documents.create(template=template, envelope_id='123', is_signed=False)
-        manager.documents.create(template=template, envelope_id='321', is_signed=False)
+        manager.documents.create()
+        manager.documents.create()
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -220,7 +220,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             then the function returns false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
 
         # Assert
@@ -232,7 +232,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             then the function returns false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
 
@@ -245,12 +245,12 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             then the is_pre_tour_signed returns true
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=True)
+        manager.documents.create()
 
         # Assert
         self.assertTrue(manager.is_pre_tour_signed())
@@ -261,12 +261,12 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             is not signed, then the function returns false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id=PRE_TOUR_TEMPLATE_ID)
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=False)
+        manager.documents.create()
 
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
@@ -277,12 +277,12 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             then the pre_tour_singed returns false
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=True)
+        manager.documents.create()
 
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
@@ -294,14 +294,14 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         :return:
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
-        user1 = MyUser.objects.create(email="test@test1.com")
+        user = MyUser.objects.create()
+        user1 = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
         template = HunterDocManagerModel.retrieve_pre_tour_template()
 
         # Act
-        manager1.documents.create(template=template, envelope_id="123", is_signed=True)
+        manager1.documents.create()
 
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
@@ -313,15 +313,15 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             the correct validation is returned from is_pre_tour_signed
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
-        user1 = MyUser.objects.create(email="test@test1.com")
+        user = MyUser.objects.create()
+        user1 = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
         template = HunterDocManagerModel.retrieve_pre_tour_template()
 
         # Act
-        manager.documents.create(template=template, envelope_id="123", is_signed=False)
-        manager1.documents.create(template=template, envelope_id="123", is_signed=True)
+        manager.documents.create()
+        manager1.documents.create()
 
         # Assert
         self.assertFalse(manager.is_pre_tour_signed())
@@ -332,7 +332,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         Tests that if is_pre_tour_signed is called and the document doesn't exist, then false is returned
         """
         # Arrange
-        user = MyUser.objects.create(email="test@test.com")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         HunterDocTemplateModel.objects.create(template_id="123", template_type="np")
 
@@ -348,7 +348,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             is created in the database
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         HunterDocTemplateModel.create_pre_tour_template()
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -368,7 +368,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         Since the template is created when it is accessed, this should pass and return true
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         DocusignLogin.set_up_docusign_api = MagicMock()
         DocusignWrapper.send_document_for_signatures = MagicMock(return_value="123")
@@ -385,7 +385,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             then create_pre_tour_documents returns false
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         DocusignLogin.set_up_docusign_api = MagicMock()
         DocusignWrapper.send_document_for_signatures = MagicMock(return_value=None)
@@ -402,10 +402,10 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             return true
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.create_pre_tour_template()
-        manager.documents.create(template=template)
+        manager.documents.create()
 
         # Act
         result = manager.pre_tour_forms_created()
@@ -419,12 +419,12 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             there isn't any conflict across user accounts
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com")
-        user1 = MyUser.objects.create(email="awagud121@gmail.com")
+        user = MyUser.objects.create()
+        user1 = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
         template = HunterDocTemplateModel.create_pre_tour_template()
-        manager.documents.create(template=template)
+        manager.documents.create()
 
         # Act
         result = manager.pre_tour_forms_created()
@@ -440,10 +440,10 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             the document is sent
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.create_pre_tour_template()
-        doc = manager.documents.create(template=template, envelope_id='123')
+        doc = manager.documents.create()
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -462,7 +462,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             then it can't be sent and false is returned
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         HunterDocTemplateModel.create_pre_tour_template()
 
@@ -483,11 +483,11 @@ class TestSignatureModelsPreTourDocuments(TestCase):
             documents are returned, then false is returned
         """
         # Arrange
-        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        user = MyUser.objects.create()
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.create_pre_tour_template()
-        manager.documents.create(template=template, envelope_id='123')
-        manager.documents.create(template=template, envelope_id='321')
+        manager.documents.create()
+        manager.documents.create()
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()

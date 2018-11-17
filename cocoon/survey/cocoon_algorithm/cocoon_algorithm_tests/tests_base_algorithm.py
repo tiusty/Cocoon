@@ -43,7 +43,7 @@ class TestAddingHomes(TestCase):
         :return:
         """
         # Arrange
-        user = MyUser.objects.create(email="test@email.com", is_hunter=True)
+        user = MyUser.objects.create()
         home_type = HomeTypeModel.objects.create(home_type='House')
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")

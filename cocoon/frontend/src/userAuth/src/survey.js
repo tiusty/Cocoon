@@ -1,8 +1,13 @@
 import React from 'react'
 import { Component } from 'react';
 import HomeTile from "./homeTile";
+import axios from 'axios'
 
 import './survey.css'
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+
 
 class Survey extends Component {
     state = {
@@ -14,24 +19,20 @@ class Survey extends Component {
 
     componentDidMount() {
         let endpoint = "http://127.0.0.1:8000/survey/api/userSurveys/" + this.state.id;
-        fetch(endpoint)
-            .then(response => {
-                if (response.status !== 200) {
-                    console.log("something went wrong in here")
-                }
-                return response.json()
-            })
-            .then(data =>
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response =>
                 this.setState({
-                    name: data.name,
-                    favorites: data.favorites,
-                    visit_list: data.visit_list,
+                    name: response.data.name,
+                    favorites: response.data.favorites,
+                    visit_list: response.data.visit_list,
                 }),
             )
     }
 
     handleVisitClick = (home) => {
         let visit_list = [...this.state.visit_list];
+        let add_to_list = true;
 
         if (this.state.visit_list.filter(c => c.id === home.id).length > 0)
         {
@@ -40,6 +41,7 @@ class Survey extends Component {
             });
             if (home_index !== -1) {
                 visit_list.splice(home_index, 1);
+                add_to_list = false;
             }
         } else {
             if (visit_list.length < 6)
@@ -48,7 +50,24 @@ class Survey extends Component {
             }
         }
 
-        this.setState({visit_list})
+        let endpoint = "http://127.0.0.1:8000/survey/api/userSurveysUpdate/" + this.state.id + "/";
+        console.log(endpoint);
+        axios.put(endpoint,
+            {
+                home_id: home.id
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                console.log('in callback')
+                console.log(visit_list, add_to_list, response.data.result)
+                    if (add_to_list && parseInt(response.data.result) === 0) {
+                        this.setState({visit_list})
+                    } else if (!add_to_list && parseInt(response.data.result) === 1) {
+                        this.setState({visit_list})
+                    }}
+            );
+
     };
 
     renderFavorites() {

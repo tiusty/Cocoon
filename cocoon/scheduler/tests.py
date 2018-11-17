@@ -30,8 +30,8 @@ class AgentSchedulerViewTests(TestCase):
         :return:
             tuple containing list of claimed itineraries and list of unclaimed itineraries
         """
-        agent = MyUser.objects.create(email="test@email.com", is_broker=True)
-        client = MyUser.objects.create(email="client@email.com", is_hunter=True)
+        agent = MyUser.objects.create()
+        client = MyUser.objects.create()
         claimed_itineraries = [ItineraryModel.objects.create(client=client, agent=agent) for i in
                                range(num_claimed)]
         unclaimed_itineraries = [ItineraryModel.objects.create(client=client) for i in range(num_unclaimed)]
