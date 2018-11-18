@@ -21,6 +21,9 @@ from .tokens import account_activation_token
 from cocoon.signature.models import HunterDocManagerModel
 from cocoon.scheduler import views as scheduler_views
 
+# Import Scheduler algorithm
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+
 
 def index(request):
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
@@ -54,6 +57,23 @@ class VisitList(ListView):
         data.update(scheduler_views.get_user_itineraries(self.request))
 
         return data
+
+    def post(self, request, *args, **kwargs):
+        # Run the client scheduler algorithm
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_profile)
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        # Run client_scheduler algorithm
+        client_scheduler_alg = ClientScheduler()
+        result= client_scheduler_alg.run(homes_list, self.request.user)
+        if result:
+            messages.info(request, "Itinerary created")
+        else:
+            messages.warning(request, "Itinerary already exists")
+        return HttpResponseRedirect(reverse('userAuth:surveys'))
 
 
 def loginPage(request):

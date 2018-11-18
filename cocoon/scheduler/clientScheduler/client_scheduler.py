@@ -112,3 +112,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
                 itinerary_model.homes.add(home)
 
             itinerary_model.save()
+            return True
+        else:
+            return False

@@ -5,6 +5,7 @@ import axios from 'axios'
 
 import './survey.css'
 import survey_endpoints from '../../endpoints/survey_endpoints'
+import CSRFToken from './csrftoken';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -134,7 +135,10 @@ class Survey extends Component {
                     <div className="col-md-2">
                         <a href={this.handleLoad()} className="btn btn-primary active">Load</a>
                         <button onClick={() => onDelete(this.state.id)} className="btn btn-danger btn-sm m-2">Delete</button>
-                        <button className="btn btn-success btn-sm m-2">Schedule Group!</button>
+                        <form method="post">
+                            <CSRFToken/>
+                            <button name="submit-button" className="btn btn-success btn-sm m-2" value={this.state.id} type="submit">Schedule Group!</button>
+                        </form>
                     </div>
                 </div>
                 <div className="row">
