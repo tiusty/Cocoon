@@ -35,7 +35,7 @@ def index(request):
 class VisitList(ListView):
 
     model = RentingSurveyModel
-    template_name = 'userAuth/user_groups.html'
+    template_name = 'userAuth/surveys.html'
     context_object_name = 'surveys'
 
     def get_queryset(self):
