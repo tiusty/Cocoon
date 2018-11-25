@@ -1,11 +1,11 @@
 import React from 'react'
 import { Component } from 'react';
-import HomeTile from "./homeTile";
+import HomeTile from "../../common/homeTile/homeTile";
 import axios from 'axios'
 
 import './survey.css'
 import survey_endpoints from '../../endpoints/survey_endpoints'
-import CSRFToken from './csrftoken';
+import CSRFToken from '../../common/csrftoken';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
