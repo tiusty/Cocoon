@@ -113,8 +113,9 @@ class Survey extends Component {
                         favorite={this.inFavorites(home)}
                         visit={this.inVisitList(home)}
                         onVisitClick={this.handleVisitClick}
+                        onFavoriteClick={this.handleFavoriteClick}
                         show_score={false}
-                        show_heart={false}
+                        show_heart={true}
                         show_visit={true}
                     />
                 )}
