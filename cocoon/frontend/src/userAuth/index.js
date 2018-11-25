@@ -1,23 +1,14 @@
 import React from 'react';
-import { Component } from 'react';
 import ReactDOM from "react-dom";
 
 import './userAuth.css';
-import Main from './src/main'
+import Surveys from "./src/surveys";
 
-class UserAuth extends Component {
-    componentDidMount = () => {
-    };
-
-    render(){
-        return (
-           <Main/>
-        );
-    }
-}
-
+const components = {
+    'Surveys': Surveys,
+};
 
 ReactDOM.render(
-    React.createElement(UserAuth, window.props),
+    React.createElement(components[window.component], window.props),
     window.react_mount
 );

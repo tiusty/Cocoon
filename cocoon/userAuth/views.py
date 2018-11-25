@@ -39,14 +39,15 @@ class VisitList(ListView):
     context_object_name = 'surveys'
 
     def get_queryset(self):
-        user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+        user_prof = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_prof)
 
     def get_context_data(self, **kwargs):
         data = super(VisitList, self).get_context_data(**kwargs)
-        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        data['component'] = 'Surveys'
+        user_prof = get_object_or_404(UserProfile, user=self.request.user)
         (manager, _) = HunterDocManagerModel.objects.get_or_create(
-            user=user_profile.user,
+            user=user_prof.user,
         )
 
         # Since the page is loading, update all the signed documents to see if the status has changed
@@ -61,17 +62,17 @@ class VisitList(ListView):
 
         return data
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         # Run the client scheduler algorithm
-        user_profile = get_object_or_404(UserProfile, user=request.user)
-        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_profile)
+        user_prof = get_object_or_404(UserProfile, user=request.user)
+        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_prof)
         homes_list = []
         for home in survey.visit_list.all():
             homes_list.append(home)
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler()
-        result= client_scheduler_alg.run(homes_list, self.request.user)
+        result = client_scheduler_alg.run(homes_list, self.request.user)
         if result:
             messages.info(request, "Itinerary created")
         else:
