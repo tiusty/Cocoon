@@ -14,12 +14,12 @@
     If the home is not in the list, then it will add the home to the list
 
  */
-function set_favorite(num, url) {
+function set_favorite(num, survey, url) {
     console.log("favorited");
             $.ajax({
                 url: url,
                 type: "POST", //http method
-                data: {"fav": num},
+                data: {"fav": num, "survey": survey},
 
                 success: function (json) {
                     console.log("success");

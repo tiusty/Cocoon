@@ -12,12 +12,12 @@
  Description:
  This function adds the home to the users visit list
  */
-function set_visit_house(num, url) {
+function set_visit_house(num, survey, url) {
     $.ajax({
         url: url,
         type: "POST", //http method
         data: {
-            "visit_id": num,
+            "visit_id": num, "survey": survey,
         },
 
         success: function (json) {

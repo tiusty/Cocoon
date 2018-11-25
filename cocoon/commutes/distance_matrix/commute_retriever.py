@@ -8,7 +8,7 @@ from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 from cocoon.commutes.constants import GoogleCommuteNaming
 
 
-def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING):
+def retrieve_exact_commute(origins, destinations, mode):
     """
     This wraps the get_durations_and_distances to prevent a user from calling the matrix with the wrong value
 
@@ -18,18 +18,19 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING):
     If the mode type is not recognized then an empty list is returned
     :param origins: (list(string)) -> List of values that is accepted by the distance matrix
     :param destinations: (list(destination)) -> list of values that is accepted by the distance matrix
-    :param mode: (CommuteType.MODE) -> The commute type that is stored in the commute type format
+    :param mode: (CommuteType Model) -> The commute type that is stored in the commute type format
     :return: (list(tuple)) -> A list of tuples containing the duration and distance between each destination
         and the origin. If the commute type is not recognized then an empty list is returned
     """
     wrapper = DistanceWrapper()
-    if mode == CommuteType.DRIVING:
+    if mode.commute_type == CommuteType.DRIVING:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.DRIVING)
-    elif mode == CommuteType.TRANSIT:
+    elif mode.commute_type == CommuteType.TRANSIT:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.TRANSIT)
-    elif mode == CommuteType.BICYCLING:
+    elif mode.commute_type == CommuteType.BICYCLING:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.BICYCLING)
-    elif mode == CommuteType.WALKING:
+    elif mode.commute_type == CommuteType.WALKING:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING)
     else:
         return []
+

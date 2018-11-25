@@ -66,8 +66,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'cocoon.userAuth.context_processors.userAuth_processors.add_favorite_homes_processor',
-                'cocoon.userAuth.context_processors.userAuth_processors.add_visit_home_list_processor',
                 'cocoon.userAuth.context_processors.userAuth_processors.determine_user_type_processor',
             ],
         },

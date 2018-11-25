@@ -35,7 +35,6 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileInline(admin.StackedInline):
-    raw_id_fields = ("favorites", "visit_list",)
     model = UserProfile
     can_delete = False
     verbose_name_plural = 'Profile'

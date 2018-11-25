@@ -1,3 +1,6 @@
+# import python modules
+from datetime import datetime
+
 from django.db import models
 from django.db import transaction
 from django.utils import timezone
@@ -9,6 +12,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 
+
+def itinerary_directory_path(instance, filename):
+    return "itinerary/{0}/{1}".format(instance.client.id, str(instance.id) + "_" + filename)
 
 class ItineraryModel(models.Model):
     """
@@ -23,7 +29,7 @@ class ItineraryModel(models.Model):
            self.homes (ManytoManyField) -> Stores the homes that are associated with this itinerary
     """
     client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
-    itinerary = models.FileField(blank=True)
+    itinerary = models.FileField(blank=True, upload_to=itinerary_directory_path)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
@@ -134,8 +140,8 @@ class ItineraryModel(models.Model):
 
         # send confirmation email to user
         email.send()
-        
-        
+
+
 class TimeModel(models.Model):
     """
         Model for a proposed itinerary start time.
