@@ -12,6 +12,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 from django.shortcuts import get_object_or_404
 
+from django.utils.decorators import method_decorator
+
 # Used for email verification
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_text
@@ -29,6 +31,7 @@ def index(request):
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
 
+@method_decorator(login_required, name='dispatch')
 class VisitList(ListView):
 
     model = RentingSurveyModel

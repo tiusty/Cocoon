@@ -1,9 +1,5 @@
 # Import Python Modules
 import json
-import os
-import string
-
-from datetime import datetime
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
@@ -33,8 +29,7 @@ from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResu
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 
 # Import Itinerary model
-from cocoon.scheduler.models import ItineraryModel
-from cocoon.survey.serializers import RentSurveySerializer, VisitListSerializer
+from cocoon.survey.serializers import RentSurveySerializer
 
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
@@ -44,9 +39,6 @@ from cocoon.userAuth.forms import ApartmentHunterSignupForm
 # Rest Framework
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
-
-from django.views.decorators.csrf import csrf_exempt
-
 
 
 class RentingSurvey(CreateView):
@@ -363,6 +355,12 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     survey.favorites.add(home)
                 except RentDatabaseModel.DoesNotExist:
                     pass
+        elif 'survey' in self.request.data['type']:
+            # Delete the current survey
+            survey.delete()
+
+            # Return a list of all the current surveys
+            return self.list(request, args, kwargs)
 
         serializer = RentSurveySerializer(survey)
         return Response(serializer.data)

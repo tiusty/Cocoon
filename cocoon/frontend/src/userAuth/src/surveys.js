@@ -6,6 +6,9 @@ import axios from 'axios'
 import Survey from "./survey";
 import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
 
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class Surveys extends Component {
     state = {
         surveys: [],
@@ -33,9 +36,17 @@ class Surveys extends Component {
             })
     }
 
-    handleDelete = (counterId) => {
-        const surveys = this.state.surveys.filter(c => c.id !== counterId);
-        this.setState({ surveys });
+    handleDelete = (survey_id) => {
+        let endpoint = this.state.endpoint + survey_id + "/";
+        axios.put(endpoint,
+            {
+                survey_id: survey_id,
+                type: 'survey',
+            })
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+               this.setState( {surveys: this.handleData(response.data)})
+            });
     };
 
     render() {
