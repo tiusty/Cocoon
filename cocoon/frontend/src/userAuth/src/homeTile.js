@@ -6,7 +6,6 @@ import './homeTile.css'
 class HomeTile extends Component {
     state = {
         hover: false,
-        heartState: this.props.favorite,
     };
 
     renderScore(home) {
@@ -28,7 +27,7 @@ class HomeTile extends Component {
         let heart_span = '';
         if (this.props.show_heart) {
             let heart_class = "glyphicon";
-            if (this.state.heartState) {
+            if (this.props.favorite) {
                 heart_class += " glyphicon-heart"
             } else {
                 heart_class += " glyphicon-heart-empty"

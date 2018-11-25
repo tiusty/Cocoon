@@ -18,6 +18,7 @@ class Survey extends Component {
         url: "",
         price: 0,
         favorites:  [],
+        curr_favorites: [],
         visit_list:  [],
     };
 
@@ -29,6 +30,7 @@ class Survey extends Component {
                 this.setState({
                     name: response.data.name,
                     favorites: response.data.favorites,
+                    curr_favorites: response.data.favorites,
                     visit_list: response.data.visit_list,
                     url: response.data.url,
                 }),
@@ -64,7 +66,7 @@ class Survey extends Component {
             .catch(error => console.log('BAD', error))
             .then(response =>
                 this.setState({
-                    favorites: response.data.favorites
+                    curr_favorites: response.data.favorites
                 })
             );
     };
@@ -92,7 +94,7 @@ class Survey extends Component {
 
     inFavorites(home) {
         // Checks to see if the home exists within the favorites list
-        return this.state.favorites.filter(c => c.id === home.id).length > 0;
+        return this.state.curr_favorites.filter(c => c.id === home.id).length > 0;
     }
 
     inVisitList(home) {
