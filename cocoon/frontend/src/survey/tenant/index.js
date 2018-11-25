@@ -1,14 +1,24 @@
 import React from 'react';
 import { Component, Fragment } from 'react';
 
+import TenantForm from './tenantForm';
+
 export default class Tenant extends Component {
     render(){
         return (
             <>
-                <div className="survey-question">
-                    <h2>Tenant questions <span>here</span>?</h2>
-                </div>
-                <button className="col-md-12 survey-btn" onClick={this.props.handleNextStep}>
+                {this.props.tenants.map((t,i) => {
+                    return (
+                       <TenantForm
+                           tenantInfo={t}
+                           index={i}
+                           key={i}
+                           handleInputChange={this.props.handleInputChange}
+                           setCommuteAddress={this.props.setCommuteAddress}
+                       />
+                    )
+                })}
+                <button className="col-md-12 survey-btn" style={{marginTop: '30px'}} onClick={this.props.handleNextStep}>
                     Next
                 </button>
             </>

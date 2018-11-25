@@ -46,20 +46,21 @@ export default class General extends Component {
     handleEarliestClick = (day, { selected }) => {
         this.setState({
             selectedDayEarliest: selected ? undefined : day
-        }, () => this.props.setMoveDate('earliest_move_in', this.state.selectedDayEarliest))
+        }, () => this.props.setSurveyState('earliest_move_in', this.state.selectedDayEarliest))
     }
 
     handleLatestClick = (day, { selected }) => {
         this.setState({
             selectedDayLatest: selected  ? undefined : day
-        }, () => this.props.setMoveDate('latest_move_in', this.state.selectedDayLatest))
+        }, () => this.props.setSurveyState('latest_move_in', this.state.selectedDayLatest))
     }
 
     render(){
         return (
             <>
-                <div className="survey-question" onChange={(e) => {this.props.handleRadioChange(e, 'number');}}>
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
                     <h2>How many people are you <span>searching with</span>?</h2>
+                    {/*<span className="col-md-12 survey-error-message" id="number_of_people_error">You must select the number of people.</span>*/}
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="number_of_tenants" value="1" required />
                         <div>Just Me</div>
@@ -84,9 +85,9 @@ export default class General extends Component {
 
                 <div className="survey-question">
                     <h2>What's <span>your {this.props.number_of_tenants === 1 ? 'name' : 'names'}</span>?</h2>
-                    <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="Full Name" required data-tenantkey={0} onBlur={this.handleTenantName}/>
+                    <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} required data-tenantkey={0} onChange={this.handleTenantName}/>
                     {Array.from(Array(this.props.number_of_tenants - 1)).map((t,i) => { 1
-                        return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)} required data-tenantkey={i + 1} placeholder="Roommate Name" onBlur={this.handleTenantName} key={i} />
+                        return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)} autoCapitalize={'words'} required data-tenantkey={i + 1} placeholder="First and Last Name" onChange={this.handleTenantName} key={i} />
                     })}
                 </div>
 
@@ -115,7 +116,7 @@ export default class General extends Component {
                     </div>
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.props.handleRadioChange(e, 'number');}}>
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
                     <h2>How badly do you <span>need to move</span>?</h2>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="move_weight" value="0" required />
@@ -135,7 +136,7 @@ export default class General extends Component {
                     </label>
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.props.handleRadioChange(e, 'number');}}>
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
                     <h2>How many <span>bedrooms</span> do you need?</h2>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="num_bedrooms" value="0" required />

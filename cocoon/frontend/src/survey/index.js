@@ -6,6 +6,7 @@ import Progress from './progress';
 import General from './general';
 import Tenant from './tenant';
 import Amenities from './amenities';
+import Details from './details';
 
 import './survey.css';
 
@@ -16,13 +17,19 @@ class Survey extends Component {
         this.state = {
             step: 1,
             number_of_tenants: 1,
+            home_type: 2,
             move_weight: 0,
             num_bedrooms: 1,
             desired_price: 0,
+            price_weight: 1,
             max_price: 0,
             earliest_move_in: undefined,
             latest_move_in: undefined,
-            tenants: []
+            tenants: [],
+            // tenants-TOTAL_FORMS: 4,
+            // tenants-INITIAL_FORMS: 0,
+            // tenants-MIN_NUM_FORMS: 0,
+            // tenants-MAX_NUM_FORMS: 1000,
         };
     }
 
@@ -33,6 +40,10 @@ class Survey extends Component {
         let finalTenants = [];
         for(let i = 0; i < this.state.number_of_tenants; i++) {
             finalTenants.push(tenants[i]);
+            this.setState({
+                [`tenants-${i}-first_name`]: tenants[i].first_name,
+                [`tenants-${i}-last_name`]: tenants[i].last_name,
+            })
         }
         this.setState({
             tenants: finalTenants
@@ -46,19 +57,25 @@ class Survey extends Component {
             case 1:
                 return <General
                         handleNextStep={this.handleNextStep}
-                        handleRadioChange={this.handleRadioChange}
+                        handleInputChange={this.handleInputChange}
                         number_of_tenants={this.state.number_of_tenants}
-                        handleTenantArray={this.handleTenantArray}
                         setTenants={this.setTenants}
                         setFinalTenants={this.setFinalTenants}
                         setPrice={this.setPrice}
-                        setMoveDate={this.setMoveDate} />;
+                        setSurveyState={this.setSurveyState} />;
             case 2:
                 return <Tenant
-                        handleNextStep={this.handleNextStep} />;
+                        handleNextStep={this.handleNextStep}
+                        handleInputChange={this.handleInputChange}
+                        setCommuteAddress={this.setCommuteAddress}
+                        tenants={this.state.tenants} />;
             case 3:
                 return <Amenities
-                        handleNextStep={this.handleNextStep} />;
+                        handleNextStep={this.handleNextStep}
+                        setSurveyState={this.setSurveyState}
+                        handleInputChange={this.handleInputChange} />;
+            case 4:
+                return <Details is_authenticated={this.props.is_authenticated} />;
         }
     }
 
@@ -68,10 +85,10 @@ class Survey extends Component {
         this.setState({
             step: this.state.step + 1
         })
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
     }
 
-
-    handleRadioChange = (e, type) => {
+    handleInputChange = (e, type) => {
         const { name, value } = e.target;
         if(type === 'number') {
             this.setState({
@@ -84,27 +101,18 @@ class Survey extends Component {
         }
     }
 
-
     // Set names for tenants and adds them to array of objects
-    // with empty values that will be set later in survey
+    // so we can map over them and render them out on tenant form
     setTenants = (first_name, last_name, index) => {
         // creates copy of tenants array to modify
         let tenants = [...this.state.tenants];
         let new_tenant = {};
-        new_tenant.first_name = first_name;
-        new_tenant.last_name = last_name;
-        new_tenant.is_student = '';
-        new_tenant.street_address = '';
-        new_tenant.city = '';
-        new_tenant.state = '';
-        new_tenant.zip_code = '';
-        new_tenant.min_commute = '';
-        new_tenant.commute_weight = '';
-        new_tenant.commute_type = '';
+        new_tenant.first_name = first_name[0].toUpperCase() + first_name.substr(1);
+        new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
         tenants[index] = new_tenant;
         this.setState({
             tenants: tenants
-        }, () => console.log(this.state.tenants));
+        });
     }
 
     setPrice = (desired, max) => {
@@ -114,19 +122,34 @@ class Survey extends Component {
         });
     }
 
-    setMoveDate = (state, value) => {
+    setSurveyState = (state, value) => {
         this.setState({
-            state: value
-        }, () => console.log(state + ': ' + this.state.state))
+            [state]: value
+        }, () => console.log(state + ': ' + this.state[state]))
+    }
+
+    setCommuteAddress = (tenantId, place) => {
+        const city = place.address_components.filter(c => c.types[0] === 'locality');
+        const formatCity = city[0].long_name;
+        const state = place.address_components.filter(c => c.types[0] === 'administrative_area_level_1');
+        const formatState = state[0].short_name;
+        const zip_code = place.address_components.filter(c => c.types[0] === 'postal_code');
+        const formatZip = zip_code[0].long_name;
+        this.setState({
+            [`${tenantId}street_address`]: place.name,
+            [`${tenantId}city`]: formatCity,
+            [`${tenantId}state`]: formatState,
+            [`${tenantId}zip_code`]: formatZip
+        })
     }
 
     render(){
         return (
             <div className="survey-wrapper">
                 <Progress step={this.state.step}/>
-                <form>
+                <div className="form-wrapper">
                     {this.renderForm(this.state.step)}
-                </form>
+                </div>
             </div>
         );
     }
