@@ -20,16 +20,16 @@ class Survey extends Component {
             home_type: 2,
             move_weight: 0,
             num_bedrooms: 1,
-            desired_price: 0,
+            desired_price: 1000,
             price_weight: 1,
-            max_price: 0,
+            max_price: 3000,
             earliest_move_in: undefined,
             latest_move_in: undefined,
             tenants: [],
-            // tenants-TOTAL_FORMS: 4,
-            // tenants-INITIAL_FORMS: 0,
-            // tenants-MIN_NUM_FORMS: 0,
-            // tenants-MAX_NUM_FORMS: 1000,
+            tenants_TOTAL_FORMS: this.state.number_of_tenants,
+            tenants_INITIAL_FORMS: 0,
+            tenants_MIN_NUM_FORMS: 0,
+            tenants_MAX_NUM_FORMS: 1000,
         };
     }
 

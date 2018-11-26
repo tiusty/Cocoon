@@ -60,7 +60,7 @@ export default class General extends Component {
             <>
                 <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
                     <h2>How many people are you <span>searching with</span>?</h2>
-                    {/*<span className="col-md-12 survey-error-message" id="number_of_people_error">You must select the number of people.</span>*/}
+                    <span className="col-md-12 survey-error-message" id="number_of_people_error">You must select the number of people.</span>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="number_of_tenants" value="1" required />
                         <div>Just Me</div>
@@ -156,6 +156,7 @@ export default class General extends Component {
                     </label>
                 </div>
 
+                {/*<button className="col-md-12 survey-btn" onClick={this.handleValidation}>*/}
                 <button className="col-md-12 survey-btn" onClick={this.props.handleNextStep}>
                     Next
                 </button>
