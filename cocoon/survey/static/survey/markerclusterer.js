@@ -53,7 +53,7 @@
  *     'averageCenter': (boolean) Whether the center of each cluster should be
  *                      the average of all markers in the cluster.
  *     'minimumClusterSize': (number) The minimum number of markers to be in a
- *                           cluster before the markers are hidden and a count
+ *                           cluster before the markers are hidden and a value
  *                           is shown.
  *     'styles': (object) An object that has style properties:
  *       'url': (string) The image url.

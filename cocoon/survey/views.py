@@ -1,9 +1,5 @@
 # Import Python Modules
 import json
-import os
-import string
-
-from datetime import datetime
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
@@ -33,13 +29,16 @@ from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResu
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 
 # Import Itinerary model
-from cocoon.scheduler.models import ItineraryModel
-
+from cocoon.survey.serializers import RentSurveySerializer
 
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
+
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 
 
 class RentingSurvey(CreateView):
@@ -311,6 +310,60 @@ class VisitList(ListView):
         client_scheduler_alg.run(homes_list, self.request.user)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
+
+
+class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+
+    serializer_class = RentSurveySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Updates the visit_list to either add or remove a home from the list
+
+        :param request:
+        :param args:
+        :param kwargs:
+            Expects:
+                home_id: (int) -> The int of the home to toggle
+        :return:
+        """
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        pk = kwargs.pop('pk', None)
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+
+        if 'visit' in self.request.data['type']:
+            try:
+                home = survey.visit_list.get(id=self.request.data['home_id'])
+                survey.visit_list.remove(home)
+            except RentDatabaseModel.DoesNotExist:
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.visit_list.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
+        elif 'favorite' in self.request.data['type']:
+            try:
+                home = survey.favorites.get(id=self.request.data['home_id'])
+                survey.favorites.remove(home)
+            except RentDatabaseModel.DoesNotExist:
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.favorites.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
+        elif 'survey' in self.request.data['type']:
+            # Delete the current survey
+            survey.delete()
+
+            # Return a list of all the current surveys
+            return self.list(request, args, kwargs)
+
+        serializer = RentSurveySerializer(survey)
+        return Response(serializer.data)
 
 
 #######################################################
