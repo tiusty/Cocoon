@@ -16,7 +16,20 @@ import json
 
 
 class ClientScheduler(TemplateView):
+    """
+    Loads the template for the ClientScheduler
+
+    The template has the entry point for React and react handles
+        the rest of the frontend
+    """
     template_name = 'scheduler/clientScheduler.html'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        # Tells React which component to load onto the page
+        data['component'] = ClientScheduler.__name__
+        return data
 
 
 @login_required()
