@@ -10,6 +10,8 @@ import Details from './details';
 
 import './survey.css';
 
+import axios from 'axios'
+
 class Survey extends Component {
 
     constructor(props) {
@@ -32,6 +34,30 @@ class Survey extends Component {
             // tenants-MAX_NUM_FORMS: 1000,
         };
     }
+
+
+    handleSubmit = () => {
+        /**
+         * This function handles submitting the form to the backend via a rest API
+         *  This will return the status of that request and if success redirect,
+         *      otherwise it will return the form errors
+         */
+        console.log('submit here')
+        // Function sends a home and toggles that home in the visit_list
+        // let endpoint = this.props.endpoint + this.state.id + "/";
+        // axios.put(endpoint,
+        //     {
+        //         home_id: home.id,
+        //         type: 'favorite',
+        //
+        //     })
+        //     .catch(error => console.log('BAD', error))
+        //     .then(response =>
+        //         this.setState({
+        //             curr_favorites: response.data.favorites
+        //         })
+        //     );
+    };
 
     // When changing to step 2 this trims the tenant array to be
     // the length of number_of_tenants
@@ -75,7 +101,10 @@ class Survey extends Component {
                         setSurveyState={this.setSurveyState}
                         handleInputChange={this.handleInputChange} />;
             case 4:
-                return <Details is_authenticated={this.props.is_authenticated} />;
+                return <Details
+                    is_authenticated={this.props.is_authenticated}
+                    onSubmit={this.handleSubmit}
+                />;
         }
     }
 
