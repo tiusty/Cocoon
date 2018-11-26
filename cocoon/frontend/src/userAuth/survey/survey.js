@@ -71,7 +71,7 @@ class Survey extends Component {
         axios.put(endpoint,
             {
                 home_id: home.id,
-                type: 'visit'
+                type: 'visit_toggle'
 
             })
             .catch(error => console.log('BAD', error))
@@ -96,7 +96,7 @@ class Survey extends Component {
         axios.put(endpoint,
             {
                 home_id: home.id,
-                type: 'favorite',
+                type: 'favorite_toggle',
 
             })
             .catch(error => console.log('BAD', error))

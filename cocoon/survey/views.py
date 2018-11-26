@@ -322,20 +322,25 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
     def update(self, request, *args, **kwargs):
         """
-        Updates the visit_list to either add or remove a home from the list
+        Updates a survey
 
         :param request:
         :param args:
         :param kwargs:
             Expects:
                 home_id: (int) -> The int of the home to toggle
+                type: (string) -> The type of update that is occurring
+                    One of:
+                        visit_toggle: A visit list home is being toggled
+                        favorite_toggle: A favorite home is being toggled
+                        survey_delete: A survey is being deleted
         :return:
         """
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         pk = kwargs.pop('pk', None)
         survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
 
-        if 'visit' in self.request.data['type']:
+        if 'visit_toggle' in self.request.data['type']:
             try:
                 home = survey.visit_list.get(id=self.request.data['home_id'])
                 survey.visit_list.remove(home)
@@ -345,7 +350,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     survey.visit_list.add(home)
                 except RentDatabaseModel.DoesNotExist:
                     pass
-        elif 'favorite' in self.request.data['type']:
+        elif 'favorite_toggle' in self.request.data['type']:
             try:
                 home = survey.favorites.get(id=self.request.data['home_id'])
                 survey.favorites.remove(home)
@@ -355,7 +360,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     survey.favorites.add(home)
                 except RentDatabaseModel.DoesNotExist:
                     pass
-        elif 'survey' in self.request.data['type']:
+        elif 'survey_delete' in self.request.data['type']:
             # Delete the current survey
             survey.delete()
 

@@ -69,7 +69,7 @@ class Surveys extends Component {
         axios.put(endpoint,
             {
                 survey_id: survey_id,
-                type: 'survey',
+                type: 'survey_delete',
             })
             .catch(error => console.log('Bad', error))
             .then(response => {
