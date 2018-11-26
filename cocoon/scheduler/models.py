@@ -16,6 +16,7 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 def itinerary_directory_path(instance, filename):
     return "itinerary/{0}/{1}".format(instance.client.id, str(instance.id) + "_" + filename)
 
+
 class ItineraryModel(models.Model):
     """
        Model for Itinerary. These are based on the interface designed on the Google Doc.
@@ -61,7 +62,7 @@ class ItineraryModel(models.Model):
             True if the itinerary is claimed (associated with an agent)
             False otherwise (available for an agent to claim)
         """
-        return self.agent != None
+        return self.agent is not None
 
     @property
     def is_scheduled(self):
@@ -69,7 +70,7 @@ class ItineraryModel(models.Model):
         Returns if the itinerary has been schedueld (has a start time)
         :return:
         """
-        return self.selected_start_time != None
+        return self.selected_start_time is not None
 
     @transaction.atomic
     def select_start_time(self, start_time):
