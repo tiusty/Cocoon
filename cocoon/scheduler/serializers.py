@@ -11,7 +11,8 @@ from cocoon.userAuth.serializers import MyUserSerializer
 class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
 
     client = MyUserSerializer(read_only=True)
+    agent = MyUserSerializer(read_only=True)
 
     class Meta:
         model = ItineraryModel
-        fields = ('id', 'client')
+        fields = ('id', 'client', 'itinerary', 'agent', 'tour_duration_seconds', 'selected_start_time')
