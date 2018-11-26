@@ -12,8 +12,8 @@ class ClientScheduler extends Component {
     state = {
         id: null,
         loaded: false,
-        is_claimed: null,
-        is_scheduled: null,
+        is_claimed: false,
+        is_scheduled: false,
     };
 
     parseData(data) {
@@ -80,7 +80,7 @@ class ClientScheduler extends Component {
     };
 
     renderItinerary = () => {
-        if (this.state.loaded) {
+        if (this.state.loaded === true) {
             if (this.state.id) {
                 return (
                     <Itinerary
