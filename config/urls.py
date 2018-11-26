@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^adminBostoncocoon/', admin.site.urls),
     url(r'^', include('cocoon.homePage.urls')),
     url(r'^userAuth/', include('cocoon.userAuth.urls')),
+    url(r'^houseDatabase/', include('cocoon.houseDatabase.urls')),
     url(r'^survey/', include('cocoon.survey.urls')),
     url(r'^scheduler/', include('cocoon.scheduler.urls')),
     url(r'^signatures/', include('cocoon.signature.urls')),
