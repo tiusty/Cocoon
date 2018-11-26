@@ -17,10 +17,6 @@ class Surveys extends Component {
         // Stores the endpoint needed for this Component
         endpoint: userAuth_endpoints['userSurveys'],
     };
-    //
-    // constructor(props) {
-    //     super(props);
-    // }
 
     parseData(data) {
         /**
