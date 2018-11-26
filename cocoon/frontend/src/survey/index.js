@@ -12,6 +12,12 @@ import './survey.css';
 
 import axios from 'axios'
 
+import userAuth_endpoints from "../endpoints/userAuth_endpoints";
+import CSRFToken from '../common/csrftoken';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class Survey extends Component {
 
     constructor(props) {
@@ -28,11 +34,14 @@ class Survey extends Component {
             earliest_move_in: undefined,
             latest_move_in: undefined,
             tenants: [],
-            // tenants-TOTAL_FORMS: 4,
-            // tenants-INITIAL_FORMS: 0,
-            // tenants-MIN_NUM_FORMS: 0,
-            // tenants-MAX_NUM_FORMS: 1000,
         };
+
+        // This allows the variable name to include the hypen. Including directly
+        //  breaks the variable since it isn't allowed in react
+        this.state['tenants-TOTAL_FORMS'] = this.state.number_of_tenants;
+        this.state['tenants-INITIAL_FORMS'] = 0;
+        this.state['tenants-MIN_NUM_FORMS'] = 0;
+        this.state['tenants-MAX_NUM_FORMS'] = 1000;
     }
 
 
@@ -42,21 +51,18 @@ class Survey extends Component {
          *  This will return the status of that request and if success redirect,
          *      otherwise it will return the form errors
          */
-        console.log('submit here')
-        // Function sends a home and toggles that home in the visit_list
-        // let endpoint = this.props.endpoint + this.state.id + "/";
-        // axios.put(endpoint,
-        //     {
-        //         home_id: home.id,
-        //         type: 'favorite',
-        //
-        //     })
-        //     .catch(error => console.log('BAD', error))
-        //     .then(response =>
-        //         this.setState({
-        //             curr_favorites: response.data.favorites
-        //         })
-        //     );
+
+        // Posts the state which contains all the form elements that are needed
+        axios.post(userAuth_endpoints['userSurveys'],
+            {
+                data: this.state,
+                type: 'favorite',
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                console.log('submitted!')
+            );
     };
 
     // When changing to step 2 this trims the tenant array to be

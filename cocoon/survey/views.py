@@ -312,13 +312,33 @@ class VisitList(ListView):
         return HttpResponseRedirect(reverse('survey:visitList'))
 
 
-class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin,
+                        mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     serializer_class = RentSurveySerializer
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Function currently not done and only used for testing. Does nothing right now
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        print("in post")
+        form = RentSurveyForm(self.request.data['data'])
+        form.is_valid()
+        print(form.errors)
+
+        tenants = TenantFormSet(self.request.data['data'])
+        tenants.is_valid()
+        print(tenants.errors)
+
+        print('End of create')
 
     def update(self, request, *args, **kwargs):
         """
