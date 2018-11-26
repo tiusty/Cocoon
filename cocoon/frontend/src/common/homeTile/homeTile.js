@@ -1,6 +1,8 @@
+// Import React Components
 import React from 'react'
 import { Component } from 'react';
 
+// Import Cocoon Components
 import './homeTile.css'
 
 class HomeTile extends Component {

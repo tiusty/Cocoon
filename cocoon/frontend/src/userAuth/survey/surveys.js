@@ -1,11 +1,13 @@
+// Import React Components
 import React from 'react'
 import { Component } from 'react';
 import axios from 'axios'
 
-
+// Import Cocoon Components
 import Survey from "./survey";
 import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
 
+// For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 

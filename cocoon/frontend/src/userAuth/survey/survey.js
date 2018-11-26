@@ -1,15 +1,19 @@
+// Import React Components
 import React from 'react'
 import { Component } from 'react';
-import HomeTile from "../../common/homeTile/homeTile";
 import axios from 'axios'
 
+// Import Cocoon Components
 import './survey.css'
+import HomeTile from "../../common/homeTile/homeTile";
 import survey_endpoints from '../../endpoints/survey_endpoints'
 import CSRFToken from '../../common/csrftoken';
 
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+// Import Pop-up button components
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
+// For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
