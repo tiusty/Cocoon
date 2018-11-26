@@ -10,9 +10,14 @@ from django.views.generic import TemplateView
 from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import UserProfile
 from cocoon.scheduler.models import ItineraryModel, TimeModel
+from .serializers import ItinerarySerializer
 
 # Python Modules
 import json
+
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 
 
 class ClientScheduler(TemplateView):
@@ -30,6 +35,12 @@ class ClientScheduler(TemplateView):
         # Tells React which component to load onto the page
         data['component'] = ClientScheduler.__name__
         return data
+
+
+class ItineraryViewSet(viewsets.ModelViewSet):
+
+    queryset = ItineraryModel.objects.all()
+    serializer_class = ItinerarySerializer
 
 
 @login_required()

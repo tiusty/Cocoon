@@ -1,6 +1,11 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from . import views
+
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'clientScheduler', views.ItineraryViewSet)
 
 app_name = 'scheduler'
 urlpatterns = [
@@ -12,4 +17,7 @@ urlpatterns = [
     url(r'^claimItinerary/$', views.claim_itinerary, name="claimItinerary"),
     url(r'^selectStartTime/$', views.select_start_time, name="selectStartTime"),
     url(r'^unscheduleItinerary/$', views.unschedule_itinerary, name="unscheduleItinerary"),
+
+    # Api
+    url(r'^api/', include(router.urls))
 ]
