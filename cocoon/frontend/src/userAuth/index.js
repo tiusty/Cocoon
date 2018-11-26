@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from "react-dom";
 
 import './userAuth.css';
-import Surveys from "./src/surveys";
+import Surveys from "./survey/surveys";
 
 const components = {
     'Surveys': Surveys,
