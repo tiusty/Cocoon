@@ -2,18 +2,34 @@
 import React from 'react'
 import { Component } from 'react';
 import axios from 'axios'
+import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 
 class Itinerary extends Component {
-    state = {};
+    state = {
+        agent: null,
+        client: null,
+        homes: [],
+        id: null,
+        selected_start_time: null,
+        tour_duration_seconds: null,
+    };
 
     componentDidMount() {
         /**
          *  Retrieves all the surveys associated with the user
          */
-        axios.get(this.state.endpoint)
+        axios.get(scheduler_endpoints['itinerary'])
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {surveys: this.parseData(response.data)})
+                console.log(response.data),
+                this.setState({
+                    agent: response.data[0].agent,
+                    client: response.data[0].client,
+                    homes: response.data[0].homes,
+                    id: response.data[0].id,
+                    selected_start_time: response.data[0].selected_start_time,
+                    tour_duration_seconds: response.data[0].tour_duration_seconds,
+                })
             })
     }
 

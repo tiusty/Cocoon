@@ -2,12 +2,11 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
-from django.db import models
+from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
 
 # Models
-from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import UserProfile
 from cocoon.scheduler.models import ItineraryModel, TimeModel
 from .serializers import ItinerarySerializer
@@ -37,10 +36,14 @@ class ClientScheduler(TemplateView):
         return data
 
 
+@method_decorator(login_required, name='dispatch')
 class ItineraryViewSet(viewsets.ModelViewSet):
 
-    queryset = ItineraryModel.objects.all()
     serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return ItineraryModel.objects.filter(client=user_profile.user)
 
 
 @login_required()
