@@ -1,19 +1,16 @@
+# Import DRF modules
 from rest_framework import serializers
 
-from cocoon.scheduler.models import ItineraryModel
-from cocoon.userAuth.models import MyUser
+# Import App modules
+from .models import ItineraryModel
 
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = MyUser
-        fields = ('id', 'email')
+# Import Third party modules
+from cocoon.userAuth.serializers import MyUserSerializer
 
 
 class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
 
-    client = UserSerializer(read_only=True)
+    client = MyUserSerializer(read_only=True)
 
     class Meta:
         model = ItineraryModel
