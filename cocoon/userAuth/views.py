@@ -6,19 +6,78 @@ from cocoon.userAuth.models import UserProfile, MyUser
 from cocoon.survey.models import RentingSurveyModel
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, ListView
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
+from django.shortcuts import get_object_or_404
+
+from django.utils.decorators import method_decorator
 
 # Used for email verification
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_text
 from .tokens import account_activation_token
 
+# Import Cocoon Modules
+from cocoon.signature.models import HunterDocManagerModel
+from cocoon.scheduler import views as scheduler_views
+
+# Import Scheduler algorithm
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+
 
 def index(request):
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
+
+
+@method_decorator(login_required, name='dispatch')
+class VisitList(ListView):
+
+    model = RentingSurveyModel
+    template_name = 'userAuth/surveys.html'
+    context_object_name = 'surveys'
+
+    def get_queryset(self):
+        user_prof = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_prof)
+
+    def get_context_data(self, **kwargs):
+        data = super(VisitList, self).get_context_data(**kwargs)
+        data['component'] = 'Surveys'
+        user_prof = get_object_or_404(UserProfile, user=self.request.user)
+        (manager, _) = HunterDocManagerModel.objects.get_or_create(
+            user=user_prof.user,
+        )
+
+        # Since the page is loading, update all the signed documents to see if the status has changed
+        manager.update_all_is_signed()
+
+        # Create context to update the html based on the status of the documents
+        data['pre_tour_signed'] = manager.is_pre_tour_signed()
+        data['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+
+        # Get the user itineraries
+        data.update(scheduler_views.get_user_itineraries(self.request))
+
+        return data
+
+    def post(self, request):
+        # Run the client scheduler algorithm
+        user_prof = get_object_or_404(UserProfile, user=request.user)
+        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_prof)
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        # Run client_scheduler algorithm
+        client_scheduler_alg = ClientScheduler()
+        result = client_scheduler_alg.run(homes_list, self.request.user)
+        if result:
+            messages.info(request, "Itinerary created")
+        else:
+            messages.warning(request, "Itinerary already exists")
+        return HttpResponseRedirect(reverse('userAuth:surveys'))
 
 
 def loginPage(request):

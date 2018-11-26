@@ -6,10 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
 from django.urls import reverse
-from django.forms import inlineformset_factory
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 from django.db import transaction
 from django.contrib.auth import login
 
@@ -27,10 +25,20 @@ from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
 
+# Import Scheduler algorithm
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+
+# Import Itinerary model
+from cocoon.survey.serializers import RentSurveySerializer
+
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
+
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 
 
 class RentingSurvey(CreateView):
@@ -57,7 +65,7 @@ class RentingSurvey(CreateView):
             for x in range(int(request_post['number_of_tenants']), 5):
                 for field in self.request.POST:
                     if 'tenants-' + str(x) in field:
-                       del request_post[field]
+                        del request_post[field]
             self.request.POST = request_post
             # Populate the formset with the undesired formsets stripped away
             data['tenants'] = TenantFormSet(self.request.POST)
@@ -198,20 +206,42 @@ class RentingResultSurvey(UpdateView):
         """
         Adds the tenant form context
         Also runs the algorithm and returns the homes to the template
+
+        The Rent Algorithm is only run when the request is not POST (i.e loading the page)
+            or when the form is invalid (i.e to reload the page with errors)
+            On form_valid it is not rendered because it will be redirected back to the page
+                and thus the get method will run the algorithm (thus prevents running it twice)
+
+        kwargs:
+            invalid_form: -> Determines if the get_context_data is being called from form_invalid
         """
         data = super(RentingResultSurvey, self).get_context_data(**kwargs)
-        rent_algorithm = RentAlgorithm()
-        rent_algorithm.run(self.object)
-        data['houseList'] = [x for x in rent_algorithm.homes[:50] if x.percent_score() >= 0]
+
+        form_invalid = kwargs.pop('invalid_form', False)
+        # Only run the Algorithm if the form was either invalid or it was a get method
+        #   We don't want to run the algorithm on form valid
+        if form_invalid or not self.request.POST:
+            rent_algorithm = RentAlgorithm()
+            rent_algorithm.run(self.object)
+            data['houseList'] = [x for x in rent_algorithm.homes[:25] if x.percent_score() >= 0]
 
         # If the request is a post, then populate the tenant form set
         if self.request.POST:
             data['tenants'] = TenantFormSetResults(self.request.POST, instance=self.object)
-
         # Otherwise if it is just a get, then just create a new form set
         else:
             data['tenants'] = TenantFormSetResults(instance=self.object)
+
+        favorite_homes = self.object.favorites.all()
+        data['user_favorite_houses'] = favorite_homes
         return data
+
+    def form_invalid(self, form):
+        """
+        If the form is invalid, re-render the context data with the
+        data-filled form and errors.
+        """
+        return self.render_to_response(self.get_context_data(form=form, invalid_form=True))
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -225,40 +255,135 @@ class RentingResultSurvey(UpdateView):
             # Save the survey
             with transaction.atomic():
                 form.instance.user_profile = get_object_or_404(UserProfile, user=user)
-                object = form.save()
+                survey = form.save()
 
             # Now save the the tenants
-            tenants.instance = object
+            tenants.instance = survey
             tenants.save()
         else:
-            # If there is an error then re-render the survey page
-            return self.render_to_response(self.get_context_data(form=form))
-
+            # If there are any errors then the form is not valid
+            return self.form_invalid(form=form)
         messages.add_message(self.request, messages.SUCCESS, "Survey Updated!")
         return HttpResponseRedirect(reverse('survey:rentSurveyResult',
                                             kwargs={"survey_url": self.object.url}))
 
 
-@login_required
-def visit_list(request):
+class VisitList(ListView):
 
-    context = scheduler_views.get_user_itineraries(request)
-    context['error_message'] = []
+    model = RentingSurveyModel
+    template_name = 'survey/visitList.html'
+    context_object_name = 'surveys'
 
-    # Retrieve the models
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-    (manager, _) = HunterDocManagerModel.objects.get_or_create(
-        user=user_profile.user,
-    )
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
 
-    # Since the page is loading, update all the signed documents to see if the status has changed
-    manager.update_all_is_signed()
+    def get_context_data(self, **kwargs):
+        data = super(VisitList, self).get_context_data(**kwargs)
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        (manager, _) = HunterDocManagerModel.objects.get_or_create(
+            user=user_profile.user,
+        )
 
-    # Create context to update the html based on the status of the documents
-    context['pre_tour_signed'] = manager.is_pre_tour_signed()
-    context['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+        # Since the page is loading, update all the signed documents to see if the status has changed
+        manager.update_all_is_signed()
 
-    return render(request, 'survey/visitList.html', context)
+        # Create context to update the html based on the status of the documents
+        data['pre_tour_signed'] = manager.is_pre_tour_signed()
+        data['pre_tour_forms_created'] = manager.pre_tour_forms_created()
+
+        # Get the user itineraries
+        data.update(scheduler_views.get_user_itineraries(self.request))
+
+        return data
+
+    def post(self, request, *args, **kwargs):
+        # Run the client scheduler algorithm
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_profile)
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        # Run client_scheduler algorithm
+        client_scheduler_alg = ClientScheduler()
+        client_scheduler_alg.run(homes_list, self.request.user)
+        messages.info(request, "Itinerary created")
+        return HttpResponseRedirect(reverse('survey:visitList'))
+
+
+class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin,
+                        mixins.CreateModelMixin, viewsets.GenericViewSet):
+
+    serializer_class = RentSurveySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Function currently not done and only used for testing. Does nothing right now
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        print("in post")
+        form = RentSurveyForm(self.request.data['data'])
+        form.is_valid()
+        print(form.errors)
+
+        tenants = TenantFormSet(self.request.data['data'])
+        tenants.is_valid()
+        print(tenants.errors)
+
+        print('End of create')
+
+    def update(self, request, *args, **kwargs):
+        """
+        Updates the visit_list to either add or remove a home from the list
+
+        :param request:
+        :param args:
+        :param kwargs:
+            Expects:
+                home_id: (int) -> The int of the home to toggle
+        :return:
+        """
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        pk = kwargs.pop('pk', None)
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+
+        if 'visit' in self.request.data['type']:
+            try:
+                home = survey.visit_list.get(id=self.request.data['home_id'])
+                survey.visit_list.remove(home)
+            except RentDatabaseModel.DoesNotExist:
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.visit_list.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
+        elif 'favorite' in self.request.data['type']:
+            try:
+                home = survey.favorites.get(id=self.request.data['home_id'])
+                survey.favorites.remove(home)
+            except RentDatabaseModel.DoesNotExist:
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.favorites.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
+        elif 'survey' in self.request.data['type']:
+            # Delete the current survey
+            survey.delete()
+
+            # Return a list of all the current surveys
+            return self.list(request, args, kwargs)
+
+        serializer = RentSurveySerializer(survey)
+        return Response(serializer.data)
 
 
 #######################################################
@@ -286,6 +411,7 @@ def set_favorite(request):
         if request.user.is_authenticated():
             # Get the id that is associated with the AJAX request
             house_id = request.POST.get('fav')
+            survey_id = request.POST.get('survey')
             # Retrieve the house associated with that id
             try:
                 house = RentDatabaseModel.objects.get(id=house_id)
@@ -293,18 +419,25 @@ def set_favorite(request):
                     user_profile = UserProfile.objects.get(user=request.user)
                     # If the house is already in the database then remove it and return 0
                     # Which means that it is no longer in the favorites
-                    if user_profile.favorites.filter(id=house_id).exists():
-                        user_profile.favorites.remove(house)
-                        return HttpResponse(json.dumps({"result": "0"}),
+                    try:
+                        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(id=survey_id)
+                        if survey.favorites.filter(id=house_id).exists():
+                            survey.favorites.remove(house)
+                            return HttpResponse(json.dumps({"result": "0"}),
+                                                content_type="application/json",
+                                                )
+                        # If the  house is not in the Many to Many then add it and
+                        # return 1 which means it is currently in the favorites
+                        else:
+                            survey.favorites.add(house)
+                            return HttpResponse(json.dumps({"result": "1"}),
+                                                content_type="application/json",
+                                                )
+                    except RentingSurveyModel.DoesNotExist:
+                        return HttpResponse(json.dumps({"result": "Survey Does not exist"}),
                                             content_type="application/json",
                                             )
-                    # If the  house is not in the Many to Many then add it and
-                    # return 1 which means it is currently in the favorites
-                    else:
-                        user_profile.favorites.add(house)
-                        return HttpResponse(json.dumps({"result": "1"}),
-                                            content_type="application/json",
-                                            )
+
                 except UserProfile.DoesNotExist:
                     return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
                                         content_type="application/json",
@@ -371,21 +504,37 @@ def set_visit_house(request):
         # Only care if the user is authenticated
         if request.user.is_authenticated():
             # Get the id that is associated with the AJAX request
-            home_id = request.POST.get('visit_id')
+            house_id = request.POST.get('visit_id')
+            survey_id = request.POST.get('survey')
             try:
-                user_profile = UserProfile.objects.get(user=request.user)
+                house = RentDatabaseModel.objects.get(id=house_id)
                 try:
-                    home = RentDatabaseModel.objects.get(id=home_id)
-                    user_profile.visit_list.add(home)
-                    return HttpResponse(json.dumps({"result": "1",
-                                                    "homeId": home_id}),
-                                        content_type="application/json", )
-                except RentDatabaseModel.DoesNotExist:
-                    return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
+                    user_profile = UserProfile.objects.get(user=request.user)
+                    try:
+                        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(id=survey_id)
+                        if survey.visit_list.filter(id=house_id).exists():
+                            survey.visit_list.remove(house)
+                            return HttpResponse(json.dumps({"result": "0"}),
+                                                content_type="application/json",
+                                                )
+                        # If the  house is not in the Many to Many then add it and
+                        # return 1 which means it is currently in the favorites
+                        else:
+                            survey.visit_list.add(house)
+                            return HttpResponse(json.dumps({"result": "1"}),
+                                                content_type="application/json",
+                                                )
+                    except RentingSurveyModel.DoesNotExist:
+                        return HttpResponse(json.dumps({"result": "Survey Does not exist"}),
+                                            content_type="application/json",
+                                            )
+                except UserProfile.DoesNotExist:
+                    return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
                                         content_type="application/json",
                                         )
-            except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+            # Return an error is the house cannot be found
+            except RentDatabaseModel.DoesNotExist:
+                return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
                                     content_type="application/json",
                                     )
         else:
@@ -482,8 +631,8 @@ def check_pre_tour_documents(request):
                     return HttpResponse(json.dumps({
                         "result": "0",
                         "message": "Could not retrieve doc_manager"}),
-                                        content_type="application/json",
-                                        )
+                        content_type="application/json",
+                    )
             except UserProfile.DoesNotExist:
                 return HttpResponse(json.dumps({"result": "0",
                                                 "message": "Could not retrieve User Profile"}),

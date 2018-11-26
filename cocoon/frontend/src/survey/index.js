@@ -10,6 +10,14 @@ import Details from './details';
 
 import './survey.css';
 
+import axios from 'axios'
+
+import userAuth_endpoints from "../endpoints/userAuth_endpoints";
+import CSRFToken from '../common/csrftoken';
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class Survey extends Component {
 
     constructor(props) {
@@ -25,13 +33,36 @@ class Survey extends Component {
             max_price: 3000,
             earliest_move_in: undefined,
             latest_move_in: undefined,
-            tenants: [],
-            tenants_TOTAL_FORMS: this.state.number_of_tenants,
-            tenants_INITIAL_FORMS: 0,
-            tenants_MIN_NUM_FORMS: 0,
-            tenants_MAX_NUM_FORMS: 1000,
-        };
+            tenants: []
+        }
+        // This allows the variable name to include the hypen. Including directly
+        //  breaks the variable since it isn't allowed in react
+        this.state['tenants-TOTAL_FORMS'] = this.state.number_of_tenants;
+        this.state['tenants-INITIAL_FORMS'] = 0;
+        this.state['tenants-MIN_NUM_FORMS'] = 0;
+        this.state['tenants-MAX_NUM_FORMS'] = 1000;
     }
+
+
+    handleSubmit = () => {
+        /**
+         * This function handles submitting the form to the backend via a rest API
+         *  This will return the status of that request and if success redirect,
+         *      otherwise it will return the form errors
+         */
+
+        // Posts the state which contains all the form elements that are needed
+        axios.post(userAuth_endpoints['userSurveys'],
+            {
+                data: this.state,
+                type: 'favorite',
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                console.log('submitted!')
+            );
+    };
 
     // When changing to step 2 this trims the tenant array to be
     // the length of number_of_tenants
@@ -75,7 +106,10 @@ class Survey extends Component {
                         setSurveyState={this.setSurveyState}
                         handleInputChange={this.handleInputChange} />;
             case 4:
-                return <Details is_authenticated={this.props.is_authenticated} />;
+                return <Details
+                    is_authenticated={this.props.is_authenticated}
+                    onSubmit={this.handleSubmit}
+                />;
         }
     }
 

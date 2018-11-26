@@ -9,7 +9,7 @@ from cocoon.survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 # Import Commutes modules
-from cocoon.commutes.models import CommuteType
+from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import Distance_Matrix_Exception
@@ -18,8 +18,10 @@ from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_com
 
 # Import Constants from commute module
 from cocoon.commutes.constants import CommuteAccuracy
+from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED, EXTRA_DISTANCE_LAT_LNG_APPROX
 
 # Import Geolocator
+import geopy.distance
 import cocoon.houseDatabase.maps_requester as geolocator
 from config.settings.Global_Config import gmaps_api_key
 
@@ -86,23 +88,118 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         commute_cache_updater.update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
         for destination in self.destinations:
-            lat_lng=""
+            lat_lng = ""
 
             # If the commute type is walking or bicycling then we need to generate a lat and lng for the destination
             # We do it here so we can save the lat and lng for every home
             if destination.commute_type.commute_type == CommuteType.BICYCLING or \
                     destination.commute_type.commute_type == CommuteType.WALKING:
                 # Pulls lat/lon based on address
-                lat_lng_result = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(destination.full_address)
+                lat_lng_result = geolocator.maps_requester(gmaps_api_key).\
+                    get_lat_lon_from_address(destination.full_address)
 
                 if lat_lng_result == -1:
                     continue
                 else:
                     lat_lng = (lat_lng_result[0], lat_lng_result[1])
 
-            for home in self.homes:
-                if not home.populate_approx_commutes(home.home, destination, lat_lng_dest=lat_lng):
+            self.populate_approx_commutes(self.homes, destination, lat_lng_dest=lat_lng)
+
+    def populate_approx_commutes(self, homes, destination, lat_lng_dest=""):
+        """
+        Based on the commute type of the destination, this function determines the algorithm method that will
+            be used to generate the approximation
+        :param homes: (list[HomeScore]) -> The homes that the user is computing for
+        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
+        :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
+        """
+        if destination.commute_type.commute_type == CommuteType.DRIVING:
+            self.zip_code_approximation(homes, destination)
+        elif destination.commute_type.commute_type == CommuteType.TRANSIT:
+            self.zip_code_approximation(homes, destination)
+        elif destination.commute_type.commute_type == CommuteType.BICYCLING:
+            self.lat_lng_approximation(homes, destination, lat_lng_dest, AVERAGE_BICYCLING_SPEED)
+        elif destination.commute_type.commute_type == CommuteType.WALKING:
+            self.lat_lng_approximation(homes, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
+
+    @staticmethod
+    def lat_lng_approximation(homes, destination, lat_lng_dest, average_speed):
+        """
+        This function given a home and a destination will determine the distance between the two homes based off of the
+            lat and lng points. Then once the distance is determined, then the commute time is determined based off of
+            the average speed.
+        :param homes: (list[homeScore]) -> The home that the user is computing for
+        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
+        :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
+        :param average_speed: (int) -> The average speed in mph that the person moves for the given mode of transport
+        :return: (Boolean): -> True: The home approximation was found and added
+                               False: The home was not able to have a approximation created
+        """
+
+        for home in homes:
+            # Stores the lat and lng points for the home
+            lat_lng_home = (home.home.latitude, home.home.longitude)
+
+            # Returns the distance from the two lat lng points in miles
+            distance = geopy.distance.geodesic(lat_lng_home, lat_lng_dest).miles
+
+            # If the distance is less than a mile then don't add any distance since it is already so close
+            if distance > 1:
+                # Extra distance is determined by giving more distance to homes farther away
+                extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/distance)
+                # This normalizes the value since walking needs less of a weight than biking since homes
+                #   are more direct when walking.
+                distance += extra_distance * average_speed/AVERAGE_BICYCLING_SPEED
+            if average_speed is not 0:
+                # If the speed is not zero (to prevent divide by zero, then add the commute time to
+                #   the home
+                commute_time_hours = distance / average_speed
+                commute_time = commute_time_hours * 60
+                home.approx_commute_times[destination] = commute_time
+            else:
+                # If there was a divide by zero then just eliminate the home
+                home.eliminate_home()
+
+    @staticmethod
+    def zip_code_approximation(homes, destination):
+        """
+        This is the zip_code_approximation algorithm. This assumes that the zip-code cache is already updated
+            and that all the valid pairs are already generated. This just goes through and finds the valid pairs
+            for the given zip_code and the destination
+        :param homes: (list(HomeScore) -> The homes that the user is computing for
+        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
+        """
+
+        try:
+            # Retrieve the destination zip_code object if it exists
+            destination_zip = ZipCodeBase.objects.get(zip_code=destination.zip_code)
+
+            # Retrieve all the child zip_codes for the destination commute_type
+            child_zips = ZipCodeChild.objects.filter(base_zip_code=destination_zip). \
+                filter(commute_type=destination.commute_type). \
+                values_list('zip_code', 'commute_time_seconds')
+
+            # Dictionary Compression to retrieve the values from the QuerySet
+            child_zip_codes = {zip_code: commute_time_seconds for zip_code, commute_time_seconds in child_zips}
+
+            # For every home check to see if a zip code pair exists and then store the commute time
+            for home in homes:
+
+                # Determines if the home exists in the dictionary on child_zip_codes
+                result = home.home.zip_code in child_zip_codes
+
+                # If there was a match, (there should only be one)
+                if result:
+                    # Store the commute time associated with the zip_code
+                    home.approx_commute_times[destination] = child_zip_codes[home.home.zip_code]/60
+                else:
+                    # If no result was returned, i.e the zip_code pair doesn't exist, then just eliminate the home
                     home.eliminate_home()
+
+        # If the ZipCodeBase doesn't exist then... just don't compute, it should be there if the update_cache function
+        # is called before this
+        except ZipCodeBase.DoesNotExist:
+            pass
 
     def retrieve_exact_commutes(self):
         """
@@ -112,13 +209,13 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         for destination in self.destinations:
             try:
                 # map list of HomeScore objects to full addresses
-                origin_addresses = list(map(lambda house:house.home.full_address,
-                                       self.homes[:number_of_exact_commutes_computed]))
+                origin_addresses = list(map(lambda house: house.home.full_address,
+                                        self.homes[:number_of_exact_commutes_computed]))
 
                 destination_address = destination.full_address
 
                 results = retrieve_exact_commute(origin_addresses, [destination_address],
-                                                 destination.commute_type.commute_type)
+                                                 destination.commute_type)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):

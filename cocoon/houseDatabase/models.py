@@ -187,7 +187,7 @@ def house_directory_path(instance, filename):
 
 
 class HousePhotos(models.Model):
-    house = models.ForeignKey('RentDatabaseModel', on_delete=models.CASCADE)
+    house = models.ForeignKey('RentDatabaseModel', related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to=house_directory_path)
 
     def __str__(self):
