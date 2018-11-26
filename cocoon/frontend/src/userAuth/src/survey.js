@@ -7,6 +7,9 @@ import './survey.css'
 import survey_endpoints from '../../endpoints/survey_endpoints'
 import CSRFToken from '../../common/csrftoken';
 
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
+
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
@@ -123,6 +126,27 @@ class Survey extends Component {
         );
     };
 
+    handleDelete = () => {
+        /*
+            Opens a confirmation page first before the survey is deleted.
+                If the user clicks yes then the survey gets deleted, if
+                no then nothing happens
+         */
+        confirmAlert({
+            title: 'Confirmation',
+            message: "Are you sure you want to delete " + this.state.name + "?",
+            buttons: [
+                {
+                    label: 'yes',
+                    onClick: () => this.props.onDelete(this.state.id)
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        })
+    };
+
     handleLoad = () => {
         return survey_endpoints['rentSurveyResult'] + this.state.url + "/";
     };
@@ -137,7 +161,7 @@ class Survey extends Component {
                     </div>
                     <div className="col-md-2">
                         <a href={this.handleLoad()} className="btn btn-primary active">Load</a>
-                        <button onClick={() => onDelete(this.state.id)} className="btn btn-danger btn-sm m-2">Delete</button>
+                        <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2">Delete</button>
                         <form method="post">
                             <CSRFToken/>
                             <button name="submit-button" className="btn btn-success btn-sm m-2" value={this.state.id} type="submit">Schedule Group!</button>
