@@ -5,13 +5,13 @@ from rest_framework import serializers
 from .models import RentingSurveyModel
 
 # Import Third party modules
-from cocoon.houseDatabase.serializers import FavoritesSerializer, VisitListSerializer
+from cocoon.houseDatabase.serializers import RentDatabaseSerializer
 
 
 class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
 
-    favorites = FavoritesSerializer(read_only=True, many=True)
-    visit_list = VisitListSerializer(read_only=True, many=True)
+    favorites = RentDatabaseSerializer(read_only=True, many=True)
+    visit_list = RentDatabaseSerializer(read_only=True, many=True)
 
     class Meta:
         model = RentingSurveyModel

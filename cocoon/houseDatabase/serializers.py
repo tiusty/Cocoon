@@ -19,21 +19,10 @@ class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('home_type',)
 
 
-class FavoritesSerializer(serializers.HyperlinkedModelSerializer):
+class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
     home_type = HomeTypeSerializer(read_only=True)
     images = HomeImageSerializer(read_only=True, many=True)
 
     class Meta:
         model = RentDatabaseModel
         fields = ('id', 'price', 'home_type', 'images')
-
-
-class VisitListSerializer(serializers.HyperlinkedModelSerializer):
-    home_type = HomeTypeSerializer(read_only=True)
-    images = HomeImageSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = RentDatabaseModel
-        fields = ('id', 'price', 'home_type', 'images')
-
-
