@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.db import models
+from django.views.generic import TemplateView
 
 # Models
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -12,6 +13,11 @@ from cocoon.scheduler.models import ItineraryModel, TimeModel
 
 # Python Modules
 import json
+
+
+class ClientScheduler(TemplateView):
+    template_name = 'scheduler/clientScheduler.html'
+
 
 @login_required()
 def agent_scheduler(request):

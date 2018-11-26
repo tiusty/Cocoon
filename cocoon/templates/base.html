@@ -54,6 +54,7 @@
                 <ul class="nav navbar-nav">
                     {% if user.is_authenticated %}
                         {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:surveys' %}">My Surveys</a></li>{% endblock %}
+                        {% block nav-itinerary %}<li><a class="link" href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a></li>{% endblock %}
                         {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
                     {% endif %}
                 </ul>
