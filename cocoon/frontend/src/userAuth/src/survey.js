@@ -160,7 +160,7 @@ class Survey extends Component {
                         <h1>{this.state.name}</h1>
                     </div>
                     <div className="col-md-2">
-                        <a href={this.handleLoad()} className="btn btn-primary active">Load</a>
+                        <a href={this.handleLoad()} className="btn btn-primary">Load</a>
                         <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2">Delete</button>
                         <form method="post">
                             <CSRFToken/>
