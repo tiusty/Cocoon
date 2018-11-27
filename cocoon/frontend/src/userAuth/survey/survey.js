@@ -212,7 +212,7 @@ class Survey extends Component {
                         <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2">Delete</button>
                         <form method="post">
                             <CSRFToken/>
-                            <button name="submit-button" className="btn btn-success btn-sm m-2" value={this.state.id} type="submit">Schedule Group!</button>
+                            <button name="submit-button" disabled={!this.props.pre_tour_signed} className="btn btn-success btn-sm m-2" value={this.state.id} type="submit">Schedule Group!</button>
                         </form>
                     </div>
                 </div>

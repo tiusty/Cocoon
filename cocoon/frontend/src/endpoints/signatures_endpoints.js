@@ -5,7 +5,8 @@
  * @type {{rentSurveyResult: string}}
  */
 const signature_endpoints = {
-    'hunterDocManager': '/signatures/api/hunterDocManager/'
+    'hunterDocManager': '/signatures/api/hunterDocManager/',
+    'signaturePage': '/signatures/',
 };
 
 export default signature_endpoints;

@@ -16,6 +16,7 @@ class Surveys extends Component {
     state = {
         // Stores the ids of all the surveys associated with the user
         surveys: [],
+        loaded: false,
 
         // Stores information regarding the state of signing documents
         hunter_doc_id: null,
@@ -58,12 +59,15 @@ class Surveys extends Component {
         axios.get(this.state.signature_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                console.log(response.data),
                 this.setState( {
                     hunter_doc_id: response.data[0].id,
                     pre_tour_signed: response.data[0].is_pre_tour_signed,
                 })
-            })
+            });
+
+        this.setState({
+            loaded: true,
+        })
     }
 
     handleDelete = (survey_id) => {
@@ -93,18 +97,55 @@ class Surveys extends Component {
             });
     };
 
+    renderMessages = () => {
+        if (!this.state.loaded) {
+            return (
+                <div>
+                    <h1>Loading</h1>
+                </div>
+            );
+        }
+
+        let scheduler_message = "";
+        if (!this.state.pre_tour_signed) {
+            const pStyle = {
+                textAlign: 'center',
+                marginBottom: 0,
+            };
+            scheduler_message = (
+                <div className="alert alert-info alert-dismissable" role="alert" style={pStyle}>
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    Please sign the pre tour doc to schedule your homes
+                    <a className="btn btn-secondary btn-sm" role="button"
+                       href={signature_endpoints['signaturePage']}
+                       aria-disabled={true} style={{marginLeft: '10px'}}> Sign Docs! </a>
+                </div>
+            );
+        }
+
+        return (
+            <div>
+                {scheduler_message}
+            </div>
+        );
+    };
+
     render() {
         /**
          * Renders all the surveys
          */
         return (
             <React.Fragment>
+                {this.renderMessages()}
                 { this.state.surveys.map(survey =>
                     <Survey
                         key={survey.id}
                         onDelete={this.handleDelete}
                         survey_id={survey.id}
                         endpoint={this.state.survey_endpoint}
+                        pre_tour_signed={this.state.pre_tour_signed}
                     />
 
                 )}
