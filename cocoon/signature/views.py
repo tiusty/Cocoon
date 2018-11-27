@@ -2,9 +2,17 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.response import Response
+
+# Load app modules
+from .models import HunterDocManagerModel, HunterDocTemplateModel
+from .serializers import HunterDocManagerSerializer
 
 # Load Cocoon Modules
-from cocoon.signature.models import HunterDocManagerModel, HunterDocTemplateModel
 from cocoon.userAuth.models import UserProfile
 
 
@@ -39,3 +47,17 @@ def signature_page(request):
     context['user'] = user_profile.user
 
     return render(request, 'signature/signature_page.html', context)
+
+#############################################
+# Api views below
+#############################################
+
+
+class HunterDocManagerViewset(viewsets.ModelViewSet):
+
+    serializer_class = HunterDocManagerSerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return HunterDocManagerModel.objects.filter(user=user_profile.user)
+
