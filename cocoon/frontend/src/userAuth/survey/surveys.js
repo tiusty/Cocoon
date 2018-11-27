@@ -6,6 +6,7 @@ import axios from 'axios'
 // Import Cocoon Components
 import Survey from "./survey";
 import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
+import signature_endpoints from "../../endpoints/signatures_endpoints";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -16,13 +17,18 @@ class Surveys extends Component {
         // Stores the ids of all the surveys associated with the user
         surveys: [],
 
-        // Stores the endpoint needed for this Component
-        endpoint: userAuth_endpoints['userSurveys'],
+        // Stores information regarding the state of signing documents
+        hunter_doc_id: null,
+        pre_tour_signed: false,
+
+        // Stores the survey_endpoint needed for this Component
+        survey_endpoint: userAuth_endpoints['userSurveys'],
+        signature_endpoint: signature_endpoints['hunterDocManager'],
     };
 
     parseData(data) {
         /**
-         * Parses data returned from the endpoint and returns it in a nicer format for react
+         * Parses data returned from the survey_endpoint and returns it in a nicer format for react
          *
          * Expects to be passed data a list of surveys from the backend and then returns a list
          *  of the survey ids.
@@ -43,10 +49,20 @@ class Surveys extends Component {
         /**
          *  Retrieves all the surveys associated with the user
          */
-        axios.get(this.state.endpoint)
+        axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState( {surveys: this.parseData(response.data)})
+            });
+
+        axios.get(this.state.signature_endpoint)
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                console.log(response.data),
+                this.setState( {
+                    hunter_doc_id: response.data[0].id,
+                    pre_tour_signed: response.data[0].is_pre_tour_signed,
+                })
             })
     }
 
@@ -61,9 +77,9 @@ class Surveys extends Component {
          * @type {string} The survey id that is being deleted
          */
 
-        // The survey id is appended to the endpoint since the put request expects the survey id as
+        // The survey id is appended to the survey_endpoint since the put request expects the survey id as
         //  part of the url
-        let endpoint = this.state.endpoint + survey_id + "/";
+        let endpoint = this.state.survey_endpoint + survey_id + "/";
 
         // Passes the survey id and the put type to the backend
         axios.put(endpoint,
@@ -88,7 +104,7 @@ class Surveys extends Component {
                         key={survey.id}
                         onDelete={this.handleDelete}
                         survey_id={survey.id}
-                        endpoint={this.state.endpoint}
+                        endpoint={this.state.survey_endpoint}
                     />
 
                 )}

@@ -51,7 +51,7 @@ class VisitList(ListView):
         )
 
         # Since the page is loading, update all the signed documents to see if the status has changed
-        manager.update_all_is_signed()
+        # manager.update_all_is_signed()
 
         # Create context to update the html based on the status of the documents
         data['pre_tour_signed'] = manager.is_pre_tour_signed()

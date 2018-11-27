@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 # Rest Framework
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets
 
 # Load app modules
 from .models import HunterDocManagerModel, HunterDocTemplateModel
@@ -60,4 +60,7 @@ class HunterDocManagerViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return HunterDocManagerModel.objects.filter(user=user_profile.user)
+
+    def update(self, request, *args, **kwargs):
+        print('hi')
 
