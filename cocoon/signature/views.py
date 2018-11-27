@@ -6,7 +6,6 @@ from django.utils.decorators import method_decorator
 
 # Rest Framework
 from rest_framework import viewsets, mixins
-from rest_framework.response import Response
 
 # Load app modules
 from .models import HunterDocManagerModel, HunterDocTemplateModel
@@ -53,6 +52,7 @@ def signature_page(request):
 #############################################
 
 
+@method_decorator(login_required, name='dispatch')
 class HunterDocManagerViewset(viewsets.ModelViewSet):
 
     serializer_class = HunterDocManagerSerializer
