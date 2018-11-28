@@ -115,6 +115,11 @@ class Surveys extends Component {
     };
 
     renderMessages = () => {
+        /**
+         * Renders the messages associated with the page, i.e errors notifications etc
+         */
+
+        // If the page isn't loaded then don't load any messages
         if (!this.state.loaded) {
             return (
                 <>
@@ -122,6 +127,8 @@ class Surveys extends Component {
             );
         }
 
+        // Renders the scheduler message. i.e If the pre-tour docs are not signed
+        //  then inform the user to sign them before scheduling tours
         let scheduler_message = "";
         if (!this.state.pre_tour_signed) {
             const pStyle = {

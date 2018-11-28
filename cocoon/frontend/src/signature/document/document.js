@@ -25,7 +25,6 @@ class Document extends Component {
          * Retrieves the document associated with this component
          */
         let endpoint = this.state.endpoint + this.state.template_id + '/';
-
         axios.get(endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
