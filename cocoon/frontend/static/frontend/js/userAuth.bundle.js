@@ -129,7 +129,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var reac
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the survey app\n *\n * The format/naming should match the urls.py for the survey app\n * @type {{rentSurveyResult: string}}\n */\nvar signature_endpoints = {\n  'hunterDocManager': '/signatures/api/hunterDocManager/',\n  'signaturePage': '/signatures/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (signature_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/signatures_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the survey app\n *\n * The format/naming should match the urls.py for the survey app\n * @type {{rentSurveyResult: string}}\n */\nvar signature_endpoints = {\n  'hunterDocManager': '/signatures/api/hunterDocManager/',\n  'hunterDoc': '/signatures/api/hunterDoc/',\n  'signaturePage': '/signatures/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (signature_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/signatures_endpoints.js?");
 
 /***/ }),
 

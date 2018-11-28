@@ -9,8 +9,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 
 # Load app modules
-from .models import HunterDocManagerModel, HunterDocTemplateModel
-from .serializers import HunterDocManagerSerializer
+from .models import HunterDocManagerModel, HunterDocTemplateModel, HunterDocModel
+from .serializers import HunterDocManagerSerializer, HunterDocSerializer
 
 # Load Cocoon Modules
 from cocoon.userAuth.models import UserProfile
@@ -52,6 +52,16 @@ def signature_page(request):
 #############################################
 # Api views below
 #############################################
+
+
+@method_decorator(login_required, name='dispatch')
+class HunterDocViewset(viewsets.ReadOnlyModelViewSet):
+
+    serializer_class = HunterDocSerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return user_profile.user.doc_manager.documents
 
 
 @method_decorator(login_required, name='dispatch')

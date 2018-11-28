@@ -6,6 +6,7 @@
  */
 const signature_endpoints = {
     'hunterDocManager': '/signatures/api/hunterDocManager/',
+    'hunterDoc': '/signatures/api/hunterDoc/',
     'signaturePage': '/signatures/',
 };
 

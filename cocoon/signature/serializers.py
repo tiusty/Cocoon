@@ -2,7 +2,14 @@
 from rest_framework import serializers
 
 # Import App modules
-from .models import HunterDocManagerModel
+from .models import HunterDocManagerModel, HunterDocModel
+
+
+class HunterDocSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = HunterDocModel
+        fields = ('id',)
 
 
 class HunterDocManagerSerializer(serializers.HyperlinkedModelSerializer):
