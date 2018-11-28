@@ -56,17 +56,27 @@ class Document extends Component {
     }
 
     createDocument = () => {
+        this.setState({
+            refreshing: true,
+        });
         let endpoint = this.state.endpoint;
         axios.post(endpoint,
             {
                 template_type_id: this.state.template_id,
             })
-            .catch(error => console.log('Bad', error))
+            .catch(error => {
+                this.setState({
+                    refreshing: false,
+                });
+                console.log('Bad', error)
+            })
+
             .then(response =>
                 this.setState({
                     id: response.data.id,
                     is_signed: response.data.is_signed,
                     created: true,
+                    refreshing: false,
                 })
             );
         };
@@ -80,8 +90,8 @@ class Document extends Component {
             .catch(error => {
                 this.setState({
                     refreshing: false,
-                }),
-                    console.log('Bad', error)
+                });
+                console.log('Bad', error)
             })
             .then(response =>
                 this.setState({
@@ -97,9 +107,13 @@ class Document extends Component {
         if (this.state.refreshing) {
             return 'Loading'
         } else {
-            return 'Refresh'
+            if (this.state.created) {
+                return 'Refresh'
+            } else {
+                return 'Send'
+            }
         }
-    }
+    };
 
     renderButton() {
         if(this.state.is_signed) {
@@ -111,7 +125,7 @@ class Document extends Component {
             );
         } else {
             return (
-                <button className="btn btn-secondary" onClick={this.createDocument}>Create</button>
+                <button className="btn btn-secondary" onClick={this.createDocument}>{this.renderButtonName()}</button>
             );
         }
     }
