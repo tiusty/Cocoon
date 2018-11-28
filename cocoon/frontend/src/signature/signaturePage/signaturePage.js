@@ -9,38 +9,19 @@ import Document from "../document/document";
 
 class SignaturePage extends Component {
     state = {
-        template_ids: [],
+        template_types: [],
         hunter_doc_template_endpoint: signature_endpoints['hunterDocTemplate'],
         hunter_doc_endpoint: signature_endpoints['hunterDoc'],
     };
 
-    parseData(data) {
-        /**
-         * Parses data returned from the endpoint and returns it in a nicer format for react
-         *
-         * Expects to be passed data a list of documents from the backend and then returns a list
-         *  of the document ids.
-         * @type {Array}: A list of documents
-         */
-        let doc_ids = [];
-
-        // For each survey just push the id for that survey to the list
-        data.map(c =>
-            doc_ids.push( { id: c.id} )
-        );
-
-        // Return the list of ids
-        return doc_ids
-    }
-
     componentDidMount() {
         /**
-         *  Retrieves all the surveys associated with the user
+         *  Retrieves all the template types
          */
         axios.get(this.state.hunter_doc_template_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {template_ids: this.parseData(response.data)})
+                this.setState( {template_types: response.data })
             });
 
     }
@@ -57,11 +38,12 @@ class SignaturePage extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                    {this.state.template_ids.map(template =>
+                    {this.state.template_types.map(template =>
                         <Document
                             key={template.id}
                             template_id={template.id}
                             endpoint={this.state.hunter_doc_endpoint}
+                            template_type={template.template_type}
                         />
                     )}
                     </tbody>

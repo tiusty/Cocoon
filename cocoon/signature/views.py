@@ -56,11 +56,8 @@ def signature_page(request):
 
 class HunterDocTemplateViewset(viewsets.ModelViewSet):
 
+    queryset = HunterDocTemplateModel.objects.all()
     serializer_class = HunterDocTemplateSerializer
-
-    def get_queryset(self):
-        user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        return HunterDocTemplateModel.objects.all()
 
 
 @method_decorator(login_required, name='dispatch')
@@ -87,10 +84,22 @@ class HunterDocViewset(viewsets.ReadOnlyModelViewSet):
         # Retrieve the survey id
         pk = kwargs.pop('pk', None)
 
-        doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=pk)
+        try:
+            doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=pk)
+            response = {
+                'result': True,
+                'serializer': HunterDocSerializer(doc).data,
+            }
+        except HunterDocModel.DoesNotExist:
+            response = {
+                'result': False,
+                'serializer': '',
+            }
 
-        serializer = HunterDocSerializer(doc)
-        return Response(serializer.data)
+        return Response(response)
+
+    def update(self, request, *args, **kwargs):
+        print('hi')
 
 
 @method_decorator(login_required, name='dispatch')

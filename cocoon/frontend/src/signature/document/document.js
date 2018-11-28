@@ -7,10 +7,11 @@ class Document extends Component {
     state = {
         loaded: false,
         id: null,
+        created: false,
         template_id: this.props.template_id,
         endpoint: this.props.endpoint,
         is_signed: false,
-        template_type: '',
+        template_type: this.props.template_type,
 
     };
 
@@ -20,20 +21,26 @@ class Document extends Component {
          */
         console.log(this.state.endpoint + this.state.template_id + '/');
         let endpoint = this.state.endpoint + this.state.template_id + '/';
+
         axios.get(endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {
-                    id: response.data.id,
-                    template_type: response.data.template.template_type,
-                    is_signed: response.data.is_signed
+                if (response.data.result) {
+                    this.setState( {
+                        id: response.data.id,
+                        is_signed: response.data.is_signed,
+                        created: true,
+                    })
+                } else {
+                    this.setState( {
+                        created: false,
+                    })
+                }
+
+                this.setState({
+                    loaded:true,
                 })
             });
-
-        // Now the page has all the necessary data loaded
-        this.setState({
-            loaded: true,
-        })
     }
 
     renderIsSigned() {
@@ -45,9 +52,18 @@ class Document extends Component {
     }
 
     renderButton() {
-        return (
-            <button className="btn btn-secondary">Sign</button>
-        );
+        if(this.state.is_signed) {
+            return <p>All set</p>
+        }
+        else if (this.state.created) {
+            return (
+                <button className="btn btn-secondary">Sign</button>
+            );
+        } else {
+            return (
+                <button className="btn btn-secondary">Create</button>
+            );
+        }
     }
 
     render() {
