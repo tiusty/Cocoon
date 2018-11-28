@@ -77,11 +77,11 @@ class Surveys extends Component {
                 type: 'pre_tour_check',
             })
             .catch(error => console.log('BAD', error))
-            .then(response =>
+            .then(response => {
                 this.setState({
-                    pre_tour_signed: response.data.pre_tour_signed
+                    pre_tour_signed: response.data.is_pre_tour_signed
                 })
-            );
+            });
 
         this.setState({
             loaded: true,

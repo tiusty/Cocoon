@@ -132,8 +132,6 @@ class HunterDocViewset(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-
-
 @method_decorator(login_required, name='dispatch')
 class HunterDocManagerViewset(viewsets.ModelViewSet):
 
