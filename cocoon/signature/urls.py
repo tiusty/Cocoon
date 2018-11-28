@@ -9,7 +9,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'hunterDocManager', views.HunterDocManagerViewset, base_name='HunterDocManager')
-router.register(r'hunterDoc', views.HunterDocManagerViewset, base_name='HunterDoc')
+router.register(r'hunterDoc', views.HunterDocViewset, base_name='HunterDoc')
 
 app_name = 'signature'
 urlpatterns = [

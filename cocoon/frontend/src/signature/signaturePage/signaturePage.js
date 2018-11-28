@@ -5,6 +5,7 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import signature_endpoints from "../../endpoints/signatures_endpoints";
+import Document from "../document/document";
 
 class SignaturePage extends Component {
     state = {
@@ -46,9 +47,11 @@ class SignaturePage extends Component {
     render() {
         return (
             <div>
-                <h1>HIIII</h1>
+                {this.state.doc_ids.map(doc =>
+                    <Document/>
+                )}
             </div>
-        )
+        );
     };
 }
 
