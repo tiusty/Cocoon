@@ -1,9 +1,5 @@
 # Import Python Modules
 import json
-import os
-import string
-
-from datetime import datetime
 
 # Import Django modules
 from django.contrib.auth.decorators import login_required
@@ -33,13 +29,16 @@ from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResu
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 
 # Import Itinerary model
-from cocoon.scheduler.models import ItineraryModel
-
+from cocoon.survey.serializers import RentSurveySerializer
 
 # import scheduler views
 from cocoon.scheduler import views as scheduler_views
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
+
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 
 
 class RentingSurvey(CreateView):
@@ -311,6 +310,84 @@ class VisitList(ListView):
         client_scheduler_alg.run(homes_list, self.request.user)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
+
+
+class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+
+    serializer_class = RentSurveySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Updates a survey with one of the option listed by the kwargs['types']
+
+        :param request:
+        :param args:
+        :param kwargs:
+            Expects:
+                home_id: (int) -> The int of the home to toggle
+                type: (string) -> The type of update that is occurring
+                    One of:
+                        visit_toggle: A visit list home is being toggled
+                        favorite_toggle: A favorite home is being toggled
+                        survey_delete: A survey is being deleted
+        :return:
+        """
+
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        # Retrieve the associated survey with the request
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+
+        # Case if a visit list home is being removed or added
+        if 'visit_toggle' in self.request.data['type']:
+
+            # If the home already exists in the visit list then remove it
+            try:
+                home = survey.visit_list.get(id=self.request.data['home_id'])
+                survey.visit_list.remove(home)
+
+            # if the home does not exist in the vist list then add it
+            except RentDatabaseModel.DoesNotExist:
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.visit_list.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
+
+        # Case if a favorite home is being removed or added
+        elif 'favorite_toggle' in self.request.data['type']:
+            # If the home exists in the favorite list already then remove it
+            try:
+                home = survey.favorites.get(id=self.request.data['home_id'])
+                survey.favorites.remove(home)
+
+            # If the home does not exist in the favorite list then add it
+            except RentDatabaseModel.DoesNotExist:
+                try:
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.favorites.add(home)
+                except RentDatabaseModel.DoesNotExist:
+                    pass
+
+        # Case if a survey is being deleted
+        elif 'survey_delete' in self.request.data['type']:
+            # Delete the current survey
+            survey.delete()
+
+            # Return a list of all the current surveys
+            return self.list(request, args, kwargs)
+
+        # Returns the survey that was updated
+        serializer = RentSurveySerializer(survey)
+        return Response(serializer.data)
 
 
 #######################################################
