@@ -45,6 +45,7 @@ def signature_page(request):
 
     context['template_types'] = docs
     context['user'] = user_profile.user
+    context['component'] = 'SignaturePage'
 
     return render(request, 'signature/signature_page.html', context)
 
