@@ -19,7 +19,7 @@ class Surveys extends Component {
         loaded: false,
 
         // Stores information regarding the state of signing documents
-        hunter_doc_id: null,
+        hunter_doc_manager_id: null,
         pre_tour_signed: false,
 
         // Stores the survey_endpoint needed for this Component
@@ -56,14 +56,32 @@ class Surveys extends Component {
                 this.setState( {surveys: this.parseData(response.data)})
             });
 
+        /**
+            Retrieves the users HunterDocManager
+         */
         axios.get(this.state.signature_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState( {
-                    hunter_doc_id: response.data[0].id,
+                    hunter_doc_manager_id: response.data[0].id,
                     pre_tour_signed: response.data[0].is_pre_tour_signed,
                 })
             });
+
+        /**
+         * Updates the users pre_tour_docs and checks to see if it is signed
+         */
+        let endPoint = this.state.signature_endpoint + this.state.hunter_doc_manager_id + '/';
+        axios.put(endPoint,
+            {
+                type: 'pre_tour_check',
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    pre_tour_signed: response.data.pre_tour_signed
+                })
+            );
 
         this.setState({
             loaded: true,

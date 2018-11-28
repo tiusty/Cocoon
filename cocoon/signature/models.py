@@ -131,6 +131,20 @@ class HunterDocManagerModel(models.Model):
             document.is_signed = docusign.determine_is_signed(document.envelope_id)
             document.save()
 
+    def update_pre_tour_is_signed(self):
+        """
+        Checks the status of the pre tour documents and sees if it is signed
+        """
+        docusign = DocusignWrapper()
+        template = self.retrieve_pre_tour_template()
+        if self.documents.filter(template=template).exists():
+            try:
+                doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
+                doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
+                doc.save()
+            except HunterDocModel.DoesNotExist:
+                pass
+
     @staticmethod
     def retrieve_pre_tour_template():
         """

@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 
 # Rest Framework
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 # Load app modules
 from .models import HunterDocManagerModel, HunterDocTemplateModel
@@ -62,5 +63,17 @@ class HunterDocManagerViewset(viewsets.ModelViewSet):
         return HunterDocManagerModel.objects.filter(user=user_profile.user)
 
     def update(self, request, *args, **kwargs):
-        print('hi')
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
+        # Retrieve the associated survey with the request
+        doc_manager = user_profile.user.doc_manager
+
+        # If the request wants to check pre_tour docs then check the pre_tour docs and see if it is signed
+        if 'pre_tour_check' in self.request.data['type']:
+            doc_manager.update_pre_tour_is_signed()
+
+        # Retrieve the doc_manager again with updated values
+        doc_manager = user_profile.user.doc_manager
+        serializer = HunterDocManagerSerializer(doc_manager)
+        return Response(serializer.data)
