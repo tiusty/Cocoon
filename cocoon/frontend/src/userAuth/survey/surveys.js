@@ -79,13 +79,10 @@ class Surveys extends Component {
             .catch(error => console.log('BAD', error))
             .then(response => {
                 this.setState({
+                    loaded: true,
                     pre_tour_signed: response.data.is_pre_tour_signed
                 })
             });
-
-        this.setState({
-            loaded: true,
-        })
     }
 
     handleDelete = (survey_id) => {
@@ -118,9 +115,8 @@ class Surveys extends Component {
     renderMessages = () => {
         if (!this.state.loaded) {
             return (
-                <div>
-                    <h1>Loading</h1>
-                </div>
+                <>
+                </>
             );
         }
 
