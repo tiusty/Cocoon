@@ -14,7 +14,7 @@ router.register(r'hunterDocTemplate', views.HunterDocTemplateViewset)
 
 app_name = 'signature'
 urlpatterns = [
-    url(r'^$', views.signature_page, name="signaturePage"),
+    url(r'^$', views.SignaturePage.as_view(), name="signaturePage"),
 
     # Api
     url(r'^api/', include(router.urls))

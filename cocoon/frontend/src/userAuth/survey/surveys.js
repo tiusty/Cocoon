@@ -69,9 +69,11 @@ class Surveys extends Component {
             });
 
         /**
-         * Updates the users pre_tour_docs and checks to see if it is signed
+         * Updates the users pre_tour_docs and checks to see if it is signed.
+         *  Since the id for the url doesn't matter, null can be passed so the
+         *  update function is called
          */
-        let endPoint = this.state.signature_endpoint + this.state.hunter_doc_manager_id + '/';
+        let endPoint = this.state.signature_endpoint + 'null' + '/';
         axios.put(endPoint,
             {
                 type: 'pre_tour_check',
