@@ -1,8 +1,7 @@
 /**
- * Contains the URLS for the survey app
+ * Contains the URLS for the signature app
  *
- * The format/naming should match the urls.py for the survey app
- * @type {{rentSurveyResult: string}}
+ * The format/naming should match the urls.py
  */
 const signature_endpoints = {
     'hunterDocManager': '/signatures/api/hunterDocManager/',

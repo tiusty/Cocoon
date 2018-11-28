@@ -1,4 +1,4 @@
-// Import React Components/signatures/api/hunterDocManager/
+// Import React Components
 import React from 'react'
 import { Component } from 'react';
 import axios from 'axios'
@@ -48,6 +48,9 @@ class Document extends Component {
     }
 
     renderIsSigned() {
+        /**
+         * Returns whether or not the document has been signed
+         */
         if (this.state.is_signed) {
             return "Yes"
         } else {
@@ -56,6 +59,9 @@ class Document extends Component {
     }
 
     createDocument = () => {
+        /**
+         * Sends an API request to create the document specified by the template type
+         */
         this.setState({
             refreshing: true,
         });
@@ -82,6 +88,9 @@ class Document extends Component {
         };
 
     refreshDocumentStatus = () => {
+        /**
+         * Sends an API request to update the status of the current document
+         */
         this.setState({
             refreshing: true,
         });
@@ -104,6 +113,9 @@ class Document extends Component {
     };
 
     renderButtonName = () => {
+        /**
+         * Renders the current documents button status
+         */
         if (this.state.refreshing) {
             return 'Loading'
         } else {
@@ -116,6 +128,9 @@ class Document extends Component {
     };
 
     renderButton() {
+        /**
+         * Renders the button for the current document if it isn't signed
+         */
         if(this.state.is_signed) {
             return <p>All set</p>
         }
