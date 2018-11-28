@@ -9,8 +9,9 @@ import Document from "../document/document";
 
 class SignaturePage extends Component {
     state = {
-        doc_ids: [],
-        hunter_doc_endpoint: signature_endpoints['hunterDoc']
+        template_ids: [],
+        hunter_doc_template_endpoint: signature_endpoints['hunterDocTemplate'],
+        hunter_doc_endpoint: signature_endpoints['hunterDoc'],
     };
 
     parseData(data) {
@@ -36,10 +37,10 @@ class SignaturePage extends Component {
         /**
          *  Retrieves all the surveys associated with the user
          */
-        axios.get(this.state.hunter_doc_endpoint)
+        axios.get(this.state.hunter_doc_template_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {doc_ids: this.parseData(response.data)})
+                this.setState( {template_ids: this.parseData(response.data)})
             });
 
     }
@@ -56,10 +57,10 @@ class SignaturePage extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                    {this.state.doc_ids.map(doc =>
+                    {this.state.template_ids.map(template =>
                         <Document
-                            key={doc.id}
-                            id={doc.id}
+                            key={template.id}
+                            template_id={template.id}
                             endpoint={this.state.hunter_doc_endpoint}
                         />
                     )}

@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .models import HunterDocManagerModel, HunterDocModel, HunterDocTemplateModel
 
 
-class TemplateSerializer(serializers.HyperlinkedModelSerializer):
+class HunterDocTemplateSerializer(serializers.HyperlinkedModelSerializer):
 
     template_type = serializers.SerializerMethodField()
 
@@ -20,7 +20,7 @@ class TemplateSerializer(serializers.HyperlinkedModelSerializer):
 
 class HunterDocSerializer(serializers.HyperlinkedModelSerializer):
 
-    template = TemplateSerializer(read_only=True)
+    template = HunterDocTemplateSerializer(read_only=True)
 
     class Meta:
         model = HunterDocModel

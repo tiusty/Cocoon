@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 # Load app modules
 from .models import HunterDocManagerModel, HunterDocTemplateModel, HunterDocModel
-from .serializers import HunterDocManagerSerializer, HunterDocSerializer
+from .serializers import HunterDocManagerSerializer, HunterDocSerializer, HunterDocTemplateSerializer
 
 # Load Cocoon Modules
 from cocoon.userAuth.models import UserProfile
@@ -54,6 +54,15 @@ def signature_page(request):
 #############################################
 
 
+class HunterDocTemplateViewset(viewsets.ModelViewSet):
+
+    serializer_class = HunterDocTemplateSerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return HunterDocTemplateModel.objects.all()
+
+
 @method_decorator(login_required, name='dispatch')
 class HunterDocViewset(viewsets.ReadOnlyModelViewSet):
 
@@ -62,6 +71,26 @@ class HunterDocViewset(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return user_profile.user.doc_manager.documents
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieves a Doc by the pk of the HunterDocTemplate
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=pk)
+
+        serializer = HunterDocSerializer(doc)
+        return Response(serializer.data)
 
 
 @method_decorator(login_required, name='dispatch')

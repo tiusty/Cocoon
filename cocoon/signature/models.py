@@ -169,8 +169,10 @@ class HunterDocTemplateModel(models.Model):
             self.tempalte_id (string) -> The template id from docusign that corresponds to the type of template
     """
     PRE_TOUR = 'pt'
+    AFTER_TOUR = 'at'
     DOC_TYPE = (
         (PRE_TOUR, 'Pre-tour forms'),
+        (AFTER_TOUR, 'After-tour forms'),
     )
 
     template_type = models.CharField(
