@@ -138,7 +138,7 @@ class Surveys extends Component {
                     Please sign the pre tour doc to schedule your homes
                     <a className="btn btn-secondary btn-sm" role="button"
                        href={signature_endpoints['signaturePage']}
-                       aria-disabled={true} style={{marginLeft: '10px'}}> Sign Docs! </a>
+                       aria-disabled={true} style={{marginLeft: '10px'}}> Sign Documents </a>
                 </div>
             );
         }
