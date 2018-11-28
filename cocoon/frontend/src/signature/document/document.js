@@ -3,6 +3,10 @@ import React from 'react'
 import { Component } from 'react';
 import axios from 'axios'
 
+// For handling Post request with CSRF protection
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class Document extends Component {
     state = {
         loaded: false,
@@ -19,7 +23,6 @@ class Document extends Component {
         /**
          * Retrieves the document associated with this component
          */
-        console.log(this.state.endpoint + this.state.template_id + '/');
         let endpoint = this.state.endpoint + this.state.template_id + '/';
 
         axios.get(endpoint)
@@ -27,8 +30,8 @@ class Document extends Component {
             .then(response => {
                 if (response.data.result) {
                     this.setState( {
-                        id: response.data.id,
-                        is_signed: response.data.is_signed,
+                        id: response.data.serializer.id,
+                        is_signed: response.data.serializer.is_signed,
                         created: true,
                     })
                 } else {
@@ -51,6 +54,22 @@ class Document extends Component {
         }
     }
 
+    createDocument = () => {
+        let endpoint = this.state.endpoint;
+        axios.post(endpoint,
+            {
+                template_type_id: this.state.template_id,
+            })
+            .catch(error => console.log('Bad', error))
+            .then(response =>
+                this.setState({
+                    id: response.data.id,
+                    is_signed: response.data.is_signed,
+                    created: true,
+                })
+            );
+        };
+
     renderButton() {
         if(this.state.is_signed) {
             return <p>All set</p>
@@ -61,7 +80,7 @@ class Document extends Component {
             );
         } else {
             return (
-                <button className="btn btn-secondary">Create</button>
+                <button className="btn btn-secondary" onClick={this.createDocument}>Create</button>
             );
         }
     }

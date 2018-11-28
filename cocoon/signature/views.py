@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.http import Http404
 
 # Rest Framework
 from rest_framework import viewsets
@@ -61,7 +62,7 @@ class HunterDocTemplateViewset(viewsets.ModelViewSet):
 
 
 @method_decorator(login_required, name='dispatch')
-class HunterDocViewset(viewsets.ReadOnlyModelViewSet):
+class HunterDocViewset(viewsets.ModelViewSet):
 
     serializer_class = HunterDocSerializer
 
@@ -98,8 +99,39 @@ class HunterDocViewset(viewsets.ReadOnlyModelViewSet):
 
         return Response(response)
 
+    def create(self, request, *args, **kwargs):
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        template_id = self.request.data['template_type_id']
+
+        template = get_object_or_404(HunterDocTemplateModel, id=template_id)
+
+        if template.template_type == HunterDocTemplateModel.PRE_TOUR:
+            user_profile.user.doc_manager.create_pre_tour_documents()
+        else:
+            raise Http404
+
+        doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
+        serializer = HunterDocSerializer(doc)
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
-        print('hi')
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        template = get_object_or_404(HunterDocTemplateModel, pk=pk)
+
+        if template.template_type == HunterDocTemplateModel.PRE_TOUR:
+            user_profile.user.doc_manager.update_pre_tour_is_signed()
+
+        doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
+        serializer = HunterDocSerializer(doc)
+        return Response(serializer.data)
+
+
 
 
 @method_decorator(login_required, name='dispatch')
