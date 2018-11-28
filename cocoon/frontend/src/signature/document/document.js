@@ -17,7 +17,6 @@ class Document extends Component {
         is_signed: false,
         template_type: this.props.template_type,
         refreshing: false,
-
     };
 
     componentDidMount() {
@@ -78,7 +77,6 @@ class Document extends Component {
                 });
                 console.log('Bad', error)
             })
-
             .then(response =>
                 this.setState({
                     id: response.data.id,
@@ -153,9 +151,7 @@ class Document extends Component {
                 <tr>
                     <th>{this.state.template_type}</th>
                     <th>{this.renderIsSigned()}</th>
-                    <th>
-                        {this.renderButton()}
-                    </th>
+                    <th>{this.renderButton()}</th>
                 </tr>
             );
         } else {

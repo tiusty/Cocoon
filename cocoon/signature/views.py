@@ -45,7 +45,6 @@ class HunterDocTemplateViewset(viewsets.ReadOnlyModelViewSet):
     serializer_class = HunterDocTemplateSerializer
 
 
-@method_decorator(login_required, name='dispatch')
 class HunterDocViewset(viewsets.ModelViewSet):
 
     serializer_class = HunterDocSerializer
@@ -155,7 +154,6 @@ class HunterDocViewset(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-@method_decorator(login_required, name='dispatch')
 class HunterDocManagerViewset(viewsets.ModelViewSet):
     """
     Returns the Hunter Document Manager
