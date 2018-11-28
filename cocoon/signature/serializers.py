@@ -24,7 +24,7 @@ class HunterDocSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HunterDocModel
-        fields = ('id', 'template')
+        fields = ('id', 'template', 'is_signed')
 
 
 class HunterDocManagerSerializer(serializers.HyperlinkedModelSerializer):

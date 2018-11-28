@@ -200,7 +200,7 @@ class HunterDocTemplateModel(models.Model):
 class HunterDocModel(models.Model):
     """
     This stores information specific to a document. This stores what the template for the document is, which user
-        it is associated with, what the enevelope ID to find it on Docusign and whether or not the document is signed
+        it is associated with, what the envelope ID to find it on Docusign and whether or not the document is signed
 
     Attributes:
         self.doc_manager: (ForeignKey(HunterDocManager)) -> The associated doc manager that the document is linked to

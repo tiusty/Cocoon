@@ -47,9 +47,24 @@ class SignaturePage extends Component {
     render() {
         return (
             <div>
-                {this.state.doc_ids.map(doc =>
-                    <Document/>
-                )}
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Document Type</th>
+                            <th scope="col">Is_signed?</th>
+                            <th scope="col">Document Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.doc_ids.map(doc =>
+                        <Document
+                            key={doc.id}
+                            id={doc.id}
+                            endpoint={this.state.hunter_doc_endpoint}
+                        />
+                    )}
+                    </tbody>
+                </table>
             </div>
         );
     };

@@ -3,42 +3,6 @@
 {% block title %}Signatures{% endblock %}
 
 {% block content %}
-
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">Doc #</th>
-            <th>Doc Type</th>
-            <th scope="col">Is_signed?</th>
-            <th scope="col">Document Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for exists, template in template_types %}
-            <tr>
-                <th>{{ forloop.counter }}</th>
-                {% if exists %}
-                    <th>{{ template.template }}</th>
-                    <th>{{ template.is_signed }}</th>
-                    {% if template.is_signed %}
-                        <th>Done!</th>
-                    {% else %}
-                        <th>
-                            <button>Refresh Doc Status</button>
-                        </th>
-                    {% endif %}
-                {% else %}
-                    <th>{{ template }}</th>
-                    <th>False</th>
-                    <th>
-                        <button>Send Documents</button>
-                    </th>
-                {% endif %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
     <div id="reactWrapper"></div>
 {% endblock %}
 
