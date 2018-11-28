@@ -155,7 +155,7 @@ class Surveys extends Component {
          * Renders all the surveys
          */
         return (
-            <React.Fragment>
+            <>
                 {this.renderMessages()}
                 { this.state.surveys.map(survey =>
                     <Survey
@@ -167,7 +167,7 @@ class Surveys extends Component {
                     />
 
                 )}
-            </React.Fragment>
+            </>
         );
     }
 }
