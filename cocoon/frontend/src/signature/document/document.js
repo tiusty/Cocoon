@@ -28,18 +28,21 @@ class Document extends Component {
         axios.get(endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
+                // If the response.data.result returns true then the document exists
                 if (response.data.result) {
                     this.setState( {
                         id: response.data.serializer.id,
                         is_signed: response.data.serializer.is_signed,
                         created: true,
                     })
+                // If response.data.result is not true then the document has not been created yet
                 } else {
                     this.setState( {
                         created: false,
                     })
                 }
 
+                // After the data is done loading then render fields
                 this.setState({
                     loaded:true,
                 })

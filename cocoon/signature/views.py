@@ -74,6 +74,10 @@ class HunterDocViewset(viewsets.ModelViewSet):
         # Retrieve the survey id
         pk = kwargs.pop('pk', None)
 
+        # To easily pass back whether the document has been created or not return a Json response
+        #   of a result variable which is true when the document is already created or false otherwise,
+        #   and then pass the serializer as another field. The serializer will be blank if the document
+        #   is not created, i.e result = false.
         try:
             doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=pk)
             response = {
@@ -108,9 +112,12 @@ class HunterDocViewset(viewsets.ModelViewSet):
 
         template = get_object_or_404(HunterDocTemplateModel, id=template_id)
 
+        # Determine the template type used and update that document
         if template.template_type == HunterDocTemplateModel.PRE_TOUR:
             user_profile.user.doc_manager.create_pre_tour_documents()
         else:
+            # If the template type does not match any of the necessary template types then
+            #   return 404
             raise Http404
 
         doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
