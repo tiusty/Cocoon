@@ -96,13 +96,13 @@ class HomeTile extends Component {
 
             // Only renders first 2 photos
             return (
-                <React.Fragment>
+                <>
                     { home.images.slice(0,2).map(image =>
                         <div key={image.id} className={div_classes}>
                             <img className={image_classes} src={image.image}/>
                         </div>
                     )}
-                </React.Fragment>
+                </>
             );
 
         }

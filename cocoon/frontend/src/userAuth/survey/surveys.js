@@ -82,7 +82,7 @@ class Surveys extends Component {
          * Renders all the surveys
          */
         return (
-            <React.Fragment>
+            <>
                 { this.state.surveys.map(survey =>
                     <Survey
                         key={survey.id}
@@ -92,7 +92,7 @@ class Surveys extends Component {
                     />
 
                 )}
-            </React.Fragment>
+            </>
         );
     }
 }
