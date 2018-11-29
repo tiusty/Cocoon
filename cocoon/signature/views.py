@@ -146,8 +146,12 @@ class HunterDocViewset(viewsets.ModelViewSet):
 
         template = get_object_or_404(HunterDocTemplateModel, pk=pk)
 
-        if template.template_type == HunterDocTemplateModel.PRE_TOUR:
-            user_profile.user.doc_manager.update_pre_tour_is_signed()
+        if 'update' in self.request.data['type']:
+            if template.template_type == HunterDocTemplateModel.PRE_TOUR:
+                user_profile.user.doc_manager.update_pre_tour_is_signed()
+        elif 'resend' in self.request.data['type']:
+            if template.template_type == HunterDocTemplateModel.PRE_TOUR:
+                user_profile.user.doc_manager.resend_pre_tour_documents()
 
         doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
         serializer = HunterDocSerializer(doc)

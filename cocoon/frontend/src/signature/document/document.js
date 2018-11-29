@@ -95,7 +95,10 @@ class Document extends Component {
             refreshing: true,
         });
         let endpoint = this.state.endpoint + this.state.template_id + '/';
-        axios.put(endpoint)
+        axios.put(endpoint,
+            {
+                'type': 'update'
+            })
             .catch(error => {
                 this.setState({
                     refreshing: false,
@@ -112,36 +115,71 @@ class Document extends Component {
             );
     };
 
-    renderButtonName = () => {
+    resendDocument = () => {
         /**
-         * Renders the current documents button status
+         * Sends an API request to resend the current document
          */
-        if (this.state.refreshing) {
-            return 'Loading'
-        } else {
-            if (this.state.created) {
-                return 'Refresh'
-            } else {
-                return 'Send'
-            }
-        }
+        this.setState({
+            refreshing: true,
+        });
+        let endpoint = this.state.endpoint + this.state.template_id + '/';
+        axios.put(endpoint,
+            {
+                'type': 'resend'
+            })
+            .catch(error => {
+                this.setState({
+                    refreshing: false,
+                });
+                console.log('Bad', error)
+            })
+            .then(response =>
+                this.setState({
+                    id: response.data.id,
+                    is_signed: response.data.is_signed,
+                    created: true,
+                    refreshing: false,
+                })
+            );
     };
 
     renderButton() {
         /**
          * Renders the button for the current document if it isn't signed
          */
-        if(this.state.is_signed) {
+        if(this.state.is_signed && this.state.created) {
             return <p>All set</p>
         }
         else if (this.state.created) {
-            return (
-                <button className="btn btn-secondary" onClick={this.refreshDocumentStatus}>{this.renderButtonName()}</button>
-            );
+            if (this.state.refreshing) {
+                return <button className="btn btn-secondary">Loading</button>
+            } else {
+                return (
+                    <button className="btn btn-secondary" onClick={this.refreshDocumentStatus}>Refresh</button>
+                );
+            }
         } else {
-            return (
-                <button className="btn btn-secondary" onClick={this.createDocument}>{this.renderButtonName()}</button>
-            );
+            if (this.state.refreshing) {
+                return <button className="btn btn-secondary">Loading</button>
+            } else {
+                return (
+                    <button className="btn btn-secondary" onClick={this.createDocument}>Send</button>
+                );
+            }
+        }
+    }
+
+    renderDocumentAction() {
+        if(this.state.created && this.state.is_signed) {
+            return 'None'
+        } else if (this.state.created) {
+            if (this.state.refreshing) {
+                return <button className="btn btn-secondary">Loading</button>
+            } else {
+                return <button className="btn btn-secondary" onClick={this.resendDocument}>Resend</button>
+            }
+        } else {
+            return 'None'
         }
     }
 
@@ -152,6 +190,7 @@ class Document extends Component {
                     <th>{this.state.template_type}</th>
                     <th>{this.renderIsSigned()}</th>
                     <th>{this.renderButton()}</th>
+                    <th>{this.renderDocumentAction()}</th>
                 </tr>
             );
         } else {

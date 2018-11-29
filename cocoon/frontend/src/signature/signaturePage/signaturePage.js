@@ -35,6 +35,7 @@ class SignaturePage extends Component {
                             <th>Document Type</th>
                             <th scope="col">Is_signed?</th>
                             <th scope="col">Document Status</th>
+                            <th scope="col">Document Action</th>
                         </tr>
                     </thead>
                     <tbody>
