@@ -4,7 +4,7 @@ import { Component, Fragment } from 'react';
 export default class Details extends Component {
 
     handleValidation = () => {
-        return this.validateEmail() && this.validatePhone() && this.validatePassword();
+        return this.validateEmail() && this.validatePhone();
     }
 
     validateEmail = (e) => {
@@ -29,17 +29,6 @@ export default class Details extends Component {
         return re.test(phone);
     }
 
-    validatePassword = (e) => {
-        const re = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
-        const password = document.querySelector('input[type=password]').value;
-        if(re.test(password)) {
-            document.getElementById('password_error').style.display = 'none';
-        } else {
-            document.getElementById('password_error').style.display = 'block';
-        }
-        return re.test(password);
-    }
-
     render(){
         return (
             <>
@@ -48,7 +37,6 @@ export default class Details extends Component {
                         onSubmit={this.props.onSubmit}
                         validateEmail={this.validateEmail}
                         validatePhone={this.validatePhone}
-                        validatePassword={this.validatePassword}
                         handleValidation={this.handleValidation}
                     /> :
                     <CurrentUser
@@ -68,8 +56,7 @@ const NewUser = (props) => (
             <input className="col-md-12 survey-input" type="email" name="username" placeholder="Email address" maxLength={30} onBlur={props.validateEmail} required/>
             <span className="col-md-12 survey-error-message" id="phone_error">Enter a valid phone number. Ex. (555) 555-5555</span>
             <input className="col-md-12 survey-input" type="tel" name="phone_number" placeholder="Phone Number" onBlur={props.validatePhone} required/>
-            <span className="col-md-12 survey-error-message" id="password_error">Password should contain at least one upper and lower case letter, one number, one special character, and be a minimum of 8 characters.</span>
-            <input className="col-md-12 survey-input" type="password" name="password" placeholder="Password" onBlur={props.validatePassword} required/>
+            <input className="col-md-12 survey-input" type="password" name="password" placeholder="Password" required/>
             <button className="col-md-12 survey-btn" onClick={() => { props.handleValidation() && props.onSubmit(); }}>
                 Check out my places
             </button>

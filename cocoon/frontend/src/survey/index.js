@@ -12,7 +12,8 @@ import './survey.css';
 
 import axios from 'axios'
 
-import userAuth_endpoints from "../endpoints/userAuth_endpoints";
+import userAuth_endpoints from '../endpoints/userAuth_endpoints';
+import houseDatabase_endpoints from '../endpoints/houseDatabase_endpoints';
 import CSRFToken from '../common/csrftoken';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -25,6 +26,7 @@ class Survey extends Component {
         this.state = {
             step: 1,
             number_of_tenants: 1,
+            home_type_options: [],
             home_type: 2,
             move_weight: 0,
             num_bedrooms: 1,
@@ -43,6 +45,10 @@ class Survey extends Component {
         this.state['tenants-INITIAL_FORMS'] = 0;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
+    }
+
+    componentDidMount = () => {
+        this.getHomeTypes();
     }
 
 
@@ -65,6 +71,14 @@ class Survey extends Component {
                 console.log('submitted!')
             );
     };
+
+    getHomeTypes = () => {
+        axios.get(houseDatabase_endpoints['home_types'])
+            .then(res => {
+                const home_type_options = res.data;
+                this.setState({ home_type_options }, () => console.log(home_type_options));
+            })
+    }
 
     // When changing to step 2 this trims the tenant array to be
     // the length of number_of_tenants
