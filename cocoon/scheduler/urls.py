@@ -6,12 +6,13 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'itinerary', views.ItineraryViewSet, base_name='itinerary')
+router.register(r'itineraryDuration', views.ClientSchedulerItineraryDuration, base_name='itineraryDuration')
 
 app_name = 'scheduler'
 urlpatterns = [
     url(r'^agentScheduler/', views.agent_scheduler, name="agentScheduler"),
     url(r'^myTours/', views.view_tours, name="myTours"),
-    url(r'^clientScheduler', views.ClientScheduler.as_view(), name="clientScheduler"),
+    url(r'^clientScheduler', views.ClientSchedulerView.as_view(), name="clientScheduler"),
 
     # AJAX requests below
     url(r'^claimItinerary/$', views.claim_itinerary, name="claimItinerary"),

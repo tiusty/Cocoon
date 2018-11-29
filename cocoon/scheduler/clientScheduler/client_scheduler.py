@@ -9,8 +9,8 @@ from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_com
 from django.core.files.base import ContentFile
 from cocoon.commutes.models import CommuteType
 
-class ClientScheduler(clientSchedulerAlgorithm):
 
+class ClientScheduler(clientSchedulerAlgorithm):
 
     def build_homes_matrix(self, homes_list):
         """

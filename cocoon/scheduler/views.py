@@ -6,10 +6,14 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 
-# Models
-from cocoon.userAuth.models import UserProfile
-from cocoon.scheduler.models import ItineraryModel, TimeModel
+# App Models
+from .models import ItineraryModel, TimeModel
 from .serializers import ItinerarySerializer
+
+# Cocoon Modules
+from cocoon.userAuth.models import UserProfile
+from cocoon.survey.models import RentingSurveyModel
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 
 # Python Modules
 import json
@@ -19,7 +23,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
 
-class ClientScheduler(TemplateView):
+class ClientSchedulerView(TemplateView):
     """
     Loads the template for the ClientScheduler
 
@@ -36,7 +40,6 @@ class ClientScheduler(TemplateView):
         return data
 
 
-@method_decorator(login_required, name='dispatch')
 class ItineraryViewSet(viewsets.ModelViewSet):
 
     serializer_class = ItinerarySerializer
@@ -44,6 +47,37 @@ class ItineraryViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return ItineraryModel.objects.filter(client=user_profile.user)
+
+
+class ClientSchedulerItineraryDuration(viewsets.ViewSet):
+
+    @staticmethod
+    def list(request, *args, **kwargs):
+        return Response({'message': 'List not implemented'})
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Given the survey passed via the url, returns the total duration to do the commute
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        user_prof = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        survey = get_object_or_404(RentingSurveyModel, pk=pk, user_profile=user_prof)
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        # Run client_scheduler algorithm
+        client_scheduler_alg = ClientScheduler()
+        result = client_scheduler_alg.run(homes_list)
+        return Response({'duration': result})
+
 
 
 @login_required()
