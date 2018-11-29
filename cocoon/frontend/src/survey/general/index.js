@@ -55,12 +55,57 @@ export default class General extends Component {
         }, () => this.props.setSurveyState('latest_move_in', this.state.selectedDayLatest))
     }
 
+    handleValidation = () => {
+        return this.validateRadioButton('number_of_tenants', '#number_of_tenants_error')
+            && this.validateTenantNames()
+            && this.validateDates()
+            && this.validateRadioButton('move_weight', '#move_weight_error')
+            && this.validateRadioButton('num_bedrooms', '#number_of_rooms_error');
+    }
+
+    validateTenantNames = () => {
+        const inputs = Array.from(document.querySelectorAll('#tenant_names input[type=text]'));
+        let emptyFields = inputs.filter(i => i.value === '');
+        if(emptyFields.length > 0) {
+            document.querySelector('#name_of_tenants_error').style.display = 'block';
+            document.querySelector('#name_of_tenants_error').parentNode.scrollIntoView(true);
+            return false;
+        } else {
+            document.querySelector('#name_of_tenants_error').style.display = 'none';
+            return true;
+        }
+    }
+
+    validateDates = () => {
+        if(this.state.selectedDayEarliest && this.state.selectedDayLatest) {
+            document.querySelector('#date_error').style.display = 'none';
+            return true;
+        } else {
+            document.querySelector('#date_error').style.display = 'block';
+            document.querySelector('#date_error').parentNode.scrollIntoView(true);
+            return false;
+        }
+    }
+
+    validateRadioButton = (el, err) => {
+        const inputs = document.querySelectorAll(`input[name=${el}]`);
+                for (let i = 0; i < inputs.length; i++) {
+            if(inputs[i].checked) {
+                document.querySelector(err).style.display = 'none';
+                return true;
+            }
+        }
+        document.querySelector(err).style.display = 'block';
+        document.querySelector(err).parentNode.scrollIntoView(true);
+        return false;
+    }
+
     render(){
         return (
             <>
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number'); this.validateRadioButton('number_of_tenants', '#number_of_tenants_error');}}>
                     <h2>How many people are you <span>searching with</span>?</h2>
-                    <span className="col-md-12 survey-error-message" id="number_of_people_error">You must select the number of people.</span>
+                    <span className="col-md-12 survey-error-message" id="number_of_tenants_error">You must select the number of people.</span>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="number_of_tenants" value="1" required />
                         <div>Just Me</div>
@@ -83,8 +128,9 @@ export default class General extends Component {
                     </label>
                 </div>
 
-                <div className="survey-question">
+                <div className="survey-question" id="tenant_names">
                     <h2>What's <span>your {this.props.number_of_tenants === 1 ? 'name' : 'names'}</span>?</h2>
+                    <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>
                     <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} required data-tenantkey={0} onChange={this.handleTenantName}/>
                     {Array.from(Array(this.props.number_of_tenants - 1)).map((t,i) => { 1
                         return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)} autoCapitalize={'words'} required data-tenantkey={i + 1} placeholder="First and Last Name" onChange={this.handleTenantName} key={i} />
@@ -104,6 +150,7 @@ export default class General extends Component {
 
                 <div className="survey-question">
                     <h2>When are you wanting to <span>move in</span>?</h2>
+                    <span className="col-md-12 survey-error-message" id="date_error">You must select an earliest and latest move in date.</span>
                     <div className="col-md-6 date-wrapper">
                         <DayPickerInput
                             placeholder={'Earliest'}
@@ -116,8 +163,9 @@ export default class General extends Component {
                     </div>
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number'); this.validateRadioButton('move_weight', '#move_weight_error');}}>
                     <h2>How badly do you <span>need to move</span>?</h2>
+                    <span className="col-md-12 survey-error-message" id="move_weight_error">You must select an option.</span>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="move_weight" value="0" required />
                         <div>Just browsing</div>
@@ -136,8 +184,9 @@ export default class General extends Component {
                     </label>
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number'); this.validateRadioButton('num_bedrooms', '#number_of_rooms_error');}}>
                     <h2>How many <span>bedrooms</span> do you need?</h2>
+                    <span className="col-md-12 survey-error-message" id="number_of_rooms_error">You must select the number of rooms.</span>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="num_bedrooms" value="0" required />
                         <div>Studio</div>
@@ -156,8 +205,7 @@ export default class General extends Component {
                     </label>
                 </div>
 
-                {/*<button className="col-md-12 survey-btn" onClick={this.handleValidation}>*/}
-                <button className="col-md-12 survey-btn" onClick={this.props.handleNextStep}>
+                <button className="col-md-12 survey-btn" onClick={(e) => this.handleValidation() && this.props.handleNextStep(e)}>
                     Next
                 </button>
             </>

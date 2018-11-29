@@ -3,12 +3,53 @@ import { Component, Fragment } from 'react';
 
 export default class Details extends Component {
 
+    handleValidation = () => {
+        return this.validateEmail() && this.validatePhone() && this.validatePassword();
+    }
+
+    validateEmail = (e) => {
+        const re = /\S+@\S+\.\S+/;
+        const email = document.querySelector('input[type=email]').value;
+        if(re.test(email)) {
+            document.getElementById('email_error').style.display = 'none';
+        } else {
+            document.getElementById('email_error').style.display = 'block';
+        }
+        return re.test(email);
+    }
+
+    validatePhone = (e) => {
+        const re = /^(\([0-9]{3}\)\s*|[0-9]{3}\-)[0-9]{3}-[0-9]{4}$/;
+        const phone = document.querySelector('input[type=tel]').value;
+        if(re.test(phone)) {
+            document.getElementById('phone_error').style.display = 'none';
+        } else {
+            document.getElementById('phone_error').style.display = 'block';
+        }
+        return re.test(phone);
+    }
+
+    validatePassword = (e) => {
+        const re = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+        const password = document.querySelector('input[type=password]').value;
+        if(re.test(password)) {
+            document.getElementById('password_error').style.display = 'none';
+        } else {
+            document.getElementById('password_error').style.display = 'block';
+        }
+        return re.test(password);
+    }
+
     render(){
         return (
             <>
                 {!this.props.is_authenticated ?
                     <NewUser
                         onSubmit={this.props.onSubmit}
+                        validateEmail={this.validateEmail}
+                        validatePhone={this.validatePhone}
+                        validatePassword={this.validatePassword}
+                        handleValidation={this.handleValidation}
                     /> :
                     <CurrentUser
                         onSubmit={this.props.onSubmit}
@@ -23,10 +64,13 @@ const NewUser = (props) => (
     <form>
         <div className="survey-question">
             <h2>Finish signing up to see <span>your results</span>!</h2>
-            <input className="col-md-12 survey-input" type="email" name="username" placeholder="Email address" maxLength={30} required/>
-            <input className="col-md-12 survey-input" type="tel" name="phone_number" placeholder="Phone Number" required/>
-            <input className="col-md-12 survey-input" type="password" name="password" placeholder="Password" required/>
-            <button className="col-md-12 survey-btn" onClick={() => props.onSubmit()}>
+            <span className="col-md-12 survey-error-message" id="email_error">Enter a valid email address.</span>
+            <input className="col-md-12 survey-input" type="email" name="username" placeholder="Email address" maxLength={30} onBlur={props.validateEmail} required/>
+            <span className="col-md-12 survey-error-message" id="phone_error">Enter a valid phone number. Ex. (555) 555-5555</span>
+            <input className="col-md-12 survey-input" type="tel" name="phone_number" placeholder="Phone Number" onBlur={props.validatePhone} required/>
+            <span className="col-md-12 survey-error-message" id="password_error">Password should contain at least one upper and lower case letter, one number, one special character, and be a minimum of 8 characters.</span>
+            <input className="col-md-12 survey-input" type="password" name="password" placeholder="Password" onBlur={props.validatePassword} required/>
+            <button className="col-md-12 survey-btn" onClick={() => { props.handleValidation() && props.onSubmit(); }}>
                 Check out my places
             </button>
         </div>

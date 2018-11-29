@@ -31,6 +31,8 @@ class Survey extends Component {
             desired_price: 1000,
             price_weight: 1,
             max_price: 3000,
+            min_bathrooms: 1,
+            max_bathrooms: 6,
             earliest_move_in: undefined,
             latest_move_in: undefined,
             tenants: []
@@ -93,7 +95,8 @@ class Survey extends Component {
                         setTenants={this.setTenants}
                         setFinalTenants={this.setFinalTenants}
                         setPrice={this.setPrice}
-                        setSurveyState={this.setSurveyState} />;
+                        setSurveyState={this.setSurveyState}
+                        tenants={this.state.tenants}/>;
             case 2:
                 return <Tenant
                         handleNextStep={this.handleNextStep}

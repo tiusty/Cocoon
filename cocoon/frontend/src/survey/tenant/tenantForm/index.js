@@ -8,6 +8,7 @@ export default class TenantForm extends Component {
         super(props);
         this.state = {
             isActive: false,
+            isValid: false,
             occupation_type: null,
             other_occupation_reason: null,
             commute_type: null
@@ -32,19 +33,71 @@ export default class TenantForm extends Component {
         this.setState({commute_type:commute_type});
     }
 
+    handleValidation = (el) => {
+        const q = Array.from(document.getElementById(el).querySelectorAll('.survey-question'));
+        let visibleQuestions = q.filter(i => i.style.display !== 'none');
+        for(let i = 0; i < visibleQuestions.length; i++) {
+            if(visibleQuestions[i].querySelector('input').type === 'radio') {
+                if(this.validateRadioButton(visibleQuestions[i].querySelector('input').name)) {
+                    this.setState({
+                        isValid: true
+                    }, () => this.props.isTenantValid(this.props.index, this.state.isValid) );
+                } else {
+                    this.setState({
+                        isValid: false
+                    }, () => this.props.isTenantValid(this.props.index, this.state.isValid) );
+                }
+            } else {
+                if(this.validateInputText(visibleQuestions[i].querySelector('input').value)) {
+                    this.setState({
+                        isValid: true
+                    }, () => this.props.isTenantValid(this.props.index, this.state.isValid) );
+                } else {
+                    this.setState({
+                        isValid: false
+                    }, () => this.props.isTenantValid(this.props.index, this.state.isValid) );
+                }
+            }
+        }
+    }
+
+    validateRadioButton = (el) => {
+        const inputs = document.querySelectorAll(`input[name=${el}]`);
+        for (let i = 0; i < inputs.length; i++) {
+            if(inputs[i].checked) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    validateInputText = (val) => {
+        if(val !== '') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     render(){
         const name = this.props.tenantInfo.first_name;
         const toggleName = this.props.index === 0 ? 'you' : this.props.tenantInfo.first_name;
         const tenantNumber = `tenants-${this.props.index}`;
         return (
             <>
-                <div className="tenant-panel" onClick={this.toggleQuestions} style={{borderBottom: this.state.isActive ? 'none': '1px solid var(--borderColor)'}}>
-                    <span>{this.props.index + 1}. {name}'s Info</span>
+                <div className="tenant-panel" onClick={() => {this.handleValidation(`tenants-${this.props.index}-questions`); this.toggleQuestions(); }} style={{borderBottom: this.state.isActive ? 'none': '1px solid var(--borderColor)'}}>
+                    <div className="tenant-panel-left">
+                        <i className="material-icons" style={{color: `${!this.state.isValid ? 'var(--red)' : 'var(--teal)'}`}}>
+                            {!this.state.isValid ? 'error_outline' : 'check_circle_outline'}
+                        </i>
+                        <span>{this.props.index + 1}. {name}'s Info</span>
+                    </div>
                     <span><i className="material-icons">{this.state.isActive ? 'remove' : 'add'}</i></span>
                 </div>
-                <div className="tenant-questions" style={{display: this.state.isActive ? 'flex': 'none', borderBottom: this.state.isActive ? '1px solid var(--borderColor)': 'none'}}>
+                <div id={`tenants-${this.props.index}-questions`} onChange={(e) => this.handleValidation(`tenants-${this.props.index}-questions`)} className="tenant-questions" style={{display: this.state.isActive ? 'flex': 'none', borderBottom: this.state.isActive ? '1px solid var(--borderColor)': 'none'}}>
                     <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'string'); this.handleOccupation(e.target.value)}}>
                         <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{toggleName}</span> working, studying, or other?</h2>
+                        <span className="col-md-12 survey-error-message" id={`tenant-${this.props.index}_occupation_error`}>You must select the number of people.</span>
                         <label className="col-md-6 survey-label">
                             <input type="radio" name={`${tenantNumber}-occupation`} value="working" required />
                             <div>Working</div>
@@ -101,7 +154,7 @@ export default class TenantForm extends Component {
                         <h2>Is there somewhere {toggleName} <span>{this.props.index === 0 ? 'visit' : 'visits'} regularly</span>?</h2>
                         <Autocomplete
                             className="col-md-12 survey-input"
-                            onPlaceSelected={(place) => { console.log(place); this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
+                            onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
                             types={['address']}
                             name={`${tenantNumber}-commute_address`}
                             placeholder={'Street Address'}
@@ -120,7 +173,7 @@ export default class TenantForm extends Component {
                         <h2>What's the <span>address of the campus</span> {toggleName} {this.props.index === 0 ? 'attend' : 'attends'}?</h2>
                         <Autocomplete
                             className="col-md-12 survey-input"
-                            onPlaceSelected={(place) => { console.log(place); this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
+                            onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
                             types={['address']}
                             name={`${tenantNumber}-commute_address`}
                             placeholder={'School Address'}
@@ -132,7 +185,7 @@ export default class TenantForm extends Component {
                         <h2>What's the <span>work address</span> for {toggleName}?</h2>
                         <Autocomplete
                             className="col-md-12 survey-input"
-                            onPlaceSelected={(place) => { console.log(place); this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
+                            onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
                             types={['address']}
                             name={`${tenantNumber}-commute_address`}
                             placeholder={'Work Address'}
@@ -232,7 +285,7 @@ export default class TenantForm extends Component {
 
                     <div className="survey-question" id={`${tenantNumber}-income-question`} onBlur={(e) => {this.props.handleInputChange(e, 'number');}}>
                         <h2>What is {this.props.index === 0 ? 'your' : `${toggleName}'s`} <span>approximate income</span>?</h2>
-                        <input className="col-md-12 survey-input" type="number" name={`${tenantNumber}-income`} placeholder="Yearly salary" />
+                        <input className="col-md-12 survey-input" type="number" name={`${tenantNumber}-income`} placeholder="Yearly salary" step="1000"/>
                     </div>
 
                     <div className="survey-question" id={`${tenantNumber}-credit_score-question`} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>

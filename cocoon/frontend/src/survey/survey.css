@@ -256,6 +256,21 @@
     font-weight: bold;
 }
 
+.tenant-panel-left {
+    display: flex;
+    align-items: center;
+}
+
+.tenant-panel-left span {
+    padding-left: 10px;
+}
+
+.tenant-panel-left i {
+    font-size: 40px;
+    font-weight: lighter;
+    opacity: .3;
+}
+
 .tenant-questions {
     border-bottom: 1px solid var(--borderColor);
     flex-direction: column;
@@ -267,6 +282,7 @@
     font-size: 12px;
     font-weight: bold;
     display: none;
+    padding-bottom: 5px;
 }
 
 @media screen and (max-width: 992px) {
@@ -282,6 +298,9 @@
 @media screen and (max-width: 768px) {
     .survey-wrapper {
         padding: 30px 0px;
+    }
+    .survey-question h2 {
+        font-size: 20px;
     }
 }
 
