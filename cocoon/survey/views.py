@@ -307,7 +307,7 @@ class VisitList(ListView):
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler()
-        client_scheduler_alg.run(homes_list, self.request.user)
+        client_scheduler_alg.calculate_duration(homes_list, self.request.user)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
 

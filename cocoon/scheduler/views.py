@@ -75,9 +75,8 @@ class ClientSchedulerItineraryDuration(viewsets.ViewSet):
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler()
-        result = client_scheduler_alg.run(homes_list)
+        result = client_scheduler_alg.calculate_duration(homes_list)
         return Response({'duration': result})
-
 
 
 @login_required()

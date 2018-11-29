@@ -84,7 +84,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
 
         if not ItineraryModel.retrieve_unfinished_itinerary().exists():
-            total_time_secs, interpreted_route = self.run(homes_list)
+            total_time_secs, interpreted_route = self.calculate_duration(homes_list)
             itinerary_model = ItineraryModel(client=user)
             itinerary_model.tour_duration_seconds = total_time_secs
 
@@ -105,7 +105,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
             return True
         return False
 
-    def run(self, homes_list):
+    def calculate_duration(self, homes_list):
         """
         Algorithm runner
         args:
