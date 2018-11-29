@@ -76,7 +76,7 @@ class Survey extends Component {
         axios.get(houseDatabase_endpoints['home_types'])
             .then(res => {
                 const home_type_options = res.data;
-                this.setState({ home_type_options }, () => console.log(home_type_options));
+                this.setState({ home_type_options }, () => console.log(res));
             })
     }
 
