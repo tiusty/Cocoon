@@ -1,30 +1,31 @@
+# Django modules
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
-from cocoon.userAuth.models import UserProfile, MyUser
-from cocoon.survey.models import RentingSurveyModel
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import CreateView, TemplateView, ListView
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 from django.shortcuts import get_object_or_404
-
 from django.utils.decorators import method_decorator
 
 # Used for email verification
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_text
+
+# App Modules
+from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 from .tokens import account_activation_token
+from .models import UserProfile, MyUser
 
 # Import Cocoon Modules
 from cocoon.signature.models import HunterDocManagerModel
 from cocoon.scheduler import views as scheduler_views
-
-# Import Scheduler algorithm
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+from cocoon.commutes.constants import CommuteAccuracy
+from cocoon.survey.models import RentingSurveyModel
 
 
 def index(request):
@@ -71,7 +72,7 @@ class VisitList(ListView):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler()
+        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
         result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
         if result:
             messages.info(request, "Itinerary created")

@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
-from django.utils.decorators import method_decorator
 
 # App Models
 from .models import ItineraryModel, TimeModel
@@ -14,6 +13,7 @@ from .serializers import ItinerarySerializer
 from cocoon.userAuth.models import UserProfile
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+from cocoon.commutes.constants import CommuteAccuracy
 
 # Python Modules
 import json
@@ -74,7 +74,7 @@ class ClientSchedulerItineraryDuration(viewsets.ViewSet):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler()
+        client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.APPROXIMATE)
         result = client_scheduler_alg.calculate_duration(homes_list)
         return Response({'duration': result})
 

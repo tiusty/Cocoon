@@ -1,3 +1,6 @@
+# import django modules
+from django.core.files.base import ContentFile
+
 # App imports
 from ..clientScheduler.base_algorithm import clientSchedulerAlgorithm
 from ..models import ItineraryModel
@@ -5,12 +8,16 @@ from ..models import ItineraryModel
 # import distance matrix wrapper
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
-# import django modules
-from django.core.files.base import ContentFile
+# Import Cocoon modules
 from cocoon.commutes.models import CommuteType
+from cocoon.commutes.constants import CommuteAccuracy
 
 
 class ClientScheduler(clientSchedulerAlgorithm):
+
+    def __init__(self, accuracy=CommuteAccuracy.EXACT):
+        super().__init__()
+        self.commute_accuracy = accuracy
 
     def build_homes_matrix(self, homes_list):
         """
