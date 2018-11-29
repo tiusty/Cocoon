@@ -96,7 +96,9 @@ class ClientScheduler(clientSchedulerAlgorithm):
             # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
             # Add 20 minutes to each home
             s = ""
+            total_time_secs = 20 * 60
             for item in interpreted_route:
+                total_time_secs = 20 * 60 + item[1]
                 s += item[0]
                 s += " "
                 s += str(item[1] / 60 + 20)
@@ -106,6 +108,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
             # File name is unique based on user and current time (making it impossible to have duplicates)
 
             itinerary_model = ItineraryModel.objects.create(client=user)
+            itinerary_model.tour_duration_seconds = total_time_secs
 
             itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
             for home in homes_list:
