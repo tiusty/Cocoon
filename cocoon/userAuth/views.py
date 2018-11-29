@@ -72,7 +72,7 @@ class VisitList(ListView):
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler()
-        result = client_scheduler_alg.run(homes_list, self.request.user)
+        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
         if result:
             messages.info(request, "Itinerary created")
         else:

@@ -1,13 +1,9 @@
-# import python modules
-
-from datetime import datetime
-import os
-
+# App imports
+from ..clientScheduler.base_algorithm import clientSchedulerAlgorithm
+from ..models import ItineraryModel
 
 # import distance matrix wrapper
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
-from cocoon.scheduler.clientScheduler.base_algorithm import clientSchedulerAlgorithm
-from cocoon.scheduler.models import ItineraryModel, itinerary_directory_path
 
 # import django modules
 from django.core.files.base import ContentFile
@@ -77,38 +73,29 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         return tuple_list_edges
 
-    def run(self, homes_list, user):
+    def save_itinerary(self, homes_list, user):
         """
-        Algorithm runner
-        args:
-        :param: (list) homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
+
+        :param: (list) homes_list: The matrix calculated using DistanceWrapper() with distances between every pair
+                                    of homes in visit list
         :param: (request.user) user: user
+        :return: (boolean) -> True: The itinerary was created successfully
+                              False: The itinerary was not created
         """
 
-        if not ItineraryModel.objects.filter(client=user).exists():
-            destination_addresses = []
-            for item in homes_list:
-                destination_addresses.append(item.full_address)
-
-            shortest_path = self.run_client_scheduler_algorithm(destination_addresses)
-            interpreted_route = self.interpret_algorithm_output(destination_addresses, shortest_path)
+        if not ItineraryModel.retrieve_unfinished_itinerary().exists():
+            total_time_secs, interpreted_route = self.run(homes_list)
+            itinerary_model = ItineraryModel(client=user)
+            itinerary_model.tour_duration_seconds = total_time_secs
 
             # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
             # Add 20 minutes to each home
             s = ""
-            total_time_secs = 20 * 60
             for item in interpreted_route:
-                total_time_secs = 20 * 60 + item[1]
                 s += item[0]
                 s += " "
                 s += str(item[1] / 60 + 20)
                 s += "\n"
-
-            # Update Itinerary Model
-            # File name is unique based on user and current time (making it impossible to have duplicates)
-
-            itinerary_model = ItineraryModel.objects.create(client=user)
-            itinerary_model.tour_duration_seconds = total_time_secs
 
             itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
             for home in homes_list:
@@ -116,5 +103,29 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             itinerary_model.save()
             return True
-        else:
-            return False
+        return False
+
+    def run(self, homes_list):
+        """
+        Algorithm runner
+        args:
+        :param: (list) homes_list: The matrix calculated using DistanceWrapper() with distances between every pair
+                                    of homes in visit list
+        """
+
+        destination_addresses = []
+        for item in homes_list:
+            destination_addresses.append(item.full_address)
+
+        shortest_path = self.run_client_scheduler_algorithm(destination_addresses)
+        interpreted_route = self.interpret_algorithm_output(destination_addresses, shortest_path)
+
+        # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
+        # Add 20 minutes to each home
+        total_time_secs = 20 * 60
+        for item in interpreted_route:
+            total_time_secs = 20 * 60 + item[1]
+
+        # Update Itinerary Model
+        # File name is unique based on user and current time (making it impossible to have duplicates)
+        return total_time_secs, interpreted_route

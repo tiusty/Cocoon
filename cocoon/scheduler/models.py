@@ -1,6 +1,4 @@
-# import python modules
-from datetime import datetime
-
+# Import django modules
 from django.db import models
 from django.db import transaction
 from django.utils import timezone
@@ -35,6 +33,7 @@ class ItineraryModel(models.Model):
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
+    finished = models.BooleanField(default=False)
 
     def __str__(self):
         return "{0} Itinerary".format(self.client.full_name)
@@ -71,6 +70,10 @@ class ItineraryModel(models.Model):
         :return:
         """
         return self.selected_start_time is not None
+
+    @staticmethod
+    def retrieve_unfinished_itinerary():
+        return ItineraryModel.objects.filter(finished=False)
 
     @transaction.atomic
     def select_start_time(self, start_time):
