@@ -136,6 +136,10 @@ class HunterDocViewset(viewsets.ModelViewSet):
         :param kwargs:
             Expects:
                 pk: (int) -> The value passed in via the url
+                type: (string) -> The type of update specified
+                    One of:
+                        update -> Update the document with the passed in template id
+                        resend -> Resend the document with the passed in template id
         :return:
         """
         # Retrieve the user profile
@@ -146,13 +150,16 @@ class HunterDocViewset(viewsets.ModelViewSet):
 
         template = get_object_or_404(HunterDocTemplateModel, pk=pk)
 
+        # Update, updates the status of the document with the given template id
         if 'update' in self.request.data['type']:
             if template.template_type == HunterDocTemplateModel.PRE_TOUR:
                 user_profile.user.doc_manager.update_pre_tour_is_signed()
+        # resend, resends the document to the user via email
         elif 'resend' in self.request.data['type']:
             if template.template_type == HunterDocTemplateModel.PRE_TOUR:
                 user_profile.user.doc_manager.resend_pre_tour_documents()
 
+        # Return the document again
         doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
         serializer = HunterDocSerializer(doc)
         return Response(serializer.data)
