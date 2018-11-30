@@ -125,7 +125,7 @@ class DistanceWrapper:
         traffic_model_in="best_guess"
         if traffic_option:
             traffic_model_in="pessimistic"
-        print(traffic_model_in)
+
         while origin_list:
             # only computes for the first destination_number destinations
             response_json = distance_matrix.distance_matrix(self.client,
