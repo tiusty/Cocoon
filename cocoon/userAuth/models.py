@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, UserManager, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
@@ -94,8 +94,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
-    favorites = models.ManyToManyField(RentDatabaseModel, related_name="favorite_list", blank=True)
-    visit_list = models.ManyToManyField(RentDatabaseModel, related_name="visit_list", blank=True)
 
     def __str__(self):
         return self.user.get_short_name()

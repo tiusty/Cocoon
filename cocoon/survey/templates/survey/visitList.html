@@ -6,10 +6,9 @@
     {{ block.super }}
 
     <!-- Style sheets for template page -->
-    <link href="{% static 'Unicorn/homes/css/homeModal.css' %}" rel="stylesheet">
-    <link href="{% static 'Unicorn/homes/css/tiles.css' %}" rel="stylesheet">
+    <link href="{% static 'cocoon/tile/css/homeModal.css' %}" rel="stylesheet">
+    <link href="{% static 'cocoon/tile/css/tiles.css' %}" rel="stylesheet">
     <link href="{% static 'survey/visit_list_tiles.css' %}" rel="stylesheet">
-    {#    <link href="{% static 'survey/survey_result.css' %}" rel="stylesheet">#}
 
 {% endblock %}
 
@@ -52,25 +51,38 @@
             </div>
         {% endif %}
     </div>
-    <div class="row">
+    <br>
+    <br>
+    {% for survey in surveys %}
+    <div class="row" style="outline-style: dotted; padding-left: 10px; padding-bottom: 10px; padding-right: 10px">
+        <h2>{{ survey.name }}</h2>
         <div class="col-md-6">
-            <p>The Short List (These are homes you plan on visiting)</p>
-            <div class="tileTable">
-                {% for house in user_visit_house_list %}
-                    {% include "homes/tiles.html" with includeScore=False theHouse=house %}
+            <h2 style="text-decoration: underline">Favorites:</h2>
+                {% for favorite in survey.favorites.all %}
+                    {% include "homes/tiles.html" with user_favorite_houses=survey.favorites.all survey_id=survey.id includeScore=False  theHouse=favorite %}
+                    {% empty %}
+                    <h3>Please load your survey and add favorite homes</h3>
                 {% endfor %}
-            </div>
         </div>
-
-        <div class="col-md-6">
-            <p>Favorites (These are homes you like and want to keep track of)</p>
-            <div class="favoriteTiles tileTable">
-                {% for house in user_favorite_houses %}
-                    {% include "homes/tiles.html" with includeScore=False  theHouse=house %}
-                {% endfor %}
-            </div>
+        <div class="col-md-5">
+            <h2 style="text-decoration: underline">Visit List:</h2>
+                    {% for visit in survey.visit_list.all %}
+                        {% include "homes/tiles.html" with user_favorite_houses=survey.favorites.all survey_id=survey.id includeScore=False  theHouse=visit %}
+                    {% empty %}
+                        <h3>Please add homes to your visit list!</h3>
+                    {% endfor %}
+        </div>
+        <div class="col-md-1">
+            {% if survey.visit_list.exists %}
+            <form action="{% url 'survey:visitList' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-primary" name="submit-button" type="submit" value="{{ survey.id }}">Schedule</button>
+            </form>
+            {% endif %}
         </div>
     </div>
+        <br>
+    {% endfor %}
 
     <div class="scheduled-itinerary">
         {% for itn in scheduled_itineraries %}
@@ -85,14 +97,14 @@
 
     <!-- Custom Javascript -->
     {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
-    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/getCookie.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables adding homes to the users visit list{% endcomment %}
-    <script src="{% static 'Unicorn/homes/javascript/set_visit_house.js' %}"></script>
-    <script src="{% static 'Unicorn/homes/javascript/set_favorite.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/set_visit_house.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/set_favorite.js' %}"></script>
     <script src="{% static 'survey/javascript/ajax/check_pre_tour_documents.js' %}"></script>
     <script src="{% static 'survey/javascript/ajax/resend_pre_tour_documents.js' %}"></script>
     {% comment %}This script adds the set_visit_house function which enables removing homes from the users visit list{% endcomment %}
-    <script src="{% static 'Unicorn/homes/javascript/delete_visit_house.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/delete_visit_house.js' %}"></script>
     {# Necessary imports for the global tiles #}
     <script src="{% static 'survey/tileCarousel.js' %}"></script>
     <script src="{% static 'survey/tileInteraction.js' %}"></script>

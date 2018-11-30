@@ -6,7 +6,7 @@ from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
 
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import Distance_Matrix_Exception
-from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
 # Load the logger
 import logging
@@ -63,14 +63,10 @@ class Driving(CommuteCalculator):
     def check_all_combinations(self):
         """
         This function checks every combination possible given multiple homes for a destination.
-        If a pair doesn't exist, it will add the pair to a list and then at the end compute the
-        approximation for the missing pairs
+        Pairs that don't exist are passed to the generate_approximation_pair to create the pair in the database
         """
         failed_home_dict = dict()
-        failed_list = []
-        for home_score in self.homes:
-            if not self.does_pair_exist(home_score.home):
-                failed_list.append((home_score.home.zip_code, home_score.home.state))
+        failed_list = self.find_missing_pairs(self.homes)
 
         # Add to the dictionary of failed homes
         failed_home_dict[(self.destination.zip_code, self.destination.state)] = failed_list
@@ -82,29 +78,47 @@ class Driving(CommuteCalculator):
             except Distance_Matrix_Exception as e:
                 logger.warning("Caught: {0}".format(e.__class__.__name__))
 
-    def does_pair_exist(self, home):
+    def find_missing_pairs(self, homes):
         """
-        This function given a pair of locations, checks to see if the combination exists in the cache already.
-        If it does, then the cache doesn't need to be added, if it doesn't, then it returns false.
-        It also does a check to see how old the pair is, and if it is too old, then it will return false.
-        :param home: (homeScore) -> The home that is being computed
+        Given a list of homes, it determines if a zip_code pair exists between each home and destination.
+            If not then it adds the pair to the failed list so the pair can be generated
+        :param homes: (list[homeScore]) -> Homes that are being checked for zip-code pairs
+        :return: (list[(string, string)] Returns a set of (zip_code, state) tuples of pairs that don't exist
+            in the cache
         """
-        parent_zip_code_dictionary = ZipCodeBase.objects.filter(zip_code__exact=home.zip_code)
-        if parent_zip_code_dictionary.exists():
-            for parent in parent_zip_code_dictionary:
-                zip_code_dictionary = ZipCodeChild.objects.filter(
-                    base_zip_code_id=parent).filter(zip_code__exact=self.destination.zip_code) \
-                    .filter(commute_type=self.destination.commute_type)
-                if zip_code_dictionary.exists():
-                    for match in zip_code_dictionary:
-                        if match.zip_code_cache_still_valid():
-                            return True
-                        else:
-                            return False
-                else:
-                    return False
-        else:
-            return False
+        # The reason a set is used is because this prevents adding duplicate entries because
+        #   adding an entry that already exists does nothing
+        failed_list = set()
+        try:
+            dest_zip = ZipCodeBase.objects.filter(zip_code__exact=self.destination.zip_code)
+
+            # Generates a queryset of all the child zip_codes that exist for this destination
+            child_zips = ZipCodeChild.objects.filter(base_zip_code=dest_zip). \
+                filter(commute_type=self.destination.commute_type). \
+                values_list('zip_code', 'last_date_updated')
+
+            # Dictionary Compression to retrieve the values from the QuerySet
+            child_zip_codes = {zip_code: last_update for zip_code, last_update in child_zips}
+
+            # For every home, see if the home zip_code matches one of the zip_codes in the child_zip codes
+            #   If not then add it to the failed_list
+            for home in homes:
+
+                # Determines if the home exists in the dictionary on child_zip_codes
+                result = home.home.zip_code in child_zip_codes
+
+                # If there is not pair or the pair is out of date then mark the pair as failed
+                #   so it gets regenerated
+                if not result or not ZipCodeChild.zip_code_cache_valid_check(child_zip_codes[home.home.zip_code]):
+                    failed_list.add((home.home.zip_code, home.home.state))
+
+        # If the ZipCodeBase doesn't exist then none of the children exist so add them all to the
+        #   failed list
+        except ZipCodeBase.DoesNotExist:
+            for home in homes:
+                failed_list.add((home.home.zip_code, home.home.state))
+
+        return failed_list
 
     def generate_approximation_pair(self, origins_zips_states, destination_zip_state):
         """
@@ -121,20 +135,19 @@ class Driving(CommuteCalculator):
             destination = ("20344", California)
             commute_type = "driving"
         """
-        wrapper = DistanceWrapper()
 
         # map (zip, state) tuples list to a list of "state+zip" strings
-        results = wrapper.get_durations_and_distances(list(map(lambda x: x[1]+"+"+x[0], origins_zips_states)),
-                                                      [destination_zip_state[1]+"+"+destination_zip_state[0]],
-                                                      mode=self.google_commute_name)
+        results = retrieve_exact_commute(list(map(lambda x: x[1] + "+" + x[0], origins_zips_states)),
+                                         [destination_zip_state[1] + "+" + destination_zip_state[0]],
+                                         self.destination.commute_type)
 
         if results:
             # iterates both lists simultaneously
             for origin, result in zip(origins_zips_states, results):
-                if ZipCodeBase.objects.filter(zip_code=origin[0]).exists():
-                    zip_code_dictionary = ZipCodeBase.objects.get(zip_code=origin[0])
+                if ZipCodeBase.objects.filter(zip_code=destination_zip_state[0]).exists():
+                    zip_code_dictionary = ZipCodeBase.objects.get(zip_code=destination_zip_state[0])
                     zip_dest = zip_code_dictionary.zipcodechild_set.filter(
-                        zip_code=destination_zip_state[0],
+                        zip_code=origin[0],
                         commute_type=self.destination.commute_type)
 
                     # If the zip code doesn't exist or is not valid then compute the approximate distance
@@ -143,15 +156,15 @@ class Driving(CommuteCalculator):
                         if zip_dest.exists():
                             zip_dest.delete()
                         zip_code_dictionary.zipcodechild_set.create(
-                            zip_code=destination_zip_state[0],
+                            zip_code=origin[0],
                             commute_type=self.destination.commute_type,
                             commute_distance_meters=result[0][1],
                             commute_time_seconds=result[0][0],
                         )
                 else:
-                    ZipCodeBase.objects.create(zip_code=origin[0]) \
+                    ZipCodeBase.objects.create(zip_code=destination_zip_state[0]) \
                         .zipcodechild_set.create(
-                        zip_code=destination_zip_state[0],
+                        zip_code=origin[0],
                         commute_type=self.destination.commute_type,
                         commute_distance_meters=result[0][1],
                         commute_time_seconds=result[0][0],
@@ -162,7 +175,7 @@ class Driving(CommuteCalculator):
 
     def run(self):
         """
-        The generic run method that each chlid class should have. Starts the execution of the class
+        The generic run method that each child class should have. Starts the execution of the class
         """
         if self.accuracy == CommuteAccuracy.EXACT:
             """

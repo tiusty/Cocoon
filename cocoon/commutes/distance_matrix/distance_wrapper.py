@@ -118,8 +118,8 @@ class DistanceWrapper:
         origin_list = origins
 
         # maximizes 100 elements while retaining 25 origin/dest limit
-        destination_number = min(25, len(destinations))
-        origin_number = min((100 / destination_number), 25)
+        destination_number = int(min(25, len(destinations)))
+        origin_number = int(min((100 / destination_number), 25))
 
         # traffic option set to best_guess (default)
         traffic_model_in="best_guess"
@@ -135,6 +135,7 @@ class DistanceWrapper:
                                                             mode=mode,
                                                             traffic_model=traffic_model_in,
                                                             )
+
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin
             for res in response_list:

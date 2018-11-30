@@ -11,6 +11,7 @@ class TenantInLine(admin.TabularInline):
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
     readonly_fields = ("created", 'id', 'url')
+    raw_id_fields = ("favorites", "visit_list",)
     # noinspection SpellCheckingInspection
     fieldsets = (
         (None, {'fields': ('name', 'user_profile')}),
@@ -18,6 +19,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
                                'max_bathrooms', )}),
         ('Exterior Amenities', {'fields': ('parking_spot',)}),
         ('Created', {'fields': ('created', 'id', 'url')}),
+        ('Homes', {'fields': ('favorites', 'visit_list',)}),
     )
     list_display = ('name', 'user_profile', )
     list_filter = ['user_profile']
