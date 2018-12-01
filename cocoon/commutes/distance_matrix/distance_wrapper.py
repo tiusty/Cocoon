@@ -128,13 +128,26 @@ class DistanceWrapper:
 
         while origin_list:
             # only computes for the first destination_number destinations
-            response_json = distance_matrix.distance_matrix(self.client,
+
+            if traffic_option and mode == "driving":
+                # departure time = Tuesday, Dec 4, 2018 4:30pm
+                response_json = distance_matrix.distance_matrix(self.client,
                                                             origin_list[:origin_number],
                                                             destinations[:destination_number],
                                                             units=self.units,
                                                             mode=mode,
-                                                            traffic_model=traffic_model_in,
+                                                            departure_time=1543941000,
+                                                            traffic_model="best_guess",
                                                             )
+
+            else:
+                response_json = distance_matrix.distance_matrix(self.client,
+                                                                origin_list[:origin_number],
+                                                                destinations[:destination_number],
+                                                                units=self.units,
+                                                                mode=mode,
+
+                                                                )
 
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin

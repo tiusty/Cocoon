@@ -411,7 +411,7 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
         fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type']
+                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option']
 
 
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
