@@ -43,7 +43,8 @@ export default class Tenant extends Component {
                            handleInputChange={this.props.handleInputChange}
                            setCommuteAddress={this.props.setCommuteAddress}
                            isTenantValid={this.isTenantValid}
-                       />
+                           commute_type_options={this.props.commute_type_options}
+                           setCommuteType={this.props.setCommuteType} />
                     )
                 })}
                 <button className="col-md-12 survey-btn" style={{marginTop: '30px'}} onClick={(e) => {this.isAllValid() && this.props.handleNextStep(e)}}>

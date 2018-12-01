@@ -29,8 +29,8 @@ export default class TenantForm extends Component {
         this.setState({other_occupation_reason: other_occupation_reason});
     }
 
-    handleCommuteType = (commute_type) => {
-        this.setState({commute_type:commute_type});
+    handleCommuteType = (tenantId, commute_type) => {
+        this.setState({commute_type:commute_type.commute_type}, () => this.props.setCommuteType(tenantId, commute_type));
     }
 
     handleValidation = (el) => {
@@ -150,7 +150,19 @@ export default class TenantForm extends Component {
                         </label>
                     </div>
 
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'other' ? 'block' : 'none'}`}}>
+                    {this.props.commute_type_options &&
+                        <div className="survey-question" id={`${tenantNumber}commute_type-question`}>
+                            <h2>How {this.props.index === 0 ? 'do' : 'does'} {toggleName} <span>commute</span>?</h2>
+                            {this.props.commute_type_options.map((o, index) => (
+                            <label className="col-md-6 survey-label" key={index} onChange={(e) => this.handleCommuteType(tenantNumber, this.props.commute_type_options[index])}>
+                                <input type="radio" name={`${tenantNumber}-commute_type`} value={o.id} />
+                                <div>{o.commute_type}</div>
+                            </label>
+                        ))}
+                        </div>
+                    }
+
+                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'other' && this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}}>
                         <h2>Is there somewhere {toggleName} <span>{this.props.index === 0 ? 'visit' : 'visits'} regularly</span>?</h2>
                         <Autocomplete
                             className="col-md-12 survey-input"
@@ -161,15 +173,8 @@ export default class TenantForm extends Component {
                         />
                     </div>
 
-
-
                     {/*SHOWS ONLY ON STUDYING OCCUPATION*/}
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'studying' ? 'block' : 'none'}`}} onBlur={(e) => {this.props.handleInputChange(e, 'string');}}>
-                        <h2>What's the name of the <span>school</span> {toggleName} {this.props.index === 0 ? 'attend' : 'attends'}?</h2>
-                        <input className="col-md-12 survey-input" type="text" name={`${tenantNumber}-student_school_name`} placeholder="School Name" />
-                    </div>
-
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'studying' ? 'block' : 'none'}`}}>
+                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'studying' && this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}}>
                         <h2>What's the <span>address of the campus</span> {toggleName} {this.props.index === 0 ? 'attend' : 'attends'}?</h2>
                         <Autocomplete
                             className="col-md-12 survey-input"
@@ -181,7 +186,7 @@ export default class TenantForm extends Component {
                     </div>
 
                     {/*SHOWS ONLY ON WORKING OCCUPATION*/}
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'working' ? 'block' : 'none'}`}}>
+                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'working' && this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}}>
                         <h2>What's the <span>work address</span> for {toggleName}?</h2>
                         <Autocomplete
                             className="col-md-12 survey-input"
@@ -192,28 +197,8 @@ export default class TenantForm extends Component {
                         />
                     </div>
 
-                    <div className="survey-question" id={`${tenantNumber}-commute_type-question`} onChange={(e) => {this.props.handleInputChange(e, 'string'); this.handleCommuteType(e.target.value)}}>
-                        <h2>How {this.props.index === 0 ? 'do' : 'does'} {toggleName} <span>commute</span>?</h2>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-commute_type`} value="driving" required />
-                            <div>Driving</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-commute_type`} value="transit" />
-                            <div>Transit</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-commute_type`} value="walking" />
-                            <div>Walking</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-commute_type`} value="biking" />
-                            <div>Biking</div>
-                        </label>
-                    </div>
-
                     {/*SHOWS ONLY ON DRIVING COMMUTE_TYPE*/}
-                    <div className="survey-question" id={`${tenantNumber}-driving-follow-up-question`} style={{display: `${this.state.commute_type === 'driving' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <div className="survey-question" id={`${tenantNumber}-driving-follow-up-question`} style={{display: `${this.state.commute_type === 'Driving' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
                         <h2>What are the <span>driving options</span>?</h2>
                         <label className="col-md-6 survey-label">
                             <input type="radio" name={`${tenantNumber}-driving_condition`} value="with-traffic" required />
@@ -226,7 +211,7 @@ export default class TenantForm extends Component {
                     </div>
 
                     {/*SHOWS ONLY ON TRANSIT COMMUTE_TYPE*/}
-                    <div className="survey-question" id={`${tenantNumber}-transit-follow-up-question`} style={{display: `${this.state.commute_type === 'transit' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <div className="survey-question" id={`${tenantNumber}-transit-follow-up-question`} style={{display: `${this.state.commute_type === 'Transit' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
                         <h2>What form of <span>transit</span>?</h2>
                         <label className="col-md-6 survey-label">
                             <input type="radio" name={`${tenantNumber}-transit_type`} value="bus" required />
@@ -242,12 +227,12 @@ export default class TenantForm extends Component {
                         </label>
                     </div>
 
-                    <div className="survey-question" id={`${tenantNumber}-desired_commute-question`} onBlur={(e) => {this.props.handleInputChange(e, 'number');}}>
+                    <div className="survey-question" id={`${tenantNumber}-desired_commute-question`} style={{display: `${this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}} onBlur={(e) => {this.props.handleInputChange(e, 'number');}}>
                         <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {toggleName} want?</h2>
                         <input className="col-md-12 survey-input" type="number" name={`${tenantNumber}-desired_commute`} placeholder="Time in minutes" />
                     </div>
 
-                    <div className="survey-question" id={`${tenantNumber}-commute_weight-question`} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <div className="survey-question" id={`${tenantNumber}-commute_weight-question`} style={{display: `${this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
                         <h2>How <span>important is commute</span> to {toggleName}?</h2>
                         <label className="col-md-3 col-xs-6 survey-label">
                             <input type="radio" name={`${tenantNumber}-commute_weight`} value="0" required />

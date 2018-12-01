@@ -14,6 +14,8 @@ import axios from 'axios'
 
 import userAuth_endpoints from '../endpoints/userAuth_endpoints';
 import houseDatabase_endpoints from '../endpoints/houseDatabase_endpoints';
+import commutes_endpoints from '../endpoints/commutes_endpoints';
+
 import CSRFToken from '../common/csrftoken';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -26,8 +28,9 @@ class Survey extends Component {
         this.state = {
             step: 1,
             number_of_tenants: 1,
-            home_type_options: [],
-            home_type: 2,
+            home_type_options: undefined,
+            home_type: [],
+            commute_type_options: undefined,
             move_weight: 0,
             num_bedrooms: 1,
             desired_price: 1000,
@@ -49,6 +52,7 @@ class Survey extends Component {
 
     componentDidMount = () => {
         this.getHomeTypes();
+        this.getCommuteTypes();
     }
 
 
@@ -76,8 +80,16 @@ class Survey extends Component {
         axios.get(houseDatabase_endpoints['home_types'])
             .then(res => {
                 const home_type_options = res.data;
-                this.setState({ home_type_options }, () => console.log(res));
-            })
+                this.setState({ home_type_options });
+            });
+    }
+
+    getCommuteTypes = () => {
+        axios.get(commutes_endpoints['commute_types'])
+            .then(res => {
+                const commute_type_options = res.data;
+                this.setState({ commute_type_options }, () => console.log(this.state.commute_type_options));
+            });
     }
 
     // When changing to step 2 this trims the tenant array to be
@@ -110,13 +122,17 @@ class Survey extends Component {
                         setFinalTenants={this.setFinalTenants}
                         setPrice={this.setPrice}
                         setSurveyState={this.setSurveyState}
-                        tenants={this.state.tenants}/>;
+                        tenants={this.state.tenants}
+                        home_type_options={this.state.home_type_options}
+                        setHomeTypes={this.setHomeTypes} />;
             case 2:
                 return <Tenant
                         handleNextStep={this.handleNextStep}
                         handleInputChange={this.handleInputChange}
                         setCommuteAddress={this.setCommuteAddress}
-                        tenants={this.state.tenants} />;
+                        tenants={this.state.tenants}
+                        commute_type_options={this.state.commute_type_options}
+                        setCommuteType={this.setCommuteType} />;
             case 3:
                 return <Amenities
                         handleNextStep={this.handleNextStep}
@@ -192,6 +208,27 @@ class Survey extends Component {
             [`${tenantId}state`]: formatState,
             [`${tenantId}zip_code`]: formatZip
         })
+    }
+
+    setHomeTypes = (e, index, id) => {
+        let home_type = [...this.state.home_type];
+        if(e.target.checked) {
+            home_type.push(this.state.home_type_options[index]);
+            this.setState({home_type});
+        } else {
+            for(let i = 0; i < home_type.length; i++) {
+                if(home_type[i].id === id) {
+                    home_type.splice(i, 1);
+                    this.setState({home_type});
+                }
+            }
+        }
+    }
+
+    setCommuteType = (tenantId, commute_type) => {
+        this.setState({
+            [`${tenantId}-commute_type`]: commute_type
+            }, ()=> console.log(this.state));
     }
 
     render(){

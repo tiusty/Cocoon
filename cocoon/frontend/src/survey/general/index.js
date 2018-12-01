@@ -58,6 +58,7 @@ export default class General extends Component {
     handleValidation = () => {
         return this.validateRadioButton('number_of_tenants', '#number_of_tenants_error')
             && this.validateTenantNames()
+            && this.validateHomeType()
             && this.validateDates()
             && this.validateRadioButton('move_weight', '#move_weight_error')
             && this.validateRadioButton('num_bedrooms', '#number_of_rooms_error');
@@ -89,7 +90,7 @@ export default class General extends Component {
 
     validateRadioButton = (el, err) => {
         const inputs = document.querySelectorAll(`input[name=${el}]`);
-                for (let i = 0; i < inputs.length; i++) {
+        for (let i = 0; i < inputs.length; i++) {
             if(inputs[i].checked) {
                 document.querySelector(err).style.display = 'none';
                 return true;
@@ -97,6 +98,19 @@ export default class General extends Component {
         }
         document.querySelector(err).style.display = 'block';
         document.querySelector(err).parentNode.scrollIntoView(true);
+        return false;
+    }
+
+    validateHomeType = () => {
+        const options = document.querySelectorAll('input[name=home_type]');
+        for(let i = 0; i < options.length; i++) {
+            if(options[i].checked) {
+                document.querySelector('#home_type_error').style.display = 'none';
+                return true;
+            }
+        }
+        document.querySelector('#home_type_error').style.display = 'block';
+        document.querySelector('#home_type_error').parentNode.scrollIntoView(true);
         return false;
     }
 
@@ -132,10 +146,23 @@ export default class General extends Component {
                     <h2>What's <span>your {this.props.number_of_tenants === 1 ? 'name' : 'names'}</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>
                     <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} required data-tenantkey={0} onChange={this.handleTenantName}/>
-                    {Array.from(Array(this.props.number_of_tenants - 1)).map((t,i) => { 1
+                    {Array.from(Array(this.props.number_of_tenants - 1)).map((t, i) => {
                         return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)} autoCapitalize={'words'} required data-tenantkey={i + 1} placeholder="First and Last Name" onChange={this.handleTenantName} key={i} />
                     })}
                 </div>
+
+                {this.props.home_type_options &&
+                    <div className="survey-question" onChange={this.validateHomeType}>
+                        <h2>What <span>kind of home</span> do you want?</h2>
+                        <span className="col-md-12 survey-error-message" id="home_type_error">You must select at least one type of home.</span>
+                        {this.props.home_type_options.map((o, index) => (
+                            <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.props.setHomeTypes(e, index, o.id)}>
+                                <input type="checkbox" name="home_type" value={o.id} />
+                                <div>{o.home_type} <i className="material-icons">check</i></div>
+                            </label>
+                        ))}
+                    </div>
+                }
 
                 <div className="survey-question">
                     <h2>How much rent do you <span>want to pay</span>?</h2>

@@ -30,7 +30,7 @@ export default class Amenities extends Component {
     render(){
         return (
             <>
-                <div className="survey-question"onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
                     <h2>How do you like <span>your laundry</span>?</h2>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="preferred_laundry" value="in-unit" />
