@@ -5,7 +5,8 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'itinerary', views.ItineraryViewSet, base_name='itinerary')
+router.register(r'itinerary', views.ItineraryClientViewSet, base_name='itinerary')
+router.register(r'itineraryAgent', views.ItineraryAgentViewSet, base_name='itineraryAgent')
 
 app_name = 'scheduler'
 urlpatterns = [
