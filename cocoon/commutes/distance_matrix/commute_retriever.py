@@ -25,13 +25,13 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, traf
     """
     wrapper = DistanceWrapper()
 
-    if mode == CommuteType.DRIVING:
+    if mode.commute_type == CommuteType.DRIVING:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.DRIVING, traffic_option=traffic_option)
-    elif mode == CommuteType.TRANSIT:
+    elif mode.commute_type == CommuteType.TRANSIT:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.TRANSIT, traffic_option=traffic_option)
-    elif mode == CommuteType.BICYCLING:
+    elif mode.commute_type == CommuteType.BICYCLING:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.BICYCLING, traffic_option=traffic_option)
-    elif mode == CommuteType.WALKING:
+    elif mode.commute_type == CommuteType.WALKING:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING, traffic_option=traffic_option)
 
     else:

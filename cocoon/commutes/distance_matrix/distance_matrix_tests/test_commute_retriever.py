@@ -23,7 +23,7 @@ class TestRetrieveExactCommute(TestCase):
         retrieve_exact_commute([], [], commute_driving)
 
         # Assert
-        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.DRIVING)
+        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.DRIVING, traffic_option=False)
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
     def test_mode_transit(self, mock_os):
@@ -34,7 +34,7 @@ class TestRetrieveExactCommute(TestCase):
         retrieve_exact_commute([], [], commute_transit)
 
         # Assert
-        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.TRANSIT)
+        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.TRANSIT, traffic_option=False)
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
     def test_mode_bicycling(self, mock_os):
@@ -45,7 +45,7 @@ class TestRetrieveExactCommute(TestCase):
         retrieve_exact_commute([], [], commute_bike)
 
         # Assert
-        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.BICYCLING)
+        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.BICYCLING, traffic_option=False)
 
     @patch('cocoon.commutes.distance_matrix.commute_retriever.DistanceWrapper.get_durations_and_distances')
     def test_mode_walking(self, mock_os):
@@ -56,4 +56,4 @@ class TestRetrieveExactCommute(TestCase):
         retrieve_exact_commute([], [], commute_walking)
 
         # Assert
-        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.WALKING)
+        mock_os.assert_called_once_with([], [], mode=GoogleCommuteNaming.WALKING, traffic_option=False)
