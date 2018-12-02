@@ -19,6 +19,7 @@ import json
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
+
 class ClientScheduler(TemplateView):
     """
     Loads the template for the ClientScheduler
@@ -49,7 +50,7 @@ class AgentScheduler(TemplateView):
         data = super().get_context_data(**kwargs)
 
         # Tells React which component to load onto the page
-        data['component'] = ClientScheduler.__name__
+        data['component'] = AgentScheduler.__name__
         return data
 
 
@@ -72,7 +73,7 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        itinerary_type = self.request.query_params('type', None)
+        itinerary_type = self.request.query_params.get('type', None)
 
         if itinerary_type == 'unscheduled':
             return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)

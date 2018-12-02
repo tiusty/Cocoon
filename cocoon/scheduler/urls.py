@@ -10,7 +10,8 @@ router.register(r'itineraryAgent', views.ItineraryAgentViewSet, base_name='itine
 
 app_name = 'scheduler'
 urlpatterns = [
-    url(r'^agentScheduler/', views.agent_scheduler, name="agentScheduler"),
+    # url(r'^agentSchedulerOld/', views.agent_scheduler, name="agentScheduler"),
+    url(r'^agentScheduler/', views.AgentScheduler.as_view(), name="agentScheduler"),
     url(r'^myTours/', views.view_tours, name="myTours"),
     url(r'^clientScheduler', views.ClientScheduler.as_view(), name="clientScheduler"),
 

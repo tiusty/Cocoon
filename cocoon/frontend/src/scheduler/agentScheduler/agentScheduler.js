@@ -6,9 +6,9 @@ import axios from 'axios'
 // Import Cocoon Components
 import Itinerary from "../itinerary/itinerary";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
-// import ItineraryTimeSelector from "./itineraryTimeSelector";
 
 class AgentScheduler extends Component {
+
     state = {
         scheduled_loaded: false,
         unscheduled_loaded: false,
@@ -16,6 +16,7 @@ class AgentScheduler extends Component {
         unscheduled_itineraries: [],
         scheduled_itineraries: [],
     };
+
 
     parseData(data) {
         /**
@@ -42,63 +43,29 @@ class AgentScheduler extends Component {
         /**
          *  Retrieves all the agent's unscheduled itineraries
          */
-        axios.get(scheduler_endpoints['itinerary'],
-            {
-                type: 'unscheduled'
-            })
+        axios.get(scheduler_endpoints['itineraryAgent'], {params: {type: 'unscheduled'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
                     this.setState(
-                        {unscheduled_itineraries: this.parseData(response)}
+                        {unscheduled_itineraries: this.parseData(response.data)}
                     ),
                     this.setState( {unscheduled_loaded: true } )
             })
 
-        axios.get(scheduler_endpoints['itinerary'],
-            {
-                type: 'scheduled'
-            })
+        axios.get(scheduler_endpoints['itineraryAgent'], {params: {type: 'scheduled'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
                     this.setState(
-                        {scheduled_itineraries: this.parseData(response)}
+                        {scheduled_itineraries: this.parseData(response.data)}
                     ),
                     this.setState( {scheduled_loaded: true } )
             })
     }
 
-    // renderTimeSelector = () => {
-    //
-    //     if (this.state.loaded === true) {
-    //         if (this.state.is_scheduled === true) {
-    //             return (
-    //                 <div>
-    //                     <h2>Your Itinerary is currently is already scheduled so you can't modify it</h2>
-    //                 </div>
-    //             )
-    //         } else if (this.state.is_claimed === true) {
-    //             return (
-    //                 <div>
-    //                     <h2>Your Itinerary is currently being scheduled by one of our agents</h2>
-    //                 </div>
-    //             )
-    //         } else {
-    //             return <ItineraryTimeSelector/>
-    //
-    //         }
-    //     } else {
-    //         return (
-    //             <div>
-    //                 <p>Loading</p>
-    //             </div>
-    //         );
-    //     }
-    // };
-
     renderItinerary = (itinerary) => {
         return (
             <Itinerary
-                id={this.state.id}
+                id={itinerary.id}
             />
         );
     };
@@ -114,7 +81,7 @@ class AgentScheduler extends Component {
     };
 
     renderScheduledItineraries = () => {
-        if (this.state.scheduled_itineraries) {
+        if (this.state.scheduled_loaded) {
             return (
                 <div className='scheduled-wrapper'>
                     {this.state.scheduled_itineraries.map((itn) => this.renderItinerary(itn))}
@@ -122,7 +89,6 @@ class AgentScheduler extends Component {
             )
         }
     };
-
 
     render() {
         return (
@@ -139,6 +105,7 @@ class AgentScheduler extends Component {
             </React.Fragment>
         );
     }
+
 }
 
 export default AgentScheduler
