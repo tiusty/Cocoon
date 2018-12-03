@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
+from django.http import Http404
 
 # App Models
 from .models import ItineraryModel, TimeModel
@@ -59,17 +60,63 @@ class AgentSchedulerView(TemplateView):
         return data
 
 
-@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
-class ItineraryClientViewSet(viewsets.ModelViewSet):
+class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
+    """
+    Used for retrieving a generic itinerary. Base on the account type the user
+    can get access to more itinerary models
+    """
 
     serializer_class = ItinerarySerializer
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        return ItineraryModel.objects.filter(client=user_profile.user)
+
+        if user_profile.user.is_broker or user_profile.user.is_admin:
+            return ItineraryModel.objects.all()
+        else:
+            return ItineraryModel.objects.filter(client=user_profile.user)
 
 
-class ClientSchedulerItineraryDuration(viewsets.ViewSet):
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+class ItineraryClientViewSet(viewsets.ModelViewSet):
+    """
+    Used on the client scheduler page to retrieve the itineraries for the current user
+    """
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return ItineraryModel.objects.filter(client=user_profile.user).filter(finished=False)
+
+
+@method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
+class ItineraryAgentViewSet(viewsets.ModelViewSet):
+    """
+    Used to pull the itineraries associated with that the current user which should be an agent
+    """
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        itinerary_type = self.request.query_params.get('type', None)
+
+        if itinerary_type == 'unscheduled':
+            return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)\
+                .filter(finished=False)
+        elif itinerary_type == 'scheduled':
+            return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)\
+                .filter(finished=False)
+        else:
+            raise Http404
+
+
+class ClientItineraryCalculateDuration(viewsets.ViewSet):
+    """
+    Used to calculate the itinerary approximate duration to inform the user before
+        they decide to schedule a group of homes
+    """
 
     @staticmethod
     def list(request, *args, **kwargs):
@@ -97,20 +144,6 @@ class ClientSchedulerItineraryDuration(viewsets.ViewSet):
         client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.APPROXIMATE)
         result = client_scheduler_alg.calculate_duration(homes_list)
         return Response({'duration': result})
-
-@method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
-class ItineraryAgentViewSet(viewsets.ModelViewSet):
-
-    serializer_class = ItinerarySerializer
-
-    def get_queryset(self):
-        user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        itinerary_type = self.request.query_params.get('type', None)
-
-        if itinerary_type == 'unscheduled':
-            return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)
-        elif itinerary_type == 'scheduled':
-            return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)
 
 
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')

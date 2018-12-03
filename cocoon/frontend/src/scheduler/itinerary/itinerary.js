@@ -24,7 +24,7 @@ class Itinerary extends Component {
 
     componentDidMount() {
         /**
-         *  Retrieves all the surveys associated with the user
+         *  Retrieves the itinerary associated with this current component
          */
         axios.get(scheduler_endpoints['itinerary'] + this.state.id + '/')
             .catch(error => console.log('Bad', error))

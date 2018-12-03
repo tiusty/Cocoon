@@ -5,10 +5,11 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'itineraryDuration', views.ClientSchedulerItineraryDuration, base_name='itineraryDuration')
-router.register(r'itinerary', views.ItineraryClientViewSet, base_name='itinerary')
+router.register(r'itinerary', views.ItineraryViewset, base_name='itinerary')
+router.register(r'itineraryClient', views.ItineraryClientViewSet, base_name='itineraryClient')
 router.register(r'itineraryAgent', views.ItineraryAgentViewSet, base_name='itineraryAgent')
 router.register(r'itineraryMarket', views.ItineraryMarketViewSet, base_name='itineraryMarket')
+router.register(r'itineraryDuration', views.ClientItineraryCalculateDuration, base_name='itineraryDuration')
 
 app_name = 'scheduler'
 urlpatterns = [

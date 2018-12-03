@@ -39,9 +39,9 @@ class ClientScheduler extends Component {
 
     componentDidMount() {
         /**
-         *  Retrieves all the surveys associated with the user
+         *  Retrieves all the itineraries associated with the user
          */
-        axios.get(scheduler_endpoints['itinerary'])
+        axios.get(scheduler_endpoints['itineraryClient'], {params: {type: 'unfinished'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
                     this.setState(
