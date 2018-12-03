@@ -65,7 +65,7 @@ class Itinerary extends Component {
         });
     }
 
-    claimItinerary = (id) => {
+    claimItinerary = () => {
         let formData = new FormData();
         formData.set('itinerary_id', this.state.id);
 
@@ -89,7 +89,7 @@ class Itinerary extends Component {
         if (this.state.showClaim) {
             return (
                 <button onClick={() => this.claimItinerary(this.state.id)}>claim</button>
-            )
+            );
         }
 
         return null
