@@ -155,6 +155,23 @@ class Surveys extends Component {
         );
     };
 
+    renderSurveys() {
+        if (this.state.surveys.length <= 0) {
+            return <h3>Please take a survey!</h3>
+        }
+
+        return (this.state.surveys.map(survey =>
+            <Survey
+                key={survey.id}
+                onDelete={this.handleDelete}
+                survey_id={survey.id}
+                endpoint={this.state.survey_endpoint}
+                pre_tour_signed={this.state.pre_tour_signed}
+            />
+
+        ));
+    }
+
     render() {
         /**
          * Renders all the surveys
@@ -162,16 +179,7 @@ class Surveys extends Component {
         return (
             <>
                 {this.renderMessages()}
-                { this.state.surveys.map(survey =>
-                    <Survey
-                        key={survey.id}
-                        onDelete={this.handleDelete}
-                        survey_id={survey.id}
-                        endpoint={this.state.survey_endpoint}
-                        pre_tour_signed={this.state.pre_tour_signed}
-                    />
-
-                )}
+                {this.renderSurveys()}
             </>
         );
     }
