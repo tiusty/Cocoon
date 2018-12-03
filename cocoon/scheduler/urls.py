@@ -11,7 +11,7 @@ router.register(r'itineraryMarket', views.ItineraryMarketViewSet, base_name='iti
 
 app_name = 'scheduler'
 urlpatterns = [
-    url(r'^agentSchedulerOld/', views.agent_scheduler, name="agentScheduler"),
+    url(r'^agentSchedulerOld/', views.agent_scheduler, name="agentSchedulerOld"),
     url(r'^agentScheduler/', views.AgentScheduler.as_view(), name="agentScheduler"),
     url(r'^myToursOld/', views.view_tours, name="myTours"),
     url(r'^clientScheduler', views.ClientScheduler.as_view(), name="clientScheduler"),
