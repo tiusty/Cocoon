@@ -8,7 +8,6 @@ import HomeTile from "../../common/homeTile/homeTile";
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 class Itinerary extends Component {
     state = {
@@ -43,18 +42,25 @@ class Itinerary extends Component {
         /**
          * Schedules a claimed itinerary by selecting a start time
          */
-        console.log(this.state.id)
-        axios.post(scheduler_endpoints['selectStartTime'],
-            {"time_id": id, "itinerary_id": this.state.id})
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                if (response.result == 0) {
-                    this.setState({
-                        selected_start_time: time,
+        let formData = new FormData();
+        formData.set('time_id', id);
+        formData.set('itinerary_id', this.state.id);
 
-                    });
-                }
-            });
+        axios({
+            method: 'post',
+            url: scheduler_endpoints['selectStartTime'],
+            data: formData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        })
+        .catch(error => console.log('Bad', error))
+        .then(response => {
+            if (response.result == 0) {
+                this.setState({
+                    selected_start_time: time,
+
+                });
+            }
+        });
     }
 
     renderStartTimes = () => {
