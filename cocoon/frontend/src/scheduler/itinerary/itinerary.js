@@ -5,6 +5,10 @@ import axios from 'axios'
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import HomeTile from "../../common/homeTile/homeTile";
 
+// For handling Post request with CSRF protection
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 class Itinerary extends Component {
     state = {
         agent: null,
@@ -13,6 +17,9 @@ class Itinerary extends Component {
         id: this.props.id,
         selected_start_time: null,
         tour_duration_seconds: null,
+        start_times: [],
+        showTimes: this.props.showTimes,
+        showClaim: this.props.showClaim,
     };
 
     componentDidMount() {
@@ -28,8 +35,81 @@ class Itinerary extends Component {
                     homes: response.data.homes,
                     selected_start_time: response.data.selected_start_time,
                     tour_duration_seconds: response.data.tour_duration_seconds,
+                    start_times: response.data.start_times
                 })
             })
+    }
+
+    selectTime = (id, time) => {
+        /**
+         * Schedules a claimed itinerary by selecting a start time
+         */
+        let formData = new FormData();
+        formData.set('time_id', id);
+        formData.set('itinerary_id', this.state.id);
+
+        axios({
+            method: 'post',
+            url: scheduler_endpoints['selectStartTime'],
+            data: formData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        })
+        .catch(error => console.log('Bad', error))
+        .then(response => {
+            if (response.data.result == 0) {
+                this.setState({
+                    selected_start_time: time,
+                    showTimes: false,
+                });
+            }
+        });
+    }
+
+    claimItinerary = () => {
+        let formData = new FormData();
+        formData.set('itinerary_id', this.state.id);
+
+        axios({
+            method: 'post',
+            url: scheduler_endpoints['claimItinerary'],
+            data: formData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        })
+        .catch(error => console.log('Bad', error))
+        .then(response => {
+            if (response.data.result == "0") {
+                this.setState({
+                    showClaim: false,
+                });
+            }
+        });
+    }
+
+    renderClaimButton = () => {
+        if (this.state.showClaim) {
+            return (
+                <button onClick={() => this.claimItinerary(this.state.id)}>claim</button>
+            );
+        }
+
+        return null
+    }
+
+    renderStartTimes = () => {
+        if (this.state.showTimes) {
+            return (
+                this.state.start_times.map((timeObject) => {
+                    return (
+                        <div key={timeObject.id}>
+                            <div>{timeObject.time}</div>
+                            <button onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button>
+                        </div>
+                    );
+                })
+            )
+        }
+
+        return null
     }
 
     renderItinerary = () => {
@@ -55,6 +135,8 @@ class Itinerary extends Component {
                 {agent_div}
                 <p>Tour Duration = {this.state.tour_duration_seconds}</p>
                 {start_time}
+                {this.renderStartTimes()}
+                {this.renderClaimButton()}
                 {this.state.homes.map(home =>
                     <HomeTile
                         key={home.id}

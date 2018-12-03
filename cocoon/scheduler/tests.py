@@ -61,21 +61,21 @@ class AgentSchedulerViewTests(TestCase):
         claimed_itineraries, unclaimed_itineraries = self.setup_test_itineraries()
 
         # should respond with redirect to logged out user
-        response = self.client.get(reverse('scheduler:agentScheduler'))
+        response = self.client.get(reverse('scheduler:agentSchedulerOld'))
         self.assertEqual(response.status_code, 302)
         self.assertEqual("/userAuth/login" in response.url, True)
 
         # should respond with 404 to hunter
         self.client.login(username=self.hunter.email, password=self.password)
         self.assertEqual(get_user(self.client), self.hunter)
-        response = self.client.get(reverse('scheduler:agentScheduler'))
+        response = self.client.get(reverse('scheduler:agentSchedulerOld'))
         self.assertEqual(response.status_code, 404)
         self.client.logout()
 
         # should respond correctly to broker
         self.client.login(username=self.broker.email, password=self.password)
         self.assertEqual(get_user(self.client), self.broker)
-        response = self.client.get(reverse('scheduler:agentScheduler'))
+        response = self.client.get(reverse('scheduler:agentSchedulerOld'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(claimed_itineraries, [itn for itn in response.context['claimed_itineraries']])
         self.assertEqual(unclaimed_itineraries, [itn for itn in response.context['unclaimed_itineraries']])
@@ -84,7 +84,7 @@ class AgentSchedulerViewTests(TestCase):
         # should respond correctly to admin
         self.client.login(username=self.admin.email, password=self.password)
         self.assertEqual(get_user(self.client), self.admin)
-        response = self.client.get(reverse('scheduler:agentScheduler'))
+        response = self.client.get(reverse('scheduler:agentSchedulerOld'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(claimed_itineraries, [itn for itn in response.context['claimed_itineraries']])
         self.assertEqual(unclaimed_itineraries, [itn for itn in response.context['unclaimed_itineraries']])

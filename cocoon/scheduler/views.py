@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
 
 # App Models
 from .models import ItineraryModel, TimeModel
@@ -40,7 +42,26 @@ class ClientSchedulerView(TemplateView):
         return data
 
 
-class ItineraryViewSet(viewsets.ModelViewSet):
+class AgentScheduler(TemplateView):
+    """
+    Loads the template for the AgentScheduler
+
+    The template contains the entry point for React and react handles
+    retrieving the necessary data
+    """
+    template_name = 'scheduler/agentScheduler.html'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        # Tells React which component to load onto the page
+        data['component'] = AgentScheduler.__name__
+        return data
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+class ItineraryClientViewSet(viewsets.ModelViewSet):
 
     serializer_class = ItinerarySerializer
 
@@ -77,6 +98,32 @@ class ClientSchedulerItineraryDuration(viewsets.ViewSet):
         client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.APPROXIMATE)
         result = client_scheduler_alg.calculate_duration(homes_list)
         return Response({'duration': result})
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
+class ItineraryAgentViewSet(viewsets.ModelViewSet):
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        itinerary_type = self.request.query_params.get('type', None)
+
+        if itinerary_type == 'unscheduled':
+            return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)
+        elif itinerary_type == 'scheduled':
+            return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)
+
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
+class ItineraryMarketViewSet(viewsets.ModelViewSet):
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+
+        return ItineraryModel.objects.filter(agent=None)
 
 
 @login_required()
@@ -221,10 +268,8 @@ def select_start_time(request):
             try:
                 current_profile = get_object_or_404(UserProfile, user=request.user)
                 if current_profile.user.is_broker or current_profile.user.is_admin:
-
                     time_id = request.POST.get('time_id')
                     itinerary_id = request.POST.get('itinerary_id')
-
                     try:
                         time = TimeModel.objects.get(id=time_id)
                         itinerary = ItineraryModel.objects.get(id=itinerary_id)

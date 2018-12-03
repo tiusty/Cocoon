@@ -8,7 +8,12 @@ const app_name = '/scheduler';
 const api_path = app_name + '/api';
 
 const scheduler_endpoints = {
-    'itinerary': api_path + '/itinerary/'
+    'itinerary': api_path + '/itinerary/',
+    'itineraryAgent': api_path + '/itineraryAgent/',
+    'itineraryMarket': api_path + '/itineraryMarket/',
+    'selectStartTime': '/scheduler/selectStartTime/',
+    'claimItinerary': '/scheduler/claimItinerary/',
+    'unscheduleItinerary': 'scheduler/unscheduleItinerary',
 };
 
 export default scheduler_endpoints;
