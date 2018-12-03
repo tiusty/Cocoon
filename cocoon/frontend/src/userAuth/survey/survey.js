@@ -208,9 +208,9 @@ class Survey extends Component {
                         <h1>{this.state.name}</h1>
                     </div>
                     <div className="col-md-2">
-                        <a href={this.generateLoadUrl()} className="btn btn-primary">Load</a>
+                        <a href={this.generateLoadUrl()} style={{marginRight: '10px'}} className="btn btn-primary">Load</a>
                         <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2">Delete</button>
-                        <form method="post">
+                        <form method="post" style={{marginTop: '10px'}}>
                             <CSRFToken/>
                             <button name="submit-button" disabled={!this.props.pre_tour_signed}
                                     className="btn btn-success btn-sm m-2" value={this.state.id}
