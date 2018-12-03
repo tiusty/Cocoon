@@ -46,21 +46,6 @@ class VisitList(ListView):
     def get_context_data(self, **kwargs):
         data = super(VisitList, self).get_context_data(**kwargs)
         data['component'] = 'Surveys'
-        user_prof = get_object_or_404(UserProfile, user=self.request.user)
-        (manager, _) = HunterDocManagerModel.objects.get_or_create(
-            user=user_prof.user,
-        )
-
-        # Since the page is loading, update all the signed documents to see if the status has changed
-        manager.update_all_is_signed()
-
-        # Create context to update the html based on the status of the documents
-        data['pre_tour_signed'] = manager.is_pre_tour_signed()
-        data['pre_tour_forms_created'] = manager.pre_tour_forms_created()
-
-        # Get the user itineraries
-        data.update(scheduler_views.get_user_itineraries(self.request))
-
         return data
 
     def post(self, request):
