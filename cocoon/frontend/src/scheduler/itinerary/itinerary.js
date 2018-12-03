@@ -56,7 +56,7 @@ class Itinerary extends Component {
         })
         .catch(error => console.log('Bad', error))
         .then(response => {
-            if (response.result == 0) {
+            if (response.data.result == 0) {
                 this.setState({
                     selected_start_time: time,
                     showTimes: false,
@@ -77,7 +77,7 @@ class Itinerary extends Component {
         })
         .catch(error => console.log('Bad', error))
         .then(response => {
-            if (response.result == 0) {
+            if (response.data.result == "0") {
                 this.setState({
                     showClaim: false,
                 });
@@ -99,7 +99,6 @@ class Itinerary extends Component {
         if (this.state.showTimes) {
             return (
                 this.state.start_times.map((timeObject) => {
-                    console.log(timeObject)
                     return (
                         <div key={timeObject.id}>
                             <div>{timeObject.time}</div>
