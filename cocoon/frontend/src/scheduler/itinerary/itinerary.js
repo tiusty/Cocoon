@@ -18,6 +18,8 @@ class Itinerary extends Component {
         selected_start_time: null,
         tour_duration_seconds: null,
         start_times: [],
+        showTimes: this.props.showTimes,
+        showClaim: this.props.showClaim,
     };
 
     componentDidMount() {
@@ -57,14 +59,44 @@ class Itinerary extends Component {
             if (response.result == 0) {
                 this.setState({
                     selected_start_time: time,
-
+                    showTimes: false,
                 });
             }
         });
     }
 
+    claimItinerary = (id) => {
+        let formData = new FormData();
+        formData.set('itinerary_id', this.state.id);
+
+        axios({
+            method: 'post',
+            url: scheduler_endpoints['claimItinerary'],
+            data: formData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        })
+        .catch(error => console.log('Bad', error))
+        .then(response => {
+            if (response.result == 0) {
+                this.setState({
+                    showClaim: false,
+                });
+            }
+        });
+    }
+
+    renderClaimButton = () => {
+        if (this.state.showClaim) {
+            return (
+                <button onClick={() => this.claimItinerary(this.state.id)}>claim</button>
+            )
+        }
+
+        return null
+    }
+
     renderStartTimes = () => {
-        if (this.props.showTimes) {
+        if (this.state.showTimes) {
             return (
                 this.state.start_times.map((timeObject) => {
                     console.log(timeObject)
@@ -105,6 +137,7 @@ class Itinerary extends Component {
                 <p>Tour Duration = {this.state.tour_duration_seconds}</p>
                 {start_time}
                 {this.renderStartTimes()}
+                {this.renderClaimButton()}
                 {this.state.homes.map(home =>
                     <HomeTile
                         key={home.id}

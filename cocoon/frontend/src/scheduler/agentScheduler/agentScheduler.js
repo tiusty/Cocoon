@@ -75,11 +75,12 @@ class AgentScheduler extends Component {
 
     }
 
-    renderItinerary = (itinerary, key, showTimes=false) => {
+    renderItinerary = (itinerary, key, showTimes, showClaim) => {
         return (
             <Itinerary
                 id={itinerary.id}
                 showTimes={showTimes}
+                showClaim={showClaim}
                 key={key}
             />
         );
@@ -89,7 +90,7 @@ class AgentScheduler extends Component {
         if (this.state.unscheduled_loaded) {
             return (
                 <div className='unscheduled-wrapepr'>
-                    {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true))}
+                    {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false))}
                 </div>
             );
         }
@@ -99,7 +100,7 @@ class AgentScheduler extends Component {
         if (this.state.scheduled_loaded) {
             return (
                 <div className='scheduled-wrapper'>
-                    {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i))}
+                    {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, false, false))}
                 </div>
             )
         }
@@ -109,7 +110,7 @@ class AgentScheduler extends Component {
         if (this.state.marketplace_loaded) {
             return (
                 <div className='marketplace-wrapper'>
-                    {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i))}
+                    {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true))}
                 </div>
             )
         }

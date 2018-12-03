@@ -12,6 +12,7 @@ const scheduler_endpoints = {
     'itineraryAgent': api_path + '/itineraryAgent/',
     'itineraryMarket': api_path + '/itineraryMarket/',
     'selectStartTime': '/scheduler/selectStartTime/',
+    'claimItinerary': '/scheduler/claimItinerary/',
 };
 
 export default scheduler_endpoints;
