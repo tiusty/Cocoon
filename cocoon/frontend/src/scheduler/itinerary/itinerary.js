@@ -5,6 +5,11 @@ import axios from 'axios'
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import HomeTile from "../../common/homeTile/homeTile";
 
+// For handling Post request with CSRF protection
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 class Itinerary extends Component {
     state = {
         agent: null,
@@ -13,6 +18,7 @@ class Itinerary extends Component {
         id: this.props.id,
         selected_start_time: null,
         tour_duration_seconds: null,
+        start_times: [],
     };
 
     componentDidMount() {
@@ -28,8 +34,45 @@ class Itinerary extends Component {
                     homes: response.data.homes,
                     selected_start_time: response.data.selected_start_time,
                     tour_duration_seconds: response.data.tour_duration_seconds,
+                    start_times: response.data.start_times
                 })
             })
+    }
+
+    selectTime = (id, time) => {
+        /**
+         * Schedules a claimed itinerary by selecting a start time
+         */
+        console.log(this.state.id)
+        axios.post(scheduler_endpoints['selectStartTime'],
+            {"time_id": id, "itinerary_id": this.state.id})
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                if (response.result == 0) {
+                    this.setState({
+                        selected_start_time: time,
+
+                    });
+                }
+            });
+    }
+
+    renderStartTimes = () => {
+        if (this.props.showTimes) {
+            return (
+                this.state.start_times.map((timeObject) => {
+                    console.log(timeObject)
+                    return (
+                        <div key={timeObject.id}>
+                            <div>{timeObject.time}</div>
+                            <button onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button>
+                        </div>
+                    );
+                })
+            )
+        }
+
+        return null
     }
 
     renderItinerary = () => {
@@ -55,6 +98,7 @@ class Itinerary extends Component {
                 {agent_div}
                 <p>Tour Duration = {this.state.tour_duration_seconds}</p>
                 {start_time}
+                {this.renderStartTimes()}
                 {this.state.homes.map(home =>
                     <HomeTile
                         key={home.id}

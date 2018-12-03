@@ -234,10 +234,9 @@ def select_start_time(request):
             try:
                 current_profile = get_object_or_404(UserProfile, user=request.user)
                 if current_profile.user.is_broker or current_profile.user.is_admin:
-
                     time_id = request.POST.get('time_id')
                     itinerary_id = request.POST.get('itinerary_id')
-
+                    print(itinerary_id)
                     try:
                         time = TimeModel.objects.get(id=time_id)
                         itinerary = ItineraryModel.objects.get(id=itinerary_id)

@@ -51,6 +51,10 @@ class ClientScheduler extends Component {
             })
     }
 
+    claimItinerary = (id) => {
+
+    }
+
     renderTimeSelector = () => {
 
         if (this.state.loaded === true) {

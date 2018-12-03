@@ -7,12 +7,13 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'itinerary', views.ItineraryClientViewSet, base_name='itinerary')
 router.register(r'itineraryAgent', views.ItineraryAgentViewSet, base_name='itineraryAgent')
+router.register(r'itineraryMarket', views.ItineraryMarketViewSet, base_name='itineraryMarket')
 
 app_name = 'scheduler'
 urlpatterns = [
-    # url(r'^agentSchedulerOld/', views.agent_scheduler, name="agentScheduler"),
+    url(r'^agentSchedulerOld/', views.agent_scheduler, name="agentScheduler"),
     url(r'^agentScheduler/', views.AgentScheduler.as_view(), name="agentScheduler"),
-    url(r'^myTours/', views.view_tours, name="myTours"),
+    url(r'^myToursOld/', views.view_tours, name="myTours"),
     url(r'^clientScheduler', views.ClientScheduler.as_view(), name="clientScheduler"),
 
     # AJAX requests below
