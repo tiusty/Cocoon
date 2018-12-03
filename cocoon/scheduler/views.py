@@ -38,11 +38,11 @@ class ClientSchedulerView(TemplateView):
         data = super().get_context_data(**kwargs)
 
         # Tells React which component to load onto the page
-        data['component'] = ClientScheduler.__name__
+        data['component'] = ClientSchedulerView.__name__
         return data
 
 
-class AgentScheduler(TemplateView):
+class AgentSchedulerView(TemplateView):
     """
     Loads the template for the AgentScheduler
 
@@ -55,7 +55,7 @@ class AgentScheduler(TemplateView):
         data = super().get_context_data(**kwargs)
 
         # Tells React which component to load onto the page
-        data['component'] = AgentScheduler.__name__
+        data['component'] = AgentSchedulerView.__name__
         return data
 
 
