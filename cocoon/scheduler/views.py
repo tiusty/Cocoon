@@ -59,7 +59,6 @@ class AgentScheduler(TemplateView):
         return data
 
 
-@method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
 class ItineraryClientViewSet(viewsets.ModelViewSet):
 
@@ -99,7 +98,6 @@ class ClientSchedulerItineraryDuration(viewsets.ViewSet):
         result = client_scheduler_alg.calculate_duration(homes_list)
         return Response({'duration': result})
 
-@method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
 class ItineraryAgentViewSet(viewsets.ModelViewSet):
 
@@ -115,7 +113,6 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
             return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)
 
 
-@method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
 class ItineraryMarketViewSet(viewsets.ModelViewSet):
 
