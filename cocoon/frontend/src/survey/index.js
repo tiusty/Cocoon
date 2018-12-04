@@ -12,11 +12,10 @@ import './survey.css';
 
 import axios from 'axios'
 
-import userAuth_endpoints from '../endpoints/userAuth_endpoints';
 import houseDatabase_endpoints from '../endpoints/houseDatabase_endpoints';
 import commutes_endpoints from '../endpoints/commutes_endpoints';
 
-import CSRFToken from '../common/csrftoken';
+import survey_endpoints from "../endpoints/survey_endpoints";
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -64,10 +63,9 @@ class Survey extends Component {
          */
 
         // Posts the state which contains all the form elements that are needed
-        axios.post(userAuth_endpoints['userSurveys'],
+        axios.post(survey_endpoints['rentSurvey'],
             {
                 data: this.state,
-                type: 'favorite',
 
             })
             .catch(error => console.log('BAD', error))

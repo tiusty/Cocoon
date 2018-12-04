@@ -4,7 +4,7 @@ import axios from 'axios'
 
 
 import Survey from "./survey";
-import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -12,7 +12,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 class Surveys extends Component {
     state = {
         surveys: [],
-        endpoint: userAuth_endpoints['userSurveys'],
+        endpoint: survey_endpoints['rentSurvey'],
     };
 
     constructor(props) {
