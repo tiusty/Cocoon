@@ -8,7 +8,7 @@ from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 from cocoon.commutes.constants import GoogleCommuteNaming
 
 
-def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, traffic_option=False):
+def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, with_traffic=False):
 
     """
     This wraps the get_durations_and_distances to prevent a user from calling the matrix with the wrong value
@@ -26,13 +26,13 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, traf
     wrapper = DistanceWrapper()
 
     if mode.commute_type == CommuteType.DRIVING:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.DRIVING, traffic_option=traffic_option)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.DRIVING, with_traffic=with_traffic)
     elif mode.commute_type == CommuteType.TRANSIT:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.TRANSIT, traffic_option=traffic_option)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.TRANSIT, with_traffic=with_traffic)
     elif mode.commute_type == CommuteType.BICYCLING:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.BICYCLING, traffic_option=traffic_option)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.BICYCLING, with_traffic=with_traffic)
     elif mode.commute_type == CommuteType.WALKING:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING, traffic_option=traffic_option)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING, with_traffic=with_traffic)
 
     else:
         return []

@@ -87,7 +87,7 @@ class DistanceWrapper:
         # list of lists of durations from origin to destinations
         return distance_list
 
-    def get_durations_and_distances(self, origins, destinations, mode="driving", traffic_option=False):
+    def get_durations_and_distances(self, origins, destinations, mode="driving", with_traffic=False):
         """
         NOTE: THIS SHOULD NOT BE CALLED DIRECTLY
 
@@ -122,32 +122,28 @@ class DistanceWrapper:
         origin_number = int(min((100 / destination_number), 25))
 
         # traffic option set to best_guess (default)
+        # departure time = Tuesday, Dec 4, 2018 3:30am - No Traffic
+        departure_time = 1543894200
+
         traffic_model_in="best_guess"
-        if traffic_option:
-            traffic_model_in="pessimistic"
+        if with_traffic and mode == "driving":
+            # departure time = Tuesday, Dec 4, 2018 4:30pm - With Traffic
+            departure_time = 1543941000
+
+
 
         while origin_list:
             # only computes for the first destination_number destinations
 
-            if traffic_option and mode == "driving":
-                # departure time = Tuesday, Dec 4, 2018 4:30pm
-                response_json = distance_matrix.distance_matrix(self.client,
-                                                            origin_list[:origin_number],
-                                                            destinations[:destination_number],
-                                                            units=self.units,
-                                                            mode=mode,
-                                                            departure_time=1543941000,
-                                                            traffic_model="best_guess",
-                                                            )
+            response_json = distance_matrix.distance_matrix(self.client,
+                                                        origin_list[:origin_number],
+                                                        destinations[:destination_number],
+                                                        units=self.units,
+                                                        mode=mode,
+                                                        departure_time=departure_time,
+                                                        traffic_model=traffic_model_in,
+                                                    )
 
-            else:
-                response_json = distance_matrix.distance_matrix(self.client,
-                                                                origin_list[:origin_number],
-                                                                destinations[:destination_number],
-                                                                units=self.units,
-                                                                mode=mode,
-
-                                                                )
 
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin

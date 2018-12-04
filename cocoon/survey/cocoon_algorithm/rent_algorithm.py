@@ -215,7 +215,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 destination_address = destination.full_address
                 results = retrieve_exact_commute(origin_addresses, [destination_address],
                                                  destination.commute_type,
-                                                 traffic_option=destination.traffic_option)
+                                                 with_traffic=destination.traffic_option)
 
 
                 # iterates over min of number to be computed and length of results in case lens don't match
