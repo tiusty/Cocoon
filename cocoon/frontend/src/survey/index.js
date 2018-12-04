@@ -37,6 +37,7 @@ class Survey extends Component {
             max_price: 3000,
             min_bathrooms: 1,
             max_bathrooms: 6,
+            parking_spot: 0, // Need to add question
             earliest_move_in: undefined,
             latest_move_in: undefined,
             tenants: []
@@ -66,7 +67,6 @@ class Survey extends Component {
         axios.post(survey_endpoints['rentSurvey'],
             {
                 data: this.state,
-
             })
             .catch(error => console.log('BAD', error))
             .then(response =>
