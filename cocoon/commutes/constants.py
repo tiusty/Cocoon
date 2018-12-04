@@ -20,3 +20,10 @@ class CommuteAccuracy(Enum):
     DEFAULT = EXACT
 
 
+# Traffic Mode Constants- Note: This needs to be updated every year
+# API does not accept times from the past
+# With traffic = Tuesday Dec 4, 2019 4:30pm
+# Without traffic = Tuesday Dec 4, 2019 3:30am
+COMMUTE_TIME_WITH_TRAFFIC = 1575477036
+COMMUTE_TIME_WITHOUT_TRAFFIC = 1575430236
+TRAFFIC_MODEL_DEFAULT = "best_guess"

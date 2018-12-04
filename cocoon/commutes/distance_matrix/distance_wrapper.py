@@ -4,6 +4,9 @@ from googlemaps import distance_matrix, client
 # import API key from settings
 from config.settings.Global_Config import gmaps_api_key
 
+# Retrieve Constants
+from cocoon.commutes.constants import COMMUTE_TIME_WITH_TRAFFIC, COMMUTE_TIME_WITHOUT_TRAFFIC, TRAFFIC_MODEL_DEFAULT
+
 # Load the logger
 import logging
 logger = logging.getLogger(__name__)
@@ -122,13 +125,11 @@ class DistanceWrapper:
         origin_number = int(min((100 / destination_number), 25))
 
         # traffic option set to best_guess (default)
-        # departure time = Tuesday, Dec 4, 2018 3:30am - No Traffic
-        departure_time = 1543894200
+        departure_time = COMMUTE_TIME_WITHOUT_TRAFFIC
 
-        traffic_model_in="best_guess"
+        traffic_model_in = TRAFFIC_MODEL_DEFAULT
         if with_traffic and mode == "driving":
-            # departure time = Tuesday, Dec 4, 2018 4:30pm - With Traffic
-            departure_time = 1543941000
+            departure_time = COMMUTE_TIME_WITH_TRAFFIC
 
 
 
