@@ -21,7 +21,7 @@ export default class TenantForm extends Component {
         });
     }
 
-    handleOccupation = (occupation_type,) => {
+    handleOccupation = (occupation_type) => {
         this.setState({occupation_type: occupation_type});
     }
 

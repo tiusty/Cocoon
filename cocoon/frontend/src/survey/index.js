@@ -88,7 +88,7 @@ class Survey extends Component {
         axios.get(commutes_endpoints['commute_types'])
             .then(res => {
                 const commute_type_options = res.data;
-                this.setState({ commute_type_options }, () => console.log(this.state.commute_type_options));
+                this.setState({ commute_type_options });
             });
     }
 

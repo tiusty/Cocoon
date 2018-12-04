@@ -13,6 +13,7 @@ export default class General extends Component {
                 min: 1000,
                 max: 3000
             },
+            isMovingAsap: undefined,
             selectedDayEarliest: undefined,
             selectedDayLatest: undefined
         }
@@ -43,6 +44,18 @@ export default class General extends Component {
         }
     }
 
+    getDefaultDates = () => {
+        const today = new Date();
+        const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+        this.setState({
+            selectedDayEarliest: today,
+            selectedDayLatest: nextWeek
+        }, () => {
+           this.props.setSurveyState('earliest_move_in', this.state.selectedDayEarliest);
+           this.props.setSurveyState('latest_move_in', this.state.selectedDayLatest);
+        });
+    }
+
     handleEarliestClick = (day, { selected }) => {
         this.setState({
             selectedDayEarliest: selected ? undefined : day
@@ -53,6 +66,19 @@ export default class General extends Component {
         this.setState({
             selectedDayLatest: selected  ? undefined : day
         }, () => this.props.setSurveyState('latest_move_in', this.state.selectedDayLatest))
+    }
+
+    handleMovingAsap = (e) => {
+        const { value } = e.target;
+        if(value === 'yes') {
+            this.setState({
+                isMovingAsap: value
+            }, () => this.getDefaultDates());
+        } else {
+            this.setState({
+                isMovingAsap: value
+            });
+        }
     }
 
     handleValidation = () => {
@@ -175,7 +201,20 @@ export default class General extends Component {
                         formatLabel={value => `$${value}`} />
                 </div>
 
-                <div className="survey-question">
+                <div className="survey-question" onChange={(e) => this.handleMovingAsap(e)}>
+                    <h2>Are you looking to move in <span>as soon as possible?</span></h2>
+                    <span className="col-md-12 survey-error-message" id="date_error">You must select an answer.</span>
+                    <label className="col-md-6 survey-label">
+                            <input type="radio" name="move_asap" value="yes" required />
+                            <div>Yes</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                            <input type="radio" name="move_asap" value="no" required />
+                            <div>No</div>
+                    </label>
+                </div>
+
+                <div className="survey-question" style={{display: `${this.state.isMovingAsap === 'no' ? 'block' : 'none'}`}}>
                     <h2>When are you wanting to <span>move in</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="date_error">You must select an earliest and latest move in date.</span>
                     <div className="col-md-6 date-wrapper">
@@ -199,11 +238,11 @@ export default class General extends Component {
                     </label>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="move_weight" value="1" required />
-                        <div>Another option</div>
+                        <div>I've got some time</div>
                     </label>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="move_weight" value="2" required />
-                        <div>Third Choice</div>
+                        <div>Moving soon</div>
                     </label>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="move_weight" value="3" required />
