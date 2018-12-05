@@ -30,7 +30,7 @@ export default class TenantForm extends Component {
     }
 
     handleCommuteType = (tenantId, commute_type) => {
-        this.setState({commute_type:commute_type.commute_type}, () => this.props.setCommuteType(tenantId, commute_type));
+        this.setState({commute_type:commute_type.commute_type}, () => this.props.setCommuteType(tenantId, commute_type.id));
     }
 
     handleValidation = (el) => {

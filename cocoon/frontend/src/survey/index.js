@@ -128,6 +128,7 @@ class Survey extends Component {
             case 2:
                 return <Tenant
                         handleNextStep={this.handleNextStep}
+                        handlePrevStep={this.handlePrevStep}
                         handleInputChange={this.handleInputChange}
                         setCommuteAddress={this.setCommuteAddress}
                         tenants={this.state.tenants}
@@ -213,11 +214,11 @@ class Survey extends Component {
     setHomeTypes = (e, index, id) => {
         let home_type = [...this.state.home_type];
         if(e.target.checked) {
-            home_type.push(this.state.home_type_options[index]);
+            home_type.push(this.state.home_type_options[index].id);
             this.setState({home_type});
         } else {
             for(let i = 0; i < home_type.length; i++) {
-                if(home_type[i].id === id) {
+                if(home_type[i] === id) {
                     home_type.splice(i, 1);
                     this.setState({home_type});
                 }
@@ -228,10 +229,10 @@ class Survey extends Component {
     setCommuteType = (tenantId, commute_type) => {
         this.setState({
             [`${tenantId}-commute_type`]: commute_type
-            }, ()=> console.log(this.state));
+            }, ()=> console.log(this.state) );
     }
 
-    render(){
+    render() {
         return (
             <div className="survey-wrapper">
                 <Progress step={this.state.step}/>
