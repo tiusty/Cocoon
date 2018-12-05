@@ -42,7 +42,7 @@ class Survey extends Component {
             latest_move_in: undefined,
             tenants: []
         }
-        // This allows the variable name to include the hypen. Including directly
+        // This allows the variable name to include the hyphen. Including directly
         //  breaks the variable since it isn't allowed in react
         this.state['tenants-TOTAL_FORMS'] = this.state.number_of_tenants;
         this.state['tenants-INITIAL_FORMS'] = 0;
@@ -56,7 +56,8 @@ class Survey extends Component {
     }
 
 
-    handleSubmit = () => {
+    handleSubmit = (e) => {
+        e.preventDefault();
         /**
          * This function handles submitting the form to the backend via a rest API
          *  This will return the status of that request and if success redirect,
