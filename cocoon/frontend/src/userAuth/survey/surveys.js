@@ -161,7 +161,7 @@ class Surveys extends Component {
             return (
                 <>
                     <h3>Please take a survey:</h3>
-                    <a href={survey_endpoints['rentSurvey']} className="btn btn-primary">Click here</a>
+                    <a href={survey_endpoints['rentingSurvey']} className="btn btn-primary">Click here</a>
                 </>
             );
         }

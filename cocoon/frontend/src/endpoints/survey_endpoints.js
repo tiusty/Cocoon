@@ -5,7 +5,7 @@
  */
 const survey_endpoints = {
     'rentSurveyResult': '/survey/rent/',
-    'rentSurvey': '/survey/rent/',
+    'rentingSurvey': '/survey/rent/',
 };
 
 export default survey_endpoints;
