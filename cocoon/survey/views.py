@@ -344,7 +344,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
         if not self.request.user.is_authenticated():
             print('User not authenticated, attempting to validate user form')
-            user_form = ApartmentHunterSignupForm(self.request.POST)
+            user_form = ApartmentHunterSignupForm(self.request.data['data'])
             user_form.is_valid()
             print(user_form.errors)
         else:
