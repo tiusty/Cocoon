@@ -331,18 +331,27 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         """
         print("in post")
         form = RentSurveyForm(self.request.data['data'])
-        form.is_valid()
-        print(form.errors)
+        if form.is_valid():
+            print('The survey form is valid!')
+        else:
+            print(form.errors)
 
         tenants = TenantFormSet(self.request.data['data'])
-        tenants.is_valid()
-        print(tenants.errors)
+        if tenants.is_valid():
+            print('Yay the tenant form is valid!')
+        else:
+            print(tenants.errors)
 
-        user_form = ApartmentHunterSignupForm(self.request.POST)
-        user_form.is_valid()
-        print(user_form.errors)
+        if not self.request.user.is_authenticated():
+            print('User not authenticated, attempting to validate user form')
+            user_form = ApartmentHunterSignupForm(self.request.POST)
+            user_form.is_valid()
+            print(user_form.errors)
+        else:
+            print('User is already authenticated')
 
         print('End of create')
+        return Response({'result': True})
 
     def update(self, request, *args, **kwargs):
         """
