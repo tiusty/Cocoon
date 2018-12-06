@@ -17,6 +17,8 @@ import commutes_endpoints from '../endpoints/commutes_endpoints';
 
 import survey_endpoints from "../endpoints/survey_endpoints";
 
+import CSRFToken from '../common/csrftoken';
+
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
@@ -70,8 +72,10 @@ class Survey extends Component {
                 data: this.state,
             })
             .catch(error => console.log('BAD', error))
-            .then(response =>
-                console.log('submitted!')
+            .then(response => {
+                    console.log('submitted!');
+                    // location.href = ''
+                }
             );
     };
 
@@ -140,9 +144,10 @@ class Survey extends Component {
                         handleInputChange={this.handleInputChange} />;
             case 4:
                 return <Details
-                    is_authenticated={this.props.is_authenticated}
-                    onSubmit={this.handleSubmit}
-                />;
+                        is_authenticated={this.props.is_authenticated}
+                        onSubmit={this.handleSubmit}
+                        handleInputChange={this.handleInputChange}
+                        setSurveyState={this.setSurveyState} />;
         }
     }
 
@@ -179,7 +184,14 @@ class Survey extends Component {
         tenants[index] = new_tenant;
         this.setState({
             tenants: tenants
-        });
+        }, () => this.setUserName());
+    }
+
+    setUserName = () => {
+        this.setState({
+            first_name: this.state.tenants[0].first_name,
+            last_name: this.state.tenants[0].last_name
+        })
     }
 
     setPrice = (desired, max) => {

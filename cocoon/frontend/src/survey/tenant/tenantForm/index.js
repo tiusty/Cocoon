@@ -79,6 +79,156 @@ export default class TenantForm extends Component {
         }
     }
 
+    renderOtherOccupation = (tenantNumber) => {
+        if(this.state.occupation_type === 'other') {
+            return (
+                <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} onChange={(e) => {this.props.handleInputChange(e, 'string'); this.handleOtherOccupation(e.target.value)}}>
+                    <h2>What's that <span>other</span>?</h2>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-other_reason`} value="unemployed" required />
+                        <div>Unemployed</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-other_reason`} value="new-job" />
+                        <div>New job</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-other_reason`} value="seeking-work" />
+                        <div>Seeking work</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-other_reason`} value="not-working" />
+                        <div>Not working</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-other_reason`} value="disability" />
+                        <div>Disability</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderUnemployedAnswer = (tenantNumber, toggleName) => {
+        if(this.state.other_occupation_reason === 'unemployed') {
+            return (
+                <div className="survey-question" id={`${tenantNumber}-unemployed-follow-up-question`} style={{display: `${this.state.other_occupation_reason === 'unemployed' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <h2>Will {toggleName} be <span>paying rent or receiving assistance</span> from a cosigner?</h2>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-unemployed_follow_up`} value="paying-solo" required />
+                        <div>Paying solo</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-unemployed_follow_up`} value="paying-with-help" />
+                        <div>Getting help</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderOtherOccupationCommuteAddress = (tenantNumber, toggleName) => {
+        if(this.state.occupation_type === 'other' && this.state.commute_type !== 'Work From Home') {
+            return (
+                <div className="survey-question" id={`${tenantNumber}-other-occupation-question`}>
+                    <h2>Is there somewhere {toggleName} <span>{this.props.index === 0 ? 'visit' : 'visits'} regularly</span>?</h2>
+                    <Autocomplete
+                        className="col-md-12 survey-input"
+                        onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
+                        types={['address']}
+                        name={`${tenantNumber}-commute_address`}
+                        placeholder={'Street Address'} />
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderStudyOccupationCommuteAddress = (tenantNumber, toggleName) => {
+        if(this.state.occupation_type === 'studying' && this.state.commute_type !== 'Work From Home') {
+            return(
+                <div className="survey-question" id={`${tenantNumber}-other-occupation-question`}>
+                    <h2>What's the <span>address of the campus</span> {toggleName} {this.props.index === 0 ? 'attend' : 'attends'}?</h2>
+                    <Autocomplete
+                        className="col-md-12 survey-input"
+                        onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
+                        types={['address']}
+                        name={`${tenantNumber}-commute_address`}
+                        placeholder={'School Address'} />
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderWorkOccupationCommuteAddress = (tenantNumber, toggleName) => {
+        if(this.state.occupation_type === 'working' && this.state.commute_type !== 'Work From Home') {
+            return (
+                <div className="survey-question" id={`${tenantNumber}-other-occupation-question`}>
+                    <h2>What's the <span>work address</span> for {toggleName}?</h2>
+                    <Autocomplete
+                        className="col-md-12 survey-input"
+                        onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
+                        types={['address']}
+                        name={`${tenantNumber}-commute_address`}
+                        placeholder={'Work Address'} />
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderDrivingOptions = (tenantNumber) => {
+        if(this.state.commute_type === 'Driving') {
+            return (
+                <div className="survey-question" id={`${tenantNumber}-driving-follow-up-question`} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <h2>What are the <span>driving options</span>?</h2>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-driving_condition`} value="with-traffic" required />
+                        <div>With traffic</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-driving_condition`} value="without-traffic" />
+                        <div>Without traffic</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
+    renderTransitOptions = (tenantNumber) => {
+        if(this.state.commute_type === 'Transit') {
+            return (
+                <div className="survey-question" id={`${tenantNumber}-transit-follow-up-question`} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <h2>What form of <span>transit</span>?</h2>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-transit_type`} value="bus" required />
+                        <div>Bus</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-transit_type`} value="train" />
+                        <div>Train</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-transit_type`} value="commuter-rail" />
+                        <div>Commuter rail</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
     render(){
         const name = this.props.tenantInfo.first_name;
         const toggleName = this.props.index === 0 ? 'you' : this.props.tenantInfo.first_name;
@@ -113,42 +263,10 @@ export default class TenantForm extends Component {
                     </div>
 
                     {/*SHOWS ONLY OTHER OCCUPATION*/}
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'other' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string'); this.handleOtherOccupation(e.target.value)}}>
-                        <h2>What's that <span>other</span>?</h2>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-other_reason`} value="unemployed" required />
-                            <div>Unemployed</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-other_reason`} value="new-job" />
-                            <div>New job</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-other_reason`} value="seeking-work" />
-                            <div>Seeking work</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-other_reason`} value="not-working" />
-                            <div>Not working</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-other_reason`} value="disability" />
-                            <div>Disability</div>
-                        </label>
-                    </div>
+                    {this.renderOtherOccupation(tenantNumber)}
 
                     {/*SHOWS ONLY IF UNEMPLOYED*/}
-                    <div className="survey-question" id={`${tenantNumber}-unemployed-follow-up-question`} style={{display: `${this.state.other_occupation_reason === 'unemployed' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
-                        <h2>Will {toggleName} be <span>paying rent or receiving assistance</span> from a cosigner?</h2>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-unemployed_follow_up`} value="paying-solo" required />
-                            <div>Paying solo</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-unemployed_follow_up`} value="paying-with-help" />
-                            <div>Getting help</div>
-                        </label>
-                    </div>
+                    {this.renderUnemployedAnswer(tenantNumber, toggleName)}
 
                     {this.props.commute_type_options &&
                         <div className="survey-question" id={`${tenantNumber}commute_type-question`}>
@@ -162,70 +280,20 @@ export default class TenantForm extends Component {
                         </div>
                     }
 
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'other' && this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}}>
-                        <h2>Is there somewhere {toggleName} <span>{this.props.index === 0 ? 'visit' : 'visits'} regularly</span>?</h2>
-                        <Autocomplete
-                            className="col-md-12 survey-input"
-                            onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
-                            types={['address']}
-                            name={`${tenantNumber}-commute_address`}
-                            placeholder={'Street Address'}
-                        />
-                    </div>
+                    {/*SHOWS ONLY IF OTHER OCCUPATION && NOT WORKING FROM HOME*/}
+                    {this.renderOtherOccupationCommuteAddress(tenantNumber, toggleName)}
 
-                    {/*SHOWS ONLY ON STUDYING OCCUPATION*/}
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'studying' && this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}}>
-                        <h2>What's the <span>address of the campus</span> {toggleName} {this.props.index === 0 ? 'attend' : 'attends'}?</h2>
-                        <Autocomplete
-                            className="col-md-12 survey-input"
-                            onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
-                            types={['address']}
-                            name={`${tenantNumber}-commute_address`}
-                            placeholder={'School Address'}
-                        />
-                    </div>
+                    {/*SHOWS ONLY ON STUDYING OCCUPATION && NOT WORKING FROM HOME*/}
+                    {this.renderStudyOccupationCommuteAddress(tenantNumber, toggleName)}
 
-                    {/*SHOWS ONLY ON WORKING OCCUPATION*/}
-                    <div className="survey-question" id={`${tenantNumber}-other-occupation-question`} style={{display: `${this.state.occupation_type === 'working' && this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}}>
-                        <h2>What's the <span>work address</span> for {toggleName}?</h2>
-                        <Autocomplete
-                            className="col-md-12 survey-input"
-                            onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
-                            types={['address']}
-                            name={`${tenantNumber}-commute_address`}
-                            placeholder={'Work Address'}
-                        />
-                    </div>
+                    {/*SHOWS ONLY ON WORKING OCCUPATION && NOT WORKING FROM HOME*/}
+                    {this.renderWorkOccupationCommuteAddress(tenantNumber, toggleName)}
 
                     {/*SHOWS ONLY ON DRIVING COMMUTE_TYPE*/}
-                    <div className="survey-question" id={`${tenantNumber}-driving-follow-up-question`} style={{display: `${this.state.commute_type === 'Driving' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
-                        <h2>What are the <span>driving options</span>?</h2>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-driving_condition`} value="with-traffic" required />
-                            <div>With traffic</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-driving_condition`} value="without-traffic" />
-                            <div>Without traffic</div>
-                        </label>
-                    </div>
+                    {this.renderDrivingOptions(tenantNumber)}
 
                     {/*SHOWS ONLY ON TRANSIT COMMUTE_TYPE*/}
-                    <div className="survey-question" id={`${tenantNumber}-transit-follow-up-question`} style={{display: `${this.state.commute_type === 'Transit' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
-                        <h2>What form of <span>transit</span>?</h2>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-transit_type`} value="bus" required />
-                            <div>Bus</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-transit_type`} value="train" />
-                            <div>Train</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-transit_type`} value="commuter-rail" />
-                            <div>Commuter rail</div>
-                        </label>
-                    </div>
+                    {this.renderTransitOptions(tenantNumber)}
 
                     <div className="survey-question" id={`${tenantNumber}-desired_commute-question`} style={{display: `${this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}} onBlur={(e) => {this.props.handleInputChange(e, 'number');}}>
                         <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {toggleName} want?</h2>
