@@ -7,6 +7,7 @@ import axios from 'axios'
 import Survey from "./survey";
 import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -120,7 +121,7 @@ class Surveys extends Component {
          */
 
         // If the page isn't loaded then don't load any messages
-        if (!this.state.loaded) {
+        if (!this.state.loaded || this.state.surveys.length <= 0) {
             return (
                 <>
                 </>
@@ -157,7 +158,12 @@ class Surveys extends Component {
 
     renderSurveys() {
         if (this.state.surveys.length <= 0) {
-            return <h3>Please take a survey!</h3>
+            return (
+                <>
+                    <h3>Please take a survey:</h3>
+                    <a href={survey_endpoints['rentSurvey']} className="btn btn-primary">Click here</a>
+                </>
+            );
         }
 
         return (this.state.surveys.map(survey =>
