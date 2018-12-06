@@ -338,6 +338,10 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         tenants.is_valid()
         print(tenants.errors)
 
+        user_form = ApartmentHunterSignupForm(self.request.POST)
+        user_form.is_valid()
+        print(user_form.errors)
+
         print('End of create')
 
     def update(self, request, *args, **kwargs):
