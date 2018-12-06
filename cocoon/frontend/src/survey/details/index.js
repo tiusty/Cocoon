@@ -49,7 +49,7 @@ export default class Details extends Component {
 }
 
 const NewUser = (props) => (
-    <form>
+    <form method="POST">
         <div className="survey-question">
             <h2>Finish signing up to see <span>your results</span>!</h2>
             <span className="col-md-12 survey-error-message" id="email_error">Enter a valid email address.</span>
@@ -57,7 +57,7 @@ const NewUser = (props) => (
             <span className="col-md-12 survey-error-message" id="phone_error">Enter a valid phone number. Ex. (555) 555-5555</span>
             <input className="col-md-12 survey-input" type="tel" name="phone_number" placeholder="Phone Number" onBlur={props.validatePhone} required/>
             <input className="col-md-12 survey-input" type="password" name="password" placeholder="Password" required/>
-            <button className="col-md-12 survey-btn" onClick={() => { props.handleValidation() && props.onSubmit(); }}>
+            <button className="col-md-12 survey-btn" onClick={(e) => { props.handleValidation() && props.onSubmit(e); }}>
                 Check out my places
             </button>
         </div>
