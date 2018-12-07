@@ -162,10 +162,6 @@ export default class General extends Component {
                         <input type="radio" name="number_of_tenants" value="4" />
                             <div>Me + 3 others</div>
                     </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="5" />
-                        <div>Me + 4 others</div>
-                    </label>
                 </div>
 
                 <div className="survey-question" id="tenant_names">

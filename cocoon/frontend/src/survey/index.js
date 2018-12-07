@@ -84,8 +84,12 @@ class Survey extends Component {
             })
             .catch(error => console.log('BAD', error))
             .then(response => {
-                    console.log('submitted!');
-                    // location.href = ''
+                // On successful form submit then redirect to survey results page
+                    if (response.data.result) {
+                        window.location = response.data.redirect_url
+                    } else {
+                        console.log(response.data)
+                    }
                 }
             );
     };

@@ -403,7 +403,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         # Return a result false if the form was not valid
         return Response({'result': False})
 
-
     def update(self, request, *args, **kwargs):
         """
         Updates the visit_list to either add or remove a home from the list
