@@ -373,7 +373,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
                         # Write me for the user as the first person in the roomate group
                         elif counter is 1:
-                            survey_name = survey_name + " Me,"
+                            survey_name = survey_name + " Me"
 
                         # End condition for the last roomate
                         elif counter >= data['number_of_tenants']:
