@@ -5,7 +5,6 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import Survey from "./survey";
-import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
 
@@ -24,7 +23,7 @@ class Surveys extends Component {
         pre_tour_signed: false,
 
         // Stores the survey_endpoint needed for this Component
-        survey_endpoint: userAuth_endpoints['userSurveys'],
+        survey_endpoint: survey_endpoints['rentSurvey'],
         signature_endpoint: signature_endpoints['hunterDocManager'],
     };
 
