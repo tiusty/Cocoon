@@ -10,7 +10,7 @@ router.register(r'rentSurvey', views.RentSurveyViewSet, base_name='user_survey')
 app_name = 'survey'
 urlpatterns = [
     url(r'^rent/$', views.RentingSurvey.as_view(), name="rentingSurvey"),
-    url(r'^rentReact/$', views.RentingSurvey.as_view(template_name='survey/reactRentingSurvey.html'), name="rentingSurveyReact"),
+    url(r'^rentOld/$', views.RentingSurvey.as_view(template_name='survey/rentingSurvey.html'), name="rentingSurveyOld"),
     # url(r'^visits/$', views.VisitList.as_view(), name="visitList"),
     url(r'^rent/(?P<survey_url>.*)/$', views.RentingResultSurvey.as_view(), name="rentSurveyResult"),
     # Ajax requests

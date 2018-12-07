@@ -44,7 +44,7 @@ from rest_framework.response import Response
 class RentingSurvey(CreateView):
     model = RentingSurveyModel
     form_class = RentSurveyForm
-    template_name = 'survey/rentingSurvey.html'
+    template_name = 'survey/reactRentingSurvey.html'
 
     def get_context_data(self, **kwargs):
         """
@@ -329,29 +329,80 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         :param kwargs:
         :return:
         """
-        print("in post")
-        form = RentSurveyForm(self.request.data['data'])
+
+        data = self.request.data['data']
+
+        form = RentSurveyForm(data)
         if form.is_valid():
-            print('The survey form is valid!')
-        else:
-            print(form.errors)
 
-        tenants = TenantFormSet(self.request.data['data'])
-        if tenants.is_valid():
-            print('Yay the tenant form is valid!')
-        else:
-            print(tenants.errors)
+            tenants = TenantFormSet(data)
 
-        if not self.request.user.is_authenticated():
-            print('User not authenticated, attempting to validate user form')
-            user_form = ApartmentHunterSignupForm(self.request.data['data'])
-            user_form.is_valid()
-            print(user_form.errors)
-        else:
-            print('User is already authenticated')
+            does_user_signup = False
+            sign_up_form_valid = True
+            user_form = None
 
-        print('End of create')
-        return Response({'result': True})
+            if not self.request.user.is_authenticated():
+                does_user_signup = True
+                user_form = ApartmentHunterSignupForm(data)
+                sign_up_form_valid = user_form.is_valid()
+
+            # Makes sure that the tenant form and the signup form are valid before saving
+            if tenants.is_valid() and sign_up_form_valid:
+
+                user = self.request.user
+
+                # If the user is signing up then save that form and return the user to log them in
+                if does_user_signup:
+                    user = user_form.save(request=self.request)
+                    login(self.request, user)
+
+                # Save the rent survey
+                with transaction.atomic():
+                    form.instance.user_profile = get_object_or_404(UserProfile, user=user)
+
+                    # Creates a the survey name based on the people in the roommate group
+                    survey_name = "Roommate Group:"
+                    counter = 1
+                    # Depending on whether it is the last/first roommate then the formatting of the string is different
+                    for tenant in tenants:
+
+                        # If only the user
+                        if counter is 1 and counter is data['number_of_tenants']:
+                            survey_name = survey_name + " Just Me"
+                            break
+
+                        # Write me for the user as the first person in the roomate group
+                        elif counter is 1:
+                            survey_name = survey_name + " Me,"
+
+                        # End condition for the last roomate
+                        elif counter >= data['number_of_tenants']:
+                            survey_name = survey_name + " and {0}".format(tenant.cleaned_data['first_name'])
+                            break
+
+                        # Adds another roommate to the group
+                        else:
+                            survey_name = survey_name + ", {0}".format(tenant.cleaned_data['first_name'])
+
+                        counter = counter + 1
+
+                    # Set the form name
+                    form.instance.name = survey_name
+
+                    # Now the form can be saved
+                    survey = form.save()
+
+                # Now save the the tenants
+                tenants.instance = survey
+                tenants.save()
+
+                survey = RentingSurveyModel.objects.get(id=survey.id)
+
+                return Response({'result': True, 'redirect_url': survey.url})
+
+        # Return a result false if the form was not valid
+        return Response({'result': False})
+
 
     def update(self, request, *args, **kwargs):
         """

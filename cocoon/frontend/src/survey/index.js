@@ -52,6 +52,17 @@ class Survey extends Component {
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        /*
+        Anytime that the state updates this is called
+         */
+
+        // If the number of tenants changes then update the total number of forms to equal that
+        if (this.state.number_of_tenants !== prevState.number_of_tenants) {
+            this.setState({'tenants-TOTAL_FORMS': this.state.number_of_tenants})
+        }
+    }
+
     componentDidMount = () => {
         this.getHomeTypes();
         this.getCommuteTypes();
