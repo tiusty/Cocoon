@@ -39,6 +39,7 @@ from cocoon.userAuth.forms import ApartmentHunterSignupForm
 # Rest Framework
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 class RentingSurvey(CreateView):
@@ -316,6 +317,18 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                         mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     serializer_class = RentSurveySerializer
+
+    def get_permissions(self):
+        """
+        Dynamically get permissions because we only allow the user to not be authenticated on the
+            create method
+        """
+        if self.action == 'create':
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
