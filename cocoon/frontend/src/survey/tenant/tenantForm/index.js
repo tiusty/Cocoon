@@ -297,7 +297,7 @@ export default class TenantForm extends Component {
 
                     <div className="survey-question" id={`${tenantNumber}-desired_commute-question`} style={{display: `${this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}} onBlur={(e) => {this.props.handleInputChange(e, 'number');}}>
                         <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {toggleName} want?</h2>
-                        <input className="col-md-12 survey-input" type="number" name={`${tenantNumber}-desired_commute`} placeholder="Time in minutes" />
+                        <input className="col-md-12 survey-input" type="number" name={`${tenantNumber}-max_commute`} placeholder="Time in minutes" />
                     </div>
 
                     <div className="survey-question" id={`${tenantNumber}-commute_weight-question`} style={{display: `${this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
