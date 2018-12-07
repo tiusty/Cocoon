@@ -1,6 +1,8 @@
+// Import React Components
 import React from 'react'
 import { Component } from 'react';
 
+// Import Cocoon Components
 import './homeTile.css'
 
 class HomeTile extends Component {
@@ -9,6 +11,10 @@ class HomeTile extends Component {
     };
 
     renderScore(home) {
+        /**
+         * Renders the score portion of the home tile
+         * @type {string} THe home that is being rendered
+         */
 
         let homeScore = '';
         if (this.props.show_score) {
@@ -60,6 +66,10 @@ class HomeTile extends Component {
     }
 
     renderInfo(home) {
+        /**
+         * Renders the info portion on the home Tile
+         * @type {string}
+         */
         let bit_classes = "homeBit ";
         if (this.state.hover) {
             bit_classes += "homeBit-hover";
@@ -73,6 +83,9 @@ class HomeTile extends Component {
     }
 
     renderImages(home) {
+        /**
+         * Renders the image portion of the tile
+         */
         if (home.images) {
             let div_classes = "col-md-5 thumbnailDiv ";
             let image_classes = "thumbnailImage ";
@@ -83,19 +96,23 @@ class HomeTile extends Component {
 
             // Only renders first 2 photos
             return (
-                <React.Fragment>
+                <>
                     { home.images.slice(0,2).map(image =>
                         <div key={image.id} className={div_classes}>
                             <img className={image_classes} src={image.image}/>
                         </div>
                     )}
-                </React.Fragment>
+                </>
             );
 
         }
     }
 
     toggleHover = () => {
+        /**
+         * Creates the hovering functionality of the tile
+         * @type {boolean}
+         */
         let hover = !this.state.hover;
         this.setState({hover})
     };

@@ -3,13 +3,12 @@ import React from 'react';
 import ReactDOM from "react-dom";
 
 // Import Cocoon Components
-import './userAuth.css';
-import Surveys from "./survey/surveys";
+import SignaturePage from './signaturePage/signaturePage'
 
 // Determines which component to load via dictionary
 //  This should be passed in the context to the template
 const components = {
-    'Surveys': Surveys,
+    'SignaturePage': SignaturePage,
 };
 
 ReactDOM.render(
