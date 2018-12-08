@@ -55,7 +55,9 @@
                     {% if user.is_authenticated %}
                         {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:surveys' %}">My Surveys</a></li>{% endblock %}
                         {% if user.is_broker or user.is_admin%}
-                            {% block nav-agent-itinerary %}<li><a class="link" href="{% url 'scheduler:agentScheduler' %}">Itineraries</a></li>{% endblock %}
+                            {% block nav-agent-portal %}<li><a class="link" href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a></li>{% endblock %}
+                            {% block nav-agent-marketplace %}<li><a class="link" href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a></li>{% endblock %}
+
                         {% endif %}
                         {% if user.is_hunter or user.is_admin %}
                             {% block nav-client-itinerary %}<li><a class="link" href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a></li>{% endblock %}

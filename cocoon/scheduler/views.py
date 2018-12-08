@@ -37,22 +37,38 @@ class ClientScheduler(TemplateView):
         return data
 
 
-class AgentScheduler(TemplateView):
+class AgentSchedulerPortal(TemplateView):
     """
-    Loads the template for the AgentScheduler
+    Loads the template for the AgentSchedulerPortal
 
     The template contains the entry point for React and react handles
     retrieving the necessary data
     """
-    template_name = 'scheduler/agentScheduler.html'
+    template_name = 'scheduler/agentSchedulerPortal.html'
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
 
         # Tells React which component to load onto the page
-        data['component'] = AgentScheduler.__name__
+        data['component'] = AgentSchedulerPortal.__name__
         return data
 
+
+class AgentSchedulerMarketplace(TemplateView):
+    """
+        Loads the template for the AgentSchedulerMarketplace
+
+        The template contains the entry point for React and react handles
+        retrieving the necessary data
+        """
+    template_name = 'scheduler/agentSchedulerMarketplace.html'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        # Tells React which component to load onto the page
+        data['component'] = AgentSchedulerMarketplace.__name__
+        return data
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')

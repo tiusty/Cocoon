@@ -13,7 +13,7 @@ import "./agentScheduler.css"
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-class AgentScheduler extends Component {
+class AgentSchedulerPortal extends Component {
 
     state = {
         scheduled_loaded: false,
@@ -21,7 +21,6 @@ class AgentScheduler extends Component {
         marketplace_loaded: false,
         unscheduled_itineraries: [],
         scheduled_itineraries: [],
-        marketplace_itineraries: [],
     };
 
 
@@ -74,13 +73,6 @@ class AgentScheduler extends Component {
                 this.setState({scheduled_loaded: true});
             })
 
-        // retrieve list of unclaimed, marketplace itineraries
-        axios.get(scheduler_endpoints['itineraryMarket'])
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({marketplace_itineraries: this.parseData(response.data)});
-                this.setState({marketplace_loaded: true});
-            })
     }
 
     claimItinerary = (id) => {
@@ -149,16 +141,6 @@ class AgentScheduler extends Component {
         }
     };
 
-    renderMarketplaceItineraries = () => {
-        if (this.state.marketplace_loaded) {
-            return (
-                <div className='marketplace-wrapper'>
-                    {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true, false, "itineraryMarket"))}
-                </div>
-            )
-        }
-    }
-
     render() {
         return (
             <React.Fragment>
@@ -174,16 +156,10 @@ class AgentScheduler extends Component {
                             {this.renderScheduledItineraries()}
                         </div>
                     </div>
-                    <div className='row'>
-                        <div className='col-md-4'>
-                            <h2>Available unclaimed itineraries</h2>
-                            {this.renderMarketplaceItineraries()}
-                        </div>
-                    </div>
                 </div>
             </React.Fragment>
         );
     }
 }
 
-export default AgentScheduler
+export default AgentSchedulerPortal
