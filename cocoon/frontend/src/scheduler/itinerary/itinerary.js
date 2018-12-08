@@ -1,9 +1,11 @@
 // Import React Components
 import React from 'react'
-import { Component } from 'react';
+import {Component} from 'react';
 import axios from 'axios'
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import HomeTile from "../../common/homeTile/homeTile";
+
+import "./itinerary.css"
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -26,7 +28,8 @@ class Itinerary extends Component {
         /**
          *  Retrieves all the surveys associated with the user
          */
-        axios.get(scheduler_endpoints['itinerary'] + this.state.id + '/')
+
+        axios.get(scheduler_endpoints[this.props.viewType] + this.state.id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
@@ -38,6 +41,7 @@ class Itinerary extends Component {
                     start_times: response.data.start_times
                 })
             })
+
     }
 
     selectTime = (id, time) => {
@@ -52,47 +56,17 @@ class Itinerary extends Component {
             method: 'post',
             url: scheduler_endpoints['selectStartTime'],
             data: formData,
-            config: { headers: {'Content-Type': 'multipart/form-data' }}
+            config: {headers: {'Content-Type': 'multipart/form-data'}}
         })
-        .catch(error => console.log('Bad', error))
-        .then(response => {
-            if (response.data.result == 0) {
-                this.setState({
-                    selected_start_time: time,
-                    showTimes: false,
-                });
-            }
-        });
-    }
-
-    claimItinerary = () => {
-        let formData = new FormData();
-        formData.set('itinerary_id', this.state.id);
-
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['claimItinerary'],
-            data: formData,
-            config: { headers: {'Content-Type': 'multipart/form-data' }}
-        })
-        .catch(error => console.log('Bad', error))
-        .then(response => {
-            if (response.data.result == "0") {
-                this.setState({
-                    showClaim: false,
-                });
-            }
-        });
-    }
-
-    renderClaimButton = () => {
-        if (this.state.showClaim) {
-            return (
-                <button onClick={() => this.claimItinerary(this.state.id)}>claim</button>
-            );
-        }
-
-        return null
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                if (response.data.result == 0) {
+                    this.setState({
+                        selected_start_time: time,
+                        showTimes: false,
+                    });
+                }
+            });
     }
 
     renderStartTimes = () => {
@@ -102,7 +76,7 @@ class Itinerary extends Component {
                     return (
                         <div key={timeObject.id}>
                             <div>{timeObject.time}</div>
-                            <button onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button>
+                            {this.props.canSelect ? <button onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button> : null}
                         </div>
                     );
                 })
@@ -135,8 +109,7 @@ class Itinerary extends Component {
                 {agent_div}
                 <p>Tour Duration = {this.state.tour_duration_seconds}</p>
                 {start_time}
-                {this.renderStartTimes()}
-                {this.renderClaimButton()}
+                <div className={"available-times-wrapper"}>{this.renderStartTimes()}</div>
                 {this.state.homes.map(home =>
                     <HomeTile
                         key={home.id}

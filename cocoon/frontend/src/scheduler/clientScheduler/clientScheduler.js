@@ -85,6 +85,7 @@ class ClientScheduler extends Component {
                 return (
                     <Itinerary
                         id={this.state.id}
+                        viewType={"itinerary"}
                     />
                 );
             } else {

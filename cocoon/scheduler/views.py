@@ -62,6 +62,7 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        print(user_profile)
         return ItineraryModel.objects.filter(client=user_profile.user)
 
 
@@ -79,6 +80,14 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
             return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)
         elif itinerary_type == 'scheduled':
             return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)
+
+    # allows agents to retrieve specific client itineraries
+    def retrieve(self, request, pk=None):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        queryset = ItineraryModel.objects.filter(agent=user_profile.user)
+        client_itinerary = get_object_or_404(queryset, pk=pk)
+        serializer = ItinerarySerializer(client_itinerary)
+        return Response(serializer.data)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -200,13 +209,13 @@ def claim_itinerary(request):
                             return HttpResponse(json.dumps({"result": "1"}),
                                                 content_type="application/json")
                     except ItineraryModel.DoesNotExist:
-                        return HttpResponse(json.dumps({"result": "Could not find itinerary"}),
+                        return HttpResponse(json.dumps({"result": "This itinerary no longer exists"}),
                                             content_type="application/json")
                 else:
-                    return HttpResponse(json.dumps({"result: User does not have privileges"},
+                    return HttpResponse(json.dumps({"result: Insufficient privileges"},
                                                     content_type="application/json"))
             except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                return HttpResponse(json.dumps({"result": "Must be a logged in user"}),
                                     content_type="application/json",
                                     )
         else:

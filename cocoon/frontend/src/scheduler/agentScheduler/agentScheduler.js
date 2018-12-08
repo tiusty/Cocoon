@@ -1,11 +1,13 @@
 // Import React Components
 import React from 'react'
-import { Component } from 'react';
+import {Component} from 'react';
 import axios from 'axios'
 
 // Import Cocoon Components
 import Itinerary from "../itinerary/itinerary";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
+
+import "./agentScheduler.css"
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -36,9 +38,11 @@ class AgentScheduler extends Component {
         // For each survey just push the id for that itinerary to the list
         // Note there should only be one
         data.map(c =>
-            itinerary_ids.push( { id: c.id,
+            itinerary_ids.push({
+                id: c.id,
                 is_claimed: c.is_claimed,
-                is_scheduled: c.is_scheduled} )
+                is_scheduled: c.is_scheduled
+            })
         );
 
         return itinerary_ids
@@ -49,20 +53,25 @@ class AgentScheduler extends Component {
          *  Retrieves all the agent's unscheduled itineraries
          */
 
+        this.refreshItineraries()
+    }
+
+    refreshItineraries = () => {
+
         // retrieve list of claimed, unscheduled itineraries
         axios.get(scheduler_endpoints['itineraryAgent'], {params: {type: 'unscheduled'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
-                    this.setState({unscheduled_itineraries: this.parseData(response.data)});
-                    this.setState({unscheduled_loaded: true });
+                this.setState({unscheduled_itineraries: this.parseData(response.data)});
+                this.setState({unscheduled_loaded: true});
             })
 
         // retrieve list of claimed, scheduled itineraries
         axios.get(scheduler_endpoints['itineraryAgent'], {params: {type: 'scheduled'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
-                    this.setState({scheduled_itineraries: this.parseData(response.data)});
-                    this.setState({scheduled_loaded: true });
+                this.setState({scheduled_itineraries: this.parseData(response.data)});
+                this.setState({scheduled_loaded: true});
             })
 
         // retrieve list of unclaimed, marketplace itineraries
@@ -70,27 +79,61 @@ class AgentScheduler extends Component {
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({marketplace_itineraries: this.parseData(response.data)});
-                this.setState( {marketplace_loaded: true});
+                this.setState({marketplace_loaded: true});
             })
-
     }
 
-    renderItinerary = (itinerary, key, showTimes, showClaim) => {
+    claimItinerary = (id) => {
+        let formData = new FormData();
+        formData.set('itinerary_id', id);
+
+        axios({
+            method: 'post',
+            url: scheduler_endpoints['claimItinerary'],
+            data: formData,
+            config: {headers: {'Content-Type': 'multipart/form-data'}}
+        })
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                if (response.data.result == "0") {
+                    this.setState({
+                        showClaim: false,
+                    });
+                    this.refreshItineraries()
+
+                } else if (response.data.result == "1") {
+                    alert("This itinerary has been claimed")
+                    this.refreshItineraries()
+                } else {
+                    alert(response.data.result)
+                    this.refreshItineraries()
+                }
+            });
+    }
+
+    renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {
+        let claimButton = canClaim ?
+            <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button> : null
         return (
-            <Itinerary
-                id={itinerary.id}
-                showTimes={showTimes}
-                showClaim={showClaim}
-                key={key}
-            />
+            <div>
+                <Itinerary
+                    id={itinerary.id}
+                    showTimes={showTimes}
+                    canSelect={canSelect}
+                    brokerRequest
+                    key={"itinerary" + key}
+                    viewType={viewType}
+                />
+                {claimButton}
+            </div>
         );
     };
 
     renderUnscheduledItineraries = () => {
         if (this.state.unscheduled_loaded) {
             return (
-                <div className='unscheduled-wrapepr'>
-                    {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false))}
+                <div className='unscheduled-wrapper'>
+                    {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false, true, "itineraryAgent"))}
                 </div>
             );
         }
@@ -100,7 +143,7 @@ class AgentScheduler extends Component {
         if (this.state.scheduled_loaded) {
             return (
                 <div className='scheduled-wrapper'>
-                    {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, false, false))}
+                    {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, false, false, false, "itineraryAgent"))}
                 </div>
             )
         }
@@ -110,7 +153,7 @@ class AgentScheduler extends Component {
         if (this.state.marketplace_loaded) {
             return (
                 <div className='marketplace-wrapper'>
-                    {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true))}
+                    {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true, false, "itineraryMarket"))}
                 </div>
             )
         }
@@ -119,26 +162,28 @@ class AgentScheduler extends Component {
     render() {
         return (
             <React.Fragment>
-                <div className='row'>
-                    <div className="col-md-4">
-                        <h2>Claimed Itineraries</h2>
-                        {this.renderUnscheduledItineraries()}
+                <div className="agent-scheduler-wrapper">
+                    <button onClick={this.refreshItineraries}>Refresh itineraries</button>
+                    <div className='itinerary-wrapper row'>
+                        <div className="col-md-4">
+                            <h2>Claimed Itineraries</h2>
+                            {this.renderUnscheduledItineraries()}
+                        </div>
+                        <div className="col-md-4">
+                            <h2>Scheduled Itineraries</h2>
+                            {this.renderScheduledItineraries()}
+                        </div>
                     </div>
-                    <div className="col-md-4">
-                        <h2>Scheduled Itineraries</h2>
-                        {this.renderScheduledItineraries()}
-                    </div>
-                </div>
-                <div className='row'>
-                    <div className='col-md-8'>
-                        <h2>Available unclaimed itineraries</h2>
-                        {this.renderMarketplaceItineraries()}
+                    <div className='row'>
+                        <div className='col-md-4'>
+                            <h2>Available unclaimed itineraries</h2>
+                            {this.renderMarketplaceItineraries()}
+                        </div>
                     </div>
                 </div>
             </React.Fragment>
         );
     }
-
 }
 
 export default AgentScheduler
