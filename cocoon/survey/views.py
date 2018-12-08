@@ -346,13 +346,15 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         data = self.request.data['data']
 
         form = RentSurveyForm(data)
+        tenants = None
+        user_form = None
+
         if form.is_valid():
 
             tenants = TenantFormSet(data)
 
             does_user_signup = False
             sign_up_form_valid = True
-            user_form = None
 
             if not self.request.user.is_authenticated():
                 does_user_signup = True
@@ -413,8 +415,25 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
                 return Response({'result': True, 'redirect_url': survey.url})
 
+        form_errors = form.errors
+        user_form_errors = ""
+        tenants_errors = ""
+
+        if tenants is not None:
+            tenants.is_valid()
+            tenants_errors = tenants.errors
+
+        if user_form is not None:
+            user_form.is_valid()
+            user_form_errors = user_form.errors
+
         # Return a result false if the form was not valid
-        return Response({'result': False})
+        return Response({
+            'result': False,
+            'survey_errors': form_errors,
+            'tenants_errors': tenants_errors,
+            'user_form_errors': user_form_errors
+        })
 
     def update(self, request, *args, **kwargs):
         """
