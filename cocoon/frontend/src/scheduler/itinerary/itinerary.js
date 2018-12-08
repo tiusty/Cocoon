@@ -2,9 +2,11 @@
 import React from 'react'
 import {Component} from 'react';
 import axios from 'axios'
+import moment from 'moment';
+
+// Import Cocoon Components
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import HomeTile from "../../common/homeTile/homeTile";
-
 import "./itinerary.css"
 
 // For handling Post request with CSRF protection
@@ -75,8 +77,11 @@ class Itinerary extends Component {
                 this.state.start_times.map((timeObject) => {
                     return (
                         <div key={timeObject.id}>
-                            <div>{timeObject.time}</div>
-                            {this.props.canSelect ? <button onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button> : null}
+                            <div>
+                                {moment(timeObject.time).format('MM/DD/YYYY')} @ {moment(timeObject.time).format('HH:mm')}
+                            </div>
+                            {this.props.canSelect ? <button
+                                onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button> : null}
                         </div>
                     );
                 })
@@ -99,7 +104,12 @@ class Itinerary extends Component {
 
         let start_time = <p>Start Time: Not Selected</p>;
         if (this.state.selected_start_time) {
-            start_time = <p>Start Time: {this.state.selected_start_time}</p>
+            start_time = <p>
+                Start Time:
+                {moment(this.state.selected_start_time).format('MM/DD/YYYY')}
+                &nbsp; @ &nbsp;
+                {moment(this.state.selected_start_time).format('HH:mm')}
+                </p>
         }
 
 
