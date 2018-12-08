@@ -6,6 +6,8 @@ import axios from 'axios'
 // Import Cocoon Components
 import Survey from "./survey";
 import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
+import signature_endpoints from "../../endpoints/signatures_endpoints";
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -15,14 +17,20 @@ class Surveys extends Component {
     state = {
         // Stores the ids of all the surveys associated with the user
         surveys: [],
+        loaded: false,
 
-        // Stores the endpoint needed for this Component
-        endpoint: userAuth_endpoints['userSurveys'],
+        // Stores information regarding the state of signing documents
+        hunter_doc_manager_id: null,
+        pre_tour_signed: false,
+
+        // Stores the survey_endpoint needed for this Component
+        survey_endpoint: userAuth_endpoints['userSurveys'],
+        signature_endpoint: signature_endpoints['hunterDocManager'],
     };
 
     parseData(data) {
         /**
-         * Parses data returned from the endpoint and returns it in a nicer format for react
+         * Parses data returned from the survey_endpoint and returns it in a nicer format for react
          *
          * Expects to be passed data a list of surveys from the backend and then returns a list
          *  of the survey ids.
@@ -43,11 +51,41 @@ class Surveys extends Component {
         /**
          *  Retrieves all the surveys associated with the user
          */
-        axios.get(this.state.endpoint)
+        axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState( {surveys: this.parseData(response.data)})
+            });
+
+        /**
+            Retrieves the users HunterDocManager
+         */
+        axios.get(this.state.signature_endpoint)
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState( {
+                    hunter_doc_manager_id: response.data[0].id,
+                    pre_tour_signed: response.data[0].is_pre_tour_signed,
+                })
+            });
+
+        /**
+         * Updates the users pre_tour_docs and checks to see if it is signed.
+         *  Since the id for the url doesn't matter, null can be passed so the
+         *  update function is called
+         */
+        let endPoint = this.state.signature_endpoint + 'null' + '/';
+        axios.put(endPoint,
+            {
+                type: 'pre_tour_check',
             })
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                this.setState({
+                    loaded: true,
+                    pre_tour_signed: response.data.is_pre_tour_signed
+                })
+            });
     }
 
     handleDelete = (survey_id) => {
@@ -61,9 +99,9 @@ class Surveys extends Component {
          * @type {string} The survey id that is being deleted
          */
 
-        // The survey id is appended to the endpoint since the put request expects the survey id as
+        // The survey id is appended to the survey_endpoint since the put request expects the survey id as
         //  part of the url
-        let endpoint = this.state.endpoint + survey_id + "/";
+        let endpoint = this.state.survey_endpoint + survey_id + "/";
 
         // Passes the survey id and the put type to the backend
         axios.put(endpoint,
@@ -77,21 +115,77 @@ class Surveys extends Component {
             });
     };
 
+    renderMessages = () => {
+        /**
+         * Renders the messages associated with the page, i.e errors notifications etc
+         */
+
+        // If the page isn't loaded then don't load any messages
+        if (!this.state.loaded || this.state.surveys.length <= 0) {
+            return (
+                <>
+                </>
+            );
+        }
+
+        // Renders the scheduler message. i.e If the pre-tour docs are not signed
+        //  then inform the user to sign them before scheduling tours
+        let scheduler_message = "";
+        if (!this.state.pre_tour_signed) {
+            const pStyle = {
+                textAlign: 'center',
+                marginBottom: 0,
+            };
+            scheduler_message = (
+                <div className="alert alert-info alert-dismissable" role="alert" style={pStyle}>
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    Please sign the pre tour doc to schedule your homes
+                    <a className="btn btn-secondary btn-sm" role="button"
+                       href={signature_endpoints['signaturePage']}
+                       aria-disabled={true} style={{marginLeft: '10px'}}> Sign Documents </a>
+                </div>
+            );
+        }
+
+        return (
+            <div>
+                {scheduler_message}
+            </div>
+        );
+    };
+
+    renderSurveys() {
+        if (this.state.surveys.length <= 0) {
+            return (
+                <>
+                    <h3>Please take a survey:</h3>
+                    <a href={survey_endpoints['rentingSurvey']} className="btn btn-primary">Click here</a>
+                </>
+            );
+        }
+
+        return (this.state.surveys.map(survey =>
+            <Survey
+                key={survey.id}
+                onDelete={this.handleDelete}
+                survey_id={survey.id}
+                endpoint={this.state.survey_endpoint}
+                pre_tour_signed={this.state.pre_tour_signed}
+            />
+
+        ));
+    }
+
     render() {
         /**
          * Renders all the surveys
          */
         return (
             <>
-                { this.state.surveys.map(survey =>
-                    <Survey
-                        key={survey.id}
-                        onDelete={this.handleDelete}
-                        survey_id={survey.id}
-                        endpoint={this.state.endpoint}
-                    />
-
-                )}
+                {this.renderMessages()}
+                {this.renderSurveys()}
             </>
         );
     }
