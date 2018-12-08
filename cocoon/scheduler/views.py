@@ -70,7 +70,7 @@ class AgentSchedulerMarketplace(TemplateView):
         data['component'] = AgentSchedulerMarketplace.__name__
         return data
 
-@method_decorator(login_required, name='dispatch')
+
 @method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
 class ItineraryClientViewSet(viewsets.ModelViewSet):
 
@@ -82,7 +82,6 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
         return ItineraryModel.objects.filter(client=user_profile.user)
 
 
-@method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
 class ItineraryAgentViewSet(viewsets.ModelViewSet):
 
@@ -106,7 +105,6 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-@method_decorator(login_required, name='dispatch')
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
 class ItineraryMarketViewSet(viewsets.ModelViewSet):
 
