@@ -27,14 +27,13 @@ class AgentSchedulerPortal extends Component {
         /**
          * Parses data returned from the endpoint and returns it in a nicer format for react
          *
-         * Expects to be passed data a list of surveys from the backend and then returns a list
-         *  of the survey ids.
+         * Expects to be passed data a list of itineraries from the backend and then returns a list
+         *  of the of each itinerary with appropriate information.
          * @type {Array}: A list of surveys
          */
         let itinerary_ids = [];
 
-        // For each survey just push the id for that itinerary to the list
-        // Note there should only be one
+        // For each itinerary just push the id for that itinerary to the list
         data.map(c =>
             itinerary_ids.push({
                 id: c.id,
