@@ -80,7 +80,7 @@ class Itinerary extends Component {
         })
             .catch(error => console.log('Bad', error))
             .then(response => {
-                if (response.data.result == 0) {
+                if (response.data.result === 0) {
                     this.setState({
                         selected_start_time: time,
                         showTimes: false,
@@ -91,22 +91,43 @@ class Itinerary extends Component {
 
     renderStartTimes = () => {
         if (this.state.showTimes) {
-            return (
-                this.state.start_times.map((timeObject) => {
-                    return (
-                        <div key={timeObject.id}>
-                            <div>
-                                {moment(timeObject.time).format('MM/DD/YYYY')} @ {moment(timeObject.time).format('HH:mm')}
-                            </div>
+            if (this.state.start_times.length === 0) {
+                return <p> No start times chosen</p>
+            } else {
+                return (
+                    <div className={"available-times-wrapper"}>
+                        {this.state.start_times.map((timeObject) => {
+                        return (
+                            <div key={timeObject.id}>
+                                <div>
+                                    {moment(timeObject.time).format('MM/DD/YYYY')} @ {moment(timeObject.time).format('HH:mm')}
+                                </div>
                             {this.props.canSelect ? <button
-                                onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button> : null}
+                            onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button> : null}
                         </div>
-                    );
-                })
-            )
+                        );
+                    })}
+                    </div>
+                )
+            }
         }
 
         return null
+    }
+
+    renderHomes(homes) {
+        if (homes.length <= 0) {
+            return <p>There are no homes in this visit list</p>
+        } else {
+            return (this.state.homes.map(home =>
+                <HomeTile
+                    key={home.id}
+                    home={home}
+                    show_heart={false}
+                    show_visit={false}
+                />
+            ));
+        }
     }
 
     renderItinerary = () => {
@@ -137,15 +158,8 @@ class Itinerary extends Component {
                 {agent_div}
                 <p>Tour Duration = {this.state.tour_duration_seconds}</p>
                 {start_time}
-                <div className={"available-times-wrapper"}>{this.renderStartTimes()}</div>
-                {this.state.homes.map(home =>
-                    <HomeTile
-                        key={home.id}
-                        home={home}
-                        show_heart={false}
-                        show_visit={false}
-                    />
-                )}
+                {this.renderStartTimes()}
+                {this.renderHomes(this.state.homes)}
             </div>
         );
     };
