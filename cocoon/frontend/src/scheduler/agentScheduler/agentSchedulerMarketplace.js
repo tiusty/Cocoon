@@ -116,11 +116,15 @@ class AgentSchedulerPortal extends Component {
 
     renderMarketplaceItineraries = () => {
         if (this.state.marketplace_loaded) {
-            return (
-                <div className='marketplace-wrapper'>
-                    {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true, false, "itineraryMarket"))}
-                </div>
-            )
+            if (this.state.marketplace_itineraries.length <= 0) {
+                return <div> There is no open itineraries </div>
+            } else {
+                return (
+                    <div className='marketplace-wrapper'>
+                        {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true, false, "itineraryMarket"))}
+                    </div>
+                )
+            }
         }
     }
 
