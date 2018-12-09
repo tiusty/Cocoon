@@ -92,9 +92,11 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
         itinerary_type = self.request.query_params.get('type', None)
 
         if itinerary_type == 'unscheduled':
-            return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)
+            return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)\
+                .exclude(finished=True)
         elif itinerary_type == 'scheduled':
-            return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)
+            return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)\
+                .exclude(finished=True)
 
     # allows agents to retrieve specific client itineraries
     def retrieve(self, request, pk=None):
@@ -112,7 +114,7 @@ class ItineraryMarketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        return ItineraryModel.objects.filter(agent=None)
+        return ItineraryModel.objects.filter(agent=None).exclude(finished=True)
 
 
 ########################################
