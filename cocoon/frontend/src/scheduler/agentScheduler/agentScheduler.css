@@ -1,0 +1,10 @@
+.agent-scheduler-wrapper {
+    padding: 15px;
+}
+
+.itinerary-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+}
