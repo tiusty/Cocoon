@@ -80,7 +80,7 @@ class Itinerary extends Component {
         })
             .catch(error => console.log('Bad', error))
             .then(response => {
-                if (response.data.result === 0) {
+                if (response.data.result == 0) {
                     this.setState({
                         selected_start_time: time,
                         showTimes: false,

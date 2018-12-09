@@ -78,13 +78,13 @@ class AgentSchedulerPortal extends Component {
         })
             .catch(error => console.log('Bad', error))
             .then(response => {
-                if (response.data.result === "0") {
+                if (response.data.result == "0") {
                     this.setState({
                         showClaim: false,
                     });
                     this.refreshItineraries()
 
-                } else if (response.data.result === "1") {
+                } else if (response.data.result == "1") {
                     alert("This itinerary has been claimed")
                     this.refreshItineraries()
                 } else {
