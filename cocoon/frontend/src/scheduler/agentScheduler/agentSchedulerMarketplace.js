@@ -98,9 +98,10 @@ class AgentSchedulerPortal extends Component {
         let claimButton = canClaim ?
             <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button> : null
         return (
-            <div className="single-itinerary">
+            <div key={key} className="single-itinerary">
                 <Itinerary
                     id={itinerary.id}
+                    key={"itinerary" + key}
                     hash={itinerary.hash}
                     showTimes={showTimes}
                     canSelect={canSelect}
