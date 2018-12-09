@@ -23,7 +23,6 @@ class AgentSchedulerPortal extends Component {
         scheduled_itineraries: [],
     };
 
-
     parseData(data) {
         /**
          * Parses data returned from the endpoint and returns it in a nicer format for react
@@ -40,7 +39,8 @@ class AgentSchedulerPortal extends Component {
             itinerary_ids.push({
                 id: c.id,
                 is_claimed: c.is_claimed,
-                is_scheduled: c.is_scheduled
+                is_scheduled: c.is_scheduled,
+                hash: c.hash,
             })
         );
 
@@ -87,13 +87,13 @@ class AgentSchedulerPortal extends Component {
         })
             .catch(error => console.log('Bad', error))
             .then(response => {
-                if (response.data.result == "0") {
+                if (response.data.result === "0") {
                     this.setState({
                         showClaim: false,
                     });
                     this.refreshItineraries()
 
-                } else if (response.data.result == "1") {
+                } else if (response.data.result === "1") {
                     alert("This itinerary has been claimed")
                     this.refreshItineraries()
                 } else {
@@ -110,6 +110,7 @@ class AgentSchedulerPortal extends Component {
             <div>
                 <Itinerary
                     id={itinerary.id}
+                    hash={itinerary.hash}
                     showTimes={showTimes}
                     canSelect={canSelect}
                     brokerRequest
