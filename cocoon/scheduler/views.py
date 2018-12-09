@@ -115,59 +115,6 @@ class ItineraryMarketViewSet(viewsets.ModelViewSet):
         return ItineraryModel.objects.filter(agent=None)
 
 
-@login_required()
-def agent_scheduler(request):
-    context = {}
-    current_profile = get_object_or_404(UserProfile, user=request.user)
-    if current_profile.user.is_broker or current_profile.user.is_admin:
-        unclaimed_itineraries = ItineraryModel.objects.filter(agent=None)
-        claimed_itineraries = ItineraryModel.objects\
-            .filter(selected_start_time=None)\
-            .exclude(agent=None)
-        context['unclaimed_itineraries'] = unclaimed_itineraries
-        context['claimed_itineraries'] = claimed_itineraries
-
-    else:
-        return HttpResponseNotFound()
-    return render(request, 'scheduler/itineraryPicker.html', context)
-
-@login_required()
-def view_tours(request):
-    current_profile = get_object_or_404(UserProfile, user=request.user)
-    if current_profile.user.is_broker or current_profile.user.is_admin:
-        context = {}
-        unscheduled_itineraries = ItineraryModel.objects.filter(agent=current_profile.user, selected_start_time=None)
-        scheduled_itineraries = ItineraryModel.objects.filter(agent=current_profile.user).exclude(selected_start_time=None)
-        context['unscheduled_itineraries'] = unscheduled_itineraries
-        context['scheduled_itineraries'] = scheduled_itineraries
-    else:
-        return HttpResponseNotFound()
-    return render(request, 'scheduler/viewTours.html', context)
-
-@login_required
-def get_user_itineraries(request):
-    """
-    A helper function intended for use in other views to add the
-    given user's itineraries to the current context
-    :param request: The current http request
-    :return: The context containing the user's itineraries
-    """
-    if request.user.is_authenticated():
-        user_profile = get_object_or_404(UserProfile, user=request.user)
-        itineraries = ItineraryModel.objects.filter(client=user_profile.user)
-        unscheduled_itineraries = itineraries.filter(selected_start_time=None)
-        scheduled_itineraries = itineraries.exclude(selected_start_time=None)
-        return {
-            'unscheduled_itineraries': unscheduled_itineraries,
-            'scheduled_itineraries': scheduled_itineraries,
-        }
-    else:
-        return {
-            'scheduled_itineraries': None,
-            'unscheduled_itineraries': None,
-        }
-
-
 ########################################
 # AJAX Request Handlers
 ########################################

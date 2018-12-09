@@ -26,6 +26,21 @@ class Itinerary extends Component {
         showClaim: this.props.showClaim,
     };
 
+    componentDidUpdate() {
+        axios.get(scheduler_endpoints[this.props.viewType] + this.state.id + '/')
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    agent: response.data.agent,
+                    client: response.data.client,
+                    homes: response.data.homes,
+                    selected_start_time: response.data.selected_start_time,
+                    tour_duration_seconds: response.data.tour_duration_seconds,
+                    start_times: response.data.start_times
+                })
+            })
+    }
+
     componentDidMount() {
         /**
          *  Retrieves all the surveys associated with the user
