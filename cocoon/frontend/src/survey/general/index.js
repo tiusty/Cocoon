@@ -35,13 +35,16 @@ export default class General extends Component {
     }
 
     getMaxPrice = (number_of_tenants) => {
+        /*
         if(number_of_tenants === 1) {
             return 4000;
         } else if (number_of_tenants < 4) {
             return (number_of_tenants * 3) * 1000;
         } else {
             return 10000;
-        }
+        }*/
+        // For now just return 4000 always, since it will be per person
+        return 4000
     }
 
     getDefaultDates = () => {
@@ -165,7 +168,7 @@ export default class General extends Component {
                 </div>
 
                 <div className="survey-question" id="tenant_names">
-                    <h2>What's <span>your {this.props.number_of_tenants === 1 ? 'name' : 'names'}</span>?</h2>
+                    <h2>What <span>{this.props.number_of_tenants === 1 ? ' is your name' : ' are your names'}</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>
                     <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} required data-tenantkey={0} onChange={this.handleTenantName}/>
                     {Array.from(Array(this.props.number_of_tenants - 1)).map((t, i) => {
@@ -187,11 +190,12 @@ export default class General extends Component {
                 }
 
                 <div className="survey-question">
-                    <h2>How much rent do you <span>want to pay</span>?</h2>
+                    <h2>How much rent do you <span>want to pay per person</span>?</h2>
                     <InputRange
                         draggableTrack
                         maxValue={this.getMaxPrice(this.props.number_of_tenants)}
                         minValue={0}
+                        step={50}
                         value={this.state.value}
                         onChange={value => {this.setState({value});this.props.setPrice(this.state.value.min, this.state.value.max);}}
                         formatLabel={value => `$${value}`} />
