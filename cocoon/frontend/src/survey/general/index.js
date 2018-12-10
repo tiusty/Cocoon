@@ -3,12 +3,28 @@ import { Component, Fragment } from 'react';
 import InputRange from 'react-input-range';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
+import axios from "axios";
+import houseDatabase_endpoints from "../../endpoints/houseDatabase_endpoints";
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 export default class General extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            number_of_tenants: 1,
+            home_type_options: undefined,
+            home_type: [],
+            move_weight: 0,
+            num_bedrooms: 1,
+            desired_price: 1000,
+            price_weight: 1,
+            max_price: 3000,
+            min_bathrooms: 1,
+            max_bathrooms: 6,
+            parking_spot: 0, // Need to add question
+            earliest_move_in: undefined,
+            latest_move_in: undefined,
             value: {
                 min: 1000,
                 max: 3000
@@ -19,8 +35,16 @@ export default class General extends Component {
         }
     }
 
+    componentDidMount = () => {
+        axios.get(houseDatabase_endpoints['home_types'])
+            .then(res => {
+                const home_type_options = res.data;
+                this.setState({ home_type_options });
+        });
+    }
+
     componentWillUnmount = () => {
-        this.props.setFinalTenants();
+        this.props.setNumberOfTenants(this.state.number_of_tenants);
     }
 
     // Splits name inputs into first and last names
@@ -54,21 +78,21 @@ export default class General extends Component {
             selectedDayEarliest: today,
             selectedDayLatest: nextWeek
         }, () => {
-           this.props.setSurveyState('earliest_move_in', this.state.selectedDayEarliest);
-           this.props.setSurveyState('latest_move_in', this.state.selectedDayLatest);
+           this.setSurveyState('earliest_move_in', this.state.selectedDayEarliest);
+           this.setSurveyState('latest_move_in', this.state.selectedDayLatest);
         });
     }
 
     handleEarliestClick = (day, { selected }) => {
         this.setState({
             selectedDayEarliest: selected ? undefined : day
-        }, () => this.props.setSurveyState('earliest_move_in', this.state.selectedDayEarliest))
+        }, () => this.setSurveyState('earliest_move_in', this.state.selectedDayEarliest))
     }
 
     handleLatestClick = (day, { selected }) => {
         this.setState({
             selectedDayLatest: selected  ? undefined : day
-        }, () => this.props.setSurveyState('latest_move_in', this.state.selectedDayLatest))
+        }, () => this.setSurveyState('latest_move_in', this.state.selectedDayLatest))
     }
 
     handleMovingAsap = (e) => {
@@ -82,6 +106,47 @@ export default class General extends Component {
                 isMovingAsap: value
             });
         }
+    }
+
+    handleInputChange = (e, type) => {
+        const { name, value } = e.target;
+        if(type === 'number') {
+            this.setState({
+                [name]: parseInt(value)
+            });
+        } else {
+            this.setState({
+                [name]: value
+            });
+        }
+    }
+
+    setSurveyState = (state, value) => {
+        this.setState({
+            [state]: value
+        });
+    }
+
+    setHomeTypes = (e, index, id) => {
+        let home_type = [...this.state.home_type];
+        if(e.target.checked) {
+            home_type.push(this.state.home_type_options[index].id);
+            this.setState({home_type});
+        } else {
+            for(let i = 0; i < home_type.length; i++) {
+                if(home_type[i] === id) {
+                    home_type.splice(i, 1);
+                    this.setState({home_type});
+                }
+            }
+        }
+    }
+
+    setPrice = (desired, max) => {
+        this.setState({
+            desired_price: desired,
+            max_price: max
+        });
     }
 
     handleValidation = () => {
@@ -143,10 +208,25 @@ export default class General extends Component {
         return false;
     }
 
+    handleGeneralForm  = (e) => {
+        e.preventDefault();
+                axios.post(survey_endpoints['rentSurvey'],
+            {
+                data: this.state,
+                type: 'validate_survey_general'
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                    // handle errors
+                    // if no errors go to next step
+                }
+            );
+    }
+
     render(){
         return (
             <>
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number'); this.validateRadioButton('number_of_tenants', '#number_of_tenants_error');}}>
+                <div className="survey-question" onChange={(e) => {this.handleInputChange(e, 'number'); this.validateRadioButton('number_of_tenants', '#number_of_tenants_error');}}>
                     <h2>How many people are you <span>searching with</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="number_of_tenants_error">You must select the number of people.</span>
                     <label className="col-md-6 survey-label">
@@ -168,20 +248,20 @@ export default class General extends Component {
                 </div>
 
                 <div className="survey-question" id="tenant_names">
-                    <h2>What <span>{this.props.number_of_tenants === 1 ? ' is your name' : ' are your names'}</span>?</h2>
+                    <h2>What <span>{this.state.number_of_tenants === 1 ? ' is your name' : ' are your names'}</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>
                     <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} required data-tenantkey={0} onChange={this.handleTenantName}/>
-                    {Array.from(Array(this.props.number_of_tenants - 1)).map((t, i) => {
+                    {Array.from(Array(this.state.number_of_tenants - 1)).map((t, i) => {
                         return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)} autoCapitalize={'words'} required data-tenantkey={i + 1} placeholder="First and Last Name" onChange={this.handleTenantName} key={i} />
                     })}
                 </div>
 
-                {this.props.home_type_options &&
+                {this.state.home_type_options &&
                     <div className="survey-question" onChange={this.validateHomeType}>
                         <h2>What <span>kind of home</span> do you want?</h2>
                         <span className="col-md-12 survey-error-message" id="home_type_error">You must select at least one type of home.</span>
-                        {this.props.home_type_options.map((o, index) => (
-                            <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.props.setHomeTypes(e, index, o.id)}>
+                        {this.state.home_type_options.map((o, index) => (
+                            <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.setHomeTypes(e, index, o.id)}>
                                 <input type="checkbox" name="home_type" value={o.id} />
                                 <div>{o.home_type} <i className="material-icons">check</i></div>
                             </label>
@@ -197,11 +277,11 @@ export default class General extends Component {
                         minValue={0}
                         step={50}
                         value={this.state.value}
-                        onChange={value => {this.setState({value});this.props.setPrice(this.state.value.min, this.state.value.max);}}
+                        onChange={value => {this.setState({value});this.setPrice(this.state.value.min, this.state.value.max);}}
                         formatLabel={value => `$${value}`} />
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                <div className="survey-question" onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How <span>important is the price</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="price_weight" value="0" required />
@@ -257,7 +337,7 @@ export default class General extends Component {
                     </div>
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number'); this.validateRadioButton('move_weight', '#move_weight_error');}}>
+                <div className="survey-question" onChange={(e) => {this.handleInputChange(e, 'number'); this.validateRadioButton('move_weight', '#move_weight_error');}}>
                     <h2>How badly do you <span>need to move</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="move_weight_error">You must select an option.</span>
                     <label className="col-md-6 survey-label">
@@ -278,7 +358,7 @@ export default class General extends Component {
                     </label>
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'number'); this.validateRadioButton('num_bedrooms', '#number_of_rooms_error');}}>
+                <div className="survey-question" onChange={(e) => {this.handleInputChange(e, 'number'); this.validateRadioButton('num_bedrooms', '#number_of_rooms_error');}}>
                     <h2>How many <span>bedrooms</span> do you need?</h2>
                     <span className="col-md-12 survey-error-message" id="number_of_rooms_error">You must select the number of rooms.</span>
                     <label className="col-md-6 survey-label">

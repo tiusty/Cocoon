@@ -1,5 +1,7 @@
 import React from 'react';
 import { Component, Fragment } from 'react';
+import axios from "axios";
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 export default class Amenities extends Component {
 
@@ -24,19 +26,53 @@ export default class Amenities extends Component {
         const { name, value } = e.target;
         this.setState({
             [value]: !this.state[value]
-        }, () => this.props.setSurveyState(name, this.state[value]));
+        }, () => this.setSurveyState(name, this.state[value]));
     }
 
     handleLaundry = (e) => {
         if(e.target.checked) {
             this.setState({
                 [e.target.name]: true
-            }, () => console.log(this.state))
+            })
         } else {
             this.setState({
                 [e.target.name]: false
-            }, () => console.log(this.state))
+            })
         }
+    }
+
+    handleInputChange = (e, type) => {
+        const { name, value } = e.target;
+        if(type === 'number') {
+            this.setState({
+                [name]: parseInt(value)
+            });
+        } else {
+            this.setState({
+                [name]: value
+            });
+        }
+    }
+
+    setSurveyState = (state, value) => {
+        this.setState({
+            [state]: value
+        })
+    }
+
+    handleAmenitiesForm  = (e) => {
+        e.preventDefault();
+                axios.post(survey_endpoints['rentSurvey'],
+            {
+                data: this.state,
+                type: 'validate_survey_amenties'
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                    // handle errors
+                    // if no errors go to next step
+                }
+            );
     }
 
     render(){
@@ -115,12 +151,12 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS PARKING*/}
-                <div className="survey-question" style={{display: `${this.state.wantsParking ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsParking ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How many <span>cars</span> do you have?</h2>
                     <input className="col-md-12 survey-input" type="number" name="number_of_cars" placeholder="Number of cars" />
                 </div>
 
-                <div className="survey-question" style={{display: `${this.state.wantsParking ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsParking ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you need <span>off street parking</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="parking_spot" value="1" />
@@ -137,7 +173,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS FURNISHED*/}
-                <div className="survey-question" style={{display: `${this.state.wantsFurnished ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsFurnished ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you need it to be <span>furnished</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="furnished" value="1" />
@@ -154,12 +190,12 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS DOGS*/}
-                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How many <span>dogs</span>?</h2>
                     <input className="col-md-12 survey-input" type="number" name="number_of_dogs" placeholder="Number of dogs" />
                 </div>
 
-                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'string');}}>
                     <h2>{number_of_dogs > 1 ? 'Are the dogs registered service dogs' : 'Is the dog a registered service dog'}?</h2>
                     <label className="col-md-6 survey-label survey-checkbox">
                         <input type="radio" name="service_dogs" value="true" />
@@ -171,12 +207,12 @@ export default class Amenities extends Component {
                     </label>
                 </div>
 
-                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'string');}}>
                     <h2>What <span>{number_of_dogs > 1 ? 'breeds' : 'breed'}</span>?</h2>
                     <input className="col-md-12 survey-input" type="text" name="breed_of_dogs" placeholder={`Enter breed of ${number_of_dogs > 1 ? 'dogs' : 'dog'}`} />
                 </div>
 
-                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'string');}}>
                     <h2>Does your {number_of_dogs > 1 ? 'dogs' : 'dog'} <span>weigh more or less than 25 lbs</span>?</h2>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="dog_size" value="more-than-25" />
@@ -189,7 +225,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS HARDWOOD FLOORS*/}
-                <div className="survey-question" style={{display: `${this.state.wantsHardwood ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsHardwood ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you want <span>hardwood floors</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="hardwood_floors" value="1" />
@@ -206,7 +242,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS AC*/}
-                <div className="survey-question" style={{display: `${this.state.wantsAC ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsAC ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you want <span>air conditioning</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="air_condition" value="1" />
@@ -223,7 +259,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS DISHWASHER*/}
-                <div className="survey-question" style={{display: `${this.state.wantsDishWasher ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsDishWasher ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you want a <span>dishwasher</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="dishwasher" value="1" />
@@ -240,7 +276,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS PATIO*/}
-                <div className="survey-question" style={{display: `${this.state.wantsPatio ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsPatio ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you want a <span>patio/balcony</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="patio" value="1" />
@@ -257,7 +293,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS POOL*/}
-                <div className="survey-question" style={{display: `${this.state.wantsPool ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsPool ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you want a <span>pool/hot tub</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="pool" value="1" />
@@ -274,7 +310,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS GYM*/}
-                <div className="survey-question" style={{display: `${this.state.wantsGym ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsGym ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you want a <span>gym</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="gym" value="1" />
@@ -291,7 +327,7 @@ export default class Amenities extends Component {
                 </div>
 
                 {/*SHOWS ONLY IF WANTS STORAGE UNIT*/}
-                <div className="survey-question" style={{display: `${this.state.wantsStorage ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'number');}}>
+                <div className="survey-question" style={{display: `${this.state.wantsStorage ? 'block' : 'none'}`}} onChange={(e) => {this.handleInputChange(e, 'number');}}>
                     <h2>How badly do you want a <span>storage unit</span>?</h2>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name="storage_unit" value="1" />

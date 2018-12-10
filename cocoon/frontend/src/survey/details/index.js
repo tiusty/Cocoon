@@ -1,5 +1,7 @@
 import React from 'react';
 import { Component, Fragment } from 'react';
+import axios from "axios";
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 export default class Details extends Component {
 
@@ -72,6 +74,34 @@ export default class Details extends Component {
         return true;
     }
 
+    handleInputChange = (e, type) => {
+        const { name, value } = e.target;
+        if(type === 'number') {
+            this.setState({
+                [name]: parseInt(value)
+            });
+        } else {
+            this.setState({
+                [name]: value
+            });
+        }
+    }
+
+    handleUserForm  = (e) => {
+        e.preventDefault();
+                axios.post(survey_endpoints['rentSurvey'],
+            {
+                data: this.state,
+                type: 'validate_user_form'
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                    // handle errors
+                    // if no errors go to next step
+                }
+            );
+    }
+
     render(){
         return (
             <>
@@ -81,7 +111,7 @@ export default class Details extends Component {
                         validateEmail={this.validateEmail}
                         validatePhone={this.validatePhone}
                         handleValidation={this.handleValidation}
-                        handleInputChange={this.props.handleInputChange}
+                        handleInputChange={this.handleInputChange}
                         validatePassword={this.validatePassword}
                         validatePasswordMatch={this.validatePasswordMatch}
                     /> :
