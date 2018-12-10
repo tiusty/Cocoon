@@ -1,4 +1,5 @@
 from enum import Enum
+import time
 
 # Controls how many days until the zip codes need to be refreshed
 ZIP_CODE_TIMEDELTA_VALUE = 60
@@ -27,3 +28,10 @@ class CommuteAccuracy(Enum):
 COMMUTE_TIME_WITH_TRAFFIC = 1575477036
 COMMUTE_TIME_WITHOUT_TRAFFIC = 1575430236
 TRAFFIC_MODEL_DEFAULT = "best_guess"
+
+# Check if your commute time is in the future, if it is then change both times by a increasing it
+# a year, this makes sure that the time is always in the future
+if COMMUTE_TIME_WITH_TRAFFIC - time.time() <= 0 or COMMUTE_TIME_WITHOUT_TRAFFIC - time.time() <= 0:
+    COMMUTE_TIME_WITH_TRAFFIC += 31557600
+    COMMUTE_TIME_WITHOUT_TRAFFIC += 31557600
+
