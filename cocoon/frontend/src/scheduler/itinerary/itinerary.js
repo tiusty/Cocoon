@@ -72,19 +72,17 @@ class Itinerary extends Component {
             console.log('Bad', error)
         })
         .then(response => {
-            this.setState({
-                refreshing: false,
-            });
             if (response.data.result) {
                 this.props.refreshItineraries()
             } else {
                 alert(response.data.reason);
                 this.updateItinerary()
             }
+            this.setState({refreshing: false});
         });
     };
 
-    claimButtonAction(timeObject) {
+    selectTimeButton(timeObject) {
         if (!this.state.refreshing) {
             return this.selectTime(timeObject.id, timeObject.time)
         } else {
@@ -106,7 +104,7 @@ class Itinerary extends Component {
                                     {moment(timeObject.time).format('MM/DD/YYYY')} @ {moment(timeObject.time).format('HH:mm')}
                                 </div>
                             {this.props.canSelect ? <button
-                                onClick={() => this.claimButtonAction(timeObject)}>
+                                onClick={() => this.selectTimeButton(timeObject)}>
                                 {this.state.refreshing ? 'Loading' : 'select'}
                             </button> : null}
                         </div>

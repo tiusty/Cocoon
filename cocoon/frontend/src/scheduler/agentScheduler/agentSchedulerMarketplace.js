@@ -20,6 +20,7 @@ class AgentSchedulerPortal extends Component {
         unscheduled_loaded: false,
         marketplace_loaded: false,
         marketplace_itineraries: [],
+        refreshing: false,
     };
 
 
@@ -67,22 +68,37 @@ class AgentSchedulerPortal extends Component {
     };
 
     claimItinerary = (id) => {
+        this.setState({refreshing: true});
         let endpoint = scheduler_endpoints['itineraryAgent'] + id + '/';
         axios.put(endpoint, {
             type: 'claim',
         })
-        .catch(error => console.log('Bad', error))
+        .catch(error => {
+            this.setState({
+                refreshing: false,
+            });
+            console.log('Bad', error)
+        })
         .then(response => {
             if (response.data.result) {
-                this.setState({
-                    showClaim: false,
-                });
-
+                this.refreshItineraries()
             } else {
-                alert(response.data.reason)
+                alert(response.data.reason);
                 this.refreshItineraries()
             }
+            this.setState({refreshing: false});
         });
+    };
+
+    claimButtonAction(id) {
+        /*
+        This function prevents spamming of backend by disabling button once the user clicks it
+         */
+        if (!this.state.refreshing) {
+            return this.claimItinerary(id)
+        } else {
+            return null
+        }
     }
 
     renderItinerary = (itinerary, key, showTimes, canSelect, viewType) => {
@@ -96,7 +112,9 @@ class AgentSchedulerPortal extends Component {
                     canSelect={canSelect}
                     viewType={viewType}
                 />
-                <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button>
+                <button key={"claim" + key} onClick={() => this.claimButtonAction(itinerary.id)}>
+                    {this.state.refreshing ? 'Loading' : 'claim'}
+                </button>
             </div>
         );
     };
@@ -113,7 +131,7 @@ class AgentSchedulerPortal extends Component {
                 )
             }
         }
-    }
+    };
 
     render() {
         return (
