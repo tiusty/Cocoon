@@ -117,7 +117,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var reac
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the scheduler app\n *\n * The format/naming should match the urls.py for the scheduler app\n * @type {string}\n */\nvar app_name = '/scheduler';\nvar api_path = app_name + '/api';\nvar scheduler_endpoints = {\n  'itinerary': api_path + '/itinerary/',\n  'itineraryAgent': api_path + '/itineraryAgent/',\n  'itineraryMarket': api_path + '/itineraryMarket/',\n  'selectStartTime': '/scheduler/selectStartTime/',\n  'unscheduleItinerary': 'scheduler/unscheduleItinerary'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (scheduler_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/scheduler_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the scheduler app\n *\n * The format/naming should match the urls.py for the scheduler app\n * @type {string}\n */\nvar app_name = '/scheduler';\nvar api_path = app_name + '/api';\nvar scheduler_endpoints = {\n  'itinerary': api_path + '/itinerary/',\n  'itineraryAgent': api_path + '/itineraryAgent/',\n  'itineraryMarket': api_path + '/itineraryMarket/',\n  'unscheduleItinerary': 'scheduler/unscheduleItinerary'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (scheduler_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/scheduler_endpoints.js?");
 
 /***/ }),
 

@@ -16,7 +16,6 @@ urlpatterns = [
     url(r'^clientScheduler', views.ClientScheduler.as_view(), name="clientScheduler"),
 
     # AJAX requests below
-    url(r'^selectStartTime/$', views.select_start_time, name="selectStartTime"),
     url(r'^unscheduleItinerary/$', views.unschedule_itinerary, name="unscheduleItinerary"),
 
     # Api
