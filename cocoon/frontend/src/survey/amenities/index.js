@@ -27,26 +27,42 @@ export default class Amenities extends Component {
         }, () => this.props.setSurveyState(name, this.state[value]));
     }
 
+    handleLaundry = (e) => {
+        if(e.target.checked) {
+            this.setState({
+                [e.target.name]: true
+            }, () => console.log(this.state))
+        } else {
+            this.setState({
+                [e.target.name]: false
+            }, () => console.log(this.state))
+        }
+    }
+
     render(){
+        let number_of_dogs = 1;
+        if(this.state.wantsDogs) {
+            number_of_dogs = document.querySelector('input[name=number_of_dogs').value;
+        }
         return (
             <>
-                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                <div className="survey-question" onChange={this.handleLaundry}>
                     <h2>How do you like <span>your laundry</span>?</h2>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="preferred_laundry" value="in-unit" />
-                        <div>In-unit</div>
+                    <label className="col-md-6 survey-label survey-checkbox">
+                        <input type="checkbox" name="laundry_in_unit" value="true" />
+                        <div>In-unit <i className="material-icons">check</i></div>
                     </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="preferred_laundry" value="in-building" />
-                        <div>In-building</div>
+                    <label className="col-md-6 survey-label survey-checkbox">
+                        <input type="checkbox" name="laundry_in_building" value="true" />
+                        <div>In-building <i className="material-icons">check</i></div>
                     </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="preferred_laundry" value="nearby" />
-                        <div>Nearby laundromat</div>
+                    <label className="col-md-6 survey-label survey-checkbox">
+                        <input type="checkbox" name="laundry_nearby_laundromat" value="true" />
+                        <div>Nearby laundromat <i className="material-icons">check</i></div>
                     </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="preferred_laundry" value="don't-care" />
-                        <div>Don't care</div>
+                    <label className="col-md-6 survey-label survey-checkbox">
+                        <input type="checkbox" name="laundry_no_preference" value="true" />
+                        <div>Don't care <i className="material-icons">check</i></div>
                     </label>
                 </div>
 
@@ -144,7 +160,7 @@ export default class Amenities extends Component {
                 </div>
 
                 <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
-                    <h2>Are the dog(s) <span>registered service dogs</span>?</h2>
+                    <h2>{number_of_dogs > 1 ? 'Are the dogs registered service dogs' : 'Is the dog a registered service dog'}?</h2>
                     <label className="col-md-6 survey-label survey-checkbox">
                         <input type="radio" name="service_dogs" value="true" />
                         <div>Yes</div>
@@ -156,12 +172,12 @@ export default class Amenities extends Component {
                 </div>
 
                 <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
-                    <h2>What <span>breed(s)</span>?</h2>
-                    <input className="col-md-12 survey-input" type="text" name="breed_of_dogs" placeholder="Enter breed of dog(s)" />
+                    <h2>What <span>{number_of_dogs > 1 ? 'breeds' : 'breed'}</span>?</h2>
+                    <input className="col-md-12 survey-input" type="text" name="breed_of_dogs" placeholder={`Enter breed of ${number_of_dogs > 1 ? 'dogs' : 'dog'}`} />
                 </div>
 
                 <div className="survey-question" style={{display: `${this.state.wantsDogs ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
-                    <h2>Does your dog(s) <span>weigh more or less than 25 lbs</span>?</h2>
+                    <h2>Does your {number_of_dogs > 1 ? 'dogs' : 'dog'} <span>weigh more or less than 25 lbs</span>?</h2>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name="dog_size" value="more-than-25" />
                         <div>More than</div>

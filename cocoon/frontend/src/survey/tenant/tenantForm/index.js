@@ -15,6 +15,14 @@ export default class TenantForm extends Component {
         }
     }
 
+    componentDidMount = () => {
+        if(this.props.index === 0) {
+            this.setState({
+                isActive: !this.state.isActive
+            });
+        }
+    }
+
     toggleQuestions = () => {
         this.setState({
             isActive: !this.state.isActive
@@ -79,6 +87,26 @@ export default class TenantForm extends Component {
         }
     }
 
+    renderWorkingOccupation = (tenantNumber, toggleName) => {
+        if(this.state.occupation_type === 'working') {
+            return (
+                <div className="survey-question" id={`${tenantNumber}-working-occupation-question`} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <h2>{this.props.index === 0 ? 'Have' : 'Has'} {toggleName} been at this <span>job for 6 months</span>?</h2>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-new_job`} value="false" required />
+                        <div>Yes</div>
+                    </label>
+                    <label className="col-md-6 survey-label">
+                        <input type="radio" name={`${tenantNumber}-new_job`} value="true" />
+                        <div>No</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    }
+
     renderOtherOccupation = (tenantNumber) => {
         if(this.state.occupation_type === 'other') {
             return (
@@ -87,10 +115,6 @@ export default class TenantForm extends Component {
                     <label className="col-md-6 survey-label">
                         <input type="radio" name={`${tenantNumber}-other_reason`} value="unemployed" required />
                         <div>Unemployed</div>
-                    </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name={`${tenantNumber}-other_reason`} value="new-job" />
-                        <div>New job</div>
                     </label>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name={`${tenantNumber}-other_reason`} value="seeking-work" />
@@ -131,11 +155,24 @@ export default class TenantForm extends Component {
         }
     }
 
+    renderCommuteQuestion = (toggleName) => {
+        if(this.state.occupation_type === 'other') {
+            return (
+                <h2>Would {toggleName} be using any <span>regular commute type</span>? ex. going into the city</h2>
+            );
+        } else {
+            return (
+                <h2>How {this.props.index === 0 ? 'do' : 'does'} {toggleName} <span>commute</span>?</h2>
+            );
+        }
+    }
+
+
     renderOtherOccupationCommuteAddress = (tenantNumber, toggleName) => {
         if(this.state.occupation_type === 'other' && this.state.commute_type !== 'Work From Home') {
             return (
                 <div className="survey-question" id={`${tenantNumber}-other-occupation-question`}>
-                    <h2>Is there somewhere {toggleName} <span>{this.props.index === 0 ? 'visit' : 'visits'} regularly</span>?</h2>
+                    <h2>What's the <span>street address</span>?</h2>
                     <Autocomplete
                         className="col-md-12 survey-input"
                         onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
@@ -208,19 +245,19 @@ export default class TenantForm extends Component {
     renderTransitOptions = (tenantNumber) => {
         if(this.state.commute_type === 'Transit') {
             return (
-                <div className="survey-question" id={`${tenantNumber}-transit-follow-up-question`} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                <div className="survey-question" id={`${tenantNumber}-transit-follow-up-question`} onChange={(e) => {this.props.setTransitType(e);}}>
                     <h2>What form of <span>transit</span>?</h2>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name={`${tenantNumber}-transit_type`} value="bus" required />
-                        <div>Bus</div>
+                    <label className="col-md-6 survey-label survey-checkbox">
+                        <input type="checkbox" name={`${tenantNumber}-transit_type`} value="bus" required />
+                        <div>Bus <i className="material-icons">check</i></div>
                     </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name={`${tenantNumber}-transit_type`} value="train" />
-                        <div>Train</div>
+                    <label className="col-md-6 survey-label survey-checkbox">
+                        <input type="checkbox" name={`${tenantNumber}-transit_type`} value="train" />
+                        <div>Train <i className="material-icons">check</i></div>
                     </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name={`${tenantNumber}-transit_type`} value="commuter-rail" />
-                        <div>Commuter rail</div>
+                    <label className="col-md-6 survey-label survey-checkbox">
+                        <input type="checkbox" name={`${tenantNumber}-transit_type`} value="commuter-rail" />
+                        <div>Commuter rail <i className="material-icons">check</i></div>
                     </label>
                 </div>
             );
@@ -233,6 +270,12 @@ export default class TenantForm extends Component {
         const name = this.props.tenantInfo.first_name;
         const toggleName = this.props.index === 0 ? 'you' : this.props.tenantInfo.first_name;
         const tenantNumber = `tenants-${this.props.index}`;
+        let commute_type_options;
+        if(this.state.occupation_type !== 'other') {
+            commute_type_options = this.props.commute_type_options
+        } else {
+            commute_type_options = this.props.commute_type_options.filter(o => o.commute_type !== 'Work From Home');
+        }
         return (
             <>
                 <div className="tenant-panel" onClick={() => {this.handleValidation(`tenants-${this.props.index}-questions`); this.toggleQuestions(); }} style={{borderBottom: this.state.isActive ? 'none': '1px solid var(--borderColor)'}}>
@@ -247,7 +290,7 @@ export default class TenantForm extends Component {
                 <div id={`tenants-${this.props.index}-questions`} onChange={(e) => this.handleValidation(`tenants-${this.props.index}-questions`)} className="tenant-questions" style={{display: this.state.isActive ? 'flex': 'none', borderBottom: this.state.isActive ? '1px solid var(--borderColor)': 'none'}}>
                     <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'string'); this.handleOccupation(e.target.value)}}>
                         <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{toggleName}</span> working, studying, or other?</h2>
-                        <span className="col-md-12 survey-error-message" id={`tenant-${this.props.index}_occupation_error`}>You must select the number of people.</span>
+                        <span className="col-md-12 survey-error-message" id={`tenant-${this.props.index}_occupation_error`}>You must select an occupation type.</span>
                         <label className="col-md-6 survey-label">
                             <input type="radio" name={`${tenantNumber}-occupation`} value="working" required />
                             <div>Working</div>
@@ -262,21 +305,25 @@ export default class TenantForm extends Component {
                         </label>
                     </div>
 
+                    {/*SHOWS ONLY IF WORKING OCCUPATION*/}
+                    {this.renderWorkingOccupation(tenantNumber, toggleName)}
+
                     {/*SHOWS ONLY OTHER OCCUPATION*/}
                     {this.renderOtherOccupation(tenantNumber)}
 
                     {/*SHOWS ONLY IF UNEMPLOYED*/}
                     {this.renderUnemployedAnswer(tenantNumber, toggleName)}
 
-                    {this.props.commute_type_options &&
+                    {commute_type_options &&
                         <div className="survey-question" id={`${tenantNumber}commute_type-question`}>
-                            <h2>How {this.props.index === 0 ? 'do' : 'does'} {toggleName} <span>commute</span>?</h2>
-                            {this.props.commute_type_options.map((o, index) => (
-                            <label className="col-md-6 survey-label" key={index} onChange={(e) => this.handleCommuteType(tenantNumber, this.props.commute_type_options[index])}>
-                                <input type="radio" name={`${tenantNumber}-commute_type`} value={o.id} />
-                                <div>{o.commute_type}</div>
-                            </label>
-                        ))}
+                            {this.renderCommuteQuestion(toggleName)}
+                            {commute_type_options.map((o, index) => (
+                                <label className="col-md-6 survey-label" key={index} onChange={(e) => this.handleCommuteType(tenantNumber, this.props.commute_type_options[index])}>
+                                    <input type="radio" name={`${tenantNumber}-commute_type`} value={o.id} />
+                                    <div>{o.commute_type}</div>
+                                </label>
+                                )
+                            )}
                         </div>
                     }
 
@@ -302,37 +349,29 @@ export default class TenantForm extends Component {
 
                     <div className="survey-question" id={`${tenantNumber}-commute_weight-question`} style={{display: `${this.state.commute_type !== 'Work From Home' ? 'block' : 'none'}`}} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
                         <h2>How <span>important is commute</span> to {toggleName}?</h2>
-                        <label className="col-md-3 col-xs-6 survey-label">
+                        <label className="col-md-4 survey-label">
                             <input type="radio" name={`${tenantNumber}-commute_weight`} value="0" required />
-                            <div>0</div>
+                            <div>Doesn’t care</div>
                         </label>
-                        <label className="col-md-3 col-xs-6 survey-label">
+                        <label className="col-md-4 survey-label">
                             <input type="radio" name={`${tenantNumber}-commute_weight`} value="1" />
-                            <div>1</div>
+                            <div>Slightly care</div>
                         </label>
-                        <label className="col-md-3 col-xs-6 survey-label">
+                        <label className="col-md-4 survey-label">
                             <input type="radio" name={`${tenantNumber}-commute_weight`} value="2" />
-                            <div>2</div>
+                            <div>Cares</div>
                         </label>
-                        <label className="col-md-3 col-xs-6 survey-label">
+                        <label className="col-md-4 survey-label">
                             <input type="radio" name={`${tenantNumber}-commute_weight`} value="3" />
-                            <div>3</div>
+                            <div>Really care</div>
                         </label>
-                        <label className="col-md-3 col-xs-6 survey-label">
+                        <label className="col-md-4 survey-label">
                             <input type="radio" name={`${tenantNumber}-commute_weight`} value="4" />
-                            <div>4</div>
+                            <div>Super important</div>
                         </label>
-                        <label className="col-md-3 col-xs-6 survey-label">
+                        <label className="col-md-4 survey-label">
                             <input type="radio" name={`${tenantNumber}-commute_weight`} value="5" />
-                            <div>5</div>
-                        </label>
-                        <label className="col-md-3 col-xs-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-commute_weight`} value="6" />
-                            <div>6</div>
-                        </label>
-                        <label className="col-md-3 col-xs-6 survey-label">
-                            <input type="radio" name={`${tenantNumber}-commute_weight`} value="7" />
-                            <div>7</div>
+                            <div>Top priority!</div>
                         </label>
                     </div>
 

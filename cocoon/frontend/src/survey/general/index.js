@@ -201,6 +201,34 @@ export default class General extends Component {
                         formatLabel={value => `$${value}`} />
                 </div>
 
+                <div className="survey-question" onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
+                    <h2>How <span>important is the price</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="price_weight" value="0" required />
+                        <div>Doesn’t care</div>
+                    </label>
+                        <label className="col-md-4 survey-label">
+                        <input type="radio" name="price_weight" value="1" />
+                        <div>Slightly care</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="price_weight" value="2" />
+                        <div>Cares</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="price_weight" value="3" />
+                        <div>Really care</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="price_weight" value="4" />
+                        <div>Super important</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="price_weight" value="5" />
+                        <div>Top priority!</div>
+                    </label>
+                </div>
+
                 <div className="survey-question" onChange={(e) => this.handleMovingAsap(e)}>
                     <h2>Are you looking to move in <span>as soon as possible?</span></h2>
                     <span className="col-md-12 survey-error-message" id="date_error">You must select an answer.</span>
