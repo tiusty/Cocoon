@@ -26,29 +26,7 @@ class Itinerary extends Component {
         showClaim: this.props.showClaim,
     };
 
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.hash !== this.props.hash) {
-            axios.get(scheduler_endpoints[this.props.viewType] + this.state.id + '/')
-                .catch(error => console.log('Bad', error))
-                .then(response => {
-                    this.setState({
-                        agent: response.data.agent,
-                        client: response.data.client,
-                        homes: response.data.homes,
-                        selected_start_time: response.data.selected_start_time,
-                        tour_duration_seconds: response.data.tour_duration_seconds,
-                        start_times: response.data.start_times,
-                    })
-                })
-        }
-    }
-
-    componentDidMount() {
-        /**
-         *  Retrieves all the surveys associated with the user
-         */
-
+    updateItinerary() {
         axios.get(scheduler_endpoints[this.props.viewType] + this.state.id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
@@ -58,35 +36,45 @@ class Itinerary extends Component {
                     homes: response.data.homes,
                     selected_start_time: response.data.selected_start_time,
                     tour_duration_seconds: response.data.tour_duration_seconds,
-                    start_times: response.data.start_times
+                    start_times: response.data.start_times,
                 })
             })
+    }
 
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.hash !== this.props.hash) {
+            this.updateItinerary()
+        }
+    }
+
+    componentDidMount() {
+        /**
+         *  Retrieves all the surveys associated with the user
+         */
+
+        this.updateItinerary()
     }
 
     selectTime = (id, time) => {
         /**
          * Schedules a claimed itinerary by selecting a start time
          */
-        let formData = new FormData();
-        formData.set('time_id', id);
-        formData.set('itinerary_id', this.state.id);
-
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['selectStartTime'],
-            data: formData,
-            config: {headers: {'Content-Type': 'multipart/form-data'}}
+        let endpoint = scheduler_endpoints['itineraryAgent'] + this.state.id + '/';
+        axios.put(endpoint, {
+            type: 'schedule',
+            time_id: id,
         })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                if (response.data.result == 0) {
-                    this.setState({
-                        selected_start_time: time,
-                        showTimes: false,
-                    });
-                }
-            });
+        .catch(error => console.log('Bad', error))
+        .then(response => {
+            if (response.data.result) {
+                this.props.refreshItineraries()
+            } else {
+                alert(response.data.reason)
+                this.updateItinerary()
+
+            }
+        });
     }
 
     renderStartTimes = () => {

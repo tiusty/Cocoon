@@ -67,9 +67,6 @@ class AgentSchedulerPortal extends Component {
     };
 
     claimItinerary = (id) => {
-        let formData = new FormData();
-        formData.set('itinerary_id', id);
-
         let endpoint = scheduler_endpoints['itineraryAgent'] + id + '/';
         axios.put(endpoint, {
             type: 'claim',
@@ -80,7 +77,6 @@ class AgentSchedulerPortal extends Component {
                 this.setState({
                     showClaim: false,
                 });
-                this.refreshItineraries()
 
             } else {
                 alert(response.data.reason)

@@ -81,6 +81,7 @@ class AgentSchedulerPortal extends Component {
                     id={itinerary.id}
                     key={"itinerary" + key}
                     hash={itinerary.hash}
+                    refreshItineraries={this.refreshItineraries}
                     showTimes={showTimes}
                     canSelect={canSelect}
                     brokerRequest
