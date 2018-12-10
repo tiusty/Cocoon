@@ -98,8 +98,51 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
             return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)\
                 .exclude(finished=True)
 
+    def update(self, request, *args, **kwargs):
+
+        result = False
+        reason = ''
+
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the itinerary id
+        pk = kwargs.pop('pk', None)
+
+        # Retrieve the associated itinerary with the request
+        itinerary = get_object_or_404(ItineraryModel, pk=pk)
+
+        # Case if an agent is trying to schedule an itinerary they already claimed
+        if 'schedule' in self.request.data['type']:
+            time_id = self.request.data['time_id']
+
+            # The start time must be one of the available start times for that itinerary
+            try:
+                time = TimeModel.objects.filter(itinerary=itinerary).get(id=time_id)
+                itinerary.select_start_time(time.time)
+                result = True
+            except TimeModel.DoesNotExist:
+                result = False
+                reason = 'Start time is not one of the available start times'
+
+        # Case if the agent is trying to claim an itinerary from the market
+        elif 'claim' in self.request.data['type']:
+
+            # If the itinerary is already claimed then the agent cannot claim it anymore
+            if itinerary.agent is None:
+                itinerary.associate_agent(user_profile.user)
+                result = True
+            else:
+                result = False
+                reason = 'Itinerary already claimed'
+
+        return Response({'result': result,
+                         'reason': reason})
+
     # allows agents to retrieve specific client itineraries
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, *args, **kwargs):
+        # Retrieve the itinerary id
+        pk = kwargs.pop('pk', None)
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         queryset = ItineraryModel.objects.filter(agent=user_profile.user)
         client_itinerary = get_object_or_404(queryset, pk=pk)
@@ -143,53 +186,6 @@ def unschedule_itinerary(request):
         return HttpResponse(json.dumps({"result": "1"}),
                             content_type="application/json",
                             )
-
-@login_required
-def claim_itinerary(request):
-    """
-    This ajax function associates an agent to an itinerary
-    :param request: Http request
-    :return:
-        0 -> succes, itinerary was claimed
-        1 -> itinerary was already claimed
-    """
-
-    if request.method == "POST":
-        # Only care if the user is authenticated
-        if request.user.is_authenticated():
-            try:
-                current_profile = get_object_or_404(UserProfile, user=request.user)
-                if current_profile.user.is_broker or current_profile.user.is_admin:
-                    itinerary_id = request.POST.get('itinerary_id')
-                    try:
-                        itinerary = ItineraryModel.objects.get(id=itinerary_id)
-                        if itinerary.agent is None:
-                            itinerary.associate_agent(current_profile.user)
-                            return HttpResponse(json.dumps({"result": "0",
-                                                            "itineraryId": itinerary_id,
-                                                            }), content_type="application/json")
-                        else:
-                            return HttpResponse(json.dumps({"result": "1"}),
-                                                content_type="application/json")
-                    except ItineraryModel.DoesNotExist:
-                        return HttpResponse(json.dumps({"result": "This itinerary no longer exists"}),
-                                            content_type="application/json")
-                else:
-                    return HttpResponse(json.dumps({"result: Insufficient privileges"},
-                                                    content_type="application/json"))
-            except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Must be a logged in user"}),
-                                    content_type="application/json",
-                                    )
-        else:
-            return HttpResponse(json.dumps({"result": "User not authenticated"}),
-                                content_type="application/json",
-                                )
-    else:
-        return HttpResponse(json.dumps({"result": "Method Not POST"}),
-                            content_type="application/json",
-                            )
-
 @login_required
 def select_start_time(request):
     """

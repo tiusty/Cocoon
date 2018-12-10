@@ -70,28 +70,23 @@ class AgentSchedulerPortal extends Component {
         let formData = new FormData();
         formData.set('itinerary_id', id);
 
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['claimItinerary'],
-            data: formData,
-            config: {headers: {'Content-Type': 'multipart/form-data'}}
+        let endpoint = scheduler_endpoints['itineraryAgent'] + id + '/';
+        axios.put(endpoint, {
+            type: 'claim',
         })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                if (response.data.result == "0") {
-                    this.setState({
-                        showClaim: false,
-                    });
-                    this.refreshItineraries()
+        .catch(error => console.log('Bad', error))
+        .then(response => {
+            if (response.data.result) {
+                this.setState({
+                    showClaim: false,
+                });
+                this.refreshItineraries()
 
-                } else if (response.data.result == "1") {
-                    alert("This itinerary has been claimed")
-                    this.refreshItineraries()
-                } else {
-                    alert(response.data.result)
-                    this.refreshItineraries()
-                }
-            });
+            } else {
+                alert(response.data.reason)
+                this.refreshItineraries()
+            }
+        });
     }
 
     renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {

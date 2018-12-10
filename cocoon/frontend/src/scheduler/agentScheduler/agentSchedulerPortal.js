@@ -74,37 +74,7 @@ class AgentSchedulerPortal extends Component {
 
     }
 
-    claimItinerary = (id) => {
-        let formData = new FormData();
-        formData.set('itinerary_id', id);
-
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['claimItinerary'],
-            data: formData,
-            config: {headers: {'Content-Type': 'multipart/form-data'}}
-        })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                if (response.data.result == "0") {
-                    this.setState({
-                        showClaim: false,
-                    });
-                    this.refreshItineraries()
-
-                } else if (response.data.result == "1") {
-                    alert("This itinerary has been claimed")
-                    this.refreshItineraries()
-                } else {
-                    alert(response.data.result)
-                    this.refreshItineraries()
-                }
-            });
-    };
-
     renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {
-        let claimButton = canClaim ?
-            <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button> : null
         return (
             <div key={key} className='single-itinerary'>
                 <Itinerary
@@ -116,7 +86,6 @@ class AgentSchedulerPortal extends Component {
                     brokerRequest
                     viewType={viewType}
                 />
-                {claimButton}
             </div>
         );
     };
