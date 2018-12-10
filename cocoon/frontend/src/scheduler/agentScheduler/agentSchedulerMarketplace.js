@@ -89,9 +89,7 @@ class AgentSchedulerPortal extends Component {
         });
     }
 
-    renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {
-        let claimButton = canClaim ?
-            <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button> : null
+    renderItinerary = (itinerary, key, showTimes, canSelect, viewType) => {
         return (
             <div key={key} className="single-itinerary">
                 <Itinerary
@@ -100,11 +98,9 @@ class AgentSchedulerPortal extends Component {
                     hash={itinerary.hash}
                     showTimes={showTimes}
                     canSelect={canSelect}
-                    brokerRequest
-                    key={"itinerary" + key}
                     viewType={viewType}
                 />
-                {claimButton}
+                <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button>
             </div>
         );
     };
@@ -116,7 +112,7 @@ class AgentSchedulerPortal extends Component {
             } else {
                 return (
                     <div className='marketplace-wrapper'>
-                        {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true, false, "itineraryMarket"))}
+                        {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false, "itineraryMarket"))}
                     </div>
                 )
             }
