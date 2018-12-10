@@ -131,6 +131,20 @@ class HunterDocManagerModel(models.Model):
             document.is_signed = docusign.determine_is_signed(document.envelope_id)
             document.save()
 
+    def update_pre_tour_is_signed(self):
+        """
+        Checks the status of the pre tour documents and sees if it is signed
+        """
+        docusign = DocusignWrapper()
+        template = self.retrieve_pre_tour_template()
+        if self.documents.filter(template=template).exists():
+            try:
+                doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
+                doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
+                doc.save()
+            except HunterDocModel.DoesNotExist:
+                pass
+
     @staticmethod
     def retrieve_pre_tour_template():
         """
@@ -155,8 +169,10 @@ class HunterDocTemplateModel(models.Model):
             self.tempalte_id (string) -> The template id from docusign that corresponds to the type of template
     """
     PRE_TOUR = 'pt'
+    AFTER_TOUR = 'at'
     DOC_TYPE = (
         (PRE_TOUR, 'Pre-tour forms'),
+        (AFTER_TOUR, 'After-tour forms'),
     )
 
     template_type = models.CharField(
@@ -186,7 +202,7 @@ class HunterDocTemplateModel(models.Model):
 class HunterDocModel(models.Model):
     """
     This stores information specific to a document. This stores what the template for the document is, which user
-        it is associated with, what the enevelope ID to find it on Docusign and whether or not the document is signed
+        it is associated with, what the envelope ID to find it on Docusign and whether or not the document is signed
 
     Attributes:
         self.doc_manager: (ForeignKey(HunterDocManager)) -> The associated doc manager that the document is linked to

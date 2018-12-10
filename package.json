@@ -37,8 +37,9 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "bootstrap": "^4.1.1",
+    "bootstrap": "^4.1.2",
     "react-confirm-alert": "^2.0.6",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^4.3.1",
+    "react-time-range": "^1.0.4"
   }
 }

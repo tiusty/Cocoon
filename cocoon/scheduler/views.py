@@ -2,68 +2,119 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseNotFound
-from django.db import models
+from django.http import HttpResponse, HttpResponseNotFound
+from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
 
 # Models
-from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import UserProfile
 from cocoon.scheduler.models import ItineraryModel, TimeModel
+from .serializers import ItinerarySerializer
 
 # Python Modules
 import json
 
-@login_required()
-def agent_scheduler(request):
-    context = {}
-    current_profile = get_object_or_404(UserProfile, user=request.user)
-    if current_profile.user.is_broker or current_profile.user.is_admin:
-        unclaimed_itineraries = ItineraryModel.objects.filter(agent=None)
-        claimed_itineraries = ItineraryModel.objects\
-            .filter(selected_start_time=None)\
-            .exclude(agent=None)
-        context['unclaimed_itineraries'] = unclaimed_itineraries
-        context['claimed_itineraries'] = claimed_itineraries
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.response import Response
 
-    else:
-        return HttpResponseNotFound()
-    return render(request, 'scheduler/itineraryPicker.html', context)
 
-@login_required()
-def view_tours(request):
-    current_profile = get_object_or_404(UserProfile, user=request.user)
-    if current_profile.user.is_broker or current_profile.user.is_admin:
-        context = {}
-        unscheduled_itineraries = ItineraryModel.objects.filter(agent=current_profile.user, selected_start_time=None)
-        scheduled_itineraries = ItineraryModel.objects.filter(agent=current_profile.user).exclude(selected_start_time=None)
-        context['unscheduled_itineraries'] = unscheduled_itineraries
-        context['scheduled_itineraries'] = scheduled_itineraries
-    else:
-        return HttpResponseNotFound()
-    return render(request, 'scheduler/viewTours.html', context)
-
-@login_required
-def get_user_itineraries(request):
+class ClientScheduler(TemplateView):
     """
-    A helper function intended for use in other views to add the
-    given user's itineraries to the current context
-    :param request: The current http request
-    :return: The context containing the user's itineraries
+    Loads the template for the ClientScheduler
+
+    The template has the entry point for React and react handles
+        the rest of the frontend
     """
-    if request.user.is_authenticated():
-        user_profile = get_object_or_404(UserProfile, user=request.user)
-        itineraries = ItineraryModel.objects.filter(client=user_profile.user)
-        unscheduled_itineraries = itineraries.filter(selected_start_time=None)
-        scheduled_itineraries = itineraries.exclude(selected_start_time=None)
-        return {
-            'unscheduled_itineraries': unscheduled_itineraries,
-            'scheduled_itineraries': scheduled_itineraries,
-        }
-    else:
-        return {
-            'scheduled_itineraries': None,
-            'unscheduled_itineraries': None,
-        }
+    template_name = 'scheduler/clientScheduler.html'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        # Tells React which component to load onto the page
+        data['component'] = ClientScheduler.__name__
+        return data
+
+
+class AgentSchedulerPortal(TemplateView):
+    """
+    Loads the template for the AgentSchedulerPortal
+
+    The template contains the entry point for React and react handles
+    retrieving the necessary data
+    """
+    template_name = 'scheduler/agentSchedulerPortal.html'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        # Tells React which component to load onto the page
+        data['component'] = AgentSchedulerPortal.__name__
+        return data
+
+
+class AgentSchedulerMarketplace(TemplateView):
+    """
+        Loads the template for the AgentSchedulerMarketplace
+
+        The template contains the entry point for React and react handles
+        retrieving the necessary data
+        """
+    template_name = 'scheduler/agentSchedulerMarketplace.html'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        # Tells React which component to load onto the page
+        data['component'] = AgentSchedulerMarketplace.__name__
+        return data
+
+
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+class ItineraryClientViewSet(viewsets.ModelViewSet):
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        print(user_profile)
+        return ItineraryModel.objects.filter(client=user_profile.user)
+
+
+@method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
+class ItineraryAgentViewSet(viewsets.ModelViewSet):
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        itinerary_type = self.request.query_params.get('type', None)
+
+        if itinerary_type == 'unscheduled':
+            return ItineraryModel.objects.filter(agent=user_profile.user, selected_start_time=None)\
+                .exclude(finished=True)
+        elif itinerary_type == 'scheduled':
+            return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)\
+                .exclude(finished=True)
+
+    # allows agents to retrieve specific client itineraries
+    def retrieve(self, request, pk=None):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        queryset = ItineraryModel.objects.filter(agent=user_profile.user)
+        client_itinerary = get_object_or_404(queryset, pk=pk)
+        serializer = ItinerarySerializer(client_itinerary)
+        return Response(serializer.data)
+
+
+@method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
+class ItineraryMarketViewSet(viewsets.ModelViewSet):
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+
+        return ItineraryModel.objects.filter(agent=None).exclude(finished=True)
 
 
 ########################################
@@ -121,13 +172,13 @@ def claim_itinerary(request):
                             return HttpResponse(json.dumps({"result": "1"}),
                                                 content_type="application/json")
                     except ItineraryModel.DoesNotExist:
-                        return HttpResponse(json.dumps({"result": "Could not find itinerary"}),
+                        return HttpResponse(json.dumps({"result": "This itinerary no longer exists"}),
                                             content_type="application/json")
                 else:
-                    return HttpResponse(json.dumps({"result: User does not have privileges"},
+                    return HttpResponse(json.dumps({"result: Insufficient privileges"},
                                                     content_type="application/json"))
             except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
+                return HttpResponse(json.dumps({"result": "Must be a logged in user"}),
                                     content_type="application/json",
                                     )
         else:
@@ -155,10 +206,8 @@ def select_start_time(request):
             try:
                 current_profile = get_object_or_404(UserProfile, user=request.user)
                 if current_profile.user.is_broker or current_profile.user.is_admin:
-
                     time_id = request.POST.get('time_id')
                     itinerary_id = request.POST.get('itinerary_id')
-
                     try:
                         time = TimeModel.objects.get(id=time_id)
                         itinerary = ItineraryModel.objects.get(id=itinerary_id)
