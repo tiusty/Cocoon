@@ -5,20 +5,19 @@ import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import axios from "axios";
 import houseDatabase_endpoints from "../../endpoints/houseDatabase_endpoints";
-import survey_endpoints from "../../endpoints/survey_endpoints";
 
 export default class General extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            number_of_tenants: 1,
+            number_of_tenants: 0,
             home_type_options: undefined,
             home_type: [],
-            move_weight: 0,
-            num_bedrooms: 1,
+            move_weight: '',
+            num_bedrooms: '',
             desired_price: 1000,
-            price_weight: 1,
+            price_weight: '',
             max_price: 3000,
             min_bathrooms: 1,
             max_bathrooms: 6,
@@ -29,9 +28,9 @@ export default class General extends Component {
                 min: 1000,
                 max: 3000
             },
-            isMovingAsap: undefined,
+            isMovingAsap: '',
             selectedDayEarliest: undefined,
-            selectedDayLatest: undefined
+            selectedDayLatest: undefined,
         }
     }
 
@@ -41,6 +40,11 @@ export default class General extends Component {
                 const home_type_options = res.data;
                 this.setState({ home_type_options });
         });
+        // checks to see if general info data has been saved
+        // if true, the state is set to that
+        if(this.props.generalInfo) {
+            this.setState(this.props.generalInfo)
+        }
     }
 
     componentWillUnmount = () => {
@@ -153,6 +157,7 @@ export default class General extends Component {
         return this.validateRadioButton('number_of_tenants', '#number_of_tenants_error')
             && this.validateTenantNames()
             && this.validateHomeType()
+            && this.validatePriceWeight()
             && this.validateDates()
             && this.validateRadioButton('move_weight', '#move_weight_error')
             && this.validateRadioButton('num_bedrooms', '#number_of_rooms_error');
@@ -208,19 +213,17 @@ export default class General extends Component {
         return false;
     }
 
-    handleGeneralForm  = (e) => {
-        e.preventDefault();
-                axios.post(survey_endpoints['rentSurvey'],
-            {
-                data: this.state,
-                type: 'validate_survey_general'
-            })
-            .catch(error => console.log('BAD', error))
-            .then(response => {
-                    // handle errors
-                    // if no errors go to next step
-                }
-            );
+    validatePriceWeight = () => {
+        const options = document.querySelectorAll('input[name=price_weight]');
+        for(let i = 0; i < options.length; i++) {
+            if(options[i].checked) {
+                document.querySelector('#price_weight_error').style.display = 'none';
+                return true;
+            }
+        }
+        document.querySelector('#price_weight_error').style.display = 'block';
+        document.querySelector('#price_weight_error').parentNode.scrollIntoView(true);
+        return false;
     }
 
     render(){
@@ -230,29 +233,29 @@ export default class General extends Component {
                     <h2>How many people are you <span>searching with</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="number_of_tenants_error">You must select the number of people.</span>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="1" required />
+                        <input type="radio" name="number_of_tenants" value="1" checked={this.state.number_of_tenants === 1} onChange={() => {}} />
                         <div>Just Me</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="2" />
+                        <input type="radio" name="number_of_tenants" value="2" checked={this.state.number_of_tenants === 2} onChange={() => {}} />
                         <div>Me + 1 other</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="3" />
+                        <input type="radio" name="number_of_tenants" value="3" checked={this.state.number_of_tenants === 3} onChange={() => {}} />
                         <div>Me + 2 others</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="4" />
+                        <input type="radio" name="number_of_tenants" value="4" checked={this.state.number_of_tenants === 4} onChange={() => {}} />
                             <div>Me + 3 others</div>
                     </label>
                 </div>
 
                 <div className="survey-question" id="tenant_names">
-                    <h2>What <span>{this.state.number_of_tenants === 1 ? ' is your name' : ' are your names'}</span>?</h2>
+                    <h2>What <span>{this.state.number_of_tenants >= 0 ? ' is your name' : ' are your names'}</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>
-                    <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} required data-tenantkey={0} onChange={this.handleTenantName}/>
-                    {Array.from(Array(this.state.number_of_tenants - 1)).map((t, i) => {
-                        return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)} autoCapitalize={'words'} required data-tenantkey={i + 1} placeholder="First and Last Name" onChange={this.handleTenantName} key={i} />
+                    <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} data-tenantkey={0} onChange={this.handleTenantName} />
+                    {this.state.number_of_tenants > 1 && Array.from(Array(this.state.number_of_tenants - 1)).map((t, i) => {
+                        return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)} autoCapitalize={'words'} data-tenantkey={i + 1} placeholder="First and Last Name"  onChange={this.handleTenantName} key={i} />
                     })}
                 </div>
 
@@ -262,7 +265,7 @@ export default class General extends Component {
                         <span className="col-md-12 survey-error-message" id="home_type_error">You must select at least one type of home.</span>
                         {this.state.home_type_options.map((o, index) => (
                             <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.setHomeTypes(e, index, o.id)}>
-                                <input type="checkbox" name="home_type" value={o.id} />
+                                <input type="checkbox" name="home_type" value={o.id} checked={this.state.home_type.length && this.state.home_type.some(i => i === o.id)} onChange={() => {}} />
                                 <div>{o.home_type} <i className="material-icons">check</i></div>
                             </label>
                         ))}
@@ -281,30 +284,31 @@ export default class General extends Component {
                         formatLabel={value => `$${value}`} />
                 </div>
 
-                <div className="survey-question" onChange={(e) => {this.handleInputChange(e, 'number');}}>
+                <div className="survey-question" onChange={(e) => {this.validatePriceWeight(); this.handleInputChange(e, 'number');}}>
                     <h2>How <span>important is the price</span>?</h2>
+                    <span className="col-md-12 survey-error-message" id="price_weight_error">You must choose how much you care about the price.</span>
                     <label className="col-md-4 survey-label">
-                        <input type="radio" name="price_weight" value="0" required />
+                        <input type="radio" name="price_weight" value="0" checked={this.state.price_weight === 0} onChange={() => {}} />
                         <div>Doesn’t care</div>
                     </label>
                         <label className="col-md-4 survey-label">
-                        <input type="radio" name="price_weight" value="1" />
+                        <input type="radio" name="price_weight" value="1" checked={this.state.price_weight === 1} onChange={() => {}} />
                         <div>Slightly care</div>
                     </label>
                     <label className="col-md-4 survey-label">
-                        <input type="radio" name="price_weight" value="2" />
+                        <input type="radio" name="price_weight" value="2" checked={this.state.price_weight === 2} onChange={() => {}} />
                         <div>Cares</div>
                     </label>
                     <label className="col-md-4 survey-label">
-                        <input type="radio" name="price_weight" value="3" />
+                        <input type="radio" name="price_weight" value="3" checked={this.state.price_weight === 3} onChange={() => {}} />
                         <div>Really care</div>
                     </label>
                     <label className="col-md-4 survey-label">
-                        <input type="radio" name="price_weight" value="4" />
+                        <input type="radio" name="price_weight" value="4" checked={this.state.price_weight === 4} onChange={() => {}} />
                         <div>Super important</div>
                     </label>
                     <label className="col-md-4 survey-label">
-                        <input type="radio" name="price_weight" value="5" />
+                        <input type="radio" name="price_weight" value="5" checked={this.state.price_weight === 5} onChange={() => {}} />
                         <div>Top priority!</div>
                     </label>
                 </div>
@@ -313,11 +317,11 @@ export default class General extends Component {
                     <h2>Are you looking to move in <span>as soon as possible?</span></h2>
                     <span className="col-md-12 survey-error-message" id="date_error">You must select an answer.</span>
                     <label className="col-md-6 survey-label">
-                            <input type="radio" name="move_asap" value="yes" required />
+                            <input type="radio" name="move_asap" value="yes" checked={this.state.isMovingAsap === 'yes'} onChange={() => {}} />
                             <div>Yes</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                            <input type="radio" name="move_asap" value="no" required />
+                            <input type="radio" name="move_asap" value="no" checked={this.state.isMovingAsap === 'no'} onChange={() => {}} />
                             <div>No</div>
                     </label>
                 </div>
@@ -328,12 +332,14 @@ export default class General extends Component {
                     <div className="col-md-6 date-wrapper">
                         <DayPickerInput
                             placeholder={'Earliest'}
-                            onDayChange={this.handleEarliestClick} />
+                            onDayChange={this.handleEarliestClick}
+                            value={this.state.earliest_move_in && this.state.earliest_move_in} onChange={() => {}} />
                     </div>
                     <div className="col-md-6 date-wrapper">
                         <DayPickerInput
                             placeholder={'Latest'}
-                            onDayChange={this.handleLatestClick} />
+                            onDayChange={this.handleLatestClick}
+                            value={this.state.latest_move_in && this.state.latest_move_in} onChange={() => {}} />
                     </div>
                 </div>
 
@@ -341,19 +347,19 @@ export default class General extends Component {
                     <h2>How badly do you <span>need to move</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="move_weight_error">You must select an option.</span>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="move_weight" value="0" required />
+                        <input type="radio" name="move_weight" value="0" checked={this.state.move_weight === 0} onChange={() => {}} />
                         <div>Just browsing</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="move_weight" value="1" required />
+                        <input type="radio" name="move_weight" value="1" checked={this.state.move_weight === 1} onChange={() => {}} />
                         <div>I've got some time</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="move_weight" value="2" required />
+                        <input type="radio" name="move_weight" value="2" checked={this.state.move_weight === 2} onChange={() => {}} />
                         <div>Moving soon</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="move_weight" value="3" required />
+                        <input type="radio" name="move_weight" value="3" checked={this.state.move_weight === 3} onChange={() => {}} />
                         <div>I gotta move!</div>
                     </label>
                 </div>
@@ -362,24 +368,24 @@ export default class General extends Component {
                     <h2>How many <span>bedrooms</span> do you need?</h2>
                     <span className="col-md-12 survey-error-message" id="number_of_rooms_error">You must select the number of rooms.</span>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="num_bedrooms" value="0" required />
+                        <input type="radio" name="num_bedrooms" value="0" checked={this.state.num_bedrooms === 0} onChange={() => {}} />
                         <div>Studio</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="num_bedrooms" value="1" required />
+                        <input type="radio" name="num_bedrooms" value="1" checked={this.state.num_bedrooms === 1} onChange={() => {}} />
                         <div>1 bed</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="num_bedrooms" value="2" required />
+                        <input type="radio" name="num_bedrooms" value="2" checked={this.state.num_bedrooms === 2} onChange={() => {}} />
                         <div>2 beds</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name="num_bedrooms" value="3" required />
+                        <input type="radio" name="num_bedrooms" value="3" checked={this.state.num_bedrooms === 3} onChange={() => {}} />
                         <div>3 beds</div>
                     </label>
                 </div>
 
-                <button className="col-md-12 survey-btn" onClick={(e) => this.handleValidation() && this.props.handleNextStep(e)}>
+                <button className="col-md-12 survey-btn" onClick={(e) => {this.handleValidation() ? (this.props.saveGeneralInfo(this.state), this.props.handleNextStep(e)) : null; } }>
                     Next
                 </button>
             </>

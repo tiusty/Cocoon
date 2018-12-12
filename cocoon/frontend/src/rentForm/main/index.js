@@ -1,28 +1,19 @@
 import React from 'react';
 import { Component } from 'react';
-import ReactDOM from "react-dom";
 
-import Progress from './progress';
-import General from './general';
-import Tenant from './tenant';
-import Amenities from './amenities';
-import Details from './details';
-
-import './survey.css';
+import Progress from '../progress';
+import General from '../general';
+import Tenant from '../tenant';
+import Amenities from '../amenities';
+import Details from '../details';
 
 import axios from 'axios'
-
-import houseDatabase_endpoints from '../endpoints/houseDatabase_endpoints';
-import commutes_endpoints from '../endpoints/commutes_endpoints';
-
-import survey_endpoints from "../endpoints/survey_endpoints";
-
-import CSRFToken from '../common/csrftoken';
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-class Survey extends Component {
+export default class RentForm extends Component {
 
     constructor(props) {
         super(props);
@@ -108,19 +99,27 @@ class Survey extends Component {
                         setTenants={this.setTenants}
                         setFinalTenants={this.setFinalTenants}
                         tenants={this.state.tenants}
-                        setNumberOfTenants={this.setNumberOfTenants} />;
+                        setNumberOfTenants={this.setNumberOfTenants}
+                        saveGeneralInfo={this.saveGeneralInfo}
+                        generalInfo={this.state.generalInfo} />;
             case 2:
                 return <Tenant
                         handleNextStep={this.handleNextStep}
                         handlePrevStep={this.handlePrevStep}
-                        tenants={this.state.tenants} />;
+                        tenants={this.state.tenants}
+                        saveTenantInfo={this.saveTenantInfo}
+                        allTenantInfo={this.state.allTenantInfo} />;
             case 3:
                 return <Amenities
-                        handleNextStep={this.handleNextStep} />;
+                        handleNextStep={this.handleNextStep}
+                        handlePrevStep={this.handlePrevStep}
+                        saveAmenitiesInfo={this.saveAmenitiesInfo}
+                        allAmenitiesInfo={this.state.allAmenitiesInfo} />;
             case 4:
                 return <Details
                         is_authenticated={this.props.is_authenticated}
                         onSubmit={this.handleSubmit}
+                        handlePrevStep={this.handlePrevStep}
                         handleInputChange={this.handleInputChange} />;
         }
     }
@@ -163,6 +162,27 @@ class Survey extends Component {
         })
     }
 
+    // Saves the data from the general tab to repopulate fields with
+    saveGeneralInfo = (data) => {
+        this.setState({
+            generalInfo: data
+        }, () => console.log(this.state.generalInfo));
+    }
+
+    // Saves the data from the tenant tab to repopulate fields with
+    saveTenantInfo = (data) => {
+        this.setState({
+            allTenantInfo: data
+        }, () => console.log(this.state.allTenantInfo))
+    }
+
+    // Saves the data from the amenities tab to repopulate fields with
+    saveAmenitiesInfo = (data) => {
+        this.setState({
+            allAmenitiesInfo: data
+        }, () => console.log(this.state.allAmenitiesInfo))
+    }
+
     render() {
         return (
             <div className="survey-wrapper">
@@ -174,5 +194,3 @@ class Survey extends Component {
         );
     }
 }
-
-ReactDOM.render(<Survey is_authenticated={window.isUser} />, window.react_mount);
