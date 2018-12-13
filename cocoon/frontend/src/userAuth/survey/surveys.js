@@ -169,7 +169,7 @@ class Surveys extends Component {
             <Survey
                 key={survey.id}
                 onDelete={this.handleDelete}
-                survey_id={survey.id}
+                id={survey.id}
                 endpoint={this.state.survey_endpoint}
                 pre_tour_signed={this.state.pre_tour_signed}
             />
