@@ -85,6 +85,16 @@ export default class Details extends Component {
         }
     }
 
+    handleSubmit = (e) => {
+        if (!this.props.is_authenticated) {
+            if (!this.handleValidation())
+            {
+                return false;
+            }
+        }
+        this.props.onSubmit(e, this.state)
+    }
+
     render(){
         return (
             <>
@@ -98,14 +108,12 @@ export default class Details extends Component {
                         validatePassword={this.validatePassword}
                         validatePasswordMatch={this.validatePasswordMatch}
                         handlePrevStep={this.props.handlePrevStep}
-                        saveDetailsInfo={this.props.saveDetailsInfo}
-                        state={this.state}
+                        handleSubmit={this.handleSubmit}
                     /> :
                     <CurrentUser
                         onSubmit={this.props.onSubmit}
                         handlePrevStep={this.props.handlePrevStep}
-                        saveDetailsInfo={this.props.saveDetailsInfo}
-                        state={this.state}
+                        handleSubmit={this.handleSubmit}
                     />}
             </>
         );
@@ -138,7 +146,7 @@ const NewUser = (props) => (
                 </button>
             </div>
             <div className="col-md-6">
-                <button className="col-md-12 survey-btn" onClick={(e) => { (props.saveDetailsInfo(props.state), props.handleValidation()) && props.onSubmit(e); }}>
+                <button className="col-md-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
                     Check out my places
                 </button>
             </div>
@@ -156,7 +164,7 @@ const CurrentUser = (props) => (
                 </button>
             </div>
             <div className="col-md-6">
-                <button className="col-md-12 survey-btn" onClick={(e) => ( props.saveDetailsInfo(props.state), props.onSubmit(e))}>
+                <button className="col-md-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
                     View now
                 </button>
             </div>

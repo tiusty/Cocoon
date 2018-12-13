@@ -20,14 +20,12 @@ export default class RentForm extends Component {
         super(props);
         this.state = {
             step: 1,
-            tenants: []
-        }
-        // This allows the variable name to include the hyphen. Including directly
-        //  breaks the variable since it isn't allowed in react
-        this.state['tenants-TOTAL_FORMS'] = this.state.number_of_tenants;
-        this.state['tenants-INITIAL_FORMS'] = 0;
-        this.state['tenants-MIN_NUM_FORMS'] = 0;
-        this.state['tenants-MAX_NUM_FORMS'] = 1000;
+            tenants: [],
+            tenants_TOTAL_FORMS: 0,
+            tenants_INITIAL_FORMS: 0,
+            tenants_MIN_NUM_FORMS: 0,
+            tenants_MAX_NUM_FORMS: 1000,
+        };
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -37,17 +35,26 @@ export default class RentForm extends Component {
 
         // If the number of tenants changes then update the total number of forms to equal that
         if (this.state.number_of_tenants !== prevState.number_of_tenants) {
-            this.setState({'tenants-TOTAL_FORMS': this.state.number_of_tenants})
+            this.setState({'tenants_TOTAL_FORMS': this.state.number_of_tenants})
         }
     }
 
-    handleSubmit = (e) => {
+    handleSubmit = (e, detailsData) => {
         e.preventDefault();
         /**
          * This function handles submitting the form to the backend via a rest API
          *  This will return the status of that request and if success redirect,
          *      otherwise it will return the form errors
          */
+
+        // Add first and last name to details data
+        let userData = detailsData;
+        userData['first_name'] = this.state.first_name;
+        userData['last_name'] = this.state.last_name;
+
+        // Add user data to data
+        let data = this.state;
+        data['allDetailsInfo'] = userData
 
         // Posts the state which contains all the form elements that are needed
         axios.post(survey_endpoints['rentSurvey'],
@@ -122,7 +129,6 @@ export default class RentForm extends Component {
                         onSubmit={this.handleSubmit}
                         handlePrevStep={this.handlePrevStep}
                         handleInputChange={this.handleInputChange}
-                        saveDetailsInfo={this.saveDetailsInfo}
                 />;
         }
     }
@@ -174,7 +180,11 @@ export default class RentForm extends Component {
 
     // Saves the data from the tenant tab to repopulate fields with
     saveTenantInfo = (data) => {
-        console.log("save tenant")
+        data['tenants-INITIAL_FORMS'] = this.state.tenants_INITIAL_FORMS;
+        data['tenants-MAX_NUM)FORMS'] = this.state.tenants_MAX_NUM_FORMS;
+        data['tenants-MIN_NUM_FORMS'] = this.state.tenants_MIN_NUM_FORMS;
+        data['tenants-TOTAL_FORMS'] = this.state.tenants_TOTAL_FORMS;
+
         this.setState({
             allTenantInfo: data
         }, () => console.log(this.state.allTenantInfo))
@@ -185,12 +195,6 @@ export default class RentForm extends Component {
         this.setState({
             allAmenitiesInfo: data
         }, () => console.log(this.state.allAmenitiesInfo))
-    }
-
-    saveDetailsInfo = (data) => {
-        this.setState({
-            allDetailsInfo: data
-        }), () => console.log(this.state.allDetailsInfo)
     }
 
     render() {
