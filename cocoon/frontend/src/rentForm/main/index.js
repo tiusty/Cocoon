@@ -19,7 +19,6 @@ export default class RentForm extends Component {
         super(props);
         this.state = {
             step: 1,
-            number_of_tenants: 1,
             tenants: []
         }
         // This allows the variable name to include the hyphen. Including directly
@@ -107,6 +106,7 @@ export default class RentForm extends Component {
                         handleNextStep={this.handleNextStep}
                         handlePrevStep={this.handlePrevStep}
                         tenants={this.state.tenants}
+                        number_of_tenants={this.state.number_of_tenants}
                         saveTenantInfo={this.saveTenantInfo}
                         allTenantInfo={this.state.allTenantInfo} />;
             case 3:
