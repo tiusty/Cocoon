@@ -20,6 +20,7 @@ class AgentSchedulerPortal extends Component {
         unscheduled_loaded: false,
         marketplace_loaded: false,
         marketplace_itineraries: [],
+        refreshing: false,
     };
 
 
@@ -39,7 +40,8 @@ class AgentSchedulerPortal extends Component {
             itinerary_ids.push({
                 id: c.id,
                 is_claimed: c.is_claimed,
-                is_scheduled: c.is_scheduled
+                is_scheduled: c.is_scheduled,
+                hash: c.hash,
             })
         );
 
@@ -63,63 +65,73 @@ class AgentSchedulerPortal extends Component {
                 this.setState({marketplace_itineraries: this.parseData(response.data)});
                 this.setState({marketplace_loaded: true});
             })
-    }
+    };
 
     claimItinerary = (id) => {
-        let formData = new FormData();
-        formData.set('itinerary_id', id);
-
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['claimItinerary'],
-            data: formData,
-            config: {headers: {'Content-Type': 'multipart/form-data'}}
+        this.setState({refreshing: true});
+        let endpoint = scheduler_endpoints['itineraryAgent'] + id + '/';
+        axios.put(endpoint, {
+            type: 'claim',
         })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                if (response.data.result == "0") {
-                    this.setState({
-                        showClaim: false,
-                    });
-                    this.refreshItineraries()
-
-                } else if (response.data.result == "1") {
-                    alert("This itinerary has been claimed")
-                    this.refreshItineraries()
-                } else {
-                    alert(response.data.result)
-                    this.refreshItineraries()
-                }
+        .catch(error => {
+            this.setState({
+                refreshing: false,
             });
+            console.log('Bad', error)
+        })
+        .then(response => {
+            if (response.data.result) {
+                this.refreshItineraries()
+            } else {
+                alert(response.data.reason);
+                this.refreshItineraries()
+            }
+            this.setState({refreshing: false});
+        });
+    };
+
+    claimButtonAction(id) {
+        /*
+        This function prevents spamming of backend by disabling button once the user clicks it
+         */
+        if (!this.state.refreshing) {
+            return this.claimItinerary(id)
+        } else {
+            return null
+        }
     }
 
-    renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {
-        let claimButton = canClaim ?
-            <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button> : null
+    renderItinerary = (itinerary, key, showTimes, canSelect, viewType) => {
         return (
-            <div>
+            <div key={key} className="single-itinerary">
                 <Itinerary
                     id={itinerary.id}
+                    key={"itinerary" + key}
+                    hash={itinerary.hash}
                     showTimes={showTimes}
                     canSelect={canSelect}
-                    brokerRequest
-                    key={"itinerary" + key}
                     viewType={viewType}
                 />
-                {claimButton}
+                <button key={"claim" + key} onClick={() => this.claimButtonAction(itinerary.id)}>
+                    {this.state.refreshing ? 'Loading' : 'claim'}
+                </button>
             </div>
         );
     };
 
     renderMarketplaceItineraries = () => {
         if (this.state.marketplace_loaded) {
-            return (
-                <div className='marketplace-wrapper'>
-                    {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, true, false, "itineraryMarket"))}
-                </div>
-            )
+            if (this.state.marketplace_itineraries.length <= 0) {
+                return <div> There is no open itineraries </div>
+            } else {
+                return (
+                    <div className='marketplace-wrapper'>
+                        {this.state.marketplace_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false, "itineraryMarket"))}
+                    </div>
+                )
+            }
         }
-    }
+    };
 
     render() {
         return (

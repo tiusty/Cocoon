@@ -59,14 +59,27 @@ class ItineraryModel(models.Model):
         for time in self.start_times.all():
             start_time_ids = start_time_ids + str(time.id)
 
+        selected_start_time = "null"
+        if self.selected_start_time is not None:
+            selected_start_time = self.selected_start_time
+
+        client_id = "null"
+        if self.client is not None:
+            client_id = self.client.id
+
+        agent_id = "null"
+        if self.agent is not None:
+            agent_id = self.agent.id
+
         # Now create a string that will be hashed. It should contain all the data from the
         #   itinerary model
-        hashable_string = "{0}{1}{2}{3}{4}{5}".format(self.client.id,
-                                                      self.agent.id,
-                                                      self.tour_duration_seconds,
-                                                      start_time_ids,
-                                                      home_ids,
-                                                      self.finished)
+        hashable_string = "{0}{1}{2}{3}{4}{5}{6}".format(client_id,
+                                                         agent_id,
+                                                         self.tour_duration_seconds,
+                                                         selected_start_time,
+                                                         start_time_ids,
+                                                         home_ids,
+                                                         self.finished)
 
         # Create the md5 object
         m = hashlib.md5()

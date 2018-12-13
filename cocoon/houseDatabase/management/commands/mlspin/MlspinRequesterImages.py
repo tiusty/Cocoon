@@ -47,7 +47,7 @@ class MlspinRequesterImage(object):
 
                 # Determine if the house photos needs updating.
                 # This is to speed up updating the photos by skipping homes with photos already
-                if not home.housephotos_set.exists():
+                if not home.images.exists():
 
                     # Connect to the FTP server and login
                     ftp = FTP("ftp.mlspin.com", "anonymous", "")
@@ -59,8 +59,8 @@ class MlspinRequesterImage(object):
                                                                                              second_directory))))
 
                     # Determine if there are housePhoto files and if so deletes them
-                    if home.housephotos_set.exists():
-                        for photo in home.housephotos_set.all():
+                    if home.images.exists():
+                        for photo in home.images.all():
                             # Determine if an image is currently saved
                             # if photo.image:
                             # If there is an image saved, then make sure it is a file
