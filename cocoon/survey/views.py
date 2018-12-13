@@ -52,7 +52,7 @@ class RentingSurvey(CreateView):
         Adds the TenantFormSet, and the user creation form to the context
         """
         data = super(RentingSurvey, self).get_context_data(**kwargs)
-        data['component'] = 'survey'
+        data['component'] = RentingSurvey.__name__
         # data['props'] = RentSurveyForm
 
         # If the request is a post, then populate the tenant form set

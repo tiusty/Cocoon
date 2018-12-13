@@ -1,14 +1,15 @@
 import React from 'react';
 import { Component } from 'react';
 
-import Progress from '../progress';
-import General from '../general';
-import Tenant from '../tenant';
-import Amenities from '../amenities';
-import Details from '../details';
+import Progress from '../progress/index';
+import General from '../general/index';
+import Tenant from '../tenant/index';
+import Amenities from '../amenities/index';
+import Details from '../details/index';
 
 import axios from 'axios'
-import survey_endpoints from "../../endpoints/survey_endpoints";
+import survey_endpoints from "../../../endpoints/survey_endpoints";
+import './rentForm/main/rentForm.css';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';

@@ -4,7 +4,7 @@ import InputRange from 'react-input-range';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 import axios from "axios";
-import houseDatabase_endpoints from "../../endpoints/houseDatabase_endpoints";
+import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
 export default class General extends Component {
 

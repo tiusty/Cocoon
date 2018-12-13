@@ -1,9 +1,9 @@
 import React from 'react';
 import { Component, Fragment } from 'react';
 
-import TenantForm from './tenantForm';
+import TenantForm from './tenantForm/index';
 import axios from "axios";
-import commutes_endpoints from "../../endpoints/commutes_endpoints";
+import commutes_endpoints from "../../../endpoints/commutes_endpoints";
 
 export default class Tenant extends Component {
 

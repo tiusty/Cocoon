@@ -1,7 +1,7 @@
 module.exports = {
     // Entry point for webpack. Add new components here
     entry: {
-        rentForm: './cocoon/frontend/src/rentForm',
+        rentForm: './cocoon/frontend/src/survey',
         userAuth: './cocoon/frontend/src/userAuth',
         scheduler: './cocoon/frontend/src/scheduler',
         signature: './cocoon/frontend/src/signature',
