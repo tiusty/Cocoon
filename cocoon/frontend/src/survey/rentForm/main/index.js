@@ -47,14 +47,16 @@ export default class RentForm extends Component {
          *      otherwise it will return the form errors
          */
 
+        let data = this.state;
+
         // Add first and last name to details data
         let userData = detailsData;
-        userData['first_name'] = this.state.first_name;
-        userData['last_name'] = this.state.last_name;
-
-        // Add user data to data
-        let data = this.state;
-        data['allDetailsInfo'] = userData
+        if (detailsData !== null) {
+            userData['first_name'] = this.state.first_name;
+            userData['last_name'] = this.state.last_name;
+            // Add user data to data
+            data['allDetailsInfo'] = userData
+        }
 
         // Posts the state which contains all the form elements that are needed
         axios.post(survey_endpoints['rentSurvey'],
@@ -180,15 +182,23 @@ export default class RentForm extends Component {
 
     // Saves the data from the tenant tab to repopulate fields with
     saveTenantInfo = (data) => {
-        data['tenants-INITIAL_FORMS'] = this.state.tenants_INITIAL_FORMS;
-        data['tenants-MAX_NUM)FORMS'] = this.state.tenants_MAX_NUM_FORMS;
-        data['tenants-MIN_NUM_FORMS'] = this.state.tenants_MIN_NUM_FORMS;
-        data['tenants-TOTAL_FORMS'] = this.state.tenants_TOTAL_FORMS;
+        let submitData = data;
+        submitData['tenants-INITIAL_FORMS'] = this.state.tenants_INITIAL_FORMS;
+        submitData['tenants-MAX_NUM_FORMS'] = this.state.tenants_MAX_NUM_FORMS;
+        submitData['tenants-MIN_NUM_FORMS'] = this.state.tenants_MIN_NUM_FORMS;
+        submitData['tenants-TOTAL_FORMS'] = this.state.tenants_TOTAL_FORMS;
+
+        console.log(this.state.tenants)
+
+        for(let i = 0; i < this.state.number_of_tenants; i++) {
+            submitData[`tenants-${[i]}-first_name`] = this.state.tenants[i].first_name;
+            submitData[`tenants-${[i]}-last_name`] = this.state.tenants[i].last_name;
+        }
 
         this.setState({
-            allTenantInfo: data
+            allTenantInfo: submitData
         }, () => console.log(this.state.allTenantInfo))
-    }
+    };
 
     // Saves the data from the amenities tab to repopulate fields with
     saveAmenitiesInfo = (data) => {

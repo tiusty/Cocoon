@@ -346,11 +346,18 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         data = self.request.data['data']
 
         # Parse data to correct format
+        survey_data = None
+        tenant_data = None
+        user_data = None
 
-        survey_data = data['generalInfo']
-        survey_data.update(data['allAmenitiesInfo'])
-        tenant_data = data['allTenantInfo']
-        user_data = data['allDetailsInfo']
+        if 'generalInfo' in data:
+            survey_data = data['generalInfo']
+        if 'allAmenitiesInfo' in data:
+            survey_data.update(data['allAmenitiesInfo'])
+        if 'allTenantInfo' in data:
+            tenant_data = data['allTenantInfo']
+        if 'allDetailsInfo' in data:
+            user_data = data['allDetailsInfo']
 
         form = RentSurveyForm(survey_data)
 
