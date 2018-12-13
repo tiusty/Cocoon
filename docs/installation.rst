@@ -131,6 +131,9 @@ Setting up the necessary Models
         Home Type Models
             * python manage.py houseDatabase_creation
 
+        Hunter Template Models
+            * python manage.py signature_creation
+
 Adding Homes to the database
 -----------------------------
 * Go to the manage.py location and make sure to have the virtual env loaded
