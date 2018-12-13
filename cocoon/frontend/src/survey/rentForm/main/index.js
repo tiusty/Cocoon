@@ -9,7 +9,7 @@ import Details from '../details/index';
 
 import axios from 'axios'
 import survey_endpoints from "../../../endpoints/survey_endpoints";
-import './rentForm/main/rentForm.css';
+import './rentForm.css';
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -172,6 +172,7 @@ export default class RentForm extends Component {
 
     // Saves the data from the tenant tab to repopulate fields with
     saveTenantInfo = (data) => {
+        console.log("save tenant")
         this.setState({
             allTenantInfo: data
         }, () => console.log(this.state.allTenantInfo))

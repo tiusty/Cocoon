@@ -351,7 +351,7 @@ export default class Amenities extends Component {
 
                 <div className="row survey-btn-wrapper">
                     <div className="col-md-6">
-                        <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}}>
+                        <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => { ( this.props.saveAmenitiesInfo(), this.props.handlePrevStep(e))}}>
                             Back
                         </button>
                     </div>
