@@ -121,7 +121,9 @@ export default class RentForm extends Component {
                         is_authenticated={this.props.is_authenticated}
                         onSubmit={this.handleSubmit}
                         handlePrevStep={this.handlePrevStep}
-                        handleInputChange={this.handleInputChange} />;
+                        handleInputChange={this.handleInputChange}
+                        saveDetailsInfo={this.saveDetailsInfo}
+                />;
         }
     }
 
@@ -183,6 +185,12 @@ export default class RentForm extends Component {
         this.setState({
             allAmenitiesInfo: data
         }, () => console.log(this.state.allAmenitiesInfo))
+    }
+
+    saveDetailsInfo = (data) => {
+        this.setState({
+            allDetailsInfo: data
+        }), () => console.log(this.state.allDetailsInfo)
     }
 
     render() {

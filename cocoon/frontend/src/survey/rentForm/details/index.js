@@ -98,10 +98,14 @@ export default class Details extends Component {
                         validatePassword={this.validatePassword}
                         validatePasswordMatch={this.validatePasswordMatch}
                         handlePrevStep={this.props.handlePrevStep}
+                        saveDetailsInfo={this.props.saveDetailsInfo}
+                        state={this.state}
                     /> :
                     <CurrentUser
                         onSubmit={this.props.onSubmit}
                         handlePrevStep={this.props.handlePrevStep}
+                        saveDetailsInfo={this.props.saveDetailsInfo}
+                        state={this.state}
                     />}
             </>
         );
@@ -134,7 +138,7 @@ const NewUser = (props) => (
                 </button>
             </div>
             <div className="col-md-6">
-                <button className="col-md-12 survey-btn" onClick={(e) => { props.handleValidation() && props.onSubmit(e); }}>
+                <button className="col-md-12 survey-btn" onClick={(e) => { (props.saveDetailsInfo(props.state), props.handleValidation()) && props.onSubmit(e); }}>
                     Check out my places
                 </button>
             </div>
@@ -147,12 +151,12 @@ const CurrentUser = (props) => (
         <h2><span>Awesome!</span> Check your best places out now.</h2>
         <div className="row survey-btn-wrapper">
             <div className="col-md-6">
-                <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {props.handlePrevStep(e)}}>
+                <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => { props.handlePrevStep(e)}}>
                     Back
                 </button>
             </div>
             <div className="col-md-6">
-                <button className="col-md-12 survey-btn" onClick={(e) => props.onSubmit(e)}>
+                <button className="col-md-12 survey-btn" onClick={(e) => ( props.saveDetailsInfo(props.state), props.onSubmit(e))}>
                     View now
                 </button>
             </div>
