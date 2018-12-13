@@ -67,6 +67,15 @@
     /*margin-top: 30px;*/
 }
 
+.survey-btn_back {
+    background: var(--grey);
+}
+
+.survey-btn-wrapper {
+    display: flex;
+    align-items: baseline;
+}
+
 .survey-question .survey-label input {
     visibility: hidden;
     position: absolute;

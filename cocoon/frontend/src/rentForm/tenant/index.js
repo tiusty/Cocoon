@@ -4,7 +4,6 @@ import { Component, Fragment } from 'react';
 import TenantForm from './tenantForm';
 import axios from "axios";
 import commutes_endpoints from "../../endpoints/commutes_endpoints";
-import survey_endpoints from "../../endpoints/survey_endpoints";
 
 export default class Tenant extends Component {
 
@@ -23,6 +22,9 @@ export default class Tenant extends Component {
                 const commute_type_options = res.data;
                 this.setState({ commute_type_options });
         });
+        if(this.props.allTenantInfo) {
+            this.setState(this.props.allTenantInfo)
+        }
     }
 
     setInitialValid = () => {
@@ -91,29 +93,15 @@ export default class Tenant extends Component {
             [`${tenantId}street_address`]: place.name,
             [`${tenantId}city`]: formatCity,
             [`${tenantId}state`]: formatState,
-            [`${tenantId}zip_code`]: formatZip
+            [`${tenantId}zip_code`]: formatZip,
+             [`${tenantId}full_address`]: place.formatted_address
         })
     }
 
     setCommuteType = (tenantId, commute_type) => {
         this.setState({
             [`${tenantId}-commute_type`]: commute_type
-            });
-    }
-
-    handleTenantForm  = (e) => {
-        e.preventDefault();
-                axios.post(survey_endpoints['rentSurvey'],
-            {
-                data: this.state,
-                type: 'validate_tenants'
-            })
-            .catch(error => console.log('BAD', error))
-            .then(response => {
-                    // handle errors
-                    // if no errors go to next step
-                }
-            );
+        });
     }
 
     render(){
@@ -130,15 +118,25 @@ export default class Tenant extends Component {
                            isTenantValid={this.isTenantValid}
                            commute_type_options={this.state.commute_type_options}
                            setCommuteType={this.setCommuteType}
-                           setTransitType ={this.setTransitType} />
+                           setTransitType ={this.setTransitType}
+                           allTenantInfo={this.state} />
                     )
                 })}
-                <button className="col-md-6 survey-btn" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}}>
-                    Back
-                </button>
-                <button className="col-md-6 survey-btn" style={{marginTop: '30px'}} onClick={(e) => {this.isAllValid() && this.props.handleNextStep(e)}}>
-                    Next
-                </button>
+                <div className="row survey-btn-wrapper">
+                    <div className="col-md-6">
+                        <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}}>
+                            Back
+                        </button>
+                    </div>
+
+                    <div className="col-md-6">
+                        <button className="col-md-12 survey-btn" style={{marginTop: '30px'}} onClick={(e) => { this.isAllValid() ? (this.props.saveTenantInfo(this.state), this.props.handleNextStep(e)) : null; } }>
+                            Next
+                        </button>
+                    </div>
+
+
+                </div>
             </>
         );
     }

@@ -1,7 +1,5 @@
 import React from 'react';
 import { Component, Fragment } from 'react';
-import axios from "axios";
-import survey_endpoints from "../../endpoints/survey_endpoints";
 
 export default class Details extends Component {
 
@@ -87,21 +85,6 @@ export default class Details extends Component {
         }
     }
 
-    handleUserForm  = (e) => {
-        e.preventDefault();
-                axios.post(survey_endpoints['rentSurvey'],
-            {
-                data: this.state,
-                type: 'validate_user_form'
-            })
-            .catch(error => console.log('BAD', error))
-            .then(response => {
-                    // handle errors
-                    // if no errors go to next step
-                }
-            );
-    }
-
     render(){
         return (
             <>
@@ -114,9 +97,11 @@ export default class Details extends Component {
                         handleInputChange={this.handleInputChange}
                         validatePassword={this.validatePassword}
                         validatePasswordMatch={this.validatePasswordMatch}
+                        handlePrevStep={this.props.handlePrevStep}
                     /> :
                     <CurrentUser
                         onSubmit={this.props.onSubmit}
+                        handlePrevStep={this.props.handlePrevStep}
                     />}
             </>
         );
@@ -125,6 +110,7 @@ export default class Details extends Component {
 }
 
 const NewUser = (props) => (
+    <>
         <div className="survey-question">
             <h2>Finish signing up to see <span>your results</span>!</h2>
 
@@ -140,18 +126,37 @@ const NewUser = (props) => (
             <input className="col-md-12 survey-input" type="password" name="password2" placeholder="Confirm Your Password" required onChange={props.validatePasswordMatch} onBlur={(e) => {props.validatePasswordMatch && props.handleInputChange(e, 'string')} } />
 
             <input className="col-md-12 survey-input" type="text" name="creation_key" placeholder="Enter Your Key" required onBlur={(e) => props.handleInputChange(e, 'string')} />
-
-            <button className="col-md-12 survey-btn" onClick={(e) => { props.handleValidation() && props.onSubmit(e); }}>
-                Check out my places
-            </button>
         </div>
+        <div className="row survey-btn-wrapper">
+            <div className="col-md-6">
+                <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}}>
+                    Back
+                </button>
+            </div>
+            <div className="col-md-6">
+                <button className="col-md-12 survey-btn" onClick={(e) => { props.handleValidation() && props.onSubmit(e); }}>
+                    Check out my places
+                </button>
+            </div>
+        </div>
+    </>
 );
 
 const CurrentUser = (props) => (
     <>
         <h2><span>Awesome!</span> Check your best places out now.</h2>
-        <button className="col-md-12 survey-btn" onClick={(e) => props.onSubmit(e)}>
-            View now
-        </button>
+        <div className="row survey-btn-wrapper">
+            <div className="col-md-6">
+                <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {props.handlePrevStep(e)}}>
+                    Back
+                </button>
+            </div>
+            <div className="col-md-6">
+                <button className="col-md-12 survey-btn" onClick={(e) => props.onSubmit(e)}>
+                    View now
+                </button>
+            </div>
+        </div>
+
     </>
 )
