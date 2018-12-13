@@ -116,7 +116,7 @@ eval("\nvar content = __webpack_require__(/*! !../../../../node_modules/css-load
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \".survey-headline {\\n    color: darkred;\\n    font-weight: bold;\\n}\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./cocoon/frontend/src/survey/survey.css?./node_modules/css-loader");
+eval("exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ \"./node_modules/css-loader/lib/css-base.js\")(false);\n// imports\n\n\n// module\nexports.push([module.i, \".survey-headline {\\r\\n    color: darkred;\\r\\n    font-weight: bold;\\r\\n}\", \"\"]);\n\n// exports\n\n\n//# sourceURL=webpack:///./cocoon/frontend/src/survey/survey.css?./node_modules/css-loader");
 
 /***/ }),
 

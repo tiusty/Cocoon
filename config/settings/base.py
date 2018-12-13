@@ -220,6 +220,7 @@ LOGGING = {
         'django.security.DisallowedHost': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
 
         # Catch all logger
