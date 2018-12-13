@@ -54,7 +54,7 @@ Setting up Software
         ::
 
                 cd ~/work/Cocoon/config/settings
-                cp secret.json.template secret.json
+                cp secrets.json.template secrets.json
 
 Creating the Postgres Database
 ------------------------------
@@ -121,25 +121,15 @@ Setting up the necessary Models
         python manage.py createsuperuser # Creates a super user
         #   Follow steps and create the super user
 
-* Go to the admin site
-    * probably: http://127.0.0.1:8000/adminBostoncocoon/
-
 * There are models you need to create:
-    * Commute Types:
-        * Click on Commute Types, then add Commute Types
-        * Make sure to create at least one, i.e driving, but you can create all if you want
-    * Home Type Models:
-        * Click on Home Type Models, then add Home Type Model
-        * Create at least apartment, but you can create all 4 if you want
-    * MLSManagementModel:
-        * Click on MLSManagementModel, then click add
-        * Just need to click save
-    * YGLManagementModel:
-        * Click on YGLManagementModel, then click add
-        * Just need to click save
-    * HomeProviderModel:
-       * Click on the HomeProviderModel:
-       * Add all the choices and save them
+
+    ::
+
+        Commute Types:
+            * python manage.py commutes_creation
+
+        Home Type Models
+            * python manage.py houseDatabase_creation
 
 Adding Homes to the database
 -----------------------------
