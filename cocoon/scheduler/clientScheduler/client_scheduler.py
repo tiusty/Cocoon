@@ -134,7 +134,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
         # Add 20 minutes to each home
         total_time_secs = 20 * 60
         for item in interpreted_route:
-            total_time_secs = 20 * 60 + item[1]
+            total_time_secs = 20 * 60 + item[1] + total_time_secs
 
         # Update Itinerary Model
         # File name is unique based on user and current time (making it impossible to have duplicates)
