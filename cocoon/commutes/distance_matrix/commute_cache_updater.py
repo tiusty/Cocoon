@@ -101,8 +101,8 @@ class Driving(CommuteCalculator):
     """
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.DRIVING
 
-    def __init__(self, homes, destination):
-        super().__init__(homes, destination)
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
         self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
 
     def check_all_combinations(self):
@@ -243,8 +243,8 @@ class Transit(Driving):
     """
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.TRANSIT
 
-    def __init__(self, homes, destination):
-        super().__init__(homes, destination)
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
         self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
 
 
@@ -255,8 +255,8 @@ class Bicycling(CommuteCalculator):
     """
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.BICYCLING
 
-    def __init__(self, homes, destination):
-        super().__init__(homes, destination)
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
         self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.BICYCLING)[0]
 
     def run(self):
@@ -270,8 +270,8 @@ class Walking(CommuteCalculator):
     """
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.WALKING
 
-    def __init__(self, homes, destination):
-        super().__init__(homes, destination)
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
         self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.WALKING)[0]
 
     def run(self):
