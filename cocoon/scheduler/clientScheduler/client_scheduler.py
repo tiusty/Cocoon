@@ -6,7 +6,7 @@ from ..clientScheduler.base_algorithm import clientSchedulerAlgorithm
 from ..models import ItineraryModel
 
 # import distance matrix wrapper
-from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute_client_scheduler, retrieve_approximate_commute_client_scheduler
 from cocoon.commutes.distance_matrix.commute_cache_updater import update_commutes_cache_client_scheduler
 
 # Import Cocoon modules
@@ -35,12 +35,14 @@ class ClientScheduler(clientSchedulerAlgorithm):
             home_one_distances = []
             commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
             if self.commute_accuracy == CommuteAccuracy.EXACT:
-                result_distance_wrapper = retrieve_exact_commute([home_one], homes_list, commute_type)
+                result_distance_wrapper = retrieve_exact_commute_client_scheduler(homes_list, home_one, commute_type)
+                for source, time in result_distance_wrapper[0]:
+                    home_one_distances.append(time)
             else:
                 update_commutes_cache_client_scheduler(homes_list, home_one, accuracy=CommuteAccuracy.APPROXIMATE,
                                                        commute_type=CommuteType.DRIVING)
-            for source, time in result_distance_wrapper[0]:
-                home_one_distances.append(time)
+                home_one_distances = retrieve_approximate_commute_client_scheduler(homes_list, home_one,
+                                                                                   commute_type=CommuteType.DRIVING)
 
             homes_matrix.append(home_one_distances)
 

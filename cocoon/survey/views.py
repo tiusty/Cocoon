@@ -306,7 +306,7 @@ class VisitList(ListView):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.APPROXIMATE)
+        client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.EXACT)
         client_scheduler_alg.calculate_duration(homes_list)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
