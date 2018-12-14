@@ -11,6 +11,14 @@ from cocoon.commutes.constants import GoogleCommuteNaming
 
 
 def retrieve_exact_commute_client_scheduler(homes, destination, commute_type):
+    """
+    Exact commute retriever for the client scheduler. Puts the arguments in the correct formation
+    :param homes: (list(RentDatabase models)) -> The rent database models used for computation
+    :param destination: (RentDatabase Model) -> The destination which other homes compute against
+    :param commute_type: (CommuteType) -> The type of commute for the commute
+    :return: (list(tuple(time, distance)) -> returns the time as seconds and the distance as meters. Also each index has
+        all possible combinations given by google, i.e if there are different routes
+    """
     home_addresses = []
     for home in homes:
         home_addresses.append(home.full_address)
@@ -19,7 +27,16 @@ def retrieve_exact_commute_client_scheduler(homes, destination, commute_type):
 
 
 def retrieve_approximate_commute_client_scheduler(homes, destination, commute_type):
-    return retrieve_approximate_commute(HomeCommute.rentdatabases_to_home_cache(homes), HomeCommute.rentdatabase_to_home_cache(destination), commute_type)
+    """
+    Approximation commute retriever for the client scheduler. Puts arguments in correct format.
+    :param homes: (list(RentDatabase Models)) -> The homes to compute against
+    :param destination: (RentDatabase Models) -> The home which all other homes compute against
+    :param commute_type: (Commute Type) -> The commute type of the approximation
+    :return: (list(ints)) -> Returns the commute time for each home from the destination to that home. It is returned
+        in the order it is sent
+    """
+    return retrieve_approximate_commute(HomeCommute.rentdatabases_to_home_cache(homes),
+                                        HomeCommute.rentdatabase_to_home_cache(destination), commute_type)
 
 
 def retrieve_exact_commute(origins, destinations, mode):

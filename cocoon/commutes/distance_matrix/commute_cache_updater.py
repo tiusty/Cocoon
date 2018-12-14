@@ -39,7 +39,15 @@ def update_commutes_cache_rent_algorithm(homes, destinations, accuracy=CommuteAc
                     accuracy=accuracy).run()
 
 
-def update_commutes_cache_client_scheduler(homes, destination, accuracy=CommuteAccuracy.DEFAULT, commute_type=CommuteType.DRIVING):
+def update_commutes_cache_client_scheduler(homes, destination, accuracy=CommuteAccuracy.DEFAULT,
+                                           commute_type=CommuteType.DRIVING):
+    """
+    Updates the caching for when the client scheduler is being used
+    :param homes: (list(rentDatabase models) -> The homes that are having distance calculated
+    :param destination: (rentDatabase model) -> The home which all other homes are being computed against
+    :param accuracy: (CommuteAccurary) -> The accuracy type used for the caching
+    :param commute_type: (CommuteType) -> THe commute type for the approximation updating
+    """
 
     if commute_type == CommuteType.DRIVING:
         Driving(HomeCommute.rentdatabases_to_home_cache(homes), HomeCommute.rentdatabase_to_home_cache(destination),
