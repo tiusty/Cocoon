@@ -99,8 +99,11 @@ class Driving(CommuteCalculator):
     This class updates the database to make sure it contains all the combinations necessary for storing
         the approximate zip codes
     """
-    COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.DRIVING
+
+    def __init__(self, homes, destination):
+        super().__init__(homes, destination)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
 
     def check_all_combinations(self):
         """
@@ -238,8 +241,11 @@ class Transit(Driving):
     Currently Transit uses the same method as driving for caching. Therefore, just inherit
     all of the driving functionality. Later on the caching mechanism should be changed for transit
     """
-    COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.TRANSIT
+
+    def __init__(self, homes, destination):
+        super().__init__(homes, destination)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
 
 
 class Bicycling(CommuteCalculator):
@@ -247,8 +253,11 @@ class Bicycling(CommuteCalculator):
     Currently the approximation for biking is done via the lat, long distance and therefore,
         do not have to be saved.
     """
-    COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.BICYCLING)[0]
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.BICYCLING
+
+    def __init__(self, homes, destination):
+        super().__init__(homes, destination)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.BICYCLING)[0]
 
     def run(self):
         pass
@@ -259,8 +268,11 @@ class Walking(CommuteCalculator):
     Currently the approximation for walking is done via the lat, long distance and therefore,
         do not have to be saved.
     """
-    COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.WALKING)[0]
     GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.WALKING
+
+    def __init__(self, homes, destination):
+        super().__init__(homes, destination)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.WALKING)[0]
 
     def run(self):
         pass

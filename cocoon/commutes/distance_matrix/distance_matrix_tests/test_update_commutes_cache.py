@@ -10,7 +10,7 @@ from cocoon.commutes.constants import CommuteAccuracy
 
 # Import Distance matrix classes
 from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Transit, Bicycling, Walking, \
-    update_commutes_cache
+    update_commutes_cache, HomeCache
 
 # Import home score
 from cocoon.survey.home_data.home_score import HomeScore
@@ -256,14 +256,13 @@ class TestDriveCommuteCalculator(TestCase):
 
     def test_find_missing_pairs_all_exist_all_same_commute(self):
         """
-        Tests that if all the zipcodes pair exist for that commute then there is no failed homes
+        Tests that if all the zip-code pairs exist for that commute then there is no failed homes
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
-        home_score = self.create_home(self.home_type, zip_code='02476')
-        home_score1 = self.create_home(self.home_type, zip_code='02475')
-        home_score2 = self.create_home(self.home_type, zip_code='02474')
-        destination = self.create_destination(survey, self.commute_driving, zip_code='02476')
+        home_score = HomeCache('02476', 'MA')
+        home_score1 = HomeCache('02475', 'MA')
+        home_score2 = HomeCache('02474', 'MA')
+        destination = HomeCache('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
