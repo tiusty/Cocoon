@@ -57,7 +57,7 @@ class VisitList(ListView):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler(CommuteAccuracy.APPROXIMATE)
+        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
         result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
         if result:
             messages.info(request, "Itinerary created")

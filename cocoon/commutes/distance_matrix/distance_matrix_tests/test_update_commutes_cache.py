@@ -10,7 +10,7 @@ from cocoon.commutes.constants import CommuteAccuracy
 
 # Import Distance matrix classes
 from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Transit, Bicycling, Walking, \
-    update_commutes_cache_rent_algorithm, HomeCache
+    update_commutes_cache_rent_algorithm, HomeCommute
 
 # Import home score
 from cocoon.survey.home_data.home_score import HomeScore
@@ -259,10 +259,10 @@ class TestDriveCommuteCalculator(TestCase):
         Tests that if all the zip-code pairs exist for that commute then there is no failed homes
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -283,10 +283,10 @@ class TestDriveCommuteCalculator(TestCase):
         Tests that if some of the pairs do not exist, then those homes show up in the failed list
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -307,10 +307,10 @@ class TestDriveCommuteCalculator(TestCase):
             show up in the failed homes
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -332,10 +332,10 @@ class TestDriveCommuteCalculator(TestCase):
         Tests that if none of the pairs exist then all of them are in the failed homes list
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -356,11 +356,11 @@ class TestDriveCommuteCalculator(TestCase):
             failed list
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        home_score3 = HomeCache('02111', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        home_score3 = HomeCommute('02111', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -380,11 +380,11 @@ class TestDriveCommuteCalculator(TestCase):
             they aren't duplicated
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02476', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        home_score3 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02476', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        home_score3 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -404,8 +404,8 @@ class TestDriveCommuteCalculator(TestCase):
             makes sure that the run_exact_commute_cache function is not called
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        destination = HomeCache('02474', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        destination = HomeCommute('02474', 'MA')
 
         commute_calculator = Driving([home_score], destination, accuracy=CommuteAccuracy.APPROXIMATE)
 
@@ -425,8 +425,8 @@ class TestDriveCommuteCalculator(TestCase):
             sure that the check_all_combinations is not called
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        destination = HomeCache('02474', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        destination = HomeCommute('02474', 'MA')
 
         commute_calculator = Driving([home_score], destination, accuracy=CommuteAccuracy.EXACT)
 
@@ -500,10 +500,10 @@ class TestTransitCommuteCalculator(TestCase):
         Tests that if all the zipcodes pair exist for that commute then there is no failed homes
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -524,10 +524,10 @@ class TestTransitCommuteCalculator(TestCase):
         Tests that if some of the pairs do not exist, then those homes show up in the failed list
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -548,10 +548,10 @@ class TestTransitCommuteCalculator(TestCase):
             show up in the failed homes
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -573,10 +573,10 @@ class TestTransitCommuteCalculator(TestCase):
         Tests that if none of the pairs exist then all of them are in the failed homes list
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -597,11 +597,11 @@ class TestTransitCommuteCalculator(TestCase):
             failed list
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02475', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        home_score3 = HomeCache('02111', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02475', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        home_score3 = HomeCommute('02111', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -621,11 +621,11 @@ class TestTransitCommuteCalculator(TestCase):
             they aren't duplicated
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        home_score1 = HomeCache('02476', 'MA')
-        home_score2 = HomeCache('02474', 'MA')
-        home_score3 = HomeCache('02474', 'MA')
-        destination = HomeCache('02476', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        home_score1 = HomeCommute('02476', 'MA')
+        home_score2 = HomeCommute('02474', 'MA')
+        home_score3 = HomeCommute('02474', 'MA')
+        destination = HomeCommute('02476', 'MA')
 
         commute_calculator = Driving([home_score], destination)
 
@@ -645,8 +645,8 @@ class TestTransitCommuteCalculator(TestCase):
             makes sure that the run_exact_commute_cache function is not called
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        destination = HomeCache('02474', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        destination = HomeCommute('02474', 'MA')
 
         commute_calculator = Transit([home_score], destination, accuracy=CommuteAccuracy.APPROXIMATE)
 
@@ -666,8 +666,8 @@ class TestTransitCommuteCalculator(TestCase):
             sure that the check_all_combinations is not called
         """
         # Arrange
-        home_score = HomeCache('02476', 'MA')
-        destination = HomeCache('02474', 'MA')
+        home_score = HomeCommute('02476', 'MA')
+        destination = HomeCommute('02474', 'MA')
 
         commute_calculator = Transit([home_score], destination, accuracy=CommuteAccuracy.EXACT)
 
