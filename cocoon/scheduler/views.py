@@ -142,7 +142,7 @@ class ClientItineraryCalculateDuration(viewsets.ViewSet):
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.APPROXIMATE)
-        result = client_scheduler_alg.calculate_duration(homes_list)
+        result = client_scheduler_alg.calculate_duration(homes_list)[0]
         return Response({'duration': result})
 
 
