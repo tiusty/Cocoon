@@ -7,6 +7,7 @@ from ..models import ItineraryModel
 
 # import distance matrix wrapper
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
+from cocoon.commutes.distance_matrix.commute_cache_updater import update_commutes_cache_client_scheduler
 
 # Import Cocoon modules
 from cocoon.commutes.models import CommuteType
@@ -33,7 +34,11 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             home_one_distances = []
             commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
-            result_distance_wrapper = retrieve_exact_commute([home_one], homes_list, commute_type)
+            if self.commute_accuracy == CommuteAccuracy.EXACT:
+                result_distance_wrapper = retrieve_exact_commute([home_one], homes_list, commute_type)
+            else:
+                update_commutes_cache_client_scheduler(homes_list, home_one, accuracy=CommuteAccuracy.APPROXIMATE,
+                                                       commute_type=CommuteType.DRIVING)
             for source, time in result_distance_wrapper[0]:
                 home_one_distances.append(time)
 
@@ -120,12 +125,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
                                     of homes in visit list
         """
 
-        destination_addresses = []
-        for item in homes_list:
-            destination_addresses.append(item.full_address)
-
-        shortest_path = self.run_client_scheduler_algorithm(destination_addresses)
-        interpreted_route = self.interpret_algorithm_output(destination_addresses, shortest_path)
+        shortest_path = self.run_client_scheduler_algorithm(homes_list)
+        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
 
         # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
         # Add 20 minutes to each home

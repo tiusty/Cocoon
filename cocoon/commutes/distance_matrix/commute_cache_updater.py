@@ -43,13 +43,23 @@ class HomeCache(object):
     @staticmethod
     def rentdatabases_to_home_cache(homes):
         """
-        Convert a list of of rentdatabases to home cache object
+        Convert a list of rentdatabases to home cache object
         :param homes: (list(RentDatabase model)) -> The homes to convert
         :return: (list(HomeCache)) -> The homes in the correct format
         """
         home_cache = []
         for home in homes:
             home_cache.append(HomeCache(home.zip_code, home.state))
+        return home_cache
+
+    @staticmethod
+    def rentdatabase_to_home_cache(home):
+        """
+        Convert a rentdatabase to home cache object
+        :param home: (RentDatabase model) -> The homes to convert
+        :return: (HomeCache) -> The homes in the correct format
+        """
+        return HomeCache(home.zip_code, home.state)
 
 
 def update_commutes_cache_rent_algorithm(homes, destinations, accuracy=CommuteAccuracy.DEFAULT):
@@ -80,16 +90,16 @@ def update_commutes_cache_rent_algorithm(homes, destinations, accuracy=CommuteAc
 def update_commutes_cache_client_scheduler(homes, destination, accuracy=CommuteAccuracy.DEFAULT, commute_type=CommuteType.DRIVING):
 
     if commute_type == CommuteType.DRIVING:
-        Driving(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+        Driving(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabase_to_home_cache(destination),
                 accuracy=accuracy).run()
     elif commute_type == CommuteType.TRANSIT:
-        Transit(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+        Transit(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabase_to_home_cache(destination),
                 accuracy=accuracy).run()
     elif commute_type == CommuteType.BICYCLING:
-        Bicycling(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+        Bicycling(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabase_to_home_cache(destination),
                   accuracy=accuracy).run()
     elif commute_type == CommuteType.WALKING:
-        Walking(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+        Walking(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabase_to_home_cache(destination),
                 accuracy=accuracy).run()
 
 

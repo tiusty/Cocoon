@@ -24,7 +24,7 @@ from cocoon.userAuth.models import UserProfile
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
-
+from cocoon.commutes.constants import CommuteAccuracy
 # Import Scheduler algorithm
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 
@@ -306,8 +306,8 @@ class VisitList(ListView):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler()
-        client_scheduler_alg.calculate_duration(homes_list, self.request.user)
+        client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.APPROXIMATE)
+        client_scheduler_alg.calculate_duration(homes_list)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
 
