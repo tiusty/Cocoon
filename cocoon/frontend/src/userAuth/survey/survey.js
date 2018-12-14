@@ -26,7 +26,8 @@ class Survey extends Component {
         name: "",
         url: "",
         price: 0,
-        tour_duration: null,
+        duration: null,
+        refresh_duration: false,
 
         // Favorites contains a lit of the favorites when the data was pulled from the backend
         favorites:  [],
@@ -37,6 +38,29 @@ class Survey extends Component {
 
         visit_list:  [],
     };
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.visit_list !== this.state.visit_list) {
+            let endpoint = scheduler_endpoints['itineraryDuration'] + this.state.id;
+            this.setState({
+                refresh_duration: true,
+            });
+            axios.get(endpoint)
+                .catch(error => {
+                    console.log('BAD', error);
+                    thi.setState({
+                        refresh_duration: false,
+                    })
+                })
+                .then(response => {
+                    console.log(response.data.duration),
+                        this.setState({
+                            duration: response.data.duration,
+                            refresh_duration: false,
+                        })},
+                )
+        }
+    }
 
     componentDidMount() {
         /**
@@ -230,6 +254,9 @@ class Survey extends Component {
                                     type="submit">Schedule Visit List!
                             </button>
                         </form>
+                    </div>
+                    <div className="col-md-2">
+                        Duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}
                     </div>
                 </div>
                 <div className="row">
