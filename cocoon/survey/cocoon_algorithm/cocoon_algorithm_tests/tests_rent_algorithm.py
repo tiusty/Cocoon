@@ -1715,6 +1715,7 @@ class TestRetrieveExactCommutes(TestCase):
         self.assertEqual(rent_algorithm.homes[0].exact_commute_times,
                          {destination: 39})
 
+    @skip('Calls api')
     def test_retrieve_exact_commute_zero_origin(self):
         # Arrange
         survey = self.create_survey(self.user.userProfile)
@@ -1730,6 +1731,7 @@ class TestRetrieveExactCommutes(TestCase):
         # Assert
         self.assertEqual(len(rent_algorithm.homes), 0)
 
+    @skip('calls api')
     def test_retrieve_exact_commute_no_destinations(self):
         # Arrange
         survey = self.create_survey(self.user.userProfile)

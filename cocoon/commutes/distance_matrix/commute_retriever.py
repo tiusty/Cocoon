@@ -104,10 +104,13 @@ def retrieve_approximate_commute(homes, destination, commute_type):
             if result:
                 # Store the commute time associated with the zip_code
                 approx.append(child_zip_codes[home.zip_code])
+            else:
+                approx.append(-1)
 
     # If the ZipCodeBase doesn't exist then... just don't compute, it should be there if the update_cache function
     # is called before this
     except ZipCodeBase.DoesNotExist:
-        pass
+        for home in homes:
+            approx.append(-1)
 
     return approx
