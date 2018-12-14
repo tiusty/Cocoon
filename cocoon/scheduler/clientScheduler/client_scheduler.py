@@ -132,7 +132,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
         # Add 20 minutes to each home
-        total_time_secs = 20 * 60
+        total_time_secs = 0
         for item in interpreted_route:
             total_time_secs = 20 * 60 + item[1] + total_time_secs
 
