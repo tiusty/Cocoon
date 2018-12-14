@@ -52,7 +52,7 @@ class HomeCache(object):
             home_cache.append(HomeCache(home.zip_code, home.state))
 
 
-def update_commutes_cache(homes, destinations, accuracy=CommuteAccuracy.DEFAULT):
+def update_commutes_cache_rent_algorithm(homes, destinations, accuracy=CommuteAccuracy.DEFAULT):
     """
     This function updates the commute database for caching reasons. Therefore, this is the interface between
         the survey and the commutes to update any saved commute information

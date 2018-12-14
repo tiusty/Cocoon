@@ -10,7 +10,7 @@ from cocoon.commutes.constants import CommuteAccuracy
 
 # Import Distance matrix classes
 from cocoon.commutes.distance_matrix.commute_cache_updater import Driving, Transit, Bicycling, Walking, \
-    update_commutes_cache, HomeCache
+    update_commutes_cache_rent_algorithm, HomeCache
 
 # Import home score
 from cocoon.survey.home_data.home_score import HomeScore
@@ -89,7 +89,7 @@ class TestUpdateCommutesCache(TestCase):
         Walking.run = MagicMock()
 
         # Act
-        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+        update_commutes_cache_rent_algorithm([home_score], [destination], accuracy=accuracy)
 
         # Assert
         Driving.run.assert_called_once_with()
@@ -114,7 +114,7 @@ class TestUpdateCommutesCache(TestCase):
         Walking.run = MagicMock()
 
         # Act
-        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+        update_commutes_cache_rent_algorithm([home_score], [destination], accuracy=accuracy)
 
         # Assert
         Driving.run.assert_not_called()
@@ -139,7 +139,7 @@ class TestUpdateCommutesCache(TestCase):
         Walking.run = MagicMock()
 
         # Act
-        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+        update_commutes_cache_rent_algorithm([home_score], [destination], accuracy=accuracy)
 
         # Assert
         Driving.run.assert_not_called()
@@ -164,7 +164,7 @@ class TestUpdateCommutesCache(TestCase):
         Walking.run = MagicMock()
 
         # Act
-        update_commutes_cache([home_score], [destination], accuracy=accuracy)
+        update_commutes_cache_rent_algorithm([home_score], [destination], accuracy=accuracy)
 
         # Assert
         Driving.run.assert_not_called()
@@ -196,7 +196,7 @@ class TestUpdateCommutesCache(TestCase):
         Walking.run = MagicMock()
 
         # Act
-        update_commutes_cache([home_score], [destination, destination1, destination2, destination3], accuracy=accuracy)
+        update_commutes_cache_rent_algorithm([home_score], [destination, destination1, destination2, destination3], accuracy=accuracy)
 
         # Assert
         Driving.run.assert_called_once_with()

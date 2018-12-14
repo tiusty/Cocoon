@@ -86,7 +86,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         First the function updates all the caches for the new homes and destinations. Then it will populate the rent
             algorithm with valid commutes
         """
-        commute_cache_updater.update_commutes_cache(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
+        commute_cache_updater.update_commutes_cache_rent_algorithm(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
         for destination in self.destinations:
             lat_lng = ""
 
