@@ -71,8 +71,10 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
         Creates the home matrix and calls the calculation algorithm to find the shortest path
         args:
-        :param homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
-        :return: (list): shortest_path List of indices that denote the shortest path, which is the output of the algorithms
+        :param homes_list: The matrix calculated using DistanceWrapper() with distances between every pair of homes in
+            favourited list
+        :return: (list): shortest_path List of indices that denote the shortest path, which is the output of the
+            algorithms
         """
 
         homes_matrix = self.build_homes_matrix(homes_list)
