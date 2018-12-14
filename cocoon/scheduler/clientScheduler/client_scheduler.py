@@ -106,7 +106,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
             # Add 20 minutes to each home
             s = ""
             for item in interpreted_route:
-                s += item[0]
+                s += item[0].full_address
                 s += " "
                 s += str(item[1] / 60 + 20)
                 s += "\n"
