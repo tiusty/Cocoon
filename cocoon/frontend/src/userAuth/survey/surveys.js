@@ -7,6 +7,7 @@ import axios from 'axios'
 import Survey from "./survey";
 import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
+import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -17,6 +18,9 @@ class Surveys extends Component {
         // Stores the ids of all the surveys associated with the user
         surveys: [],
         loaded: false,
+
+        // Itinerary information
+        itinerary_exists: false,
 
         // Stores information regarding the state of signing documents
         hunter_doc_manager_id: null,
@@ -44,6 +48,32 @@ class Surveys extends Component {
 
         // Return the list of ids
         return survey_ids
+    }
+
+    determineActiveItinerary(data) {
+        /**
+         * Determines if there is an active itinerary are not
+         *  An active itinerary is one that finished is not true
+         *
+         *  Arguments:
+         *      data: list(ItinerarySerializer)
+         *
+         *  return (boolean):
+         *      true -> If an unfinished itinerary exists
+         *      false -> If there are no unfinished itineraries
+         */
+        let result = false;
+
+        // Determine if any of the itineraries are not finished
+        data.map(i =>
+            {
+                if (!i.finished) {
+                    result = true
+                }
+            }
+        );
+
+        return result
     }
 
     componentDidMount() {
@@ -83,6 +113,15 @@ class Surveys extends Component {
                 this.setState({
                     loaded: true,
                     pre_tour_signed: response.data.is_pre_tour_signed
+                })
+            });
+
+        // Determines if an itinerary exists yet already or not
+        axios.get(scheduler_endpoints['itineraryClient'])
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    itinerary_exists: this.determineActiveItinerary(response.data),
                 })
             });
     }
@@ -146,6 +185,22 @@ class Surveys extends Component {
                        aria-disabled={true} style={{marginLeft: '10px'}}> Sign Documents </a>
                 </div>
             );
+        } else if (this.state.itinerary_exists) {
+            const pStyle = {
+                textAlign: 'center',
+                marginBottom: 0,
+            };
+            scheduler_message = (
+                <div className="alert alert-info alert-dismissable" role="alert" style={pStyle}>
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    You already have a tour schedule. You cannot schedule another tour until your current one is finished
+                    <a className="btn btn-secondary btn-sm" role="button"
+                       href={scheduler_endpoints['clientScheduler']}
+                       aria-disabled={true} style={{marginLeft: '10px'}}> My Tour </a>
+                </div>
+            )
         }
 
         return (
@@ -169,6 +224,7 @@ class Surveys extends Component {
                         survey_id={survey.id}
                         endpoint={this.state.survey_endpoint}
                         pre_tour_signed={this.state.pre_tour_signed}
+                        itinerary_exists={this.state.itinerary_exists}
                     />
 
                 )}

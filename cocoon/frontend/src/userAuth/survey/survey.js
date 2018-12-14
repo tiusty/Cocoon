@@ -48,12 +48,11 @@ class Survey extends Component {
             axios.get(endpoint)
                 .catch(error => {
                     console.log('BAD', error);
-                    thi.setState({
+                    this.setState({
                         refresh_duration: false,
                     })
                 })
                 .then(response => {
-                    console.log(response.data.duration),
                         this.setState({
                             duration: response.data.duration,
                             refresh_duration: false,
@@ -68,7 +67,6 @@ class Survey extends Component {
          * @type {string}
          */
 
-        console.log('hi')
         // The survey id is appended to the get request to get a specific survey
         let endpoint = this.props.endpoint + this.state.id;
         axios.get(endpoint)
@@ -87,7 +85,6 @@ class Survey extends Component {
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
             .then(response => {
-                console.log(response.data),
                 this.setState({
                     duration: response.data.duration
                 })},
@@ -237,6 +234,14 @@ class Survey extends Component {
         return survey_endpoints['rentSurveyResult'] + this.state.url + "/";
     };
 
+    buttonDisableToggle() {
+        /**
+         * Determines to disable the button or not based on whether the pre tour documents/if an itinerary is already
+         * created
+         */
+        return this.props.pre_tour_signed && this.props.itinerary_exists;
+    }
+
     render(){
         return (
             <div className="Dotted_box">
@@ -249,7 +254,7 @@ class Survey extends Component {
                         <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2">Delete</button>
                         <form method="post">
                             <CSRFToken/>
-                            <button name="submit-button" disabled={!this.props.pre_tour_signed}
+                            <button name="submit-button" disabled={this.buttonDisableToggle()}
                                     className="btn btn-success btn-sm m-2" value={this.state.id}
                                     type="submit">Schedule Visit List!
                             </button>
