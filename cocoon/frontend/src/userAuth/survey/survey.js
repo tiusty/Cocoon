@@ -12,6 +12,7 @@ import CSRFToken from '../../common/csrftoken';
 // Import Pop-up button components
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
+import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -25,6 +26,7 @@ class Survey extends Component {
         name: "",
         url: "",
         price: 0,
+        tour_duration: null,
 
         // Favorites contains a lit of the favorites when the data was pulled from the backend
         favorites:  [],
@@ -42,6 +44,7 @@ class Survey extends Component {
          * @type {string}
          */
 
+        console.log('hi')
         // The survey id is appended to the get request to get a specific survey
         let endpoint = this.props.endpoint + this.state.id;
         axios.get(endpoint)
@@ -54,6 +57,16 @@ class Survey extends Component {
                     visit_list: response.data.visit_list,
                     url: response.data.url,
                 }),
+            )
+
+        endpoint = scheduler_endpoints['itineraryDuration'] + this.state.id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                console.log(response.data),
+                this.setState({
+                    duration: response.data.duration
+                })},
             )
     }
 

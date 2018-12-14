@@ -15,6 +15,7 @@ const scheduler_endpoints = {
     'selectStartTime': '/scheduler/selectStartTime/',
     'claimItinerary': '/scheduler/claimItinerary/',
     'unscheduleItinerary': 'scheduler/unscheduleItinerary',
+    'itineraryDuration': api_path + '/itineraryDuration/'
 };
 
 export default scheduler_endpoints;
