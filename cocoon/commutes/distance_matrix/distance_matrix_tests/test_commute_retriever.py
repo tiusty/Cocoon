@@ -3,14 +3,76 @@ from django.test import TestCase
 
 # Import third party libraries
 from unittest.mock import patch
+from unittest import skip
 
 # Retrieve Cocoon Modules
-from ..commute_retriever import retrieve_exact_commute, retrieve_approximate_commute
-from ...models import CommuteType, ZipCodeBase, ZipCodeChild
+from ..commute_retriever import retrieve_exact_commute, retrieve_approximate_commute, \
+    retrieve_exact_commute_client_scheduler, retrieve_approximate_commute_client_scheduler
+from ...models import CommuteType, ZipCodeBase
 from ..home_commute import HomeCommute
 
 # Retrieve Cocoon Constants
 from ...constants import GoogleCommuteNaming
+
+# Import Cocoon Modules
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
+
+
+class TestRetrieveExactCommuteClientScheduler(TestCase):
+
+    @patch('cocoon.commutes.distance_matrix.commute_retriever.retrieve_exact_commute')
+    def test_converting_formats(self, mock_os):
+        """
+        Tests that given the right outputs, the retrieve exact commutes is called with the right arguments
+        """
+        # Arrange
+        home_type = HomeTypeModel.objects.create(home_type='House')
+        list_provider = HomeProviderModel.objects.get_or_create(provider='ygl')[0]
+
+        home = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
+                                                street_address='40 Thorndike', city='Arlington',
+                                                zip_code='02476', state='MA')
+        home1 = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
+                                                 street_address='12 Stony', city='Arlington',
+                                                 zip_code='02474', state='MA')
+        destination = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
+                                                       street_address='36 Brook Side', city='Arlington',
+                                                       zip_code='02474', state='MA')
+        homes = [home, home1]
+
+        # Act
+        retrieve_exact_commute_client_scheduler(homes, destination, CommuteType.DRIVING)
+
+        # Assert
+        mock_os.assert_called_once_with(destination.full_address, [home.full_address, home1.full_address],
+                                        CommuteType.DRIVING)
+
+
+class TestRetrieveApproximateCommuteClientScheduler(TestCase):
+
+    @skip('Cannot assert')
+    @patch('cocoon.commutes.distance_matrix.commute_retriever.retrieve_approximate_commute')
+    def test_converting_format(self, mock_os):
+        # Arrange
+        home_type = HomeTypeModel.objects.create(home_type='House')
+        list_provider = HomeProviderModel.objects.get_or_create(provider='ygl')[0]
+
+        home = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
+                                                street_address='40 Thorndike', city='Arlington',
+                                                zip_code='02476', state='MA')
+        home1 = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
+                                                 street_address='12 Stony', city='Arlington',
+                                                 zip_code='02474', state='MA')
+        destination = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
+                                                       street_address='36 Brook Side', city='Arlington',
+                                                       zip_code='02474', state='MA')
+        homes = [home, home1]
+
+        # Act
+        retrieve_approximate_commute_client_scheduler(homes, destination, CommuteType.DRIVING)
+
+        # Assert
+        mock_os.assert_called()
 
 
 class TestRetrieveExactCommute(TestCase):

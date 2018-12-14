@@ -4,7 +4,7 @@ from cocoon.commutes.models import CommuteType
 # Retrieve Distance Matrix
 from .distance_wrapper import DistanceWrapper
 from ..models import ZipCodeChild, ZipCodeBase
-from .home_commute import  HomeCommute
+from .home_commute import HomeCommute
 
 # Retrieve Constants
 from cocoon.commutes.constants import GoogleCommuteNaming
