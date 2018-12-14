@@ -77,6 +77,22 @@ def update_commutes_cache_rent_algorithm(homes, destinations, accuracy=CommuteAc
                     accuracy=accuracy).run()
 
 
+def update_commutes_cache_client_scheduler(homes, destination, accuracy=CommuteAccuracy.DEFAULT, commute_type=CommuteType.DRIVING):
+
+    if commute_type == CommuteType.DRIVING:
+        Driving(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+                accuracy=accuracy).run()
+    elif commute_type == CommuteType.TRANSIT:
+        Transit(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+                accuracy=accuracy).run()
+    elif commute_type == CommuteType.BICYCLING:
+        Bicycling(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+                  accuracy=accuracy).run()
+    elif commute_type == CommuteType.WALKING:
+        Walking(HomeCache.rentdatabases_to_home_cache(homes), HomeCache.rentdatabases_to_home_cache(destination),
+                accuracy=accuracy).run()
+
+
 class CommuteCalculator(object):
     """
     Base class that stores common information for the different commute types
