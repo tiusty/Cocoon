@@ -36,7 +36,7 @@ export default class RentForm extends Component {
                 parking_spot: 0,
                 earliest_move_in: null,
                 latest_move_in: null,
-                is_move_asap: null,
+                is_move_asap: '',
             },
 
             tenants: [],

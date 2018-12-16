@@ -28,7 +28,7 @@ export default class GeneralForm extends Component {
         valid = valid && this.handleNameValidation();
         valid = valid && this.handleHomeTypeValidation();
         valid = valid && this.handlePriceValidation();
-        console.log(valid)
+        valid = valid && this.handleMoveAsapValidation();
         return valid
     };
 
@@ -63,6 +63,14 @@ export default class GeneralForm extends Component {
             valid = false
         }
         if (!this.props.price_weight) {
+            valid = false
+        }
+        return valid
+    }
+
+    handleMoveAsapValidation() {
+        let valid = true;
+        if (!this.props.generalInfo.is_move_asap === 'no' || !this.props.generalInfo.is_move_asap === 'yes') {
             valid = false
         }
         return valid
@@ -205,9 +213,26 @@ export default class GeneralForm extends Component {
         );
     }
 
+    renderMoveAsapQuestion() {
+        return (
+            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'string')}>
+                <h2>Are you looking to move in <span>as soon as possible?</span></h2>
+                <span className="col-md-12 survey-error-message" id="date_error">You must select an answer.</span>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="is_move_asap" value="yes" checked={this.props.generalInfo.is_move_asap === 'yes'} onChange={() => {}} />
+                    <div>Yes</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="is_move_asap" value="no" checked={this.props.generalInfo.is_move_asap === 'no'} onChange={() => {}} />
+                    <div>No</div>
+                </label>
+            </div>
+        );
+    }
+
     handleNextButtonAction(e) {
         if(this.handleValidation()) {
-            // this.props.handleNextStep(e)
+            this.props.handleNextStep(e)
         }
     }
 
@@ -219,6 +244,7 @@ export default class GeneralForm extends Component {
                 {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
+                {this.renderMoveAsapQuestion()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
                     Next
