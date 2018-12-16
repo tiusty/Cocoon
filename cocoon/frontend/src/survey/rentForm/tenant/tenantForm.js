@@ -83,7 +83,7 @@ export default class Tenant extends Component {
         if (this.state.commute_type === null) {
             valid = false
         }
-        if (this.state.commute_type !== 'Work From Home') {
+        if (this.state.commute_type !== this.getCommuteId('Work From Home')) {
             if (this.state.full_address === null || this.state.street_address === null || this.state.city === null
                 || this.state.zip_code === null || this.state.state === null) {
                 valid = false
@@ -106,7 +106,7 @@ export default class Tenant extends Component {
                 [nameStripped]: value
             });
         }
-    }
+    };
 
     handleTenantPanelClick = () => {
         this.handleValidation();
@@ -326,8 +326,15 @@ export default class Tenant extends Component {
         }
     }
 
+    getCommuteId = (type) => {
+        if (this.props.commute_type_options) {
+            const commuteType = this.props.commute_type_options.filter(o => o.commute_type === type);
+            return commuteType[0].id;
+        }
+    };
+
     renderAddressInput = () => {
-        if (this.state.commute_type !== 'Work From Home') {
+        if (this.state.commute_type !== this.getCommuteId('Work From Home')) {
             return (
                 <div className="survey-question" id={`${this.state.tenant_identifier}-other-occupation-question`}>
                     <h2>What's the <span>street address</span>?</h2>
