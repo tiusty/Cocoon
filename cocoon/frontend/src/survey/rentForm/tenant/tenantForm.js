@@ -30,6 +30,8 @@ export default class Tenant extends Component {
             commute_type: null,
             driving_options: null,
             transit_options: [],
+            max_commute: 60,
+            min_commute: 0,
         }
     }
 
@@ -94,11 +96,23 @@ export default class Tenant extends Component {
                 || this.state.zip_code === null || this.state.state === null) {
                 valid = false
             }
+
+            // Make sure if the option is not work from home then the max commute is set
+            if (this.state.max_commute === null) {
+                valid = false
+            }
         }
 
         // Make sure if driving then driving options selected
         if (this.state.commute_type === this.getCommuteId('Driving')) {
             if (this.state.driving_options === null) {
+                valid = false
+            }
+        }
+
+        // Make sure a transit option is selected if transit is selected
+        if (this.state.commute_type === this.getCommuteId('Transit')) {
+            if (this.state.transit_options === null) {
                 valid = false
             }
         }
@@ -475,6 +489,25 @@ export default class Tenant extends Component {
         }
     };
 
+    renderCommuteLengthQuestion = (name) => {
+        if (this.state.commute_type !== this.getCommuteId('Work From Home'))
+            return (
+                <div className="survey-question" id={`${this.state.tenant_identifier}-desired_commute-question`}
+                     onBlur={(e) => {
+                         this.handleInputChange(e, 'number');
+                     }}>
+                    <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {name} want?
+                    </h2>
+                    <input className="col-md-12 survey-input"
+                           type="number"
+                           name={`${this.state.tenant_identifier}-max_commute`}
+                           placeholder="Time in minutes"
+                           value={this.state.max_commute || ''}
+                           onChange={(e) => {this.handleInputChange(e, 'number')}}/>
+                </div>
+            );
+    };
+
     render() {
         const name = this.props.tenantInfo.first_name;
         const tenant_identifier = this.state.tenant_identifier;
@@ -493,6 +526,7 @@ export default class Tenant extends Component {
                      onChange={() => this.handleValidation()}>
                     {this.renderOccupation(name)}
                     {this.renderCommuteTypeQuestion(name)}
+                    {this.renderCommuteLengthQuestion(name)}
                 </div>
             </>
         );
