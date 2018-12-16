@@ -115,6 +115,12 @@ export default class RentForm extends Component {
             data[key] = generalInfo[key]
         }
 
+        // Add amenities
+        let amenitiesInfo = this.state.amenitiesInfo;
+        for(let key in amenitiesInfo) {
+            data[key] = amenitiesInfo[key]
+        }
+
         // Combine the data with the state of main
         data = Object.assign({}, data, this.state);
 
