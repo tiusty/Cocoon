@@ -2,7 +2,7 @@ import React from 'react';
 import { Component } from 'react';
 
 import Progress from '../progress/index';
-import General from '../general/index';
+import GeneralForm from '../general/generalForm';
 import TenantsForm from '../tenant/tenantsForm';
 import Amenities from '../amenities/index';
 import Details from '../details/index';
@@ -19,7 +19,7 @@ export default class RentForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            step: 2,
+            step: 1,
 
             // General Form Fields
             number_of_tenants: 1,
@@ -35,20 +35,7 @@ export default class RentForm extends Component {
             latest_move_in: null,
             is_move_asap: null,
 
-            tenants: [
-                {
-                    first_name: 'Alex',
-                    last_name: 'Agudelo',
-                    id: 0,
-                    valid: false,
-                },
-                {
-                    first_name: 'Tomas',
-                    last_name: 'Jurgen',
-                    id: 1,
-                    valid: false,
-                },
-            ],
+            tenants: [],
             tenantsInfo: [],
             errors: {},
         };
@@ -126,11 +113,16 @@ export default class RentForm extends Component {
     renderForm = (step) => {
         switch (step) {
             case 1:
-                return <General
+                return <GeneralForm
                         handleNextStep={this.handleNextStep}
+                        onInputChange={this.handleInputChange}
+                        number_of_tenants={this.state.number_of_tenants}
+                        onHandleTenantName={this.handleTenantName}
+                        tenants={this.state.tenants}
+
+
                         setTenants={this.setTenants}
                         setFinalTenants={this.setFinalTenants}
-                        tenants={this.state.tenants}
                         setNumberOfTenants={this.setNumberOfTenants}
                         saveGeneralInfo={this.saveGeneralInfo}
                         generalInfo={this.state.generalInfo} />;
@@ -214,8 +206,52 @@ export default class RentForm extends Component {
         }, () => console.log(this.state.allAmenitiesInfo))
     };
 
+    handleInputChange = (e, type) => {
+        const { name, value } = e.target;
+        if(type === 'number') {
+            this.setState({
+                [name]: parseInt(value)
+            });
+        } else {
+            this.setState({
+                [name]: value
+            });
+        }
+    };
 
-    // HANDLE INPUTS //
+    // Splits name inputs into first and last names
+    handleTenantName = (e) => {
+        const { value } = e.target;
+        const first_name = value.split(' ').slice(0, -1).join(' ');
+        const last_name = value.split(' ').slice(-1).join(' ');
+        const index = e.target.dataset.tenantkey;
+        let tenants = [...this.state.tenants];
+
+        // Create a new tenant
+        if (this.state.tenants.length <= index) {
+            let new_tenant = {};
+            if(first_name){
+                new_tenant.first_name = first_name[0].toUpperCase() + first_name.substr(1);
+            }
+            if(last_name){
+                new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
+            }
+            new_tenant.id = parseInt(index);
+            new_tenant.valid = false;
+            tenants[index] = new_tenant;
+            this.setState({
+                tenants: tenants
+            });
+        // If the tenant already exists then just update that tenant
+        } else {
+            tenants[index].id = index;
+            tenants[index].first_name = first_name;
+            tenants[index].last_name = last_name;
+        }
+        this.setState({tenants});
+    }
+
+
     handleTenantInputChange = (e, type, tenant_identifier, id) => {
         const { name, value } = e.target;
         const nameStripped = name.replace(tenant_identifier+'-', '');
