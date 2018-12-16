@@ -26,7 +26,10 @@ export default class Tenant extends Component {
             zip_code: null,
             full_address: null,
 
-            commute_type: null
+            // Commute questions
+            commute_type: null,
+            driving_options: null,
+            transit_options: [],
         }
     }
 
@@ -79,13 +82,23 @@ export default class Tenant extends Component {
     }
 
     handleCommuteTypeValidation() {
+        // Make sure that the commute type is not null
         let valid = true;
         if (this.state.commute_type === null) {
             valid = false
         }
+
+        // If the option is not work from home then make sure the address fields are filled in
         if (this.state.commute_type !== this.getCommuteId('Work From Home')) {
             if (this.state.full_address === null || this.state.street_address === null || this.state.city === null
                 || this.state.zip_code === null || this.state.state === null) {
+                valid = false
+            }
+        }
+
+        // Make sure if driving then driving options selected
+        if (this.state.commute_type === this.getCommuteId('Driving')) {
+            if (this.state.driving_options === null) {
                 valid = false
             }
         }
@@ -195,6 +208,8 @@ export default class Tenant extends Component {
             return this.renderWorkingOccupation(name)
         } else if (this.state.occupation === 'other') {
             return this.renderOtherOccupation()
+        } else {
+            return null;
         }
     }
 
@@ -318,6 +333,7 @@ export default class Tenant extends Component {
                         )}
                     </div>
                     {this.renderAddressInput()}
+                    {this.renderCommuteTypeOptions()}
                 </>
 
             );
@@ -371,6 +387,92 @@ export default class Tenant extends Component {
             zip_code: formatZip,
             full_address: place.formatted_address
         })
+    };
+
+    renderCommuteTypeOptions() {
+        if (this.state.commute_type === this.getCommuteId('Driving')) {
+            return this.renderDrivingOptions()
+        } else if (this.state.commute_type === this.getCommuteId('Transit')) {
+            return this.renderTransitOptions()
+        } else {
+            return null;
+        }
+    }
+
+    renderDrivingOptions = () => {
+        return (
+            <div className="survey-question" id={`${this.state.tenant_identifier}-driving-follow-up-question`} onChange={(e) => {
+                this.handleInputChange(e, 'string');
+            }}>
+                <h2>What are the <span>driving options</span>?</h2>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-driving_options`} value="with-traffic"
+                           checked={this.state.driving_options === 'with-traffic'}
+                           onChange={() => {
+                           }}/>
+                    <div>With traffic</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-driving_options`} value="without-traffic"
+                           checked={this.state.driving_options === 'without-traffic'}
+                           onChange={() => {
+                           }}/>
+                    <div>Without traffic</div>
+                </label>
+            </div>
+        );
+    };
+
+    renderTransitOptions = () => {
+        return (
+            <div className="survey-question" id={`${this.state.tenant_identifier}-transit-follow-up-question`} onChange={(e) => {
+                this.setTransitType(e);
+            }}>
+                <h2>What form of <span>transit</span>?</h2>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name={`${this.state.tenant_identifier}-transit_options`} value="bus"
+                           checked={this.state.transit_options.some(i => i === 'bus')}
+                           onChange={() => {
+                           }}/>
+                    <div>Bus <i className="material-icons">check</i></div>
+                </label>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name={`${this.state.tenant_identifier}-transit_options`} value="train"
+                           checked={this.state.transit_options.some(i => i === 'train')}
+                           onChange={() => {
+                           }}/>
+                    <div>Train <i className="material-icons">check</i></div>
+                </label>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name={`${this.state.tenant_identifier}-transit_options`} value="commuter-rail"
+                           checked={this.state.transit_options.some(i => i === 'commuter-rail')}
+                           onChange={() => {
+                           }}/>
+                    <div>Commuter rail <i className="material-icons">check</i></div>
+                </label>
+            </div>
+        );
+    };
+
+    setTransitType = (e) => {
+        const {value, name} = e.target;
+        const nameStripped = name.replace(this.state.tenant_identifier+'-', '');
+        let transit_type = this.state.transit_options;
+        if(e.target.checked) {
+            transit_type.push(value);
+            this.setState({
+                [nameStripped]: transit_type
+            })
+        } else {
+            for(let i = 0; i < transit_type.length; i++) {
+                if(transit_type[i] === value) {
+                    transit_type.splice(i, 1);
+                    this.setState({
+                        [nameStripped]: transit_type
+                    })
+                }
+            }
+        }
     };
 
     render() {
