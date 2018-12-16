@@ -271,13 +271,13 @@ export default class Tenant extends Component {
     };
 
     renderCommutePrompt = (name) => {
-        if (this.state.occupation_type === 'other') {
+        if (this.state.occupation === 'other') {
             return (
                 <h2>Would {name} be using any <span>regular commute type</span>? ex. going into the city</h2>
             );
         } else {
             return (
-                <h2>How {this.props.index === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
+                <h2>How {this.props.id === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
             );
         }
     };
@@ -295,7 +295,9 @@ export default class Tenant extends Component {
                                        checked={this.state.commute_type === o.id}
                                        onChange={() => {
                                        }}/>
-                                <div>{o.commute_type}</div>
+                                <div>
+                                    {o.commute_type === 'Work From Home' && this.state.occupation === 'other' ? 'No' : o.commute_type}
+                                </div>
                             </label>
                         )
                     )}
