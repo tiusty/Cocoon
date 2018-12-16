@@ -55,6 +55,7 @@ export default class RentForm extends Component {
                 wants_cats: false,
                 cat_weight: 0,
                 wants_hardwood_floors: false,
+                hardwood_floors_weight: 0,
                 wants_AC: false,
                 wants_dishwasher: false,
                 wants_patio: false,

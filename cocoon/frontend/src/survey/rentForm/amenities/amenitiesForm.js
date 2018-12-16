@@ -234,6 +234,37 @@ export default class AmenitiesForm extends Component {
         }
     }
 
+    renderHardwoodFloorFollowUp() {
+        if (this.props.amenitiesInfo.wants_hardwood_floors) {
+            return (
+                <div className="survey-question"
+                     onChange={(e) => this.props.onInputChange(e, 'number')}>
+                    <h2>How badly do you want <span>hardwood floors</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="hardwood_floors_weight" value="1"
+                               checked={this.props.amenitiesInfo.hardwood_floors_weight === 1} onChange={() => {
+                        }}/>
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="hardwood_floors_weight" value="2"
+                               checked={this.props.amenitiesInfo.hardwood_floors_weight === 2} onChange={() => {
+                        }}/>
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="hardwood_floors_weight" value="3"
+                               checked={this.props.amenitiesInfo.hardwood_floors_weight === 3} onChange={() => {
+                        }}/>
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
     render() {
         return(
             <>
@@ -243,6 +274,7 @@ export default class AmenitiesForm extends Component {
                 {this.renderFurnishedFollowUp()}
                 {this.renderDogFollowup()}
                 {this.renderCatFollowUp()}
+                {this.renderHardwoodFloorFollowUp()}
             </>
         );
     }
