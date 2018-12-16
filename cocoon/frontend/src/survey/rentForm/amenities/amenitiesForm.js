@@ -136,6 +136,74 @@ export default class AmenitiesForm extends Component {
         }
     }
 
+    renderDogFollowup() {
+        if(this.props.amenitiesInfo.wants_dogs) {
+            return (
+                <>
+                    <div className="survey-question">
+                        <h2>How many <span>dogs</span>?</h2>
+                        <input className="col-md-12 survey-input" type="number" name="number_of_dogs"
+                               placeholder="Number of dogs"
+                               value={this.props.amenitiesInfo.number_of_dogs !== 0 ? this.props.amenitiesInfo.number_of_dogs : ''}
+                               onChange={(e) => {
+                                   this.props.onInputChange(e, 'number');
+                               }}/>
+                    </div>
+
+                    <div className="survey-question"
+                         onChange={(e) => {
+                             this.props.onInputChange(e, 'boolean');
+                         }}>
+                        <h2>{this.props.amenitiesInfo.number_of_dogs > 1 ? 'Are the dogs registered service dogs' : 'Is the dog a registered service dog'}?</h2>
+                        <label className="col-md-6 survey-label survey-checkbox">
+                            <input type="radio" name="service_dogs" value="yes"
+                                   checked={this.props.amenitiesInfo.service_dogs === true} onChange={() => {
+                            }}/>
+                            <div>Yes</div>
+                        </label>
+                        <label className="col-md-6 survey-label survey-checkbox">
+                            <input type="radio" name="service_dogs" value="no"
+                                   checked={this.props.amenitiesInfo.service_dogs === false} onChange={() => {
+                            }}/>
+                            <div>No</div>
+                        </label>
+                    </div>
+
+                    <div className="survey-question">
+                        <h2>What <span>{this.props.amenitiesInfo.number_of_dogs > 1 ? 'breeds' : 'breed'}</span>?</h2>
+                        <input className="col-md-12 survey-input" type="text" name="breed_of_dogs"
+                               placeholder={`Enter breed of ${this.props.amenitiesInfo.number_of_dogs > 1 ? 'dogs' : 'dog'}`}
+                               value={this.props.amenitiesInfo.breed_of_dogs || ''} onChange={(e) => {
+                            this.props.onInputChange(e, 'string');
+                        }}/>
+                    </div>
+
+                    <div className="survey-question"
+                         onChange={(e) => {
+                             this.props.onInputChange(e, 'string');
+                         }}>
+                        <h2>Does your {this.props.amenitiesInfo.number_of_dogs > 1 ? 'dogs' : 'dog'} <span>weigh more or less than 25 lbs</span>?
+                        </h2>
+                        <label className="col-md-6 survey-label">
+                            <input type="radio" name="dog_size" value="more-than-25"
+                                   checked={this.props.amenitiesInfo.dog_size === 'more-than-25'} onChange={() => {
+                            }}/>
+                            <div>More than</div>
+                        </label>
+                        <label className="col-md-6 survey-label">
+                            <input type="radio" name="dog_size" value="less-than-25"
+                                   checked={this.props.amenitiesInfo.dog_size === 'less-than-25'} onChange={() => {
+                            }}/>
+                            <div>Less than</div>
+                        </label>
+                    </div>
+                </>
+            );
+        } else {
+            return null
+        }
+    }
+
     render() {
         return(
             <>
@@ -143,6 +211,7 @@ export default class AmenitiesForm extends Component {
                 {this.renderAmenitiesQuestions()}
                 {this.renderParkingFollowUp()}
                 {this.renderFurnishedFollowUp()}
+                {this.renderDogFollowup()}
             </>
         );
     }
