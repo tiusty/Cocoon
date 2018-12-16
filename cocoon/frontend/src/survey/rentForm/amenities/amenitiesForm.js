@@ -265,6 +265,54 @@ export default class AmenitiesForm extends Component {
         }
     }
 
+    renderACFollowup() {
+        if (this.props.amenitiesInfo.wants_AC) {
+            return (
+                <div className="survey-question" onChange={(e) => {this.props.onInputChange(e, 'number');}}>
+                    <h2>How badly do you want <span>air conditioning</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="AC_weight" value="1" checked={this.props.amenitiesInfo.AC_weight === 1} onChange={() => {}} />
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="AC_weight" value="2" checked={this.props.amenitiesInfo.AC_weight === 2} onChange={() => {}} />
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="AC_weight" value="3" checked={this.props.amenitiesInfo.AC_weight === 3} onChange={() => {}} />
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
+    renderDishwasherFollowup() {
+        if(this.props.amenitiesInfo.wants_dishwasher) {
+            return (
+                <div className="survey-question" onChange={(e) => {this.props.onInputChange(e, 'number');}}>
+                    <h2>How badly do you want a <span>dishwasher</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="dishwasher_weight" value="1" checked={this.props.amenitiesInfo.dishwasher_weight === 1} onChange={() => {}} />
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="dishwasher_weight" value="2" checked={this.props.amenitiesInfo.dishwasher_weight === 2} onChange={() => {}} />
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="dishwasher_weight" value="3" checked={this.props.amenitiesInfo.dishwasher_weight === 3} onChange={() => {}} />
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
     render() {
         return(
             <>
@@ -275,6 +323,8 @@ export default class AmenitiesForm extends Component {
                 {this.renderDogFollowup()}
                 {this.renderCatFollowUp()}
                 {this.renderHardwoodFloorFollowUp()}
+                {this.renderACFollowup()}
+                {this.renderDishwasherFollowup()}
             </>
         );
     }
