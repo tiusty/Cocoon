@@ -307,7 +307,7 @@ export default class RentForm extends Component {
             });
         // If the tenant already exists then just update that tenant
         } else {
-            tenants[index].id = index;
+            tenants[index].id = parseInt(index);
             tenants[index].first_name = first_name;
             tenants[index].last_name = last_name;
         }
@@ -319,6 +319,8 @@ export default class RentForm extends Component {
         const { name, value } = e.target;
         const nameStripped = name.replace(tenant_identifier+'-', '');
         let tenants = [...this.state.tenants];
+        console.log(nameStripped)
+        console.log(id)
         for (let i=0; i<this.state.tenants.length; i++) {
             if (tenants[id].id === i) {
                 if(type === 'number') {

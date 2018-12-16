@@ -37,7 +37,7 @@ export default class GeneralForm extends Component {
         valid = valid && this.handleDatePickerValidation();
         console.log(valid)
         valid = valid && this.handleUrgencyValidation();
-        valid = valid && this.handleBedroomValidation()
+        valid = valid && this.handleBedroomValidation();
         return valid
     };
 
