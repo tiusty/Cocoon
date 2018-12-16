@@ -62,6 +62,9 @@ export default class GeneralForm extends Component {
         if (!this.props.max_price) {
             valid = false
         }
+        if (!this.props.price_weight) {
+            valid = false
+        }
         return valid
     }
 
@@ -169,6 +172,39 @@ export default class GeneralForm extends Component {
         );
     }
 
+    renderPriceWeightQuestion() {
+        return (
+            <div className="survey-question" onChange={(e) =>this.props.onGeneralInputChange(e, 'number')}>
+                <h2>How <span>important is the price</span>?</h2>
+                <span className="col-md-12 survey-error-message" id="price_weight_error">You must choose how much you care about the price.</span>
+                <label className="col-md-4 survey-label">
+                    <input type="radio" name="price_weight" value="0" checked={this.props.generalInfo.price_weight === 0} onChange={() => {}} />
+                    <div>Don’t care</div>
+                </label>
+                <label className="col-md-4 survey-label">
+                    <input type="radio" name="price_weight" value="1" checked={this.props.generalInfo.price_weight === 1} onChange={() => {}} />
+                    <div>Slightly care</div>
+                </label>
+                <label className="col-md-4 survey-label">
+                    <input type="radio" name="price_weight" value="2" checked={this.props.generalInfo.price_weight === 2} onChange={() => {}} />
+                    <div>Cares</div>
+                </label>
+                <label className="col-md-4 survey-label">
+                    <input type="radio" name="price_weight" value="3" checked={this.props.generalInfo.price_weight === 3} onChange={() => {}} />
+                    <div>Really care</div>
+                </label>
+                <label className="col-md-4 survey-label">
+                    <input type="radio" name="price_weight" value="4" checked={this.props.generalInfo.price_weight === 4} onChange={() => {}} />
+                    <div>Super important</div>
+                </label>
+                <label className="col-md-4 survey-label">
+                    <input type="radio" name="price_weight" value="5" checked={this.props.generalInfo.price_weight === 5} onChange={() => {}} />
+                    <div>Top priority!</div>
+                </label>
+            </div>
+        );
+    }
+
     handleNextButtonAction(e) {
         if(this.handleValidation()) {
             // this.props.handleNextStep(e)
@@ -182,6 +218,7 @@ export default class GeneralForm extends Component {
                 {this.renderNameQuestion()}
                 {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
+                {this.renderPriceWeightQuestion()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
                     Next

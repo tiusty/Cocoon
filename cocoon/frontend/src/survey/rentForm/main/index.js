@@ -30,6 +30,7 @@ export default class RentForm extends Component {
                 num_bedrooms: null,
                 desired_price: 1000,
                 max_price: 3000,
+                price_weight: 0,
                 min_bathrooms: 1,
                 max_bathrooms: 6,
                 parking_spot: 0,
@@ -119,6 +120,7 @@ export default class RentForm extends Component {
                 return <GeneralForm
                         handleNextStep={this.handleNextStep}
                         onInputChange={this.handleInputChange}
+                        onGeneralInputChange={this.handleGeneralInputChange}
                         number_of_tenants={this.state.number_of_tenants}
                         onHandleTenantName={this.handleTenantName}
                         tenants={this.state.tenants}
@@ -223,6 +225,17 @@ export default class RentForm extends Component {
                 [name]: value
             });
         }
+    };
+
+    handleGeneralInputChange = (e, type) => {
+        const { name, value } = e.target;
+        let generalInfo = this.state.generalInfo;
+        if(type === 'number') {
+            generalInfo[name] = parseInt(value);
+        } else {
+            generalInfo[name] = value
+        }
+        this.setState({generalInfo})
     };
 
     setHomeTypes = (e, index, id) => {
