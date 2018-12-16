@@ -41,6 +41,7 @@ export default class AmenitiesForm extends Component {
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_parking}/>
                     <div>Parking spot <i className="material-icons">check</i></div>
                 </label>
+                {this.renderParkingFollowUp()}
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="wants_furnished" value="wantsFurnished"
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_furnished}/>
@@ -93,6 +94,23 @@ export default class AmenitiesForm extends Component {
                 </label>
             </div>
         );
+    }
+
+    renderParkingFollowUp() {
+        if (this.props.amenitiesInfo.wants_parking) {
+            return (
+                <div className="survey-question">
+                    <h3>How many <span>cars</span> do you have?</h3>
+                    <input className="col-md-12 survey-input" type="number" name="number_of_cars"
+                           placeholder="Number of cars"
+                           value={this.props.amenitiesInfo.number_of_cars !== 0 ? this.props.amenitiesInfo.number_of_cars : ''} onChange={(e) => {
+                        this.props.onInputChange(e, 'number');
+                    }}/>
+                </div>
+            );
+        } else {
+            return null
+        }
     }
 
     render() {

@@ -53,7 +53,8 @@ export default class RentForm extends Component {
                 wants_patio: false,
                 wants_pool: false,
                 wants_gym: false,
-                wants_storage: false
+                wants_storage: false,
+                number_of_cars: 0,
             },
 
             tenants: [],
