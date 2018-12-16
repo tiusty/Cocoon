@@ -95,6 +95,39 @@ export default class Tenant extends Component {
         return classes
     }
 
+
+    // Rendering functions //
+    renderOccupation() {
+        return (
+            <div className="survey-question" onChange={(e) => {this.handleInputChange(e, 'string');}}>
+                <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
+                </h2>
+                <span className="col-md-12 survey-error-message" id={`${this.state.tenant_identifier}-occupation-error`}>You must select an occupation type.</span>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-occupation`} value="working"
+                           checked={this.state.occupation === 'working'}
+                           onChange={() => {}}
+                    />
+                    <div>Working</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-occupation`} value="studying"
+                           checked={this.state.occupation === 'studying'}
+                           onChange={() => {}}
+                    />
+                    <div>Studying</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-occupation`} value="other"
+                           checked={this.state.occupation === 'other'}
+                           onChange={() => {}}
+                    />
+                    <div>Other</div>
+                </label>
+            </div>
+        );
+    }
+
     render() {
         const name = this.props.tenantInfo.first_name;
         const tenant_identifier = this.state.tenant_identifier;
@@ -111,34 +144,7 @@ export default class Tenant extends Component {
                 </div>
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
                      onChange={() => this.handleValidation()}>
-                    <div className="survey-question" onChange={(e) => {
-                        this.handleInputChange(e, 'string');
-                    }}>
-                        <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
-                        </h2>
-                        <span className="col-md-12 survey-error-message" id={`${tenant_identifier}-occupation-error`}>You must select an occupation type.</span>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenant_identifier}-occupation`} value="working"
-                                   checked={this.state.occupation === 'working'}
-                                   onChange={() => {}}
-                                   />
-                            <div>Working</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenant_identifier}-occupation`} value="studying"
-                                   checked={this.state.occupation === 'studying'}
-                                   onChange={() => {}}
-                                   />
-                            <div>Studying</div>
-                        </label>
-                        <label className="col-md-6 survey-label">
-                            <input type="radio" name={`${tenant_identifier}-occupation`} value="other"
-                                   checked={this.state.occupation === 'other'}
-                                   onChange={() => {}}
-                                   />
-                            <div>Other</div>
-                        </label>
-                    </div>
+                    {this.renderOccupation()}
                 </div>
             </>
         );
