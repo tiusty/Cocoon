@@ -65,10 +65,55 @@ export default class Tenants extends Component {
         }
     };
 
-    tenantValid = (tenant_id, valid) => {
+    initializeTenant = (id) => {
+        let tenants = [...this.state.tenants];
+        for (let i = 0; i < this.state.tenants.length; i++) {
+            if (tenants[i].id === id) {
+                tenants[i].tenant_identifier = 'tenant-' + id;
+                tenants[i].valid = false;
+
+                // Survey questions state
+                tenants[i].occupation = null;
+                tenants[i].new_job = null;
+
+                tenants[i].other_occupation_reason = null;
+                tenants[i].unemployed_follow_up = null;
+
+                // Address
+                tenants[i].street_address = null;
+                tenants[i].city = null;
+                tenants[i].state = null;
+                tenants[i].zip_code = null;
+                tenants[i].full_address = null;
+
+                // Commute questions
+                tenants[i].commute_type = null;
+                tenants[i].driving_options = null;
+                tenants[i].transit_options = [];
+                tenants[i].max_commute = 60;
+                tenants[i].min_commute = 0;
+                tenants[i].commute_weight = 0;
+
+                //Other
+                tenants[i].income = null;
+                tenants[i].credit_score = null;
+
+            }
+            this.setState({tenants});
+        };
+    };
+
+    // VALIDATION FUNCTIONS //
+    handleValidation = (id) => {
+        let valid = true;
+        valid = valid && this.handleOccupationValidation(id);
+        valid = valid && this.handleOccupationFollowupValidation(id);
+        valid = valid && this.handleCommuteTypeValidation(id);
+        valid = valid && this.handleFinancialValidation(id);
+
         let tenants = [...this.state.tenants];
         for (let i=0; i<this.state.tenants.length; i++ ) {
-            if (tenants[i].id === tenant_id) {
+            if (tenants[i].id === id) {
                 if (tenants[i].valid !== valid) {
                     tenants[i].valid = valid;
                     this.setState({
@@ -78,6 +123,82 @@ export default class Tenants extends Component {
             }
         }
     };
+
+    handleOccupationValidation(id) {
+        let valid = true;
+        if (!this.state.tenants[id].occupation) {
+            valid = false;
+        }
+        return valid
+    }
+
+    handleOccupationFollowupValidation(id) {
+        let valid = true;
+        if (this.state.tenants[id].occupation === 'working') {
+            if (!this.state.tenants[id].new_job) {
+                valid = false;
+            }
+        } else if (this.state.tenants[id].occupation === 'other') {
+            if (!this.state.tenants[id].other_occupation_reason) {
+                valid = false
+            } else if (this.state.tenants[id].other_occupation_reason === 'unemployed' && !this.props.tenant.unemployed_follow_up) {
+                valid = false
+            }
+        }
+        return valid
+    }
+
+    handleCommuteTypeValidation(id) {
+        // Make sure that the commute type is not null
+        let valid = true;
+        if (this.state.tenants[id].commute_type === null) {
+            valid = false
+        }
+
+        // If the option is not work from home then make sure the address fields are filled in
+        if (this.state.tenants[id].commute_type !== this.getCommuteId('Work From Home')) {
+            if (this.state.tenants[id].full_address === null || this.state.tenants[id].street_address === null || this.state.tenants[id].city === null
+                || this.state.tenants[id].zip_code === null || this.state.tenants[id].state === null) {
+                valid = false
+            }
+
+            // Make sure if the option is not work from home then the max commute is set
+            if (this.state.tenants[id].max_commute === null) {
+                valid = false
+            }
+
+            if (this.state.tenants[id].commute_weight < 0 || this.state.tenants[id].commute_weight > 6) {
+                valid = false
+            }
+        }
+
+        // Make sure if driving then driving options selected
+        if (this.state.tenants[id].commute_type === this.getCommuteId('Driving')) {
+            if (this.state.tenants[id].driving_options === null) {
+                valid = false
+            }
+        }
+
+        // Make sure a transit option is selected if transit is selected
+        if (this.state.tenants[id].commute_type === this.getCommuteId('Transit')) {
+            if (this.state.tenants[id].transit_options === null) {
+                valid = false
+            }
+        }
+        return valid
+    }
+
+    handleFinancialValidation() {
+        let valid = true;
+        if (this.state.tenants[id].income === null) {
+            valid = false
+        }
+
+        if (this.state.tenants[id].credit_score === null) {
+            valid = false
+        }
+        return valid
+    }
 
     isAllValid = () => {
         let valid = true;
@@ -95,6 +216,30 @@ export default class Tenants extends Component {
         }
     }
 
+    // HANDLE INPUTS //
+    handleInputChange = (e, type, tenant_identifier, id) => {
+        const { name, value } = e.target;
+        const nameStripped = name.replace(tenant_identifier+'-', '');
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.tenants.length; i++) {
+            if (tenants[id].id === i) {
+                if(type === 'number') {
+                    tenants[id][nameStripped] = parseInt(value)
+                } else {
+                    tenants[id][nameStripped] = value
+                }
+            }
+        }
+        this.setState({tenants})
+    };
+
+    getCommuteId = (type) => {
+        if (this.state.commute_type_options) {
+            const commuteType = this.state.commute_type_options.filter(o => o.commute_type === type);
+            return commuteType[0].id;
+        }
+    };
+
     render() {
         return (
             <>
@@ -103,8 +248,10 @@ export default class Tenants extends Component {
                         key={t.id}
                         id={t.id}
                         tenant={t}
+                        initTenant={this.initializeTenant}
                         commute_type_options={this.state.commute_type_options}
-                        tenantValid={this.tenantValid}
+                        onInputChange={this.handleInputChange}
+                        onHandleValidation={this.handleValidation}
                     />
                 )}
                 <div className="row survey-btn-wrapper">
