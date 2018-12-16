@@ -34,8 +34,8 @@ export default class RentForm extends Component {
                 min_bathrooms: 1,
                 max_bathrooms: 6,
                 parking_spot: 0,
-                earliest_move_in: null,
-                latest_move_in: null,
+                earliest_move_in: undefined,
+                latest_move_in: undefined,
                 is_move_asap: '',
             },
 
@@ -127,6 +127,8 @@ export default class RentForm extends Component {
                         generalInfo={this.state.generalInfo}
                         setHomeTypes={this.setHomeTypes}
                         setPrice={this.setPrice}
+                        handleEarliestClick={this.handleEarliestClick}
+                        handleLatestClick={this.handleLatestClick}
 
 
                         setTenants={this.setTenants}
@@ -236,6 +238,24 @@ export default class RentForm extends Component {
             generalInfo[name] = value
         }
         this.setState({generalInfo})
+    };
+
+    handleEarliestClick = (day, { selected }) => {
+        let generalInfo = this.state.generalInfo;
+        generalInfo['earliest_move_in'] = selected ? null : day;
+        this.setState({generalInfo});
+    };
+
+    handleLatestClick = (day, { selected }) => {
+        let generalInfo = this.state.generalInfo;
+        generalInfo['latest_move_in'] = selected ? null : day;
+        this.setState({generalInfo});
+    };
+
+    setSurveyState = (state, value) => {
+        this.setState({
+            [state]: value
+        });
     };
 
     setHomeTypes = (e, index, id) => {

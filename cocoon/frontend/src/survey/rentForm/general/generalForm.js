@@ -2,6 +2,7 @@ import React from 'react';
 import { Component } from 'react';
 import axios from "axios";
 import InputRange from 'react-input-range';
+import DayPickerInput from 'react-day-picker/DayPickerInput';
 
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
@@ -26,9 +27,15 @@ export default class GeneralForm extends Component {
     handleValidation = () => {
         let valid = true;
         valid = valid && this.handleNameValidation();
+        console.log(valid)
         valid = valid && this.handleHomeTypeValidation();
+        console.log(valid)
         valid = valid && this.handlePriceValidation();
+        console.log(valid)
         valid = valid && this.handleMoveAsapValidation();
+        console.log(valid)
+        valid = valid && this.handleDatePickerValidation();
+        console.log(valid)
         return valid
     };
 
@@ -56,13 +63,13 @@ export default class GeneralForm extends Component {
 
     handlePriceValidation() {
         let valid = true;
-        if (!this.props.desired_price) {
+        if (this.props.desired_price < 0) {
             valid = false
         }
-        if (!this.props.max_price) {
+        if (this.props.max_price < 0) {
             valid = false
         }
-        if (!this.props.price_weight) {
+        if (this.props.price_weight < 0) {
             valid = false
         }
         return valid
@@ -72,6 +79,17 @@ export default class GeneralForm extends Component {
         let valid = true;
         if (!this.props.generalInfo.is_move_asap === 'no' || !this.props.generalInfo.is_move_asap === 'yes') {
             valid = false
+        }
+        return valid
+    }
+
+    handleDatePickerValidation() {
+        let valid = true;
+        if (this.props.generalInfo.is_move_asap !== 'yes') {
+            if (this.props.generalInfo.earliest_move_in === undefined ||
+            this.props.generalInfo.latest_move_in === undefined) {
+                valid  = false
+            }
         }
         return valid
     }
@@ -230,6 +248,31 @@ export default class GeneralForm extends Component {
         );
     }
 
+    renderDatePickingQuestion() {
+        if (this.props.generalInfo.is_move_asap !== "yes") {
+            return (
+                <>
+                    <h2>When are you wanting to <span>move in</span>?</h2>
+                    <span className="col-md-12 survey-error-message" id="date_error">You must select an earliest and latest move in date.</span>
+                    <div className="col-md-6 date-wrapper">
+                        <DayPickerInput
+                            placeholder={'Earliest'}
+                            onDayChange={this.props.handleEarliestClick}
+                            value={this.props.generalInfo.earliest_move_in} onChange={() => {}} />
+                    </div>
+                    <div className="col-md-6 date-wrapper">
+                        <DayPickerInput
+                            placeholder={'Latest'}
+                            onDayChange={this.props.handleLatestClick}
+                            value={this.props.generalInfo.latest_move_in} onChange={() => {}} />
+                    </div>
+                </>
+            );
+        } else {
+            return null
+        }
+    }
+
     handleNextButtonAction(e) {
         if(this.handleValidation()) {
             this.props.handleNextStep(e)
@@ -245,6 +288,7 @@ export default class GeneralForm extends Component {
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
                 {this.renderMoveAsapQuestion()}
+                {this.renderDatePickingQuestion()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
                     Next
