@@ -90,7 +90,7 @@ class ClientScheduler extends Component {
                                 id={this.state.id}
                             />
                         </div>
-                        <div className='col-md-8'>
+                        <div className='col-md-6 col-md-offset-2'>
                             {this.renderTimeSelector()}
                         </div>
                     </div>

@@ -6,10 +6,27 @@ import { Component } from 'react';
 import ItineraryDaySelector from "./itineraryDaySelector";
 
 export default class ItineraryTimeSelector extends Component {
+    state = {
+        days: 6,
+    };
+
+    renderEachDay()  {
+        let time_selectors = [];
+        for (let i =0; i < this.state.days; i++) {
+            time_selectors.push(<ItineraryDaySelector/>)
+        }
+        return time_selectors
+    }
 
     render() {
         return(
-            <ItineraryDaySelector/>
+            <>
+                    {this.renderEachDay().map(d =>
+                        <div className="row">
+                            {d}
+                        </div>
+                    )}
+            </>
         );
     }
 }
