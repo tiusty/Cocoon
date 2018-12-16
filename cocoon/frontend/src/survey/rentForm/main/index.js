@@ -124,7 +124,7 @@ export default class RentForm extends Component {
         if (detailsData !== null) {
             userData['first_name'] = this.state.first_name;
             userData['last_name'] = this.state.last_name;
-            for(let key in detailsData) {
+            for(let key in userData) {
                 data[key] = userData[key]
             }
         }
