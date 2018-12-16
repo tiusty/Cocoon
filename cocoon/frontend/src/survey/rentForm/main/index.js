@@ -19,9 +19,15 @@ export default class RentForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            step: 1,
+            step: 2,
             number_of_tenants: 1,
-            tenants: [],
+            tenants: [
+                {
+                    first_name: 'Alex',
+                    last_name: 'Agudelo',
+                    id: 0,
+                }
+            ],
             errors: {},
             tenants_TOTAL_FORMS: 0,
             tenants_INITIAL_FORMS: 0,
@@ -148,7 +154,7 @@ export default class RentForm extends Component {
         let new_tenant = {};
         new_tenant.first_name = first_name[0].toUpperCase() + first_name.substr(1);
         new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
-        new_tenant.id = parseInt(index)
+        new_tenant.id = parseInt(index);
         tenants[index] = new_tenant;
         this.setState({
             tenants: tenants

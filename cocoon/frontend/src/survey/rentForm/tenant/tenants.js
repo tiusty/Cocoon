@@ -3,6 +3,7 @@ import { Component } from 'react';
 import axios from "axios";
 
 import commutes_endpoints from "../../../endpoints/commutes_endpoints";
+import Tenant from "./tenantForm";
 
 export default class Tenants extends Component {
     /**
@@ -25,14 +26,13 @@ export default class Tenants extends Component {
     componentDidMount() {
         this.setState({
             tenants: this.props.tenants_names,
-        })
+        });
 
         // Retrieve all the commute type options
         axios.get(commutes_endpoints['commute_types'])
             .then(res => {
                 const commute_type_options = res.data;
                 this.setState({ commute_type_options });
-                console.log(commute_type_options)
             });
     }
 
@@ -65,6 +65,13 @@ export default class Tenants extends Component {
     render() {
         return (
             <>
+                {this.state.tenants.map(t =>
+                    <Tenant
+                        key={t.id}
+                        id={t.id}
+                        tenantInfo={t}
+                    />
+                )}
                 <div className="row survey-btn-wrapper">
                     <div className="col-sm-6 col-xs-12">
                         <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}} >
