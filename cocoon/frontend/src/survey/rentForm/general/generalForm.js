@@ -18,6 +18,36 @@ export default class GeneralForm extends Component {
             });
     };
 
+    handleValidation = () => {
+        let valid = true;
+        valid = valid && this.handleNameValidation();
+        valid = valid && this.handleHomeTypeValidation();
+        console.log(valid)
+        return valid
+    };
+
+    handleNameValidation() {
+        let valid = true;
+        if (this.props.tenants.length < this.props.number_of_tenants) {
+            valid = false
+        } else {
+            for(let i=0; i<this.props.number_of_tenants; i++) {
+                if(!this.props.tenants[i].first_name || !this.props.tenants[i].last_name) {
+                    valid = false
+                }
+            }
+        }
+        return valid
+    }
+
+    handleHomeTypeValidation() {
+        let valid = true;
+        if (this.props.generalInfo.home_type.length === 0) {
+            valid = false
+        }
+        return valid
+    }
+
     renderNumberOfPeopleQuestion() {
         return (
             <div className="survey-question" onChange={(e) => this.props.onInputChange(e, 'number')}>
@@ -96,12 +126,22 @@ export default class GeneralForm extends Component {
         }
     }
 
+    handleNextButtonAction(e) {
+        if(this.handleValidation()) {
+            // this.props.handleNextStep(e)
+        }
+    }
+
     render() {
         return (
             <>
                 {this.renderNumberOfPeopleQuestion()}
                 {this.renderNameQuestion()}
                 {this.renderHomeTypeQuestion()}
+
+                <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
+                    Next
+                </button>
             </>
         );
     }
