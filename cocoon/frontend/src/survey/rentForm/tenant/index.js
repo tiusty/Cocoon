@@ -5,7 +5,7 @@ import TenantForm from './tenantForm/index';
 import axios from "axios";
 import commutes_endpoints from "../../../endpoints/commutes_endpoints";
 
-export default class Tenant extends Component {
+export default class TenantOld extends Component {
 
     constructor(props) {
         super(props);
@@ -42,9 +42,13 @@ export default class Tenant extends Component {
     }
 
     isAllValid = () => {
+        console.log('In is all valid function!!')
+        console.log(Object.values(this.state))
         if(Object.values(this.state).every(Boolean)) {
+            console.log('true in all valid')
             return true;
         } else {
+            console.log('false in all valid')
             return false;
         }
     }
@@ -102,6 +106,16 @@ export default class Tenant extends Component {
         this.setState({
             [`${tenantId}-commute_type`]: commute_type
         });
+    }
+
+    handleNextButtonClick(e) {
+         if (this.isAllValid()) {
+             console.log('is valid');
+             this.props.saveTenantInfo(this.state);
+             this.props.handleNextStep(e)
+         } else {
+             console.log('not valid')
+         }
     }
 
     render(){

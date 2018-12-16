@@ -3,7 +3,7 @@ import { Component } from 'react';
 
 import Progress from '../progress/index';
 import General from '../general/index';
-import Tenant from '../tenant/index';
+import Tenants from '../tenant/tenants';
 import Amenities from '../amenities/index';
 import Details from '../details/index';
 
@@ -20,6 +20,7 @@ export default class RentForm extends Component {
         super(props);
         this.state = {
             step: 1,
+            number_of_tenants: 1,
             tenants: [],
             errors: {},
             tenants_TOTAL_FORMS: 0,
@@ -98,10 +99,10 @@ export default class RentForm extends Component {
                         saveGeneralInfo={this.saveGeneralInfo}
                         generalInfo={this.state.generalInfo} />;
             case 2:
-                return <Tenant
+                return <Tenants
                         handleNextStep={this.handleNextStep}
                         handlePrevStep={this.handlePrevStep}
-                        tenants={this.state.tenants}
+                        tenants_names={this.state.tenants}
                         number_of_tenants={this.state.number_of_tenants}
                         saveTenantInfo={this.saveTenantInfo}
                         allTenantInfo={this.state.allTenantInfo} />;
@@ -169,6 +170,7 @@ export default class RentForm extends Component {
 
     // Saves the data from the tenant tab to repopulate fields with
     saveTenantInfo = (data) => {
+        console.log('in saveTenantInfo')
         let submitData = data;
         submitData['tenants-INITIAL_FORMS'] = this.state.tenants_INITIAL_FORMS;
         submitData['tenants-MAX_NUM_FORMS'] = this.state.tenants_MAX_NUM_FORMS;
