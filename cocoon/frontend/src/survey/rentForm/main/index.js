@@ -41,7 +41,7 @@ export default class RentForm extends Component {
         this.state['tenants-INITIAL_FORMS'] = 0;
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
-        this.state['tenants-TOTAL_FORMS'] = this.props.number_of_tenants;
+        this.state['tenants-TOTAL_FORMS'] = this.state.number_of_tenants;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -63,7 +63,15 @@ export default class RentForm extends Component {
          *      otherwise it will return the form errors
          */
 
-        let data = this.state;
+        let data = {};
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.number_of_tenants; i++) {
+            for(let key in tenants[i]) {
+                data[tenants[i].tenant_identifier + '-' + key] = tenants[i][key]
+            }
+        }
+
+        data = Object.assign({}, data, this.state);
 
         // Add first and last name to details data
         let userData = detailsData;

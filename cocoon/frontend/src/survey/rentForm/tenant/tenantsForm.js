@@ -14,7 +14,8 @@ export default class TenantsForm extends Component {
      */
     state = {
         commute_type_options: null,
-    }
+    };
+
     componentDidMount() {
         // Retrieve all the commute type options
         axios.get(commutes_endpoints['commute_types'])
