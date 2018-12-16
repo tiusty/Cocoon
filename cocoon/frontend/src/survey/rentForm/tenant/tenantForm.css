@@ -12,6 +12,8 @@
     border-bottom: 1px solid var(--borderColor);
 }
 
+
+
 /***** TENANT QUESTIONS/PANEL *****/
 .tenant-panel {
     padding: 30px;
@@ -48,7 +50,11 @@
 }
 
 .tenant-questions {
-    border-bottom: 1px solid var(--borderColor);
     flex-direction: column;
     padding-bottom: 30px;
+}
+
+.tenant-questions-active {
+    display: flex;
+    border-bottom: 1px solid var(--borderColor);
 }

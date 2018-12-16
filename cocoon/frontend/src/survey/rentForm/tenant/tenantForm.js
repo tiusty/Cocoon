@@ -8,7 +8,7 @@ export default class Tenant extends Component {
     constructor(props){
         super(props);
         this.state = {
-            is_active: true,
+            is_active: false,
             occupation_type: null,
             other_occupation_reason: null,
             commute_type: null
@@ -57,25 +57,38 @@ export default class Tenant extends Component {
     handleTenantIconClasses = () => {
         let classes = 'material-icons ';
         if (this.handleValidation()) {
-            return classes + 'valid-panel'
+            classes = classes + 'valid-panel'
         } else {
-            return  classes + 'invalid-panel'
+            classes = classes + 'invalid-panel'
         }
+        return classes
     };
+
+    handleTenantQuesitonClasses() {
+        let classes = "tenant-questions ";
+        if (this.state.is_active) {
+            classes = classes + "tenant-questions-active"
+        }
+        return classes
+    }
 
     render() {
         const name = this.props.tenantInfo.first_name;
         const tenant_identifier = `tenants-${this.props.id}`;
         return (
-            <div className={this.handleTenantPanelClasses()} onClick={this.handleTenantPanelClick}>
-                <div className="tenant-panel-left">
-                    <i className={this.handleTenantIconClasses()}>
-                        {this.handleTenantPanelIcon()}
-                    </i>
-                    <span>{name}'s Info</span>
+            <>
+                <div className={this.handleTenantPanelClasses()} onClick={this.handleTenantPanelClick}>
+                    <div className="tenant-panel-left">
+                        <i className={this.handleTenantIconClasses()}>
+                            {this.handleTenantPanelIcon()}
+                        </i>
+                        <span>{name}'s Info</span>
+                    </div>
+                    <span><i className="material-icons">{this.state.isActive ? 'remove' : 'add'}</i></span>
                 </div>
-                <span><i className="material-icons">{this.state.isActive ? 'remove' : 'add'}</i></span>
-            </div>
+                <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuesitonClasses()} onChange={(e) => this.handleValidation(`tenants-${this.props.index}-questions`)}>
+                </div>
+            </>
         );
     }
 }
