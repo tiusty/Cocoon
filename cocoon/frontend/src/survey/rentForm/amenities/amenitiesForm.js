@@ -1,5 +1,5 @@
 import React from 'react';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 
 export default class AmenitiesForm extends Component {
 
@@ -32,7 +32,7 @@ export default class AmenitiesForm extends Component {
         );
     }
 
-    renderAmenetiesQuestions() {
+    renderAmenitiesQuestions() {
         return (
             <div className="survey-question">
                 <h2>Which of the following <span>amenities</span> do you want?</h2>
@@ -41,7 +41,6 @@ export default class AmenitiesForm extends Component {
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_parking}/>
                     <div>Parking spot <i className="material-icons">check</i></div>
                 </label>
-                {this.renderParkingFollowUp()}
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="wants_furnished" value="wantsFurnished"
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_furnished}/>
@@ -113,11 +112,37 @@ export default class AmenitiesForm extends Component {
         }
     }
 
+    renderFurnishedFollowUp() {
+        if (this.props.amenitiesInfo.wants_furnished) {
+            return (
+                <div className="survey-question" onChange={(e) => {this.props.onInputChange(e, 'number');}}>
+                    <h2>How badly do you need it to be <span>furnished</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="furnished_weight" value="1" checked={this.props.amenitiesInfo.furnished_weight === 1} onChange={() => {}} />
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="furnished_weight" value="2" checked={this.props.amenitiesInfo.furnished_weight === 2} onChange={() => {}} />
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="furnished_weight" value="3" checked={this.props.amenitiesInfo.furnished_weight === 3} onChange={() => {}} />
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
     render() {
         return(
             <>
                 {this.renderLaundryQuestion()}
-                {this.renderAmenetiesQuestions()}
+                {this.renderAmenitiesQuestions()}
+                {this.renderParkingFollowUp()}
+                {this.renderFurnishedFollowUp()}
             </>
         );
     }

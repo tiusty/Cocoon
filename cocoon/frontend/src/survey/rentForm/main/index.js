@@ -44,7 +44,9 @@ export default class RentForm extends Component {
                 wants_laundry_in_building: false,
                 wants_laundry_nearby: false,
                 wants_parking: false,
+                number_of_cars: 0,
                 wants_furnished: false,
+                furnished_weight: 0,
                 wants_dogs: false,
                 wants_cats: false,
                 wants_hardwood_floors: false,
@@ -54,7 +56,6 @@ export default class RentForm extends Component {
                 wants_pool: false,
                 wants_gym: false,
                 wants_storage: false,
-                number_of_cars: 0,
             },
 
             tenants: [],
@@ -228,7 +229,11 @@ export default class RentForm extends Component {
         const {name, value} = e.target;
         let amenitiesInfo = this.state.amenitiesInfo;
         if (type === 'number') {
-            amenitiesInfo[name] = parseInt(value);
+            if(value) {
+                amenitiesInfo[name] = parseInt(value);
+            } else {
+                amenitiesInfo[name] = 0;
+            }
         } else if (type === 'boolean') {
             amenitiesInfo[name] = !amenitiesInfo[name]
         } else {
