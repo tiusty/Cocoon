@@ -26,11 +26,13 @@ export default class RentForm extends Component {
                     first_name: 'Alex',
                     last_name: 'Agudelo',
                     id: 0,
+                    valid: false,
                 },
                 {
                     first_name: 'Tomas',
                     last_name: 'Jurgen',
                     id: 1,
+                    valid: false,
                 },
             ],
             errors: {},
@@ -115,8 +117,8 @@ export default class RentForm extends Component {
                         handlePrevStep={this.handlePrevStep}
                         tenants_names={this.state.tenants}
                         number_of_tenants={this.state.number_of_tenants}
-                        saveTenantInfo={this.saveTenantInfo}
-                        allTenantInfo={this.state.allTenantInfo} />;
+                        save={this.saveGeneralInfo}
+                />;
             case 3:
                 return <Amenities
                         handleNextStep={this.handleNextStep}
@@ -160,6 +162,7 @@ export default class RentForm extends Component {
         new_tenant.first_name = first_name[0].toUpperCase() + first_name.substr(1);
         new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
         new_tenant.id = parseInt(index);
+        new_tenant.valid = false;
         tenants[index] = new_tenant;
         this.setState({
             tenants: tenants
@@ -180,26 +183,11 @@ export default class RentForm extends Component {
         }, () => console.log(this.state.generalInfo));
     }
 
-    // Saves the data from the tenant tab to repopulate fields with
-    saveTenantInfo = (data) => {
-        console.log('in saveTenantInfo')
-        let submitData = data;
-        submitData['tenants-INITIAL_FORMS'] = this.state.tenants_INITIAL_FORMS;
-        submitData['tenants-MAX_NUM_FORMS'] = this.state.tenants_MAX_NUM_FORMS;
-        submitData['tenants-MIN_NUM_FORMS'] = this.state.tenants_MIN_NUM_FORMS;
-        submitData['tenants-TOTAL_FORMS'] = this.state.tenants_TOTAL_FORMS;
-
-        console.log(this.state.tenants)
-
-        for(let i = 0; i < this.state.number_of_tenants; i++) {
-            submitData[`tenants-${[i]}-first_name`] = this.state.tenants[i].first_name;
-            submitData[`tenants-${[i]}-last_name`] = this.state.tenants[i].last_name;
-        }
-
+    saveTenantsInfo = (data) => {
         this.setState({
-            allTenantInfo: submitData
-        }, () => console.log(this.state.allTenantInfo))
-    };
+            tenantsInfo: data
+        }), () => console.log(this.state.tenantsInfo)
+    }
 
     // Saves the data from the amenities tab to repopulate fields with
     saveAmenitiesInfo = (data) => {

@@ -143,9 +143,9 @@ export default class TenantOld extends Component {
                         </button>
                     </div>
 
-                    <div className="col-sm-6 col-xs-12">
-                        <button className="col-sm-12 survey-btn" style={{marginTop: '30px'}} onClick={(e) => { this.isAllValid() ? (this.props.saveTenantInfo(this.state), this.props.handleNextStep(e)) : null; } }>
-                            Next
+                    <div classname="col-sm-6 col-xs-12">
+                        <button classname="col-sm-12 survey-btn" style={{margintop: '30px'}} onclick={(e) => { this.isallvalid() ? (this.props.savetenantinfo(this.state), this.props.handlenextstep(e)) : null; } }>
+                            next
                         </button>
                     </div>
 

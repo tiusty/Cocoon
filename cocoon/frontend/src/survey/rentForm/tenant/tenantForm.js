@@ -12,6 +12,7 @@ export default class Tenant extends Component {
             // General state information
             tenant_identifier: 'tenant-' + this.props.id,
             is_active: false,
+            valid: false,
 
             // Survey questions state
             occupation: null,
@@ -62,7 +63,9 @@ export default class Tenant extends Component {
         valid = valid && this.handleOccupationFollowupValidation();
         valid = valid && this.handleCommuteTypeValidation();
         valid = valid && this.handleFinancialValidation();
-        return valid
+        this.setState({
+            valid
+        }, () => this.props.tenantValid(this.props.id, valid));
     };
 
     handleOccupationValidation() {
@@ -163,7 +166,7 @@ export default class Tenant extends Component {
     };
 
     handleTenantPanelIcon = () => {
-        if (this.handleValidation()) {
+        if (this.state.valid) {
             return 'check_circle_outline'
         } else {
             return 'error_outline'
@@ -180,7 +183,7 @@ export default class Tenant extends Component {
 
     handleTenantIconClasses = () => {
         let classes = 'material-icons ';
-        if (this.handleValidation()) {
+        if (this.state.valid) {
             classes = classes + 'valid-panel'
         } else {
             classes = classes + 'invalid-panel'

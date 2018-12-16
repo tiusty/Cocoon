@@ -55,12 +55,45 @@ export default class Tenants extends Component {
                 if (current_tenants[i].last_name !== this.props.tenants_names[i].last_name) {
                     current_tenants[i].last_name = this.props.tenants_names[i].last_name
                 }
+                if (current_tenants[i].id !== this.props.tenants_name[i].id) {
+                    current_tenants[i].id = this.props.tenants_names[i].id
+                }
             }
             this.setState({
                 tenants: current_tenants,
             })
         }
     };
+
+    tenantValid = (tenant_id, valid) => {
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.tenants.length; i++ ) {
+            if (tenants[i].id === tenant_id) {
+                if (tenants[i].valid !== valid) {
+                    tenants[i].valid = valid;
+                    this.setState({
+                        tenants
+                    })
+                }
+            }
+        }
+    };
+
+    isAllValid = () => {
+        let valid = true;
+        for(let i=0; i<this.props.number_of_tenants; i++) {
+            if (!this.state.tenants[i].valid) {
+                valid = false
+            }
+        }
+        return valid
+    };
+
+    handleButtonClick(e) {
+        if(this.isAllValid()) {
+            this.props.handleNextStep(e)
+        }
+    }
 
     render() {
         return (
@@ -71,12 +104,18 @@ export default class Tenants extends Component {
                         id={t.id}
                         tenantInfo={t}
                         commute_type_options={this.state.commute_type_options}
+                        tenantValid={this.tenantValid}
                     />
                 )}
                 <div className="row survey-btn-wrapper">
                     <div className="col-sm-6 col-xs-12">
                         <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}} >
                             Back
+                        </button>
+                    </div>
+                    <div className="col-sm-6 col-xs-12">
+                        <button className="col-sm-12 survey-btn" style={{margintop: '30px'}} onClick={(e) => this.handleButtonClick(e)} >
+                            Next
                         </button>
                     </div>
                 </div>
