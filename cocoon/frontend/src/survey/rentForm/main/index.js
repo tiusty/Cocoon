@@ -69,6 +69,8 @@ export default class RentForm extends Component {
          */
 
         let data = {};
+
+        // Add the tenants state to the data
         let tenants = [...this.state.tenants];
         for (let i=0; i<this.state.number_of_tenants; i++) {
             for(let key in tenants[i]) {
@@ -76,6 +78,13 @@ export default class RentForm extends Component {
             }
         }
 
+        // Add the general state to the data
+        let generalInfo = this.state.generalInfo;
+        for(let key in generalInfo) {
+            data[key] = generalInfo[key]
+        }
+
+        // Combine the data with the state of main
         data = Object.assign({}, data, this.state);
 
         // Add first and last name to details data
@@ -90,7 +99,7 @@ export default class RentForm extends Component {
         // Posts the state which contains all the form elements that are needed
         axios.post(survey_endpoints['rentSurvey'],
             {
-                data: this.state,
+                data: data,
             })
             .catch(error => console.log('BAD', error))
             .then(response => {
@@ -217,6 +226,9 @@ export default class RentForm extends Component {
     };
 
     handleInputChange = (e, type) => {
+        /**
+         * Handles input that will be stored directly into the main state
+         */
         const { name, value } = e.target;
         if(type === 'number') {
             this.setState({
@@ -230,6 +242,10 @@ export default class RentForm extends Component {
     };
 
     handleGeneralInputChange = (e, type) => {
+        /**
+         * Handles input that goes into the general form
+         *  i.e generalInfo dictionary
+         */
         const { name, value } = e.target;
         let generalInfo = this.state.generalInfo;
         if(type === 'number') {
@@ -250,12 +266,6 @@ export default class RentForm extends Component {
         let generalInfo = this.state.generalInfo;
         generalInfo['latest_move_in'] = selected ? null : day;
         this.setState({generalInfo});
-    };
-
-    setSurveyState = (state, value) => {
-        this.setState({
-            [state]: value
-        });
     };
 
     setHomeTypes = (e, index, id) => {
@@ -316,6 +326,13 @@ export default class RentForm extends Component {
 
 
     handleTenantInputChange = (e, type, tenant_identifier, id) => {
+        /**
+         * Handles input change from the tenant page. This ensure that the variable
+         *  name is name spaced proeprly in the main state.
+         *
+         *  For tenant all variables live in
+         *      this.state.tenants[tenant_id]
+         */
         const { name, value } = e.target;
         const nameStripped = name.replace(tenant_identifier+'-', '');
         let tenants = [...this.state.tenants];

@@ -27,15 +27,10 @@ export default class GeneralForm extends Component {
     handleValidation = () => {
         let valid = true;
         valid = valid && this.handleNameValidation();
-        console.log(valid)
         valid = valid && this.handleHomeTypeValidation();
-        console.log(valid)
         valid = valid && this.handlePriceValidation();
-        console.log(valid)
         valid = valid && this.handleMoveAsapValidation();
-        console.log(valid)
         valid = valid && this.handleDatePickerValidation();
-        console.log(valid)
         valid = valid && this.handleUrgencyValidation();
         valid = valid && this.handleBedroomValidation();
         return valid
@@ -320,7 +315,7 @@ export default class GeneralForm extends Component {
         );
     }
 
-    renderBedroomQuesiton() {
+    renderBedroomQuestion() {
         return(
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
                 <h2>How many <span>bedrooms</span> do you need?</h2>
@@ -362,7 +357,7 @@ export default class GeneralForm extends Component {
                 {this.renderMoveAsapQuestion()}
                 {this.renderDatePickingQuestion()}
                 {this.renderUrgencyQuestion()}
-                {this.renderBedroomQuesiton()}
+                {this.renderBedroomQuestion()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
                     Next
