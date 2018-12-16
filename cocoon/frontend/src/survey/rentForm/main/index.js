@@ -4,7 +4,7 @@ import { Component } from 'react';
 import Progress from '../progress/index';
 import GeneralForm from '../general/generalForm';
 import TenantsForm from '../tenant/tenantsForm';
-import Amenities from '../amenities/index';
+import AmenitiesForm from '../amenities/amenitiesForm';
 import Details from '../details/index';
 
 import axios from 'axios'
@@ -19,7 +19,7 @@ export default class RentForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            step: 1,
+            step: 3,
 
             // General Form Fields
             number_of_tenants: 1,
@@ -37,6 +37,23 @@ export default class RentForm extends Component {
                 earliest_move_in: undefined,
                 latest_move_in: undefined,
                 is_move_asap: '',
+            },
+
+            amenitiesInfo: {
+                wantsLaundryInUnit: false,
+                wantsLaundryInBuilding: false,
+                wantsLaundryNearby: false,
+                wantsParking: false,
+                wantsFurnished: false,
+                wantsDogs: false,
+                wantsCats: false,
+                wantsHardwood: false,
+                wantsAC: false,
+                wantsDishWasher: false,
+                wantsPatio: false,
+                wantsPool: false,
+                wantsGym: false,
+                wantsStorage: false
             },
 
             tenants: [],
@@ -116,12 +133,6 @@ export default class RentForm extends Component {
             );
     };
 
-    setNumberOfTenants = (num) => {
-        this.setState({
-            number_of_tenants: num
-        })
-    }
-
     // Renders the section of the form based on which step the user is on
     renderForm = (step) => {
         switch (step) {
@@ -149,9 +160,12 @@ export default class RentForm extends Component {
                         onInputChange={this.handleTenantInputChange}
                 />;
             case 3:
-                return <Amenities
+                return <AmenitiesForm
                         handleNextStep={this.handleNextStep}
                         handlePrevStep={this.handlePrevStep}
+                        amenitiesInfo={this.state.amenitiesInfo}
+                        onInputChange={this.handleAmenitiesInputChange}
+
                         saveAmenitiesInfo={this.saveAmenitiesInfo}
                         allAmenitiesInfo={this.state.allAmenitiesInfo} />;
             case 4:
@@ -182,36 +196,6 @@ export default class RentForm extends Component {
         document.body.scrollTop = document.documentElement.scrollTop = 0;
     }
 
-    // Set names for tenants and adds them to array of objects
-    // so we can map over them and render them out on tenant form
-    setTenants = (first_name, last_name, index) => {
-        // creates copy of tenants array to modify
-        let tenants = [...this.state.tenants];
-        let new_tenant = {};
-        new_tenant.first_name = first_name[0].toUpperCase() + first_name.substr(1);
-        new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
-        new_tenant.id = parseInt(index);
-        new_tenant.valid = false;
-        tenants[index] = new_tenant;
-        this.setState({
-            tenants: tenants
-        }, () => this.setUserName());
-    }
-
-    setUserName = () => {
-        this.setState({
-            first_name: this.state.tenants[0].first_name,
-            last_name: this.state.tenants[0].last_name
-        })
-    }
-
-    // Saves the data from the general tab to repopulate fields with
-    saveGeneralInfo = (data) => {
-        this.setState({
-            generalInfo: data
-        }, () => console.log(this.state.generalInfo));
-    }
-
     // Saves the data from the amenities tab to repopulate fields with
     saveAmenitiesInfo = (data) => {
         this.setState({
@@ -235,14 +219,33 @@ export default class RentForm extends Component {
         }
     };
 
+    handleAmenitiesInputChange = (e, type) => {
+        /**
+         * Handles input that goes into the amenities form
+         *  i.e generalInfo dictionary
+         */
+        const {name, value} = e.target;
+        let amenitiesInfo = this.state.amenitiesInfo;
+        console.log('hi')
+        if (type === 'number') {
+            amenitiesInfo[name] = parseInt(value);
+        } else if (type === 'boolean') {
+            amenitiesInfo[name] = !amenitiesInfo[name]
+        } else {
+            amenitiesInfo[name] = value
+        }
+        console.log(amenitiesInfo)
+        this.setState({amenitiesInfo})
+    };
+
     handleGeneralInputChange = (e, type) => {
         /**
          * Handles input that goes into the general form
          *  i.e generalInfo dictionary
          */
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         let generalInfo = this.state.generalInfo;
-        if(type === 'number') {
+        if (type === 'number') {
             generalInfo[name] = parseInt(value);
         } else {
             generalInfo[name] = value
@@ -250,7 +253,7 @@ export default class RentForm extends Component {
         this.setState({generalInfo})
     };
 
-    handleEarliestClick = (day, { selected }) => {
+    handleEarliestClick = (day, {selected}) => {
         let generalInfo = this.state.generalInfo;
         generalInfo['earliest_move_in'] = selected ? null : day;
         this.setState({generalInfo});
