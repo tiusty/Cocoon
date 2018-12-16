@@ -5,7 +5,7 @@ import Progress from '../progress/index';
 import GeneralForm from '../general/generalForm';
 import TenantsForm from '../tenant/tenantsForm';
 import AmenitiesForm from '../amenities/amenitiesForm';
-import Details from '../details/index';
+import DetailsForm from '../details/index';
 
 import axios from 'axios'
 import survey_endpoints from "../../../endpoints/survey_endpoints";
@@ -19,7 +19,7 @@ export default class RentForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            step: 3,
+            step: 1,
 
             // General Form Fields
             number_of_tenants: 1,
@@ -71,8 +71,6 @@ export default class RentForm extends Component {
             },
 
             tenants: [],
-            tenantsInfo: [],
-            errors: {},
         };
         this.state['tenants-INITIAL_FORMS'] = 0;
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
@@ -121,17 +119,20 @@ export default class RentForm extends Component {
             data[key] = amenitiesInfo[key]
         }
 
-        // Combine the data with the state of main
-        data = Object.assign({}, data, this.state);
-
         // Add first and last name to details data
         let userData = detailsData;
         if (detailsData !== null) {
             userData['first_name'] = this.state.first_name;
             userData['last_name'] = this.state.last_name;
-            // Add user data to data
-            data['allDetailsInfo'] = userData
+            for(let key in detailsData) {
+                data[key] = userData[key]
+            }
         }
+
+        // Combine the data with the state of main
+        data = Object.assign({}, data, this.state);
+        console.log(data)
+
 
         // Posts the state which contains all the form elements that are needed
         axios.post(survey_endpoints['rentSurvey'],
@@ -189,7 +190,7 @@ export default class RentForm extends Component {
                         saveAmenitiesInfo={this.saveAmenitiesInfo}
                         allAmenitiesInfo={this.state.allAmenitiesInfo} />;
             case 4:
-                return <Details
+                return <DetailsForm
                         is_authenticated={this.props.is_authenticated}
                         onSubmit={this.handleSubmit}
                         handlePrevStep={this.handlePrevStep}

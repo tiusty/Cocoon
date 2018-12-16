@@ -1,7 +1,7 @@
 import React from 'react';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 
-export default class Details extends Component {
+export default class DetailsForm extends Component {
 
     handleValidation = () => {
         return this.validateEmail() && this.validatePhone() && this.validatePassword() && this.validatePasswordMatch() && this.validateCreationKey();
