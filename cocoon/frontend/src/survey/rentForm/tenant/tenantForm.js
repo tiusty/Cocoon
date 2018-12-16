@@ -36,11 +36,8 @@ export default class Tenant extends Component {
         let valid = true;
         if (!this.state.occupation) {
             valid = false;
-            console.log(`${this.state.tenant_identifier}-occupation-error`)
-            // const q = document.getElementById(`${this.state.tenant_identifier}-occupation-error`)
-            // console.log(q)
         }
-        return true
+        return valid
     };
 
 
@@ -123,18 +120,21 @@ export default class Tenant extends Component {
                         <label className="col-md-6 survey-label">
                             <input type="radio" name={`${tenant_identifier}-occupation`} value="working"
                                    checked={this.state.occupation === 'working'}
+                                   onChange={() => {}}
                                    />
                             <div>Working</div>
                         </label>
                         <label className="col-md-6 survey-label">
                             <input type="radio" name={`${tenant_identifier}-occupation`} value="studying"
                                    checked={this.state.occupation === 'studying'}
+                                   onChange={() => {}}
                                    />
                             <div>Studying</div>
                         </label>
                         <label className="col-md-6 survey-label">
                             <input type="radio" name={`${tenant_identifier}-occupation`} value="other"
                                    checked={this.state.occupation === 'other'}
+                                   onChange={() => {}}
                                    />
                             <div>Other</div>
                         </label>
