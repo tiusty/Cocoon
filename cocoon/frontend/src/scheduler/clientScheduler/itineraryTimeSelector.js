@@ -2,7 +2,6 @@
 import React from 'react'
 import { Component } from 'react';
 
-
 import TimeRange from 'react-time-range';
 import moment from 'moment';
 

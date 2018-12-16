@@ -41,7 +41,7 @@ class ClientScheduler extends Component {
         /**
          *  Retrieves all the itineraries associated with the user
          */
-        axios.get(scheduler_endpoints['itineraryClient'], {params: {type: 'unfinished'}})
+        axios.get(scheduler_endpoints['itineraryClient'])
             .catch(error => console.log('Bad', error))
             .then(response => {
                     this.setState(
@@ -79,41 +79,39 @@ class ClientScheduler extends Component {
         }
     };
 
-    renderItinerary = () => {
-        if (this.state.loaded === true) {
+    clientSchedulerStatus() {
+        if (this.state.loaded) {
             if (this.state.id) {
                 return (
-                    <Itinerary
-                        id={this.state.id}
-                    />
+                    <div className='row'>
+                        <div className='col-md-4'>
+                            <h2>Your Itinerary</h2>
+                            <Itinerary
+                                id={this.state.id}
+                            />
+                        </div>
+                        <div className='col-md-8'>
+                            {this.renderTimeSelector()}
+                        </div>
+                    </div>
                 );
             } else {
                 return (
                     <div>
                         <h2>Please create an itinerary!</h2>
                     </div>
-
                 );
             }
-        }
-        else {
+        } else {
             return <p>Loading</p>
         }
-    };
+    }
 
     render() {
         return (
-            <React.Fragment>
-                <div className='row'>
-                    <div className='col-md-4'>
-                        <h2>Your Itinerary</h2>
-                        {this.renderItinerary()}
-                    </div>
-                    <div className='col-md-8'>
-                        {this.renderTimeSelector()}
-                    </div>
-                </div>
-            </React.Fragment>
+            <>
+                {this.clientSchedulerStatus()}
+            </>
         );
     }
 }
