@@ -188,7 +188,7 @@ export default class Tenants extends Component {
         return valid
     }
 
-    handleFinancialValidation() {
+    handleFinancialValidation(id) {
         let valid = true;
         if (this.state.tenants[id].income === null) {
             valid = false

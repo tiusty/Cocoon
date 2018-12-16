@@ -126,7 +126,7 @@ export default class Tenant extends Component {
 
     renderWorkingOccupation = (name) => {
         return (
-            <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-working-occupation-question`} onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenants.tenant_identifier, this.props.id)}>
+            <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-working-occupation-question`} onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.id)}>
                 <h2>{this.props.id === 0 ? 'Have' : 'Has'} {name} been at this <span>job for less than 6 months</span>?</h2>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name={`${this.props.tenant.tenant_identifier}-new_job`} value={true} checked={this.props.tenant.new_job === "true"} onChange={() => {}} />
@@ -144,7 +144,7 @@ export default class Tenant extends Component {
         return (
             <>
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-other-occupation-question`}
-                     onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenants.tenant_identifier, this.props.id)}>
+                     onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.id)}>
                     <h2>What's that <span>other</span>?</h2>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name={`${this.props.tenant.tenant_identifier}-other_occupation_reason`}
@@ -224,14 +224,14 @@ export default class Tenant extends Component {
 
     renderCommuteTypeQuestion(name) {
 
-        if (this.props.tenant.commute_type_options) {
+        if (this.props.commute_type_options) {
             return (
                 <>
                     <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-commute_type-question`}>
                         {this.renderCommutePrompt(name)}
-                        {this.props.tenant.commute_type_options.map((o, index) => (
+                        {this.props.commute_type_options.map((o, index) => (
                                 <label className="col-md-6 survey-label" key={index}
-                                       onChange={(e) => this.props.onInputChange(e, 'number', this.props.tenants.tenant_identifier, this.props.id)}>
+                                       onChange={(e) => this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id)}>
                                     <input type="radio" name={`${this.props.tenant.tenant_identifier}-commute_type`} value={o.id}
                                            checked={this.props.tenant.commute_type === o.id}
                                            onChange={() => {
@@ -254,8 +254,8 @@ export default class Tenant extends Component {
     }
 
     getCommuteId = (type) => {
-        if (this.props.tenant.commute_type_options) {
-            const commuteType = this.props.tenant.commute_type_options.filter(o => o.commute_type === type);
+        if (this.props.commute_type_options) {
+            const commuteType = this.props.commute_type_options.filter(o => o.commute_type === type);
             return commuteType[0].id;
         }
     };
@@ -467,7 +467,7 @@ export default class Tenant extends Component {
                 <input className="col-md-12 survey-input" type="number" name={`${this.props.tenant.tenant_identifier}-income`}
                        placeholder="Yearly salary" step="1000"
                        value={this.props.tenant.income || ''} onChange={(e) => {
-                    this.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id);
+                    this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id);
                 }}/>
             </div>
         );
