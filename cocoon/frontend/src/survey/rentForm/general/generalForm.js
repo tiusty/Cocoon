@@ -36,7 +36,8 @@ export default class GeneralForm extends Component {
         console.log(valid)
         valid = valid && this.handleDatePickerValidation();
         console.log(valid)
-        valid = valid && this.handleUrgencyValdation();
+        valid = valid && this.handleUrgencyValidation();
+        valid = valid && this.handleBedroomValidation()
         return valid
     };
 
@@ -95,10 +96,22 @@ export default class GeneralForm extends Component {
         return valid
     }
 
-    handleUrgencyValdation() {
+    handleUrgencyValidation() {
         let valid = true;
         if (this.props.generalInfo.move_weight < 0) {
             valid = false
+        }
+        return valid
+    }
+
+    handleBedroomValidation() {
+        let valid = true;
+        if (this.props.generalInfo.num_bedrooms === undefined){
+            valid = false
+        } else {
+            if (this.props.generalInfo.num_bedrooms < 0) {
+                valid = false
+            }
         }
         return valid
     }
@@ -307,6 +320,31 @@ export default class GeneralForm extends Component {
         );
     }
 
+    renderBedroomQuesiton() {
+        return(
+            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
+                <h2>How many <span>bedrooms</span> do you need?</h2>
+                <span className="col-md-12 survey-error-message" id="number_of_rooms_error">You must select the number of rooms.</span>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="num_bedrooms" value="0" checked={this.props.generalInfo.num_bedrooms === 0} onChange={() => {}} />
+                    <div>Studio</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="num_bedrooms" value="1" checked={this.props.generalInfo.num_bedrooms === 1} onChange={() => {}} />
+                    <div>1 bed</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="num_bedrooms" value="2" checked={this.props.generalInfo.num_bedrooms === 2} onChange={() => {}} />
+                    <div>2 beds</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="num_bedrooms" value="3" checked={this.props.generalInfo.num_bedrooms === 3} onChange={() => {}} />
+                    <div>3 beds</div>
+                </label>
+            </div>
+        );
+    }
+
     handleNextButtonAction(e) {
         if(this.handleValidation()) {
             this.props.handleNextStep(e)
@@ -324,6 +362,7 @@ export default class GeneralForm extends Component {
                 {this.renderMoveAsapQuestion()}
                 {this.renderDatePickingQuestion()}
                 {this.renderUrgencyQuestion()}
+                {this.renderBedroomQuesiton()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
                     Next

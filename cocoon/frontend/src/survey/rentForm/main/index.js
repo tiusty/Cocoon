@@ -27,7 +27,7 @@ export default class RentForm extends Component {
             generalInfo: {
                 home_type: [],
                 move_weight: 0,
-                num_bedrooms: null,
+                num_bedrooms: undefined,
                 desired_price: 1000,
                 max_price: 3000,
                 price_weight: 0,
