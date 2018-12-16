@@ -204,6 +204,36 @@ export default class AmenitiesForm extends Component {
         }
     }
 
+    renderCatFollowUp() {
+        if (this.props.amenitiesInfo.wants_cats) {
+            return (
+                <div className="survey-question"
+                     onChange={(e) => {
+                         this.props.onInputChange(e, 'number');
+                     }}>
+                    <h2>How badly do you want <span>cats</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="cat_weight" value="1" checked={this.props.amenitiesInfo.cat_weight === 1} onChange={() => {
+                        }}/>
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="cat_weight" value="2" checked={this.props.amenitiesInfo.cat_weight === 2} onChange={() => {
+                        }}/>
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="cat_weight" value="3" checked={this.props.amenitiesInfo.cat_weight === 3} onChange={() => {
+                        }}/>
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
     render() {
         return(
             <>
@@ -212,6 +242,7 @@ export default class AmenitiesForm extends Component {
                 {this.renderParkingFollowUp()}
                 {this.renderFurnishedFollowUp()}
                 {this.renderDogFollowup()}
+                {this.renderCatFollowUp()}
             </>
         );
     }

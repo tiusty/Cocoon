@@ -53,6 +53,7 @@ export default class RentForm extends Component {
                 dog_size: '',
                 breed_of_dogs: '',
                 wants_cats: false,
+                cat_weight: 0,
                 wants_hardwood_floors: false,
                 wants_AC: false,
                 wants_dishwasher: false,
