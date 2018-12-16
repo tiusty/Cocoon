@@ -40,20 +40,20 @@ export default class RentForm extends Component {
             },
 
             amenitiesInfo: {
-                wantsLaundryInUnit: false,
-                wantsLaundryInBuilding: false,
-                wantsLaundryNearby: false,
-                wantsParking: false,
-                wantsFurnished: false,
-                wantsDogs: false,
-                wantsCats: false,
-                wantsHardwood: false,
-                wantsAC: false,
-                wantsDishWasher: false,
-                wantsPatio: false,
-                wantsPool: false,
-                wantsGym: false,
-                wantsStorage: false
+                wants_laundry_in_unit: false,
+                wants_laundry_in_building: false,
+                wants_laundry_nearby: false,
+                wants_parking: false,
+                wants_furnished: false,
+                wants_dogs: false,
+                wants_cats: false,
+                wants_hardwood_floors: false,
+                wants_AC: false,
+                wants_dishwasher: false,
+                wants_patio: false,
+                wants_pool: false,
+                wants_gym: false,
+                wants_storage: false
             },
 
             tenants: [],
@@ -226,7 +226,6 @@ export default class RentForm extends Component {
          */
         const {name, value} = e.target;
         let amenitiesInfo = this.state.amenitiesInfo;
-        console.log('hi')
         if (type === 'number') {
             amenitiesInfo[name] = parseInt(value);
         } else if (type === 'boolean') {
@@ -234,7 +233,6 @@ export default class RentForm extends Component {
         } else {
             amenitiesInfo[name] = value
         }
-        console.log(amenitiesInfo)
         this.setState({amenitiesInfo})
     };
 
