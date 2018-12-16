@@ -8,8 +8,9 @@ export default class Tenant extends Component {
     constructor(props){
         super(props);
         this.state = {
+            tenant_identifier: 'tenant-'+this.props.id,
             is_active: false,
-            occupation_type: null,
+            occupation: null,
             other_occupation_reason: null,
             commute_type: null
         }
@@ -29,9 +30,34 @@ export default class Tenant extends Component {
         });
     };
 
+
+    // VALIDATION FUNCTIONS //
     handleValidation = () => {
+        let valid = true;
+        if (!this.state.occupation) {
+            valid = false;
+            console.log(`${this.state.tenant_identifier}-occupation-error`)
+            // const q = document.getElementById(`${this.state.tenant_identifier}-occupation-error`)
+            // console.log(q)
+        }
         return true
     };
+
+
+    // HANDLE INPUTS //
+    handleInputChange = (e, type) => {
+        const { name, value } = e.target;
+        const nameStripped = name.replace(this.state.tenant_identifier+'-', '');
+        if(type === 'number') {
+            this.setState({
+                [nameStripped]: parseInt(value)
+            });
+        } else {
+            this.setState({
+                [nameStripped]: value
+            });
+        }
+    }
 
     handleTenantPanelClick = () => {
         this.handleValidation();
@@ -64,7 +90,7 @@ export default class Tenant extends Component {
         return classes
     };
 
-    handleTenantQuesitonClasses() {
+    handleTenantQuestionClasses() {
         let classes = "tenant-questions ";
         if (this.state.is_active) {
             classes = classes + "tenant-questions-active"
@@ -74,7 +100,7 @@ export default class Tenant extends Component {
 
     render() {
         const name = this.props.tenantInfo.first_name;
-        const tenant_identifier = `tenants-${this.props.id}`;
+        const tenant_identifier = this.state.tenant_identifier;
         return (
             <>
                 <div className={this.handleTenantPanelClasses()} onClick={this.handleTenantPanelClick}>
@@ -86,7 +112,33 @@ export default class Tenant extends Component {
                     </div>
                     <span><i className="material-icons">{this.state.isActive ? 'remove' : 'add'}</i></span>
                 </div>
-                <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuesitonClasses()} onChange={(e) => this.handleValidation(`tenants-${this.props.index}-questions`)}>
+                <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
+                     onChange={() => this.handleValidation()}>
+                    <div className="survey-question" onChange={(e) => {
+                        this.handleInputChange(e, 'string');
+                    }}>
+                        <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
+                        </h2>
+                        <span className="col-md-12 survey-error-message" id={`${tenant_identifier}-occupation-error`}>You must select an occupation type.</span>
+                        <label className="col-md-6 survey-label">
+                            <input type="radio" name={`${tenant_identifier}-occupation`} value="working"
+                                   checked={this.state.occupation === 'working'}
+                                   />
+                            <div>Working</div>
+                        </label>
+                        <label className="col-md-6 survey-label">
+                            <input type="radio" name={`${tenant_identifier}-occupation`} value="studying"
+                                   checked={this.state.occupation === 'studying'}
+                                   />
+                            <div>Studying</div>
+                        </label>
+                        <label className="col-md-6 survey-label">
+                            <input type="radio" name={`${tenant_identifier}-occupation`} value="other"
+                                   checked={this.state.occupation === 'other'}
+                                   />
+                            <div>Other</div>
+                        </label>
+                    </div>
                 </div>
             </>
         );
