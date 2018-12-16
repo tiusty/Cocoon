@@ -673,7 +673,7 @@ export default class Tenant extends Component {
     }
 
     render() {
-        const name = this.props.tenantInfo.first_name;
+        const name = this.props.tenant.first_name;
         const tenant_identifier = this.state.tenant_identifier;
         return (
             <>

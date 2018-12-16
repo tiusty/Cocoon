@@ -102,7 +102,7 @@ export default class Tenants extends Component {
                     <Tenant
                         key={t.id}
                         id={t.id}
-                        tenantInfo={t}
+                        tenant={t}
                         commute_type_options={this.state.commute_type_options}
                         tenantValid={this.tenantValid}
                     />
