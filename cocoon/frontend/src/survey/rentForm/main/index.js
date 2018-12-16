@@ -23,17 +23,20 @@ export default class RentForm extends Component {
 
             // General Form Fields
             number_of_tenants: 1,
-            home_type: [],
-            move_weight: 0,
-            num_bedrooms: null,
-            desired_price: 1000,
-            max_price: 3000,
-            min_bathrooms: 1,
-            max_bathrooms: 6,
-            parking_spot: 0,
-            earliest_move_in: null,
-            latest_move_in: null,
-            is_move_asap: null,
+
+            generalInfo: {
+                home_type: [],
+                move_weight: 0,
+                num_bedrooms: null,
+                desired_price: 1000,
+                max_price: 3000,
+                min_bathrooms: 1,
+                max_bathrooms: 6,
+                parking_spot: 0,
+                earliest_move_in: null,
+                latest_move_in: null,
+                is_move_asap: null,
+            },
 
             tenants: [],
             tenantsInfo: [],
@@ -119,13 +122,15 @@ export default class RentForm extends Component {
                         number_of_tenants={this.state.number_of_tenants}
                         onHandleTenantName={this.handleTenantName}
                         tenants={this.state.tenants}
+                        generalInfo={this.state.generalInfo}
+                        setHomeTypes={this.setHomeTypes}
 
 
                         setTenants={this.setTenants}
                         setFinalTenants={this.setFinalTenants}
                         setNumberOfTenants={this.setNumberOfTenants}
                         saveGeneralInfo={this.saveGeneralInfo}
-                        generalInfo={this.state.generalInfo} />;
+                />;
             case 2:
                 return <TenantsForm
                         handleNextStep={this.handleNextStep}
@@ -218,6 +223,23 @@ export default class RentForm extends Component {
             });
         }
     };
+
+    setHomeTypes = (e, index, id) => {
+        let generalInfo = this.state.generalInfo;
+        let home_type = generalInfo.home_type;
+        if(e.target.checked) {
+            home_type.push(id);
+        } else {
+            for(let i = 0; i < home_type.length; i++) {
+                if(home_type[i] === id) {
+                    home_type.splice(i, 1);
+                }
+            }
+        }
+        generalInfo.home_type = home_type;
+        this.setState({generalInfo});
+    }
+
 
     // Splits name inputs into first and last names
     handleTenantName = (e) => {

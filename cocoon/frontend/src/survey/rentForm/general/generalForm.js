@@ -1,7 +1,22 @@
 import React from 'react';
 import { Component } from 'react';
+import axios from "axios";
+
+import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
 export default class GeneralForm extends Component {
+    state = {
+        home_type_options: [],
+    };
+
+    componentDidMount = () => {
+        // Retrieve all the home types
+        axios.get(houseDatabase_endpoints['home_types'])
+            .then(res => {
+                const home_type_options = res.data;
+                this.setState({ home_type_options });
+            });
+    };
 
     renderNumberOfPeopleQuestion() {
         return (
@@ -29,12 +44,13 @@ export default class GeneralForm extends Component {
     }
 
     setNameOnField(id) {
+        // Display the name if the tenant exists and either a first or last name exists
         if(this.props.tenants.length > id && (this.props.tenants[id].first_name || this.props.tenants[id].last_name)) {
             let first_name = '';
             if(this.props.tenants[id].first_name) {
                 first_name = this.props.tenants[id].first_name
             }
-            let last_name = ''
+            let last_name = '';
             if(this.props.tenants[id].last_name) {
                 last_name = this.props.tenants[id].last_name
             }
@@ -62,11 +78,30 @@ export default class GeneralForm extends Component {
         );
     }
 
+    renderHomeTypeQuestion() {
+        if(this.state.home_type_options) {
+            return (
+                <div className="survey-question" onChange={this.validateHomeType}>
+                    <h2>What <span>kind of home</span> do you want?</h2>
+                    <span className="col-md-12 survey-error-message" id="home_type_error">You must select at least one type of home.</span>
+                    {this.state.home_type_options.map((o, index) => (
+                        <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.props.setHomeTypes(e, index, o.id)}>
+                            <input type="checkbox" name="home_type" value={o.id} checked={this.props.generalInfo.home_type.length && this.props.generalInfo.home_type.some(i => i === o.id)} onChange={() => {}} />
+                            <div>{o.home_type} <i className="material-icons">check</i></div>
+                        </label>
+                    ))}
+                </div>
+
+            );
+        }
+    }
+
     render() {
         return (
             <>
                 {this.renderNumberOfPeopleQuestion()}
                 {this.renderNameQuestion()}
+                {this.renderHomeTypeQuestion()}
             </>
         );
     }
