@@ -19,14 +19,14 @@ export default class Tenant extends Component {
     componentDidMount = () => {
         if(this.props.id === 0) {
             this.setState({
-                isActive: !this.state.isActive
+                is_active: !this.state.is_active
             });
         }
     };
 
     toggleQuestions = () => {
         this.setState({
-            isActive: !this.state.isActive
+            is_active: !this.state.is_active
         });
     };
 
@@ -110,7 +110,7 @@ export default class Tenant extends Component {
                         </i>
                         <span>{name}'s Info</span>
                     </div>
-                    <span><i className="material-icons">{this.state.isActive ? 'remove' : 'add'}</i></span>
+                    <span><i className="material-icons">{this.state.is_active ? 'remove' : 'add'}</i></span>
                 </div>
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
                      onChange={() => this.handleValidation()}>
