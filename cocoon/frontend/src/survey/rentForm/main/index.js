@@ -124,6 +124,7 @@ export default class RentForm extends Component {
                         tenants={this.state.tenants}
                         generalInfo={this.state.generalInfo}
                         setHomeTypes={this.setHomeTypes}
+                        setPrice={this.setPrice}
 
 
                         setTenants={this.setTenants}
@@ -238,7 +239,14 @@ export default class RentForm extends Component {
         }
         generalInfo.home_type = home_type;
         this.setState({generalInfo});
-    }
+    };
+
+    setPrice = (desired, max) => {
+        let generalInfo = this.state.generalInfo;
+        generalInfo.desired_price = desired;
+        generalInfo.max_price = max;
+        this.setState({generalInfo});
+    };
 
 
     // Splits name inputs into first and last names

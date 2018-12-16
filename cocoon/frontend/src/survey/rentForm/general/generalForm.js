@@ -1,12 +1,17 @@
 import React from 'react';
 import { Component } from 'react';
 import axios from "axios";
+import InputRange from 'react-input-range';
 
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
 export default class GeneralForm extends Component {
     state = {
         home_type_options: [],
+        value: {
+            min: 1000,
+            max: 3000,
+        }
     };
 
     componentDidMount = () => {
@@ -22,6 +27,7 @@ export default class GeneralForm extends Component {
         let valid = true;
         valid = valid && this.handleNameValidation();
         valid = valid && this.handleHomeTypeValidation();
+        valid = valid && this.handlePriceValidation();
         console.log(valid)
         return valid
     };
@@ -43,6 +49,17 @@ export default class GeneralForm extends Component {
     handleHomeTypeValidation() {
         let valid = true;
         if (this.props.generalInfo.home_type.length === 0) {
+            valid = false
+        }
+        return valid
+    }
+
+    handlePriceValidation() {
+        let valid = true;
+        if (!this.props.desired_price) {
+            valid = false
+        }
+        if (!this.props.max_price) {
             valid = false
         }
         return valid
@@ -90,6 +107,16 @@ export default class GeneralForm extends Component {
         }
     }
 
+    getMaxPrice = (number_of_tenants) => {
+        if(number_of_tenants === 1) {
+            return 4000;
+        } else if (number_of_tenants < 4) {
+            return (number_of_tenants * 3) * 1000;
+        } else {
+            return 10000;
+        }
+    }
+
     renderNameQuestion() {
         return (
             <div className="survey-question" id="tenant_names">
@@ -126,6 +153,22 @@ export default class GeneralForm extends Component {
         }
     }
 
+    renderPriceQuestion() {
+        return(
+            <div className="survey-question">
+                <h2>How much rent do you <span>want to pay</span>?</h2>
+                <InputRange
+                    draggableTrack
+                    maxValue={this.getMaxPrice(this.props.number_of_tenants)}
+                    minValue={0}
+                    step={50}
+                    value={this.state.value}
+                    onChange={value => {this.setState({value});this.props.setPrice(this.state.value.min, this.state.value.max);}}
+                    formatLabel={value => `$${value}`} />
+            </div>
+        );
+    }
+
     handleNextButtonAction(e) {
         if(this.handleValidation()) {
             // this.props.handleNextStep(e)
@@ -138,6 +181,7 @@ export default class GeneralForm extends Component {
                 {this.renderNumberOfPeopleQuestion()}
                 {this.renderNameQuestion()}
                 {this.renderHomeTypeQuestion()}
+                {this.renderPriceQuestion()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
                     Next
