@@ -138,12 +138,6 @@ export default class RentForm extends Component {
                         setPrice={this.setPrice}
                         handleEarliestClick={this.handleEarliestClick}
                         handleLatestClick={this.handleLatestClick}
-
-
-                        setTenants={this.setTenants}
-                        setFinalTenants={this.setFinalTenants}
-                        setNumberOfTenants={this.setNumberOfTenants}
-                        saveGeneralInfo={this.saveGeneralInfo}
                 />;
             case 2:
                 return <TenantsForm
