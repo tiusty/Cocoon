@@ -138,23 +138,6 @@ export default class TenantsForm extends Component {
         }
     }
 
-    // HANDLE INPUTS //
-    handleInputChange = (e, type, tenant_identifier, id) => {
-        const { name, value } = e.target;
-        const nameStripped = name.replace(tenant_identifier+'-', '');
-        let tenants = [...this.props.tenants];
-        for (let i=0; i<this.props.tenants.length; i++) {
-            if (tenants[id].id === i) {
-                if(type === 'number') {
-                    tenants[id][nameStripped] = parseInt(value)
-                } else {
-                    tenants[id][nameStripped] = value
-                }
-            }
-        }
-        this.setState({tenants})
-    };
-
     getCommuteId = (type) => {
         if (this.state.commute_type_options) {
             const commuteType = this.state.commute_type_options.filter(o => o.commute_type === type);
@@ -172,7 +155,7 @@ export default class TenantsForm extends Component {
                         tenant={t}
                         initTenant={this.props.initTenants}
                         commute_type_options={this.state.commute_type_options}
-                        onInputChange={this.handleInputChange}
+                        onInputChange={this.props.onInputChange}
                         onHandleValidation={this.handleValidation}
                     />
                 )}

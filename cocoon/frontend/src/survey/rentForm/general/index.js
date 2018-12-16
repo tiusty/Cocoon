@@ -35,21 +35,13 @@ export default class General extends Component {
     }
 
     componentDidMount = () => {
+        // Retrieve all the home types
         axios.get(houseDatabase_endpoints['home_types'])
             .then(res => {
                 const home_type_options = res.data;
                 this.setState({ home_type_options });
         });
-        // checks to see if general info data has been saved
-        // if true, the state is set to that
-        if(this.props.generalInfo) {
-            this.setState(this.props.generalInfo)
-        }
-    }
-
-    componentWillUnmount = () => {
-        this.props.setNumberOfTenants(this.state.number_of_tenants);
-    }
+    };
 
     // Splits name inputs into first and last names
     handleTenantName = (e) => {
@@ -237,30 +229,35 @@ export default class General extends Component {
         return false;
     }
 
+    renderNumberOfPeopleQuestion() {
+        return (
+            <div className="survey-question" onChange={(e) => this.handleInputChange(e, 'number')}>
+                <h2>How many people are you <span>searching with</span>?</h2>
+                <span className="col-md-12 survey-error-message" id="number_of_tenants_error">You must select the number of people.</span>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
+                    <div>Just Me</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="number_of_tenants" value="2" checked={this.props.number_of_tenants === 2} onChange={() => {}} />
+                    <div>Me + 1 other</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="number_of_tenants" value="3" checked={this.props.number_of_tenants === 3} onChange={() => {}} />
+                    <div>Me + 2 others</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="number_of_tenants" value="4" checked={this.props.number_of_tenants === 4} onChange={() => {}} />
+                    <div>Me + 3 others</div>
+                </label>
+            </div>
+        );
+    }
+
     render(){
         return (
             <>
-                <div className="survey-question" onChange={(e) => {this.handleInputChange(e, 'number'); this.validateRadioButton('number_of_tenants', '#number_of_tenants_error');}}>
-                    <h2>How many people are you <span>searching with</span>?</h2>
-                    <span className="col-md-12 survey-error-message" id="number_of_tenants_error">You must select the number of people.</span>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="1" checked={this.state.number_of_tenants === 1} onChange={() => {}} />
-                        <div>Just Me</div>
-                    </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="2" checked={this.state.number_of_tenants === 2} onChange={() => {}} />
-                        <div>Me + 1 other</div>
-                    </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="3" checked={this.state.number_of_tenants === 3} onChange={() => {}} />
-                        <div>Me + 2 others</div>
-                    </label>
-                    <label className="col-md-6 survey-label">
-                        <input type="radio" name="number_of_tenants" value="4" checked={this.state.number_of_tenants === 4} onChange={() => {}} />
-                            <div>Me + 3 others</div>
-                    </label>
-                </div>
-
+                {this.renderNumberOfPeopleQuestion()}
                 <div className="survey-question" id="tenant_names">
                     <h2>What <span>{this.state.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>

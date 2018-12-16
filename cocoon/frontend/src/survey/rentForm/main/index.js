@@ -20,7 +20,21 @@ export default class RentForm extends Component {
         super(props);
         this.state = {
             step: 2,
-            number_of_tenants: 2,
+
+            // General Form Fields
+            number_of_tenants: 1,
+            home_type: [],
+            move_weight: 0,
+            num_bedrooms: null,
+            desired_price: 1000,
+            max_price: 3000,
+            min_bathrooms: 1,
+            max_bathrooms: 6,
+            parking_spot: 0,
+            earliest_move_in: null,
+            latest_move_in: null,
+            is_move_asap: null,
+
             tenants: [
                 {
                     first_name: 'Alex',
@@ -127,6 +141,7 @@ export default class RentForm extends Component {
                         tenants={this.state.tenants}
                         number_of_tenants={this.state.number_of_tenants}
                         initTenants={this.initializeTenant}
+                        onInputChange={this.handleTenantInputChange}
                 />;
             case 3:
                 return <Amenities
@@ -197,8 +212,25 @@ export default class RentForm extends Component {
         this.setState({
             allAmenitiesInfo: data
         }, () => console.log(this.state.allAmenitiesInfo))
-    }
+    };
 
+
+    // HANDLE INPUTS //
+    handleTenantInputChange = (e, type, tenant_identifier, id) => {
+        const { name, value } = e.target;
+        const nameStripped = name.replace(tenant_identifier+'-', '');
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.tenants.length; i++) {
+            if (tenants[id].id === i) {
+                if(type === 'number') {
+                    tenants[id][nameStripped] = parseInt(value)
+                } else {
+                    tenants[id][nameStripped] = value
+                }
+            }
+        }
+        this.setState({tenants})
+    };
 
     initializeTenant = (id) => {
         let tenants = [...this.state.tenants];
