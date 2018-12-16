@@ -4,6 +4,7 @@ import { Component } from 'react';
 
 // Import Cocoon Components
 import ItineraryTimeRangeSelector from "./itineraryTimeRangeSelector";
+import moment from 'moment';
 
 export default class ItineraryDaySelector extends Component {
     /**
@@ -12,12 +13,31 @@ export default class ItineraryDaySelector extends Component {
      *      date corresponds to
      * @returns {*}
      */
+    state = {
+      num_time_ranges: 0,
+    };
+
+    addTimeRangeSelector = () => {
+        this.setState({
+            num_time_ranges: this.state.num_time_ranges+1
+        })
+    };
 
     render() {
+        let selectors = [];
+        for (let i=0; i<this.state.num_time_ranges; i++) {
+            selectors.push(
+                <ItineraryTimeRangeSelector
+                    key={i}
+                />
+            )
+        }
+
         return(
             <>
                 <h4>{this.props.dayOfWeek.format('dddd')}</h4>
-                <ItineraryTimeRangeSelector/>
+                {selectors}
+                <button className="btn btn-sm" onClick={this.addTimeRangeSelector}>Add time</button>
             </>
         );
     }
