@@ -26,7 +26,12 @@ export default class RentForm extends Component {
                     first_name: 'Alex',
                     last_name: 'Agudelo',
                     id: 0,
-                }
+                },
+                {
+                    first_name: 'Tomas',
+                    last_name: 'Jurgen',
+                    id: 1,
+                },
             ],
             errors: {},
             tenants_TOTAL_FORMS: 0,

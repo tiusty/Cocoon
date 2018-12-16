@@ -58,3 +58,7 @@
     display: flex;
     border-bottom: 1px solid var(--borderColor);
 }
+
+.tenant-questions-inactive {
+    display: none;
+}

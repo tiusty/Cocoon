@@ -192,6 +192,8 @@ export default class Tenant extends Component {
         let classes = "tenant-questions ";
         if (this.state.is_active) {
             classes = classes + "tenant-questions-active"
+        } else {
+            classes = classes + "tenant-questions-inactive"
         }
         return classes
     }
