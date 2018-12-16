@@ -1,6 +1,7 @@
 import React from 'react';
 import { Component } from 'react';
 
+import Autocomplete from 'react-google-autocomplete';
 import './tenantForm.css'
 
 export default class Tenant extends Component {
@@ -17,6 +18,13 @@ export default class Tenant extends Component {
             new_job: null,
             other_occupation_reason: null,
             unemployed_follow_up: null,
+
+            // Address
+            street_address: null,
+            city: null,
+            state: null,
+            zip_code: null,
+            full_address: null,
 
             commute_type: null
         }
@@ -72,8 +80,14 @@ export default class Tenant extends Component {
 
     handleCommuteTypeValidation() {
         let valid = true;
-        if (!this.state.commute_type) {
+        if (this.state.commute_type === null) {
             valid = false
+        }
+        if (this.state.commute_type !== 'Work From Home') {
+            if (this.state.full_address === null || this.state.street_address === null || this.state.city === null
+                || this.state.zip_code === null || this.state.state === null) {
+                valid = false
+            }
         }
         return valid
     }
@@ -286,28 +300,71 @@ export default class Tenant extends Component {
 
         if (this.props.commute_type_options) {
             return (
-                <div className="survey-question" id={`${this.state.tenant_identifier}-commute_type-question`}>
-                    {this.renderCommutePrompt(name)}
-                    {this.props.commute_type_options.map((o, index) => (
-                            <label className="col-md-6 survey-label" key={index}
-                                   onChange={(e) => this.handleInputChange(e, 'number')}>
-                                <input type="radio" name={`${this.state.tenant_identifier}-commute_type`} value={o.id}
-                                       checked={this.state.commute_type === o.id}
-                                       onChange={() => {
-                                       }}/>
-                                <div>
-                                    {o.commute_type === 'Work From Home' && this.state.occupation === 'other' ? 'No' : o.commute_type}
-                                </div>
-                            </label>
-                        )
-                    )}
-                </div>
+                <>
+                    <div className="survey-question" id={`${this.state.tenant_identifier}-commute_type-question`}>
+                        {this.renderCommutePrompt(name)}
+                        {this.props.commute_type_options.map((o, index) => (
+                                <label className="col-md-6 survey-label" key={index}
+                                       onChange={(e) => this.handleInputChange(e, 'number')}>
+                                    <input type="radio" name={`${this.state.tenant_identifier}-commute_type`} value={o.id}
+                                           checked={this.state.commute_type === o.id}
+                                           onChange={() => {
+                                           }}/>
+                                    <div>
+                                        {o.commute_type === 'Work From Home' && this.state.occupation === 'other' ? 'No' : o.commute_type}
+                                    </div>
+                                </label>
+                            )
+                        )}
+                    </div>
+                    {this.renderAddressInput()}
+                </>
 
             );
         } else {
             return null;
         }
     }
+
+    renderAddressInput = () => {
+        if (this.state.commute_type !== 'Work From Home') {
+            return (
+                <div className="survey-question" id={`${this.state.tenant_identifier}-other-occupation-question`}>
+                    <h2>What's the <span>street address</span>?</h2>
+                    <Autocomplete
+                        className="col-md-12 survey-input"
+                        onPlaceSelected={(place) => {
+                            this.setCommuteAddress(place)
+                        }}
+                        types={['address']}
+                        name={`${this.state.tenant_identifier}-commute_address`}
+                        placeholder={'Street Address'}
+                        value={this.state.fulladdress}
+                        onChange={() => {
+                        }}
+                    />
+                </div>
+            );
+        } else {
+            return null;
+        }
+    };
+
+    setCommuteAddress = (place) => {
+        const city = place.address_components.filter(c => c.types[0] === 'locality');
+        const formatCity = city[0].long_name;
+        const state = place.address_components.filter(c => c.types[0] === 'administrative_area_level_1');
+        const formatState = state[0].short_name;
+        const zip_code = place.address_components.filter(c => c.types[0] === 'postal_code');
+        const formatZip = zip_code[0].long_name;
+        this.setState({
+            street_address: place.name,
+            city: formatCity,
+            state: formatState,
+            zip_code: formatZip,
+            full_address: place.formatted_address
+        })
+    };
 
     render() {
         const name = this.props.tenantInfo.first_name;
