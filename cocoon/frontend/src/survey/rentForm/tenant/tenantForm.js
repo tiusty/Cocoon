@@ -32,6 +32,7 @@ export default class Tenant extends Component {
             transit_options: [],
             max_commute: 60,
             min_commute: 0,
+            commute_weight: 0,
         }
     }
 
@@ -99,6 +100,10 @@ export default class Tenant extends Component {
 
             // Make sure if the option is not work from home then the max commute is set
             if (this.state.max_commute === null) {
+                valid = false
+            }
+
+            if (this.state.commute_weight < 0 || this.state.commute_weight > 6) {
                 valid = false
             }
         }
@@ -508,6 +513,60 @@ export default class Tenant extends Component {
             );
     };
 
+    renderCommuteWeightQuestion = (name) => {
+        if (this.state.commute_type !== this.getCommuteId('Work From Home'))
+            return (
+                <div className="survey-question" id={`${this.state.tenant_identifier}-commute_weight-question`}
+                     onChange={(e) => {
+                         this.handleInputChange(e, 'number');
+                     }}>
+                    <h2>How <span>important is commute</span> to {name}?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-commute_weight`} value="0"
+                               checked={this.state.commute_weight === 0}
+                               onChange={() => {
+                               }}/>
+                        <div>Doesn’t care</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-commute_weight`} value="1"
+                               checked={this.state.commute_weight === 1}
+                               onChange={() => {
+                               }}/>
+                        <div>Slightly care</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-commute_weight`} value="2"
+                               checked={this.state.commute_weight === 2}
+                               onChange={() => {
+                               }}/>
+                        <div>Cares</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-commute_weight`} value="3"
+                               checked={this.state.commute_weight === 3}
+                               onChange={() => {
+                               }}/>
+                        <div>Really care</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-commute_weight`} value="4"
+                               checked={this.state.commute_weight === 4}
+                               onChange={() => {
+                               }}/>
+                        <div>Super important</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-commute_weight`} value="5"
+                               checked={this.state.commute_weight === 5}
+                               onChange={() => {
+                               }}/>
+                        <div>Top priority!</div>
+                    </label>
+                </div>
+            );
+    }
+
     render() {
         const name = this.props.tenantInfo.first_name;
         const tenant_identifier = this.state.tenant_identifier;
@@ -527,6 +586,7 @@ export default class Tenant extends Component {
                     {this.renderOccupation(name)}
                     {this.renderCommuteTypeQuestion(name)}
                     {this.renderCommuteLengthQuestion(name)}
+                    {this.renderCommuteWeightQuestion(name)}
                 </div>
             </>
         );
