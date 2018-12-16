@@ -26,13 +26,18 @@ class ItineraryTimeRangeSelector extends Component {
 
     render() {
         return (
-            <div>
-                <TimeRange
-                    sameIsValid={false}
-                    startMoment={this.state.startTime}
-                    endMoment={this.state.endTime}
-                    onChange={this.returnFunction}
-                />
+            <div className="row">
+                <div className="col-md-6">
+                    <TimeRange
+                        sameIsValid={false}
+                        startMoment={this.state.startTime}
+                        endMoment={this.state.endTime}
+                        onChange={this.returnFunction}
+                    />
+                </div>
+                <div className="col-md-4">
+                    <button className="btn btn-sm" onClick={() => this.props.onDelete(this.props.id)}>-</button>
+                </div>
             </div>
         );
     }
