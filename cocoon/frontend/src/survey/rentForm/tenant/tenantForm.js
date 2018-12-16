@@ -11,7 +11,6 @@ export default class Tenant extends Component {
         this.state = {
             is_active: false,
         };
-            // General state information
     }
 
     componentDidMount = () => {

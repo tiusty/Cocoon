@@ -35,12 +35,13 @@ export default class RentForm extends Component {
                     valid: false,
                 },
             ],
+            tenantsInfo: [],
             errors: {},
-            tenants_TOTAL_FORMS: 0,
-            tenants_INITIAL_FORMS: 0,
-            tenants_MIN_NUM_FORMS: 0,
-            tenants_MAX_NUM_FORMS: 1000,
         };
+        this.state['tenants-INITIAL_FORMS'] = 0;
+        this.state['tenants-MAX_NUM_FORMS'] = 1000;
+        this.state['tenants-MIN_NUM_FORMS'] = 0;
+        this.state['tenants-TOTAL_FORMS'] = this.props.number_of_tenants;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -50,9 +51,9 @@ export default class RentForm extends Component {
 
         // If the number of tenants changes then update the total number of forms to equal that
         if (this.state.number_of_tenants !== prevState.number_of_tenants) {
-            this.setState({'tenants_TOTAL_FORMS': this.state.number_of_tenants})
+            this.setState({'tenants-TOTAL_FORMS': this.state.number_of_tenants})
         }
-    }
+    };
 
     handleSubmit = (e, detailsData) => {
         e.preventDefault();
@@ -115,9 +116,9 @@ export default class RentForm extends Component {
                 return <Tenants
                         handleNextStep={this.handleNextStep}
                         handlePrevStep={this.handlePrevStep}
-                        tenants_names={this.state.tenants}
+                        tenants={this.state.tenants}
                         number_of_tenants={this.state.number_of_tenants}
-                        save={this.saveGeneralInfo}
+                        initTenants={this.initializeTenant}
                 />;
             case 3:
                 return <Amenities
@@ -183,18 +184,51 @@ export default class RentForm extends Component {
         }, () => console.log(this.state.generalInfo));
     }
 
-    saveTenantsInfo = (data) => {
-        this.setState({
-            tenantsInfo: data
-        }), () => console.log(this.state.tenantsInfo)
-    }
-
     // Saves the data from the amenities tab to repopulate fields with
     saveAmenitiesInfo = (data) => {
         this.setState({
             allAmenitiesInfo: data
         }, () => console.log(this.state.allAmenitiesInfo))
     }
+
+
+    initializeTenant = (id) => {
+        let tenants = [...this.state.tenants];
+        for (let i = 0; i < this.state.tenants.length; i++) {
+            if (tenants[i].id === id) {
+                tenants[i].tenant_identifier =  this.state.tenants[id].tenant_identifier || 'tenant-' + id;
+                tenants[i].valid = this.state.tenants[id].valid || false;
+
+                // Survey questions state
+                tenants[i].occupation = this.state.tenants[id].occupation || null;
+                tenants[i].new_job = this.state.tenants[id].new_job || null;
+
+                tenants[i].other_occupation_reason = this.state.tenants[id].other_occupation_reason || null;
+                tenants[i].unemployed_follow_up = this.state.tenants[id].unemployed_follow_up || null;
+
+                // Address
+                tenants[i].street_address = this.state.tenants[id].street_address || null;
+                tenants[i].city = this.state.tenants[id].city || null;
+                tenants[i].state = this.state.tenants[id].state || null;
+                tenants[i].zip_code = this.state.tenants[id].zip_code || null;
+                tenants[i].full_address = this.state.tenants[id].full_address || null;
+
+                // Commute questions
+                tenants[i].commute_type = this.state.tenants[id].commute_type || null;
+                tenants[i].driving_options = this.state.tenants[id].driving_options || null;
+                tenants[i].transit_options = this.state.tenants[id].transit_options || [];
+                tenants[i].max_commute = this.state.tenants[id].max_commute || 60;
+                tenants[i].min_commute = this.state.tenants[id].min_commute || 0;
+                tenants[i].commute_weight = this.state.tenants[id].commute_weight || 0;
+
+                //Other
+                tenants[i].income = this.state.tenants[id].income || null;
+                tenants[i].credit_score = this.state.tenants[id].credit_score || null;
+
+            }
+            this.setState({tenants});
+        }
+    };
 
     render() {
         return (
