@@ -27,7 +27,6 @@ class ItineraryTimeRangeSelector extends Component {
     render() {
         return (
             <div>
-                <h2>The Time Selector</h2>
                 <TimeRange
                     sameIsValid={false}
                     startMoment={this.state.startTime}

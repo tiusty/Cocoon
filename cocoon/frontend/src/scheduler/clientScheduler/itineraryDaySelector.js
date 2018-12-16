@@ -6,10 +6,18 @@ import { Component } from 'react';
 import ItineraryTimeRangeSelector from "./itineraryTimeRangeSelector";
 
 export default class ItineraryDaySelector extends Component {
+    /**
+     * Props:
+     *  this.props.dayOfWeek
+     * @returns {*}
+     */
 
     render() {
         return(
-            <ItineraryTimeRangeSelector/>
+            <>
+                <h4>{this.props.dayOfWeek}</h4>
+                <ItineraryTimeRangeSelector/>
+            </>
         );
     }
 }
