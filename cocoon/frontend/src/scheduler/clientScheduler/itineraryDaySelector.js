@@ -8,14 +8,15 @@ import ItineraryTimeRangeSelector from "./itineraryTimeRangeSelector";
 export default class ItineraryDaySelector extends Component {
     /**
      * Props:
-     *  this.props.dayOfWeek
+     *  this.props.dayOfWeek (moment) -> The day of the week that this
+     *      date corresponds to
      * @returns {*}
      */
 
     render() {
         return(
             <>
-                <h4>{this.props.dayOfWeek}</h4>
+                <h4>{this.props.dayOfWeek.format('dddd')}</h4>
                 <ItineraryTimeRangeSelector/>
             </>
         );

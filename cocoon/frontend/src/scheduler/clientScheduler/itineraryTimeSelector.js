@@ -15,7 +15,7 @@ export default class ItineraryTimeSelector extends Component {
         let time_selectors = [];
         for (let i =0; i < this.state.days; i++) {
             time_selectors.push(<ItineraryDaySelector
-                dayOfWeek={moment().add(i, 'days').format('dddd')}
+                dayOfWeek={moment().add(i, 'days')}
             />)
         }
         return time_selectors
