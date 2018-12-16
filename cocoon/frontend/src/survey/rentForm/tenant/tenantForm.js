@@ -42,6 +42,7 @@ export default class Tenant extends Component {
         let valid = true;
         valid = valid && this.handleOccupationValidation();
         valid = valid && this.handleOccupationFollowupValidation();
+        valid = valid && this.handleCommuteTypeValidation();
         return valid
     };
 
@@ -60,9 +61,19 @@ export default class Tenant extends Component {
                 valid = false;
             }
         } else if (this.state.occupation === 'other') {
-            if (!this.state.other_reason) {
+            if (!this.state.other_occupation_reason) {
+                valid = false
+            } else if (this.state.other_occupation_reason === 'unemployed' && !this.state.unemployed_follow_up) {
                 valid = false
             }
+        }
+        return valid
+    }
+
+    handleCommuteTypeValidation() {
+        let valid = true;
+        if (!this.state.commute_type) {
+            valid = false
         }
         return valid
     }
@@ -124,7 +135,7 @@ export default class Tenant extends Component {
 
 
     // Rendering functions //
-    renderOccupation() {
+    renderOccupation(name) {
         return (
             <>
                 <div className="survey-question" onChange={(e) => {
@@ -259,6 +270,43 @@ export default class Tenant extends Component {
         }
     };
 
+    renderCommutePrompt = (name) => {
+        if (this.state.occupation_type === 'other') {
+            return (
+                <h2>Would {name} be using any <span>regular commute type</span>? ex. going into the city</h2>
+            );
+        } else {
+            return (
+                <h2>How {this.props.index === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
+            );
+        }
+    };
+
+    renderCommuteTypeQuestion(name) {
+
+        if (this.props.commute_type_options) {
+            return (
+                <div className="survey-question" id={`${this.state.tenant_identifier}-commute_type-question`}>
+                    {this.renderCommutePrompt(name)}
+                    {this.props.commute_type_options.map((o, index) => (
+                            <label className="col-md-6 survey-label" key={index}
+                                   onChange={(e) => this.handleInputChange(e, 'number')}>
+                                <input type="radio" name={`${this.state.tenant_identifier}-commute_type`} value={o.id}
+                                       checked={this.state.commute_type === o.id}
+                                       onChange={() => {
+                                       }}/>
+                                <div>{o.commute_type}</div>
+                            </label>
+                        )
+                    )}
+                </div>
+
+            );
+        } else {
+            return null;
+        }
+    }
+
     render() {
         const name = this.props.tenantInfo.first_name;
         const tenant_identifier = this.state.tenant_identifier;
@@ -275,7 +323,8 @@ export default class Tenant extends Component {
                 </div>
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
                      onChange={() => this.handleValidation()}>
-                    {this.renderOccupation()}
+                    {this.renderOccupation(name)}
+                    {this.renderCommuteTypeQuestion(name)}
                 </div>
             </>
         );

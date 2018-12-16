@@ -70,6 +70,7 @@ export default class Tenants extends Component {
                         key={t.id}
                         id={t.id}
                         tenantInfo={t}
+                        commute_type_options={this.state.commute_type_options}
                     />
                 )}
                 <div className="row survey-btn-wrapper">
