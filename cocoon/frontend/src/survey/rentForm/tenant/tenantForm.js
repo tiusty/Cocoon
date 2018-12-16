@@ -9,14 +9,14 @@ export default class Tenant extends Component {
         super(props);
         this.state = {
             // General state information
-            tenant_identifier: 'tenant-'+this.props.id,
+            tenant_identifier: 'tenant-' + this.props.id,
             is_active: false,
 
             // Survey questions state
             occupation: null,
             new_job: null,
-
             other_occupation_reason: null,
+
             commute_type: null
         }
     }
@@ -57,6 +57,10 @@ export default class Tenant extends Component {
         if (this.state.occupation === 'working') {
             if (!this.state.new_job) {
                 valid = false;
+            }
+        } else if (this.state.occupation === 'other') {
+            if (!this.state.other_reason) {
+                valid = false
             }
         }
         return valid
@@ -153,12 +157,14 @@ export default class Tenant extends Component {
     renderOccupationFollowupQuestions(name) {
         if (this.state.occupation === 'working') {
             return this.renderWorkingOccupation(name)
+        } else if (this.state.occupation === 'other') {
+            return this.renderOtherOccupation()
         }
     }
 
     renderWorkingOccupation = (name) => {
         return (
-            <div className="survey-question" id={`${this.state.tenant_identifier}-working-occupation-question`} onChange={(e) => {this.handleInputChange(e, 'string');}}>
+            <div className="survey-question" id={`${this.state.tenant_identifier}-working-occupation-question`} onChange={(e) => this.handleInputChange(e, 'string')}>
                 <h2>{this.props.id === 0 ? 'Have' : 'Has'} {name} been at this <span>job for less than 6 months</span>?</h2>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name={`${this.state.tenant_identifier}-new_job`} value={true} checked={this.state.new_job === "true"} onChange={() => {}} />
@@ -167,6 +173,30 @@ export default class Tenant extends Component {
                 <label className="col-md-6 survey-label">
                     <input type="radio" name={`${this.state.tenant_identifier}-new_job`} value={false} checked={this.state.new_job === "false"} onChange={() => {}} />
                     <div>No</div>
+                </label>
+            </div>
+        );
+    };
+
+    renderOtherOccupation = () => {
+        return (
+            <div className="survey-question" id={`${this.state.tenant_identifier}-other-occupation-question`} onChange={(e) => this.handleInputChange(e, 'string')}>
+                <h2>What's that <span>other</span>?</h2>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-other_occupation_reason`} value="unemployed" checked={this.state.other_occupation_reason === 'unemployed'} onChange={() => {}} />
+                    <div>Unemployed</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-other_occupation_reason`} value="seeking-work" checked={this.state.other_occupation_reason === 'seeking-work'} onChange={() => {}} />
+                    <div>Seeking work</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-other_occupation_reason`} value="not-working" checked={this.state.other_occupation_reason === 'not-working'} onChange={() => {}} />
+                    <div>Not working</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name={`${this.state.tenant_identifier}-other_occupation_reason`} value="disability" checked={this.state.other_occupation_reason === 'disability'} onChange={() => {}} />
+                    <div>Disability</div>
                 </label>
             </div>
         );
