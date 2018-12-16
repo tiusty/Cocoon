@@ -50,6 +50,8 @@ export default class TenantForm extends Component {
                         isValid: true
                     }, () => this.props.isTenantValid(this.props.index, this.state.isValid) );
                 } else {
+                    // document.querySelector('#name_of_tenants_error').style.display = 'block';
+                    // document.querySelector('#name_of_tenants_error').parentNode.scrollIntoView(true);
                     this.setState({
                         isValid: false
                     }, () => this.props.isTenantValid(this.props.index, this.state.isValid) );
@@ -90,13 +92,13 @@ export default class TenantForm extends Component {
         if(this.state.occupation_type === 'working' || this.props.allTenantInfo[`${tenantNumber}-occupation`] === 'working') {
             return (
                 <div className="survey-question" id={`${tenantNumber}-working-occupation-question`} onChange={(e) => {this.props.handleInputChange(e, 'string');}}>
-                    <h2>{this.props.index === 0 ? 'Have' : 'Has'} {toggleName} been at this <span>job for 6 months</span>?</h2>
+                    <h2>{this.props.index === 0 ? 'Have' : 'Has'} {toggleName} been at this <span>job for less than 6 months</span>?</h2>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name={`${tenantNumber}-new_job`} value="false" checked={this.props.allTenantInfo[`${tenantNumber}-new_job`] === 'false'} onChange={() => {}} />
+                        <input type="radio" name={`${tenantNumber}-new_job`} value="yes" checked={this.props.allTenantInfo[`${tenantNumber}-new_job`] === 'yes'} onChange={() => {}} />
                         <div>Yes</div>
                     </label>
                     <label className="col-md-6 survey-label">
-                        <input type="radio" name={`${tenantNumber}-new_job`} value="true" checked={this.props.allTenantInfo[`${tenantNumber}-new_job`] === 'true'} onChange={() => {}} />
+                        <input type="radio" name={`${tenantNumber}-new_job`} value="no" checked={this.props.allTenantInfo[`${tenantNumber}-new_job`] === 'no'} onChange={() => {}} />
                         <div>No</div>
                     </label>
                 </div>
@@ -166,9 +168,8 @@ export default class TenantForm extends Component {
         }
     }
 
-
-    renderOtherOccupationCommuteAddress = (tenantNumber, toggleName) => {
-        if((this.state.occupation_type === 'other' && this.state.commute_type !== 'Work From Home') || (this.props.allTenantInfo[`${tenantNumber}-occupation`] === 'other' && this.getCommuteId('Work From Home') !== this.props.allTenantInfo[`${tenantNumber}-commute_type`])) {
+    renderAddressInput = (tenantNumber, toggleName) => {
+        if(!(this.state.commute_type === 'Work From Home' || this.getCommuteId('Work From Home') === this.props.allTenantInfo[`${tenantNumber}-commute_type`])) {
             return (
                 <div className="survey-question" id={`${tenantNumber}-other-occupation-question`}>
                     <h2>What's the <span>street address</span>?</h2>
@@ -178,48 +179,6 @@ export default class TenantForm extends Component {
                         types={['address']}
                         name={`${tenantNumber}-commute_address`}
                         placeholder={'Street Address'}
-                        value={this.props.allTenantInfo[`${tenantNumber}-full_address`] && this.props.allTenantInfo[`${tenantNumber}-full_address`]}
-                        onChange={() => {}}
-                    />
-                </div>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    renderStudyOccupationCommuteAddress = (tenantNumber, toggleName) => {
-        if((this.state.occupation_type === 'studying' && this.state.commute_type !== 'Work From Home') || (this.props.allTenantInfo[`${tenantNumber}-occupation`] === 'studying'  && this.getCommuteId('Work From Home') !== this.props.allTenantInfo[`${tenantNumber}-commute_type`])) {
-            return(
-                <div className="survey-question" id={`${tenantNumber}-other-occupation-question`}>
-                    <h2>What's the <span>address of the campus</span> {toggleName} {this.props.index === 0 ? 'attend' : 'attends'}?</h2>
-                    <Autocomplete
-                        className="col-md-12 survey-input"
-                        onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
-                        types={['address']}
-                        name={`${tenantNumber}-commute_address`}
-                        placeholder={'School Address'}
-                        value={this.props.allTenantInfo[`${tenantNumber}-full_address`] && this.props.allTenantInfo[`${tenantNumber}-full_address`]}
-                        onChange={() => {}}
-                    />
-                </div>
-            );
-        } else {
-            return null;
-        }
-    }
-
-    renderWorkOccupationCommuteAddress = (tenantNumber, toggleName) => {
-        if((this.state.occupation_type === 'working' && this.state.commute_type !== 'Work From Home') || (this.props.allTenantInfo[`${tenantNumber}-occupation`] === 'working' && this.getCommuteId('Work From Home') !== this.props.allTenantInfo[`${tenantNumber}-commute_type`])) {
-            return (
-                <div className="survey-question" id={`${tenantNumber}-other-occupation-question`}>
-                    <h2>What's the <span>work address</span> for {toggleName}?</h2>
-                    <Autocomplete
-                        className="col-md-12 survey-input"
-                        onPlaceSelected={(place) => { this.props.setCommuteAddress(`${tenantNumber}-`, place) }}
-                        types={['address']}
-                        name={`${tenantNumber}-commute_address`}
-                        placeholder={'Work Address'}
                         value={this.props.allTenantInfo[`${tenantNumber}-full_address`] && this.props.allTenantInfo[`${tenantNumber}-full_address`]}
                         onChange={() => {}}
                     />
@@ -385,14 +344,8 @@ export default class TenantForm extends Component {
                         </div>
                     }
 
-                    {/*SHOWS ONLY IF OTHER OCCUPATION && NOT WORKING FROM HOME*/}
-                    {this.renderOtherOccupationCommuteAddress(tenantNumber, toggleName)}
-
-                    {/*SHOWS ONLY ON STUDYING OCCUPATION && NOT WORKING FROM HOME*/}
-                    {this.renderStudyOccupationCommuteAddress(tenantNumber, toggleName)}
-
-                    {/*SHOWS ONLY ON WORKING OCCUPATION && NOT WORKING FROM HOME*/}
-                    {this.renderWorkOccupationCommuteAddress(tenantNumber, toggleName)}
+                    {/*SHOWS ONLY IF NOT WORKING FROM HOME*/}
+                    {this.renderAddressInput(tenantNumber, toggleName)}
 
                     {/*SHOWS ONLY ON DRIVING COMMUTE_TYPE*/}
                     {this.renderDrivingOptions(tenantNumber)}

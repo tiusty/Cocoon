@@ -107,7 +107,7 @@ export default class Tenant extends Component {
     render(){
         return (
             <>
-                {this.props.tenants.map((t,i) => {
+                {this.props.tenants.slice(0, this.props.number_of_tenants).map((t,i) => {
                     return (
                        <TenantForm
                            tenantInfo={t}
@@ -123,14 +123,14 @@ export default class Tenant extends Component {
                     )
                 })}
                 <div className="row survey-btn-wrapper">
-                    <div className="col-md-6">
-                        <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => { ( this.props.saveTenantInfo(this.state), this.props.handlePrevStep(e)) } }>
+                    <div className="col-sm-6 col-xs-12">
+                        <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => { ( this.props.saveTenantInfo(this.state), this.props.handlePrevStep(e)) } }>
                             Back
                         </button>
                     </div>
 
-                    <div className="col-md-6">
-                        <button className="col-md-12 survey-btn" style={{marginTop: '30px'}} onClick={(e) => { this.isAllValid() ? (this.props.saveTenantInfo(this.state), this.props.handleNextStep(e)) : null; } }>
+                    <div className="col-sm-6 col-xs-12">
+                        <button className="col-sm-12 survey-btn" style={{marginTop: '30px'}} onClick={(e) => { this.isAllValid() ? (this.props.saveTenantInfo(this.state), this.props.handleNextStep(e)) : null; } }>
                             Next
                         </button>
                     </div>

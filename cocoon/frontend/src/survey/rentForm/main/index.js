@@ -21,6 +21,7 @@ export default class RentForm extends Component {
         this.state = {
             step: 1,
             tenants: [],
+            errors: {},
             tenants_TOTAL_FORMS: 0,
             tenants_INITIAL_FORMS: 0,
             tenants_MIN_NUM_FORMS: 0,
@@ -69,6 +70,9 @@ export default class RentForm extends Component {
                     if (response.data.result) {
                         window.location = response.data.redirect_url
                     } else {
+                        this.setState({
+                            errors: response.data
+                        })
                         console.log(response.data)
                     }
                 }
@@ -78,26 +82,8 @@ export default class RentForm extends Component {
     setNumberOfTenants = (num) => {
         this.setState({
             number_of_tenants: num
-        }, () => this.setFinalTenants())
+        })
     }
-
-    // When changing to step 2 this trims the tenant array to be
-    // the length of number_of_tenants
-    setFinalTenants = () => {
-        let tenants = [...this.state.tenants];
-        let finalTenants = [];
-        for(let i = 0; i < this.state.number_of_tenants; i++) {
-            finalTenants.push(tenants[i]);
-            this.setState({
-                [`tenants-${i}-first_name`]: tenants[i].first_name,
-                [`tenants-${i}-last_name`]: tenants[i].last_name,
-            })
-        }
-        this.setState({
-            tenants: finalTenants
-        });
-    }
-
 
     // Renders the section of the form based on which step the user is on
     renderForm = (step) => {
@@ -131,6 +117,7 @@ export default class RentForm extends Component {
                         onSubmit={this.handleSubmit}
                         handlePrevStep={this.handlePrevStep}
                         handleInputChange={this.handleInputChange}
+                        errors={this.state.errors}
                 />;
         }
     }

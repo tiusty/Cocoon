@@ -170,11 +170,21 @@ export default class General extends Component {
     validateTenantNames = () => {
         const inputs = Array.from(document.querySelectorAll('#tenant_names input[type=text]'));
         let emptyFields = inputs.filter(i => i.value === '');
+
         if(emptyFields.length > 0) {
             document.querySelector('#name_of_tenants_error').style.display = 'block';
             document.querySelector('#name_of_tenants_error').parentNode.scrollIntoView(true);
             return false;
         } else {
+            for(let i = 0; i < inputs.length; i++) {
+                const first_name = inputs[i].value.split(' ').slice(0, -1).join(' ');
+                const last_name = inputs[i].value.split(' ').slice(-1).join(' ');
+                if(first_name === '' || last_name === '') {
+                    document.querySelector('#name_of_tenants_error').style.display = 'block';
+                    document.querySelector('#name_of_tenants_error').parentNode.scrollIntoView(true);
+                    return false;
+                }
+            }
             document.querySelector('#name_of_tenants_error').style.display = 'none';
             return true;
         }
@@ -255,7 +265,7 @@ export default class General extends Component {
                 </div>
 
                 <div className="survey-question" id="tenant_names">
-                    <h2>What <span>{this.state.number_of_tenants >= 0 ? ' is your name' : ' are your names'}</span>?</h2>
+                    <h2>What <span>{this.state.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>
                     <input className="col-md-12 survey-input" type="text" name="tenant_name" placeholder="First and Last Name" autoCapitalize={'words'} data-tenantkey={0} value={this.state.tenant_name || ''} onChange={this.handleTenantName} />
                     {this.state.number_of_tenants > 1 && Array.from(Array(this.state.number_of_tenants - 1)).map((t, i) => {
