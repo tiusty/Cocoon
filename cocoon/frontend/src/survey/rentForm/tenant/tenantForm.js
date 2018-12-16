@@ -33,6 +33,10 @@ export default class Tenant extends Component {
             max_commute: 60,
             min_commute: 0,
             commute_weight: 0,
+
+            //Other
+            income: null,
+            credit_score: null,
         }
     }
 
@@ -57,6 +61,7 @@ export default class Tenant extends Component {
         valid = valid && this.handleOccupationValidation();
         valid = valid && this.handleOccupationFollowupValidation();
         valid = valid && this.handleCommuteTypeValidation();
+        valid = valid && this.handleFinancialValidation();
         return valid
     };
 
@@ -124,6 +129,18 @@ export default class Tenant extends Component {
         return valid
     }
 
+    handleFinancialValidation() {
+        let valid = true;
+        if (this.state.income === null) {
+            valid = false
+        }
+
+        if (this.state.credit_score === null) {
+            valid = false
+        }
+        return valid
+    }
+
 
     // HANDLE INPUTS //
     handleInputChange = (e, type) => {
@@ -187,7 +204,7 @@ export default class Tenant extends Component {
                 <div className="survey-question" onChange={(e) => {
                     this.handleInputChange(e, 'string');
                 }}>
-                    <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
+                    <h2>{this.props.id === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.state.tenant_identifier}-occupation-error`}>You must select an occupation type.</span>
@@ -501,7 +518,7 @@ export default class Tenant extends Component {
                      onBlur={(e) => {
                          this.handleInputChange(e, 'number');
                      }}>
-                    <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {name} want?
+                    <h2>How <span>long of a commute</span> {this.props.id === 0 ? 'do' : 'does'} {name} want?
                     </h2>
                     <input className="col-md-12 survey-input"
                            type="number"
@@ -565,6 +582,89 @@ export default class Tenant extends Component {
                     </label>
                 </div>
             );
+    };
+
+    renderIncomeQuestion(name) {
+        return (
+            <div className="survey-question" id={`${this.state.tenant_identifier}-income-question`} onBlur={(e) => {
+                this.handleInputChange(e, 'number');
+            }}>
+                <h2>What is {this.props.id === 0 ? 'your' : `${name}'s`} <span>approximate income</span>?
+                </h2>
+                <input className="col-md-12 survey-input" type="number" name={`${this.state.tenant_identifier}-income`}
+                       placeholder="Yearly salary" step="1000"
+                       value={this.state.income || ''} onChange={(e) => {
+                    this.handleInputChange(e, 'number');
+                }}/>
+            </div>
+        );
+    }
+
+    renderCreditScoreQuestion(name) {
+        return (
+                <div className="survey-question" id={`${this.state.tenant_identifier}-credit_score-question`} onChange={(e) => {
+                    this.handleInputChange(e, 'string');
+                }}>
+                    <h2>What is {this.props.id === 0 ? 'your' : `${name}'s`}
+                        <span>approximate credit score</span>?</h2>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="less than 500"
+                               checked={this.state.credit_score === 'less than 500'}
+                               onChange={() => {
+                               }}/>
+                        <div>&lt; 500</div>
+                    </label>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="500 - 550"
+                               checked={this.state.credit_score === '500 - 550'}
+                               onChange={() => {
+                               }}/>
+                        <div>500 - 550</div>
+                    </label>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="551 - 600"
+                               checked={this.state.credit_score === '551 - 600'}
+                               onChange={() => {
+                               }}/>
+                        <div>551 - 600</div>
+                    </label>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="601 - 650"
+                               checked={this.state.credit_score === '601 - 650'}
+                               onChange={() => {
+                               }}/>
+                        <div>601 - 650</div>
+                    </label>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="651 - 700"
+                               checked={this.state.credit_score === '651 - 700'}
+                               onChange={() => {
+                               }}/>
+                        <div>651 - 700</div>
+                    </label>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="701 - 750"
+                               checked={this.state.credit_score === '701 - 750'}
+                               onChange={() => {
+                               }}/>
+                        <div>701 - 750</div>
+                    </label>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="751 - 800"
+                               checked={this.state.credit_score === '751 - 800'}
+                               onChange={() => {
+                               }}/>
+                        <div>751 - 800</div>
+                    </label>
+                    <label className="col-md-3 col-xs-6 survey-label">
+                        <input type="radio" name={`${this.state.tenant_identifier}-credit_score`} value="801 - 850"
+                               checked={this.state.credit_score === '801 - 850'}
+                               onChange={() => {
+                               }}/>
+                        <div>801 - 850</div>
+                    </label>
+                </div>
+        );
     }
 
     render() {
@@ -587,6 +687,8 @@ export default class Tenant extends Component {
                     {this.renderCommuteTypeQuestion(name)}
                     {this.renderCommuteLengthQuestion(name)}
                     {this.renderCommuteWeightQuestion(name)}
+                    {this.renderIncomeQuestion(name)}
+                    {this.renderCreditScoreQuestion()}
                 </div>
             </>
         );
