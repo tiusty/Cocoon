@@ -148,6 +148,7 @@ export default class RentForm extends Component {
         let new_tenant = {};
         new_tenant.first_name = first_name[0].toUpperCase() + first_name.substr(1);
         new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
+        new_tenant.id = parseInt(index)
         tenants[index] = new_tenant;
         this.setState({
             tenants: tenants
