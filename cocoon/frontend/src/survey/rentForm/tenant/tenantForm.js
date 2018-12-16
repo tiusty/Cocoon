@@ -4,7 +4,7 @@ import { Component } from 'react';
 import Autocomplete from 'react-google-autocomplete';
 import './tenantForm.css'
 
-export default class Tenant extends Component {
+export default class TenantForm extends Component {
 
     constructor(props){
         super(props);

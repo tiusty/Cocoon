@@ -3,7 +3,7 @@ import { Component } from 'react';
 
 import Progress from '../progress/index';
 import General from '../general/index';
-import Tenants from '../tenant/tenants';
+import TenantsForm from '../tenant/tenantsForm';
 import Amenities from '../amenities/index';
 import Details from '../details/index';
 
@@ -20,7 +20,7 @@ export default class RentForm extends Component {
         super(props);
         this.state = {
             step: 2,
-            number_of_tenants: 1,
+            number_of_tenants: 2,
             tenants: [
                 {
                     first_name: 'Alex',
@@ -113,7 +113,7 @@ export default class RentForm extends Component {
                         saveGeneralInfo={this.saveGeneralInfo}
                         generalInfo={this.state.generalInfo} />;
             case 2:
-                return <Tenants
+                return <TenantsForm
                         handleNextStep={this.handleNextStep}
                         handlePrevStep={this.handlePrevStep}
                         tenants={this.state.tenants}

@@ -3,9 +3,9 @@ import { Component } from 'react';
 import axios from "axios";
 
 import commutes_endpoints from "../../../endpoints/commutes_endpoints";
-import Tenant from "./tenantForm";
+import TenantForm from "./tenantForm";
 
-export default class Tenants extends Component {
+export default class TenantsForm extends Component {
     /**
      *
      * @param props
@@ -165,7 +165,7 @@ export default class Tenants extends Component {
         return (
             <>
                 {this.props.tenants.map(t =>
-                    <Tenant
+                    <TenantForm
                         key={t.id}
                         id={t.id}
                         tenant={t}
