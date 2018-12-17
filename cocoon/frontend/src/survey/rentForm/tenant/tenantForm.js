@@ -14,8 +14,8 @@ export default class TenantForm extends Component {
     }
 
     componentDidMount = () => {
-        this.props.initTenant(this.props.id)
-        if(this.props.id === 0) {
+        this.props.initTenant(this.props.index)
+        if(this.props.index === 0) {
             this.setState({
                 is_active: !this.state.is_active
             });
@@ -30,7 +30,7 @@ export default class TenantForm extends Component {
 
 
     handleTenantPanelClick = () => {
-        this.props.onHandleValidation(this.props.id);
+        this.props.onHandleValidation(this.props.index);
         this.toggleQuestions();
     };
 
@@ -76,9 +76,9 @@ export default class TenantForm extends Component {
         return (
             <>
                 <div className="survey-question" onChange={(e) => {
-                    this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.id);
+                    this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index);
                 }}>
-                    <h2>{this.props.id === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
+                    <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-occupation-error`}>You must select an occupation type.</span>
@@ -125,8 +125,8 @@ export default class TenantForm extends Component {
 
     renderWorkingOccupation = (name) => {
         return (
-            <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-working-occupation-question`} onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.id)}>
-                <h2>{this.props.id === 0 ? 'Have' : 'Has'} {name} been at this <span>job for less than 6 months</span>?</h2>
+            <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-working-occupation-question`} onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index)}>
+                <h2>{this.props.index === 0 ? 'Have' : 'Has'} {name} been at this <span>job for less than 6 months</span>?</h2>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name={`${this.props.tenant.tenant_identifier}-new_job`} value={true} checked={this.props.tenant.new_job === "true"} onChange={() => {}} />
                     <div>Yes</div>
@@ -143,7 +143,7 @@ export default class TenantForm extends Component {
         return (
             <>
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-other-occupation-question`}
-                     onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.id)}>
+                     onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index)}>
                     <h2>What's that <span>other</span>?</h2>
                     <label className="col-md-6 survey-label">
                         <input type="radio" name={`${this.props.tenant.tenant_identifier}-other_occupation_reason`}
@@ -185,7 +185,7 @@ export default class TenantForm extends Component {
             return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-unemployed-follow-up-question`}
                      onChange={(e) => {
-                         this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.id);
+                         this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index);
                      }}>
                     <h2>Will {name} be <span>paying rent or receiving assistance</span> from a cosigner?</h2>
                     <label className="col-md-6 survey-label">
@@ -216,7 +216,7 @@ export default class TenantForm extends Component {
             );
         } else {
             return (
-                <h2>How {this.props.id === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
+                <h2>How {this.props.index === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
             );
         }
     };
@@ -230,7 +230,7 @@ export default class TenantForm extends Component {
                         {this.renderCommutePrompt(name)}
                         {this.props.commute_type_options.map((o, index) => (
                                 <label className="col-md-6 survey-label" key={index}
-                                       onChange={(e) => this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id)}>
+                                       onChange={(e) => this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index)}>
                                     <input type="radio" name={`${this.props.tenant.tenant_identifier}-commute_type`} value={o.id}
                                            checked={this.props.tenant.commute_type === o.id}
                                            onChange={() => {
@@ -310,7 +310,7 @@ export default class TenantForm extends Component {
     renderDrivingOptions = () => {
         return (
             <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-driving-follow-up-question`} onChange={(e) => {
-                this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.id);
+                this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index);
             }}>
                 <h2>What are the <span>driving options</span>?</h2>
                 <label className="col-md-6 survey-label">
@@ -388,16 +388,16 @@ export default class TenantForm extends Component {
             return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-desired_commute-question`}
                      onBlur={(e) => {
-                         this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id);
+                         this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
                      }}>
-                    <h2>How <span>long of a commute</span> {this.props.id === 0 ? 'do' : 'does'} {name} want?
+                    <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {name} want?
                     </h2>
                     <input className="col-md-12 survey-input"
                            type="number"
                            name={`${this.props.tenant.tenant_identifier}-max_commute`}
                            placeholder="Time in minutes"
                            value={this.props.tenant.max_commute || ''}
-                           onChange={(e) => {this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id)}}/>
+                           onChange={(e) => {this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index)}}/>
                 </div>
             );
     };
@@ -407,7 +407,7 @@ export default class TenantForm extends Component {
             return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-commute_weight-question`}
                      onChange={(e) => {
-                         this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id);
+                         this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
                      }}>
                     <h2>How <span>important is commute</span> to {name}?</h2>
                     <label className="col-md-4 survey-label">
@@ -459,14 +459,14 @@ export default class TenantForm extends Component {
     renderIncomeQuestion = (name) => {
         return (
             <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-income-question`} onBlur={(e) => {
-                this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id);
+                this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
             }}>
-                <h2>What is {this.props.id === 0 ? 'your' : `${name}'s`} <span>approximate income</span>?
+                <h2>What is {this.props.index === 0 ? 'your' : `${name}'s`} <span>approximate income</span>?
                 </h2>
                 <input className="col-md-12 survey-input" type="number" name={`${this.props.tenant.tenant_identifier}-income`}
                        placeholder="Yearly salary" step="1000"
                        value={this.props.tenant.income || ''} onChange={(e) => {
-                    this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.id);
+                    this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
                 }}/>
             </div>
         );
@@ -475,9 +475,9 @@ export default class TenantForm extends Component {
     renderCreditScoreQuestion(name) {
         return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-credit_score-question`} onChange={(e) => {
-                    this.props.onInputChange(e, 'string',this.props.tenant.tenant_identifier, this.props.id);
+                    this.props.onInputChange(e, 'string',this.props.tenant.tenant_identifier, this.props.index);
                 }}>
-                    <h2>What is {this.props.id === 0 ? 'your' : `${name}'s`}
+                    <h2>What is {this.props.index === 0 ? 'your' : `${name}'s`}
                         <span>approximate credit score</span>?</h2>
                     <label className="col-md-3 col-xs-6 survey-label">
                         <input type="radio" name={`${this.props.tenant.tenant_identifier}-credit_score`} value="less than 500"
@@ -554,7 +554,7 @@ export default class TenantForm extends Component {
                     <span><i className="material-icons">{this.state.is_active ? 'remove' : 'add'}</i></span>
                 </div>
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
-                     onChange={() => this.props.onHandleValidation(this.props.id)}>
+                     onChange={() => this.props.onHandleValidation(this.props.index)}>
                     {this.renderOccupation(name)}
                     {this.renderCommuteTypeQuestion(name)}
                     {this.renderCommuteLengthQuestion(name)}

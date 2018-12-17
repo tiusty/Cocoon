@@ -26,16 +26,16 @@ export default class TenantsForm extends Component {
     }
 
     // VALIDATION FUNCTIONS //
-    handleValidation = (id) => {
+    handleValidation = (index) => {
         let valid = true;
-        valid = valid && this.handleOccupationValidation(id);
-        valid = valid && this.handleOccupationFollowupValidation(id);
-        valid = valid && this.handleCommuteTypeValidation(id);
-        valid = valid && this.handleFinancialValidation(id);
+        valid = valid && this.handleOccupationValidation(index);
+        valid = valid && this.handleOccupationFollowupValidation(index);
+        valid = valid && this.handleCommuteTypeValidation(index);
+        valid = valid && this.handleFinancialValidation(index);
 
         let tenants = [...this.props.tenants];
         for (let i=0; i<this.props.tenants.length; i++ ) {
-            if (tenants[i].id === id) {
+            if (tenants[i].index === index) {
                 if (tenants[i].valid !== valid) {
                     tenants[i].valid = valid;
                     this.setState({
@@ -46,9 +46,9 @@ export default class TenantsForm extends Component {
         }
     };
 
-    handleOccupationValidation(id) {
+    handleOccupationValidation(index) {
         let valid = true;
-        if (!this.props.tenants[id].occupation) {
+        if (!this.props.tenants[index].occupation) {
             valid = false;
         }
         return valid
@@ -63,7 +63,7 @@ export default class TenantsForm extends Component {
         } else if (this.props.tenants[id].occupation === 'other') {
             if (!this.props.tenants[id].other_occupation_reason) {
                 valid = false
-            } else if (this.props.tenants[id].other_occupation_reason === 'unemployed' && !this.props.tenant.unemployed_follow_up) {
+            } else if (this.props.tenants[id].other_occupation_reason === 'unemployed' && !this.props.tenants.unemployed_follow_up) {
                 valid = false
             }
         }
@@ -150,8 +150,8 @@ export default class TenantsForm extends Component {
             <>
                 {this.props.tenants.map(t =>
                     <TenantForm
-                        key={t.id}
-                        id={t.id}
+                        key={t.index}
+                        index={t.index}
                         tenant={t}
                         initTenant={this.props.initTenants}
                         commute_type_options={this.state.commute_type_options}

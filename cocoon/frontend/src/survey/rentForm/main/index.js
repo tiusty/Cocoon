@@ -22,9 +22,8 @@ export default class RentForm extends Component {
             step: 1,
 
             // General Form Fields
-            number_of_tenants: 1,
-
             generalInfo: {
+                number_of_tenants: 1,
                 home_type: [],
                 move_weight: 0,
                 num_bedrooms: undefined,
@@ -75,7 +74,7 @@ export default class RentForm extends Component {
         this.state['tenants-INITIAL_FORMS'] = 0;
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
-        this.state['tenants-TOTAL_FORMS'] = this.state.number_of_tenants;
+        this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -84,8 +83,8 @@ export default class RentForm extends Component {
          */
 
         // If the number of tenants changes then update the total number of forms to equal that
-        if (this.state.number_of_tenants !== prevState.number_of_tenants) {
-            this.setState({'tenants-TOTAL_FORMS': this.state.number_of_tenants})
+        if (this.state.generalInfo.number_of_tenants !== prevState.generalInfo.number_of_tenants) {
+            this.setState({'tenants-TOTAL_FORMS': this.state.generalInfo.number_of_tenants})
         }
     };
 
@@ -99,40 +98,40 @@ export default class RentForm extends Component {
 
         let data = {};
 
-        // Add the tenants state to the data
         let tenants = [...this.state.tenants];
-        for (let i=0; i<this.state.number_of_tenants; i++) {
+        let tenantInfo = {};
+        // Adds the tenant identifier needed for Django formsets
+        for (let i=0; i<this.state.generalInfo.number_of_tenants; i++) {
             for(let key in tenants[i]) {
-                data[tenants[i].tenant_identifier + '-' + key] = tenants[i][key]
+                tenantInfo[tenants[i].tenant_identifier + '-' + key] = tenants[i][key]
             }
         }
 
+        // Add the management data for the tenants needed by Django
+        tenantInfo['tenants-INITIAL_FORMS'] = this.state['tenants-INITIAL_FORMS'];
+        tenantInfo['tenants-MAX_NUM_FORMS'] = this.state['tenants-MAX_NUM_FORMS'];
+        tenantInfo['tenants-MIN_NUM_FORMS'] = this.state['tenants-MIN_NUM_FORMS'];
+        tenantInfo['tenants-TOTAL_FORMS'] = this.state['tenants-TOTAL_FORMS'];
+
+        // Add the tenant info to the data
+        data['tenantInfo'] = tenantInfo;
+
         // Add the general state to the data
-        let generalInfo = this.state.generalInfo;
-        for(let key in generalInfo) {
-            data[key] = generalInfo[key]
-        }
+        data['generalInfo'] = this.state.generalInfo;
 
         // Add amenities
-        let amenitiesInfo = this.state.amenitiesInfo;
-        for(let key in amenitiesInfo) {
-            data[key] = amenitiesInfo[key]
-        }
+        data['amenitiesInfo'] = this.state.amenitiesInfo;
 
         // Add first and last name to details data
         let userData = detailsData;
         if (detailsData !== null) {
             userData['first_name'] = this.state.first_name;
             userData['last_name'] = this.state.last_name;
-            for(let key in userData) {
-                data[key] = userData[key]
-            }
+            data['detailsInfo'] = userData
         }
 
         // Combine the data with the state of main
         data = Object.assign({}, data, this.state);
-        console.log(data)
-
 
         // Posts the state which contains all the form elements that are needed
         axios.post(survey_endpoints['rentSurvey'],
@@ -160,9 +159,8 @@ export default class RentForm extends Component {
             case 1:
                 return <GeneralForm
                         handleNextStep={this.handleNextStep}
-                        onInputChange={this.handleInputChange}
                         onGeneralInputChange={this.handleGeneralInputChange}
-                        number_of_tenants={this.state.number_of_tenants}
+                        number_of_tenants={this.state.generalInfo.number_of_tenants}
                         onHandleTenantName={this.handleTenantName}
                         tenants={this.state.tenants}
                         generalInfo={this.state.generalInfo}
@@ -176,7 +174,7 @@ export default class RentForm extends Component {
                         handleNextStep={this.handleNextStep}
                         handlePrevStep={this.handlePrevStep}
                         tenants={this.state.tenants}
-                        number_of_tenants={this.state.number_of_tenants}
+                        number_of_tenants={this.state.generalInfo.number_of_tenants}
                         initTenants={this.initializeTenant}
                         onInputChange={this.handleTenantInputChange}
                 />;
@@ -329,7 +327,7 @@ export default class RentForm extends Component {
             if(last_name){
                 new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
             }
-            new_tenant.id = parseInt(index);
+            new_tenant.index = parseInt(index);
             new_tenant.valid = false;
             tenants[index] = new_tenant;
             this.setState({
@@ -337,7 +335,7 @@ export default class RentForm extends Component {
             });
         // If the tenant already exists then just update that tenant
         } else {
-            tenants[index].id = parseInt(index);
+            tenants[index].index = parseInt(index);
             tenants[index].first_name = first_name;
             tenants[index].last_name = last_name;
         }
@@ -356,10 +354,8 @@ export default class RentForm extends Component {
         const { name, value } = e.target;
         const nameStripped = name.replace(tenant_identifier+'-', '');
         let tenants = [...this.state.tenants];
-        console.log(nameStripped)
-        console.log(id)
         for (let i=0; i<this.state.tenants.length; i++) {
-            if (tenants[id].id === i) {
+            if (tenants[id].index === i) {
                 if(type === 'number') {
                     tenants[id][nameStripped] = parseInt(value)
                 } else {
@@ -370,38 +366,38 @@ export default class RentForm extends Component {
         this.setState({tenants})
     };
 
-    initializeTenant = (id) => {
+    initializeTenant = (index) => {
         let tenants = [...this.state.tenants];
         for (let i = 0; i < this.state.tenants.length; i++) {
-            if (tenants[i].id === id) {
-                tenants[i].tenant_identifier =  this.state.tenants[id].tenant_identifier || 'tenant-' + id;
-                tenants[i].valid = this.state.tenants[id].valid || false;
+            if (tenants[i].index === index) {
+                tenants[i].tenant_identifier =  this.state.tenants[index].tenant_identifier || 'tenant-' + index;
+                tenants[i].valid = this.state.tenants[index].valid || false;
 
                 // Survey questions state
-                tenants[i].occupation = this.state.tenants[id].occupation || null;
-                tenants[i].new_job = this.state.tenants[id].new_job || null;
+                tenants[i].occupation = this.state.tenants[index].occupation || null;
+                tenants[i].new_job = this.state.tenants[index].new_job || null;
 
-                tenants[i].other_occupation_reason = this.state.tenants[id].other_occupation_reason || null;
-                tenants[i].unemployed_follow_up = this.state.tenants[id].unemployed_follow_up || null;
+                tenants[i].other_occupation_reason = this.state.tenants[index].other_occupation_reason || null;
+                tenants[i].unemployed_follow_up = this.state.tenants[index].unemployed_follow_up || null;
 
                 // Address
-                tenants[i].street_address = this.state.tenants[id].street_address || null;
-                tenants[i].city = this.state.tenants[id].city || null;
-                tenants[i].state = this.state.tenants[id].state || null;
-                tenants[i].zip_code = this.state.tenants[id].zip_code || null;
-                tenants[i].full_address = this.state.tenants[id].full_address || null;
+                tenants[i].street_address = this.state.tenants[index].street_address || null;
+                tenants[i].city = this.state.tenants[index].city || null;
+                tenants[i].state = this.state.tenants[index].state || null;
+                tenants[i].zip_code = this.state.tenants[index].zip_code || null;
+                tenants[i].full_address = this.state.tenants[index].full_address || null;
 
                 // Commute questions
-                tenants[i].commute_type = this.state.tenants[id].commute_type || null;
-                tenants[i].driving_options = this.state.tenants[id].driving_options || null;
-                tenants[i].transit_options = this.state.tenants[id].transit_options || [];
-                tenants[i].max_commute = this.state.tenants[id].max_commute || 60;
-                tenants[i].min_commute = this.state.tenants[id].min_commute || 0;
-                tenants[i].commute_weight = this.state.tenants[id].commute_weight || 0;
+                tenants[i].commute_type = this.state.tenants[index].commute_type || null;
+                tenants[i].driving_options = this.state.tenants[index].driving_options || null;
+                tenants[i].transit_options = this.state.tenants[index].transit_options || [];
+                tenants[i].max_commute = this.state.tenants[index].max_commute || 60;
+                tenants[i].min_commute = this.state.tenants[index].min_commute || 0;
+                tenants[i].commute_weight = this.state.tenants[index].commute_weight || 0;
 
                 //Other
-                tenants[i].income = this.state.tenants[id].income || null;
-                tenants[i].credit_score = this.state.tenants[id].credit_score || null;
+                tenants[i].income = this.state.tenants[index].income || null;
+                tenants[i].credit_score = this.state.tenants[index].credit_score || null;
 
             }
             this.setState({tenants});

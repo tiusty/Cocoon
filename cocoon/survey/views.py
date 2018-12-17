@@ -345,21 +345,35 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
         data = self.request.data['data']
 
-        form = RentSurveyForm(data)
+        # Parse data to correct format
+        survey_data = None
+        tenant_data = None
+        user_data = None
+
+        if 'generalInfo' in data:
+            survey_data = data['generalInfo']
+        if 'amenitiesInfo' in data:
+            survey_data.update(data['amenitiesInfo'])
+        if 'tenantInfo' in data:
+            tenant_data = data['tenantInfo']
+        if 'detailsInfo' in data:
+            user_data = data['detailsInfo']
+
+        form = RentSurveyForm(survey_data)
 
         tenants = None
         user_form = None
 
         if form.is_valid():
 
-            tenants = TenantFormSet(data)
+            tenants = TenantFormSet(tenant_data)
 
             does_user_signup = False
             sign_up_form_valid = True
 
             if not self.request.user.is_authenticated():
                 does_user_signup = True
-                user_form = ApartmentHunterSignupForm(data)
+                user_form = ApartmentHunterSignupForm(user_data)
                 sign_up_form_valid = user_form.is_valid()
 
             # Makes sure that the tenant form and the signup form are valid before saving
@@ -383,7 +397,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     for tenant in tenants:
 
                         # If only the user
-                        if counter is 1 and counter is data['number_of_tenants']:
+                        if counter is 1 and counter is survey_data['number_of_tenants']:
                             survey_name = survey_name + " Just Me"
                             break
 

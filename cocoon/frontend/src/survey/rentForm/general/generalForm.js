@@ -113,7 +113,7 @@ export default class GeneralForm extends Component {
 
     renderNumberOfPeopleQuestion() {
         return (
-            <div className="survey-question" onChange={(e) => this.props.onInputChange(e, 'number')}>
+            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
                 <h2>How many people are you <span>searching with</span>?</h2>
                 <span className="col-md-12 survey-error-message" id="number_of_tenants_error">You must select the number of people.</span>
                 <label className="col-md-6 survey-label">
