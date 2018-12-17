@@ -129,8 +129,6 @@ export default class RentForm extends Component {
             userData['last_name'] = this.state.tenants[0].last_name;
             data['detailsInfo'] = userData
         }
-        console.log(data)
-        console.log(userData)
 
         // Combine the data with the state of main
         data = Object.assign({}, data, this.state);
