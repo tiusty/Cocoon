@@ -125,8 +125,8 @@ export default class RentForm extends Component {
         // Add first and last name to details data
         let userData = detailsData;
         if (detailsData !== null) {
-            userData['first_name'] = this.state.first_name;
-            userData['last_name'] = this.state.last_name;
+            userData['first_name'] = this.state.tenants[0].first_name;
+            userData['last_name'] = this.state.tenants[0].last_name;
             data['detailsInfo'] = userData
         }
 
