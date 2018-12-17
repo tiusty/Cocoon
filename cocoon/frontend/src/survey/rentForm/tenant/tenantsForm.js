@@ -79,13 +79,16 @@ export default class TenantsForm extends Component {
 
         // If the option is not work from home then make sure the address fields are filled in
         if (this.props.tenants[id].commute_type !== this.getCommuteId('Work From Home')) {
+            console.log('in case')
             if (this.props.tenants[id].full_address === null || this.props.tenants[id].street_address === null || this.props.tenants[id].city === null
                 || this.props.tenants[id].zip_code === null || this.props.tenants[id].state === null) {
                 valid = false
             }
 
             // Make sure if the option is not work from home then the max commute is set
+            console.log(this.props.tenants[id].max_commute)
             if (this.props.tenants[id].max_commute === null) {
+                console.log('max_comute')
                 valid = false
             }
 

@@ -132,25 +132,27 @@ export default class RentForm extends Component {
 
         // Combine the data with the state of main
         data = Object.assign({}, data, this.state);
+        console.log(data)
+        console.log(userData)
 
         // Posts the state which contains all the form elements that are needed
-        axios.post(survey_endpoints['rentSurvey'],
-            {
-                data: data,
-            })
-            .catch(error => console.log('BAD', error))
-            .then(response => {
-                // On successful form submit then redirect to survey results page
-                    if (response.data.result) {
-                        window.location = response.data.redirect_url
-                    } else {
-                        this.setState({
-                            errors: response.data
-                        })
-                        console.log(response.data)
-                    }
-                }
-            );
+        // axios.post(survey_endpoints['rentSurvey'],
+        //     {
+        //         data: data,
+        //     })
+        //     .catch(error => console.log('BAD', error))
+        //     .then(response => {
+        //         // On successful form submit then redirect to survey results page
+        //             if (response.data.result) {
+        //                 window.location = response.data.redirect_url
+        //             } else {
+        //                 this.setState({
+        //                     errors: response.data
+        //                 })
+        //                 console.log(response.data)
+        //             }
+        //         }
+        //     );
     };
 
     // Renders the section of the form based on which step the user is on
