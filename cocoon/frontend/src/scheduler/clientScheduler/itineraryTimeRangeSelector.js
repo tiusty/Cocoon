@@ -36,7 +36,7 @@ class ItineraryTimeRangeSelector extends Component {
                     />
                 </div>
                 <div className="col-md-4">
-                    <button className="btn btn-sm" onClick={() => this.props.onDelete(this.props.id)}>-</button>
+                    <button className="btn btn-sm" onClick={() => this.props.onDelete(this.props.index, this.props.day_index)}>-</button>
                 </div>
             </div>
         );
