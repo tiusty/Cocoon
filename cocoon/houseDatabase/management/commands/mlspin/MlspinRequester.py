@@ -10,7 +10,7 @@ from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
-
+from cocoon.homeDataNLPModel.word_scraper import WordScraper
 # Load the logger
 import logging
 logger = logging.getLogger(__name__)
@@ -132,6 +132,9 @@ class MlspinRequester(object):
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
 
                 # Set MLSpinDataModel fields
+                word_scraper = WordScraper()
+                word_scraper.word_scraper(cells[REMARKS])
+                print(word_scraper.input_description)
                 new_listing.remarks = cells[REMARKS]
                 new_listing.listing_number = int(cells[LIST_NO])
                 new_listing.listing_provider = HomeProviderModel.objects.get(provider="MLSPIN")
