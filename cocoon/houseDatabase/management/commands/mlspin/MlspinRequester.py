@@ -149,7 +149,7 @@ class MlspinRequester(object):
                     new_listing.parking_spot = True
                 if word_scraper.word_finder("pool") or (word_scraper.word_finder("hot") and word_scraper.word_finder("tub")):
                     new_listing.pool = True
-                if word_scraper.word_finder("balcony") or word_scraper.finder("patio"):
+                if word_scraper.word_finder("balcony") or word_scraper.word_finder("patio"):
                     new_listing.patio_balcony = True
                 if word_scraper.word_finder("laundry") and word_scraper.word_finder("unit"):
                     new_listing.laundry_in_unit = True
