@@ -9,7 +9,6 @@ class WordScraper:
     def word_finder(self, word):
 
         if word in self.input_description:
-
             return True
 
         return False

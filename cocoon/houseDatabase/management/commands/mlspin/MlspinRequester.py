@@ -147,6 +147,17 @@ class MlspinRequester(object):
                 # Set Exterior Amenities fields
                 if int(cells[PARKING_SPACES]) > 0:
                     new_listing.parking_spot = True
+                if word_scraper.word_finder("pool") or (word_scraper.word_finder("hot") and word_scraper.word_finder("tub")):
+                    new_listing.pool = True
+                if word_scraper.word_finder("balcony") or word_scraper.finder("patio"):
+                    new_listing.patio_balcony = True
+                if word_scraper.word_finder("laundry") and word_scraper.word_finder("unit"):
+                    new_listing.laundry_in_unit = True
+                    new_listing.laundromat_nearby = False
+                    new_listing.laundry_inside = False
+                new_listing.gym = word_scraper.word_finder("gym")
+                new_listing.storage = word_scraper.word_finder("storage")
+
 
                 # Create the new home
                 # Define the home type
