@@ -134,7 +134,6 @@ class MlspinRequester(object):
                 # Set MLSpinDataModel fields
                 word_scraper = WordScraper()
                 word_scraper.word_scraper(cells[REMARKS])
-                print(word_scraper.input_description)
                 new_listing.remarks = cells[REMARKS]
                 new_listing.listing_number = int(cells[LIST_NO])
                 new_listing.listing_provider = HomeProviderModel.objects.get(provider="MLSPIN")
