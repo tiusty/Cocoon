@@ -126,7 +126,7 @@ class MlspinRequester(object):
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
-                if word_scraper.word_finder("laundromat") and word_scraper.word_finder("narby"):
+                if word_scraper.word_finder("laundromat") and word_scraper.word_finder("nearby"):
                     new_listing.laundry_in_unit = False
                     new_listing.laundromat_nearby = True
                     new_listing.laundry_inside = False
