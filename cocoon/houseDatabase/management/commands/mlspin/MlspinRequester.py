@@ -116,12 +116,20 @@ class MlspinRequester(object):
 
             # If any of the fields give a value error, then don't save the apartment
             try:
+                #Initialize word scraper
+                word_scraper = WordScraper()
+                word_scraper.word_scraper(cells[REMARKS])
+
                 # Set the HomeBaseModel Fields
                 new_listing.street_address = normalize_street_address("{0} {1}".format(cells[STREET_NO], clean_address))
                 new_listing.city = self.towns[str(cells[TOWN_NUM])]["town"]
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
+                if word_scraper.word_finder("laundromat") and word_scraper.word_finder("narby"):
+                    new_listing.laundry_in_unit = False
+                    new_listing.laundromat_nearby = True
+                    new_listing.laundry_inside = False
 
                 # Set InteriorAmenitiesModel Fields
                 # Currently don't support non-integers for num_bathrooms. Therefore
@@ -130,10 +138,24 @@ class MlspinRequester(object):
                 new_listing.bath = True if num_baths > 0 else False
                 new_listing.num_bathrooms = num_baths
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
+                new_listing.furnished = word_scraper.word_finder("furnished")
+                new_listing.hardwood_floors = word_scraper.word_finder("hardwood")
+                if (word_scraper.word_finder("air") and word_scraper.word_finder("conditioning")) or word_scraper.word_finder("ac") or word_scraper.word_finder("a/c"):
+                    new_listing.air_conditioning = True
+
+                if (word_scraper.word_finder("dogs") and word_scraper.word_finder("allowed")) or word_scraper.word_finder("dogs"):
+                    new_listing.dogs_allowed = True
+
+                if (word_scraper.word_finder("cats") and word_scraper.word_finder("allowed")) or word_scraper.word_finder("cats"):
+                    new_listing.cats_allowed = True
+
+                if word_scraper.word_finder("laundry") and word_scraper.word_finder("building"):
+                    new_listing.laundry_in_unit = False
+                    new_listing.laundromat_nearby = False
+                    new_listing.laundry_inside = True
+
 
                 # Set MLSpinDataModel fields
-                word_scraper = WordScraper()
-                word_scraper.word_scraper(cells[REMARKS])
                 new_listing.remarks = cells[REMARKS]
                 new_listing.listing_number = int(cells[LIST_NO])
                 new_listing.listing_provider = HomeProviderModel.objects.get(provider="MLSPIN")

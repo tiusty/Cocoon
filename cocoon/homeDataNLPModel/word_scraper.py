@@ -4,7 +4,7 @@ class WordScraper:
         self.input_description = ""
 
     def word_scraper(self, input_description):
-        self.input_description = input_description
+        self.input_description = input_description.lower()
 
     def word_finder(self, word):
 
