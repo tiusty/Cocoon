@@ -1,6 +1,8 @@
 import React from 'react';
 import { Component } from 'react';
 
+import houseIcon from './found-apt.png';
+
 export default class DetailsForm extends Component {
     state = {
         errorMessages: {
@@ -186,20 +188,22 @@ const NewUser = (props) => (
 );
 
 const CurrentUser = (props) => (
-    <>
+    <div className="form-details-box">
+
         <h2><span>Awesome!</span> Check your best places out now.</h2>
+        <img src={houseIcon} alt="Icon of a house"/>
         <div className="row survey-btn-wrapper">
-            <div className="col-md-6">
-                <button className="col-md-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => { props.handlePrevStep(e)}}>
+            <div className="col-sm-6 col-xs-12">
+                <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => { props.handlePrevStep(e)}}>
                     Back
                 </button>
             </div>
-            <div className="col-md-6">
-                <button className="col-md-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
+            <div className="col-sm-6 col-xs-12">
+                <button className="col-sm-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
                     View now
                 </button>
             </div>
         </div>
 
-    </>
+    </div>
 )

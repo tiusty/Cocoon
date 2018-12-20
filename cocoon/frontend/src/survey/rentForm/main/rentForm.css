@@ -252,6 +252,24 @@
     padding-bottom: 5px;
 }
 
+.form-details-box {
+    padding: 30px;
+    margin-top: 30px;
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+}
+
+.form-details-box h2 {
+    text-align: center;
+}
+
+.form-details-box img {
+    margin: 30px auto;
+    text-align: center;
+    max-width: 150px;
+    display: block;
+}
+
 @media screen and (max-width: 992px) {
     .survey-wrapper {
         width: 100%;

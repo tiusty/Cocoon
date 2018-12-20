@@ -25,6 +25,11 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
+            },
+            // Adds ability to import images into components
+            {
+                test: /\.(gif|svg|jpg|png)$/,
+                loader: "url-loader?limit=1000000"
             }
         ]
     }
