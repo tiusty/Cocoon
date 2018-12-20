@@ -2,6 +2,42 @@ import React from 'react';
 import { Component } from 'react';
 
 export default class DetailsForm extends Component {
+    state = {
+        errorMessages: {
+            email_error: 'You must enter a valid email address.',
+            phone_error: 'Enter a valid phone number. ex. 555-555-5555',
+            password_error_number: 'The password must contain at least 1 number',
+            password_error_length: 'Password must be at least 8 characters.',
+            password_error_match: 'Passwords must match.',
+            creation_key_error: 'You must enter a creation key.'
+        }
+    }
+
+    componentDidUpdate = (prevProps) => {
+        if(this.props.errors !== prevProps.errors) {
+            this.handleSubmitErrors(this.props.errors);
+        }
+    }
+
+    handleSubmitErrors = (errors) => {
+        let valid = true;
+        if (errors.user_form_errors.email) {
+            document.querySelector('#email_error').style.display = 'block';
+            document.querySelector('#email_error').innerText = errors.user_form_errors.email[0];
+            valid = false;
+        } else if (!errors.user_form_errors.email) { document.querySelector('#email_error').style.display = 'none'; }
+        if (errors.user_form_errors.password2) {
+            document.querySelector('#password_error').style.display = 'block';
+            document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
+            valid = false;
+        } else if (!errors.user_form_errors.password2) { document.querySelector('#password_error').style.display = 'none'; }
+        if (errors.user_form_errors.creation_key) {
+            document.querySelector('#creation_key_error').style.display = 'block';
+            document.querySelector('#creation_key_error').innerText = errors.user_form_errors.creation_key[0];
+            valid = false;
+        } else if (errors.user_form_errors.creation_key) { document.querySelector('#creation_key_error').style.display = 'none'; }
+        return valid;
+    }
 
     handleValidation = () => {
         return this.validateEmail() && this.validatePhone() && this.validatePassword() && this.validatePasswordMatch() && this.validateCreationKey();
@@ -10,63 +46,57 @@ export default class DetailsForm extends Component {
     validateEmail = () => {
         const re = /\S+@\S+\.\S+/;
         const email = document.querySelector('input[type=email]').value;
-        if(re.test(email)) {
-            document.getElementById('email_error').style.display = 'none';
-        } else {
-            document.getElementById('email_error').style.display = 'block';
-        }
+        if (!re.test(email)) {
+            document.querySelector('#email_error').style.display = 'block';
+            document.querySelector('#email_error').innerText = this.state.errorMessages.email_error;
+        } else if (re.test(email)) { document.querySelector('#email_error').style.display = 'none'; }
         return re.test(email);
     }
 
     validatePhone = () => {
         const re = /^(\([0-9]{3}\)\s*|[0-9]{3}\-)[0-9]{3}-[0-9]{4}$/;
         const phone = document.querySelector('input[type=tel]').value;
-        if(re.test(phone)) {
-            document.getElementById('phone_error').style.display = 'none';
-        } else {
-            document.getElementById('phone_error').style.display = 'block';
-        }
+        if (!re.test(phone)) {
+            document.querySelector('#phone_error').style.display = 'block';
+            document.querySelector('#phone_error').innerText = this.state.errorMessages.phone_error;
+        } else if (re.test(phone)) { document.querySelector('#phone_error').style.display = 'none'; }
         return re.test(phone);
     }
 
     validatePassword = () => {
         const password = document.querySelector('input[name=password1]').value;
         const numberMatch = /[0-9]/;
-        const errors = [
-            'Password must contain at least one number',
-            'Password must be at least 8 characters.',
-        ];
-        if(!numberMatch.test(password)) {
-            document.getElementById('password_error').innerText = errors[0];
-            document.getElementById('password_error').style.display = 'block';
+        if (password.length < 8) {
+            document.querySelector('#password_error').style.display = 'block';
+            document.querySelector('#password_error').innerText = this.state.errorMessages.password_error_length;
             return false;
-        } else if(password.length < 8) {
-            document.getElementById('password_error').innerText = errors[3];
-            document.getElementById('password_error').style.display = 'block';
+        } else if (!numberMatch.test(password)) {
+            document.querySelector('#password_error').style.display = 'block';
+            document.querySelector('#password_error').innerText = this.state.errorMessages.password_error_number;
             return false;
         }
-        document.getElementById('password_error').style.display = 'none';
+        if (numberMatch.test(password) && !password.length < 8) { document.querySelector('#password_error').style.display = 'none'; }
         return true;
     }
 
     validatePasswordMatch = () => {
         const password = document.querySelector('input[name=password1]').value;
         const confirmPassword = document.querySelector('input[name=password2]').value;
-        if(password !== confirmPassword) {
-            document.getElementById('password_match_error').style.display = 'block';
+        if (password !== confirmPassword) {
+            document.querySelector('#password_match_error').style.display = 'block';
+            document.querySelector('#password_match_error').innerText = this.state.errorMessages.password_error_match;
             return false;
-        }
-        document.getElementById('password_match_error').style.display = 'none';
+        } else if (password === confirmPassword) { document.querySelector('#password_match_error').style.display = 'none'; }
         return true;
     }
 
     validateCreationKey = () => {
         const creationKey = document.querySelector('input[name=creation_key').value;
-        if(creationKey === '') {
-            document.getElementById('creation_key_error').style.display = 'block';
+        if (creationKey === '') {
+            document.querySelector('#creation_key_error').style.display = 'block';
+            document.querySelector('#creation_key_error').innerText = this.state.errorMessages.creation_key_error;
             return false;
-        }
-        document.getElementById('creation_key_error').style.display = 'none';
+        } else if (creationKey) { document.querySelector('#creation_key_error').style.display = 'none'; }
         return true;
     }
 
@@ -126,19 +156,19 @@ const NewUser = (props) => (
         <div className="survey-question">
             <h2>Finish signing up to see <span>your results</span>!</h2>
 
-            <span className="col-md-12 survey-error-message" id="email_error">Enter a valid email address.</span>
+            <span className="col-md-12 survey-error-message" id="email_error"></span>
             <input className="col-md-12 survey-input" type="email" name="email" placeholder="Email address" maxLength={30} onBlur={(e) => {props.validateEmail(e) && props.handleInputChange(e, 'string')} } required/>
 
-            <span className="col-md-12 survey-error-message" id="phone_error">Enter a valid phone number. Ex. (555) 555-5555</span>
+            <span className="col-md-12 survey-error-message" id="phone_error"></span>
             <input className="col-md-12 survey-input" type="tel" name="phone_number" placeholder="Phone Number" onBlur={(e) => { props.validatePhone(e) && props.handleInputChange(e, 'string')} } required/>
 
             <span className="col-md-12 survey-error-message" id="password_error"></span>
             <input className="col-md-12 survey-input" type="password" name="password1" placeholder="Password" required onChange={props.validatePassword} onBlur={(e) => {props.validatePassword && props.handleInputChange(e, 'string')} } />
-            <span className="col-md-12 survey-error-message" id="password_match_error">Passwords must match.</span>
+            <span className="col-md-12 survey-error-message" id="password_match_error"></span>
             <input className="col-md-12 survey-input" type="password" name="password2" placeholder="Confirm Your Password" required onChange={props.validatePasswordMatch} onBlur={(e) => {props.validatePasswordMatch && props.handleInputChange(e, 'string')} } />
 
-            <span className="col-md-12 survey-error-message" id="creation_key_error">This field is required.</span>
-            <input className="col-md-12 survey-input" type="text" name="creation_key" placeholder="Enter Your Key" required onChange={props.validateCreationKey} onBlur={(e) => props.handleInputChange(e, 'string')} />
+            <span className="col-md-12 survey-error-message" id="creation_key_error"></span>
+            <input className="col-md-12 survey-input" type="text" name="creation_key" placeholder="Enter Your Key" required onBlur={(e) => props.handleInputChange(e, 'string')} />
         </div>
         <div className="row survey-btn-wrapper">
             <div className="col-sm-6 col-xs-12">

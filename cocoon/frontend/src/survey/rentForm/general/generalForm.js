@@ -3,6 +3,7 @@ import { Component } from 'react';
 import axios from "axios";
 import InputRange from 'react-input-range';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
+import 'react-day-picker/lib/style.css';
 
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
@@ -12,6 +13,16 @@ export default class GeneralForm extends Component {
         value: {
             min: 1000,
             max: 3000,
+        },
+        errorMessages: {
+            name_error_undefined: 'You must enter the names of the tenants.',
+            name_error_format: 'Enter first and last name separated by a space.',
+            home_type_error: 'You must select at least one type of home.',
+            price_error_range: 'The price must be between $0 and $4000',
+            price_error_weight: 'You must choose how much you care about the price.',
+            date_error: 'You must select an earliest and latest move in date.',
+            num_bedrooms_error_undefined: 'You must choose the number of bedrooms you need.',
+            num_bedrooms_error_amount: 'The number of bedrooms cannot be below 0.'
         }
     };
 
@@ -40,35 +51,63 @@ export default class GeneralForm extends Component {
         let valid = true;
         if (this.props.tenants.length < this.props.number_of_tenants) {
             valid = false
+            document.querySelector('#name_of_tenants_error').style.display = 'block';
+            document.querySelector('#name_of_tenants_error').innerText = this.state.errorMessages.name_error_undefined;
+            document.querySelector('input[name=tenant_name]').parentNode.scrollIntoView(true)
+            alert(this.state.errorMessages.name_error_undefined)
         } else {
             for(let i=0; i<this.props.number_of_tenants; i++) {
                 if(!this.props.tenants[i].first_name || !this.props.tenants[i].last_name) {
                     valid = false
+                    document.querySelector('#name_of_tenants_error').style.display = 'block';
+                    document.querySelector('#name_of_tenants_error').innerText = this.state.errorMessages.name_error_format;
+                    document.querySelector('input[name=tenant_name]').parentNode.scrollIntoView(true)
+                    alert(this.state.errorMessages.name_error_format)
                 }
             }
         }
+        if(valid) { document.querySelector('#name_of_tenants_error').style.display = 'none'; }
         return valid
     }
 
     handleHomeTypeValidation() {
         let valid = true;
         if (this.props.generalInfo.home_type.length === 0) {
-            valid = false
+            document.querySelector('#home_type_error').style.display = 'block';
+            document.querySelector('#home_type_error').innerText = this.state.errorMessages.home_type_error;
+            document.querySelector('input[name=home_type]').parentNode.scrollIntoView(true);
+            alert(this.state.errorMessages.home_type_error);
+            valid = false;
         }
+        if(valid) { document.querySelector('#home_type_error').style.display = 'none'; }
         return valid
     }
 
     handlePriceValidation() {
         let valid = true;
         if (this.props.desired_price < 0) {
+            document.querySelector('#price_error').style.display = 'block';
+            document.querySelector('#price_error').innerText = this.state.errorMessages.price_error_range;
+            document.querySelector('.input-range').parentNode.scrollIntoView(true)
+            alert(this.state.errorMessages.price_error_range)
             valid = false
         }
         if (this.props.max_price < 0) {
+            document.querySelector('#price_error').style.display = 'block';
+            document.querySelector('#price_error').innerText = this.state.errorMessages.price_error_range;
+            document.querySelector('.input-range').parentNode.scrollIntoView(true)
+            alert(this.state.errorMessages.price_error_range)
             valid = false
         }
         if (this.props.price_weight < 0) {
+            document.querySelector('#price_weight_error').style.display = 'block';
+            document.querySelector('#price_weight_error').innerText = this.state.errorMessages.price_error_weight;
+            document.querySelector('input[name=price_weight]').parentNode.scrollIntoView(true)
+            alert(this.state.errorMessages.price_error_weight)
             valid = false
         }
+        if(valid) { document.querySelector('#price_weight_error').style.display = 'none'; }
+        if(valid) { document.querySelector('#price_error').style.display = 'none'; }
         return valid
     }
 
@@ -85,8 +124,12 @@ export default class GeneralForm extends Component {
         if (this.props.generalInfo.is_move_asap !== 'yes') {
             if (this.props.generalInfo.earliest_move_in === undefined ||
             this.props.generalInfo.latest_move_in === undefined) {
+                document.querySelector('#date_error').style.display = 'block';
+                document.querySelector('#date_error').innerText = this.state.errorMessages.date_error;
+                document.querySelector('.date-wrapper').parentNode.scrollIntoView(true)
+                alert(this.state.errorMessages.date_error)
                 valid  = false
-            }
+            } else if(valid) { document.querySelector('#date_error').style.display = 'none'; }
         }
         return valid
     }
@@ -102,12 +145,21 @@ export default class GeneralForm extends Component {
     handleBedroomValidation() {
         let valid = true;
         if (this.props.generalInfo.num_bedrooms === undefined){
+            document.querySelector('#number_of_rooms_error').style.display = 'block';
+            document.querySelector('#number_of_rooms_error').innerText = this.state.errorMessages.num_bedrooms_error_undefined;
+            document.querySelector('input[name=num_bedrooms]').parentNode.scrollIntoView(true);
+            alert(this.state.errorMessages.num_bedrooms_error_undefined);
             valid = false
         } else {
             if (this.props.generalInfo.num_bedrooms < 0) {
+                document.querySelector('#number_of_rooms_error').style.display = 'block';
+                document.querySelector('#number_of_rooms_error').innerText = this.state.errorMessages.num_bedrooms_error_amount;
+                document.querySelector('input[name=num_bedrooms]').parentNode.scrollIntoView(true)
+                alert(this.state.errorMessages.num_bedrooms_error_amount);
                 valid = false
             }
         }
+        if(valid) { document.querySelector('#number_of_rooms_error').style.display = 'none'; }
         return valid
     }
 
@@ -115,7 +167,6 @@ export default class GeneralForm extends Component {
         return (
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
                 <h2>How many people are you <span>searching with</span>?</h2>
-                <span className="col-md-12 survey-error-message" id="number_of_tenants_error">You must select the number of people.</span>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
                     <div>Just Me</div>
@@ -167,7 +218,7 @@ export default class GeneralForm extends Component {
         return (
             <div className="survey-question" id="tenant_names">
                 <h2>What <span>{this.props.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
-                <span className="col-md-12 survey-error-message" id="name_of_tenants_error">Enter first and last name separated by a space.</span>
+                <span className="col-md-12 survey-error-message" id="name_of_tenants_error"></span>
                 <input className="col-md-12 survey-input" type="text" name="tenant_name"
                        placeholder="First and Last Name" autoCapitalize={'words'} data-tenantkey={0}
                        value={this.setNameOnField(0)} onChange={this.props.onHandleTenantName}/>
@@ -186,7 +237,7 @@ export default class GeneralForm extends Component {
             return (
                 <div className="survey-question" onChange={this.validateHomeType}>
                     <h2>What <span>kind of home</span> do you want?</h2>
-                    <span className="col-md-12 survey-error-message" id="home_type_error">You must select at least one type of home.</span>
+                    <span className="col-md-12 survey-error-message" id="home_type_error"></span>
                     {this.state.home_type_options.map((o, index) => (
                         <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.props.setHomeTypes(e, index, o.id)}>
                             <input type="checkbox" name="home_type" value={o.id} checked={this.props.generalInfo.home_type.length && this.props.generalInfo.home_type.some(i => i === o.id)} onChange={() => {}} />
@@ -203,6 +254,7 @@ export default class GeneralForm extends Component {
         return(
             <div className="survey-question">
                 <h2>How much rent do you <span>want to pay</span>?</h2>
+                <span className="col-md-12 survey-error-message" id="price_error"></span>
                 <InputRange
                     draggableTrack
                     maxValue={this.getMaxPrice(this.props.number_of_tenants)}
@@ -219,7 +271,7 @@ export default class GeneralForm extends Component {
         return (
             <div className="survey-question" onChange={(e) =>this.props.onGeneralInputChange(e, 'number')}>
                 <h2>How <span>important is the price</span>?</h2>
-                <span className="col-md-12 survey-error-message" id="price_weight_error">You must choose how much you care about the price.</span>
+                <span className="col-md-12 survey-error-message" id="price_weight_error"></span>
                 <label className="col-md-4 survey-label">
                     <input type="radio" name="price_weight" value="0" checked={this.props.generalInfo.price_weight === 0} onChange={() => {}} />
                     <div>Don’t care</div>
@@ -252,7 +304,6 @@ export default class GeneralForm extends Component {
         return (
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'string')}>
                 <h2>Are you looking to move in <span>as soon as possible?</span></h2>
-                <span className="col-md-12 survey-error-message" id="date_error">You must select an answer.</span>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="is_move_asap" value="yes" checked={this.props.generalInfo.is_move_asap === 'yes'} onChange={() => {}} />
                     <div>Yes</div>
@@ -268,9 +319,9 @@ export default class GeneralForm extends Component {
     renderDatePickingQuestion() {
         if (this.props.generalInfo.is_move_asap !== "yes") {
             return (
-                <>
+                <div className="survey-question">
                     <h2>When are you wanting to <span>move in</span>?</h2>
-                    <span className="col-md-12 survey-error-message" id="date_error">You must select an earliest and latest move in date.</span>
+                    <span className="col-md-12 survey-error-message" id="date_error"></span>
                     <div className="col-md-6 date-wrapper">
                         <DayPickerInput
                             placeholder={'Earliest'}
@@ -283,7 +334,7 @@ export default class GeneralForm extends Component {
                             onDayChange={this.props.handleLatestClick}
                             value={this.props.generalInfo.latest_move_in} onChange={() => {}} />
                     </div>
-                </>
+                </div>
             );
         } else {
             return null
@@ -319,7 +370,7 @@ export default class GeneralForm extends Component {
         return(
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
                 <h2>How many <span>bedrooms</span> do you need?</h2>
-                <span className="col-md-12 survey-error-message" id="number_of_rooms_error">You must select the number of rooms.</span>
+                <span className="col-md-12 survey-error-message" id="number_of_rooms_error"></span>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="num_bedrooms" value="0" checked={this.props.generalInfo.num_bedrooms === 0} onChange={() => {}} />
                     <div>Studio</div>
