@@ -1,16 +1,18 @@
+// Import React Components
 import React from 'react';
 import { Component } from 'react';
+import axios from 'axios'
 
+// Import Cocoon Components
 import Progress from '../progress/index';
 import GeneralForm from '../general/generalForm';
 import TenantsForm from '../tenant/tenantsForm';
 import AmenitiesForm from '../amenities/amenitiesForm';
 import DetailsForm from '../details/index';
-
-import axios from 'axios'
 import survey_endpoints from "../../../endpoints/survey_endpoints";
 import './rentForm.css';
 
+// Necessary XSRF headers for posting form
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
@@ -38,6 +40,7 @@ export default class RentForm extends Component {
                 is_move_asap: 'yes',
             },
 
+            // Amenities Form Fields
             amenitiesInfo: {
                 wants_laundry_in_unit: false,
                 wants_laundry_in_building: false,
@@ -69,8 +72,11 @@ export default class RentForm extends Component {
                 storage_weight: 0,
             },
 
+            // Tenant form fields
             tenants: [],
         };
+
+        // Necessary form management fields for Django formsets
         this.state['tenants-INITIAL_FORMS'] = 0;
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
@@ -94,13 +100,23 @@ export default class RentForm extends Component {
          * This function handles submitting the form to the backend via a rest API
          *  This will return the status of that request and if success redirect,
          *      otherwise it will return the form errors
+         *
+         *  All the form data is populated into the data variable.
+         *      Each form section is a different dictionary element
+         *      Each section is added with the appropriate fields
+         *
+         *      Then the data variable is submitted as the data for the form field to the backend
          */
 
+        // Data for the form is submitted in the data variable
         let data = {};
 
+
+        /**        Tenant Data            **/
         let tenants = [...this.state.tenants];
         let tenantInfo = {};
         // Adds the tenant identifier needed for Django formsets
+        // Also all the fields are added to one dictionary instead of in different lists.
         for (let i=0; i<this.state.generalInfo.number_of_tenants; i++) {
             for(let key in tenants[i]) {
                 tenantInfo[tenants[i].tenant_identifier + '-' + key] = tenants[i][key]
@@ -116,22 +132,26 @@ export default class RentForm extends Component {
         // Add the tenant info to the data
         data['tenantInfo'] = tenantInfo;
 
+
+        /**          General info data               **/
         // Add the general state to the data
         data['generalInfo'] = this.state.generalInfo;
 
+        /**             Amenities data                     **/
         // Add amenities
         data['amenitiesInfo'] = this.state.amenitiesInfo;
 
-        // Add first and last name to details data
+
+        /**         Details data if it exists              **/
         let userData = detailsData;
         if (detailsData !== null) {
+            // Add first and last name to details data as the information from the first tenant
             userData['first_name'] = this.state.tenants[0].first_name;
             userData['last_name'] = this.state.tenants[0].last_name;
+
+            // Add the data to the form data
             data['detailsInfo'] = userData
         }
-
-        // Combine the data with the state of main
-        data = Object.assign({}, data, this.state);
 
         // Posts the state which contains all the form elements that are needed
         axios.post(survey_endpoints['rentSurvey'],
@@ -142,11 +162,11 @@ export default class RentForm extends Component {
             .then(response => {
                 // On successful form submit then redirect to survey results page
                     if (response.data.result) {
-                        window.location = response.data.redirect_url
+                        // window.location = response.data.redirect_url
                     } else {
                         this.setState({
                             errors: response.data
-                        })
+                        });
                         console.log(response.data)
                     }
                 }
@@ -192,7 +212,6 @@ export default class RentForm extends Component {
                         is_authenticated={this.props.is_authenticated}
                         onSubmit={this.handleSubmit}
                         handlePrevStep={this.handlePrevStep}
-                        handleInputChange={this.handleInputChange}
                         errors={this.state.errors}
                 />;
         }
@@ -220,22 +239,6 @@ export default class RentForm extends Component {
         this.setState({
             allAmenitiesInfo: data
         }, () => console.log(this.state.allAmenitiesInfo))
-    };
-
-    handleInputChange = (e, type) => {
-        /**
-         * Handles input that will be stored directly into the main state
-         */
-        const { name, value } = e.target;
-        if(type === 'number') {
-            this.setState({
-                [name]: parseInt(value)
-            });
-        } else {
-            this.setState({
-                [name]: value
-            });
-        }
     };
 
     handleAmenitiesInputChange = (e, type) => {
