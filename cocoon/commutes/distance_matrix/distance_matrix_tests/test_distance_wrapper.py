@@ -266,3 +266,35 @@ class TestDistanceWrapper(TestCase):
 
         # Assert
         self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+
+    def test_interpret_distance_matrix_response_driving_traffic(self):
+        """
+        Tests that if traffic is desired then the traffic duration is taken
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = True
+        response = {'status': 'OK', 'destination_addresses': ['1245 Massachusetts Ave, Arlington, MA 02476, USA'], 'origin_addresses': ['349 Pleasant St, Malden, MA 02148, USA', '10 Wait St, Boston, MA 02120, USA'], 'rows': [{'elements': [{'distance': {'text': '6.0 mi', 'value': 9650}, 'status': 'OK', 'duration_in_traffic': {'text': '25 mins', 'value': 1492}, 'duration': {'text': '22 mins', 'value': 1298}}]}, {'elements': [{'distance': {'text': '10.8 mi', 'value': 17326}, 'status': 'OK', 'duration_in_traffic': {'text': '44 mins', 'value': 2640}, 'duration': {'text': '29 mins', 'value': 1749}}]}]}
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.interpret_distance_matrix_response(response, mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, [[(1492, 9650)], [(2640, 17326)]])
+
+    def test_interpret_distance_matrix_response_driving_no_traffic(self):
+        """
+        Tests that if traffic is not desired then the non traffic duration is taken
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = False
+        response = {'status': 'OK', 'destination_addresses': ['1245 Massachusetts Ave, Arlington, MA 02476, USA'], 'origin_addresses': ['349 Pleasant St, Malden, MA 02148, USA', '10 Wait St, Boston, MA 02120, USA'], 'rows': [{'elements': [{'distance': {'text': '6.0 mi', 'value': 9650}, 'status': 'OK', 'duration_in_traffic': {'text': '25 mins', 'value': 1492}, 'duration': {'text': '22 mins', 'value': 1298}}]}, {'elements': [{'distance': {'text': '10.8 mi', 'value': 17326}, 'status': 'OK', 'duration_in_traffic': {'text': '44 mins', 'value': 2640}, 'duration': {'text': '29 mins', 'value': 1749}}]}]}
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.interpret_distance_matrix_response(response, mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, [[(1298, 9650)], [(1749, 17326)]])
