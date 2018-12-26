@@ -363,6 +363,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         if 'detailsInfo' in data:
             user_data = data['detailsInfo']
 
+        number_of_tenants = survey_data['number_of_tenants']
         form = RentSurveyForm(survey_data)
 
         tenants = None
@@ -401,7 +402,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     for tenant in tenants:
 
                         # If only the user
-                        if counter is 1 and counter is survey_data['number_of_tenants']:
+                        if counter is 1 and counter is number_of_tenants:
                             survey_name = survey_name + " Just Me"
                             break
 
@@ -409,8 +410,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                         elif counter is 1:
                             survey_name = survey_name + " Me"
 
-                        # End condition for the last roomate
-                        elif counter >= data['number_of_tenants']:
+                        # End condition for the last roommate
+                        elif counter >= number_of_tenants:
                             survey_name = survey_name + " and {0}".format(tenant.cleaned_data['first_name'])
                             break
 

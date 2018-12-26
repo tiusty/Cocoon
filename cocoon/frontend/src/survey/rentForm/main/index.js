@@ -78,7 +78,7 @@ export default class RentForm extends Component {
         };
 
         // Necessary form management fields for Django formsets
-        this.state['tenants-INITIAL_FORMS'] = 6;
+        this.state['tenants-INITIAL_FORMS'] = 0;
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
         this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
@@ -392,7 +392,7 @@ export default class RentForm extends Component {
         let tenants = [...this.state.tenants];
         for (let i = 0; i < this.state.tenants.length; i++) {
             if (tenants[i].index === index) {
-                tenants[i].tenant_identifier =  this.state.tenants[index].tenant_identifier || 'tenant-' + index;
+                tenants[i].tenant_identifier =  this.state.tenants[index].tenant_identifier || 'tenants-' + index;
                 tenants[i].valid = this.state.tenants[index].valid || false;
 
                 // Survey questions state

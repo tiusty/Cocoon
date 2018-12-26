@@ -50,12 +50,12 @@ export default class TenantsForm extends Component {
         let valid = true;
         if (!this.props.tenants[index].occupation) {
             if (show_errors) {
-                document.querySelector(`#tenant-${index}-occupation-error`).style.display = 'block';
-                document.querySelector(`#tenant-${index}-occupation-error`).innerText = `Select if ${this.props.tenants[index].first_name} is working, studying, or other.`;
+                document.querySelector(`#tenants-${index}-occupation-error`).style.display = 'block';
+                document.querySelector(`#tenants-${index}-occupation-error`).innerText = `Select if ${this.props.tenants[index].first_name} is working, studying, or other.`;
             }
             valid = false;
         }
-        if(valid) { document.querySelector(`#tenant-${index}-occupation-error`).style.display = 'none'; }
+        if(valid) { document.querySelector(`#tenants-${index}-occupation-error`).style.display = 'none'; }
         return valid
     }
 
@@ -64,35 +64,35 @@ export default class TenantsForm extends Component {
         if (this.props.tenants[id].occupation === 'working') {
             if (!this.props.tenants[id].new_job) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-working-occupation-error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-working-occupation-error`).innerText = `Choose whether or not ${this.props.tenants[id].first_name} has been at their job for 6 months or more.`;
+                    document.querySelector(`#tenants-${id}-working-occupation-error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-working-occupation-error`).innerText = `Choose whether or not ${this.props.tenants[id].first_name} has been at their job for 6 months or more.`;
                 }
                 valid = false;
             }
         } else if (this.props.tenants[id].occupation === 'other') {
             if (!this.props.tenants[id].other_occupation_reason) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-other-occupation-error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-other-occupation-error`).innerText = `Select a reason why ${this.props.tenants[id].first_name} is not working or studying.`;
+                    document.querySelector(`#tenants-${id}-other-occupation-error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-other-occupation-error`).innerText = `Select a reason why ${this.props.tenants[id].first_name} is not working or studying.`;
                 }
                 valid = false;
             } else if (this.props.tenants[id].other_occupation_reason === 'unemployed' && !this.props.tenants.unemployed_follow_up) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-unemployed-occupation-error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-unemployed-occupation-error`).innerText = `Select if ${this.props.tenants[id].first_name} will be receiving assistance from a cosigner.`;
+                    document.querySelector(`#tenants-${id}-unemployed-occupation-error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-unemployed-occupation-error`).innerText = `Select if ${this.props.tenants[id].first_name} will be receiving assistance from a cosigner.`;
                 }
                 valid = false;
             }
         }
         if(valid) {
-            if(document.querySelector(`#tenant-${id}-working-occupation-error`)) {
-                document.querySelector(`#tenant-${id}-working-occupation-error`).style.display = 'none';
+            if(document.querySelector(`#tenants-${id}-working-occupation-error`)) {
+                document.querySelector(`#tenants-${id}-working-occupation-error`).style.display = 'none';
             }
-            if(document.querySelector(`#tenant-${id}-other-occupation-error`)) {
-                document.querySelector(`#tenant-${id}-other-occupation-error`).style.display = 'none';
+            if(document.querySelector(`#tenants-${id}-other-occupation-error`)) {
+                document.querySelector(`#tenants-${id}-other-occupation-error`).style.display = 'none';
             }
-            if(document.querySelector(`#tenant-${id}-unemployed-occupation-error`)) {
-                document.querySelector(`#tenant-${id}-unemployed-occupation-error`).style.display = 'none';
+            if(document.querySelector(`#tenants-${id}-unemployed-occupation-error`)) {
+                document.querySelector(`#tenants-${id}-unemployed-occupation-error`).style.display = 'none';
             }
         }
         return valid
@@ -103,62 +103,62 @@ export default class TenantsForm extends Component {
         let valid = true;
         if (this.props.tenants[id].commute_type === null) {
             if (show_errors) {
-                document.querySelector(`#tenant-${id}-commute_type-error`).style.display = 'block';
-                document.querySelector(`#tenant-${id}-commute_type-error`).innerText = `You must select a commute type for ${this.props.tenants[id].first_name}.`;
+                document.querySelector(`#tenants-${id}-commute_type-error`).style.display = 'block';
+                document.querySelector(`#tenants-${id}-commute_type-error`).innerText = `You must select a commute type for ${this.props.tenants[id].first_name}.`;
             }
 
             valid = false;
-        } else if (valid) { document.querySelector(`#tenant-${id}-commute_type-error`).style.display = 'none'; }
+        } else if (valid) { document.querySelector(`#tenants-${id}-commute_type-error`).style.display = 'none'; }
 
         // If the option is not work from home then make sure the address fields are filled in
         if (this.props.tenants[id].commute_type !== this.getCommuteId('Work From Home')) {
             if (this.props.tenants[id].full_address === null || this.props.tenants[id].street_address === null || this.props.tenants[id].city === null
                 || this.props.tenants[id].zip_code === null || this.props.tenants[id].state === null) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-commute_address-error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-commute_address-error`).innerText = `You must enter a commute address for ${this.props.tenants[id].first_name}.`;
+                    document.querySelector(`#tenants-${id}-commute_address-error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-commute_address-error`).innerText = `You must enter a commute address for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenant-${id}-commute_address-error`).style.display = 'none'; }
+            } else if (valid) { document.querySelector(`#tenants-${id}-commute_address-error`).style.display = 'none'; }
 
             // Make sure if the option is not work from home then the max commute is set
             if (this.props.tenants[id].max_commute === null) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-desired_commute-error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-desired_commute-error`).innerText = `You must enter a maximum commute time for ${this.props.tenants[id].first_name}.`;
+                    document.querySelector(`#tenants-${id}-desired_commute-error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-desired_commute-error`).innerText = `You must enter a maximum commute time for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenant-${id}-desired_commute-error`).style.display = 'none'; }
+            } else if (valid) { document.querySelector(`#tenants-${id}-desired_commute-error`).style.display = 'none'; }
 
             if (this.props.tenants[id].commute_weight < 0 || this.props.tenants[id].commute_weight > 6) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-commute_weight-error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-commute_weight-error`).innerText = `You must choose how important commute time is for ${this.props.tenants[id].first_name}.`;
+                    document.querySelector(`#tenants-${id}-commute_weight-error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-commute_weight-error`).innerText = `You must choose how important commute time is for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenant-${id}-commute_weight-error`).style.display = 'none'; }
+            } else if (valid) { document.querySelector(`#tenants-${id}-commute_weight-error`).style.display = 'none'; }
         }
 
         // Make sure if driving then driving options selected
         if (this.props.tenants[id].commute_type === this.getCommuteId('Driving')) {
             if (this.props.tenants[id].driving_options === null) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-driving_options_error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-driving_options_error`).innerText = `You must select a driving option for ${this.props.tenants[id].first_name}.`;
+                    document.querySelector(`#tenants-${id}-driving_options_error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-driving_options_error`).innerText = `You must select a driving option for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenant-${id}-driving_options_error`).style.display = 'none'; }
+            } else if (valid) { document.querySelector(`#tenants-${id}-driving_options_error`).style.display = 'none'; }
         }
 
         // Make sure a transit option is selected if transit is selected
         if (this.props.tenants[id].commute_type === this.getCommuteId('Transit')) {
             if (this.props.tenants[id].transit_options === null) {
                 if (show_errors) {
-                    document.querySelector(`#tenant-${id}-transit_options_error`).style.display = 'block';
-                    document.querySelector(`#tenant-${id}-transit_options_error`).innerText = `You must select a transit option for ${this.props.tenants[id].first_name}.`;
+                    document.querySelector(`#tenants-${id}-transit_options_error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-transit_options_error`).innerText = `You must select a transit option for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenant-${id}-transit_options_error`).style.display = 'none'; }
+            } else if (valid) { document.querySelector(`#tenants-${id}-transit_options_error`).style.display = 'none'; }
         }
 
         return valid
@@ -168,19 +168,19 @@ export default class TenantsForm extends Component {
         let valid = true;
         if (this.props.tenants[id].income === null) {
             if (show_errors) {
-                document.querySelector(`#tenant-${id}-income-error`).style.display = 'block';
-                document.querySelector(`#tenant-${id}-income-error`).innerText = `You must enter an annual income for ${this.props.tenants[id].first_name}.`;
+                document.querySelector(`#tenants-${id}-income-error`).style.display = 'block';
+                document.querySelector(`#tenants-${id}-income-error`).innerText = `You must enter an annual income for ${this.props.tenants[id].first_name}.`;
             }
             valid = false
-        } else if (this.props.tenants[id].income) { document.querySelector(`#tenant-${id}-income-error`).style.display = 'none'; }
+        } else if (this.props.tenants[id].income) { document.querySelector(`#tenants-${id}-income-error`).style.display = 'none'; }
 
         if (this.props.tenants[id].credit_score === null) {
             if (show_errors) {
-                document.querySelector(`#tenant-${id}-credit_score-error`).style.display = 'block';
-                document.querySelector(`#tenant-${id}-credit_score-error`).innerText = `You must select an approximate credit score for ${this.props.tenants[id].first_name}.`;
+                document.querySelector(`#tenants-${id}-credit_score-error`).style.display = 'block';
+                document.querySelector(`#tenants-${id}-credit_score-error`).innerText = `You must select an approximate credit score for ${this.props.tenants[id].first_name}.`;
             }
             valid = false;
-        } else if (this.props.tenants[id].credit_score) { document.querySelector(`#tenant-${id}-credit_score-error`).style.display = 'none'; }
+        } else if (this.props.tenants[id].credit_score) { document.querySelector(`#tenants-${id}-credit_score-error`).style.display = 'none'; }
 
         return valid
     }
