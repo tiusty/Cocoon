@@ -11,7 +11,7 @@ export default class GeneralForm extends Component {
     state = {
         home_type_options: [],
         value: {
-            min: 1000,
+            min: 2000,
             max: 3000,
         },
         errorMessages: {
@@ -254,6 +254,8 @@ export default class GeneralForm extends Component {
         return(
             <div className="survey-question">
                 <h2>How much rent do you <span>want to pay</span>?</h2>
+                <small id="priceHelp" className="form-text text-muted">Left dot is what you want to pay, the right one is the maximum price you are willing to spend
+                </small>
                 <span className="col-md-12 survey-error-message" id="price_error"></span>
                 <InputRange
                     draggableTrack
