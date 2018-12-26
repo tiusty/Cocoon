@@ -1,5 +1,6 @@
 from enum import Enum
 import datetime
+from dateutil import tz
 
 # Controls how many days until the zip codes need to be refreshed
 ZIP_CODE_TIMEDELTA_VALUE = 60
@@ -28,7 +29,7 @@ d = d + datetime.timedelta(weeks=2, days=-d.weekday()+1)
 # 5:30pm for traffic
 # 3:30am for no-traffic
 # Make sure to use utc time so the commute times are standardized
-COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(7, 15))
-print(COMMUTE_TIME_WITH_TRAFFIC)
-COMMUTE_TIME_WITHOUT_TRAFFIC = datetime.datetime.combine(d, datetime.time(3, 30))
+NYC = tz.gettz('America/New_York')
+COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(7, 15)).replace(tzinfo=NYC).timestamp()
+COMMUTE_TIME_WITHOUT_TRAFFIC = datetime.datetime.combine(d, datetime.time(3, 30)).replace(tzinfo=NYC).timestamp()
 TRAFFIC_MODEL_DEFAULT = "best_guess"
