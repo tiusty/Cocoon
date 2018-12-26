@@ -26,11 +26,12 @@ class CommuteAccuracy(Enum):
 d = datetime.date(datetime.datetime.today().year + 1, 1, 4)
 d = d + datetime.timedelta(weeks=2, days=-d.weekday()+1)
 
-# 5:30pm for traffic
+# 4:30pm for traffic because the origin of the commute is the destination they want to go to, so it would
+#   be the afternoon commute
 # 3:30am for no-traffic
-# Make sure to use utc time so the commute times are standardized
+# Right now we only support Boston so the timezone for the commute should be based on EST
 NYC = tz.gettz('America/New_York')
-COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(7, 15)).replace(tzinfo=NYC).timestamp()
+COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(17, 0)).replace(tzinfo=NYC).timestamp()
 COMMUTE_TIME_WITHOUT_TRAFFIC = datetime.datetime.combine(d, datetime.time(3, 30)).replace(tzinfo=NYC).timestamp()
 
 # Traffic model
