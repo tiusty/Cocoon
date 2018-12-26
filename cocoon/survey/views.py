@@ -336,7 +336,10 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
     def create(self, request, *args, **kwargs):
         """
-        Function currently not done and only used for testing. Does nothing right now
+        Retrieves all the data from the frontend
+        Then the data is parsed to each of the sections
+        If all the forms are valid, they are saved and the redirct url is returned
+        Otherwise the form errors are returned
         :param request:
         :param args:
         :param kwargs:
@@ -350,6 +353,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         tenant_data = None
         user_data = None
 
+        # Save data if it exists
         if 'generalInfo' in data:
             survey_data = data['generalInfo']
         if 'amenitiesInfo' in data:
@@ -428,8 +432,11 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
                 survey = RentingSurveyModel.objects.get(id=survey.id)
 
+                # Return that the result is True and the redirect url so the page knows
+                #   where to redirect to
                 return Response({'result': True, 'redirect_url': survey.url})
 
+        # If there were any errors then save the errors so they can be returned
         form_errors = form.errors
         user_form_errors = ""
         tenants_errors = ""
