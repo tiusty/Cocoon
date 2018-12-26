@@ -1,8 +1,9 @@
 from django.test import TestCase
 from unittest.mock import MagicMock
-from cocoon.commutes.distance_matrix.distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
+from ..distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
     Over_Query_Limit_Exception, Max_Elements_Exceeded_Exception, Unknown_Error_Exception, Zero_Results_Exception, \
     distance_matrix, DistanceWrapper
+from ...constants import GoogleCommuteNaming, COMMUTE_TIME_WITHOUT_TRAFFIC, COMMUTE_TIME_WITH_TRAFFIC
 
 
 class TestDistanceWrapper(TestCase):
@@ -201,3 +202,67 @@ class TestDistanceWrapper(TestCase):
             self.assertEqual(duration[0][1], 39311)
             self.assertEqual(duration[1][0], 2336)
             self.assertEqual(duration[1][1], 41838)
+
+    def test_determine_departure_time_driving_traffic(self):
+        """
+        Tests that if the commute type is driving and they want traffic then the departure time
+            is with traffic
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+
+    def test_determine_departure_time_driving_no_traffic(self):
+        """
+        Tests that if the commute type is driving and they don't want traffic then the departure time
+            is with traffic
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITHOUT_TRAFFIC)
+
+    def test_determine_departure_time_driving_transit_with_traffic(self):
+        """
+        Tests that if the commute type is transit then the departure time
+            is with traffic even if with traffic is specified
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+
+    def test_determine_departure_time_driving_transit_with_no_traffic(self):
+        """
+        Tests that if the commute type is transit then the departure time
+            is with traffic even if with no traffic is specified
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)

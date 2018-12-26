@@ -5,7 +5,8 @@ from googlemaps import distance_matrix, client
 from config.settings.Global_Config import gmaps_api_key
 
 # Retrieve Constants
-from cocoon.commutes.constants import COMMUTE_TIME_WITH_TRAFFIC, COMMUTE_TIME_WITHOUT_TRAFFIC, TRAFFIC_MODEL_DEFAULT
+from cocoon.commutes.constants import COMMUTE_TIME_WITH_TRAFFIC, COMMUTE_TIME_WITHOUT_TRAFFIC, TRAFFIC_MODEL_DEFAULT, \
+    GoogleCommuteNaming
 
 # Load the logger
 import logging
@@ -90,7 +91,25 @@ class DistanceWrapper:
         # list of lists of durations from origin to destinations
         return distance_list
 
-    def get_durations_and_distances(self, origins, destinations, mode="driving", with_traffic=False):
+    @staticmethod
+    def determine_departure_time(mode, with_traffic):
+        """
+        Determines the departure time depending on the commute type and whether or not they want traffic
+        :param mode: (GoogleCommuteNaming) -> The commute type the user wants
+        :param with_traffic: (Boolean) -> Determines whether or not the user wants traffic to be included
+        :return: (int) -> The depature time in unix seconds
+        """
+        departure_time = COMMUTE_TIME_WITH_TRAFFIC
+        if mode == GoogleCommuteNaming.TRANSIT:
+            departure_time = COMMUTE_TIME_WITH_TRAFFIC
+        elif with_traffic and mode == GoogleCommuteNaming.DRIVING:
+            departure_time = COMMUTE_TIME_WITH_TRAFFIC
+        elif not with_traffic and mode == GoogleCommuteNaming.DRIVING:
+            departure_time = COMMUTE_TIME_WITHOUT_TRAFFIC
+
+        return departure_time
+
+    def get_durations_and_distances(self, origins, destinations, mode=GoogleCommuteNaming.DRIVING, with_traffic=False):
         """
         NOTE: THIS SHOULD NOT BE CALLED DIRECTLY
 
@@ -101,8 +120,8 @@ class DistanceWrapper:
         Segments requests to the distance matrix API to include a maximum of 25 origins and returns
         the consolidated results.
 
-        :params origins: list of origins in a distance matrix accepted format
-        :params destinations: the destination in a distance matrix accepted format
+        :param origins: list of origins in a distance matrix accepted format
+        :param destinations: the destination in a distance matrix accepted format
         :param mode: (string) -> Must be the mode using the google distance defined mode i.e from the
             GoogleCommuteNaming class
         :returns a list of lists of tuples containing the duration and distance between the origins and the
@@ -125,26 +144,22 @@ class DistanceWrapper:
         origin_number = int(min((100 / destination_number), 25))
 
         # traffic option set to best_guess (default)
-        departure_time = COMMUTE_TIME_WITHOUT_TRAFFIC
-
         traffic_model_in = TRAFFIC_MODEL_DEFAULT
-        if with_traffic and mode == "driving":
-            departure_time = COMMUTE_TIME_WITH_TRAFFIC
 
-
+        # Determines the departure time to give more accurate commute information
+        departure_time = self.determine_departure_time(mode, with_traffic)
 
         while origin_list:
             # only computes for the first destination_number destinations
 
             response_json = distance_matrix.distance_matrix(self.client,
-                                                        origin_list[:origin_number],
-                                                        destinations[:destination_number],
-                                                        units=self.units,
-                                                        mode=mode,
-                                                        departure_time=departure_time,
-                                                        traffic_model=traffic_model_in,
-                                                    )
-
+                                                            origin_list[:origin_number],
+                                                            destinations[:destination_number],
+                                                            units=self.units,
+                                                            mode=mode,
+                                                            departure_time=departure_time,
+                                                            traffic_model=traffic_model_in,
+                                                            )
 
             response_list = self.interpret_distance_matrix_response(response_json)
             # each inner list the entire results of an origin
