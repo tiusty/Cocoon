@@ -21,7 +21,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Request_Denied_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_invalid_request_exception(self):
         response_obj = {
@@ -33,7 +33,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Invalid_Request_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_over_query_limit_exception(self):
         response_obj = {
@@ -45,7 +45,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Over_Query_Limit_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_zero_results_exception(self):
         response_obj = {
@@ -57,7 +57,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Zero_Results_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_unknown_error_exception(self):
         response_obj = {
@@ -69,7 +69,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Unknown_Error_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_max_elements_exceeded_exception(self):
         response_obj = {
@@ -81,7 +81,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Max_Elements_Exceeded_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     ###############################################
     # API requests required for following functions
