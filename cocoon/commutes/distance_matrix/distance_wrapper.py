@@ -54,11 +54,13 @@ class DistanceWrapper:
             logger.warning("ZERO_RESULTS")
             raise Zero_Results_Exception
 
-    def interpret_distance_matrix_response(self, response_obj):
+    def interpret_distance_matrix_response(self, response_obj, mode, with_traffic):
         """
         interprets the response dict returned by the distance_matrix API. This function both handles errors
         and compiles the response into a list of lists of tuples.
 
+        :param with_traffic: (Boolean) -> Determines whether or not the user specified with traffic
+        :param mode: (GoogleCommuteNaming) -> The commute type the user wants
         :param response_obj: the dictionary returned by the distance matrix API
         :return: a list of lists of tuples containing the duration and distance from each origin to each destination
         [[(int, int), (int, int)], [(int, int), (int, int)]]
@@ -78,7 +80,13 @@ class DistanceWrapper:
                     element_status = element["status"]
                     if element_status == "OK":
                         # retrieve the duration from origin to destination
-                        duration_in_seconds = int(element["duration"]["value"])
+
+                        # If the user specified driving with traffic then return the traffic time
+                        if with_traffic and mode == GoogleCommuteNaming.DRIVING:
+                            duration_in_seconds = int(element["duration_in_traffic"]["value"])
+                        # Otherwise return the default duration
+                        else:
+                            duration_in_seconds = int(element["duration"]["value"])
                         distance_in_meters = int(element["distance"]["value"])
                         origin_distance_list.append((duration_in_seconds, distance_in_meters))
                     # otherwise there was an error, skip this element
@@ -97,7 +105,7 @@ class DistanceWrapper:
         Determines the departure time depending on the commute type and whether or not they want traffic
         :param mode: (GoogleCommuteNaming) -> The commute type the user wants
         :param with_traffic: (Boolean) -> Determines whether or not the user wants traffic to be included
-        :return: (int) -> The depature time in unix seconds
+        :return: (int) -> The departure time in unix seconds
         """
         departure_time = COMMUTE_TIME_WITH_TRAFFIC
         if mode == GoogleCommuteNaming.TRANSIT:
@@ -161,7 +169,7 @@ class DistanceWrapper:
                                                             traffic_model=traffic_model_in,
                                                             )
 
-            response_list = self.interpret_distance_matrix_response(response_json)
+            response_list = self.interpret_distance_matrix_response(response_json, mode, with_traffic)
             # each inner list the entire results of an origin
             for res in response_list:
                 distance_matrix_list.append(res)
