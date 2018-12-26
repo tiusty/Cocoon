@@ -83,7 +83,13 @@ class DistanceWrapper:
 
                         # If the user specified driving with traffic then return the traffic time
                         if with_traffic and mode == GoogleCommuteNaming.DRIVING:
-                            duration_in_seconds = int(element["duration_in_traffic"]["value"])
+                            # Sometimes the duration in traffic doesn't exist so if it doesn't,
+                            #   then take the normal durations
+                            if 'duration_in_traffic' in element:
+                                duration_in_seconds = int(element["duration_in_traffic"]["value"])
+                            else:
+                                logger.error("Duration in seconds doesn't exist: {0}".format(response_obj))
+                                duration_in_seconds = int(element["duration"]["value"])
                         # Otherwise return the default duration
                         else:
                             duration_in_seconds = int(element["duration"]["value"])
