@@ -22,6 +22,7 @@ export default class RentForm extends Component {
         super(props);
         this.state = {
             step: 1,
+            loading: false,
 
             // General Form Fields
             generalInfo: {
@@ -108,6 +109,10 @@ export default class RentForm extends Component {
          *      Then the data variable is submitted as the data for the form field to the backend
          */
 
+        // Prevents the user from being able to submit the form again and informs them
+        //  that the page is loading
+        this.setState({loading: true});
+
         // Data for the form is submitted in the data variable
         let data = {};
 
@@ -158,7 +163,13 @@ export default class RentForm extends Component {
             {
                 data: data,
             })
-            .catch(error => console.log('BAD', error))
+            .catch(error => {
+                console.log('BAD', error);
+                this.setState({loading: false})
+            })
+            // If the response was successful then don't set loading to true
+            //  because the page will redirect and we don't want the user to click
+            //  the button again
             .then(response => {
                 // On successful form submit then redirect to survey results page
                     if (response.data.result) {
@@ -167,7 +178,7 @@ export default class RentForm extends Component {
                         this.setState({
                             errors: response.data
                         });
-                        console.log(response.data)
+                        this.setState({loading: false})
                     }
                 }
             );
@@ -211,9 +222,10 @@ export default class RentForm extends Component {
                         onSubmit={this.handleSubmit}
                         handlePrevStep={this.handlePrevStep}
                         errors={this.state.errors}
+                        loading={this.state.loading}
                 />;
         }
-    }
+    };
 
     handleNextStep = (e) => {
         /**

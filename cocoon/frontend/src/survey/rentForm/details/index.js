@@ -117,13 +117,20 @@ export default class DetailsForm extends Component {
     }
 
     handleSubmit = (e) => {
-        if (!this.props.is_authenticated) {
-            if (!this.handleValidation())
-            {
-                return false;
+        /**
+         * Does a validation check before attempting to send form to backend
+         * If the page is already loading, i.e the button is clicked then the button is
+         *  disabled to prevent pressing multiple times
+         */
+        if (!this.props.loading) {
+            if (!this.props.is_authenticated) {
+                if (!this.handleValidation())
+                {
+                    return false;
+                }
             }
+            this.props.onSubmit(e, this.state)
         }
-        this.props.onSubmit(e, this.state)
     }
 
     render(){
@@ -141,11 +148,13 @@ export default class DetailsForm extends Component {
                         validateCreationKey={this.validateCreationKey}
                         handlePrevStep={this.props.handlePrevStep}
                         handleSubmit={this.handleSubmit}
+                        loading={this.props.loading}
                     /> :
                     <CurrentUser
                         onSubmit={this.props.onSubmit}
                         handlePrevStep={this.props.handlePrevStep}
                         handleSubmit={this.handleSubmit}
+                        loading={this.props.loading}
                     />}
             </>
         );
@@ -180,7 +189,7 @@ const NewUser = (props) => (
             </div>
             <div className="col-sm-6 col-xs-12">
                 <button className="col-sm-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
-                    Check out my places
+                    {props.loading ? 'Loading' : 'Check out my places'}
                 </button>
             </div>
         </div>
@@ -200,7 +209,7 @@ const CurrentUser = (props) => (
             </div>
             <div className="col-sm-6 col-xs-12">
                 <button className="col-sm-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
-                    View now
+                    {props.loading ? 'Loading' : 'Check out my places'}
                 </button>
             </div>
         </div>
