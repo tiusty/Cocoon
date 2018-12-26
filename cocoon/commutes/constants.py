@@ -28,6 +28,7 @@ d = d + datetime.timedelta(weeks=2, days=-d.weekday()+1)
 # 5:30pm for traffic
 # 3:30am for no-traffic
 # Make sure to use utc time so the commute times are standardized
-COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(7, 15)).replace(tzinfo=datetime.timezone.utc)
-COMMUTE_TIME_WITHOUT_TRAFFIC = datetime.datetime.combine(d, datetime.time(3, 30)).replace(tzinfo=datetime.timezone.utc)
+COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(7, 15))
+print(COMMUTE_TIME_WITH_TRAFFIC)
+COMMUTE_TIME_WITHOUT_TRAFFIC = datetime.datetime.combine(d, datetime.time(3, 30))
 TRAFFIC_MODEL_DEFAULT = "best_guess"
