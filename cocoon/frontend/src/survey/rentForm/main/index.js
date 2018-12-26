@@ -78,7 +78,7 @@ export default class RentForm extends Component {
         };
 
         // Necessary form management fields for Django formsets
-        this.state['tenants-INITIAL_FORMS'] = 0;
+        this.state['tenants-INITIAL_FORMS'] = 6;
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
         this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
@@ -255,19 +255,24 @@ export default class RentForm extends Component {
          *  i.e generalInfo dictionary
          */
         const {name, value} = e.target;
-        let amenitiesInfo = this.state.amenitiesInfo;
+        let data = "";
         if (type === 'number') {
             if(value) {
-                amenitiesInfo[name] = parseInt(value);
+                data = parseInt(value);
             } else {
-                amenitiesInfo[name] = 0;
+                data = 0;
             }
         } else if (type === 'boolean') {
-            amenitiesInfo[name] = !amenitiesInfo[name]
+            data = !this.state.amenitiesInfo[name]
         } else {
-            amenitiesInfo[name] = value
+            data = value
         }
-        this.setState({amenitiesInfo})
+        this.setState({
+            amenitiesInfo: {
+                ...this.state.amenitiesInfo,
+                [name]: data,
+            }
+        })
     };
 
     handleGeneralInputChange = (e, type) => {
@@ -276,13 +281,19 @@ export default class RentForm extends Component {
          *  i.e generalInfo dictionary
          */
         const {name, value} = e.target;
-        let generalInfo = this.state.generalInfo;
+        let data = "";
         if (type === 'number') {
-            generalInfo[name] = parseInt(value);
+            data = parseInt(value);
         } else {
-            generalInfo[name] = value
+            data = value
         }
-        this.setState({generalInfo})
+
+        this.setState({
+            generalInfo: {
+                ...this.state.generalInfo,
+                [name]: data,
+            }
+        })
     };
 
     handleEarliestClick = (day, {selected}) => {
