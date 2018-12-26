@@ -32,4 +32,4 @@ d = d + datetime.timedelta(weeks=2, days=-d.weekday()+1)
 NYC = tz.gettz('America/New_York')
 COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(7, 15)).replace(tzinfo=NYC).timestamp()
 COMMUTE_TIME_WITHOUT_TRAFFIC = datetime.datetime.combine(d, datetime.time(3, 30)).replace(tzinfo=NYC).timestamp()
-TRAFFIC_MODEL_DEFAULT = "best_guess"
+TRAFFIC_MODEL_DEFAULT = "pessimistic"
