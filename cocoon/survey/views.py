@@ -45,7 +45,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 class RentingSurvey(CreateView):
     model = RentingSurveyModel
     form_class = RentSurveyForm
-    template_name = 'survey/reactRentingSurvey.html'
+    template_name = 'survey/rentForm.html'
 
     def get_context_data(self, **kwargs):
         """
