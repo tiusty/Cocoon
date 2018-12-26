@@ -28,10 +28,10 @@ export default class TenantsForm extends Component {
     // VALIDATION FUNCTIONS //
     handleValidation = (index, show_errors) => {
         let valid = true;
-        valid = valid && this.handleOccupationValidation(index, show_errors);
-        valid = valid && this.handleOccupationFollowupValidation(index, show_errors);
-        valid = valid && this.handleCommuteTypeValidation(index, show_errors);
-        valid = valid && this.handleFinancialValidation(index, show_errors);
+        valid = this.handleOccupationValidation(index, show_errors) && valid;
+        valid = this.handleOccupationFollowupValidation(index, show_errors) && valid;
+        valid = this.handleCommuteTypeValidation(index, show_errors) && valid;
+        valid = this.handleFinancialValidation(index, show_errors) && valid;
 
         let tenants = [...this.props.tenants];
         for (let i=0; i<this.props.tenants.length; i++ ) {
@@ -52,7 +52,6 @@ export default class TenantsForm extends Component {
             if (show_errors) {
                 document.querySelector(`#tenant-${index}-occupation-error`).style.display = 'block';
                 document.querySelector(`#tenant-${index}-occupation-error`).innerText = `Select if ${this.props.tenants[index].first_name} is working, studying, or other.`;
-                alert(`Select if ${this.props.tenants[index].first_name} is working, studying, or other.`)
             }
             valid = false;
         }
@@ -67,7 +66,6 @@ export default class TenantsForm extends Component {
                 if (show_errors) {
                     document.querySelector(`#tenant-${id}-working-occupation-error`).style.display = 'block';
                     document.querySelector(`#tenant-${id}-working-occupation-error`).innerText = `Choose whether or not ${this.props.tenants[id].first_name} has been at their job for 6 months or more.`;
-                    alert(`Choose whether or not ${this.props.tenants[id].first_name} has been at their job for 6 months or more.`);
                 }
                 valid = false;
             }
@@ -76,14 +74,12 @@ export default class TenantsForm extends Component {
                 if (show_errors) {
                     document.querySelector(`#tenant-${id}-other-occupation-error`).style.display = 'block';
                     document.querySelector(`#tenant-${id}-other-occupation-error`).innerText = `Select a reason why ${this.props.tenants[id].first_name} is not working or studying.`;
-                    alert(`Select a reason why ${this.props.tenants[id].first_name} is not working or studying.`);
                 }
                 valid = false;
             } else if (this.props.tenants[id].other_occupation_reason === 'unemployed' && !this.props.tenants.unemployed_follow_up) {
                 if (show_errors) {
                     document.querySelector(`#tenant-${id}-unemployed-occupation-error`).style.display = 'block';
                     document.querySelector(`#tenant-${id}-unemployed-occupation-error`).innerText = `Select if ${this.props.tenants[id].first_name} will be receiving assistance from a cosigner.`;
-                    alert(`Select if ${this.props.tenants[id].first_name} will be receiving assistance from a cosigner.`);
                 }
                 valid = false;
             }
@@ -165,8 +161,6 @@ export default class TenantsForm extends Component {
             } else if (valid) { document.querySelector(`#tenant-${id}-transit_options_error`).style.display = 'none'; }
         }
 
-        if (!valid && show_errors) { alert(`You must fix the commute errors for ${this.props.tenants[id].first_name}.`); }
-
         return valid
     }
 
@@ -188,8 +182,6 @@ export default class TenantsForm extends Component {
             valid = false;
         } else if (this.props.tenants[id].credit_score) { document.querySelector(`#tenant-${id}-credit_score-error`).style.display = 'none'; }
 
-        if (!valid && show_errors) { alert(`You must fix the finance errors for ${this.props.tenants[id].first_name}.`); }
-
         return valid
     }
 
@@ -199,6 +191,7 @@ export default class TenantsForm extends Component {
             this.handleValidation(i, true)
             if (!this.props.tenants[i].valid) {
                 valid = false
+                alert('Please fix errors for ' + this.props.tenants[i].first_name);
                 return valid
             }
         }

@@ -162,7 +162,7 @@ export default class RentForm extends Component {
             .then(response => {
                 // On successful form submit then redirect to survey results page
                     if (response.data.result) {
-                        // window.location = response.data.redirect_url
+                        window.location = response.data.redirect_url
                     } else {
                         this.setState({
                             errors: response.data
