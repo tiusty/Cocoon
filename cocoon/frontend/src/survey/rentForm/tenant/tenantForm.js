@@ -30,6 +30,7 @@ export default class TenantForm extends Component {
 
 
     handleTenantPanelClick = () => {
+        this.props.onHandleValidation(this.props.index, false);
         this.toggleQuestions();
     };
 
@@ -575,7 +576,7 @@ export default class TenantForm extends Component {
                     <span><i className="material-icons">{this.state.is_active ? 'remove' : 'add'}</i></span>
                 </div>
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
-                     >
+                     onChange={() => this.props.onHandleValidation(this.props.index, false)}>
                     {this.renderOccupation(name)}
                     {this.renderCommuteTypeQuestion(name)}
                     {this.renderCommuteLengthQuestion(name)}
