@@ -59,7 +59,7 @@ class YGLRequesterImage(object):
 
                 # If a home was found then add the photos to the home
                 if id_found and element.tag == 'Photos':
-                    if not house.housephotos_set.exists():
+                    if not house.images.exists():
                         for photo in element:
                             # Stores the image in a tempfile
                             file = urllib.request.urlretrieve(photo.text)

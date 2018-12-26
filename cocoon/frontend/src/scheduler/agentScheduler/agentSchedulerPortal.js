@@ -74,70 +74,49 @@ class AgentSchedulerPortal extends Component {
 
     }
 
-    claimItinerary = (id) => {
-        let formData = new FormData();
-        formData.set('itinerary_id', id);
-
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['claimItinerary'],
-            data: formData,
-            config: {headers: {'Content-Type': 'multipart/form-data'}}
-        })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                if (response.data.result === "0") {
-                    this.setState({
-                        showClaim: false,
-                    });
-                    this.refreshItineraries()
-
-                } else if (response.data.result === "1") {
-                    alert("This itinerary has been claimed")
-                    this.refreshItineraries()
-                } else {
-                    alert(response.data.result)
-                    this.refreshItineraries()
-                }
-            });
-    }
-
     renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {
-        let claimButton = canClaim ?
-            <button key={"claim" + key} onClick={() => this.claimItinerary(itinerary.id)}>claim</button> : null
         return (
-            <div>
+            <div key={key} className='single-itinerary'>
                 <Itinerary
                     id={itinerary.id}
+                    key={"itinerary" + key}
                     hash={itinerary.hash}
+                    refreshItineraries={this.refreshItineraries}
                     showTimes={showTimes}
                     canSelect={canSelect}
                     brokerRequest
-                    key={"itinerary" + key}
                     viewType={viewType}
                 />
-                {claimButton}
             </div>
         );
     };
 
     renderUnscheduledItineraries = () => {
         if (this.state.unscheduled_loaded) {
-            return (
-                <div className='unscheduled-wrapper'>
-                    {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false, true, "itineraryAgent"))}
-                </div>
-            );
+
+            if (this.state.unscheduled_itineraries.length <= 0) {
+                return <p> There is no unscheduled itineraries </p>
+            } else {
+                return (
+                    <div className='unscheduled-wrapper'>
+                        {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false, true, "itineraryAgent"))}
+                    </div>
+                );
+            }
         }
     };
 
     renderScheduledItineraries = () => {
         if (this.state.scheduled_loaded) {
-            return (
-                <div className='scheduled-wrapper'>
-                    {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, false, false, false, "itineraryAgent"))}
-                </div>
-            )
+            if (this.state.scheduled_itineraries.length <= 0) {
+                return <div> There is no scheduled itineraries </div>
+            } else {
+                return (
+                    <div className='scheduled-wrapper'>
+                        {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, false, false, false, "itineraryAgent"))}
+                    </div>
+                )
+            }
         }
     };
 
@@ -148,7 +127,7 @@ class AgentSchedulerPortal extends Component {
                     <button onClick={this.refreshItineraries}>Refresh itineraries</button>
                     <div className='itinerary-wrapper row'>
                         <div className="col-md-4">
-                            <h2>Claimed Itineraries</h2>
+                            <h2>Unscheduled Itineraries</h2>
                             {this.renderUnscheduledItineraries()}
                         </div>
                         <div className="col-md-4">
