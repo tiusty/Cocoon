@@ -5,8 +5,8 @@ from googlemaps import distance_matrix, client
 from config.settings.Global_Config import gmaps_api_key
 
 # Retrieve Constants
-from cocoon.commutes.constants import COMMUTE_TIME_WITH_TRAFFIC, COMMUTE_TIME_WITHOUT_TRAFFIC, TRAFFIC_MODEL_DEFAULT, \
-    GoogleCommuteNaming
+from cocoon.commutes.constants import COMMUTE_TIME_WITH_TRAFFIC, COMMUTE_TIME_WITHOUT_TRAFFIC, TRAFFIC_MODEL_BEST_GUESS,\
+    TRAFFIC_MODEL_PESSIMISTIC, GoogleCommuteNaming
 
 # Load the logger
 import logging
@@ -117,6 +117,19 @@ class DistanceWrapper:
 
         return departure_time
 
+    @staticmethod
+    def determine_traffic_model(mode, with_traffic):
+        if mode == GoogleCommuteNaming.TRANSIT:
+            traffic_model = TRAFFIC_MODEL_BEST_GUESS
+        elif with_traffic and GoogleCommuteNaming.DRIVING:
+            traffic_model = TRAFFIC_MODEL_PESSIMISTIC
+        elif not with_traffic and GoogleCommuteNaming.DRIVING:
+            traffic_model = TRAFFIC_MODEL_BEST_GUESS
+        else:
+            traffic_model = TRAFFIC_MODEL_BEST_GUESS
+
+        return traffic_model
+
     def get_durations_and_distances(self, origins, destinations, mode=GoogleCommuteNaming.DRIVING, with_traffic=False):
         """
         NOTE: THIS SHOULD NOT BE CALLED DIRECTLY
@@ -152,7 +165,7 @@ class DistanceWrapper:
         origin_number = int(min((100 / destination_number), 25))
 
         # traffic option set to best_guess (default)
-        traffic_model_in = TRAFFIC_MODEL_DEFAULT
+        traffic_model = self.determine_traffic_model(mode, with_traffic)
 
         # Determines the departure time to give more accurate commute information
         departure_time = self.determine_departure_time(mode, with_traffic)
@@ -166,7 +179,7 @@ class DistanceWrapper:
                                                             units=self.units,
                                                             mode=mode,
                                                             departure_time=departure_time,
-                                                            traffic_model=traffic_model_in,
+                                                            traffic_model=traffic_model,
                                                             )
 
             response_list = self.interpret_distance_matrix_response(response_json, mode, with_traffic)
