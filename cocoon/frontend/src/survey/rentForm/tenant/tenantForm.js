@@ -320,21 +320,21 @@ export default class TenantForm extends Component {
     renderDrivingOptions = () => {
         return (
             <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-driving-follow-up-question`} onChange={(e) => {
-                this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index);
+                this.props.onInputChange(e, 'boolean', this.props.tenant.tenant_identifier, this.props.index);
             }}>
                 <h2>What are the <span>driving options</span>?</h2>
                 <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-driving_options_error`}></span>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name={`${this.props.tenant.tenant_identifier}-driving_options`} value="with-traffic"
-                           checked={this.props.tenant.driving_options === 'with-traffic'}
+                    <input type="radio" name={`${this.props.tenant.tenant_identifier}-traffic_option`} value={true}
+                           checked={this.props.tenant.traffic_option === true}
                            onChange={() => {
                            }}/>
                     <div>With traffic</div>
                 </label>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name={`${this.props.tenant.tenant_identifier}-driving_options`} value="without-traffic"
-                           checked={this.props.tenant.driving_options === 'without-traffic'}
+                    <input type="radio" name={`${this.props.tenant.tenant_identifier}-traffic_option`} value={false}
+                           checked={this.props.tenant.traffic_option === false}
                            onChange={() => {
                            }}/>
                     <div>Without traffic</div>

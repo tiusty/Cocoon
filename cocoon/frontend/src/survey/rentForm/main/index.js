@@ -255,7 +255,7 @@ export default class RentForm extends Component {
          *  i.e generalInfo dictionary
          */
         const {name, value} = e.target;
-        let data = "";
+        let data = null;
         if (type === 'number') {
             if(value) {
                 data = parseInt(value);
@@ -380,6 +380,8 @@ export default class RentForm extends Component {
             if (tenants[id].index === i) {
                 if(type === 'number') {
                     tenants[id][nameStripped] = parseInt(value)
+                } else if (type === 'boolean') {
+                    tenants[id][nameStripped] = (value === 'true');
                 } else {
                     tenants[id][nameStripped] = value
                 }
@@ -411,7 +413,7 @@ export default class RentForm extends Component {
 
                 // Commute questions
                 tenants[i].commute_type = this.state.tenants[index].commute_type || null;
-                tenants[i].driving_options = this.state.tenants[index].driving_options || null;
+                tenants[i].traffic_option = this.state.tenants[index].traffic_option || false;
                 tenants[i].transit_options = this.state.tenants[index].transit_options || [];
                 tenants[i].max_commute = this.state.tenants[index].max_commute || 60;
                 tenants[i].min_commute = this.state.tenants[index].min_commute || 0;
