@@ -392,6 +392,10 @@ export default class GeneralForm extends Component {
     }
 
     handleNextButtonAction(e) {
+        /**
+         * Handles pressing the next button to make sure the section is valid
+         *  before allowing the user to continue
+         */
         if(this.handleValidation()) {
             this.props.handleNextStep(e)
         }

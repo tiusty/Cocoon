@@ -204,9 +204,7 @@ export default class RentForm extends Component {
                         handlePrevStep={this.handlePrevStep}
                         amenitiesInfo={this.state.amenitiesInfo}
                         onInputChange={this.handleAmenitiesInputChange}
-
-                        saveAmenitiesInfo={this.saveAmenitiesInfo}
-                        allAmenitiesInfo={this.state.allAmenitiesInfo} />;
+                        />;
             case 4:
                 return <DetailsForm
                         is_authenticated={this.props.is_authenticated}
@@ -217,28 +215,26 @@ export default class RentForm extends Component {
         }
     }
 
-    // Increments the step on button click
     handleNextStep = (e) => {
+        /**
+         * Handles when the user clicks next for the next survey section
+         */
         e.preventDefault();
         this.setState({
             step: this.state.step + 1
-        })
+        });
         document.body.scrollTop = document.documentElement.scrollTop = 0;
-    }
+    };
 
     handlePrevStep = (e) => {
+        /**
+         * Handles when the user clicks back for the previous survey section
+         */
         e.preventDefault();
         this.setState({
             step: this.state.step - 1
-        })
+        });
         document.body.scrollTop = document.documentElement.scrollTop = 0;
-    }
-
-    // Saves the data from the amenities tab to repopulate fields with
-    saveAmenitiesInfo = (data) => {
-        this.setState({
-            allAmenitiesInfo: data
-        }, () => console.log(this.state.allAmenitiesInfo))
     };
 
     handleAmenitiesInputChange = (e, type) => {
