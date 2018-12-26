@@ -27,6 +27,6 @@ d = d + datetime.timedelta(weeks=2, days=-d.weekday()+1)
 
 # 5:30pm for traffic
 # 3:30am for no-traffic
-COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(17, 30)).timestamp()
+COMMUTE_TIME_WITH_TRAFFIC = datetime.datetime.combine(d, datetime.time(7, 30)).timestamp()
 COMMUTE_TIME_WITHOUT_TRAFFIC = datetime.datetime.combine(d, datetime.time(3, 30)).timestamp()
 TRAFFIC_MODEL_DEFAULT = "best_guess"
