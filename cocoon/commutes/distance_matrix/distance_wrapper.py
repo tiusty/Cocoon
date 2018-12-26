@@ -119,6 +119,12 @@ class DistanceWrapper:
 
     @staticmethod
     def determine_traffic_model(mode, with_traffic):
+        """
+        Determines the traffic model to use based on the commute type and if the user wants traffic
+        :param mode: (GoogleCommuteNaming) -> The commute type the user wants
+        :param with_traffic: (Boolean) -> Determines whether or not the user wants traffic to be included
+        :return: (string) -> Which traffic model to use
+        """
         if mode == GoogleCommuteNaming.TRANSIT:
             traffic_model = TRAFFIC_MODEL_BEST_GUESS
         elif with_traffic and GoogleCommuteNaming.DRIVING:

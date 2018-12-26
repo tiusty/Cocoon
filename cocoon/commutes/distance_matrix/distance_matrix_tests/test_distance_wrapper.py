@@ -3,7 +3,8 @@ from unittest.mock import MagicMock
 from ..distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
     Over_Query_Limit_Exception, Max_Elements_Exceeded_Exception, Unknown_Error_Exception, Zero_Results_Exception, \
     distance_matrix, DistanceWrapper
-from ...constants import GoogleCommuteNaming, COMMUTE_TIME_WITHOUT_TRAFFIC, COMMUTE_TIME_WITH_TRAFFIC
+from ...constants import GoogleCommuteNaming, COMMUTE_TIME_WITHOUT_TRAFFIC, COMMUTE_TIME_WITH_TRAFFIC, \
+    TRAFFIC_MODEL_BEST_GUESS, TRAFFIC_MODEL_PESSIMISTIC
 
 
 class TestDistanceWrapper(TestCase):
@@ -298,3 +299,63 @@ class TestDistanceWrapper(TestCase):
 
         # Assert
         self.assertEqual(result, [[(1298, 9650)], [(1749, 17326)]])
+
+    def test_determine_traffic_model_driving_with_traffic(self):
+        """
+        If the use is driving and wants traffic then pessimistic traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_PESSIMISTIC)
+
+    def test_determine_traffic_model_driving_with_no_traffic(self):
+        """
+        If the use is driving and doesn't want traffic then best guess traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_BEST_GUESS)
+
+    def test_determine_traffic_model_transit_no_traffic(self):
+        """
+        If the use is transit and doesn't want traffic then best guess traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_BEST_GUESS)
+
+    def test_determine_traffic_model_transit_traffic(self):
+        """
+        If the use is transit and wants traffic then best guess traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_BEST_GUESS)
