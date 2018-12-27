@@ -38,72 +38,72 @@
 }
 
 .survey-large-info-div {
-    position: absolute;
-    width: 90%;
-    height: 168px;
-    left: 172px;
-    top: 120px;
+    display: flex;
 }
 
 .survey-large-snapshot {
+    flex-grow: 2;
+    margin-top:40px;
+    margin-left: 100px;
     height: 168px;
     border: 1px solid rgba(156, 156, 156, 0.7);
     box-sizing: border-box;
     border-radius: 10px;
-}
-
-.survey-large-snapshot-title {
-position: absolute;
-left: 18.72%;
-right: 18.45%;
-top: 11.51%;
-bottom: 58.27%;
-
-font-family: Montserrat;
-font-style: normal;
-font-weight: bold;
-line-height: normal;
-font-size: 24px;
-
-color: #000000;
-}
-
-.survey-large-snapshot-price {
-    position: absolute;
-left: 3%;
-top: 46.76%;
-bottom: 26.62%;
-
-font-family: Montserrat;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-font-size: 18px;
-
-color: #000000;
-}
-
-.survey-large-snapshot-bedrooms {
-   position: absolute;
-left: 3%;
-top: 66.91%;
-bottom: 17.27%;
-
-font-family: Montserrat;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-font-size: 18px;
-
-color: #000000;
 }
 
 .survey-large-tour-summary {
+    flex-grow: 2;
+    margin-top:40px;
+    margin-right:100px;
     height: 168px;
     border: 1px solid rgba(156, 156, 156, 0.7);
     box-sizing: border-box;
     border-radius: 10px;
 }
+
+.survey-large-gap {
+    flex-grow:1
+}
+
+.survey-large-snapshot-title {
+    text-align: center;
+    margin-top: 10px;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+    font-size: 24px;
+    color: #000000;
+}
+
+.survey-large-snapshot-price {
+
+    margin-top: 15px;
+    margin-left: 10px;
+
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 18px;
+
+    color: #000000;
+}
+
+.survey-large-snapshot-bedrooms {
+
+    margin-top: 15px;
+    margin-left: 10px;
+
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 18px;
+
+    color: #000000;
+}
+
 
 .survey-large-tour-summary-title {
     position: absolute;

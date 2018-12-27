@@ -52,12 +52,13 @@ export default class SurveyLarge extends Component {
                     <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>
                 </div>
                 <div className="row survey-large-info-div">
-                    <div  className="col-md-4 survey-large-snapshot">
+                    <div  className="survey-large-snapshot">
                         <p className="survey-large-snapshot-title">Survey Snapshot</p>
                         <p className="survey-large-snapshot-price">Desired price: $2000</p>
                         <p className="survey-large-snapshot-bedrooms">Number of bedrooms: 2</p>
                     </div>
-                    <div  className="col-md-4 col-md-offset-2 survey-large-tour-summary">
+                    <div className="survey-large-gap"></div>
+                    <div className="survey-large-tour-summary">
                         <p className="survey-large-tour-summary-title">Tour Summary</p>
                         <p className="survey-large-tour-summary-estimate-duration">Estimated duration: 1 hour 5 minutes</p>
                         <p className="survey-large-tour-summary-message">You are ready to schedule!</p>
