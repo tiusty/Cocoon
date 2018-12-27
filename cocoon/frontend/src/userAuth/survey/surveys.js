@@ -5,7 +5,8 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import './surveys.css'
-import Survey from "./survey";
+import SurveySmall from "./surveySmall";
+import SurveyLarge from "./surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
 
@@ -16,7 +17,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 export default class Surveys extends Component {
 
     state = {
-        survey_clicked: undefined,
+        survey_clicked_id: undefined,
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
@@ -72,38 +73,93 @@ export default class Surveys extends Component {
             });
     }
 
+    handleDelete = (survey_id) => {
+        /**
+         * When a survey wants to be deleted, it passes it to the backend and then
+         *  the list of surveys is returned again and the data is repopulated with the new
+         *  list of surveys.
+         *
+         *  Note: If no data race conditions happen, then the returned list of surveys should
+         *      be just the same list of surveys with the deleted one gone.
+         * @type {string} The survey id that is being deleted
+         */
+
+            // The survey id is appended to the survey_endpoint since the put request expects the survey id as
+            //  part of the url
+        let endpoint = this.state.survey_endpoint + survey_id + "/";
+
+        // Passes the survey id and the put type to the backend
+        axios.put(endpoint,
+            {
+                survey_id: survey_id,
+                type: 'survey_delete',
+            })
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState( {surveys: this.parseData(response.data)})
+            });
+    };
+
 
     renderPage() {
         if(this.state.loading_clicked) {
             return <p> Loading page </p>
         } else {
-            if(this.state.survey_clicked === undefined) {
+            if(this.state.survey_clicked_id === undefined) {
                 return (
                     <>
-                        {this.state.surveys.map(survey =>
-                            <div key={survey.id} className="col-md-3 survey">
-                                <Survey
-                                    key={survey.id}
-                                    id={survey.id}
-                                    name={survey.name}
-                                    url={survey.url}
-                                    favorites={survey.favorites}
-                                    visit_list={survey.visit_list}
-                                    onLoadingClicked={this.setLoadingClick}
+                        <div className="row">
+                            <div className="col-md-6 col-md-offset-3">
+                                <p className="my-survey-header">Roommate Groups</p>
+                            </div>
+                            <div className="col-md-1 col-md-offset-2">
+                                <button className="btn btn-primary help-button">Help</button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-6 col-md-offset-2 search-bar-div">
+                                <input type="text" className="input search-bar" placeholder="Search..." />
+                                <button className="btn btn-primary search-button">Search</button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            {this.state.surveys.map(survey =>
+                                <div key={survey.id} className="col-md-3 survey">
+                                    <SurveySmall
+                                        key={survey.id}
+                                        id={survey.id}
+                                        name={survey.name}
+                                        url={survey.url}
+                                        favorites={survey.favorites}
+                                        visit_list={survey.visit_list}
+                                        onLoadingClicked={this.setLoadingClick}
+                                        onClickSurvey={this.handleClickSurvey}
+                                    />
+                                </div>
+                            )}
+                            <div className="col-md-3 survey">
+                                <SurveySmall
+                                    default_survey={true}
                                     onClickSurvey={this.handleClickSurvey}
                                 />
                             </div>
-                        )}
-                        <div className="col-md-3 survey">
-                            <Survey
-                                default_survey={true}
-                                onClickSurvey={this.handleClickSurvey}
-                            />
                         </div>
                     </>
                 );
             } else {
-                            return <p>Survey</p>
+                let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
+                return (
+                    <div className="col-md-12 survey-large">
+                        <SurveyLarge
+                            id = {survey.id}
+                            name={survey.name}
+                            large_survey={true}
+                            onDelete={this.handleDelete}
+                        />
+                    </div>
+                );
             }
         }
     }
@@ -114,7 +170,7 @@ export default class Surveys extends Component {
 
     handleClickSurvey = (id) => {
         if(id !== undefined) {
-            this.setState({survey_clicked: id})
+            this.setState({survey_clicked_id: id})
         } else {
             console.log("default clicked")
         }
@@ -124,25 +180,8 @@ export default class Surveys extends Component {
     render() {
         return (
             <>
-                <div className="row">
-                    <div className="col-md-6 col-md-offset-3">
-                        <p className="my-survey-header">Roommate Groups</p>
-                    </div>
-                    <div className="col-md-1 col-md-offset-2">
-                        <button className="btn btn-primary help-button">Help</button>
-                    </div>
-                </div>
 
-                <div className="row">
-                    <div className="col-md-6 col-md-offset-2 search-bar-div">
-                        <input type="text" className="input search-bar" placeholder="Search..." />
-                        <button className="btn btn-primary search-button">Search</button>
-                    </div>
-                </div>
-
-                <div className="row surveys">
                     {this.renderPage()}
-                </div>
             </>
         );
     }

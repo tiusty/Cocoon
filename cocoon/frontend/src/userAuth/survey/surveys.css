@@ -61,3 +61,13 @@
     height: 295px;
 
 }
+
+.survey-large {
+    position: absolute;
+    width: 90%;
+    height: 861px;
+    margin-top: 25px;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+

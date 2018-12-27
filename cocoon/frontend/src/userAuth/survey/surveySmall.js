@@ -5,6 +5,7 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import './surveySmall.css'
+import './surveyLarge.css'
 import surveyIcon from './Questionnaire_dragon-512.png';
 import survey_endpoints from '../../endpoints/survey_endpoints'
 
@@ -12,22 +13,7 @@ import survey_endpoints from '../../endpoints/survey_endpoints'
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-export default class Survey extends Component {
-    render() {
-        return <SurveySmall
-            onLoadingClicked={this.props.onLoadingClicked}
-            default_survey={this.props.default_survey}
-            id={this.props.id}
-            url={this.props.url}
-            name={this.props.name}
-            favorites={this.props.favorites}
-            visit_list={this.props.visit_list}
-            onClickSurvey={this.props.onClickSurvey}
-        />
-    }
-}
-
-class SurveySmall extends Component {
+export default class SurveySmall extends Component {
 
     generateLoadUrl = () => {
         /**
@@ -71,10 +57,3 @@ class SurveySmall extends Component {
 
 }
 
-class SurveyLarge extends Component {
-    render() {
-        return (
-            <p></p>
-        );
-    }
-}

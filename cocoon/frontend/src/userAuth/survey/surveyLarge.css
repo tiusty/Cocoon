@@ -1,0 +1,45 @@
+.survey-large-div {
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 0%;
+    bottom: 0%;
+
+    background: #F6F6F6;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 33px;
+}
+
+.survey-large-icon {
+position: absolute;
+width: 68px;
+height: 51px;
+left: 41px;
+top: 22px;
+}
+
+.survey-large-title {
+   position: absolute;
+width: 851px;
+height: 65px;
+left: 209px;
+top: 19px;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: bold;
+line-height: normal;
+font-size: 36px;
+
+color: #000000;
+}
+
+.survey-large-delete-button {
+   position: absolute;
+width: 72px;
+height: 65px;
+left: 1187px;
+top: 26px;
+}
