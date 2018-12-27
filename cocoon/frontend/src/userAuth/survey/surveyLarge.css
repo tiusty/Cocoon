@@ -77,8 +77,7 @@ color: #000000;
 
 .survey-large-snapshot-price {
     position: absolute;
-left: 4.81%;
-right: 18.45%;
+left: 3%;
 top: 46.76%;
 bottom: 26.62%;
 
@@ -93,8 +92,7 @@ color: #000000;
 
 .survey-large-snapshot-bedrooms {
    position: absolute;
-left: 5.35%;
-right: 30.21%;
+left: 3%;
 top: 66.91%;
 bottom: 17.27%;
 
@@ -116,7 +114,6 @@ color: #000000;
 
 .survey-large-tour-summary-title {
     position: absolute;
-left: 18.72%;
 right: 31.82%;
 top: 11.51%;
 bottom: 66.91%;
@@ -132,8 +129,8 @@ color: #000000;
 
 .survey-large-tour-summary-estimate-duration {
     position: absolute;
-left: 2.41%;
-right: 2.41%;
+left: 3%;
+/*right: 5.41%;*/
 top: 32.74%;
 bottom: 40.64%;
 
@@ -148,8 +145,8 @@ color: #000000;
 
 .survey-large-tour-summary-message {
     position: absolute;
-left: 14.17%;
-right: 18.72%;
+left: 3%;
+/*right: 18.72%;*/
 top: 47.02%;
 bottom: 42.26%;
 
