@@ -39,30 +39,29 @@
 
 .survey-large-info-div {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .survey-large-snapshot {
-    flex-grow: 2;
+    flex-grow: 8;
     margin-top:40px;
     margin-left: 100px;
-    height: 168px;
+    margin-right:100px;
+    height: 200px;
     border: 1px solid rgba(156, 156, 156, 0.7);
     box-sizing: border-box;
     border-radius: 10px;
 }
 
 .survey-large-tour-summary {
-    flex-grow: 2;
+    flex-grow: 3;
     margin-top:40px;
+    margin-left: 100px;
     margin-right:100px;
-    height: 168px;
+    height: 200px;
     border: 1px solid rgba(156, 156, 156, 0.7);
     box-sizing: border-box;
     border-radius: 10px;
-}
-
-.survey-large-gap {
-    flex-grow:1
 }
 
 .survey-large-snapshot-title {
@@ -106,60 +105,53 @@
 
 
 .survey-large-tour-summary-title {
-    position: absolute;
-right: 31.82%;
-top: 11.51%;
-bottom: 66.91%;
+    margin-top: 15px;
+    text-align: center;
 
-font-family: Montserrat;
-font-style: normal;
-font-weight: bold;
-line-height: normal;
-font-size: 24px;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+    font-size: 24px;
 
-color: #000000;
+    color: #000000;
 }
 
 .survey-large-tour-summary-estimate-duration {
-    position: absolute;
-left: 3%;
-/*right: 5.41%;*/
-top: 32.74%;
-bottom: 40.64%;
 
-font-family: Montserrat;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-font-size: 18px;
+    margin-top: 15px;
+    margin-left: 10px;
 
-color: #000000;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 18px;
+
+    color: #000000;
 }
 
 .survey-large-tour-summary-message {
-    position: absolute;
-left: 3%;
-/*right: 18.72%;*/
-top: 47.02%;
-bottom: 42.26%;
 
-font-family: Montserrat;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-font-size: 18px;
+    margin-top: 15px;
+    margin-left: 10px;
 
-color: #000000;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 18px;
 
+    color: #000000;
 }
 
 .survey-large-tour-summary-button {
-    position: absolute;
-left: 33.16%;
-right: 37.43%;
-top: 66.07%;
-bottom: 6.55%;
     padding-top: 12px;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    justify-content: center;
 }
 
 .survey-large-homes-div {

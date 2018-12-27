@@ -57,7 +57,6 @@ export default class SurveyLarge extends Component {
                         <p className="survey-large-snapshot-price">Desired price: $2000</p>
                         <p className="survey-large-snapshot-bedrooms">Number of bedrooms: 2</p>
                     </div>
-                    <div className="survey-large-gap"></div>
                     <div className="survey-large-tour-summary">
                         <p className="survey-large-tour-summary-title">Tour Summary</p>
                         <p className="survey-large-tour-summary-estimate-duration">Estimated duration: 1 hour 5 minutes</p>
