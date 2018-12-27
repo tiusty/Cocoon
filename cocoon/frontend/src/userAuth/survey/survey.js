@@ -18,6 +18,9 @@ export default class Survey extends Component {
             onLoadingClicked={this.props.onLoadingClicked}
             default_survey={this.props.default_survey}
             url={this.props.url}
+            name={this.props.name}
+            favorites={this.props.favorites}
+            visit_list={this.props.visit_list}
         />
     }
 }
@@ -57,9 +60,9 @@ class SurveySmall extends Component {
                             <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
                             <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
                                 className="btn btn-primary survey-small-load-button">Load</a>
-                            <p className="survey-small-title">Tyler, Alex, and Tomas</p>
-                            <p className="survey-small-favorites">Number of favorites: 5</p>
-                            <p className="survey-small-visit-list">Number of visit list: 3</p>
+                            <p className="survey-small-title">{this.props.name}</p>
+                            <p className="survey-small-favorites">Number of favorites: {this.props.favorites.length}</p>
+                            <p className="survey-small-visit-list">Number of visit list: {this.props.visit_list.length}</p>
                             <p className="survey-small-help-text">Click box to open</p>
                         </div>
                     </div>
