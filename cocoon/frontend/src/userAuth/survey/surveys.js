@@ -88,12 +88,14 @@ export default class Surveys extends Component {
                                 favorites={survey.favorites}
                                 visit_list={survey.visit_list}
                                 onLoadingClicked={this.setLoadingClick}
+                                onClickSurvey={this.handleClickSurvey}
                             />
                         </div>
                     )}
                     <div className="col-md-3 survey">
                         <Survey
                             default_survey={true}
+                            onClickSurvey={this.handleClickSurvey}
                         />
                     </div>
                 </>
@@ -104,6 +106,14 @@ export default class Surveys extends Component {
     setLoadingClick = () => {
         this.setState({loading_clicked: true})
     };
+
+    handleClickSurvey(id) {
+        if(id !== undefined) {
+            console.log('clicked: ' + id)
+        } else {
+            console.log("default clicked")
+        }
+    }
 
 
     render() {

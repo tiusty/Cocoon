@@ -1,9 +1,3 @@
-.Dotted_box {
-    outline-style: dotted;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
 /* Roommate Groups */
 .my-survey-header {
     /*position: absolute;*/
@@ -41,7 +35,6 @@
     bottom: 0%;
 
     border: 1px solid #000000;
-    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .search-bar {

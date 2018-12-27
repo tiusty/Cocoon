@@ -17,10 +17,12 @@ export default class Survey extends Component {
         return <SurveySmall
             onLoadingClicked={this.props.onLoadingClicked}
             default_survey={this.props.default_survey}
+            id={this.props.id}
             url={this.props.url}
             name={this.props.name}
             favorites={this.props.favorites}
             visit_list={this.props.visit_list}
+            onClickSurvey={this.props.onClickSurvey}
         />
     }
 }
@@ -35,16 +37,12 @@ class SurveySmall extends Component {
         return survey_endpoints['rentSurveyResult'] + this.props.url + "/";
     };
 
-    handleOnClick() {
-        console.log('click')
-    }
-
     render() {
         if(this.props.default_survey) {
              return (
                 <>
                     <div>
-                        <div className="survey-small-box" onClick={(e) => this.handleOnClick(e)}>
+                        <div className="survey-small-box" onClick={(e) => this.props.onClickSurvey(undefined)}>
                             <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
                             <p className="survey-small-default-text">click here to take a survey</p>
                             <p className="survey-small-default-text-bottom">Your future home awaits</p>
@@ -56,7 +54,7 @@ class SurveySmall extends Component {
             return (
                 <>
                     <div>
-                        <div className="survey-small-box" onClick={() => this.handleOnClick()}>
+                        <div className="survey-small-box" onClick={() => this.props.onClickSurvey(this.props.id)}>
                             <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
                             <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
                                 className="btn btn-primary survey-small-load-button">Load</a>
@@ -71,4 +69,12 @@ class SurveySmall extends Component {
         }
     }
 
+}
+
+class SurveyLarge extends Component {
+    render() {
+        return (
+            <p></p>
+        );
+    }
 }
