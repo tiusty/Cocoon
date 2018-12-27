@@ -29,17 +29,11 @@ export default class Surveys extends Component {
                 </div>
 
                 <div className="row surveys">
-                    <div className="col-md-1 survey-gap">
-                    </div>
                     <div className="col-md-3 survey">
                         <SurveySmall/>
                     </div>
-                    <div className="col-md-1 survey-gap">
-                    </div>
                     <div className="col-md-3 survey">
                         <SurveySmall/>
-                    </div>
-                    <div className="col-md-1 survey-gap">
                     </div>
                     <div className="col-md-3 survey">
                         <SurveySmall/>

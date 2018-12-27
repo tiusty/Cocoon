@@ -63,10 +63,8 @@
 
 .survey {
     margin-top: 15px;
+    margin-left: 5%;
     width: 399px;
     height: 295px;
-}
 
-.survey-gap {
-    width: 3%;
 }
