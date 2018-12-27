@@ -26,7 +26,7 @@ export default class SurveyLarge extends Component {
          */
         confirmAlert({
             title: 'Confirmation',
-            message: "Are you sure you want to delete " + this.state.name + "?",
+            message: "Are you sure you want to delete " + this.props.name + "?",
             buttons: [
                 {
                     label: 'yes',

@@ -38,8 +38,8 @@ color: #000000;
 
 .survey-large-delete-button {
    position: absolute;
-width: 72px;
-height: 65px;
-left: 1187px;
-top: 26px;
+    width: 90px;
+    height: 65px;
+    left: 87%;
+    top: 26px;
 }

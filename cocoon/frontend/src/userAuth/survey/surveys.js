@@ -96,7 +96,10 @@ export default class Surveys extends Component {
             })
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {surveys: this.parseData(response.data)})
+                this.setState( {
+                    surveys: response.data,
+                    survey_clicked_id: undefined
+                })
             });
     };
 
