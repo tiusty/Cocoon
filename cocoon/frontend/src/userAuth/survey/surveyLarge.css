@@ -155,39 +155,45 @@
 }
 
 .survey-large-homes-div {
-    margin-top: 30%;
-    height: 80px;
-    width: 90%;
-    top: 39.37%;
-    bottom: 6.39%;
-    margin-left: 45px;
+    display: flex;
 }
 
 .survey-large-favorites-div {
-border: 1px solid #000000;
-box-sizing: border-box;
-backdrop-filter: blur(4px);/* Note: backdrop-filter has minimal browser support */
+    flex-grow: 3;
+    flex-wrap: wrap;
+
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    backdrop-filter: blur(4px);/* Note: backdrop-filter has minimal browser support */
 }
 
 .survey-large-favorites-title {
-position: absolute;
-left: 37.13%;
-right: 36.78%;
-top: 4.28%;
-bottom: 91.01%;
 
-font-family: Montserrat;
-font-style: normal;
-font-weight: 800;
-line-height: normal;
-font-size: 18px;
-text-align: center;
-text-decoration-line: underline;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    font-size: 18px;
+    text-align: center;
+    text-decoration-line: underline;
 
-color: #000000;
+    color: #000000;
 }
 
 .survey-large-visit-list-div {
+    flex-grow: 3;
+    flex-wrap: wrap;
+
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+
     border: 1px solid #000000;
     box-sizing: border-box;
     backdrop-filter: blur(4px);/* Note: backdrop-filter has minimal browser support */

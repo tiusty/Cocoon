@@ -51,7 +51,7 @@ export default class SurveyLarge extends Component {
                     <p className="survey-large-title">{this.props.name}</p>
                     <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>
                 </div>
-                <div className="row survey-large-info-div">
+                <div className="survey-large-info-div">
                     <div  className="survey-large-snapshot">
                         <p className="survey-large-snapshot-title">Survey Snapshot</p>
                         <p className="survey-large-snapshot-price">Desired price: $2000</p>
@@ -65,11 +65,11 @@ export default class SurveyLarge extends Component {
                             className="btn btn-primary survey-large-tour-summary-button">Schedule</a>
                     </div>
                 </div>
-                <div className="row survey-large-homes-div">
-                    <div className="col-md-4 col-md-offset-1 survey-large-favorites-div">
+                <div className="survey-large-homes-div">
+                    <div className="survey-large-favorites-div">
                         <p className='survey-large-favorites-title'>Favorite Home</p>
                     </div>
-                    <div className="col-md-4 col-md-offset-2 survey-large-visit-list-div">
+                    <div className="survey-large-visit-list-div">
                         <p className='survey-large-favorites-title'>Visit List</p>
                     </div>
                 </div>
