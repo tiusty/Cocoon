@@ -162,6 +162,7 @@ export default class Surveys extends Component {
                             favorites={survey.favorites}
                             visit_list={survey.visit_list}
                             onDelete={this.handleDelete}
+                            onLargeSurveyClose={this.handleLargeSurveyClose}
                         />
                     </div>
                 );
@@ -173,19 +174,22 @@ export default class Surveys extends Component {
         this.setState({loading_clicked: true})
     };
 
+    handleLargeSurveyClose = () => {
+        this.setState({survey_clicked_id:undefined})
+    }
+
     handleClickSurvey = (id) => {
         if(id !== undefined) {
             this.setState({survey_clicked_id: id})
         } else {
             console.log("default clicked")
         }
-    }
+    };
 
 
     render() {
         return (
             <>
-
                     {this.renderPage()}
             </>
         );

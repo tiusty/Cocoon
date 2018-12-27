@@ -48,9 +48,6 @@
     margin-left: 100px;
     margin-right:100px;
     height: 200px;
-    /*border: 1px solid rgba(156, 156, 156, 0.7);*/
-    /*box-sizing: border-box;*/
-    /*border-radius: 10px;*/
 }
 
 .survey-large-tour-summary {
@@ -59,13 +56,9 @@
     margin-left: 100px;
     margin-right:100px;
     height: 200px;
-    /*border: 1px solid rgba(156, 156, 156, 0.7);*/
-    /*box-sizing: border-box;*/
-    /*border-radius: 10px;*/
 }
 
 .survey-large-snapshot-title {
-    text-align: center;
     margin-top: 10px;
     font-family: Montserrat;
     font-style: normal;
@@ -106,8 +99,6 @@
 
 .survey-large-tour-summary-title {
     margin-top: 15px;
-    text-align: center;
-
     font-family: Montserrat;
     font-style: normal;
     font-weight: bold;

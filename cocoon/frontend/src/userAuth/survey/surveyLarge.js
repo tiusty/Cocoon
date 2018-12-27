@@ -96,7 +96,7 @@ export default class SurveyLarge extends Component {
         return (
             <div className="survey-large-div">
                 <div className="survey-large-header">
-                    <img className="survey-large-icon" src={closingIcon} alt="Closing icon"/>
+                    <img onClick={() => this.props.onLargeSurveyClose()} className="survey-large-icon" src={closingIcon} alt="Closing icon"/>
                     <p className="survey-large-title">{this.props.name}</p>
                     <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>
                 </div>
