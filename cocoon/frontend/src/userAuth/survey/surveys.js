@@ -159,6 +159,8 @@ export default class Surveys extends Component {
                             id = {survey.id}
                             name={survey.name}
                             large_survey={true}
+                            favorites={survey.favorites}
+                            visit_list={survey.visit_list}
                             onDelete={this.handleDelete}
                         />
                     </div>

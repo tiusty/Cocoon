@@ -6,6 +6,7 @@ import axios from 'axios'
 // Import Cocoon Components
 import './surveyLarge.css'
 import closingIcon from './closing.png'
+import HomeTile from "../../common/homeTile/homeTile";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -43,6 +44,54 @@ export default class SurveyLarge extends Component {
         return ''
     }
 
+    renderFavorites() {
+        /**
+         * Renders the favorite homes
+         */
+        if (this.props.favorites.length === 0) return <h3 className="survey-large-no-homes">Go favorite some homes!</h3>
+        return (
+            <div>
+                {this.props.favorites.map(home =>
+                    <HomeTile
+                        key={home.id}
+                        home={home}
+                        favorite={this.inFavorites(home)}
+                        visit={this.state.visit_list.filter(c => c.id === home.id).length >0}
+                        onVisitClick={this.handleVisitClick}
+                        onFavoriteClick={this.handleFavoriteClick}
+                        show_heart={true}
+                        show_score={false}
+                        show_visit={true}
+                    />
+                )}
+            </div>
+        );
+    };
+
+    renderVisitList() {
+        /**
+         * Renders the visit list homes
+         */
+        if (this.props.visit_list.length === 0) return <h3 className="survey-large-no-homes">Please add homes to your visit list!</h3>;
+        return (
+            <div>
+                {this.props.visit_list.map(home =>
+                    <HomeTile
+                        key={home.id}
+                        home={home}
+                        favorite={this.inFavorites(home)}
+                        visit={this.inVisitList(home)}
+                        onVisitClick={this.handleVisitClick}
+                        onFavoriteClick={this.handleFavoriteClick}
+                        show_score={false}
+                        show_heart={true}
+                        show_visit={true}
+                    />
+                )}
+            </div>
+        );
+    };
+
     render() {
         return (
             <div className="survey-large-div">
@@ -68,9 +117,11 @@ export default class SurveyLarge extends Component {
                 <div className="survey-large-homes-div">
                     <div className="survey-large-favorites-div">
                         <p className='survey-large-favorites-title'>Favorite Home</p>
+                        {this.renderFavorites()}
                     </div>
                     <div className="survey-large-visit-list-div">
                         <p className='survey-large-favorites-title'>Visit List</p>
+                        {this.renderVisitList()}
                     </div>
                 </div>
             </div>
