@@ -16,7 +16,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 export default class Surveys extends Component {
 
     state = {
-        loading_click: true,
+        loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
         loaded: false,
@@ -30,26 +30,6 @@ export default class Surveys extends Component {
         signature_endpoint: signature_endpoints['hunterDocManager'],
     };
 
-    parseData(data) {
-        /**
-         * Parses data returned from the survey_endpoint and returns it in a nicer format for react
-         *
-         * Expects to be passed data a list of surveys from the backend and then returns a list
-         *  of the survey ids.
-         * @type {Array}: A list of surveys
-         */
-        let survey_ids = [];
-
-        // For each survey just push the id for that survey to the list
-        data.map(c =>
-            survey_ids.push( { id: c.id} )
-        );
-
-        // Return the list of ids
-        return survey_ids
-    }
-
-
     componentDidMount() {
         /**
          *  Retrieves all the surveys associated with the user
@@ -57,7 +37,7 @@ export default class Surveys extends Component {
         axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {surveys: this.parseData(response.data)})
+                this.setState( {surveys: response.data})
             });
 
         /**
@@ -97,22 +77,33 @@ export default class Surveys extends Component {
             return <p> Loading page </p>
         } else {
             return (
-                    this.state.surveys.map(survey =>
+                <>
+                    {this.state.surveys.map(survey =>
                         <div key={survey.id} className="col-md-3 survey">
                             <Survey
                                 key={survey.id}
                                 id={survey.id}
+                                name={survey.name}
+                                url={survey.url}
+                                favorites={survey.favorites}
+                                visit_list={survey.visit_list}
                                 onLoadingClicked={this.setLoadingClick}
                             />
                         </div>
-                    )
+                    )}
+                    <div className="col-md-3 survey">
+                        <Survey
+                            default_survey={true}
+                        />
+                    </div>
+                </>
             );
         }
     }
 
     setLoadingClick = () => {
         this.setState({loading_clicked: true})
-    }
+    };
 
 
     render() {

@@ -13,37 +13,11 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 export default class Survey extends Component {
-    state = {
-        name: "",
-        url: "",
-    };
-
-    componentDidMount() {
-        /**
-         * Loads the survey data
-         * @type {string}
-         */
-
-            // The survey id is appended to the get request to get a specific survey
-            console.log(this.props.id)
-        let endpoint = survey_endpoints['rentSurvey'] + this.props.id;
-            console.log(endpoint)
-        axios.get(endpoint)
-            .catch(error => console.log('BAD', error))
-            .then(response =>
-                this.setState({
-                    name: response.data.name,
-                    favorites: response.data.favorites,
-                    curr_favorites: response.data.favorites,
-                    visit_list: response.data.visit_list,
-                    url: response.data.url,
-                }),
-            )
-    }
-
     render() {
         return <SurveySmall
-            url={this.state.url}
+            onLoadingClicked={this.props.onLoadingClicked}
+            default_survey={this.props.default_survey}
+            url={this.props.url}
         />
     }
 }
@@ -63,21 +37,35 @@ class SurveySmall extends Component {
     }
 
     render() {
-        return (
-            <>
-                <div>
-                    <div className="survey-small-box" onClick={() => this.handleOnClick()}>
-                        <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
-                        <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
-                            className="btn btn-primary survey-small-load-button">Load</a>
-                        <p className="survey-small-title">Tyler, Alex, and Tomas</p>
-                        <p className="survey-small-favorites">Number of favorites: 5</p>
-                        <p className="survey-small-visit-list">Number of visit list: 3</p>
-                        <p className="survey-small-help-text">Click box to open</p>
+        if(this.props.default_survey) {
+             return (
+                <>
+                    <div>
+                        <div className="survey-small-box" onClick={(e) => this.handleOnClick(e)}>
+                            <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
+                            <p className="survey-small-default-text">click here to take a survey</p>
+                            <p className="survey-small-default-text-bottom">Your future home awaits</p>
+                        </div>
                     </div>
-                </div>
-            </>
-        );
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <div>
+                        <div className="survey-small-box" onClick={() => this.handleOnClick()}>
+                            <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
+                            <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
+                                className="btn btn-primary survey-small-load-button">Load</a>
+                            <p className="survey-small-title">Tyler, Alex, and Tomas</p>
+                            <p className="survey-small-favorites">Number of favorites: 5</p>
+                            <p className="survey-small-visit-list">Number of visit list: 3</p>
+                            <p className="survey-small-help-text">Click box to open</p>
+                        </div>
+                    </div>
+                </>
+            );
+        }
     }
 
 }
