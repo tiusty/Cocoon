@@ -46,9 +46,11 @@ export default class SurveyLarge extends Component {
     render() {
         return (
             <div className="survey-large-div">
-                <img className="survey-large-icon" src={closingIcon} alt="Closing icon"/>
-                <p className="survey-large-title">{this.props.name}</p>
-                <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>
+                <div className="survey-large-header">
+                    <img className="survey-large-icon" src={closingIcon} alt="Closing icon"/>
+                    <p className="survey-large-title">{this.props.name}</p>
+                    <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>
+                </div>
                 <div className="row survey-large-info-div">
                     <div  className="col-md-4 survey-large-snapshot">
                         <p className="survey-large-snapshot-title">Survey Snapshot</p>
@@ -61,6 +63,14 @@ export default class SurveyLarge extends Component {
                         <p className="survey-large-tour-summary-message">You are ready to schedule!</p>
                         <a  href={this.generateLoadUrl()}
                             className="btn btn-primary survey-large-tour-summary-button">Schedule</a>
+                    </div>
+                </div>
+                <div className="row survey-large-homes-div">
+                    <div className="col-md-4 col-md-offset-1 survey-large-favorites-div">
+                        <p className='survey-large-favorites-title'>Favorite Home</p>
+                    </div>
+                    <div className="col-md-4 col-md-offset-2 survey-large-visit-list-div">
+                        <p className='survey-large-favorites-title'>Visit List</p>
                     </div>
                 </div>
             </div>

@@ -1,10 +1,4 @@
 .survey-large-div {
-    position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 0%;
-    bottom: 0%;
-
     background: #F6F6F6;
     border: 1px solid rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
@@ -12,36 +6,35 @@
     border-radius: 33px;
 }
 
+.survey-large-header {
+    display: flex;
+}
+
 .survey-large-icon {
-position: absolute;
-width: 68px;
-height: 51px;
-left: 41px;
-top: 22px;
+    flex-grow: 1;
+    height: 51px;
+    margin-left: 20px;
+    margin-top: 15px;
 }
 
 .survey-large-title {
-   position: absolute;
-width: 851px;
-height: 65px;
-left: 209px;
-top: 19px;
+    margin-top: 15px;
+    text-align: center;
+    flex-grow:50;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+    font-size: 36px;
 
-font-family: Montserrat;
-font-style: normal;
-font-weight: bold;
-line-height: normal;
-font-size: 36px;
-
-color: #000000;
+    color: #000000;
 }
 
 .survey-large-delete-button {
-   position: absolute;
-    width: 90px;
-    height: 65px;
-    left: 87%;
-    top: 26px;
+    margin-right: 20px;
+    margin-top: 15px;
+    height: 51px;
+    flex-grow:5;
 }
 
 .survey-large-info-div {
@@ -167,4 +160,43 @@ right: 37.43%;
 top: 66.07%;
 bottom: 6.55%;
     padding-top: 12px;
+}
+
+.survey-large-homes-div {
+    margin-top: 30%;
+    height: 80px;
+    width: 90%;
+    top: 39.37%;
+    bottom: 6.39%;
+    margin-left: 45px;
+}
+
+.survey-large-favorites-div {
+border: 1px solid #000000;
+box-sizing: border-box;
+backdrop-filter: blur(4px);/* Note: backdrop-filter has minimal browser support */
+}
+
+.survey-large-favorites-title {
+position: absolute;
+left: 37.13%;
+right: 36.78%;
+top: 4.28%;
+bottom: 91.01%;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: 800;
+line-height: normal;
+font-size: 18px;
+text-align: center;
+text-decoration-line: underline;
+
+color: #000000;
+}
+
+.survey-large-visit-list-div {
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    backdrop-filter: blur(4px);/* Note: backdrop-filter has minimal browser support */
 }
