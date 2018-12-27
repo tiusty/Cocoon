@@ -16,6 +16,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 export default class Surveys extends Component {
 
     state = {
+        survey_clicked: undefined,
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
@@ -76,30 +77,34 @@ export default class Surveys extends Component {
         if(this.state.loading_clicked) {
             return <p> Loading page </p>
         } else {
-            return (
-                <>
-                    {this.state.surveys.map(survey =>
-                        <div key={survey.id} className="col-md-3 survey">
+            if(this.state.survey_clicked === undefined) {
+                return (
+                    <>
+                        {this.state.surveys.map(survey =>
+                            <div key={survey.id} className="col-md-3 survey">
+                                <Survey
+                                    key={survey.id}
+                                    id={survey.id}
+                                    name={survey.name}
+                                    url={survey.url}
+                                    favorites={survey.favorites}
+                                    visit_list={survey.visit_list}
+                                    onLoadingClicked={this.setLoadingClick}
+                                    onClickSurvey={this.handleClickSurvey}
+                                />
+                            </div>
+                        )}
+                        <div className="col-md-3 survey">
                             <Survey
-                                key={survey.id}
-                                id={survey.id}
-                                name={survey.name}
-                                url={survey.url}
-                                favorites={survey.favorites}
-                                visit_list={survey.visit_list}
-                                onLoadingClicked={this.setLoadingClick}
+                                default_survey={true}
                                 onClickSurvey={this.handleClickSurvey}
                             />
                         </div>
-                    )}
-                    <div className="col-md-3 survey">
-                        <Survey
-                            default_survey={true}
-                            onClickSurvey={this.handleClickSurvey}
-                        />
-                    </div>
-                </>
-            );
+                    </>
+                );
+            } else {
+                            return <p>Survey</p>
+            }
         }
     }
 
@@ -107,9 +112,9 @@ export default class Surveys extends Component {
         this.setState({loading_clicked: true})
     };
 
-    handleClickSurvey(id) {
+    handleClickSurvey = (id) => {
         if(id !== undefined) {
-            console.log('clicked: ' + id)
+            this.setState({survey_clicked: id})
         } else {
             console.log("default clicked")
         }
