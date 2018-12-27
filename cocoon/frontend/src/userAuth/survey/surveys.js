@@ -9,6 +9,41 @@ import SurveySmall from "./surveySmall";
 
 export default class Surveys extends Component {
 
+    state = {
+        loading_click: true,
+    };
+
+    renderPage() {
+        if(this.state.loading_clicked) {
+            return <p> Loading page </p>
+        } else {
+            return (
+                <div className="row surveys">
+                    <div className="col-md-3 survey">
+                        <SurveySmall
+                            onLoadingClicked={this.setLoadingClick}
+                        />
+                    </div>
+                    <div className="col-md-3 survey">
+                        <SurveySmall
+                            onLoadingClicked={this.setLoadingClick}
+                        />
+                    </div>
+                    <div className="col-md-3 survey">
+                        <SurveySmall
+                            onLoadingClicked={this.setLoadingClick}
+                        />
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    setLoadingClick = () => {
+        this.setState({loading_clicked: true})
+    }
+
+
     render() {
         return (
             <>
@@ -28,17 +63,7 @@ export default class Surveys extends Component {
                     </div>
                 </div>
 
-                <div className="row surveys">
-                    <div className="col-md-3 survey">
-                        <SurveySmall/>
-                    </div>
-                    <div className="col-md-3 survey">
-                        <SurveySmall/>
-                    </div>
-                    <div className="col-md-3 survey">
-                        <SurveySmall/>
-                    </div>
-                </div>
+                {this.renderPage()}
             </>
         );
     }
