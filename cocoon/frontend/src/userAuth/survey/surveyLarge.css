@@ -43,3 +43,131 @@ color: #000000;
     left: 87%;
     top: 26px;
 }
+
+.survey-large-info-div {
+    position: absolute;
+    width: 90%;
+    height: 168px;
+    left: 172px;
+    top: 120px;
+}
+
+.survey-large-snapshot {
+    height: 168px;
+    border: 1px solid rgba(156, 156, 156, 0.7);
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.survey-large-snapshot-title {
+position: absolute;
+left: 18.72%;
+right: 18.45%;
+top: 11.51%;
+bottom: 58.27%;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: bold;
+line-height: normal;
+font-size: 24px;
+
+color: #000000;
+}
+
+.survey-large-snapshot-price {
+    position: absolute;
+left: 4.81%;
+right: 18.45%;
+top: 46.76%;
+bottom: 26.62%;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+font-size: 18px;
+
+color: #000000;
+}
+
+.survey-large-snapshot-bedrooms {
+   position: absolute;
+left: 5.35%;
+right: 30.21%;
+top: 66.91%;
+bottom: 17.27%;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+font-size: 18px;
+
+color: #000000;
+}
+
+.survey-large-tour-summary {
+    height: 168px;
+    border: 1px solid rgba(156, 156, 156, 0.7);
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.survey-large-tour-summary-title {
+    position: absolute;
+left: 18.72%;
+right: 31.82%;
+top: 11.51%;
+bottom: 66.91%;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: bold;
+line-height: normal;
+font-size: 24px;
+
+color: #000000;
+}
+
+.survey-large-tour-summary-estimate-duration {
+    position: absolute;
+left: 2.41%;
+right: 2.41%;
+top: 32.74%;
+bottom: 40.64%;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+font-size: 18px;
+
+color: #000000;
+}
+
+.survey-large-tour-summary-message {
+    position: absolute;
+left: 14.17%;
+right: 18.72%;
+top: 47.02%;
+bottom: 42.26%;
+
+font-family: Montserrat;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+font-size: 18px;
+
+color: #000000;
+
+}
+
+.survey-large-tour-summary-button {
+    position: absolute;
+left: 33.16%;
+right: 37.43%;
+top: 66.07%;
+bottom: 6.55%;
+    padding-top: 12px;
+}
