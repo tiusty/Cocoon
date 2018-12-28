@@ -160,7 +160,7 @@ export default class Surveys extends Component {
 
                         <div className="row">
                             <div className="col-md-6 col-md-offset-2 search-bar-div">
-                                <input type="text" className="input search-bar" placeholder="Search..." />
+                                <input type="text" disabled={true} className="input search-bar" placeholder="Search..." />
                                 <button className="btn btn-primary search-button">Search</button>
                             </div>
                         </div>
