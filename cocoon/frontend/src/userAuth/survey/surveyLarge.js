@@ -7,6 +7,9 @@ import axios from 'axios'
 import './surveyLarge.css'
 import closingIcon from './closing.png'
 import HomeTile from "../../common/homeTile/homeTile";
+import survey_endpoints from "../../endpoints/survey_endpoints";
+import signature_endpoints from "../../endpoints/signatures_endpoints"
+import CSRFToken from '../../common/csrftoken';
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -15,7 +18,6 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 // Import Pop-up button components
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import survey_endpoints from "../../endpoints/survey_endpoints";
 
 
 export default class SurveyLarge extends Component {
@@ -190,6 +192,35 @@ export default class SurveyLarge extends Component {
         return this.state.visit_list.filter(c => c.id === home.id).length >0;
     }
 
+    scheduleButtonMessages() {
+        if(!this.props.pre_tour_signed) {
+            return 'Please sign pre tour docs'
+        } else {
+            return 'You are read to schedule!'
+        }
+    }
+
+    scheduleButton() {
+        if(!this.props.pre_tour_signed) {
+            return (
+                    <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button" role="button"
+                       href={signature_endpoints['signaturePage']}
+                       > Sign Documents </a>
+            );
+        } else {
+            return(
+                <form method="post" style={{marginTop: '10px'}}>
+                    <CSRFToken/>
+                    <button name="submit-button" disabled={!this.props.pre_tour_signed}
+                            className="btn btn-success btn-sm m-2 survey-large-tour-summary-button"
+                            value={this.props.id} type="submit">Schedule!
+                    </button>
+                </form>
+            );
+        }
+
+    }
+
     render() {
         return (
             <div className="survey-large-div">
@@ -207,10 +238,8 @@ export default class SurveyLarge extends Component {
                     <div className="survey-large-tour-summary">
                         <p className="survey-large-tour-summary-title">Tour Summary</p>
                         <p className="survey-large-tour-summary-estimate-duration">Estimated duration: 1 hour 5 minutes</p>
-                        <p className="survey-large-tour-summary-message">You are ready to schedule!</p>
-                        <button name="submit-button" disabled={!this.props.pre_tour_signed}
-                            className="btn btn-success btn-sm m-2 survey-large-tour-summary-button"
-                            value={this.props.id} type="submit">Schedule!</button>
+                        <p className="survey-large-tour-summary-message">{this.scheduleButtonMessages()}</p>
+                        {this.scheduleButton()}
                     </div>
                 </div>
                 <div className="survey-large-homes-div">
