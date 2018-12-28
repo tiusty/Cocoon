@@ -40,21 +40,24 @@
 .survey-large-info-div {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-evenly;
 }
 
 .survey-large-snapshot {
-    flex-grow: 5;
+    /*flex-grow: 7;*/
+    width: 30%;
     margin-top:40px;
-    margin-left: 100px;
-    margin-right:100px;
+    margin-left: 50px;
+    margin-right:50px;
     height: 200px;
 }
 
 .survey-large-tour-summary {
-    flex-grow: 3;
+    /*flex-grow: 3;*/
+    width: 30%;
     margin-top:40px;
-    margin-left: 100px;
-    margin-right:100px;
+    margin-left: 50px;
+    margin-right:50px;
     height: 200px;
 }
 
@@ -71,7 +74,6 @@
 .survey-large-snapshot-price {
 
     margin-top: 15px;
-    margin-left: 10px;
 
     font-family: Montserrat;
     font-style: normal;
@@ -85,7 +87,6 @@
 .survey-large-snapshot-bedrooms {
 
     margin-top: 15px;
-    margin-left: 10px;
 
     font-family: Montserrat;
     font-style: normal;
@@ -111,7 +112,6 @@
 .survey-large-tour-summary-estimate-duration {
 
     margin-top: 15px;
-    margin-left: 10px;
 
     font-family: Montserrat;
     font-style: normal;
@@ -125,7 +125,6 @@
 .survey-large-tour-summary-message {
 
     margin-top: 15px;
-    margin-left: 10px;
 
     font-family: Montserrat;
     font-style: normal;
@@ -148,16 +147,11 @@
 .survey-large-homes-div {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-evenly;
 }
 
 .survey-large-favorites-div {
-    flex-grow: 3;
-    flex-wrap: wrap;
-
     margin-top: 50px;
-    margin-left: 50px;
-    margin-right: 50px;
-    margin-bottom: 50px;
 }
 
 .survey-large-favorites-title {
@@ -174,13 +168,7 @@
 }
 
 .survey-large-visit-list-div {
-    flex-grow: 3;
-
     margin-top: 50px;
-    margin-left: 50px;
-    margin-right: 50px;
-    margin-bottom: 50px;
-
 }
 
 .survey-large-no-homes {
