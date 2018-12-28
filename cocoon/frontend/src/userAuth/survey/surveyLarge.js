@@ -18,6 +18,15 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 
 
 export default class SurveyLarge extends Component {
+    state = {
+        curr_favorites: this.props.favorites
+    };
+
+    componentDidUpdate = (prevProps, prevState, snapshot) => {
+        if(this.props.favorites !== prevProps.favorites) {
+            this.setState({curr_favorites: this.props.favorites})
+        }
+    }
 
     handleDelete = () => {
         /**
@@ -91,6 +100,22 @@ export default class SurveyLarge extends Component {
             </div>
         );
     };
+
+    inFavorites(home) {
+        /**
+         * Tests whether a particular home is currently favorited
+         */
+        // Checks to see if the home exists within the favorites list
+        return this.state.curr_favorites.filter(c => c.id === home.id).length > 0;
+    }
+
+    inVisitList(home) {
+        /**
+         * Tests if a particular home is currently in the visit list
+         */
+        // Checks to see if the home exists within the visit_list
+        return this.props.visit_list.filter(c => c.id === home.id).length >0;
+    }
 
     render() {
         return (
