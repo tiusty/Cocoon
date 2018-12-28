@@ -20,13 +20,39 @@ import survey_endpoints from "../../endpoints/survey_endpoints";
 
 export default class SurveyLarge extends Component {
     state = {
-        curr_favorites: this.props.favorites
+        name: "",
+        url: "",
+        price: 0,
+
+        // Favorites contains a lit of the favorites when the data was pulled from the backend
+        favorites:  [],
+        // Stores the current list of favorites the user has, i.e if he unfavorited a home then
+        //  the home will no longer be in this list. This is used so the user can favorite and unfavorite
+        //  and the home won't disappear until the page is refreshed
+        curr_favorites: [],
+
+        visit_list:  [],
     };
 
-    componentDidUpdate = (prevProps, prevState, snapshot) => {
-        if(this.props.favorites !== prevProps.favorites) {
-            this.setState({curr_favorites: this.props.favorites})
-        }
+    componentDidMount() {
+        /**
+         * Loads the survey data
+         * @type {string}
+         */
+
+            // The survey id is appended to the get request to get a specific survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    name: response.data.name,
+                    favorites: response.data.favorites,
+                    curr_favorites: response.data.favorites,
+                    visit_list: response.data.visit_list,
+                    url: response.data.url,
+                }),
+            )
     }
 
     handleDelete = () => {
@@ -37,7 +63,7 @@ export default class SurveyLarge extends Component {
          */
         confirmAlert({
             title: 'Confirmation',
-            message: "Are you sure you want to delete " + this.props.name + "?",
+            message: "Are you sure you want to delete " + this.state.name + "?",
             buttons: [
                 {
                     label: 'yes',
@@ -54,15 +80,15 @@ export default class SurveyLarge extends Component {
         /**
          * Renders the favorite homes
          */
-        if (this.props.favorites.length === 0) return <h3 className="survey-large-no-homes">Go favorite some homes!</h3>
+        if (this.state.favorites.length === 0) return <h3 className="survey-large-no-homes">Go favorite some homes!</h3>
         return (
             <div className="survey-large-home">
-                {this.props.favorites.map(home =>
+                {this.state.favorites.map(home =>
                     <HomeTile
                         key={home.id}
                         home={home}
                         favorite={this.inFavorites(home)}
-                        visit={this.props.visit_list.filter(c => c.id === home.id).length >0}
+                        visit={this.state.visit_list.filter(c => c.id === home.id).length >0}
                         onVisitClick={this.handleVisitClick}
                         onFavoriteClick={this.handleFavoriteClick}
                         show_heart={true}
@@ -78,10 +104,10 @@ export default class SurveyLarge extends Component {
         /**
          * Renders the visit list homes
          */
-        if (this.props.visit_list.length === 0) return <h3 className="survey-large-no-homes">Please add homes to your visit list!</h3>;
+        if (this.state.visit_list.length === 0) return <h3 className="survey-large-no-homes">Please add homes to your visit list!</h3>;
         return (
             <div>
-                {this.props.visit_list.map(home =>
+                {this.state.visit_list.map(home =>
                     <HomeTile
                         key={home.id}
                         home={home}
@@ -123,6 +149,31 @@ export default class SurveyLarge extends Component {
             );
     };
 
+    handleVisitClick = (home) => {
+        /**
+         *  Function handles when the user wants to add or remove a home from the visit list
+         *
+         *  The home that is being toggled is passed to the backend and then the updated state is
+         *      returned and the new visit list is passed to the state
+         * @type {string} The home that is being toggled
+         */
+
+            // The survey id is passed to the put request to update the state of that particular survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
+        axios.put(endpoint,
+            {
+                home_id: home.id,
+                type: 'visit_toggle'
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    visit_list: response.data.visit_list
+                })
+            );
+    };
+
     inFavorites(home) {
         /**
          * Tests whether a particular home is currently favorited
@@ -136,7 +187,7 @@ export default class SurveyLarge extends Component {
          * Tests if a particular home is currently in the visit list
          */
         // Checks to see if the home exists within the visit_list
-        return this.props.visit_list.filter(c => c.id === home.id).length >0;
+        return this.state.visit_list.filter(c => c.id === home.id).length >0;
     }
 
     render() {
@@ -144,7 +195,7 @@ export default class SurveyLarge extends Component {
             <div className="survey-large-div">
                 <div className="survey-large-header">
                     <img onClick={() => this.props.onLargeSurveyClose()} className="survey-large-icon" src={closingIcon} alt="Closing icon"/>
-                    <p className="survey-large-title">{this.props.name}</p>
+                    <p className="survey-large-title">{this.state.name}</p>
                     <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>
                 </div>
                 <div className="survey-large-info-div">

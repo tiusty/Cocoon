@@ -32,6 +32,30 @@ export default class Surveys extends Component {
         signature_endpoint: signature_endpoints['hunterDocManager'],
     };
 
+    parseData(data) {
+        /**
+         * Parses data returned from the survey_endpoint and returns it in a nicer format for react
+         *
+         * Expects to be passed data a list of surveys from the backend and then returns a list
+         *  of the survey ids.
+         * @type {Array}: A list of surveys
+         */
+        let survey_ids = [];
+
+        // For each survey just push the id for that survey to the list
+        data.map(c =>
+            survey_ids.push( {
+                id: c.id,
+                visit_list_length: c.visit_list.length,
+                favorites_length: c.favorites.length,
+                url: c.url,
+                name: c.name} )
+        );
+
+        // Return the list of ids
+        return survey_ids
+    }
+
     componentDidMount() {
         /**
          *  Retrieves all the surveys associated with the user
@@ -39,7 +63,7 @@ export default class Surveys extends Component {
         axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {surveys: response.data})
+                this.setState( {surveys: this.parseData(response.data)})
             });
 
         /**
@@ -135,8 +159,8 @@ export default class Surveys extends Component {
                                         id={survey.id}
                                         name={survey.name}
                                         url={survey.url}
-                                        favorites={survey.favorites}
-                                        visit_list={survey.visit_list}
+                                        favorites_length={survey.favorites_length}
+                                        visit_list_length={survey.visit_list_length}
                                         onLoadingClicked={this.setLoadingClick}
                                         onClickSurvey={this.handleClickSurvey}
                                     />
@@ -157,13 +181,11 @@ export default class Surveys extends Component {
                     <div className="col-md-12 survey-large">
                         <SurveyLarge
                             id = {survey.id}
-                            name={survey.name}
                             large_survey={true}
-                            favorites={survey.favorites}
-                            visit_list={survey.visit_list}
                             pre_tour_signed={this.state.pre_tour_signed}
                             onDelete={this.handleDelete}
                             onLargeSurveyClose={this.handleLargeSurveyClose}
+                            onHandleUpdateFavoritesList={this.handleUpdateFavoriteList}
                         />
                     </div>
                 );
