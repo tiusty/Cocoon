@@ -108,19 +108,21 @@ export default class SurveyLarge extends Component {
          */
         if (this.state.visit_list.length === 0) return <h3 className="survey-large-no-homes">Please add homes to your visit list!</h3>;
         return (
-            <div>
+            <div className="survey-large-home">
                 {this.state.visit_list.map(home =>
-                    <HomeTile
-                        key={home.id}
-                        home={home}
-                        favorite={this.inFavorites(home)}
-                        visit={this.inVisitList(home)}
-                        onVisitClick={this.handleVisitClick}
-                        onFavoriteClick={this.handleFavoriteClick}
-                        show_score={false}
-                        show_heart={true}
-                        show_visit={true}
-                    />
+                    <div key={home.id}>
+                        <HomeTile
+                            key={home.id}
+                            home={home}
+                            favorite={this.inFavorites(home)}
+                            visit={this.inVisitList(home)}
+                            onVisitClick={this.handleVisitClick}
+                            onFavoriteClick={this.handleFavoriteClick}
+                            show_score={false}
+                            show_heart={true}
+                            show_visit={true}
+                        />
+                    </div>
                 )}
             </div>
         );
