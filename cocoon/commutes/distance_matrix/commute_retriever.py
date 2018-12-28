@@ -8,7 +8,8 @@ from cocoon.commutes.distance_matrix.distance_wrapper import DistanceWrapper
 from cocoon.commutes.constants import GoogleCommuteNaming
 
 
-def retrieve_exact_commute(origins, destinations, mode):
+def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, with_traffic=False):
+
     """
     This wraps the get_durations_and_distances to prevent a user from calling the matrix with the wrong value
 
@@ -16,6 +17,7 @@ def retrieve_exact_commute(origins, destinations, mode):
         Therefore this does the conversion.
 
     If the mode type is not recognized then an empty list is returned
+    :param with_traffic: (boolean) -> Determines if the user wants the traffic commuted with traffic or not
     :param origins: (list(string)) -> List of values that is accepted by the distance matrix
     :param destinations: (list(destination)) -> list of values that is accepted by the distance matrix
     :param mode: (CommuteType Model) -> The commute type that is stored in the commute type format
@@ -23,14 +25,16 @@ def retrieve_exact_commute(origins, destinations, mode):
         and the origin. If the commute type is not recognized then an empty list is returned
     """
     wrapper = DistanceWrapper()
+
     if mode.commute_type == CommuteType.DRIVING:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.DRIVING)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.DRIVING, with_traffic=with_traffic)
     elif mode.commute_type == CommuteType.TRANSIT:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.TRANSIT)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.TRANSIT, with_traffic=with_traffic)
     elif mode.commute_type == CommuteType.BICYCLING:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.BICYCLING)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.BICYCLING, with_traffic=with_traffic)
     elif mode.commute_type == CommuteType.WALKING:
-        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING)
+        return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING, with_traffic=with_traffic)
+
     else:
         return []
 

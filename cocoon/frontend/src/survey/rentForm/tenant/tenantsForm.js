@@ -141,7 +141,7 @@ export default class TenantsForm extends Component {
 
         // Make sure if driving then driving options selected
         if (this.props.tenants[id].commute_type === this.getCommuteId('Driving')) {
-            if (this.props.tenants[id].driving_options === null) {
+            if (this.props.tenants[id].traffic_option === null) {
                 if (show_errors) {
                     document.querySelector(`#tenants-${id}-driving_options_error`).style.display = 'block';
                     document.querySelector(`#tenants-${id}-driving_options_error`).innerText = `You must select a driving option for ${this.props.tenants[id].first_name}.`;
