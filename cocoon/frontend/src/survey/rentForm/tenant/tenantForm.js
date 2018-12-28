@@ -126,16 +126,16 @@ export default class TenantForm extends Component {
     renderWorkingOccupation = (name) => {
         return (
             <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-working-occupation-question`} onChange={(e) => this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index)}>
-                <h2>{this.props.index === 0 ? 'Have' : 'Has'} {name} been at this <span>job for less than 6 months</span>?</h2>
+                <h2>{this.props.index === 0 ? 'Have' : 'Has'} {name} been at this <span>job for more or less than 6 months</span>?</h2>
                 <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-working-occupation-error`}></span>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name={`${this.props.tenant.tenant_identifier}-new_job`} value={true} checked={this.props.tenant.new_job === "true"} onChange={() => {}} />
-                    <div>Yes</div>
+                    <div>Less than 6 months</div>
                 </label>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name={`${this.props.tenant.tenant_identifier}-new_job`} value={false} checked={this.props.tenant.new_job === "false"} onChange={() => {}} />
-                    <div>No</div>
+                    <div>More than 6 months</div>
                 </label>
             </div>
         );
@@ -447,7 +447,7 @@ export default class TenantForm extends Component {
                                checked={this.props.tenant.commute_weight === 2}
                                onChange={() => {
                                }}/>
-                        <div>Cares</div>
+                        <div>Care</div>
                     </label>
                     <label className="col-md-4 survey-label">
                         <input type="radio" name={`${this.props.tenant.tenant_identifier}-commute_weight`} value="3"
