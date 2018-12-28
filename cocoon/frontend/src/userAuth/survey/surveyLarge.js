@@ -15,6 +15,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 // Import Pop-up button components
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 
 export default class SurveyLarge extends Component {
@@ -48,10 +49,6 @@ export default class SurveyLarge extends Component {
             ]
         })
     };
-
-    generateLoadUrl() {
-        return ''
-    }
 
     renderFavorites() {
         /**
@@ -99,6 +96,31 @@ export default class SurveyLarge extends Component {
                 )}
             </div>
         );
+    };
+
+    handleFavoriteClick = (home) => {
+        /**
+         * This function handles when the user clicks the heart to favorite or unfavorite a home
+         *
+         * Note: This function updates the curr_favorites so that the loaded favorites don't disappear
+         *  and therefore the user has a chance to refavorite the home if they want
+         * @type {string} The home that is being toggled
+         */
+
+            // The survey id is passed to the put request to update the state of that particular survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
+        axios.put(endpoint,
+            {
+                home_id: home.id,
+                type: 'favorite_toggle',
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    curr_favorites: response.data.favorites
+                })
+            );
     };
 
     inFavorites(home) {
