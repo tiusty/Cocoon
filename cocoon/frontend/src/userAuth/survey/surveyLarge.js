@@ -135,8 +135,9 @@ export default class SurveyLarge extends Component {
                         <p className="survey-large-tour-summary-title">Tour Summary</p>
                         <p className="survey-large-tour-summary-estimate-duration">Estimated duration: 1 hour 5 minutes</p>
                         <p className="survey-large-tour-summary-message">You are ready to schedule!</p>
-                        <a  href={this.generateLoadUrl()}
-                            className="btn btn-primary survey-large-tour-summary-button">Schedule</a>
+                        <button name="submit-button" disabled={!this.props.pre_tour_signed}
+                            className="btn btn-success btn-sm m-2 survey-large-tour-summary-button"
+                            value={this.props.id} type="submit">Schedule!</button>
                     </div>
                 </div>
                 <div className="survey-large-homes-div">

@@ -161,6 +161,7 @@ export default class Surveys extends Component {
                             large_survey={true}
                             favorites={survey.favorites}
                             visit_list={survey.visit_list}
+                            pre_tour_signed={this.state.pre_tour_signed}
                             onDelete={this.handleDelete}
                             onLargeSurveyClose={this.handleLargeSurveyClose}
                         />

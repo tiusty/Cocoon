@@ -136,10 +136,10 @@
 }
 
 .survey-large-tour-summary-button {
-    padding-top: 12px;
+    /*padding-top: 12px;*/
     display: flex;
     align-items: center;
-    margin-left: 10px;
+    margin-left: 20%;
     margin-right: 10px;
     justify-content: center;
 }
