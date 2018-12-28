@@ -152,6 +152,8 @@
 
 .survey-large-favorites-div {
     margin-top: 50px;
+    margin-right: 20px;
+    width: 30%;
 }
 
 .survey-large-favorites-title {
@@ -169,6 +171,8 @@
 
 .survey-large-visit-list-div {
     margin-top: 50px;
+    margin-left: 20px;
+    width: 30%;
 }
 
 .survey-large-no-homes {

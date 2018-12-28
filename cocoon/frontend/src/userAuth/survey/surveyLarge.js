@@ -59,13 +59,13 @@ export default class SurveyLarge extends Component {
          */
         if (this.props.favorites.length === 0) return <h3 className="survey-large-no-homes">Go favorite some homes!</h3>
         return (
-            <div>
+            <div className="survey-large-home">
                 {this.props.favorites.map(home =>
                     <HomeTile
                         key={home.id}
                         home={home}
                         favorite={this.inFavorites(home)}
-                        visit={this.state.visit_list.filter(c => c.id === home.id).length >0}
+                        visit={this.props.visit_list.filter(c => c.id === home.id).length >0}
                         onVisitClick={this.handleVisitClick}
                         onFavoriteClick={this.handleFavoriteClick}
                         show_heart={true}
