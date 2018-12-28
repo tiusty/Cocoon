@@ -71,19 +71,18 @@
 
 .survey-small-default-text-bottom {
     position: absolute;
-width: 269px;
-height: 95px;
-left: 65px;
-top: 179px;
+    width: 269px;
+    height: 95px;
+    left: 65px;
+    top: 179px;
 
-font-family: Montserrat;
-font-style: italic;
-font-weight: 500;
-line-height: normal;
-font-size: 36px;
+    font-family: Montserrat;
+    font-style: italic;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 36px;
 
-color: #000000;
-
+    color: #000000;
 }
 
 .survey-small-help-text {
@@ -107,11 +106,11 @@ color: #000000;
 .survey-small-load-button {
     position: absolute;
     width: 72px;
-    height: 47px;
+    height: 40px;
     left: 297px;
     top: 23px;
 
-    padding-top: 12px;
+    padding-top: 10px;
 }
 
 .survey-small-default-text {
