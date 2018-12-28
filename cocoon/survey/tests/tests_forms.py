@@ -334,33 +334,6 @@ class TestCommuteInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_commute_information_missing_min_commute_not_work_from_home(self):
-        """
-        Tests that if min_commute is missing and the commute type is not work from home then the form
-            returns False
-        """
-        commute_types = [self.driving, self.transit, self.walking, self.bicycling]
-        result = True
-
-        for commute_type in commute_types:
-            # Arrange
-            form_data = {
-                'max_commute': self.max_commute,
-                'commute_weight': self.commute_weight,
-                'commute_type': commute_type.pk,
-                'street_address': "Test Address",
-                'city': 'test city',
-                'state': 'test state',
-                'zip_code': 'test zip_code',
-            }
-            commute_information_form = CommuteInformationForm(data=form_data)
-
-            # Act
-            result = commute_information_form.is_valid() and result
-
-        # Assert
-        self.assertFalse(result)
-
     def tests_commute_information_missing_commute_weight_not_work_from_home(self):
         """
         Tests that if min_commute is missing and the commute type is not work from home then the form
