@@ -9,6 +9,8 @@ import SurveySmall from "./surveySmall";
 import SurveyLarge from "./surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
+import surveyIcon from './Questionnaire_dragon-512.png';
+import LoadingScreen from 'react-loading-screen';
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -130,8 +132,20 @@ export default class Surveys extends Component {
 
     renderPage() {
         if(this.state.loading_clicked) {
-            return <p> Loading page </p>
-        } else {
+            return (
+                <LoadingScreen
+                    loading={true}
+                    bgColor='#f1f1f1'
+                    spinnerColor='#9ee5f8'
+                    textColor='#676767'
+                    logoSrc={surveyIcon}
+                    text='Please wait: Loading...'
+                >
+                    <div>Loadable content</div>
+                </LoadingScreen>
+            );
+        }
+         else {
             if(this.state.survey_clicked_id === undefined) {
                 return (
                     <>
@@ -212,7 +226,8 @@ export default class Surveys extends Component {
         if(id !== undefined) {
             this.setState({survey_clicked_id: id})
         } else {
-            console.log("default clicked")
+            this.setLoadingClick()
+            window.location = survey_endpoints['rentingSurvey']
         }
     };
 
