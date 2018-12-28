@@ -239,7 +239,7 @@ export default class SurveyLarge extends Component {
                     </div>
                     <div className="survey-large-tour-summary">
                         <p className="survey-large-tour-summary-title">Tour Summary</p>
-                        <p className="survey-large-tour-summary-estimate-duration">Estimated duration: 1 hour 5 minutes</p>
+                        <p className="survey-large-tour-summary-estimate-duration">Estimated duration: To be Implemented</p>
                         <p className="survey-large-tour-summary-message">{this.scheduleButtonMessages()}</p>
                         {this.scheduleButton()}
                     </div>
