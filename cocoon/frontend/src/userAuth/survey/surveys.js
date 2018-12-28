@@ -199,6 +199,13 @@ export default class Surveys extends Component {
 
     handleLargeSurveyClose = () => {
         this.setState({survey_clicked_id:undefined})
+
+        // See if any of the data changed
+        axios.get(this.state.survey_endpoint)
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState( {surveys: this.parseData(response.data)})
+            });
     }
 
     handleClickSurvey = (id) => {
