@@ -6,6 +6,7 @@ import axios from 'axios'
 // Import Cocoon Components
 import './surveyLarge.css'
 import closingIcon from './closing.png'
+import deleteIcon from './delelte.png'
 import HomeTile from "../../common/homeTile/homeTile";
 import survey_endpoints from "../../endpoints/survey_endpoints";
 import signature_endpoints from "../../endpoints/signatures_endpoints"
@@ -229,7 +230,8 @@ export default class SurveyLarge extends Component {
                 <div className="survey-large-header">
                     <img onClick={() => this.props.onLargeSurveyClose()} className="survey-large-icon" src={closingIcon} alt="Closing icon"/>
                     <p className="survey-large-title">{this.state.name}</p>
-                    <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>
+                    <img className="survey-large-delete-button" onClick={() => this.handleDelete()} src={deleteIcon} alt="Delete Button"/>
+                    {/*<button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2 survey-large-delete-button">Delete</button>*/}
                 </div>
                 <div className="survey-large-info-div">
                     <div  className="survey-large-snapshot">
