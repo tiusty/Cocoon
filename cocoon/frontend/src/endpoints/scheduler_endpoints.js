@@ -12,8 +12,6 @@ const scheduler_endpoints = {
     'itineraryClient': api_path + '/itineraryClient/',
     'itineraryAgent': api_path + '/itineraryAgent/',
     'itineraryMarket': api_path + '/itineraryMarket/',
-    'selectStartTime': '/scheduler/selectStartTime/',
-    'claimItinerary': '/scheduler/claimItinerary/',
     'unscheduleItinerary': '/scheduler/unscheduleItinerary',
     'itineraryDuration': api_path + '/itineraryDuration/',
     'clientScheduler': '/scheduler/clientScheduler',

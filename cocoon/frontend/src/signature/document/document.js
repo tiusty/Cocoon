@@ -12,10 +12,7 @@ class Document extends Component {
         loaded: false,
         id: null,
         created: false,
-        template_id: this.props.template_id,
-        endpoint: this.props.endpoint,
         is_signed: false,
-        template_type: this.props.template_type,
         refreshing: false,
     };
 
@@ -23,7 +20,7 @@ class Document extends Component {
         /**
          * Retrieves the document associated with this component
          */
-        let endpoint = this.state.endpoint + this.state.template_id + '/';
+        let endpoint = this.props.endpoint + this.props.template_id + '/';
         axios.get(endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
@@ -66,10 +63,10 @@ class Document extends Component {
         this.setState({
             refreshing: true,
         });
-        let endpoint = this.state.endpoint;
+        let endpoint = this.props.endpoint;
         axios.post(endpoint,
             {
-                template_type_id: this.state.template_id,
+                template_type_id: this.props.template_id,
             })
             .catch(error => {
                 this.setState({
@@ -94,7 +91,7 @@ class Document extends Component {
         this.setState({
             refreshing: true,
         });
-        let endpoint = this.state.endpoint + this.state.template_id + '/';
+        let endpoint = this.props.endpoint + this.props.template_id + '/';
         axios.put(endpoint,
             {
                 'type': 'update'
@@ -122,7 +119,7 @@ class Document extends Component {
         this.setState({
             refreshing: true,
         });
-        let endpoint = this.state.endpoint + this.state.template_id + '/';
+        let endpoint = this.props.endpoint + this.props.template_id + '/';
         axios.put(endpoint,
             {
                 'type': 'resend'
@@ -187,7 +184,7 @@ class Document extends Component {
         if (this.state.loaded) {
             return(
                 <tr>
-                    <th>{this.state.template_type}</th>
+                    <th>{this.props.template_type}</th>
                     <th>{this.renderIsSigned()}</th>
                     <th>{this.renderButton()}</th>
                     <th>{this.renderDocumentAction()}</th>

@@ -10,6 +10,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 
+# Import third party libraries
+import hashlib
+
 
 def itinerary_directory_path(instance, filename):
     return "itinerary/{0}/{1}".format(instance.client.id, str(instance.id) + "_" + filename)
@@ -37,6 +40,55 @@ class ItineraryModel(models.Model):
 
     def __str__(self):
         return "{0} Itinerary".format(self.client.full_name)
+
+    @property
+    def hash(self):
+        """
+        Hashes all the values associated with the itinerary so if any of the data fields changes values,
+            the hash changes values. This will determine that the itinerary has been updated
+        :return:  (string) -> The hex form of the hash
+        """
+
+        # Get all the homes and store the ids
+        home_ids = ""
+        for home in self.homes.all():
+            home_ids = home_ids + str(home.id)
+
+        # Get all the start times and add their ids
+        start_time_ids = ""
+        for time in self.start_times.all():
+            start_time_ids = start_time_ids + str(time.id)
+
+        selected_start_time = "null"
+        if self.selected_start_time is not None:
+            selected_start_time = self.selected_start_time
+
+        client_id = "null"
+        if self.client is not None:
+            client_id = self.client.id
+
+        agent_id = "null"
+        if self.agent is not None:
+            agent_id = self.agent.id
+
+        # Now create a string that will be hashed. It should contain all the data from the
+        #   itinerary model
+        hashable_string = "{0}{1}{2}{3}{4}{5}{6}".format(client_id,
+                                                         agent_id,
+                                                         self.tour_duration_seconds,
+                                                         selected_start_time,
+                                                         start_time_ids,
+                                                         home_ids,
+                                                         self.finished)
+
+        # Create the md5 object
+        m = hashlib.md5()
+
+        # Adds the string to the hash function
+        m.update(hashable_string.encode('utf-8'))
+
+        # Returns the hash as hex
+        return m.hexdigest()
 
     @property
     def tour_duration_minutes(self):

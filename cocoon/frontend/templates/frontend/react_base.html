@@ -1,6 +1,10 @@
 {% load static %}
 <script>
-    window.props = '{{ props }}';
     window.react_mount = document.getElementById('reactWrapper');
-    window.component = '{{ component }}';
+    window.component = '{{component}}';
+    {% if user.is_authenticated %}
+            window.isUser = true;
+        {% else %}
+            window.isUser = false;
+    {% endif %}
 </script>

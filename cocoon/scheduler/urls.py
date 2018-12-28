@@ -13,14 +13,11 @@ router.register(r'itineraryDuration', views.ClientItineraryCalculateDuration, ba
 
 app_name = 'scheduler'
 urlpatterns = [
-    url(r'^agentSchedulerOld/', views.agent_scheduler, name="agentSchedulerOld"),
-    url(r'^agentScheduler/', views.AgentSchedulerView.as_view(), name="agentScheduler"),
-    url(r'^myToursOld/', views.view_tours, name="myTours"),
+    url(r'^agentSchedulerPortal/', views.AgentSchedulerPortalView.as_view(), name="agentSchedulerPortal"),
+    url(r'^agentSchedulerMarketplace/', views.AgentSchedulerMarketplaceView.as_view(), name="agentSchedulerMarketplace"),
     url(r'^clientScheduler', views.ClientSchedulerView.as_view(), name="clientScheduler"),
 
     # AJAX requests below
-    url(r'^claimItinerary/$', views.claim_itinerary, name="claimItinerary"),
-    url(r'^selectStartTime/$', views.select_start_time, name="selectStartTime"),
     url(r'^unscheduleItinerary/$', views.unschedule_itinerary, name="unscheduleItinerary"),
 
     # Api

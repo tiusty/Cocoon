@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import ItineraryModel
 from .models import TimeModel
 
-# Register your models here.
 
 
 class TimeInline(admin.StackedInline):
@@ -12,6 +11,9 @@ class TimeInline(admin.StackedInline):
 
 class ItineraryAdmin(admin.ModelAdmin):
     raw_id_fields = ('homes',)
+    list_display = ('client', 'agent', 'finished')
+    search_fields = ('client__email',)
+    list_filter = ['client', 'finished', ]
 
     inlines = [TimeInline]
 

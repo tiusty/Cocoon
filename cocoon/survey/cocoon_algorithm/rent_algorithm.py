@@ -213,9 +213,9 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                                         self.homes[:number_of_exact_commutes_computed]))
 
                 destination_address = destination.full_address
-
                 results = retrieve_exact_commute(origin_addresses, [destination_address],
-                                                 destination.commute_type)
+                                                 destination.commute_type,
+                                                 with_traffic=destination.traffic_option)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):

@@ -301,6 +301,15 @@ class CommuteInformationForm(DestinationForm):
         ),
     )
 
+    traffic_option = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Consider Traffic?',
+            }),
+    )
+
     def is_valid(self):
         valid = super().is_valid()
 
@@ -349,9 +358,6 @@ class CommuteInformationForm(DestinationForm):
                     if int(current_form['min_commute']) < 0:
                         self.add_error('min_commute', "Min commute needs to be above 0")
                         valid = False
-                else:
-                    self.add_error('min_commute', "Min Commute Needed")
-                    valid = False
 
                 if current_form['min_commute'] is not None and current_form['max_commute'] is not None:
                     if int(current_form['min_commute']) > int(current_form['max_commute']):
@@ -402,7 +408,7 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
         fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type']
+                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option']
 
 
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,

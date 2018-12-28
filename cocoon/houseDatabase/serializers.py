@@ -16,7 +16,7 @@ class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HomeTypeModel
-        fields = ('home_type',)
+        fields = ('id', 'home_type')
 
 
 class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):

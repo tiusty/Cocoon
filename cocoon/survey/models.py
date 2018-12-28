@@ -174,6 +174,7 @@ class CommuteInformationModel(models.Model):
     min_commute = models.IntegerField(default=0)
     commute_weight = models.IntegerField(default=0)
     commute_type = models.ForeignKey(CommuteType)
+    traffic_option = models.BooleanField(default=False)
 
     @property
     def commute_range(self):

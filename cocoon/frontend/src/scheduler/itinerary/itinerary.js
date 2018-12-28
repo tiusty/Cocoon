@@ -1,9 +1,13 @@
 // Import React Components
 import React from 'react'
-import { Component } from 'react';
+import {Component} from 'react';
 import axios from 'axios'
+import moment from 'moment';
+
+// Import Cocoon Components
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import HomeTile from "../../common/homeTile/homeTile";
+import "./itinerary.css"
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -11,22 +15,17 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 class Itinerary extends Component {
     state = {
-        agent: null,
         client: null,
+        agent: null,
         homes: [],
-        id: this.props.id,
         selected_start_time: null,
         tour_duration_seconds: null,
         start_times: [],
-        showTimes: this.props.showTimes,
-        showClaim: this.props.showClaim,
+        refreshing: false,
     };
 
-    componentDidMount() {
-        /**
-         *  Retrieves the itinerary associated with this current component
-         */
-        axios.get(scheduler_endpoints['itinerary'] + this.state.id + '/')
+    updateItinerary() {
+        axios.get(scheduler_endpoints['itinerary'] + this.props.id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
@@ -35,81 +34,103 @@ class Itinerary extends Component {
                     homes: response.data.homes,
                     selected_start_time: response.data.selected_start_time,
                     tour_duration_seconds: response.data.tour_duration_seconds,
-                    start_times: response.data.start_times
+                    start_times: response.data.start_times,
                 })
             })
     }
 
-    selectTime = (id, time) => {
+
+    componentDidUpdate(prevProps) {
+        // If the hash of the itinerary changes then make sure to update the itinerary cus there are changes to the data
+        if (prevProps.hash !== this.props.hash) {
+            this.updateItinerary()
+        }
+    }
+
+    componentDidMount() {
+        /**
+         *  Retrieves all the surveys associated with the user
+         */
+
+        this.updateItinerary()
+    }
+
+    selectTime = (id) => {
         /**
          * Schedules a claimed itinerary by selecting a start time
          */
-        let formData = new FormData();
-        formData.set('time_id', id);
-        formData.set('itinerary_id', this.state.id);
-
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['selectStartTime'],
-            data: formData,
-            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        this.setState({'refreshing': true});
+        let endpoint = scheduler_endpoints['itineraryAgent'] + this.props.id + '/';
+        axios.put(endpoint, {
+            type: 'schedule',
+            time_id: id,
         })
-        .catch(error => console.log('Bad', error))
-        .then(response => {
-            if (response.data.result == 0) {
-                this.setState({
-                    selected_start_time: time,
-                    showTimes: false,
-                });
-            }
-        });
-    }
-
-    claimItinerary = () => {
-        let formData = new FormData();
-        formData.set('itinerary_id', this.state.id);
-
-        axios({
-            method: 'post',
-            url: scheduler_endpoints['claimItinerary'],
-            data: formData,
-            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        .catch(error => {
+            this.setState({
+                refreshing: false,
+            });
+            console.log('Bad', error)
         })
-        .catch(error => console.log('Bad', error))
         .then(response => {
-            if (response.data.result == "0") {
-                this.setState({
-                    showClaim: false,
-                });
+            if (response.data.result) {
+                this.props.refreshItineraries()
+            } else {
+                alert(response.data.reason);
+                this.updateItinerary()
             }
+            this.setState({refreshing: false});
         });
-    }
+    };
 
-    renderClaimButton = () => {
-        if (this.state.showClaim) {
-            return (
-                <button onClick={() => this.claimItinerary(this.state.id)}>claim</button>
-            );
+    selectTimeButton(timeObject) {
+        if (!this.state.refreshing) {
+            return this.selectTime(timeObject.id, timeObject.time)
+        } else {
+            return null
         }
-
-        return null
     }
 
     renderStartTimes = () => {
-        if (this.state.showTimes) {
-            return (
-                this.state.start_times.map((timeObject) => {
-                    return (
-                        <div key={timeObject.id}>
-                            <div>{timeObject.time}</div>
-                            <button onClick={() => this.selectTime(timeObject.id, timeObject.time)}>select</button>
+        if (this.props.showTimes) {
+            if (this.state.start_times.length === 0) {
+                return <p> No start times chosen</p>
+            } else {
+                return (
+                    <div className={"available-times-wrapper"}>
+                        {this.state.start_times.map((timeObject) => {
+                        return (
+                            <div key={timeObject.id}>
+                                <div>
+                                    {moment(timeObject.time).format('MM/DD/YYYY')} @ {moment(timeObject.time).format('HH:mm')}
+                                </div>
+                            {this.props.canSelect ? <button
+                                onClick={() => this.selectTimeButton(timeObject)}>
+                                {this.state.refreshing ? 'Loading' : 'select'}
+                            </button> : null}
                         </div>
-                    );
-                })
-            )
+                        );
+                    })}
+                    </div>
+                )
+            }
         }
 
         return null
+    };
+
+    renderHomes(homes) {
+        if (homes.length <= 0) {
+            return <p>There are no homes in this visit list</p>
+        } else {
+            return (this.state.homes.map(home =>
+                <HomeTile
+                    key={home.id}
+                    home={home}
+                    show_heart={false}
+                    show_visit={false}
+                />
+            ));
+        }
     }
 
     renderItinerary = () => {
@@ -125,7 +146,12 @@ class Itinerary extends Component {
 
         let start_time = <p>Start Time: Not Selected</p>;
         if (this.state.selected_start_time) {
-            start_time = <p>Start Time: {this.state.selected_start_time}</p>
+            start_time = <p>
+                Start Time:
+                {moment(this.state.selected_start_time).format('MM/DD/YYYY')}
+                &nbsp; @ &nbsp;
+                {moment(this.state.selected_start_time).format('HH:mm')}
+                </p>
         }
 
 
@@ -136,15 +162,7 @@ class Itinerary extends Component {
                 <p>Tour Duration = {this.state.tour_duration_seconds}</p>
                 {start_time}
                 {this.renderStartTimes()}
-                {this.renderClaimButton()}
-                {this.state.homes.map(home =>
-                    <HomeTile
-                        key={home.id}
-                        home={home}
-                        show_heart={false}
-                        show_visit={false}
-                    />
-                )}
+                {this.renderHomes(this.state.homes)}
             </div>
         );
     };

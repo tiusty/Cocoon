@@ -109,14 +109,14 @@ context.
                 <div id="myCarousel" class="carousel slide" data-ride="carousel">
                     <!-- Indicators -->
                     <ol class="carousel-indicators">
-                        {% for photo in theHouse.housephotos_set.all %}
+                        {% for photo in theHouse.images.all %}
                             <li data-target="#myCarousel" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
                         {% endfor %}
                     </ol>
 
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner">
-                    {% for photo in theHouse.housephotos_set.all %}
+                    {% for photo in theHouse.images.all %}
                         <div class="item {% if forloop.first %}active{% endif %}">
                             <img src="{{ photo.image.url }}">
                         </div>
@@ -181,7 +181,7 @@ context.
         {% endif %}
     </div>
 
-    {% for image in theHouse.housephotos_set.all|slice:":2" %}
+    {% for image in theHouse.images.all|slice:":2" %}
         <div class="thumbnailItem" id="thumbnailItem{{ forloop.counter }}">
             <img class="thumbnailImage" src="{{ image.image.url }}">
         </div>

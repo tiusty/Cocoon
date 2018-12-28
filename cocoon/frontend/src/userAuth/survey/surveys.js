@@ -5,9 +5,9 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import Survey from "./survey";
-import userAuth_endpoints from "../../endpoints/userAuth_endpoints"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
+import survey_endpoints from "../../endpoints/survey_endpoints";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -27,7 +27,7 @@ class Surveys extends Component {
         pre_tour_signed: false,
 
         // Stores the survey_endpoint needed for this Component
-        survey_endpoint: userAuth_endpoints['userSurveys'],
+        survey_endpoint: survey_endpoints['rentSurvey'],
         signature_endpoint: signature_endpoints['hunterDocManager'],
     };
 
@@ -159,7 +159,7 @@ class Surveys extends Component {
          */
 
         // If the page isn't loaded then don't load any messages
-        if (!this.state.loaded) {
+        if (!this.state.loaded || this.state.surveys.length <= 0) {
             return (
                 <>
                 </>
@@ -210,6 +210,29 @@ class Surveys extends Component {
         );
     };
 
+    renderSurveys() {
+        if (this.state.surveys.length <= 0) {
+            return (
+                <>
+                    <h3>Please take a survey:</h3>
+                    <a href={survey_endpoints['rentingSurvey']} className="btn btn-primary">Click here</a>
+                </>
+            );
+        }
+
+        return (this.state.surveys.map(survey =>
+            <Survey
+                key={survey.id}
+                onDelete={this.handleDelete}
+                id={survey.id}
+                endpoint={this.state.survey_endpoint}
+                pre_tour_signed={this.state.pre_tour_signed}
+                itinerary_exists={this.state.itinerary_exists}
+                />
+
+        ));
+    }
+
     render() {
         /**
          * Renders all the surveys
@@ -217,17 +240,7 @@ class Surveys extends Component {
         return (
             <>
                 {this.renderMessages()}
-                { this.state.surveys.map(survey =>
-                    <Survey
-                        key={survey.id}
-                        onDelete={this.handleDelete}
-                        survey_id={survey.id}
-                        endpoint={this.state.survey_endpoint}
-                        pre_tour_signed={this.state.pre_tour_signed}
-                        itinerary_exists={this.state.itinerary_exists}
-                    />
-
-                )}
+                {this.renderSurveys()}
             </>
         );
     }

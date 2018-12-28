@@ -1,8 +1,10 @@
 from django.test import TestCase
 from unittest.mock import MagicMock
-from cocoon.commutes.distance_matrix.distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
+from ..distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
     Over_Query_Limit_Exception, Max_Elements_Exceeded_Exception, Unknown_Error_Exception, Zero_Results_Exception, \
     distance_matrix, DistanceWrapper
+from ...constants import GoogleCommuteNaming, COMMUTE_TIME_WITHOUT_TRAFFIC, COMMUTE_TIME_WITH_TRAFFIC, \
+    TRAFFIC_MODEL_BEST_GUESS, TRAFFIC_MODEL_PESSIMISTIC
 
 
 class TestDistanceWrapper(TestCase):
@@ -20,7 +22,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Request_Denied_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_invalid_request_exception(self):
         response_obj = {
@@ -32,7 +34,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Invalid_Request_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_over_query_limit_exception(self):
         response_obj = {
@@ -44,7 +46,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Over_Query_Limit_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_zero_results_exception(self):
         response_obj = {
@@ -56,7 +58,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Zero_Results_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_unknown_error_exception(self):
         response_obj = {
@@ -68,7 +70,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Unknown_Error_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     def test_max_elements_exceeded_exception(self):
         response_obj = {
@@ -80,7 +82,7 @@ class TestDistanceWrapper(TestCase):
         }
 
         self.assertRaises(Max_Elements_Exceeded_Exception,
-                          self.wrapper.interpret_distance_matrix_response, response_obj)
+                          self.wrapper.interpret_distance_matrix_response, response_obj, 'test', False)
 
     ###############################################
     # API requests required for following functions
@@ -201,3 +203,159 @@ class TestDistanceWrapper(TestCase):
             self.assertEqual(duration[0][1], 39311)
             self.assertEqual(duration[1][0], 2336)
             self.assertEqual(duration[1][1], 41838)
+
+    def test_determine_departure_time_driving_traffic(self):
+        """
+        Tests that if the commute type is driving and they want traffic then the departure time
+            is with traffic
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+
+    def test_determine_departure_time_driving_no_traffic(self):
+        """
+        Tests that if the commute type is driving and they don't want traffic then the departure time
+            is with traffic
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITHOUT_TRAFFIC)
+
+    def test_determine_departure_time_driving_transit_with_traffic(self):
+        """
+        Tests that if the commute type is transit then the departure time
+            is with traffic even if with traffic is specified
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+
+    def test_determine_departure_time_driving_transit_with_no_traffic(self):
+        """
+        Tests that if the commute type is transit then the departure time
+            is with traffic even if with no traffic is specified
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+
+    def test_interpret_distance_matrix_response_driving_traffic(self):
+        """
+        Tests that if traffic is desired then the traffic duration is taken
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = True
+        response = {'status': 'OK', 'destination_addresses': ['1245 Massachusetts Ave, Arlington, MA 02476, USA'], 'origin_addresses': ['349 Pleasant St, Malden, MA 02148, USA', '10 Wait St, Boston, MA 02120, USA'], 'rows': [{'elements': [{'distance': {'text': '6.0 mi', 'value': 9650}, 'status': 'OK', 'duration_in_traffic': {'text': '25 mins', 'value': 1492}, 'duration': {'text': '22 mins', 'value': 1298}}]}, {'elements': [{'distance': {'text': '10.8 mi', 'value': 17326}, 'status': 'OK', 'duration_in_traffic': {'text': '44 mins', 'value': 2640}, 'duration': {'text': '29 mins', 'value': 1749}}]}]}
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.interpret_distance_matrix_response(response, mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, [[(1492, 9650)], [(2640, 17326)]])
+
+    def test_interpret_distance_matrix_response_driving_no_traffic(self):
+        """
+        Tests that if traffic is not desired then the non traffic duration is taken
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = False
+        response = {'status': 'OK', 'destination_addresses': ['1245 Massachusetts Ave, Arlington, MA 02476, USA'], 'origin_addresses': ['349 Pleasant St, Malden, MA 02148, USA', '10 Wait St, Boston, MA 02120, USA'], 'rows': [{'elements': [{'distance': {'text': '6.0 mi', 'value': 9650}, 'status': 'OK', 'duration_in_traffic': {'text': '25 mins', 'value': 1492}, 'duration': {'text': '22 mins', 'value': 1298}}]}, {'elements': [{'distance': {'text': '10.8 mi', 'value': 17326}, 'status': 'OK', 'duration_in_traffic': {'text': '44 mins', 'value': 2640}, 'duration': {'text': '29 mins', 'value': 1749}}]}]}
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.interpret_distance_matrix_response(response, mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, [[(1298, 9650)], [(1749, 17326)]])
+
+    def test_determine_traffic_model_driving_with_traffic(self):
+        """
+        If the use is driving and wants traffic then pessimistic traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_PESSIMISTIC)
+
+    def test_determine_traffic_model_driving_with_no_traffic(self):
+        """
+        If the use is driving and doesn't want traffic then best guess traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.DRIVING
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_BEST_GUESS)
+
+    def test_determine_traffic_model_transit_no_traffic(self):
+        """
+        If the use is transit and doesn't want traffic then best guess traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = False
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_BEST_GUESS)
+
+    def test_determine_traffic_model_transit_traffic(self):
+        """
+        If the use is transit and wants traffic then best guess traffic model should be used
+        """
+        # Arrange
+        mode = GoogleCommuteNaming.TRANSIT
+        with_traffic = True
+        distance_wrapper = DistanceWrapper()
+
+        # Act
+        result = distance_wrapper.determine_traffic_model(mode, with_traffic)
+
+        # Assert
+        self.assertEqual(result, TRAFFIC_MODEL_BEST_GUESS)
