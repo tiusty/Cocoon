@@ -45,7 +45,7 @@ class TestRetrieveExactCommuteClientScheduler(TestCase):
 
         # Assert
         mock_os.assert_called_once_with(destination.full_address, [home.full_address, home1.full_address],
-                                        CommuteType.DRIVING)
+                                        CommuteType.DRIVING, with_traffic=False)
 
 
 class TestRetrieveApproximateCommuteClientScheduler(TestCase):
