@@ -104,3 +104,58 @@
     max-width: 109%;
     width: 109%;
 }
+
+/*    Styling for large tile   */
+.expanded-tile-container {
+    width: 100%;
+    /*padding: 8px !important;*/
+    border: 1px dotted #a13718;
+}
+
+.expanded-close {
+    font-size: 32px;
+    align-self: flex-start;
+    color: #26A69A;
+}
+
+.expanded-tile-text {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.expanded-info-table {
+    border: 2px #777 !important;
+    display: table;
+    width: 90%;
+    margin: 0 auto;
+    padding: 8px !important;
+    border-collapse: collapse;
+}
+
+.expanded-info {
+    flex: 0;
+    flex-basis: 20%;
+    width: 100%;
+    align-self: center;
+    margin-top: 5px;
+    margin-bottom: 5%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td.category {
+    display: inline-block;
+    width: 30%;
+    font-weight: bold;
+}
+
+td.value {
+    display: inline-block;
+    width: 55%;
+    font-weight: normal;
+    text-align: left;
+    color: #26A69A;
+    padding: 8px;
+}

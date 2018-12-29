@@ -100,7 +100,7 @@ class HomeTile extends Component {
     render(){
         const { home } = this.props;
         return (
-            <div className="tile" onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}>
+            <div className="tile" onClick={() => this.props.onHomeClick(this.props.id)} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}>
                 {this.renderScore(home)}
                 {this.renderInfo(home)}
                 {this.renderImages(home)}
