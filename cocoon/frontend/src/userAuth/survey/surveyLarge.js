@@ -19,6 +19,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 // Import Pop-up button components
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
+import HomeTiles from "../../common/homeTile/homeTiles";
 
 
 export default class SurveyLarge extends Component {
@@ -86,19 +87,16 @@ export default class SurveyLarge extends Component {
         if (this.state.favorites.length === 0) return <h3 className="survey-large-no-homes">Go favorite some homes!</h3>
         return (
             <div className="survey-large-home">
-                {this.state.favorites.map(home =>
-                    <HomeTile
-                        key={home.id}
-                        home={home}
-                        favorite={this.inFavorites(home)}
-                        visit={this.state.visit_list.filter(c => c.id === home.id).length >0}
-                        onVisitClick={this.handleVisitClick}
-                        onFavoriteClick={this.handleFavoriteClick}
-                        show_heart={true}
-                        show_score={false}
-                        show_visit={true}
-                    />
-                )}
+                <HomeTiles
+                    homes={this.state.favorites}
+                    visit_list={this.state.visit_list}
+                    curr_favorites={this.state.curr_favorites}
+                    onVisitClick={this.handleVisitClick}
+                    onFavoriteClick={this.handleFavoriteClick}
+                    show_heart={true}
+                    show_score={false}
+                    show_visit={true}
+                />
             </div>
         );
     };
@@ -110,21 +108,16 @@ export default class SurveyLarge extends Component {
         if (this.state.visit_list.length === 0) return <h3 className="survey-large-no-homes">Please add homes to your visit list!</h3>;
         return (
             <div className="survey-large-home">
-                {this.state.visit_list.map(home =>
-                    <div key={home.id}>
-                        <HomeTile
-                            key={home.id}
-                            home={home}
-                            favorite={this.inFavorites(home)}
-                            visit={this.inVisitList(home)}
-                            onVisitClick={this.handleVisitClick}
-                            onFavoriteClick={this.handleFavoriteClick}
-                            show_score={false}
-                            show_heart={true}
-                            show_visit={true}
-                        />
-                    </div>
-                )}
+                <HomeTiles
+                    homes={this.state.visit_list}
+                    visit_list={this.state.visit_list}
+                    curr_favorites={this.state.curr_favorites}
+                    onVisitClick={this.handleVisitClick}
+                    onFavoriteClick={this.handleFavoriteClick}
+                    show_score={false}
+                    show_heart={true}
+                    show_visit={true}
+                />
             </div>
         );
     };
@@ -179,21 +172,6 @@ export default class SurveyLarge extends Component {
             );
     };
 
-    inFavorites(home) {
-        /**
-         * Tests whether a particular home is currently favorited
-         */
-        // Checks to see if the home exists within the favorites list
-        return this.state.curr_favorites.filter(c => c.id === home.id).length > 0;
-    }
-
-    inVisitList(home) {
-        /**
-         * Tests if a particular home is currently in the visit list
-         */
-        // Checks to see if the home exists within the visit_list
-        return this.state.visit_list.filter(c => c.id === home.id).length >0;
-    }
 
     scheduleButtonMessages() {
         if(!this.props.pre_tour_signed) {
