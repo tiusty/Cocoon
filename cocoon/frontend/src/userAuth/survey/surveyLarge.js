@@ -93,9 +93,6 @@ export default class SurveyLarge extends Component {
                     curr_favorites={this.state.curr_favorites}
                     onVisitClick={this.handleVisitClick}
                     onFavoriteClick={this.handleFavoriteClick}
-                    show_heart={true}
-                    show_score={false}
-                    show_visit={true}
                 />
             </div>
         );
@@ -114,9 +111,6 @@ export default class SurveyLarge extends Component {
                     curr_favorites={this.state.curr_favorites}
                     onVisitClick={this.handleVisitClick}
                     onFavoriteClick={this.handleFavoriteClick}
-                    show_score={false}
-                    show_heart={true}
-                    show_visit={true}
                 />
             </div>
         );

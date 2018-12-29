@@ -32,9 +32,6 @@ export default class HomeTiles extends Component {
                         visit={this.inVisitList(home)}
                         onVisitClick={this.props.onVisitClick}
                         onFavoriteClick={this.props.onFavoriteClick}
-                        show_heart={this.props.show_heart}
-                        show_score={this.props.show_score}
-                        show_visit={this.props.show_visit}
                     />
                 )}
             </>

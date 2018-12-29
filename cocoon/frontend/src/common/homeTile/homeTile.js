@@ -17,47 +17,27 @@ class HomeTile extends Component {
          */
 
         let homeScore = '';
-        if (this.props.show_score) {
-            // Determines whether the user is hovering over that tile
-            let classes = "scoreText ";
-            if (this.state.hover) {
-                classes += "scoreText-hover"
-            }
-            // Determines if a grade was passed to the home, if not then don't render it
-            if (home.grade) {
-                homeScore = <span className={classes}>{home.grade}</span>
-            }
-        }
-
         // Toggles whether the home has a empty or full heart depending on favorite status
-        let heart_span = '';
-        if (this.props.show_heart) {
-            let heart_class = "glyphicon";
-            if (this.props.favorite) {
-                heart_class += " glyphicon-heart"
-            } else {
-                heart_class += " glyphicon-heart-empty"
-            }
-
-            heart_span = <span className={heart_class} onClick={() => this.props.onFavoriteClick(home)}> </span>;
+        let heart_class = "glyphicon";
+        if (this.props.favorite) {
+            heart_class += " glyphicon-heart"
+        } else {
+            heart_class += " glyphicon-heart-empty"
         }
+        let heart_span = <span className={heart_class} onClick={() => this.props.onFavoriteClick(home)}> </span>;
 
-        let visit_span = '';
-        if (this.props.show_visit) {
-            let visit_classes = "glyphicon";
-            if (this.props.visit)
-            {
-                visit_classes += " glyphicon-remove";
-            } else {
-                visit_classes += " glyphicon-ok";
-            }
-            visit_span = <span className={visit_classes} onClick={() => this.props.onVisitClick(home)}> </span>;
+        let visit_classes = "glyphicon";
+        if (this.props.visit)
+        {
+            visit_classes += " glyphicon-remove";
+        } else {
+            visit_classes += " glyphicon-ok";
         }
+        let visit_span = <span className={visit_classes} onClick={() => this.props.onVisitClick(home)}> </span>;
 
         // Render the score and the heart icon
         return (
             <div className="tileScore">
-                {homeScore}
                 {heart_span}
                 {visit_span}
             </div>
@@ -99,7 +79,7 @@ class HomeTile extends Component {
                 <>
                     { home.images.slice(0,2).map(image =>
                         <div key={image.id} className={div_classes}>
-                            <img className={image_classes} src={image.image}/>
+                            <img className={image_classes} src={image.image} alt='Home image'/>
                         </div>
                     )}
                 </>
