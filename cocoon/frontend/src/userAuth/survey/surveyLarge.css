@@ -12,9 +12,11 @@
 
 .survey-large-icon {
     flex-grow: 1;
-    height: 51px;
+    height: 70px;
     margin-left: 20px;
     margin-top: 15px;
+    font-size: 60px;
+    cursor:pointer;
 }
 
 .survey-large-title {
@@ -33,8 +35,9 @@
 .survey-large-delete-button {
     margin-right: 20px;
     margin-top: 15px;
-    height: 51px;
+    height: 70px;
     flex-grow:1;
+    cursor:pointer;
 }
 
 .survey-large-info-div {
