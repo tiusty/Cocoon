@@ -26,7 +26,8 @@ export default class SurveyLarge extends Component {
     state = {
         name: "",
         url: "",
-        price: 0,
+        desired_price: 0,
+        num_bedrooms: 0,
 
         // Favorites contains a lit of the favorites when the data was pulled from the backend
         favorites:  [],
@@ -49,13 +50,18 @@ export default class SurveyLarge extends Component {
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
             .then(response =>
-                this.setState({
-                    name: response.data.name,
-                    favorites: response.data.favorites,
-                    curr_favorites: response.data.favorites,
-                    visit_list: response.data.visit_list,
-                    url: response.data.url,
-                }),
+                {
+                    console.log(response.data),
+                    this.setState({
+                        name: response.data.name,
+                        favorites: response.data.favorites,
+                        curr_favorites: response.data.favorites,
+                        visit_list: response.data.visit_list,
+                        url: response.data.url,
+                        desired_price: response.data.desired_price,
+                        num_bedrooms: response.data.num_bedrooms,
+                    })
+                }
             )
     }
 
@@ -213,8 +219,8 @@ export default class SurveyLarge extends Component {
                 <div className="survey-large-info-div">
                     <div  className="survey-large-snapshot">
                         <p className="survey-large-snapshot-title">Survey Snapshot</p>
-                        <p className="survey-large-snapshot-price">Desired price: $2000</p>
-                        <p className="survey-large-snapshot-bedrooms">Number of bedrooms: 2</p>
+                        <p className="survey-large-snapshot-price">Desired price: ${this.state.desired_price}</p>
+                        <p className="survey-large-snapshot-bedrooms">Number of bedrooms: {this.state.num_bedrooms}</p>
                     </div>
                     <div className="survey-large-tour-summary">
                         <p className="survey-large-tour-summary-title">Tour Summary</p>

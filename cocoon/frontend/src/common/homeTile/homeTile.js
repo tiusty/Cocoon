@@ -56,7 +56,7 @@ class HomeTile extends Component {
         }
         return (
             <div className="homeInfo">
-                <span className={bit_classes}>{home.price}</span>
+                <span className={bit_classes}>${home.price}</span>
                 <span className={bit_classes}>{home.home_type.home_type}</span>
             </div>
         );
