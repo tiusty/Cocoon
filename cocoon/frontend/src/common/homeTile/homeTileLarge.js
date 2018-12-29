@@ -44,16 +44,18 @@ export default class HomeTileLarge extends Component {
                             </tbody>
                         </table>
                     </div>
-                    <Carousel
-                        dynamicHeight={true}
-                        infiniteLoop={true}
-                    >
-                        {home.images.map(image =>
-                            <div key={image.id}>
-                                <img src={image.image} alt="house image" />
-                            </div>
-                        )}
-                    </Carousel>
+                    <div className="home-tile-large-carousel-div">
+                        <Carousel
+                            dynamicHeight={true}
+                            infiniteLoop={true}
+                        >
+                            {home.images.map(image =>
+                                <div key={image.id}>
+                                    <img src={image.image} alt="house image"/>
+                                </div>
+                            )}
+                        </Carousel>
+                    </div>
                 </div>
             </>
         );

@@ -171,3 +171,10 @@ td.value {
     color: #26A69A;
     padding: 8px;
 }
+
+.home-tile-large-carousel-div {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
