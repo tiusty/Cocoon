@@ -2,6 +2,10 @@
 import React from 'react'
 import {Component} from 'react';
 
+// Carousel
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
+
 export default class HomeTileLarge extends Component {
 
     render() {
@@ -40,6 +44,16 @@ export default class HomeTileLarge extends Component {
                             </tbody>
                         </table>
                     </div>
+                    <Carousel
+                        dynamicHeight={true}
+                        infiniteLoop={true}
+                    >
+                        {home.images.map(image =>
+                            <div key={image.id}>
+                                <img src={image.image} alt="house image" />
+                            </div>
+                        )}
+                    </Carousel>
                 </div>
             </>
         );
