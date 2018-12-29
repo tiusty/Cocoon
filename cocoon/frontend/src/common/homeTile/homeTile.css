@@ -109,7 +109,7 @@
 .expanded-tile-container {
     width: 100%;
     /*padding: 8px !important;*/
-    border: 1px dotted #a13718;
+    border: 1px solid #a13718;
 }
 
 .expanded-close {
@@ -126,11 +126,11 @@
 }
 
 .expanded-info-table {
-    border: 2px #777 !important;
+    /*border: 2px #777 !important;*/
     display: table;
     width: 90%;
     margin: 0 auto;
-    padding: 8px !important;
+    /*padding: 8px !important;*/
     border-collapse: collapse;
 }
 

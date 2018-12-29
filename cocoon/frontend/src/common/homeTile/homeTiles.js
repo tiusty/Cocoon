@@ -54,7 +54,7 @@ export default class HomeTiles extends Component {
         } else {
             return (
                 <HomeTileLarge
-                    home={this.props.homes.filter(h => h.id === this.state.home_click_id)}
+                    home={this.props.homes.find(home => home.id === this.state.home_click_id)}
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
                 />
             );

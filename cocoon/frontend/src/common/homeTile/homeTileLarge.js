@@ -6,6 +6,7 @@ export default class HomeTileLarge extends Component {
 
     render() {
         let home = this.props.home;
+        console.log(home)
         return (
             <>
                 <div className="expanded-tile-container">
@@ -30,7 +31,7 @@ export default class HomeTileLarge extends Component {
                             </tr>
                             <tr>
                                 <td className="expanded-tile-text category">Home type</td>
-                                <td className="expanded-tile-text value">{home.home_type}</td>
+                                <td className="expanded-tile-text value">{home.home_type.home_type}</td>
                             </tr>
                             <tr>
                                 <td className="expanded-tile-text category">Remarks</td>
