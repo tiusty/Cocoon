@@ -16,7 +16,6 @@ class HomeTile extends Component {
          * @type {string} THe home that is being rendered
          */
 
-        let homeScore = '';
         // Toggles whether the home has a empty or full heart depending on favorite status
         let heart_class = "glyphicon";
         if (this.props.favorite) {
@@ -26,7 +25,7 @@ class HomeTile extends Component {
         }
         let heart_span = <span className={heart_class} onClick={(e) => this.props.onFavoriteClick(home, e)}> </span>;
 
-        let visit_classes = "glyphicon";
+        let visit_classes = "glyphicon glyphicon-check-class";
         if (this.props.visit)
         {
             visit_classes += " glyphicon-remove";

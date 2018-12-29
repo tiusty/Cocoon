@@ -46,11 +46,17 @@
 .glyphicon-heart {
     font-size: 26px;
     color: #c65c3b;
+    cursor: pointer;
 }
 
 .glyphicon-heart-empty {
     font-size: 26px;
     color: #c65c3b;
+    cursor: pointer;
+}
+
+.glyphicon-check-class {
+    cursor: pointer;
 }
 
 /* Styling associated with the home info */
