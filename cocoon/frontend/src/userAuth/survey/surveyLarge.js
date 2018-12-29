@@ -116,7 +116,7 @@ export default class SurveyLarge extends Component {
         );
     };
 
-    handleFavoriteClick = (home) => {
+    handleFavoriteClick = (home, e) => {
         /**
          * This function handles when the user clicks the heart to favorite or unfavorite a home
          *
@@ -125,7 +125,10 @@ export default class SurveyLarge extends Component {
          * @type {string} The home that is being toggled
          */
 
-            // The survey id is passed to the put request to update the state of that particular survey
+        // Prevents the onclick on the tile from triggering
+        e.stopPropagation();
+
+        // The survey id is passed to the put request to update the state of that particular survey
         let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
         axios.put(endpoint,
             {
@@ -141,7 +144,7 @@ export default class SurveyLarge extends Component {
             );
     };
 
-    handleVisitClick = (home) => {
+    handleVisitClick = (home, e) => {
         /**
          *  Function handles when the user wants to add or remove a home from the visit list
          *
@@ -150,7 +153,10 @@ export default class SurveyLarge extends Component {
          * @type {string} The home that is being toggled
          */
 
-            // The survey id is passed to the put request to update the state of that particular survey
+        // Prevents the onclick on the tile from triggering
+        e.stopPropagation();
+
+        // The survey id is passed to the put request to update the state of that particular survey
         let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
         axios.put(endpoint,
             {

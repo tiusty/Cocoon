@@ -24,7 +24,7 @@ class HomeTile extends Component {
         } else {
             heart_class += " glyphicon-heart-empty"
         }
-        let heart_span = <span className={heart_class} onClick={() => this.props.onFavoriteClick(home)}> </span>;
+        let heart_span = <span className={heart_class} onClick={(e) => this.props.onFavoriteClick(home, e)}> </span>;
 
         let visit_classes = "glyphicon";
         if (this.props.visit)
@@ -33,7 +33,7 @@ class HomeTile extends Component {
         } else {
             visit_classes += " glyphicon-ok";
         }
-        let visit_span = <span className={visit_classes} onClick={() => this.props.onVisitClick(home)}> </span>;
+        let visit_span = <span className={visit_classes} onClick={(e) => this.props.onVisitClick(home, e)}> </span>;
 
         // Render the score and the heart icon
         return (
