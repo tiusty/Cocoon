@@ -3,6 +3,8 @@ module.exports = {
     entry: {
         survey: './cocoon/frontend/src/survey',
         userAuth: './cocoon/frontend/src/userAuth',
+        scheduler: './cocoon/frontend/src/scheduler',
+        signature: './cocoon/frontend/src/signature',
     },
     // Output name and directory for components
     output: {
@@ -23,6 +25,11 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
+            },
+            // Adds ability to import images into components
+            {
+                test: /\.(gif|svg|jpg|png)$/,
+                loader: "url-loader?limit=1000000"
             }
         ]
     }

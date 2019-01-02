@@ -217,7 +217,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                                                  destination.commute_type,
                                                  with_traffic=destination.traffic_option)
 
-
                 # iterates over min of number to be computed and length of results in case lens don't match
                 for i in range(min(number_of_exact_commutes_computed, len(results))):
                     # update exact commute time with in minutes

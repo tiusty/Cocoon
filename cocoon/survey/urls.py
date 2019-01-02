@@ -5,12 +5,11 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'userSurveys', views.RentSurveyViewSet, base_name='user_survey')
+router.register(r'rentSurvey', views.RentSurveyViewSet, base_name='user_survey')
 
 app_name = 'survey'
 urlpatterns = [
     url(r'^rent/$', views.RentingSurvey.as_view(), name="rentingSurvey"),
-    url(r'^rentReact/$', views.RentingSurvey.as_view(template_name='survey/reactRentingSurvey.html'), name="rentingSurveyReact"),
     url(r'^rent/(?P<survey_url>.*)/$', views.RentingResultSurvey.as_view(), name="rentSurveyResult"),
 
     # Ajax requests

@@ -1,22 +1,12 @@
+// Import React Components
 import React from 'react';
-import { Component } from 'react';
 import ReactDOM from "react-dom";
 
-import './survey.css';
+// Import Cocoon Components
+import RentForm from './rentForm/main/index';
 
-class Survey extends Component {
-    componentDidMount = () => {
-        console.log('rendered!');
-    }
+const components = {
+    'RentingSurvey': RentForm
+};
 
-    render(){
-        return (
-            <h1 className="survey-headline">Survey will go here!</h1>
-        );
-    }
-}
-
-ReactDOM.render(
-    React.createElement(Survey, window.props),
-    window.react_mount
-);
+ReactDOM.render(<RentForm is_authenticated={window.isUser} />, window.react_mount);

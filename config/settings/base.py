@@ -220,6 +220,7 @@ LOGGING = {
         'django.security.DisallowedHost': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
 
         # Catch all logger
@@ -306,4 +307,10 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }

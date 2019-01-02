@@ -17,6 +17,7 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, with
         Therefore this does the conversion.
 
     If the mode type is not recognized then an empty list is returned
+    :param with_traffic: (boolean) -> Determines if the user wants the traffic commuted with traffic or not
     :param origins: (list(string)) -> List of values that is accepted by the distance matrix
     :param destinations: (list(destination)) -> list of values that is accepted by the distance matrix
     :param mode: (CommuteType Model) -> The commute type that is stored in the commute type format

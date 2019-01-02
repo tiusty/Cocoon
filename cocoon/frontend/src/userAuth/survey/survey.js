@@ -21,7 +21,6 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 class Survey extends Component {
     // Stores all the data associated with the survey
     state = {
-        id: this.props.survey_id,
         name: "",
         url: "",
         price: 0,
@@ -43,7 +42,7 @@ class Survey extends Component {
          */
 
         // The survey id is appended to the get request to get a specific survey
-        let endpoint = this.props.endpoint + this.state.id;
+        let endpoint = this.props.endpoint + this.props.id;
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
             .then(response =>
@@ -67,7 +66,7 @@ class Survey extends Component {
          */
 
         // The survey id is passed to the put request to update the state of that particular survey
-        let endpoint = this.props.endpoint + this.state.id + "/";
+        let endpoint = this.props.endpoint + this.props.id + "/";
         axios.put(endpoint,
             {
                 home_id: home.id,
@@ -92,7 +91,7 @@ class Survey extends Component {
          */
 
         // The survey id is passed to the put request to update the state of that particular survey
-        let endpoint = this.props.endpoint + this.state.id + "/";
+        let endpoint = this.props.endpoint + this.props.id + "/";
         axios.put(endpoint,
             {
                 home_id: home.id,
@@ -183,7 +182,7 @@ class Survey extends Component {
             buttons: [
                 {
                     label: 'yes',
-                    onClick: () => this.props.onDelete(this.state.id)
+                    onClick: () => this.props.onDelete(this.props.id)
                 },
                 {
                     label: 'No',
@@ -208,11 +207,14 @@ class Survey extends Component {
                         <h1>{this.state.name}</h1>
                     </div>
                     <div className="col-md-2">
-                        <a href={this.generateLoadUrl()} className="btn btn-primary">Load</a>
+                        <a href={this.generateLoadUrl()} style={{marginRight: '10px'}} className="btn btn-primary">Load</a>
                         <button onClick={this.handleDelete} className="btn btn-danger btn-sm m-2">Delete</button>
-                        <form method="post">
+                        <form method="post" style={{marginTop: '10px'}}>
                             <CSRFToken/>
-                            <button name="submit-button" className="btn btn-success btn-sm m-2" value={this.state.id} type="submit">Schedule Group!</button>
+                            <button name="submit-button" disabled={!this.props.pre_tour_signed}
+                                    className="btn btn-success btn-sm m-2" value={this.props.id}
+                                    type="submit">Schedule Visit List!
+                            </button>
                         </form>
                     </div>
                 </div>
