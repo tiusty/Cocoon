@@ -136,6 +136,10 @@ export default class Surveys extends Component {
             });
     };
 
+    handleSearchBarInput() {
+        console.log('input changed')
+    }
+
 
     renderPage() {
         /**
