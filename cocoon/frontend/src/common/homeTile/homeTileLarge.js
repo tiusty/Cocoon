@@ -7,10 +7,23 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 
 export default class HomeTileLarge extends Component {
+    /**
+     * This component displays extra information for a home
+     *
+     * Props:
+     *  this.props.id: (int) -> The id for the home
+     *  this.props.home: (RentDatabase Model) -> Stores the information related to the home
+     *  this.props.favorite: (boolean) -> True: The home is currently favorited
+     *                                    False: The home is not currently favorited
+     *  this.props.visit: (boolean) -> True: The home is currently in the visit list
+     *                                 False: The home is not currently in the visit list
+     *  this.props.onVisitClick: (function(RentDatabase Model, event)) -> Handles when the visit button is pressed
+     *  this.props.onFavoriteClick: (function(RentDatabase Model, event)) -> Handles when the favorite button is clicked
+     *
+     */
 
     render() {
         let home = this.props.home;
-        console.log(home)
         return (
             <>
                 <div className="expanded-tile-container">

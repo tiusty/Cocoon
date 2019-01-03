@@ -17,6 +17,12 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 export default class Surveys extends Component {
+    /**
+     * This component handles displaying all the surveys
+     *
+     * When the user does not click on a survey all the surveys are displayed as small boxes
+     *  When the user clicks on a survey box then that one survey is displayed in large form
+     */
 
     state = {
         survey_clicked_id: undefined,

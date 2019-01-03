@@ -22,6 +22,8 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 
 export default class SurveyLarge extends Component {
     /**
+     * This component loads a large survey which has extra info for that one survey.
+     *
      * Props:
      *  this.props.id: (int) -> The survey id
      *  this.pre_tour_signed: (boolean) -> True: The pre tour documents are signed
