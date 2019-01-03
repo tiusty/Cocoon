@@ -3,7 +3,6 @@ import React from 'react';
 import ReactDOM from "react-dom";
 
 // Import Cocoon Components
-import './userAuth.css';
 import Surveys from "./survey/surveys";
 
 // Determines which component to load via dictionary
