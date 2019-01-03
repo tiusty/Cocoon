@@ -216,11 +216,21 @@ export default class Surveys extends Component {
     }
 
     setLoadingClick = () => {
+        /**
+         * Sets loading_clicked to true
+         */
         this.setState({loading_clicked: true})
     };
 
     handleLargeSurveyClose = () => {
-        this.setState({survey_clicked_id: undefined})
+        /**
+         * Handles closing the large survey.
+         *
+         * Since information can be modified on the large tile, when the user closes
+         * it then the data on the page needs to be updated. Also, the clicked survey value
+         * should go back to undefined so the small survey tiles load again
+         */
+        this.setState({survey_clicked_id: undefined});
 
         // See if any of the data changed
         axios.get(this.state.survey_endpoint)
@@ -228,13 +238,18 @@ export default class Surveys extends Component {
             .then(response => {
                 this.setState({surveys: this.parseData(response.data)})
             });
-    }
+    };
 
     handleClickSurvey = (id) => {
+        /**
+         * Handles click on the survey box to load the large survey.
+         *
+         * If the click is on the extra box then the survey should load
+         */
         if (id !== undefined) {
             this.setState({survey_clicked_id: id})
         } else {
-            this.setLoadingClick()
+            this.setLoadingClick();
             window.location = survey_endpoints['rentingSurvey']
         }
     };
