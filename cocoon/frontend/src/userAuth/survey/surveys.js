@@ -203,11 +203,9 @@ export default class Surveys extends Component {
                     <div className="col-md-12 survey-large">
                         <SurveyLarge
                             id={survey.id}
-                            large_survey={true}
                             pre_tour_signed={this.state.pre_tour_signed}
                             onDelete={this.handleDelete}
                             onLargeSurveyClose={this.handleLargeSurveyClose}
-                            onHandleUpdateFavoritesList={this.handleUpdateFavoriteList}
                         />
                     </div>
                 );

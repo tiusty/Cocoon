@@ -21,6 +21,14 @@ import 'react-confirm-alert/src/react-confirm-alert.css'
 
 
 export default class SurveyLarge extends Component {
+    /**
+     * Props:
+     *  this.props.id: (int) -> The survey id
+     *  this.pre_tour_signed: (boolean) -> True: The pre tour documents are signed
+     *                                     False: The pre tour documents are not signed
+     *  this.props.onDelete: (function(int)) (int-survey id)-> Handles when the delete button is pressed.
+     *  this.props.onLargeSurveyClose: (function()): -> Handles when the close button is pressed
+     */
     state = {
         name: "",
         url: "",
@@ -178,6 +186,9 @@ export default class SurveyLarge extends Component {
 
 
     scheduleButtonMessages() {
+        /**
+         * Generates the message for the tour summary page
+         */
         if(!this.props.pre_tour_signed) {
             return 'Please sign pre tour docs'
         } else {
@@ -186,12 +197,17 @@ export default class SurveyLarge extends Component {
     }
 
     scheduleButton() {
+        /**
+         * Generates the button for the tour summary based on the state of the user
+         */
+        // If the pre tour documents are not signed then generate a sign document button
         if(!this.props.pre_tour_signed) {
             return (
                     <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button" role="button"
                        href={signature_endpoints['signaturePage']}
                        > Sign Documents </a>
             );
+        // If the pre tour documents are signed then generate the tour summary button
         } else {
             return(
                 <form method="post" style={{marginTop: '10px'}}>
