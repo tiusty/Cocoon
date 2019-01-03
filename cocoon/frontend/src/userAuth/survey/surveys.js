@@ -1,6 +1,6 @@
 // Import React Components
 import React from 'react'
-import { Component } from 'react';
+import {Component} from 'react';
 import axios from 'axios'
 
 // Import Cocoon Components
@@ -46,12 +46,13 @@ export default class Surveys extends Component {
 
         // For each survey just push the id for that survey to the list
         data.map(c =>
-            survey_ids.push( {
+            survey_ids.push({
                 id: c.id,
                 visit_list_length: c.visit_list.length,
                 favorites_length: c.favorites.length,
                 url: c.url,
-                name: c.name} )
+                name: c.name
+            })
         );
 
         // Return the list of ids
@@ -65,7 +66,7 @@ export default class Surveys extends Component {
         axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {surveys: this.parseData(response.data)})
+                this.setState({surveys: this.parseData(response.data)})
             });
 
         /**
@@ -74,7 +75,7 @@ export default class Surveys extends Component {
         axios.get(this.state.signature_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {
+                this.setState({
                     hunter_doc_manager_id: response.data[0].id,
                     pre_tour_signed: response.data[0].is_pre_tour_signed,
                 })
@@ -122,7 +123,7 @@ export default class Surveys extends Component {
             })
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {
+                this.setState({
                     surveys: this.parseData(response.data),
                     survey_clicked_id: undefined
                 })
@@ -131,7 +132,11 @@ export default class Surveys extends Component {
 
 
     renderPage() {
-        if(this.state.loading_clicked) {
+        /**
+         * Renders the my surveys page depending on the state of the page
+         */
+        // If something is loading then render the loading page
+        if (this.state.loading_clicked) {
             return (
                 <LoadingScreen
                     loading={true}
@@ -144,9 +149,10 @@ export default class Surveys extends Component {
                     <div>Loadable content</div>
                 </LoadingScreen>
             );
-        }
-         else {
-            if(this.state.survey_clicked_id === undefined) {
+        } else {
+
+            // If no survey is selected then render the small tiles
+            if (this.state.survey_clicked_id === undefined) {
                 return (
                     <>
                         <div className="row">
@@ -160,7 +166,8 @@ export default class Surveys extends Component {
 
                         <div className="row">
                             <div className="col-md-4 col-md-offset-4 search-bar-div">
-                                <input type="text" disabled={true} className="input search-bar" placeholder="Search..." />
+                                <input type="text" disabled={true} className="input search-bar"
+                                       placeholder="Search..."/>
                                 <button className="btn btn-primary search-button">Search</button>
                             </div>
                         </div>
@@ -189,12 +196,13 @@ export default class Surveys extends Component {
                         </div>
                     </>
                 );
+                // If a survey is clicked then render the large survey
             } else {
                 let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
                 return (
                     <div className="col-md-12 survey-large">
                         <SurveyLarge
-                            id = {survey.id}
+                            id={survey.id}
                             large_survey={true}
                             pre_tour_signed={this.state.pre_tour_signed}
                             onDelete={this.handleDelete}
@@ -212,18 +220,18 @@ export default class Surveys extends Component {
     };
 
     handleLargeSurveyClose = () => {
-        this.setState({survey_clicked_id:undefined})
+        this.setState({survey_clicked_id: undefined})
 
         // See if any of the data changed
         axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {surveys: this.parseData(response.data)})
+                this.setState({surveys: this.parseData(response.data)})
             });
     }
 
     handleClickSurvey = (id) => {
-        if(id !== undefined) {
+        if (id !== undefined) {
             this.setState({survey_clicked_id: id})
         } else {
             this.setLoadingClick()
@@ -235,7 +243,7 @@ export default class Surveys extends Component {
     render() {
         return (
             <>
-                    {this.renderPage()}
+                {this.renderPage()}
             </>
         );
     }
