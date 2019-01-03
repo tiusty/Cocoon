@@ -5,7 +5,6 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import './surveySmall.css'
-import './surveyLarge/surveyLarge.css'
 import surveyIcon from '../survey_icon.png';
 import survey_endpoints from '../../../endpoints/survey_endpoints'
 
