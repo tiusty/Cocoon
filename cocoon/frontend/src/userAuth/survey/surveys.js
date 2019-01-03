@@ -5,11 +5,11 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import './surveys.css'
-import SurveySmall from "./surveySmall";
-import SurveyLarge from "./surveyLarge"
+import SurveySmall from "./surveySmall/surveySmall";
+import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
-import surveyIcon from './Questionnaire_dragon-512.png';
+import surveyIcon from './survey_icon.png';
 import LoadingScreen from 'react-loading-screen';
 
 // For handling Post request with CSRF protection

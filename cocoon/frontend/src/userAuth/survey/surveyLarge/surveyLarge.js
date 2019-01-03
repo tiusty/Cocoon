@@ -5,12 +5,11 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import './surveyLarge.css'
-import closingIcon from './closing.png'
-import deleteIcon from './delelte.png'
-import HomeTile from "../../common/homeTile/homeTile";
-import survey_endpoints from "../../endpoints/survey_endpoints";
-import signature_endpoints from "../../endpoints/signatures_endpoints"
-import CSRFToken from '../../common/csrftoken';
+import deleteIcon from './delete_icon.png'
+import HomeTiles from "../../../common/homeTile/homeTiles";
+import survey_endpoints from "../../../endpoints/survey_endpoints";
+import signature_endpoints from "../../../endpoints/signatures_endpoints"
+import CSRFToken from '../../../common/csrftoken';
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -19,7 +18,6 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 // Import Pop-up button components
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
-import HomeTiles from "../../common/homeTile/homeTiles";
 
 
 export default class SurveyLarge extends Component {
