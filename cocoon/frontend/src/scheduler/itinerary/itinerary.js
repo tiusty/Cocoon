@@ -28,6 +28,7 @@ class Itinerary extends Component {
         axios.get(scheduler_endpoints['itinerary'] + this.props.id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
+                console.log(response)
                 this.setState({
                     agent: response.data.agent,
                     client: response.data.client,
@@ -51,7 +52,6 @@ class Itinerary extends Component {
         /**
          *  Retrieves all the surveys associated with the user
          */
-
         this.updateItinerary()
     }
 
@@ -169,7 +169,7 @@ class Itinerary extends Component {
 
     render() {
         return (
-            <div>
+            <div className="itinerary-side-wrapper">
                 {this.renderItinerary()}
             </div>
         );

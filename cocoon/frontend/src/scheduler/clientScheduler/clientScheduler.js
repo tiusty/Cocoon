@@ -1,12 +1,15 @@
 // Import React Components
 import React from 'react'
 import { Component } from 'react';
-import axios from 'axios'
+import axios from 'axios';
+
+import SelectItineraryImg from '../picture.svg';
 
 // Import Cocoon Components
 import Itinerary from "../itinerary/itinerary";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import ItineraryTimeSelector from "./itineraryTimeSelector";
+import ItineraryDateSelector from './itineraryDateSelector';
 
 class ClientScheduler extends Component {
     state = {
@@ -14,6 +17,10 @@ class ClientScheduler extends Component {
         loaded: false,
         is_claimed: false,
         is_scheduled: false,
+
+        date: new Date(),
+        time_available: 2,
+        days: []
     };
 
     parseData(data) {
@@ -51,6 +58,50 @@ class ClientScheduler extends Component {
             })
     }
 
+    setDate = (date) => {
+        let dateCopy = this.state.date;
+        dateCopy.setDate(date.getDate());
+        this.setState({
+            date: dateCopy
+        }, () => this.state.date)
+    }
+
+    setTime = (hour, minute, period) => {
+        let dateCopy = this.state.date;
+        let hours = period === 'AM' ? hour : hour + 12;
+        dateCopy.setHours(hours);
+        dateCopy.setMinutes(minute);
+        this.setState({
+            date: dateCopy
+        })
+    }
+
+    setTimeAvailable = (e) => {
+        this.setState({
+            time_available: e.target.value
+        })
+    }
+
+    handleAddDate = () => {
+        let daysCopy = [...this.state.days];
+        let dateCopy = this.state.date;
+        let dayAvailable = {};
+        dayAvailable.time_available = parseInt(this.state.time_available);
+        dayAvailable.date = dateCopy;
+        if (daysCopy.length < 10) {
+            daysCopy.push(dayAvailable);
+            this.setState({
+                days: daysCopy,
+            });
+            this.setState({
+                date: new Date()
+            })
+            this.setState({
+                time_available: 2
+            })
+        }
+    }
+
     renderTimeSelector = () => {
 
         if (this.state.loaded === true) {
@@ -67,7 +118,19 @@ class ClientScheduler extends Component {
                     </div>
                 )
             } else {
-                return <ItineraryTimeSelector/>
+                return (
+                    <div className="itinerary-main-wrapper">
+                        <div className="itinerary-headline">
+                            <h2>Please create an itinerary!</h2>
+                            <p>Add up to 10 dates and times that you're available for a tour</p>
+                        </div>
+                        <div className="itinerary-date-time-wrapper">
+                            <ItineraryDateSelector date={this.state.date} setDate={this.setDate} />
+                            <ItineraryTimeSelector date={this.state.date} time_available={this.state.time_available} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
+                        </div>
+                        <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
+                    </div>
+                )
 
             }
         } else {
@@ -83,22 +146,24 @@ class ClientScheduler extends Component {
         if (this.state.loaded) {
             if (this.state.id) {
                 return (
-                    <div className='row'>
-                        <div className='col-md-4'>
-                            <h2>Your Itinerary</h2>
-                            <Itinerary
-                                id={this.state.id}
-                            />
-                        </div>
-                        <div className='col-md-6 col-md-offset-2'>
-                            {this.renderTimeSelector()}
-                        </div>
+                <div className="row">
+                    <div className="col-md-8">
+                        {this.renderTimeSelector()}
                     </div>
+                    <div className="col-md-4">
+                        <Itinerary
+                            id={this.state.id}
+                            days={this.state.days}
+                        />
+                    </div>
+                </div>
                 );
             } else {
                 return (
-                    <div>
+                    <div className="onboard-wrapper">
+                        <img src={SelectItineraryImg} alt=""/>
                         <h2>Please create an itinerary!</h2>
+                        <p>Select the places you'd like to visit.</p>
                     </div>
                 );
             }
