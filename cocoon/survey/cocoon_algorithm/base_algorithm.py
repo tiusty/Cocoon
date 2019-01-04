@@ -67,6 +67,7 @@ class CocoonAlgorithm(object):
         """
         # Query the database
         house_query =  RentDatabaseModel.objects\
+            .filter(last_updated=F(''))
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(currently_available=True) \
             .filter(num_bedrooms=user_survey.num_bedrooms) \
