@@ -78,7 +78,6 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        print(user_profile)
         return ItineraryModel.objects.filter(client=user_profile.user)
 
 
