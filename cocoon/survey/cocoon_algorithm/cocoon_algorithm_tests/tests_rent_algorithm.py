@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, Mock, patch, call
 import cocoon.houseDatabase.maps_requester as geolocator
 
 # Import external models
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel, HomeProviderModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
 from cocoon.commutes.distance_matrix import commute_cache_updater
 from cocoon.commutes.models import ZipCodeBase, CommuteType
 from cocoon.commutes.constants import CommuteAccuracy
@@ -1062,7 +1062,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.state = "MA"
         self.zip_code = '02476'
 
-        MlsManagementModel.objects.create()
+        HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
     def create_home(home_type, price=1500,
