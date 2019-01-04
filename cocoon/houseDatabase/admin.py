@@ -45,7 +45,7 @@ class HomeTypeModelAdmin(admin.ModelAdmin):
 class HomeProviderModelAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Home Type',
-         {'fields': ['provider', ]})
+         {'fields': ['provider', 'last_updated_feed']})
     ]
     list_display = ('provider',)
 
