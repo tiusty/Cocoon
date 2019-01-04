@@ -1,5 +1,6 @@
 # Import Python Modules
 from django.utils import timezone
+from django.db.models import F
 
 # Import houseDatabase modules
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -67,7 +68,7 @@ class CocoonAlgorithm(object):
         """
         # Query the database
         house_query =  RentDatabaseModel.objects\
-            .filter(last_updated=F(''))
+            .filter(last_updated=F('listing_provider__last_updated_feed')) \
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(currently_available=True) \
             .filter(num_bedrooms=user_survey.num_bedrooms) \
