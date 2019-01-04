@@ -47,8 +47,10 @@ class HomeProviderModel(models.Model):
         return self.provider
 
     def save(self, *args, **kwargs):
-        if HomeProviderModel.objects.exists() and not self.pk:
-            raise ValidationError(f"There should only be one {self.provider} management object")
+        # Protect against multiple providers added via admin / command-line
+        for provider in HomeProviderModel.objects.filter(provider=self.provider):
+            if provider.pk is not self.pk:
+                raise ValidationError(f"There should only be one {self.provider} management object")
         return super(HomeProviderModel, self).save(*args, **kwargs)
 
 # This is used as a "hack" so that every abstract model class has a base class that contains

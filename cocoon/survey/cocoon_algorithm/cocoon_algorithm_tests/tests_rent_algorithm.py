@@ -1062,8 +1062,6 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.state = "MA"
         self.zip_code = '02476'
 
-        HomeProviderModel.objects.create(provider="MLSPIN")
-
     @staticmethod
     def create_home(home_type, price=1500,
                     currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):

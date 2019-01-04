@@ -157,7 +157,7 @@ class YGLRequester(object):
                     print("[ Integrity Error ] ")
                     num_integrity_error += 1
 
-        manager = HomeProviderModel.objects.filter(provider="YGL")
+        manager = HomeProviderModel.objects.get(provider="YGL")
         manager.last_updated_feed = self.update_timestamp
         manager.save()
 
