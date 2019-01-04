@@ -13,9 +13,11 @@ class HouseAdmin(admin.ModelAdmin):
     fieldsets = [
         ('House Info',
          {'fields': ['currently_available', 'last_updated', 'street_address', 'city', 'state', 'zip_code', 'price',
-                     'home_type', 'latitude', 'longitude', 'apartment_number', ]}),
+                     'home_type', 'latitude', 'longitude', 'apartment_number','laundromat_nearby', ]}),
         ('Exterior Amenities',
-         {'fields': ('parking_spot',), }),
+         {'fields': ('parking_spot', 'pool', 'patio_balcony', 'gym', 'storage', 'laundry_in_unit'), }),
+        ('Interior Amenities',
+         {'fields': ('furnished', 'hardwood_floors', 'air_conditioning', 'dogs_allowed', 'cats_allowed', 'laundry_inside'), }),
         ('Provider Data',
          {'fields': (
              'listing_provider',
