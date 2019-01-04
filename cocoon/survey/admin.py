@@ -17,7 +17,10 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
         (None, {'fields': ('name', 'user_profile')}),
         ('Survey', {'fields': ('home_type', 'desired_price', 'max_price', 'min_bathrooms',
                                'max_bathrooms', )}),
-        ('Exterior Amenities', {'fields': ('parking_spot',)}),
+        ('Exterior Amenities', {'fields': ('parking_spot', 'wants_laundry_in_building', 'wants_patio', 'wants_pool', 'wants_gym', 'wants_storage',)}),
+        ('Interior Amenities', {'fields': (
+        'wants_laundry_in_unit', 'wants_furnished', 'wants_dogs', 'wants_cats', 'wants_hardwood_floors', 'wants_AC',)}),
+
         ('Created', {'fields': ('created', 'id', 'url')}),
         ('Homes', {'fields': ('favorites', 'visit_list',)}),
     )

@@ -5,7 +5,7 @@ from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
-    PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel, \
+    PriceInformationModel, ExteriorAmenitiesModel, InteriorAmenitiesModel, DestinationsModel, TenantModel, \
     TenantPersonalInformationModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
@@ -38,6 +38,13 @@ class HomeInformationForm(ModelForm):
     )
 
     min_bathrooms = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_laundry_nearby = forms.BooleanField(
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -133,9 +140,182 @@ class ExteriorAmenitiesForm(ModelForm):
         )
     )
 
+    wants_laundry_in_building = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    number_of_cars = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_patio = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    patio_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_pool = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    pool_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_gym = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    gym_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_storage = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    storage_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
     class Meta:
         model = ExteriorAmenitiesModel
-        fields = ["parking_spot", ]
+        fields = ["parking_spot", 'wants_laundry_in_building', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight']
+
+class InteriorAmenitiesForm(ModelForm):
+    """
+    Class stores all the form fields for the BuildingInteriorAmenitiesModel Model
+    """
+    wants_laundry_in_unit = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_furnished = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    furnished_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_dogs = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    number_of_dogs = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_cats = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    cat_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_hardwood_floors = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    hardwood_floors_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_AC = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    AC_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_dishwasher = forms.BooleanField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    dishwasher_weight = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    class Meta:
+        model = InteriorAmenitiesModel
+        fields = ["wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
 
 
 class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
