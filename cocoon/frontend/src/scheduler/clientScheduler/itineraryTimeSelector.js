@@ -23,6 +23,8 @@ export default class ItineraryTimeSelector extends Component {
             hour: ((time.getHours() + 11) % 12 + 1),
             minute: (Math.ceil(time.getMinutes() / 15) * 15) === 60 ? 45 : Math.ceil(time.getMinutes() / 15) * 15,
             period: time.getHours() >= 12 ? 'PM' : 'AM'
+        }, () => {
+            this.props.setTime(this.state.hour, this.state.minute, this.state.period)
         });
     }
 
@@ -101,8 +103,9 @@ export default class ItineraryTimeSelector extends Component {
 
                 <div className="time-available-wrapper">
                     <p>I'm free for</p>
-                    <input type="number" value={this.props.time_available} onChange={this.props.setTimeAvailable} />
+                    <input type="number" value={this.props.totalHours} onChange={this.props.setTimeAvailable} min={Math.floor(this.props.tour_duration_seconds / 3600)} />
                     <p>hours.</p>
+                    <p className="time-available-error">NOTE: Cannot be shorter than {`${Math.floor(this.props.tour_duration_seconds / 3600)}`}hrs.</p>
                 </div>
 
             </div>

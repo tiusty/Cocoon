@@ -28,7 +28,6 @@ class Itinerary extends Component {
         axios.get(scheduler_endpoints['itinerary'] + this.props.id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
-                console.log(response)
                 this.setState({
                     agent: response.data.agent,
                     client: response.data.client,
@@ -36,7 +35,7 @@ class Itinerary extends Component {
                     selected_start_time: response.data.selected_start_time,
                     tour_duration_seconds: response.data.tour_duration_seconds,
                     start_times: response.data.start_times,
-                })
+                }, () => this.props.setEstimatedDuration(response.data.tour_duration_seconds))
             })
     }
 
@@ -90,7 +89,7 @@ class Itinerary extends Component {
         }
     }
 
-    renderStartTimes = () => {
+    renderStartTimes_OLD = () => {
         if (this.props.showTimes) {
             if (this.state.start_times.length === 0) {
                 return <p> No start times chosen</p>
@@ -133,7 +132,7 @@ class Itinerary extends Component {
         }
     }
 
-    renderItinerary = () => {
+    renderItinerary_OLD = () => {
         let client_div = <div>Not rendered</div>;
         if (this.state.client) {
             client_div = <p>Itinerary: {this.state.client.email}</p>
@@ -153,8 +152,6 @@ class Itinerary extends Component {
                 {moment(this.state.selected_start_time).format('HH:mm')}
                 </p>
         }
-
-
         return (
             <div>
                 {client_div}
@@ -167,11 +164,51 @@ class Itinerary extends Component {
         );
     };
 
+    renderStartTimes = () => {
+        if (this.props.days.length === 0) {
+            return <div className="side-wrapper-times_empty"><p> No start times chosen</p></div>
+        } else {
+            return (
+                <div className="side-wrapper-times">
+                    {this.props.days.map((day, index) => {
+                        let endTime = moment(day.date).add(day.time_available_seconds, 'seconds')
+                        return (
+                            <div className="time-item" key={index}>
+                                <div className="time-item_date">
+                                    <span>{moment(day.date).format('MMMM Do')} @ </span>
+                                    <span>{moment(day.date).format('h:mm A')} - {moment(endTime).format('h:mm A')}</span>
+                                </div>
+                                <div className="time-item_delete" onClick={(event) => this.props.removeStartTime(this.props.id, index, event)}>
+                                    <i className="material-icons">add_circle</i>
+                                </div>
+                            </div>
+                        )
+                        })}
+                </div>
+            );
+        }
+    }
+
+    renderItinerary = ()=> {
+        return (
+            <>
+                <div className="side-wrapper-top">
+                    <p>Your Itinerary</p>
+                    <p>Estimated Duration: {Math.floor(this.state.tour_duration_seconds / 3600)}hrs</p>
+                </div>
+                {this.renderStartTimes()}
+            </>
+        );
+    }
+
     render() {
         return (
-            <div className="itinerary-side-wrapper">
-                {this.renderItinerary()}
-            </div>
+            <>
+                <div className="itinerary-side-wrapper">
+                    {this.renderItinerary()}
+                </div>
+                <p id="cancel-itinerary-btn" onClick={this.props.cancelItinerary}>Cancel Itinerary</p>
+            </>
         );
     }
 }

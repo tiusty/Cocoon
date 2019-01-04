@@ -178,20 +178,18 @@
     display: inline-block;
     text-align: center;
     width: 20%;
-    margin: 0 7px 20px;
+    margin: 0 7px 10px;
     font-weight: 800;
     border: none;
     border-bottom: 3px solid var(--teal);
     padding-bottom: 4px;
     font-size: 14px;
     color: var(--teal);
-    -moz-appearance: textfield;
 }
 
-.time-available-wrapper input::-webkit-outer-spin-button,
-.time-available-wrapper input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+p.time-available-error {
+    font-size: 11px;
+    color: var(--grey) !important;
 }
 
 @media screen and (max-width: 724px) {
@@ -217,4 +215,88 @@
     border: 1px solid var(--borderColor);
     border-radius: var(--borderRadius);
     padding: 15px;
+    font-family: 'Montserrat', sans-serif;
+    padding-bottom: 0px;
+}
+
+.side-wrapper-top {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--grey);
+    padding: 20px 0px;
+    border-bottom: 1px solid var(--borderColor);
+}
+
+.side-wrapper-top p:first-of-type {
+    color: var(--teal);
+}
+
+.side-wrapper-times_empty {
+    padding: 30px 0px;
+    text-align: center;
+    font-weight: 800;
+    color: var(--grey);
+    font-size: 18px;
+}
+
+.side-wrapper-times_empty p {
+    padding: 10px;
+    margin: 0;
+}
+
+.side-wrapper-times .time-item {
+    padding: 25px 0px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--borderColor);
+    font-weight: 600;
+    font-size: 13px;
+    animation: PopIn .3s ease forwards;
+}
+
+.side-wrapper-times .time-item:last-of-type {
+    border: none;
+}
+
+@keyframes PopIn {
+    0% {
+        font-size: 0px;
+    }
+    70% {
+        font-size: 14px;
+    }
+    100% {
+        font-size: 13px;
+    }
+}
+
+.time-item_date span:last-of-type {
+    color: var(--grey);
+}
+
+.time-item_delete i {
+    font-size: 19px;
+    transform: rotate(45deg);
+    color: var(--red);
+    opacity: .4;
+    cursor: pointer;
+}
+
+#cancel-itinerary-btn {
+    padding-top: 15px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    text-decoration: underline;
+    cursor: pointer;
+    color: #bbbbbb;
+    font-family: 'Montserrat', sans-serif;
+}
+
+@media screen and (max-width: 724px) {
+    #cancel-itinerary-btn {
+        margin-bottom: 20px;
+    }
 }

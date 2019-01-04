@@ -18,8 +18,10 @@ class ClientScheduler extends Component {
         is_claimed: false,
         is_scheduled: false,
 
+        tour_duration_seconds: 0,
         date: new Date(),
-        time_available: 2,
+        time_available_seconds: 7200,
+        totalHours: Math.floor(7200 / 3600),
         days: []
     };
 
@@ -58,6 +60,12 @@ class ClientScheduler extends Component {
             })
     }
 
+    setEstimatedDuration = (time) => {
+        this.setState({
+            tour_duration_seconds: time
+        })
+    }
+
     setDate = (date) => {
         let dateCopy = this.state.date;
         dateCopy.setDate(date.getDate());
@@ -78,7 +86,19 @@ class ClientScheduler extends Component {
 
     setTimeAvailable = (e) => {
         this.setState({
-            time_available: e.target.value
+            time_available_seconds: this.convertHoursToSeconds(e.target.value)
+        })
+        this.convertSecondsToHours(this.convertHoursToSeconds(e.target.value));
+    }
+
+    convertHoursToSeconds = (hours) => {
+        return 3600 * hours;
+    }
+
+    convertSecondsToHours = (seconds) => {
+        let hours = Math.floor(seconds / 3600);
+        this.setState({
+            totalHours: hours
         })
     }
 
@@ -86,20 +106,57 @@ class ClientScheduler extends Component {
         let daysCopy = [...this.state.days];
         let dateCopy = this.state.date;
         let dayAvailable = {};
-        dayAvailable.time_available = parseInt(this.state.time_available);
+        dayAvailable.time_available_seconds = parseInt(this.state.time_available_seconds);
         dayAvailable.date = dateCopy;
         if (daysCopy.length < 10) {
             daysCopy.push(dayAvailable);
             this.setState({
                 days: daysCopy,
-            });
+            }, () => this.updateStartTimes(this.state.id));
             this.setState({
                 date: new Date()
-            })
-            this.setState({
-                time_available: 2
-            })
+            }, () => this.render())
         }
+    }
+
+    updateStartTimes = (id) => {
+        /**
+         *  Updates the tenants start_times when adding new dates
+         */
+
+        // axios.put(scheduler_endpoints['itinerary'] + id + '/', {
+        //     start_times: this.state.days
+        // })
+        // .catch(error => console.log('Bad', error))
+        // .then(response => {
+        //      console.log(response)
+        // })
+    }
+
+    removeStartTime = (id, index, event) => {
+        /**
+         *  Removes the tenant start_time on click
+         *  Expects to be passed the id, index of the start time to be deleted,
+         *  and the element to be removed
+         *
+         *  Make API call to delete
+         */
+        let daysCopy = [...this.state.days];
+        daysCopy.splice(index, 1);
+        this.setState({
+            days: daysCopy
+        })
+    }
+
+    cancelItinerary = () => {
+        /**
+         *  Deletes and cancels the current itinerary
+         */
+        axios.delete(scheduler_endpoints['itineraryClient'])
+            .catch(err => console.log('BAD', err))
+            .then(response => {
+                console.log(response)
+            })
     }
 
     renderTimeSelector = () => {
@@ -126,7 +183,7 @@ class ClientScheduler extends Component {
                         </div>
                         <div className="itinerary-date-time-wrapper">
                             <ItineraryDateSelector date={this.state.date} setDate={this.setDate} />
-                            <ItineraryTimeSelector date={this.state.date} time_available={this.state.time_available} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
+                            <ItineraryTimeSelector date={this.state.date} tour_duration_seconds={this.state.tour_duration_seconds} totalHours={this.state.totalHours} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
                         </div>
                         <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
                     </div>
@@ -154,6 +211,9 @@ class ClientScheduler extends Component {
                         <Itinerary
                             id={this.state.id}
                             days={this.state.days}
+                            removeStartTime={this.removeStartTime}
+                            setEstimatedDuration={this.setEstimatedDuration}
+                            cancelItinerary={this.cancelItinerary}
                         />
                     </div>
                 </div>
