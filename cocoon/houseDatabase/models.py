@@ -41,9 +41,15 @@ class HomeProviderModel(models.Model):
         max_length=200,
     )
 
+    last_updated_feed = models.DateField(default=timezone.now)
+
     def __str__(self):
         return self.provider
 
+    def save(self, *args, **kwargs):
+        if HomeProviderModel.objects.exists() and not self.pk:
+            raise ValidationError(f"There should only be one {self.provider} management object")
+        return super(HomeProviderModel, self).save(*args, **kwargs)
 
 # This is used as a "hack" so that every abstract model class has a base class that contains
 #   the update function. This way when the chain of super's is done being called, it will call
@@ -194,27 +200,27 @@ class HousePhotos(models.Model):
         return self.image.name
 
 
-class MlsManagementModel(models.Model):
-    """
-    Model that stores general mls information information
-    """
-
-    last_updated_mls = models.DateField(default=timezone.now)
-
-    def save(self, *args, **kwargs):
-        if MlsManagementModel.objects.exists() and not self.pk:
-            raise ValidationError("There should only be one MlsManagementModel object")
-        return super(MlsManagementModel, self).save(*args, **kwargs)
-
-
-class YglManagementModel(models.Model):
-    """
-    Model that stores general ygl information information
-    """
-
-    last_updated_ygl = models.DateField(default=timezone.now)
-
-    def save(self, *args, **kwargs):
-        if YglManagementModel.objects.exists() and not self.pk:
-            raise ValidationError("There should only be one MlsManagementModel object")
-        return super(YglManagementModel, self).save(*args, **kwargs)
+# class MlsManagementModel(models.Model):
+#     """
+#     Model that stores general mls information information
+#     """
+#
+#     last_updated_mls = models.DateField(default=timezone.now)
+#
+#     def save(self, *args, **kwargs):
+#         if MlsManagementModel.objects.exists() and not self.pk:
+#             raise ValidationError("There should only be one MlsManagementModel object")
+#         return super(MlsManagementModel, self).save(*args, **kwargs)
+#
+#
+# class YglManagementModel(models.Model):
+#     """
+#     Model that stores general ygl information information
+#     """
+#
+#     last_updated_ygl = models.DateField(default=timezone.now)
+#
+#     def save(self, *args, **kwargs):
+#         if YglManagementModel.objects.exists() and not self.pk:
+#             raise ValidationError("There should only be one MlsManagementModel object")
+#         return super(YglManagementModel, self).save(*args, **kwargs)
