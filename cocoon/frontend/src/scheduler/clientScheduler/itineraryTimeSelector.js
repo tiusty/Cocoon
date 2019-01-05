@@ -18,6 +18,12 @@ export default class ItineraryTimeSelector extends Component {
         this.setInitialTime(this.state.time);
     }
 
+    componentDidUpdate = (prevProps) => {
+        if (this.props.date !== prevProps.date) {
+            this.setInitialTime(this.state.time);
+        }
+    }
+
     setInitialTime = (time) => {
         this.setState({
             hour: ((time.getHours() + 11) % 12 + 1),
@@ -101,11 +107,21 @@ export default class ItineraryTimeSelector extends Component {
                     </div>
                 </div>
 
+                {/*<div className="time-available-wrapper">*/}
+                    {/*<p>I'm free for</p>*/}
+                    {/*<input type="number" value={this.props.totalHours} onChange={this.props.setTimeAvailable} min={Math.floor(this.props.tour_duration_seconds / 3600)} />*/}
+                    {/*<p>hours.</p>*/}
+                    {/*<p className="time-available-error">NOTE: Cannot be shorter than {this.props.formatTimeAvailable(this.props.tour_duration_seconds)}</p>*/}
+                {/*</div>*/}
+
                 <div className="time-available-wrapper">
-                    <p>I'm free for</p>
-                    <input type="number" value={this.props.totalHours} onChange={this.props.setTimeAvailable} min={Math.floor(this.props.tour_duration_seconds / 3600)} />
-                    <p>hours.</p>
-                    <p className="time-available-error">NOTE: Cannot be shorter than {`${Math.floor(this.props.tour_duration_seconds / 3600)}`}hrs.</p>
+                    <p>How long are you free for?</p>
+                    <div id="time-picker_available">
+                        <div className="time-picker-up"><i className="material-icons">keyboard_arrow_up</i></div>
+                            <input type="number" readOnly value={2} />
+                        <div className="time-picker-down"><i className="material-icons">keyboard_arrow_down</i></div>
+                    </div>
+                    <p className="time-available-error">NOTE: Cannot be shorter than {this.props.formatTimeAvailable(this.props.tour_duration_seconds)}</p>
                 </div>
 
             </div>

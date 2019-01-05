@@ -8,6 +8,7 @@ import SelectItineraryImg from '../picture.svg';
 // Import Cocoon Components
 import Itinerary from "../itinerary/itinerary";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
+import userAuth_endpoints from "../../endpoints/userAuth_endpoints";
 import ItineraryTimeSelector from "./itineraryTimeSelector";
 import ItineraryDateSelector from './itineraryDateSelector';
 
@@ -18,6 +19,7 @@ class ClientScheduler extends Component {
         is_claimed: false,
         is_scheduled: false,
 
+        is_canceling: false,
         tour_duration_seconds: 0,
         date: new Date(),
         time_available_seconds: 7200,
@@ -102,35 +104,48 @@ class ClientScheduler extends Component {
         })
     }
 
+    formatTimeAvailable = (time) => {
+        let hours = Math.floor(time / 3600);
+        let minuteDivisor = time % 3600;
+        let minutes = Math.ceil((Math.floor(minuteDivisor / 60)) / 15) * 15;
+        if (minutes === 0) {
+            return `${hours}hrs`;
+        } else {
+            return `${hours}hrs ${minutes}min`;
+        }
+    }
+
     handleAddDate = () => {
         let daysCopy = [...this.state.days];
         let dateCopy = this.state.date;
         let dayAvailable = {};
+        let time_id = daysCopy.length;
         dayAvailable.time_available_seconds = parseInt(this.state.time_available_seconds);
         dayAvailable.date = dateCopy;
+        dayAvailable.time_id = time_id;
         if (daysCopy.length < 10) {
             daysCopy.push(dayAvailable);
             this.setState({
                 days: daysCopy,
-            }, () => this.updateStartTimes(this.state.id));
+            }, () => this.updateStartTimes(this.state.days));
             this.setState({
                 date: new Date()
-            }, () => this.render())
+            })
         }
     }
 
-    updateStartTimes = (id) => {
+    updateStartTimes = (data) => {
         /**
          *  Updates the tenants start_times when adding new dates
          */
-
-        // axios.put(scheduler_endpoints['itinerary'] + id + '/', {
-        //     start_times: this.state.days
-        // })
-        // .catch(error => console.log('Bad', error))
-        // .then(response => {
-        //      console.log(response)
-        // })
+        let endpoint = scheduler_endpoints['itineraryClient'] + this.state.id + '/';
+        axios.put(endpoint, {
+            start_times: data
+        })
+        .catch(error => console.log('Bad', error))
+        .then(response => {
+             console.log(response)
+        })
     }
 
     removeStartTime = (id, index, event) => {
@@ -138,17 +153,28 @@ class ClientScheduler extends Component {
          *  Removes the tenant start_time on click
          *  Expects to be passed the id, index of the start time to be deleted,
          *  and the element to be removed
-         *
-         *  Make API call to delete
-         */
+         * */
+        let endpoint = scheduler_endpoints['itineraryClient'] + this.state.id + '/';
         let daysCopy = [...this.state.days];
         daysCopy.splice(index, 1);
         this.setState({
             days: daysCopy
+        }, () => {
+            axios.put(endpoint, {
+                start_times: this.state.days
+            })
+            .catch(err => console.log('BAD', err))
+            .then(response => console.log(response))
         })
     }
 
-    cancelItinerary = () => {
+    toggleIsCanceling = () => {
+        this.setState({
+            is_canceling: !this.state.is_canceling
+        })
+    }
+
+    confirmCancelItinerary = () => {
         /**
          *  Deletes and cancels the current itinerary
          */
@@ -156,7 +182,13 @@ class ClientScheduler extends Component {
         axios.delete(endpoint)
             .catch(err => console.log('BAD', err))
             .then(response => {
-                console.log(response)
+                console.log(response);
+                this.setState({
+                    id: null,
+                    loaded: true,
+                    is_claimed: false,
+                    is_scheduled: false
+                })
             })
     }
 
@@ -184,7 +216,7 @@ class ClientScheduler extends Component {
                         </div>
                         <div className="itinerary-date-time-wrapper">
                             <ItineraryDateSelector date={this.state.date} setDate={this.setDate} />
-                            <ItineraryTimeSelector date={this.state.date} tour_duration_seconds={this.state.tour_duration_seconds} totalHours={this.state.totalHours} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
+                            <ItineraryTimeSelector date={this.state.date} formatTimeAvailable={this.formatTimeAvailable} tour_duration_seconds={this.state.tour_duration_seconds} totalHours={this.state.totalHours} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
                         </div>
                         <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
                     </div>
@@ -212,9 +244,13 @@ class ClientScheduler extends Component {
                         <Itinerary
                             id={this.state.id}
                             days={this.state.days}
+                            formatTimeAvailable={this.formatTimeAvailable}
                             removeStartTime={this.removeStartTime}
                             setEstimatedDuration={this.setEstimatedDuration}
+                            is_canceling={this.state.is_canceling}
+                            toggleIsCanceling={this.toggleIsCanceling}
                             cancelItinerary={this.cancelItinerary}
+                            confirmCancelItinerary={this.confirmCancelItinerary}
                         />
                     </div>
                 </div>
@@ -225,6 +261,7 @@ class ClientScheduler extends Component {
                         <img src={SelectItineraryImg} alt=""/>
                         <h2>Please create an itinerary!</h2>
                         <p>Select the places you'd like to visit.</p>
+                        <a href={window.location.origin + userAuth_endpoints['surveys']}>Go to Surveys</a>
                     </div>
                 );
             }

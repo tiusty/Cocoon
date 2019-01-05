@@ -55,6 +55,13 @@
     font-weight: 600;
 }
 
+.onboard-wrapper a {
+    color: var(--teal);
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
 .itinerary-date-time-wrapper {
     display: flex;
     justify-content: space-between;
@@ -293,6 +300,31 @@ p.time-available-error {
     cursor: pointer;
     color: #bbbbbb;
     font-family: 'Montserrat', sans-serif;
+    transition: all .2s ease;
+}
+
+#cancel-itinerary-btn_confirm {
+    padding-top: 15px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    color: #bbbbbb;
+    font-family: 'Montserrat', sans-serif;
+    transition: all .2s ease;
+}
+
+#cancel-itinerary-btn_confirm span {
+    padding: 0px 3px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#cancel-itinerary-btn_confirm span:nth-of-type(1):hover {
+    color: var(--red);
+}
+
+#cancel-itinerary-btn_confirm span:nth-of-type(2):hover {
+    color: var(--teal);
 }
 
 @media screen and (max-width: 724px) {

@@ -189,12 +189,27 @@ class Itinerary extends Component {
         }
     }
 
+    renderCancelButton = () => {
+        if (!this.props.is_canceling) {
+            return <p id="cancel-itinerary-btn" onClick={this.props.toggleIsCanceling}>Cancel Itinerary</p>
+        } else {
+            return (
+                <p id="cancel-itinerary-btn_confirm">
+                    Are you sure?
+                    <span onClick={this.props.confirmCancelItinerary}>Yes</span>
+                    or
+                    <span onClick={this.props.toggleIsCanceling}>No</span>
+                </p>
+            );
+        }
+    }
+
     renderItinerary = ()=> {
         return (
             <>
                 <div className="side-wrapper-top">
                     <p>Your Itinerary</p>
-                    <p>Estimated Duration: {Math.floor(this.state.tour_duration_seconds / 3600)}hrs</p>
+                    <p>Estimated Duration: {this.props.formatTimeAvailable(this.state.tour_duration_seconds)}</p>
                 </div>
                 {this.renderStartTimes()}
             </>
@@ -207,7 +222,7 @@ class Itinerary extends Component {
                 <div className="itinerary-side-wrapper">
                     {this.renderItinerary()}
                 </div>
-                <p id="cancel-itinerary-btn" onClick={this.props.cancelItinerary}>Cancel Itinerary</p>
+                {this.renderCancelButton()}
             </>
         );
     }
