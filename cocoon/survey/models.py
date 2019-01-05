@@ -142,6 +142,7 @@ class ExteriorAmenitiesModel(models.Model):
     All Questions are hybrid weighted
     """
     parking_spot = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    number_of_cars = models.IntegerField(default=0)
     wants_laundry_in_building = models.BooleanField(default=False)
     wants_patio = models.BooleanField(default=False)
     patio_weight = models.IntegerField(default=0)

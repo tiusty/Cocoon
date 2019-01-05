@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    ExteriorAmenitiesForm, RentSurveyFormMini
+    ExteriorAmenitiesForm, InteriorAmenitiesForm, RentSurveyFormMini
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
@@ -31,6 +31,7 @@ class TestHomeInformationForm(TestCase):
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
         self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
+        self.wants_laundry_nearby = True
 
     def tests_home_information_form_valid(self):
         # Arrange
@@ -40,7 +41,8 @@ class TestHomeInformationForm(TestCase):
             'num_bedrooms': self.num_bedrooms,
             'max_bathrooms': self.max_num_bathrooms,
             'min_bathrooms': self.min_num_bathrooms,
-            'home_type': self.home_type
+            'home_type': self.home_type,
+            'wants_laundry_nearby': self.wants_laundry_nearby
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -559,41 +561,31 @@ class TestExteriorAmenitiesForm(TestCase):
 
     def setUp(self):
         self.parking_spot = 0
-        self.building_washer_dryer = 0
-        self.elevator = 0
-        self.handicap_access = 0
-        self.pool_hot_tub = 0
-        self.fitness_center = 0
-        self.storage_unit = 0
+        self.number_of_cars = 0
+        self.wants_laundry_in_building = False
+        self.wants_patio = False
+        self.patio_weight = 0
+        self.wants_pool = False
+        self.pool_weight = 0
+        self.wants_gym = False
+        self.gym_weight = 0
+        self.wants_storage = False
+        self.storage_weight = 0
 
     def tests_exterior_amenities_valid(self):
         # Arrange
         form_data = {
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertTrue(result)
-
-    def tests_exterior_amenities_parking_spot_missing(self):
-        # Arrange
-        form_data = {
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
+            'parking_spot':self.parking_spot,
+            'number_of_cars': self.number_of_cars,
+            'wants_laundry_in_building': self.wants_laundry_in_building,
+            'wants_patio': self.wants_patio,
+            'patio_weight': self.patio_weight,
+            'wants_pool': self.wants_pool,
+            'pool_weight': self.pool_weight,
+            'wants_gym': self.wants_gym,
+            'gym_weight': self.gym_weight,
+            'wants_storage': self.wants_storage,
+            'storage_weight': self.storage_weight
         }
         exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
 
@@ -602,6 +594,70 @@ class TestExteriorAmenitiesForm(TestCase):
 
         # Assert
         self.assertFalse(result)
+
+    def tests_exterior_amenities_parking_spot_missing(self):
+        # Arrange
+        form_data = {
+            'number_of_cars': self.number_of_cars,
+            'wants_laundry_in_building':self.wants_laundry_in_building,
+            'wants_patio':self.wants_patio,
+            'patio_weight':self.patio_weight,
+            'wants_pool':self.wants_pool,
+            'pool_weight':self.pool_weight,
+            'wants_gym':self.wants_gym,
+            'gym_weight':self.gym_weight,
+            'wants_storage':self.wants_storage,
+            'storage_weight':self.storage_weight
+        }
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = exterior_amenities_form.is_valid()
+
+        # Assert
+        self.assertFalse(result)
+
+class TestInteriorAmenitiesForm(TestCase):
+
+    def setUp(self):
+        self.wants_laundry_in_unit = False
+        self.wants_furnished = False
+        self.furnished_weight = 0
+        self.wants_dogs = False
+        self.number_of_dogs = 0
+        self.wants_cats = False
+        self.cat_weight = 0
+        self.wants_hardwood_floors = False
+        self.hardwood_floors_weight = 0
+        self.wants_AC = False
+        self.AC_weight = 0
+        self.wants_dishwasher = False
+        self.dishwasher_weight = 0
+
+    def tests_interior_amenities_valid(self):
+        # Arrange
+        form_data = {
+            'wants_laundry_in_unit':self.wants_laundry_in_unit,
+            'wants_furnished':self.wants_furnished,
+            'furnished_weight':self.furnished_weight,
+            'wants_dogs':self.wants_dogs,
+            'number_of_dogs':self.number_of_dogs,
+            'wants_cats':self.wants_cats,
+            'cat_weight':self.cat_weight,
+            'wants_hardwood_floors':self.wants_hardwood_floors,
+            'hardwood_floors_weight':self.hardwood_floors_weight,
+            'wants_AC':self.wants_AC,
+            'AC_weight':self.AC_weight,
+            'wants_dishwasher':self.wants_dishwasher,
+            'dishwasher_weight':self.dishwasher_weight
+        }
+        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
+
+        # Act
+        result = interior_amenities_form.is_valid()
+
+        # Assert
+        self.assertTrue(result)
 
 
 class TestRentSurveyForm(TestCase):

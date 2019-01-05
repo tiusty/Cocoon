@@ -318,8 +318,7 @@ class InteriorAmenitiesForm(ModelForm):
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
 
 
-class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
-                     HomeInformationForm):
+class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm, HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -342,7 +341,7 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
                   "parking_spot", "number_of_tenants"]
 
 
-class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
+class RentSurveyFormMini(ExteriorAmenitiesForm,  PriceInformationForm,
                          HomeInformationForm):
     """
     RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
