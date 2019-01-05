@@ -152,7 +152,8 @@ class ClientScheduler extends Component {
         /**
          *  Deletes and cancels the current itinerary
          */
-        axios.delete(scheduler_endpoints['itineraryClient'])
+        let endpoint = scheduler_endpoints['itineraryClient'] + this.state.id + '/';
+        axios.delete(endpoint)
             .catch(err => console.log('BAD', err))
             .then(response => {
                 console.log(response)
