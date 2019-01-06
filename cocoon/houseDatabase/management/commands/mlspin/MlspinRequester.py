@@ -58,8 +58,9 @@ class MlspinRequester(object):
 
         # Builds a dictionary of town codes to towns
         self.towns = {}
-        self.town_lines = self.town_txt.split('\n')
-        for line in self.town_lines[1:-1]: # skips the col headers
+        town_lines = self.town_txt.split('\n')
+        self.town_lines = list(map(str.rstrip, town_lines))
+        for line in self.town_lines[1:-1]:  # skips the col headers
             fields = line.split('|')
             self.towns[str(fields[0])] = {
                 "town": fields[1],
