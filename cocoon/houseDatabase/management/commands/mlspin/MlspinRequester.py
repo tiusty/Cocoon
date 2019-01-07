@@ -28,7 +28,7 @@ class MlspinRequester(object):
 
     NUM_COLS = 29
 
-    def __init__(self, timestamp, pull_idx_feed=True, **kwargs):
+    def __init__(self, timestamp, num_homes=-1, pull_idx_feed=True, **kwargs):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
@@ -68,6 +68,8 @@ class MlspinRequester(object):
                 "state": fields[3]
             }
 
+        self.num_homes = num_homes
+
     def parse_idx_feed(self):
 
         lines = self.idx_txt
@@ -86,7 +88,13 @@ class MlspinRequester(object):
         num_updated_homes = 0
         num_homes_not_enough_cells = 0
 
+        counter = 0
         for line in lines[1:]:  # skips the col headers
+            # if self.num_homes is equal to -1, then it means to loop through all homes,
+            #   otherwise just loop for the indicated number of homes
+            if self.num_homes != -1 and counter >= self.num_homes:
+                break
+            counter = counter + 1
             num_houses += 1
             new_listing = RentDatabaseModel()
 
