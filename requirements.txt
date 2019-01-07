@@ -18,6 +18,7 @@ geocoder==1.31.0
 geographiclib==1.49
 geopy==1.16.0
 googlemaps==2.4.5
+holidays==0.9.9
 idna==2.7
 jmespath==0.9.3
 jwcrypto==0.5.0
