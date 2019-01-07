@@ -221,6 +221,7 @@ class InteriorAmenitiesForm(ModelForm):
     Class stores all the form fields for the BuildingInteriorAmenitiesModel Model
     """
     wants_laundry_in_unit = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -228,6 +229,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     wants_furnished = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -242,6 +244,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     wants_dogs = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -256,6 +259,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     wants_cats = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -270,6 +274,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     wants_hardwood_floors = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -284,6 +289,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     wants_AC = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -298,6 +304,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     wants_dishwasher = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',

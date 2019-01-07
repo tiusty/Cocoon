@@ -637,7 +637,7 @@ class TestInteriorAmenitiesForm(TestCase):
     def tests_interior_amenities_valid(self):
         # Arrange
         form_data = {
-            'wants_laundry_in_unit':self.wants_laundry_in_unit,
+            "wants_laundry_in_unit":self.wants_laundry_in_unit,
             'wants_furnished':self.wants_furnished,
             'furnished_weight':self.furnished_weight,
             'wants_dogs':self.wants_dogs,
