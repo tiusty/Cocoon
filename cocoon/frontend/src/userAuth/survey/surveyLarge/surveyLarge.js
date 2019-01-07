@@ -63,7 +63,6 @@ export default class SurveyLarge extends Component {
             .catch(error => console.log('BAD', error))
             .then(response =>
                 {
-                    console.log(response.data),
                     this.setState({
                         name: response.data.name,
                         favorites: response.data.favorites,
@@ -76,6 +75,7 @@ export default class SurveyLarge extends Component {
                 }
             )
 
+        // Retrieves the current estimated time for the tour
         endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
@@ -89,6 +89,8 @@ export default class SurveyLarge extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+
+        // When the visit list changes, updates the tour estimated time
         if (prevState.visit_list !== this.state.visit_list) {
             let endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
             this.setState({
@@ -231,6 +233,8 @@ export default class SurveyLarge extends Component {
          */
         if(!this.props.pre_tour_signed) {
             return 'Please sign pre tour docs'
+        } else if (this.props.itinerary_exists) {
+            return 'Itinerary already exists, click to view'
         } else {
             return 'You are read to schedule!'
         }
@@ -243,11 +247,19 @@ export default class SurveyLarge extends Component {
         // If the pre tour documents are not signed then generate a sign document button
         if(!this.props.pre_tour_signed) {
             return (
-                    <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button" role="button"
-                       href={signature_endpoints['signaturePage']}
-                       > Sign Documents </a>
+                <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button"
+                   role="button"
+                   href={signature_endpoints['signaturePage']}
+                > Sign Documents </a>
             );
-        // If the pre tour documents are signed then generate the tour summary button
+            // If the pre tour documents are signed then generate the tour summary button
+        } else if (this.props.itinerary_exists) {
+            return (
+                <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button"
+                   role="button"
+                   href={scheduler_endpoints['clientScheduler']}
+                > See Itinerary </a>
+            );
         } else {
             return(
                 <form method="post" style={{marginTop: '10px'}}>
