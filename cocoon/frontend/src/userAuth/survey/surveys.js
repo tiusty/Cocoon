@@ -213,13 +213,13 @@ export default class Surveys extends Component {
                             </div>
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-4 col-md-offset-4 search-bar-div">
-                                <input type="text" disabled={true} className="input search-bar"
-                                       placeholder="Search..."/>
-                                <button className="btn btn-primary search-button">Search</button>
-                            </div>
-                        </div>
+                        {/*<div className="row">*/}
+                            {/*<div className="col-md-4 col-md-offset-4 search-bar-div">*/}
+                                {/*<input type="text" disabled={true} className="input search-bar"*/}
+                                       {/*placeholder="Search..."/>*/}
+                                {/*<button className="btn btn-primary search-button">Search</button>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
 
                         <div className="row">
                             {this.state.surveys.map(survey =>
