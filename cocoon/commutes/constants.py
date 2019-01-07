@@ -22,6 +22,9 @@ class CommuteAccuracy(Enum):
 
 
 # The times that the with traffic and without traffic is computed with
+
+# Since the commutes are computed from the work to the home, this correspondes to the afternoon commute.
+#   Therefore, for accurate commute info, the departure time should be in the afternoon and not the morning
 COMMUTE_TIME_WITH_TRAFFIC = time(17, 0)
 COMMUTE_TIME_WITHOUT_TRAFFIC = time(3, 30)
 
