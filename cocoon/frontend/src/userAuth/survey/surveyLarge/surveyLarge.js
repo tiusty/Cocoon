@@ -9,6 +9,7 @@ import deleteIcon from './delete_icon.png'
 import HomeTiles from "../../../common/homeTile/homeTiles";
 import survey_endpoints from "../../../endpoints/survey_endpoints";
 import signature_endpoints from "../../../endpoints/signatures_endpoints"
+import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
 import CSRFToken from '../../../common/csrftoken';
 
 // For handling Post request with CSRF protection
@@ -36,6 +37,9 @@ export default class SurveyLarge extends Component {
         url: "",
         desired_price: 0,
         num_bedrooms: 0,
+
+        duration: null,
+        refresh_duration: true,
 
         // Favorites contains a lit of the favorites when the data was pulled from the backend
         favorites:  [],
@@ -71,6 +75,40 @@ export default class SurveyLarge extends Component {
                     })
                 }
             )
+
+        endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                    this.setState({
+                        duration: response.data.duration,
+                        refresh_duration: false,
+                    })
+                },
+            )
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.visit_list !== this.state.visit_list) {
+            let endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
+            this.setState({
+                refresh_duration: true,
+            });
+            axios.get(endpoint)
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({
+                        refresh_duration: false,
+                    })
+                })
+                .then(response => {
+                        this.setState({
+                            duration: response.data.duration,
+                            refresh_duration: false,
+                        })
+                    },
+                )
+        }
     }
 
     handleDelete = () => {
@@ -240,7 +278,7 @@ export default class SurveyLarge extends Component {
                     </div>
                     <div className="survey-large-tour-summary">
                         <p className="survey-large-tour-summary-title">Tour Summary</p>
-                        <p className="survey-large-tour-summary-estimate-duration">Estimated duration: To be Implemented</p>
+                        <p className="survey-large-tour-summary-estimate-duration">Estimated duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}</p>
                         <p className="survey-large-tour-summary-message">{this.scheduleButtonMessages()}</p>
                         {this.scheduleButton()}
                     </div>
