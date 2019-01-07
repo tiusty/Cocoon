@@ -6,6 +6,18 @@ import { Component } from 'react';
 import './homeTile.css'
 
 class HomeTile extends Component {
+    /**
+     * Props:
+     *  this.props.id: (int) -> The id for the home
+     *  this.props.home: (RentDatabase Model) -> Stores the information related to the home
+     *  this.props.favorite: (boolean) -> True: The home is currently favorited
+     *                                    False: The home is not currently favorited
+     *  this.props.visit: (boolean) -> True: The home is currently in the visit list
+     *                                 False: The home is not currently in the visit list
+     *  this.props.onVisitClick: (function(RentDatabase Model, event)) -> Handles when the visit button is pressed
+     *  this.props.onFavoriteClick: (function(RentDatabase Model, event)) -> Handles when the favorite button is clicked
+     *  this.props.onHomeClick: (function(int)) (int- the id of the home clicked) -> Handles when a home tile is clicked
+     */
     state = {
         hover: false,
     };
@@ -16,48 +28,27 @@ class HomeTile extends Component {
          * @type {string} THe home that is being rendered
          */
 
-        let homeScore = '';
-        if (this.props.show_score) {
-            // Determines whether the user is hovering over that tile
-            let classes = "scoreText ";
-            if (this.state.hover) {
-                classes += "scoreText-hover"
-            }
-            // Determines if a grade was passed to the home, if not then don't render it
-            if (home.grade) {
-                homeScore = <span className={classes}>{home.grade}</span>
-            }
-        }
-
         // Toggles whether the home has a empty or full heart depending on favorite status
-        let heart_span = '';
-        if (this.props.show_heart) {
-            let heart_class = "glyphicon";
-            if (this.props.favorite) {
-                heart_class += " glyphicon-heart"
-            } else {
-                heart_class += " glyphicon-heart-empty"
-            }
-
-            heart_span = <span className={heart_class} onClick={() => this.props.onFavoriteClick(home)}> </span>;
+        let heart_class = "glyphicon";
+        if (this.props.favorite) {
+            heart_class += " glyphicon-heart"
+        } else {
+            heart_class += " glyphicon-heart-empty"
         }
+        let heart_span = <span className={heart_class} onClick={(e) => this.props.onFavoriteClick(home, e)}> </span>;
 
-        let visit_span = '';
-        if (this.props.show_visit) {
-            let visit_classes = "glyphicon";
-            if (this.props.visit)
-            {
-                visit_classes += " glyphicon-remove";
-            } else {
-                visit_classes += " glyphicon-ok";
-            }
-            visit_span = <span className={visit_classes} onClick={() => this.props.onVisitClick(home)}> </span>;
+        let visit_classes = "glyphicon glyphicon-check-class";
+        if (this.props.visit)
+        {
+            visit_classes += " glyphicon-remove";
+        } else {
+            visit_classes += " glyphicon-ok";
         }
+        let visit_span = <span className={visit_classes} onClick={(e) => this.props.onVisitClick(home, e)}> </span>;
 
         // Render the score and the heart icon
         return (
             <div className="tileScore">
-                {homeScore}
                 {heart_span}
                 {visit_span}
             </div>
@@ -76,7 +67,7 @@ class HomeTile extends Component {
         }
         return (
             <div className="homeInfo">
-                <span className={bit_classes}>{home.price}</span>
+                <span className={bit_classes}>${home.price}</span>
                 <span className={bit_classes}>{home.home_type.home_type}</span>
             </div>
         );
@@ -99,7 +90,7 @@ class HomeTile extends Component {
                 <>
                     { home.images.slice(0,2).map(image =>
                         <div key={image.id} className={div_classes}>
-                            <img className={image_classes} src={image.image}/>
+                            <img className={image_classes} src={image.image} alt='Home image'/>
                         </div>
                     )}
                 </>
@@ -120,7 +111,7 @@ class HomeTile extends Component {
     render(){
         const { home } = this.props;
         return (
-            <div className="tile" onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}>
+            <div className="tile" onClick={() => this.props.onHomeClick(this.props.id)} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}>
                 {this.renderScore(home)}
                 {this.renderInfo(home)}
                 {this.renderImages(home)}

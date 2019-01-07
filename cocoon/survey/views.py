@@ -396,30 +396,20 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
                     # Creates a the survey name based on the people in the roommate group
-                    survey_name = "Roommate Group:"
-                    counter = 1
-                    # Depending on whether it is the last/first roommate then the formatting of the string is different
-                    for tenant in tenants:
+                    survey_name = ""
+                    if number_of_tenants is 1:
+                        survey_name = "Just Me"
+                    else:
+                        counter = 1
+                        for tenant in reversed(tenants):
+                            if counter == number_of_tenants - 1:
+                                survey_name = "{0}{1} ".format(survey_name, tenant.cleaned_data['first_name'])
+                            elif counter == number_of_tenants:
+                                survey_name = "{0}and I".format(survey_name, tenant.cleaned_data['first_name'])
+                            elif counter != number_of_tenants:
+                                survey_name = "{0}{1}, ".format(survey_name, tenant.cleaned_data['first_name'])
 
-                        # If only the user
-                        if counter is 1 and counter is number_of_tenants:
-                            survey_name = survey_name + " Just Me"
-                            break
-
-                        # Write me for the user as the first person in the roomate group
-                        elif counter is 1:
-                            survey_name = survey_name + " Me"
-
-                        # End condition for the last roommate
-                        elif counter >= number_of_tenants:
-                            survey_name = survey_name + " and {0}".format(tenant.cleaned_data['first_name'])
-                            break
-
-                        # Adds another roommate to the group
-                        else:
-                            survey_name = survey_name + ", {0}".format(tenant.cleaned_data['first_name'])
-
-                        counter = counter + 1
+                            counter = counter + 1
 
                     # Set the form name
                     form.instance.name = survey_name

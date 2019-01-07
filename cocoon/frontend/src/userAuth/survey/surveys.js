@@ -1,20 +1,33 @@
 // Import React Components
 import React from 'react'
-import { Component } from 'react';
+import {Component} from 'react';
 import axios from 'axios'
 
 // Import Cocoon Components
-import Survey from "./survey";
+import './surveys.css'
+import SurveySmall from "./surveySmall/surveySmall";
+import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
+import surveyIcon from './survey_icon.png';
+import LoadingScreen from 'react-loading-screen';
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-class Surveys extends Component {
+export default class Surveys extends Component {
+    /**
+     * This component handles displaying all the surveys
+     *
+     * When the user does not click on a survey all the surveys are displayed as small boxes
+     *  When the user clicks on a survey box then that one survey is displayed in large form
+     */
+
     state = {
+        survey_clicked_id: undefined,
+        loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
         loaded: false,
@@ -43,7 +56,13 @@ class Surveys extends Component {
 
         // For each survey just push the id for that survey to the list
         data.map(c =>
-            survey_ids.push( { id: c.id} )
+            survey_ids.push({
+                id: c.id,
+                visit_list_length: c.visit_list.length,
+                favorites_length: c.favorites.length,
+                url: c.url,
+                name: c.name
+            })
         );
 
         // Return the list of ids
@@ -83,16 +102,16 @@ class Surveys extends Component {
         axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {surveys: this.parseData(response.data)})
+                this.setState({surveys: this.parseData(response.data)})
             });
 
         /**
-            Retrieves the users HunterDocManager
+         Retrieves the users HunterDocManager
          */
         axios.get(this.state.signature_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {
+                this.setState({
                     hunter_doc_manager_id: response.data[0].id,
                     pre_tour_signed: response.data[0].is_pre_tour_signed,
                 })
@@ -137,8 +156,8 @@ class Surveys extends Component {
          * @type {string} The survey id that is being deleted
          */
 
-        // The survey id is appended to the survey_endpoint since the put request expects the survey id as
-        //  part of the url
+            // The survey id is appended to the survey_endpoint since the put request expects the survey id as
+            //  part of the url
         let endpoint = this.state.survey_endpoint + survey_id + "/";
 
         // Passes the survey id and the put type to the backend
@@ -149,101 +168,146 @@ class Surveys extends Component {
             })
             .catch(error => console.log('Bad', error))
             .then(response => {
-               this.setState( {surveys: this.parseData(response.data)})
+                this.setState({
+                    surveys: this.parseData(response.data),
+                    survey_clicked_id: undefined
+                })
             });
     };
 
-    renderMessages = () => {
-        /**
-         * Renders the messages associated with the page, i.e errors notifications etc
-         */
-
-        // If the page isn't loaded then don't load any messages
-        if (!this.state.loaded || this.state.surveys.length <= 0) {
-            return (
-                <>
-                </>
-            );
-        }
-
-        // Renders the scheduler message. i.e If the pre-tour docs are not signed
-        //  then inform the user to sign them before scheduling tours
-        let scheduler_message = "";
-        if (!this.state.pre_tour_signed) {
-            const pStyle = {
-                textAlign: 'center',
-                marginBottom: 0,
-            };
-            scheduler_message = (
-                <div className="alert alert-info alert-dismissable" role="alert" style={pStyle}>
-                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    Please sign the pre tour doc to schedule your homes
-                    <a className="btn btn-secondary btn-sm" role="button"
-                       href={signature_endpoints['signaturePage']}
-                       aria-disabled={true} style={{marginLeft: '10px'}}> Sign Documents </a>
-                </div>
-            );
-        } else if (this.state.itinerary_exists) {
-            const pStyle = {
-                textAlign: 'center',
-                marginBottom: 0,
-            };
-            scheduler_message = (
-                <div className="alert alert-info alert-dismissable" role="alert" style={pStyle}>
-                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    You already have a tour schedule. You cannot schedule another tour until your current one is finished
-                    <a className="btn btn-secondary btn-sm" role="button"
-                       href={scheduler_endpoints['clientScheduler']}
-                       aria-disabled={true} style={{marginLeft: '10px'}}> My Tour </a>
-                </div>
-            )
-        }
-
-        return (
-            <div>
-                {scheduler_message}
-            </div>
-        );
-    };
-
-    renderSurveys() {
-        if (this.state.surveys.length <= 0) {
-            return (
-                <>
-                    <h3>Please take a survey:</h3>
-                    <a href={survey_endpoints['rentingSurvey']} className="btn btn-primary">Click here</a>
-                </>
-            );
-        }
-
-        return (this.state.surveys.map(survey =>
-            <Survey
-                key={survey.id}
-                onDelete={this.handleDelete}
-                id={survey.id}
-                endpoint={this.state.survey_endpoint}
-                pre_tour_signed={this.state.pre_tour_signed}
-                itinerary_exists={this.state.itinerary_exists}
-                />
-
-        ));
+    handleSearchBarInput() {
+        console.log('input changed')
     }
 
-    render() {
+
+    renderPage() {
         /**
-         * Renders all the surveys
+         * Renders the my surveys page depending on the state of the page
          */
+        // If something is loading then render the loading page
+        if (this.state.loading_clicked) {
+            return (
+                <LoadingScreen
+                    loading={true}
+                    bgColor='#f1f1f1'
+                    spinnerColor='#9ee5f8'
+                    textColor='#676767'
+                    logoSrc={surveyIcon}
+                    text='Please wait: Loading...'
+                >
+                    <div>Loadable content</div>
+                </LoadingScreen>
+            );
+        } else {
+
+            // If no survey is selected then render the small tiles
+            if (this.state.survey_clicked_id === undefined) {
+                return (
+                    <>
+                        <div className="row">
+                            <div className="col-md-6 col-md-offset-3">
+                                <p className="my-survey-header">Roommate Groups</p>
+                            </div>
+                            <div className="col-md-1 col-md-offset-2">
+                                <button className="btn btn-primary help-button">Help</button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-4 col-md-offset-4 search-bar-div">
+                                <input type="text" disabled={true} className="input search-bar"
+                                       placeholder="Search..."/>
+                                <button className="btn btn-primary search-button">Search</button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            {this.state.surveys.map(survey =>
+                                <div key={survey.id} className="col-md-3 survey">
+                                    <SurveySmall
+                                        key={survey.id}
+                                        id={survey.id}
+                                        name={survey.name}
+                                        url={survey.url}
+                                        favorites_length={survey.favorites_length}
+                                        visit_list_length={survey.visit_list_length}
+                                        onLoadingClicked={this.setLoadingClick}
+                                        onClickSurvey={this.handleClickSurvey}
+                                    />
+                                </div>
+                            )}
+                            <div className="col-md-3 survey">
+                                <SurveySmall
+                                    default_survey={true}
+                                    onClickSurvey={this.handleClickSurvey}
+                                />
+                            </div>
+                        </div>
+                    </>
+                );
+                // If a survey is clicked then render the large survey
+            } else {
+                let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
+                return (
+                    <div className="col-md-12 survey-large">
+                        <SurveyLarge
+                            id={survey.id}
+                            pre_tour_signed={this.state.pre_tour_signed}
+                            onDelete={this.handleDelete}
+                            onLargeSurveyClose={this.handleLargeSurveyClose}
+                            itinerary_exists={this.state.itinerary_exists}
+                        />
+                    </div>
+                );
+            }
+        }
+    }
+
+    setLoadingClick = () => {
+        /**
+         * Sets loading_clicked to true
+         */
+        this.setState({loading_clicked: true})
+    };
+
+    handleLargeSurveyClose = () => {
+        /**
+         * Handles closing the large survey.
+         *
+         * Since information can be modified on the large tile, when the user closes
+         * it then the data on the page needs to be updated. Also, the clicked survey value
+         * should go back to undefined so the small survey tiles load again
+         */
+        this.setState({survey_clicked_id: undefined});
+
+        // See if any of the data changed
+        axios.get(this.state.survey_endpoint)
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({surveys: this.parseData(response.data)})
+            });
+    };
+
+    handleClickSurvey = (id) => {
+        /**
+         * Handles click on the survey box to load the large survey.
+         *
+         * If the click is on the extra box then the survey should load
+         */
+        if (id !== undefined) {
+            this.setState({survey_clicked_id: id})
+        } else {
+            this.setLoadingClick();
+            window.location = survey_endpoints['rentingSurvey']
+        }
+    };
+
+
+    render() {
         return (
             <>
-                {this.renderMessages()}
-                {this.renderSurveys()}
+                {this.renderPage()}
             </>
         );
     }
 }
-export default Surveys
-
