@@ -29,7 +29,7 @@ pycparser==2.19
 python-dateutil==2.7.3
 pytz==2018.4
 ratelim==0.1.6
-requests==2.20.0
+requests==2.11.1
 s3transfer==0.1.13
 six==1.11.0
 urllib3==1.23
