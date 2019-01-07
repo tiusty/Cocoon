@@ -61,6 +61,7 @@ class VisitList(ListView):
         result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
         if result:
             messages.info(request, "Itinerary created")
+            return HttpResponseRedirect(reverse('scheduler:clientScheduler'))
         else:
             messages.warning(request, "Itinerary already exists")
         return HttpResponseRedirect(reverse('userAuth:surveys'))
