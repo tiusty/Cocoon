@@ -59,6 +59,8 @@ class MlspinRequester(object):
         # Builds a dictionary of town codes to towns
         self.towns = {}
         town_lines = self.town_txt.split('\n')
+        # Strips any new lines. There was issues on windows due to different new lines characters
+        #   This makes sure all the elements in the area do no have new line/carriage return characters
         self.town_lines = list(map(str.rstrip, town_lines))
         for line in self.town_lines[1:-1]:  # skips the col headers
             fields = line.split('|')
