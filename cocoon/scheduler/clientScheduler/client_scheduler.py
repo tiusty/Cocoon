@@ -99,7 +99,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
                               False: The itinerary was not created
         """
 
-        if not ItineraryModel.retrieve_unfinished_itinerary().exists():
+        if not ItineraryModel.retrieve_unfinished_itinerary(user).exists():
             total_time_secs, interpreted_route = self.calculate_duration(homes_list)
             itinerary_model = ItineraryModel(client=user)
             itinerary_model.tour_duration_seconds = total_time_secs

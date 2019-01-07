@@ -124,8 +124,8 @@ class ItineraryModel(models.Model):
         return self.selected_start_time is not None
 
     @staticmethod
-    def retrieve_unfinished_itinerary():
-        return ItineraryModel.objects.filter(finished=False)
+    def retrieve_unfinished_itinerary(user):
+        return ItineraryModel.objects.filter(client=user).filter(finished=False)
 
     @transaction.atomic
     def select_start_time(self, start_time):
