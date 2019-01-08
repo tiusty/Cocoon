@@ -613,6 +613,7 @@ class TestExteriorAmenitiesForm(TestCase):
 
         # Act
         result = exterior_amenities_form.is_valid()
+        print(exterior_amenities_form.errors)
 
         # Assert
         self.assertFalse(result)
@@ -699,6 +700,20 @@ class TestRentSurveyForm(TestCase):
         self.fitness_center = 0
         self.storage_unit = 0
 
+        self.number_of_cars = 0
+        self.wants_laundry_in_building = False
+        self.wants_patio = False
+        self.patio_weight = 0
+        self.wants_pool = False
+        self.pool_weight = 0
+        self.wants_gym = False
+        self.gym_weight = 0
+        self.wants_storage = False
+        self.storage_weight = 0
+
+        self.wants_laundry_nearby = False
+
+
         self.number_of_destinations = 1
 
     def tests_rent_survey_valid(self):
@@ -729,7 +744,18 @@ class TestRentSurveyForm(TestCase):
             'pool_hot_tub_survey': self.pool_hot_tub,
             'fitness_center_survey': self.fitness_center,
             'storage_unit_survey': self.storage_unit,
-            'number_of_tenants': 2
+            'number_of_tenants': 2,
+            'wants_laundry_nearby': self.wants_laundry_nearby,
+            'number_of_cars': self.number_of_cars,
+            'wants_laundry_in_building': self.wants_laundry_in_building,
+            'wants_patio': self.wants_patio,
+            'patio_weight': self.patio_weight,
+            'wants_pool': self.wants_pool,
+            'pool_weight': self.pool_weight,
+            'wants_gym': self.wants_gym,
+            'gym_weight': self.gym_weight,
+            'wants_storage': self.wants_storage,
+            'storage_weight': self.storage_weight
         }
         rent_survey_form = RentSurveyForm(data=form_data)
 
@@ -760,7 +786,18 @@ class TestRentSurveyForm(TestCase):
             'handicap_access_survey': self.handicap_access,
             'pool_hot_tub_survey': self.pool_hot_tub,
             'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
+            'storage_unit_survey': self.storage_unit,
+            'parking_spot': self.parking_spot,
+            'number_of_cars': self.number_of_cars,
+            'wants_laundry_in_building': self.wants_laundry_in_building,
+            'wants_patio': self.wants_patio,
+            'patio_weight': self.patio_weight,
+            'wants_pool': self.wants_pool,
+            'pool_weight': self.pool_weight,
+            'wants_gym': self.wants_gym,
+            'gym_weight': self.gym_weight,
+            'wants_storage': self.wants_storage,
+            'storage_weight': self.storage_weight
         }
         rent_survey_form = RentSurveyForm(data=form_data)
 
@@ -793,7 +830,18 @@ class TestRentSurveyForm(TestCase):
             'handicap_access_survey': self.handicap_access,
             'pool_hot_tub_survey': self.pool_hot_tub,
             'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit
+            'storage_unit_survey': self.storage_unit,
+            'parking_spot': self.parking_spot,
+            'number_of_cars': self.number_of_cars,
+            'wants_laundry_in_building': self.wants_laundry_in_building,
+            'wants_patio': self.wants_patio,
+            'patio_weight': self.patio_weight,
+            'wants_pool': self.wants_pool,
+            'pool_weight': self.pool_weight,
+            'wants_gym': self.wants_gym,
+            'gym_weight': self.gym_weight,
+            'wants_storage': self.wants_storage,
+            'storage_weight': self.storage_weight
         }
         rent_survey_form = RentSurveyForm(data=form_data)
 
@@ -823,6 +871,17 @@ class TestRentSurveyForm(TestCase):
             'interior_washer_dryer_survey': self.interior_washer_dryer,
             'dish_washer_survey': self.dish_washer,
             'bath_survey': self.bath,
+            'parking_spot': self.parking_spot,
+            'number_of_cars': self.number_of_cars,
+            'wants_laundry_in_building': self.wants_laundry_in_building,
+            'wants_patio': self.wants_patio,
+            'patio_weight': self.patio_weight,
+            'wants_pool': self.wants_pool,
+            'pool_weight': self.pool_weight,
+            'wants_gym': self.wants_gym,
+            'gym_weight': self.gym_weight,
+            'wants_storage': self.wants_storage,
+            'storage_weight': self.storage_weight
         }
         rent_survey_form = RentSurveyForm(data=form_data)
 

@@ -45,6 +45,7 @@ class HomeInformationForm(ModelForm):
     )
 
     wants_laundry_nearby = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -141,6 +142,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     wants_laundry_in_building = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -148,6 +150,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     number_of_cars = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -155,6 +158,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     wants_patio = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -162,6 +166,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     patio_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -169,6 +174,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     wants_pool = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -176,6 +182,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     pool_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -183,6 +190,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     wants_gym = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -190,6 +198,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     gym_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -197,6 +206,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     wants_storage = forms.BooleanField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -204,6 +214,7 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     storage_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -237,6 +248,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     furnished_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -252,6 +264,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     number_of_dogs = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -267,6 +280,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     cat_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -282,6 +296,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     hardwood_floors_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -297,6 +312,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     AC_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
@@ -312,6 +328,7 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     dishwasher_weight = forms.IntegerField(
+        required=False,
         widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
