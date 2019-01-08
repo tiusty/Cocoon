@@ -26,6 +26,11 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+.onboard-wrapper_small {
+    height: auto;
+    padding: 30px 0px;
+}
+
 .itinerary-main-wrapper {
     font-family: 'Montserrat', sans-serif;
 }
@@ -77,6 +82,13 @@
     font-weight: 800;
     font-size: 16px;
     width: 100%;
+}
+
+.itinerary-main-wrapper .itinerary-button:nth-of-type(1) {
+    border: 2px solid var(--teal);
+    margin-bottom: 10px;
+    background: white;
+    color: var(--teal);
 }
 
 .itinerary-date-time-wrapper .calendar-wrapper,
@@ -197,6 +209,25 @@
 p.time-available-error {
     font-size: 11px;
     color: var(--grey) !important;
+}
+
+.time-available-wrapper select#picker_available {
+    display: block;
+    width: 100%;
+    outline: none;
+    border: 1px solid var(--teal);
+    padding: 15px;
+    background: white;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 10px;
+}
+
+.time-available-wrapper select#picker_available option {
+    padding: 15px;
+    background: white;
+    font-weight: 700;
+    color: var(--black);
 }
 
 @media screen and (max-width: 724px) {

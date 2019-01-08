@@ -35,7 +35,7 @@ class Itinerary extends Component {
                     selected_start_time: response.data.selected_start_time,
                     tour_duration_seconds: response.data.tour_duration_seconds,
                     start_times: response.data.start_times,
-                }, () => this.props.setEstimatedDuration(response.data.tour_duration_seconds))
+                }, () => { this.props.setEstimatedDuration(response.data.tour_duration_seconds); this.props.setDefaultTimeAvailable(response.data.tour_duration_seconds);})
             })
     }
 
@@ -51,7 +51,7 @@ class Itinerary extends Component {
         /**
          *  Retrieves all the surveys associated with the user
          */
-        this.updateItinerary()
+        this.updateItinerary();
     }
 
     selectTime = (id) => {
@@ -89,34 +89,6 @@ class Itinerary extends Component {
         }
     }
 
-    renderStartTimes_OLD = () => {
-        if (this.props.showTimes) {
-            if (this.state.start_times.length === 0) {
-                return <p> No start times chosen</p>
-            } else {
-                return (
-                    <div className={"available-times-wrapper"}>
-                        {this.state.start_times.map((timeObject) => {
-                        return (
-                            <div key={timeObject.id}>
-                                <div>
-                                    {moment(timeObject.time).format('MM/DD/YYYY')} @ {moment(timeObject.time).format('HH:mm')}
-                                </div>
-                            {this.props.canSelect ? <button
-                                onClick={() => this.selectTimeButton(timeObject)}>
-                                {this.state.refreshing ? 'Loading' : 'select'}
-                            </button> : null}
-                        </div>
-                        );
-                    })}
-                    </div>
-                )
-            }
-        }
-
-        return null
-    };
-
     renderHomes(homes) {
         if (homes.length <= 0) {
             return <p>There are no homes in this visit list</p>
@@ -131,38 +103,6 @@ class Itinerary extends Component {
             ));
         }
     }
-
-    renderItinerary_OLD = () => {
-        let client_div = <div>Not rendered</div>;
-        if (this.state.client) {
-            client_div = <p>Itinerary: {this.state.client.email}</p>
-        }
-
-        let agent_div = <p>Agent: Not assigned</p>;
-        if (this.state.agent) {
-            agent_div = <p>Agent: {this.state.agent.email}</p>
-        }
-
-        let start_time = <p>Start Time: Not Selected</p>;
-        if (this.state.selected_start_time) {
-            start_time = <p>
-                Start Time:
-                {moment(this.state.selected_start_time).format('MM/DD/YYYY')}
-                &nbsp; @ &nbsp;
-                {moment(this.state.selected_start_time).format('HH:mm')}
-                </p>
-        }
-        return (
-            <div>
-                {client_div}
-                {agent_div}
-                <p>Tour Duration = {this.state.tour_duration_seconds}</p>
-                {start_time}
-                {this.renderStartTimes()}
-                {this.renderHomes(this.state.homes)}
-            </div>
-        );
-    };
 
     renderStartTimes = () => {
         if (this.props.days.length === 0) {
@@ -189,6 +129,22 @@ class Itinerary extends Component {
         }
     }
 
+    renderSavedStartTimes = () => (
+        <div className="side-wrapper-times">
+            {this.state.start_times.map((day, index) => {
+                let endTime = moment(day.date).add(day.time_available_seconds, 'seconds')
+                return (
+                    <div className="time-item" key={index}>
+                        <div className="time-item_date">
+                            <span>{moment(day.date).format('MMMM Do')} @ </span>
+                            <span>{moment(day.date).format('h:mm A')} - {moment(endTime).format('h:mm A')}</span>
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+    );
+
     renderCancelButton = () => {
         if (!this.props.is_canceling) {
             return <p id="cancel-itinerary-btn" onClick={this.props.toggleIsCanceling}>Cancel Itinerary</p>
@@ -211,7 +167,7 @@ class Itinerary extends Component {
                     <p>Your Itinerary</p>
                     <p>Estimated Duration: {this.props.formatTimeAvailable(this.state.tour_duration_seconds)}</p>
                 </div>
-                {this.renderStartTimes()}
+                {!this.props.is_scheduled ? this.renderStartTimes() : this.renderSavedStartTimes()}
             </>
         );
     }

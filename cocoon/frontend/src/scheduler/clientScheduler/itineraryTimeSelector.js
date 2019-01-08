@@ -10,7 +10,7 @@ export default class ItineraryTimeSelector extends Component {
             time: this.props.date,
             hour: undefined,
             minute: undefined,
-            period: undefined
+            period: undefined,
         }
     }
 
@@ -78,6 +78,28 @@ export default class ItineraryTimeSelector extends Component {
         }
     }
 
+    renderAvailableOptions = () => {
+        let hours = Math.floor(this.props.tour_duration_seconds / 3600);
+        let minuteDivisor = this.props.tour_duration_seconds % 3600;
+        let minutes = Math.ceil((Math.floor(minuteDivisor / 60)) / 15) * 15;
+        let minTime = parseFloat(hours + (minutes / 60));
+        let maxTime = parseInt(hours + 6);
+
+        let options = [];
+        for (let i = minTime; i < maxTime; i+= .25) {
+            options.push(i);
+        }
+
+        return (
+            <select id="picker_available" onChange={this.props.setTimeAvailable}>
+                {options.map(o => (
+                    <option value={o}>{o} hours</option>
+                ))}
+            </select>
+        );
+
+    }
+
     render() {
         return (
             <div className="time-wrapper">
@@ -107,21 +129,10 @@ export default class ItineraryTimeSelector extends Component {
                     </div>
                 </div>
 
-                {/*<div className="time-available-wrapper">*/}
-                    {/*<p>I'm free for</p>*/}
-                    {/*<input type="number" value={this.props.totalHours} onChange={this.props.setTimeAvailable} min={Math.floor(this.props.tour_duration_seconds / 3600)} />*/}
-                    {/*<p>hours.</p>*/}
-                    {/*<p className="time-available-error">NOTE: Cannot be shorter than {this.props.formatTimeAvailable(this.props.tour_duration_seconds)}</p>*/}
-                {/*</div>*/}
-
                 <div className="time-available-wrapper">
                     <p>How long are you free for?</p>
-                    <div id="time-picker_available">
-                        <div className="time-picker-up"><i className="material-icons">keyboard_arrow_up</i></div>
-                            <input type="number" readOnly value={2} />
-                        <div className="time-picker-down"><i className="material-icons">keyboard_arrow_down</i></div>
-                    </div>
-                    <p className="time-available-error">NOTE: Cannot be shorter than {this.props.formatTimeAvailable(this.props.tour_duration_seconds)}</p>
+                    {this.renderAvailableOptions()}
+                    {/*<p className="time-available-error">NOTE: Cannot be shorter than {this.props.formatTimeAvailable(this.props.tour_duration_seconds)}</p>*/}
                 </div>
 
             </div>
