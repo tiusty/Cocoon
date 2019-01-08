@@ -145,13 +145,13 @@ class ClientScheduler extends Component {
             let endpoint = scheduler_endpoints['itineraryClient'] + this.state.id + '/';
             axios.put(endpoint, {
                 start_times: this.state.days,
-                is_scheduled: true
+                type: 'start_times',
             })
             .catch(error => console.log('Bad', error))
             .then(response => {
                  console.log(response);
                  this.setState({
-                     is_scheduled: true
+                     // is_scheduled: true
                  })
             })
         }

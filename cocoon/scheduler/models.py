@@ -91,6 +91,21 @@ class ItineraryModel(models.Model):
         return m.hexdigest()
 
     @property
+    def tour_duration_seconds_rounded(self):
+        """
+        Returns the tour duration in number of seconds rounded up to the nearest 15 minutes
+        :return:
+        """
+        # Determines how many seconds over the nearest 15 minutes the tour is
+        sec_over = self.tour_duration_seconds % (15 * 60)
+        # Subtracts out the seconds over and then add 900 which rounds unless the number of seconds
+        #   already equaled
+        if sec_over is 0:
+            return self.tour_duration_seconds
+        else:
+            return self.tour_duration_seconds - sec_over + (15 * 60)
+
+    @property
     def tour_duration_minutes(self):
         """
         Returns the tour duration in number of minutes

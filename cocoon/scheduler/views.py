@@ -1,8 +1,7 @@
 # Django modules
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
@@ -11,6 +10,7 @@ from django.http import Http404
 # App Models
 from .models import ItineraryModel, TimeModel
 from .serializers import ItinerarySerializer
+from .constants import TIME_MODEL_OFFSET
 
 # Cocoon Modules
 from cocoon.userAuth.models import UserProfile
@@ -20,6 +20,8 @@ from cocoon.commutes.constants import CommuteAccuracy
 
 # Python Modules
 import json
+from datetime import timedelta
+import dateutil.parser
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -105,6 +107,34 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return ItineraryModel.objects.filter(client=user_profile.user).filter(finished=False)
+
+    def update(self, request, *args, **kwargs):
+
+        result = False
+
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the itinerary id
+        pk = kwargs.pop('pk', None)
+
+        # Retrieve the associated itinerary with the request
+        itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
+
+        # Case if an agent is trying to schedule an itinerary they already claimed
+        if 'start_times' in self.request.data['type']:
+            start_times = self.request.data['start_times']
+            for start_time in start_times:
+                offset = 0
+                while offset + itinerary.tour_duration_seconds_rounded <= start_time['time_available_seconds']:
+                    dt = dateutil.parser.parse(start_time['date'])
+                    dt += timedelta(seconds=offset)
+                    itinerary.start_times.create(time=dt)
+                    offset += TIME_MODEL_OFFSET*60
+
+            result = True
+
+        return Response({'result': result})
 
 
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
