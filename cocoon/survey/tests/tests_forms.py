@@ -575,7 +575,6 @@ class TestExteriorAmenitiesForm(TestCase):
     def tests_exterior_amenities_valid(self):
         # Arrange
         form_data = {
-            'parking_spot':self.parking_spot,
             'number_of_cars': self.number_of_cars,
             'wants_laundry_in_building': self.wants_laundry_in_building,
             'wants_patio': self.wants_patio,
@@ -613,7 +612,6 @@ class TestExteriorAmenitiesForm(TestCase):
 
         # Act
         result = exterior_amenities_form.is_valid()
-        print(exterior_amenities_form.errors)
 
         # Assert
         self.assertFalse(result)
