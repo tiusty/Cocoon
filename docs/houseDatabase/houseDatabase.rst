@@ -18,6 +18,10 @@ HomeBaseModel:
 
 * This abstract model contains data that every home has. It has the basic information
 
+HomeProviderModel:
+
+* This model keeps track of type of data feed and a timestamp of the most recent update.
+
 InteriorAmenitiesModel:
 
 * This abstract model adds in different interior amenities a home could have
@@ -37,10 +41,6 @@ RentDatabaseModel:
 HousePhotos:
 
 * This model stores the photos associated with a particular home.
-
-MLSManagementModel:
-
-* This model manages the information regarding the MLSpin information.
 
 Scripts
 ~~~~~~~~

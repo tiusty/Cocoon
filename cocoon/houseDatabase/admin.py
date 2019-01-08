@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import RentDatabaseModel, HousePhotos, \
-    HomeTypeModel, MlsManagementModel, YglManagementModel, HomeProviderModel
+    HomeTypeModel, HomeProviderModel
 
 
 class HousePhotoUrlInLine(admin.StackedInline):
@@ -34,14 +34,6 @@ class HouseAdmin(admin.ModelAdmin):
     inlines = [HousePhotoUrlInLine]
 
 
-class MlsManagementModelAdmin(admin.ModelAdmin):
-    pass
-
-
-class YglManagementModelAdmin(admin.ModelAdmin):
-    pass
-
-
 class HomeTypeModelAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Home Type',
@@ -53,13 +45,11 @@ class HomeTypeModelAdmin(admin.ModelAdmin):
 class HomeProviderModelAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Home Type',
-         {'fields': ['provider', ]})
+         {'fields': ['provider', 'last_updated_feed']})
     ]
     list_display = ('provider',)
 
 
 admin.site.register(RentDatabaseModel, HouseAdmin)
 admin.site.register(HomeTypeModel, HomeTypeModelAdmin)
-admin.site.register(MlsManagementModel, MlsManagementModelAdmin)
-admin.site.register(YglManagementModel, YglManagementModelAdmin)
 admin.site.register(HomeProviderModel, HomeProviderModelAdmin)
