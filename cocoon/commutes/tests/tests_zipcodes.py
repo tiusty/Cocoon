@@ -4,10 +4,10 @@ from django.db import IntegrityError
 from django.utils import timezone
 
 # Commutes Imports
-from .models import CommuteType, ZipCodeBase
+from cocoon.commutes.models import CommuteType, ZipCodeBase
 
 # Commutes constants
-from .constants import ZIP_CODE_TIMEDELTA_VALUE
+from cocoon.commutes.constants import ZIP_CODE_TIMEDELTA_VALUE
 
 
 class ZipCodeTest(TestCase):
