@@ -113,6 +113,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
                 s += str(item[1] / 60 + 20)
                 s += "\n"
 
+            s.encode('utf-8')
+
             itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
             for home in homes_list:
                 itinerary_model.homes.add(home)
