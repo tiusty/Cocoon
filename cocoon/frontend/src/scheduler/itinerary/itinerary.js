@@ -33,9 +33,9 @@ class Itinerary extends Component {
                     client: response.data.client,
                     homes: response.data.homes,
                     selected_start_time: response.data.selected_start_time,
-                    tour_duration_seconds: response.data.tour_duration_seconds,
+                    tour_duration_seconds: response.data.tour_duration_seconds_rounded,
                     start_times: response.data.start_times,
-                }, () => { this.props.setEstimatedDuration(response.data.tour_duration_seconds); this.props.setDefaultTimeAvailable(response.data.tour_duration_seconds);})
+                }, () => { this.props.setEstimatedDuration(response.data.tour_duration_seconds_rounded); this.props.setDefaultTimeAvailable(response.data.tour_duration_seconds);})
             })
     }
 
