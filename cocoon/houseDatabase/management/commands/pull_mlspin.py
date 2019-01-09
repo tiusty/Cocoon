@@ -16,29 +16,38 @@ class Command(BaseCommand):
     help = 'Ingests IDX feed into database'
 
     def add_arguments(self, parser):
-        # add args here
-        return
+        # Argument allows a specified number of homes to be pulled,
+        #   If not specified then all homes are pulled.
+        parser.add_argument(
+            '--num_homes',
+            action='store',
+            dest='num_homes',
+            help='Number of homes to pull, leave blank for all',
+            type=int)
 
     def handle(self, *args, **options):
         """
         Pulls all the homes for all the providers
         """
+        num_homes = -1
+        if options['num_homes']:
+            num_homes = options['num_homes']
 
         update_timestamp = timezone.now()
 
         # Pull the homes
-        self.pull_mlspin_homes(update_timestamp)
+        self.pull_mlspin_homes(update_timestamp, num_homes)
 
         # Pull the images
         self.pull_mlspin_images(update_timestamp)
 
     @staticmethod
-    def pull_mlspin_homes(timestamp):
+    def pull_mlspin_homes(timestamp, num_homes):
         """
         Pulls the homes from MLSpin
         """
         # Pull the MLS homes
-        mlspin_request = MlspinRequester(timestamp)
+        mlspin_request = MlspinRequester(timestamp, num_homes=num_homes)
         mlspin_request.parse_idx_feed()
 
     @staticmethod

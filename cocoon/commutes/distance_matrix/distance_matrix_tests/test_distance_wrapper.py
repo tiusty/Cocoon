@@ -1,5 +1,5 @@
 from django.test import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from ..distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
     Over_Query_Limit_Exception, Max_Elements_Exceeded_Exception, Unknown_Error_Exception, Zero_Results_Exception, \
     distance_matrix, DistanceWrapper
@@ -204,7 +204,9 @@ class TestDistanceWrapper(TestCase):
             self.assertEqual(duration[1][0], 2336)
             self.assertEqual(duration[1][1], 41838)
 
-    def test_determine_departure_time_driving_traffic(self):
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_without_traffic')
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_with_traffic')
+    def test_determine_departure_time_driving_traffic(self, mock_with, mock_without):
         """
         Tests that if the commute type is driving and they want traffic then the departure time
             is with traffic
@@ -215,12 +217,15 @@ class TestDistanceWrapper(TestCase):
         distance_wrapper = DistanceWrapper()
 
         # Act
-        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+        distance_wrapper.determine_departure_time(mode, with_traffic)
 
         # Assert
-        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+        mock_with.assert_called_once_with()
+        mock_without.assert_not_called()
 
-    def test_determine_departure_time_driving_no_traffic(self):
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_without_traffic')
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_with_traffic')
+    def test_determine_departure_time_driving_no_traffic(self, mock_with, mock_without):
         """
         Tests that if the commute type is driving and they don't want traffic then the departure time
             is with traffic
@@ -231,12 +236,15 @@ class TestDistanceWrapper(TestCase):
         distance_wrapper = DistanceWrapper()
 
         # Act
-        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+        distance_wrapper.determine_departure_time(mode, with_traffic)
 
         # Assert
-        self.assertEqual(result, COMMUTE_TIME_WITHOUT_TRAFFIC)
+        mock_with.assert_not_called()
+        mock_without.assert_called_once_with()
 
-    def test_determine_departure_time_driving_transit_with_traffic(self):
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_without_traffic')
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_with_traffic')
+    def test_determine_departure_time_driving_transit_with_traffic(self, mock_with, mock_without):
         """
         Tests that if the commute type is transit then the departure time
             is with traffic even if with traffic is specified
@@ -247,12 +255,15 @@ class TestDistanceWrapper(TestCase):
         distance_wrapper = DistanceWrapper()
 
         # Act
-        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+        distance_wrapper.determine_departure_time(mode, with_traffic)
 
         # Assert
-        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+        mock_with.assert_called_once_with()
+        mock_without.assert_not_called()
 
-    def test_determine_departure_time_driving_transit_with_no_traffic(self):
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_without_traffic')
+    @patch('cocoon.commutes.distance_matrix.distance_wrapper.compute_departure_time_with_traffic')
+    def test_determine_departure_time_driving_transit_with_no_traffic(self, mock_with, mock_without):
         """
         Tests that if the commute type is transit then the departure time
             is with traffic even if with no traffic is specified
@@ -263,10 +274,11 @@ class TestDistanceWrapper(TestCase):
         distance_wrapper = DistanceWrapper()
 
         # Act
-        result = distance_wrapper.determine_departure_time(mode, with_traffic)
+        distance_wrapper.determine_departure_time(mode, with_traffic)
 
         # Assert
-        self.assertEqual(result, COMMUTE_TIME_WITH_TRAFFIC)
+        mock_with.assert_called_once_with()
+        mock_without.assert_not_called()
 
     def test_interpret_distance_matrix_response_driving_traffic(self):
         """

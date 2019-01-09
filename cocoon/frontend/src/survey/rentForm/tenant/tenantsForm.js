@@ -76,7 +76,7 @@ export default class TenantsForm extends Component {
                     document.querySelector(`#tenants-${id}-other-occupation-error`).innerText = `Select a reason why ${this.props.tenants[id].first_name} is not working or studying.`;
                 }
                 valid = false;
-            } else if (this.props.tenants[id].other_occupation_reason === 'unemployed' && !this.props.tenants.unemployed_follow_up) {
+            } else if (this.props.tenants[id].other_occupation_reason === 'unemployed' && !this.props.tenants[id].unemployed_follow_up) {
                 if (show_errors) {
                     document.querySelector(`#tenants-${id}-unemployed-occupation-error`).style.display = 'block';
                     document.querySelector(`#tenants-${id}-unemployed-occupation-error`).innerText = `Select if ${this.props.tenants[id].first_name} will be receiving assistance from a cosigner.`;
