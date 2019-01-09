@@ -76,13 +76,14 @@ class TestAddingHomes(TestCase):
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
         survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
         survey.home_type.add(home_type)
-        mls_provider.last_updated_feed = timezone.now()
-        ygl_provider.last_updated_feed = timezone.now()
 
+        current_time = timezone.now()
+        mls_provider.last_updated_feed = current_time
+        ygl_provider.last_updated_feed = current_time
 
         # Create homes
-        offmarket_home = self.create_home(home_type, mls_provider, price=2000, last_updated=timezone.now() - timezone.timedelta(days=1))
-        onmarket_home = self.create_home(home_type, ygl_provider, price=2500, last_updated=timezone.now())
+        offmarket_home = self.create_home(home_type, mls_provider, price=2000, last_updated=current_time - timezone.timedelta(days=1))
+        onmarket_home = self.create_home(home_type, ygl_provider, price=2500, last_updated=current_time)
 
         # Act
         base_algorithm = CocoonAlgorithm()
