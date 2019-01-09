@@ -106,9 +106,9 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
             # Add 20 minutes to each home
-            s = ""
+            s = b""
             for item in interpreted_route:
-                line = "{0} {1}\n".format(item[0].full_address, item[1]/60 + 20)
+                line = "{0} {1}\n".format(item[0].full_address, item[1]/60 + 20).encode('utf-8')
                 s += line
 
             itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
