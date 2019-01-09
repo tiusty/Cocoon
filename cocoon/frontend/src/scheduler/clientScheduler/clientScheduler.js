@@ -149,10 +149,13 @@ class ClientScheduler extends Component {
             })
             .catch(error => console.log('Bad', error))
             .then(response => {
-                 console.log(response);
-                 this.setState({
-                     // is_scheduled: true
-                 })
+                 if (response.data.result) {
+                     this.setState({
+                         is_scheduled: true
+                     })
+                 } else {
+                     // Some error happens
+                 }
             })
         }
     }

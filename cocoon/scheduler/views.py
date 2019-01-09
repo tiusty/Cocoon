@@ -124,14 +124,28 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
         # Case if an agent is trying to schedule an itinerary they already claimed
         if 'start_times' in self.request.data['type']:
             start_times = self.request.data['start_times']
+
+            # Loop through all the start_times so they can all be added
             for start_time in start_times:
+                # offset basically goes through each start time and the time free for each date and adds
+                #   all the available start times.
                 offset = 0
+
+                # Available start times are valid if the offset and the amount of time the tour will take is
+                #   less than then the amount of time the user said they would be free
                 while offset + itinerary.tour_duration_seconds_rounded <= start_time['time_available_seconds']:
                     dt = dateutil.parser.parse(start_time['date'])
                     dt += timedelta(seconds=offset)
-                    itinerary.start_times.create(time=dt)
+                    # Make sure that the seconds and miro-seconds are zero because otherwise
+                    #   the searching for equal time models will never work
+                    dt = dt.replace(second=0, microsecond=0)
+
+                    # only add the time if it doesn't already exist
+                    if not TimeModel.objects.filter(time=dt).exists():
+                        itinerary.start_times.create(time=dt)
                     offset += TIME_MODEL_OFFSET*60
 
+            # if there were no errors then the adding times finished successfully
             result = True
 
         return Response({'result': result})
