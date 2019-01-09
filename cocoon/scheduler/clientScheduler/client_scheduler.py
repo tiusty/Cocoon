@@ -108,12 +108,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
             # Add 20 minutes to each home
             s = ""
             for item in interpreted_route:
-                s += item[0].full_address
-                s += " "
-                s += str(item[1] / 60 + 20)
-                s += "\n"
-
-            s.encode('utf-8')
+                line = "{0} {1}\n".format(item[0].full_address, item[1]/60 + 20).encode('utf-8')
+                s += line
 
             itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
             for home in homes_list:
