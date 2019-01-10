@@ -7,11 +7,8 @@ import 'react-day-picker/lib/style.css';
 
 import { compose, withProps } from "recompose";
 import {
-  withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker,
-    Polygon
 } from "react-google-maps";
 import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
 
@@ -25,6 +22,7 @@ export default class GeneralForm extends Component {
             max: 3000,
         },
         polygons: [],
+        polygon_filter: 0,
         errorMessages: {
             name_error_undefined: 'You must enter the names of the tenants.',
             name_error_format: 'Enter first and last name separated by a space.',
@@ -415,30 +413,86 @@ export default class GeneralForm extends Component {
     }
 
     renderGoogleMaps() {
+        if (this.state.polygon_filter === 1) {
+            return (
+                <>
+                    <button onClick={this.deleteAllPolygons}>Delete all</button>
+                    <MyMapComponent
+                        onCompletePolygon={this.polygonComplete}
+                    />
+                </>
+            );
+
+        } else {
+            return null;
+        }
+
+    }
+
+    handleInputChange = (e, type) => {
+        /**
+         * Handles input that goes into the general form
+         *  i.e generalInfo dictionary
+         */
+        const {name, value} = e.target;
+        let data = "";
+        if (type === 'number') {
+            data = parseInt(value);
+        } else {
+            data = value
+        }
+
+        this.setState({
+                [name]: data,
+        })
+    };
+
+    renderFilterQuestion() {
         return (
-            <>
-                <button onClick={this.deleteAllPolygons}>Delete all</button>
-                <MyMapComponent
-                    isMarkerShown={false}
-                    onCompletePolygon={this.polygonComplete}
-                />
-            </>
+            <div className="survey-question" onChange={(e) => this.handleInputChange(e, 'number')}>
+                <h2>Do you want know <span>areas</span> you would like to live?</h2>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="polygon_filter" value="1" checked={this.state.polygon_filter === 1}
+                           onChange={() => {
+                           }}/>
+                    <div>Draw on map</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="polygon_filter" value="0" checked={this.state.polygon_filter === 0} onChange={() => {}} />
+                    <div>Don't filter</div>
+                </label>
+            </div>
         );
     }
 
+    renderFilterZones() {
+        return (
+            <>
+                {this.renderFilterQuestion()}
+                {this.renderGoogleMaps()}
+            </>
+        );
+
+    }
+
     deleteAllPolygons = () => {
-        console.log('on click')
-        let polygons = [...this.state.polygons]
+        /**
+         * Deletes all the polygons on the map and deletes it from the state
+         */
+        let polygons = [...this.state.polygons];
         for(let i=0; i<polygons.length; i++) {
             polygons[i].ref.setMap(null)
         }
         this.setState({
             polygons: [],
         })
-    }
+    };
 
     polygonComplete = (p) => {
-        let polygons = [...this.state.polygons]
+        /**
+         * Adds the polygon to the state when it is completed
+         */
+        let polygons = [...this.state.polygons];
         let polygon = {};
         let verticies = [];
         for (let i = 0; i < p.getPath().length; i++) {
@@ -446,17 +500,16 @@ export default class GeneralForm extends Component {
         }
         polygon.ref = p;
         polygon.vertices = verticies;
-        polygons.push(polygon)
+        polygons.push(polygon);
         this.setState({
             polygons
         })
-    }
+    };
 
 
     render() {
         return (
             <>
-                {this.renderGoogleMaps()}
                 {this.renderNumberOfPeopleQuestion()}
                 {this.renderNameQuestion()}
                 {this.renderHomeTypeQuestion()}
@@ -464,6 +517,7 @@ export default class GeneralForm extends Component {
                 {this.renderPriceWeightQuestion()}
                 {this.renderMoveAsapQuestion()}
                 {this.renderDatePickingQuestion()}
+                {this.renderFilterZones()}
                 {this.renderUrgencyQuestion()}
                 {this.renderBedroomQuestion()}
 
@@ -475,58 +529,40 @@ export default class GeneralForm extends Component {
     }
 }
 
-const coords = [
-
-    {lat: 42.3606, lng: -71.0489},
-    {lat: 42.9590, lng: -71.2489},
-    {lat: 42.3201, lng: -70.5089},
-]
-
 const MyMapComponent = compose(
-  withProps({
-    /**
-     * Note: create and replace your own key in the Google console.
-     * https://console.developers.google.com/apis/dashboard
-     * The key "AIzaSyBkNaAGLEVq0YLQMi-PYEMabFeREadYe1Q" can be ONLY used in this sandbox (no forked).
-     */
-    googleMapURL:
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing",
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
-    mapElement: <div style={{ height: `100%` }} />
-  }),
-  withScriptjs,
-  withGoogleMap
+    withProps({
+        // googleMapURL:
+        //     "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing",
+        loadingElement: <div style={{height: `100%`}}/>,
+        containerElement: <div style={{height: `400px`}}/>,
+        mapElement: <div style={{height: `100%`}}/>
+    }),
+    // withScriptjs,
+    withGoogleMap
 )(props => (
-  <GoogleMap defaultZoom={8} defaultCenter={{ lat: 42.3601, lng: -71.0589 }}>
-    {props.isMarkerShown && (
-      <Marker position={{ lat: 42.3601, lng: -71.0589 }} />
-    )}
-    {/*<Polygon*/}
-        {/*path={coords}*/}
-    {/*/>*/}
+    <GoogleMap defaultZoom={8} defaultCenter={{lat: 42.3601, lng: -71.0589}}>
         <DrawingManager
-      defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
-      defaultOptions={{
-        drawingControl: true,
-          drawingControlOptions: {
-              position: google.maps.ControlPosition.TOP_CENTER,
-              drawingModes: [
-                  google.maps.drawing.OverlayType.POLYGON,
-              ],
-          },
-          polygonOptions: {
-              fillColor: `#ffff00`,
-              fillOpacity: 1,
-              strokeWeight: 5,
-              clickable: true,
-              editable: true,
-              zIndex: 1,
-          },
-      }}
-      onPolygonComplete={props.onCompletePolygon}
+            defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
+            defaultOptions={{
+                drawingControl: true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.POLYGON,
+                    ],
+                },
+                polygonOptions: {
+                    fillColor: `#ffff00`,
+                    fillOpacity: 1,
+                    strokeWeight: 5,
+                    clickable: true,
+                    editable: true,
+                    zIndex: 1,
+                },
+            }}
+            onPolygonComplete={props.onCompletePolygon}
         />
 
-  </GoogleMap>
+    </GoogleMap>
 ));
 

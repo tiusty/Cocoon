@@ -6,6 +6,8 @@
     <!-- JQuery UI style sheet, mostly used for slider ui -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{% static 'survey/rentingSurvey.css' %}">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing,places"
+            async defer></script>
 {% endblock %}
 
 {% block nav-survey %}<li class="active"><a>Survey</a></li>{% endblock %}
@@ -20,8 +22,6 @@
     <script src="{% static 'cocoon/main/ajax/getCookie.js' %}"></script>
     <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
     <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&libraries=places"
-        async defer></script>
     {% include 'frontend/react_base.html' %}
     <script src="{% static 'frontend/js/survey.bundle.js' %}"></script>
 {% endblock %}
