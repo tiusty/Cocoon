@@ -505,17 +505,17 @@ export default class GeneralForm extends Component {
 }
 
 const MyMapComponent = compose(
+    /**
+     * Note: This needs the google api key in the head of the script
+     */
     withProps({
-        // googleMapURL:
-        //     "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing",
         loadingElement: <div style={{height: `100%`}}/>,
         containerElement: <div style={{height: `400px`}}/>,
         mapElement: <div style={{height: `100%`}}/>
     }),
-    // withScriptjs,
     withGoogleMap
 )(props => (
-    <GoogleMap defaultZoom={8} defaultCenter={{lat: 42.3601, lng: -71.0589}}>
+    <GoogleMap defaultZoom={11} defaultCenter={{lat: 42.3601, lng: -71.0589}}>
         <DrawingManager
             defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
             defaultOptions={{
@@ -527,11 +527,11 @@ const MyMapComponent = compose(
                     ],
                 },
                 polygonOptions: {
-                    fillColor: `#ffff00`,
-                    fillOpacity: 1,
+                    fillColor: '#008080',
+                    strokeColor: '#a13718',
+                    fillOpacity: .5,
+                    strokeOpacity: .8,
                     strokeWeight: 5,
-                    clickable: true,
-                    editable: true,
                     zIndex: 1,
                 },
             }}
