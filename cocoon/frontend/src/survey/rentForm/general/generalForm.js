@@ -412,6 +412,11 @@ export default class GeneralForm extends Component {
     }
 
     renderGoogleMaps() {
+        /**
+         * Renders the correct google mpa depending on the type of filtering the user wants
+         */
+
+        // 1 is draw on map
         if (this.state.polygon_filter === 1) {
             return (
                 <>
@@ -422,6 +427,7 @@ export default class GeneralForm extends Component {
                 </>
             );
 
+        // If the user does not want to draw then make the component null
         } else {
             return null;
         }
@@ -457,7 +463,7 @@ export default class GeneralForm extends Component {
                     <div>Draw on map</div>
                 </label>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name="polygon_filter" value="0" checked={this.state.polygon_filter === 0} onChange={() => {}} />
+                    <input type="radio" name="polygon_filter" value="0" checked={this.state.polygon_filter === 0} onChange={() => {this.props.onDeleteAllPolygons()}} />
                     <div>Don't filter</div>
                 </label>
             </div>

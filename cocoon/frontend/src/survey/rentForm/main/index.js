@@ -435,11 +435,14 @@ export default class RentForm extends Component {
         /**
          * Deletes all the polygons on the map and deletes it from the state
          */
-        console.log('pressed')
         let polygons = [...this.state.generalInfo.polygons];
+
+        // Sets all the polygon references to null to remove them from the map
         for(let i=0; i<polygons.length; i++) {
             polygons[i].ref.setMap(null)
         }
+
+        // Removes the polygons from the state since we deleted them
         this.setState({
             generalInfo: {
                 ...this.state.generalInfo,
@@ -455,12 +458,21 @@ export default class RentForm extends Component {
         let polygons = [...this.state.generalInfo.polygons];
         let polygon = {};
         let verticies = [];
+
+        // Push all the vertices to an array in order
         for (let i = 0; i < p.getPath().length; i++) {
             verticies.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
         }
+
+        // Store the reference so we can remove the polygon from the map later
         polygon.ref = p;
+        // store the vertices
         polygon.vertices = verticies;
+
+        // Add the new polygon to the list
         polygons.push(polygon);
+
+        // Now update the state to store the new polygon
         this.setState({
             generalInfo: {
                 ...this.state.generalInfo,
