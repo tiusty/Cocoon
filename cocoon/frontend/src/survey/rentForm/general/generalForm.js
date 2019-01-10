@@ -416,10 +416,10 @@ export default class GeneralForm extends Component {
         if (this.state.polygon_filter === 1) {
             return (
                 <>
-                    <button onClick={this.deleteAllPolygons}>Delete all</button>
                     <MyMapComponent
                         onCompletePolygon={this.polygonComplete}
                     />
+                    <button className="survey-btn filter-delete-button" onClick={this.deleteAllPolygons}>Delete shapes</button>
                 </>
             );
 
@@ -450,7 +450,7 @@ export default class GeneralForm extends Component {
     renderFilterQuestion() {
         return (
             <div className="survey-question" onChange={(e) => this.handleInputChange(e, 'number')}>
-                <h2>Do you want know <span>areas</span> you would like to live?</h2>
+                <h2>Do you know <span>areas</span> you would like to live?</h2>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="polygon_filter" value="1" checked={this.state.polygon_filter === 1}
                            onChange={() => {
