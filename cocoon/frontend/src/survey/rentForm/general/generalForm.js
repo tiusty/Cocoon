@@ -409,33 +409,47 @@ export default class GeneralForm extends Component {
          * Handles pressing the next button to make sure the section is valid
          *  before allowing the user to continue
          */
-        if(this.handleValidation()) {
+        if (this.handleValidation()) {
             this.props.handleNextStep(e)
         }
     }
 
     renderGoogleMaps() {
         return (
-            <MyMapComponent
-                isMarkerShown={false}
-                onCompletePolygon={this.polygonComplete}
-            />
+            <>
+                <button onClick={this.deleteAllPolygons}>Delete all</button>
+                <MyMapComponent
+                    isMarkerShown={false}
+                    onCompletePolygon={this.polygonComplete}
+                />
+            </>
         );
+    }
+
+    deleteAllPolygons = () => {
+        console.log('on click')
+        let polygons = [...this.state.polygons]
+        for(let i=0; i<polygons.length; i++) {
+            polygons[i].ref.setMap(null)
+        }
+        this.setState({
+            polygons: [],
+        })
     }
 
     polygonComplete = (p) => {
         let polygons = [...this.state.polygons]
-        let polygon = [];
-        for(let i=0; i<p.getPath().length; i++) {
-            polygon.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
+        let polygon = {};
+        let verticies = [];
+        for (let i = 0; i < p.getPath().length; i++) {
+            verticies.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
         }
+        polygon.ref = p;
+        polygon.vertices = verticies;
         polygons.push(polygon)
         this.setState({
             polygons
         })
-        console.log(p.getPath())
-        console.log(p.getPath().j[0].lat())
-        console.log(p.getPath().j[0].lng())
     }
 
 
@@ -499,16 +513,7 @@ const MyMapComponent = compose(
               position: google.maps.ControlPosition.TOP_CENTER,
               drawingModes: [
                   google.maps.drawing.OverlayType.POLYGON,
-                  google.maps.drawing.OverlayType.RECTANGLE,
               ],
-          },
-          rectangleOptions: {
-              fillColor: `#ffff00`,
-              fillOpacity: 1,
-              strokeWeight: 5,
-              clickable: true,
-              editable: true,
-              zIndex: 1,
           },
           polygonOptions: {
               fillColor: `#ffff00`,
