@@ -17,9 +17,13 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
         (None, {'fields': ('name', 'user_profile')}),
         ('Survey', {'fields': ('home_type', 'desired_price', 'max_price', 'min_bathrooms',
                                'max_bathrooms', )}),
-        ('Exterior Amenities', {'fields': ('parking_spot', 'wants_laundry_in_building', 'wants_patio', 'wants_pool', 'wants_gym', 'wants_storage',)}),
+        ('Exterior Amenities', {'fields': ('parking_spot', 'wants_laundry_in_building', 'wants_patio',
+                                           'patio_weight', 'wants_pool','pool_weight', 'wants_gym', 'gym_weight',
+                                           'wants_storage','storage_weight',)}),
         ('Interior Amenities', {'fields': (
-        'wants_laundry_in_unit', 'wants_furnished', 'wants_dogs', 'wants_cats', 'wants_hardwood_floors', 'wants_AC',)}),
+        'wants_laundry_in_unit', 'wants_furnished', 'furnished_weight', 'wants_dogs','number_of_dogs',
+        'service_dogs', 'dog_size', 'breed_of_dogs', 'wants_cats', 'cat_weight',
+        'wants_hardwood_floors','hardwood_floors_weight', 'wants_AC','AC_weight', 'wants_dishwasher', 'dishwasher_weight',)}),
 
         ('Created', {'fields': ('created', 'id', 'url')}),
         ('Homes', {'fields': ('favorites', 'visit_list',)}),

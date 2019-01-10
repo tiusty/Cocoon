@@ -253,6 +253,30 @@ class AmenitiesForm(ModelForm):
             }),
     )
 
+    service_dogs = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    dog_size = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    breed_of_dogs = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
     number_of_dogs = forms.IntegerField(
         required=False,
         widget=forms.HiddenInput(
@@ -331,7 +355,8 @@ class AmenitiesForm(ModelForm):
         fields = ["parking_spot", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight',
-                  "wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs",
+                  "service_dogs", "breed_of_dogs", "dog_size", "number_of_dogs",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"
                   ]
@@ -361,7 +386,9 @@ class RentSurveyForm(AmenitiesForm, PriceInformationForm, HomeInformationForm):
                   "max_price", "desired_price", "price_weight",
                   "parking_spot", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
-                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
+                  "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "service_dogs", "breed_of_dogs", "dog_size",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
 
