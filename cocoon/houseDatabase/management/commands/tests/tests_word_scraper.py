@@ -1,4 +1,4 @@
-from cocoon.homeDataNLPModel.word_scraper import WordScraper
+from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
 from django.test import TestCase
 
 class TestWordScraper(TestCase):

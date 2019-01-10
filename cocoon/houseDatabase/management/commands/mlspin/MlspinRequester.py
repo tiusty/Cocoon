@@ -10,7 +10,7 @@ from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
-from cocoon.homeDataNLPModel.word_scraper import WordScraper
+from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
 # Load the logger
 import logging
 logger = logging.getLogger(__name__)
