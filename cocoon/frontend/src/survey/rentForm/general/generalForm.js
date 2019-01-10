@@ -423,7 +423,7 @@ export default class GeneralForm extends Component {
                     <MyMapComponent
                         onCompletePolygon={this.props.onCompletePolygon}
                     />
-                    <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete shapes</button>
+                    <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete areas</button>
                 </>
             );
 
