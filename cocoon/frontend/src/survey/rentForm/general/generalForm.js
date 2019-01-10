@@ -455,7 +455,7 @@ export default class GeneralForm extends Component {
     renderFilterQuestion() {
         return (
             <div className="survey-question" onChange={(e) => this.handleInputChange(e, 'number')}>
-                <h2>Do you know <span>areas</span> you would like to live?</h2>
+                <h2>Do you have <span>areas</span> where you would like to live?</h2>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="polygon_filter" value="1" checked={this.state.polygon_filter === 1}
                            onChange={() => {
@@ -464,7 +464,7 @@ export default class GeneralForm extends Component {
                 </label>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="polygon_filter" value="0" checked={this.state.polygon_filter === 0} onChange={() => {this.props.onDeleteAllPolygons()}} />
-                    <div>Don't filter</div>
+                    <div>I am looking everywhere</div>
                 </label>
             </div>
         );
