@@ -53,6 +53,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_verified = models.BooleanField(default=True)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
+    phone_number = models.CharField(blank=True, max_length=200)
 
     objects = MyUserManager()
     USERNAME_FIELD = 'email'
