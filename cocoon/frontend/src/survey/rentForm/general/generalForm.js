@@ -423,7 +423,7 @@ export default class GeneralForm extends Component {
                     <MyMapComponent
                         onCompletePolygon={this.props.onCompletePolygon}
                     />
-                    <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete areas</button>
+                    <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete all areas</button>
                 </>
             );
 
@@ -453,6 +453,9 @@ export default class GeneralForm extends Component {
     };
 
     renderFilterQuestion() {
+        /**
+         * Renders the question for the map filter
+         */
         return (
             <div className="survey-question" onChange={(e) => this.handleInputChange(e, 'number')}>
                 <h2>Do you have <span>areas</span> where you would like to live?</h2>
