@@ -5,6 +5,16 @@ import InputRange from 'react-input-range';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 
+import { compose, withProps } from "recompose";
+import {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+    Polygon
+} from "react-google-maps";
+import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
+
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
 export default class GeneralForm extends Component {
@@ -14,6 +24,7 @@ export default class GeneralForm extends Component {
             min: 2000,
             max: 3000,
         },
+        polygons: [],
         errorMessages: {
             name_error_undefined: 'You must enter the names of the tenants.',
             name_error_format: 'Enter first and last name separated by a space.',
@@ -403,9 +414,35 @@ export default class GeneralForm extends Component {
         }
     }
 
+    renderGoogleMaps() {
+        return (
+            <MyMapComponent
+                isMarkerShown={false}
+                onCompletePolygon={this.polygonComplete}
+            />
+        );
+    }
+
+    polygonComplete = (p) => {
+        let polygons = [...this.state.polygons]
+        let polygon = [];
+        for(let i=0; i<p.getPath().length; i++) {
+            polygon.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
+        }
+        polygons.push(polygon)
+        this.setState({
+            polygons
+        })
+        console.log(p.getPath())
+        console.log(p.getPath().j[0].lat())
+        console.log(p.getPath().j[0].lng())
+    }
+
+
     render() {
         return (
             <>
+                {this.renderGoogleMaps()}
                 {this.renderNumberOfPeopleQuestion()}
                 {this.renderNameQuestion()}
                 {this.renderHomeTypeQuestion()}
@@ -423,3 +460,68 @@ export default class GeneralForm extends Component {
         );
     }
 }
+
+const coords = [
+
+    {lat: 42.3606, lng: -71.0489},
+    {lat: 42.9590, lng: -71.2489},
+    {lat: 42.3201, lng: -70.5089},
+]
+
+const MyMapComponent = compose(
+  withProps({
+    /**
+     * Note: create and replace your own key in the Google console.
+     * https://console.developers.google.com/apis/dashboard
+     * The key "AIzaSyBkNaAGLEVq0YLQMi-PYEMabFeREadYe1Q" can be ONLY used in this sandbox (no forked).
+     */
+    googleMapURL:
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing",
+    loadingElement: <div style={{ height: `100%` }} />,
+    containerElement: <div style={{ height: `400px` }} />,
+    mapElement: <div style={{ height: `100%` }} />
+  }),
+  withScriptjs,
+  withGoogleMap
+)(props => (
+  <GoogleMap defaultZoom={8} defaultCenter={{ lat: 42.3601, lng: -71.0589 }}>
+    {props.isMarkerShown && (
+      <Marker position={{ lat: 42.3601, lng: -71.0589 }} />
+    )}
+    {/*<Polygon*/}
+        {/*path={coords}*/}
+    {/*/>*/}
+        <DrawingManager
+      defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
+      defaultOptions={{
+        drawingControl: true,
+          drawingControlOptions: {
+              position: google.maps.ControlPosition.TOP_CENTER,
+              drawingModes: [
+                  google.maps.drawing.OverlayType.POLYGON,
+                  google.maps.drawing.OverlayType.RECTANGLE,
+              ],
+          },
+          rectangleOptions: {
+              fillColor: `#ffff00`,
+              fillOpacity: 1,
+              strokeWeight: 5,
+              clickable: true,
+              editable: true,
+              zIndex: 1,
+          },
+          polygonOptions: {
+              fillColor: `#ffff00`,
+              fillOpacity: 1,
+              strokeWeight: 5,
+              clickable: true,
+              editable: true,
+              zIndex: 1,
+          },
+      }}
+      onPolygonComplete={props.onCompletePolygon}
+        />
+
+  </GoogleMap>
+));
+
