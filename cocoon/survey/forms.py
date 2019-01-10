@@ -5,7 +5,7 @@ from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
-    PriceInformationModel, ExteriorAmenitiesModel, InteriorAmenitiesModel, DestinationsModel, TenantModel, \
+    PriceInformationModel, AmenitiesModel, DestinationsModel, TenantModel, \
     TenantPersonalInformationModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
@@ -126,7 +126,7 @@ class PriceInformationForm(ModelForm):
         fields = '__all__'
 
 
-class ExteriorAmenitiesForm(ModelForm):
+class AmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the BuildingExteriorAmenitiesModel Model
     """
@@ -221,16 +221,6 @@ class ExteriorAmenitiesForm(ModelForm):
             }),
     )
 
-    class Meta:
-        model = ExteriorAmenitiesModel
-        fields = ["parking_spot", 'wants_laundry_in_building', 'number_of_cars',
-                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
-                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight']
-
-class InteriorAmenitiesForm(ModelForm):
-    """
-    Class stores all the form fields for the BuildingInteriorAmenitiesModel Model
-    """
     wants_laundry_in_unit = forms.BooleanField(
         required=False,
         widget=forms.HiddenInput(
@@ -335,14 +325,21 @@ class InteriorAmenitiesForm(ModelForm):
             }),
     )
 
+
     class Meta:
-        model = InteriorAmenitiesModel
-        fields = ["wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+        model = AmenitiesModel
+        fields = ["parking_spot", 'wants_laundry_in_building', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight',
+                  "wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
-                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"
+                  ]
 
 
-class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm, HomeInformationForm):
+
+
+class RentSurveyForm(AmenitiesForm, PriceInformationForm, HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -362,10 +359,14 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm, HomeInformatio
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "number_of_tenants"]
+                  "parking_spot", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
 
 
-class RentSurveyFormMini(ExteriorAmenitiesForm,  PriceInformationForm,
+class RentSurveyFormMini(AmenitiesForm,  PriceInformationForm,
                          HomeInformationForm):
     """
     RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
@@ -411,7 +412,13 @@ class RentSurveyFormMini(ExteriorAmenitiesForm,  PriceInformationForm,
         model = RentingSurveyModel
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "name"]
+                   "name", "num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                  "max_price", "desired_price", "price_weight",
+                  "parking_spot", "number_of_tenants", "parking_spot", 'wants_laundry_in_building', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
 
 
 class DestinationForm(ModelForm):

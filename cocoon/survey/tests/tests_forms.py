@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    ExteriorAmenitiesForm, InteriorAmenitiesForm, RentSurveyFormMini
+    AmenitiesForm, RentSurveyFormMini
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
@@ -557,7 +557,7 @@ class TestPriceInformationForm(TestCase):
         self.assertFalse(result)
 
 
-class TestExteriorAmenitiesForm(TestCase):
+class TestAmenitiesForm(TestCase):
 
     def setUp(self):
         self.parking_spot = 0
@@ -571,6 +571,20 @@ class TestExteriorAmenitiesForm(TestCase):
         self.gym_weight = 0
         self.wants_storage = False
         self.storage_weight = 0
+
+        self.wants_laundry_in_unit = False
+        self.wants_furnished = False
+        self.furnished_weight = 0
+        self.wants_dogs = False
+        self.number_of_dogs = 0
+        self.wants_cats = False
+        self.cat_weight = 0
+        self.wants_hardwood_floors = False
+        self.hardwood_floors_weight = 0
+        self.wants_AC = False
+        self.AC_weight = 0
+        self.wants_dishwasher = False
+        self.dishwasher_weight = 0
 
     def tests_exterior_amenities_valid(self):
         # Arrange
@@ -586,7 +600,7 @@ class TestExteriorAmenitiesForm(TestCase):
             'wants_storage': self.wants_storage,
             'storage_weight': self.storage_weight
         }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+        exterior_amenities_form = AmenitiesForm(data=form_data)
 
         # Act
         result = exterior_amenities_form.is_valid()
@@ -608,30 +622,13 @@ class TestExteriorAmenitiesForm(TestCase):
             'wants_storage':self.wants_storage,
             'storage_weight':self.storage_weight
         }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
+        exterior_amenities_form = AmenitiesForm(data=form_data)
 
         # Act
         result = exterior_amenities_form.is_valid()
 
         # Assert
         self.assertFalse(result)
-
-class TestInteriorAmenitiesForm(TestCase):
-
-    def setUp(self):
-        self.wants_laundry_in_unit = False
-        self.wants_furnished = False
-        self.furnished_weight = 0
-        self.wants_dogs = False
-        self.number_of_dogs = 0
-        self.wants_cats = False
-        self.cat_weight = 0
-        self.wants_hardwood_floors = False
-        self.hardwood_floors_weight = 0
-        self.wants_AC = False
-        self.AC_weight = 0
-        self.wants_dishwasher = False
-        self.dishwasher_weight = 0
 
     def tests_interior_amenities_valid(self):
         # Arrange
@@ -650,7 +647,7 @@ class TestInteriorAmenitiesForm(TestCase):
             'wants_dishwasher':self.wants_dishwasher,
             'dishwasher_weight':self.dishwasher_weight
         }
-        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
+        interior_amenities_form = AmenitiesForm(data=form_data)
 
         # Act
         result = interior_amenities_form.is_valid()

@@ -18,6 +18,7 @@ from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY
 from .constants import MIN_PRICE_DELTA
 
 
+
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
@@ -136,7 +137,7 @@ class InteriorAmenitiesModel(models.Model):
     class Meta:
         abstract = True
 
-class ExteriorAmenitiesModel(models.Model):
+class AmenitiesModel(models.Model):
     """
     Contains all the survey questions regarding the building/Exterior Amenities
     All Questions are hybrid weighted
@@ -153,11 +154,28 @@ class ExteriorAmenitiesModel(models.Model):
     wants_storage = models.BooleanField(default=False)
     storage_weight = models.IntegerField(default=0)
 
+    wants_laundry_in_unit = models.BooleanField(default=False)
+    wants_furnished = models.BooleanField(default=False)
+    furnished_weight = models.IntegerField(default=0)
+    wants_dogs = models.BooleanField(default=False)
+    number_of_dogs = models.IntegerField(default=0)
+    service_dogs = models.BooleanField(default=False)
+    dog_size = models.CharField(max_length=200, blank=True, default="")
+    breed_of_dogs = models.CharField(max_length=200, blank=True, default="")
+    wants_cats = models.BooleanField(default=False)
+    cat_weight = models.IntegerField(default=0)
+    wants_hardwood_floors = models.BooleanField(default=False)
+    hardwood_floors_weight = models.IntegerField(default=0)
+    wants_AC = models.BooleanField(default=False)
+    AC_weight = models.IntegerField(default=0)
+    wants_dishwasher = models.BooleanField(default=False)
+    dishwasher_weight = models.IntegerField(default=0)
+
     class Meta:
         abstract = True
 
 
-class RentingSurveyModel(ExteriorAmenitiesModel, InteriorAmenitiesModel,
+class RentingSurveyModel(AmenitiesModel,
                          PriceInformationModel, HomeInformationModel, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
