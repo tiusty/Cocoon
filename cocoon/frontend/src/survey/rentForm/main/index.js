@@ -30,6 +30,7 @@ export default class RentForm extends Component {
                 home_type: [],
                 move_weight: 0,
                 num_bedrooms: undefined,
+                polygons: [],
                 desired_price: 1000,
                 max_price: 3000,
                 price_weight: 2,
@@ -199,6 +200,8 @@ export default class RentForm extends Component {
                         setPrice={this.setPrice}
                         handleEarliestClick={this.handleEarliestClick}
                         handleLatestClick={this.handleLatestClick}
+                        onCompletePolygon={this.handleCompletePolygon}
+                        onDeleteAllPolygons={this.handleDeleteAllPolygons}
                 />;
             case 2:
                 return <TenantsForm
@@ -426,6 +429,44 @@ export default class RentForm extends Component {
             }
             this.setState({tenants});
         }
+    };
+
+    handleDeleteAllPolygons = () => {
+        /**
+         * Deletes all the polygons on the map and deletes it from the state
+         */
+        console.log('pressed')
+        let polygons = [...this.state.generalInfo.polygons];
+        for(let i=0; i<polygons.length; i++) {
+            polygons[i].ref.setMap(null)
+        }
+        this.setState({
+            generalInfo: {
+                ...this.state.generalInfo,
+                polygons: [],
+            }
+        })
+    };
+
+    handleCompletePolygon = (p) => {
+        /**
+         * Adds the polygon to the state when it is completed
+         */
+        let polygons = [...this.state.generalInfo.polygons];
+        let polygon = {};
+        let verticies = [];
+        for (let i = 0; i < p.getPath().length; i++) {
+            verticies.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
+        }
+        polygon.ref = p;
+        polygon.vertices = verticies;
+        polygons.push(polygon);
+        this.setState({
+            generalInfo: {
+                ...this.state.generalInfo,
+                polygons,
+            }
+        })
     };
 
     render() {

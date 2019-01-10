@@ -21,7 +21,6 @@ export default class GeneralForm extends Component {
             min: 2000,
             max: 3000,
         },
-        polygons: [],
         polygon_filter: 0,
         errorMessages: {
             name_error_undefined: 'You must enter the names of the tenants.',
@@ -417,9 +416,9 @@ export default class GeneralForm extends Component {
             return (
                 <>
                     <MyMapComponent
-                        onCompletePolygon={this.polygonComplete}
+                        onCompletePolygon={this.props.onCompletePolygon}
                     />
-                    <button className="survey-btn filter-delete-button" onClick={this.deleteAllPolygons}>Delete shapes</button>
+                    <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete shapes</button>
                 </>
             );
 
@@ -475,36 +474,6 @@ export default class GeneralForm extends Component {
 
     }
 
-    deleteAllPolygons = () => {
-        /**
-         * Deletes all the polygons on the map and deletes it from the state
-         */
-        let polygons = [...this.state.polygons];
-        for(let i=0; i<polygons.length; i++) {
-            polygons[i].ref.setMap(null)
-        }
-        this.setState({
-            polygons: [],
-        })
-    };
-
-    polygonComplete = (p) => {
-        /**
-         * Adds the polygon to the state when it is completed
-         */
-        let polygons = [...this.state.polygons];
-        let polygon = {};
-        let verticies = [];
-        for (let i = 0; i < p.getPath().length; i++) {
-            verticies.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
-        }
-        polygon.ref = p;
-        polygon.vertices = verticies;
-        polygons.push(polygon);
-        this.setState({
-            polygons
-        })
-    };
 
 
     render() {
