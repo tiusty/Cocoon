@@ -633,6 +633,7 @@ class TestAmenitiesForm(TestCase):
     def tests_interior_amenities_valid(self):
         # Arrange
         form_data = {
+            'parking_spot': self.parking_spot,
             "wants_laundry_in_unit":self.wants_laundry_in_unit,
             'wants_furnished':self.wants_furnished,
             'furnished_weight':self.furnished_weight,
@@ -651,6 +652,7 @@ class TestAmenitiesForm(TestCase):
 
         # Act
         result = interior_amenities_form.is_valid()
+        print(interior_amenities_form.errors)
 
         # Assert
         self.assertTrue(result)
@@ -907,6 +909,7 @@ class TestRentSurveyMiniForm(TestCase):
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
         self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
+        self.number_of_tenants = 0
 
         self.max_commute = 0
         self.min_commute = 0
@@ -951,6 +954,7 @@ class TestRentSurveyMiniForm(TestCase):
         """
         # Arrange
         form_data = {
+            'number_of_tenants':self.number_of_tenants,
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
             'num_bedrooms': self.num_bedrooms,
@@ -1038,6 +1042,7 @@ class TestRentSurveyMiniForm(TestCase):
         user2 = MyUser.objects.create(email="test2@gmail.com")
 
         form_data = {
+            'number_of_tenants':self.number_of_tenants,
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
             'num_bedrooms': self.num_bedrooms,
