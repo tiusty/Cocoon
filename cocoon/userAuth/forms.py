@@ -107,7 +107,7 @@ class BaseRegisterForm(UserCreationForm):
     )
 
     phone_number = forms.CharField(
-        required=True,
+        required=False,
         label="Phone number",
         widget=forms.TextInput(
             attrs={
