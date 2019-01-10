@@ -536,9 +536,8 @@ const MyMapComponent = compose(
         <DrawingManager
             defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
             defaultOptions={{
-                drawingControl: true,
+                drawingControl: false,
                 drawingControlOptions: {
-                    position: google.maps.ControlPosition.TOP_CENTER,
                     drawingModes: [
                         google.maps.drawing.OverlayType.POLYGON,
                     ],
@@ -549,6 +548,7 @@ const MyMapComponent = compose(
                     fillOpacity: .5,
                     strokeOpacity: .8,
                     strokeWeight: 5,
+                    editable: true,
                     zIndex: 1,
                 },
             }}
