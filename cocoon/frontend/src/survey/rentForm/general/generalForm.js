@@ -563,8 +563,8 @@ const MyMapComponent = compose(
                     options={{
                         fillColor: '#008080',
                         strokeColor: '#a13718',
-                        fillOpacity: 5,
-                        strokeOpacity: 8,
+                        fillOpacity: .5,
+                        strokeOpacity: .8,
                         strokeWeight: 5,
                         editable: true,
                         zIndex: 1,

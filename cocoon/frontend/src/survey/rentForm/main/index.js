@@ -459,7 +459,7 @@ export default class RentForm extends Component {
 
         // Since we are just drawing the polygons ourselves, we will immediately remove the
         //  default polygon so that the state polygon is used instead
-        // p.setMap(null);
+        p.setMap(null);
 
         // store the vertices
         polygon.vertices = verticies;
