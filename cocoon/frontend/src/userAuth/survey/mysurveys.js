@@ -204,8 +204,7 @@ export default class MySurveys extends Component {
                 this.setState({
                     id: response.data.id,
                     is_signed: response.data.is_signed,
-                    created: true,
-                    refreshing: false,
+                    refreshing_document_status: false,
                 })
             );
     };
