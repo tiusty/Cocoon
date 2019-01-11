@@ -70,24 +70,31 @@ export default class SurveyLarge extends Component {
         return(
             <div className="survey-large-div">
                 <div className="survey-large-close-div">
-                    <span onClick={() => this.props.onLargeSurveyClose()} className="survey-large-close-icon glyphicon glyphicon-remove"/>
+                    <span onClick={() => this.props.onLargeSurveyClose()}
+                          className="survey-large-close-icon glyphicon glyphicon-remove"/>
                 </div>
                 <div className="survey-large-div-data">
                     <p className="survey-large-title">{this.state.name}</p>
                     <div className="row survey-large-survey-div">
                         <div className="col-md-5 survey-large-snapshot-outer">
                             <div className="survey-large-snapshot">
-                                <h2 className="survey-large-title">Survey Snapshot</h2>
-                                <p className="survey-large-text">Desired price: ${this.state.desired_price}</p>
-                                <p className="survey-large-text">Number of bedrooms: {this.state.num_bedrooms}</p>
-                            </div>
-                        </div>
-                        <div className="col-md-7 survey-large-homes-outer">
-                            <div className="survey-large-homes">
+                                <div className="survey-large-snapshot-section">
+                                    <h2 className="survey-large-title">Survey Snapshot</h2>
+                                    <p className="survey-large-text">Desired price: ${this.state.desired_price}</p>
+                                    <p className="survey-large-text">Number of bedrooms: {this.state.num_bedrooms}</p>
+                                </div>
+                            <div className="survey-large-snapshot-section">
+                                <p className="survey-large-text">Don't want this survey anymore?</p>
+                                <button className="btn btn-danger">Delete Survey</button>
                             </div>
                         </div>
                     </div>
+                    <div className="col-md-7 survey-large-homes-outer">
+                        <div className="survey-large-homes">
+                        </div>
+                    </div>
                 </div>
+            </div>
             </div>
         );
     }
