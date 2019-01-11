@@ -209,14 +209,41 @@ export default class MySurveys extends Component {
             );
     };
 
+    resendDocument = () => {
+        /**
+         * Sends an API request to resend the current document
+         */
+        this.setState({
+            refreshing_document_status: true,
+        });
+        let endpoint = signature_endpoints['hunterDoc'] + this.state.pre_tour_template_id + '/';
+        axios.put(endpoint,
+            {
+                'type': 'resend'
+            })
+            .catch(error => {
+                this.setState({
+                    refreshing_document_status: false,
+                });
+                console.log('Bad', error)
+            })
+            .then(response =>
+                this.setState({
+                    id: response.data.id,
+                    is_signed: response.data.is_signed,
+                    created: true,
+                    refreshing_document_status: false,
+                })
+            );
+    };
+
     handleOnClickRefreshDocument = () => {
         if (this.state.refreshing_document_status) {
             return false
         } else {
-            console.log('hi')
             this.refreshDocumentStatus()
         }
-    }
+    };
 
 
     handleOnClickCreateDocument = () => {
@@ -224,6 +251,14 @@ export default class MySurveys extends Component {
             return false
         } else {
             this.createDocument()
+        }
+    };
+
+    handleOnClickResendDocument = () => {
+        if (this.state.refreshing_document_status) {
+            return false
+        } else {
+            this.resendDocument()
         }
     }
 
@@ -239,9 +274,12 @@ export default class MySurveys extends Component {
         } else if (!this.state.is_pre_tour_signed && this.state.pre_tour_forms_created) {
             return (
                 <div>
-                    <p>Still waiting for you to sign the documents!</p>
+                    <p>Refresh your document stats!</p>
                     <button className="btn btn-primary"
-                            onClick={this.handleOnClickRefreshDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Resend'}</button>
+                            onClick={this.handleOnClickRefreshDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Refresh'}</button>
+                    <p>Can't find the email?</p>
+                    <button className="btn btn-primary"
+                            onClick={this.handleOnClickResendDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Resend'}</button>
                 </div>
             );
         }
