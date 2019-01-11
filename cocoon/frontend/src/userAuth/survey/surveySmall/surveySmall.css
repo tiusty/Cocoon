@@ -1,33 +1,30 @@
 .survey-small-box {
-    position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 0%;
-    bottom: 0%;
-
     background: #F6F6F6;
     border: 1px solid rgba(0, 0, 0, 0.5);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 33px;
+    height: 300px;
 }
 
 .survey-small-icon {
     /* Image */
-    position: absolute;
-    width: 99px;
-    height: 120px;
+    width: 100%;
+    height: 100px;
     left: 16px;;
     top: 25px;
 
 }
 
-.survey-small-title {
-    position: absolute;
-    left: 37.59%;
-    right: -2.01%;
-    top: 35.93%;
-    bottom: 53.22%;
+.survey-small-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+}
 
+.survey-small-title {
     font-family: Montserrat;
     font-style: normal;
     font-weight: 800;
@@ -39,12 +36,6 @@
 }
 
 .survey-small-favorites {
-    position: absolute;
-    left: 37.59%;
-    right: -4.86%;
-    top: 62.03%;
-    bottom: 29.18%;
-
     font-family: Montserrat;
     font-style: normal;
     font-weight: 500;
@@ -55,12 +46,6 @@
 }
 
 .survey-small-visit-list {
-    position: absolute;
-    left: 37.59%;
-    right: -4.86%;
-    top: 70.85%;
-    bottom: 20.37%;
-
     font-family: Montserrat;
     font-style: normal;
     font-weight: 500;
@@ -86,11 +71,6 @@
 }
 
 .survey-small-help-text {
-    position: absolute;
-    height: 33px;
-    left: 123px;
-    top: 254px;
-
     font-family: Montserrat;
     font-style: italic;
     font-weight: 300;
@@ -103,11 +83,8 @@
 }
 
 .survey-small-load-button {
-    position: absolute;
-    width: 72px;
-    height: 40px;
-    left: 297px;
-    top: 23px;
+    width: 100%;
+    height: 50px;
 
     padding-top: 10px;
 }

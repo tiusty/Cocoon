@@ -56,13 +56,21 @@ export default class SurveySmall extends Component {
                 <>
                     <div>
                         <div className="survey-small-box" onClick={() => this.props.onClickSurvey(this.props.id)}>
-                            <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
-                            <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
-                                className="btn btn-primary survey-small-load-button">Load</a>
-                            <p className="survey-small-title">{this.props.name}</p>
-                            <p className="survey-small-favorites">Number of favorites: {this.props.favorites_length}</p>
-                            <p className="survey-small-visit-list">Number of visit list: {this.props.visit_list_length}</p>
-                            <p className="survey-small-help-text">Click here to open</p>
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
+                                </div>
+                                <div className="col-md-4 col-md-offset-4">
+                                    <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
+                                        className="btn btn-primary survey-small-load-button">Load</a>
+                                </div>
+                            </div>
+                            <div className="survey-small-data">
+                                <p className="survey-small-title">{this.props.name}</p>
+                                <p className="survey-small-favorites">Number of favorites: {this.props.favorites_length}</p>
+                                <p className="survey-small-visit-list">Number of visit list: {this.props.visit_list_length}</p>
+                                <p className="survey-small-help-text">Click here to open</p>
+                            </div>
                         </div>
                     </div>
                 </>
