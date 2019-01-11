@@ -30,7 +30,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
                                'max_bathrooms', )}),
         ('Exterior Amenities', {'fields': ('parking_spot',)}),
         ('Created', {'fields': ('created', 'id', 'url')}),
-        ('Homes', {'fields': ('favorites', 'visit_list',)}),
+        ('Homes', {'fields': ('favorites', 'visit_list', 'polygon_filter_type',)}),
     )
     list_display = ('name', 'user_profile', )
     list_filter = ['user_profile']

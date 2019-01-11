@@ -65,6 +65,7 @@ class HomeInformationModel(models.Model):
     max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
     min_bathrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeTypeModel)
+    polygon_filter_type = models.IntegerField(default=0)
 
     @property
     def home_types(self):
