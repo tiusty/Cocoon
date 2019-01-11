@@ -9,6 +9,7 @@ import { compose, withProps } from "recompose";
 import {
   withGoogleMap,
   GoogleMap,
+    Polygon
 } from "react-google-maps";
 import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
 
@@ -422,6 +423,7 @@ export default class GeneralForm extends Component {
                 <>
                     <MyMapComponent
                         onCompletePolygon={this.props.onCompletePolygon}
+                        polygons={this.props.generalInfo.polygons}
                     />
                     <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete all areas</button>
                 </>
@@ -517,6 +519,22 @@ const defaultMapOptions = {
     streetViewControl: false,
 };
 
+const coords =
+    [
+  {
+    "lat": 42.391820114926375,
+    "lng": -71.13794436439275
+  },
+  {
+    "lat": 42.368995425147595,
+    "lng": -71.07133975013494
+  },
+  {
+    "lat": 42.33499662594357,
+    "lng": -71.16335024818181
+  }
+]
+
 const MyMapComponent = compose(
     /**
      * Note: This needs the google api key in the head of the script
@@ -536,6 +554,24 @@ const MyMapComponent = compose(
         }
         defaultOptions={defaultMapOptions}
     >
+        console.log(props.polygons);
+
+        {props.polygons.map(p =>
+                <Polygon
+                    key={p.key}
+                    path={p.vertices}
+                    options={{
+                        fillColor: '#008080',
+                        strokeColor: '#a13718',
+                        fillOpacity: 5,
+                        strokeOpacity: 8,
+                        strokeWeight: 5,
+                        editable: true,
+                        zIndex: 1,
+                    }}
+                />
+        )}
+
         <DrawingManager
             defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
             defaultOptions={{
