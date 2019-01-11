@@ -5,6 +5,7 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import SurveySmall from "./surveySmall/surveySmall";
+import SurveyLarge from "./surveyLarge/survey_large"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
@@ -27,7 +28,28 @@ export default class MySurveys extends Component {
         refreshing_document_status: false,
         pre_tour_forms_created: false,
 
+
+        // Handles opening a large survey
         survey_clicked_id: undefined,
+        survey: {
+            name: "",
+            url: "",
+            desired_price: 0,
+            num_bedrooms: 0,
+
+            duration: null,
+            refresh_duration: true,
+
+            // Favorites contains a lit of the favorites when the data was pulled from the backend
+            favorites: [],
+            // Stores the current list of favorites the user has, i.e if he unfavorited a home then
+            //  the home will no longer be in this list. This is used so the user can favorite and unfavorite
+            //  and the home won't disappear until the page is refreshed
+            curr_favorites: [],
+
+            visit_list: [],
+        },
+
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
@@ -263,6 +285,15 @@ export default class MySurveys extends Component {
         }
     }
 
+    handleClickSurvey = (id) => {
+        /**
+         * Handles click on the survey box to load the large survey.
+         *
+         * If the click is on the extra box then the survey should load
+         */
+        this.setState({survey_clicked_id: id})
+    };
+
     renderTourSummary() {
         if (!this.state.is_pre_tour_signed && !this.state.pre_tour_forms_created) {
             return (
@@ -301,16 +332,26 @@ export default class MySurveys extends Component {
         }
     }
 
-    render() {
-        return (
-            <div className="row">
-                <div className="col-md-8">
-                    <div className="surveys-div">
-                        <h2 className="surveys-title">My Surveys</h2>
-                        <p className='surveys-title-text'>When you are ready please follow the steps on the right side of the screen to
-                            sign your documents so you can schedule a tour</p>
-                    </div>
-                    <div className="surveys-main">
+    renderSurveysBlock() {
+        // If something is loading then render the loading page
+        if (this.state.loading_clicked) {
+            return (
+                <LoadingScreen
+                    loading={true}
+                    bgColor='#f1f1f1'
+                    spinnerColor='#9ee5f8'
+                    textColor='#676767'
+                    logoSrc={surveyIcon}
+                    text='Please wait: Loading...'
+                >
+                    <div>Loadable content</div>
+                </LoadingScreen>
+            );
+        } else {
+            // If no survey is selected then render the small tiles
+            if (this.state.survey_clicked_id === undefined) {
+                return (
+                    <>
                         {this.state.surveys.map(survey =>
                             <div key={survey.id} className="survey-small">
                                 <SurveySmall
@@ -325,6 +366,35 @@ export default class MySurveys extends Component {
                                 />
                             </div>
                         )}
+                    </>
+                );
+                // If a survey is clicked then render the large survey
+            } else {
+                let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
+                return (
+                    <div className="col-md-12 survey-large">
+                        <SurveyLarge
+                            id={survey.id}
+                            onDelete={this.handleDelete}
+                            onLargeSurveyClose={this.handleLargeSurveyClose}
+                        />
+                    </div>
+                );
+            }
+        }
+    }
+
+    render() {
+        return (
+            <div className="row">
+                <div className="col-md-8">
+                    <div className="surveys-div">
+                        <h2 className="surveys-title">My Surveys</h2>
+                        <p className='surveys-title-text'>When you are ready please follow the steps on the right side of the screen to
+                            sign your documents so you can schedule a tour</p>
+                    </div>
+                    <div className="surveys-main">
+                        {this.renderSurveysBlock()}
                     </div>
                 </div>
                 <div className="col-md-4">

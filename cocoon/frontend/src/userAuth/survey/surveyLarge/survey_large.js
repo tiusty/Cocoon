@@ -1,0 +1,73 @@
+// Import React Components
+import React from 'react'
+import { Component } from 'react';
+import axios from 'axios'
+
+// Import Cocoon Components
+import survey_endpoints from "../../../endpoints/survey_endpoints";
+import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
+
+export default class SurveyLarge extends Component {
+
+    state = {
+        name: "",
+        url: "",
+        desired_price: 0,
+        num_bedrooms: 0,
+
+        duration: null,
+        refresh_duration: true,
+
+        // Favorites contains a lit of the favorites when the data was pulled from the backend
+        favorites:  [],
+        // Stores the current list of favorites the user has, i.e if he unfavorited a home then
+        //  the home will no longer be in this list. This is used so the user can favorite and unfavorite
+        //  and the home won't disappear until the page is refreshed
+        curr_favorites: [],
+
+        visit_list:  [],
+    };
+
+    componentDidMount() {
+        /**
+         * Loads the survey data
+         * @type {string}
+         */
+
+            // The survey id is appended to the get request to get a specific survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                {
+                    this.setState({
+                        name: response.data.name,
+                        favorites: response.data.favorites,
+                        curr_favorites: response.data.favorites,
+                        visit_list: response.data.visit_list,
+                        url: response.data.url,
+                        desired_price: response.data.desired_price,
+                        num_bedrooms: response.data.num_bedrooms,
+                    })
+                }
+            )
+
+        // Retrieves the current estimated time for the tour
+        endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                    this.setState({
+                        duration: response.data.duration,
+                        refresh_duration: false,
+                    })
+                },
+            )
+    }
+
+    render() {
+        return(
+            <p> hi</p>
+        );
+    }
+}

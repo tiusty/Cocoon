@@ -22,57 +22,34 @@ export default class SurveySmall extends Component {
      *  this.props.url: (string) -> The url to load the survey
      *  this.props.favorites_length: (int) -> The number of favorite homes for that survey
      *  this.props.visit_list_length: (int) -> The number of visit_list homes
-     *  this.props.onLoadingClicked: (function()) -> Handles when the load button is clicked to generate a loading screen
      *  this.props.onClickSurvey: (function(int)) -> Handles when the small tile box is clicked
      */
-
-    generateLoadUrl = () => {
-        /**
-         * Generates the URl so that the user can load a survey and it directs them to the survey results page for that
-         *  survey
-         */
-        return survey_endpoints['rentSurveyResult'] + this.props.url + "/";
-    };
-
     render() {
         /**
          * If the default survey prop is true then it is the extra survey that loads the survey
          *  Otherwise the small tile should contain information passed down via props
          */
-        if(this.props.default_survey) {
-             return (
-                <>
-                    <div>
-                        <div className="survey-small-box" onClick={(e) => this.props.onClickSurvey(undefined)}>
-                            <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
-                            <p className="survey-small-default-text">Click here to take a survey</p>
-                            <p className="survey-small-default-text-bottom">Your future home awaits</p>
-                        </div>
-                    </div>
-                </>
-            );
-        } else {
-            return (
-                <>
-                    <div>
-                        <div className="survey-small-box" onClick={() => this.props.onClickSurvey(this.props.id)}>
-                            <div className="row">
-                                <div className="col-sm-6">
-                                    <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
-                                </div>
-                            </div>
-                            <div className="survey-small-data">
-                                <p className="survey-small-title">Roomate Group:</p>
-                                <p className="survey-small-title">{this.props.name}</p>
-                                <p className="survey-small-favorites">Number of favorites: {this.props.favorites_length}</p>
-                                <p className="survey-small-visit-list">Number of visit list: {this.props.visit_list_length}</p>
-                                <button className="btn btn-primary">Expand</button>
+        return (
+            <>
+                <div>
+                    <div className="survey-small-box">
+                        <div className="row">
+                            <div className="col-sm-6">
+                                <img className="survey-small-icon" src={surveyIcon} alt="Survey icon"/>
                             </div>
                         </div>
+                        <div className="survey-small-data">
+                            <p className="survey-small-title">Roomate Group:</p>
+                            <p className="survey-small-title">{this.props.name}</p>
+                            <p className="survey-small-favorites">Number of favorites: {this.props.favorites_length}</p>
+                            <p className="survey-small-visit-list">Number of visit
+                                list: {this.props.visit_list_length}</p>
+                            <button className="btn btn-primary" onClick={() => this.props.onClickSurvey(this.props.id)}>Expand</button>
+                        </div>
                     </div>
-                </>
-            );
-        }
+                </div>
+            </>
+        );
     }
 
 }
