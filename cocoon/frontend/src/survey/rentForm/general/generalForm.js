@@ -413,7 +413,7 @@ export default class GeneralForm extends Component {
 
     renderGoogleMaps() {
         /**
-         * Renders the correct google mpa depending on the type of filtering the user wants
+         * Renders the correct google map depending on the type of filtering the user wants
          */
 
         // 1 is draw on map
@@ -500,22 +500,6 @@ const defaultMapOptions = {
     streetViewControl: false,
 };
 
-const coords =
-    [
-  {
-    "lat": 42.391820114926375,
-    "lng": -71.13794436439275
-  },
-  {
-    "lat": 42.368995425147595,
-    "lng": -71.07133975013494
-  },
-  {
-    "lat": 42.33499662594357,
-    "lng": -71.16335024818181
-  }
-]
-
 const MyMapComponent = compose(
     /**
      * Note: This needs the google api key in the head of the script
@@ -535,8 +519,8 @@ const MyMapComponent = compose(
         }
         defaultOptions={defaultMapOptions}
     >
-        console.log(props.polygons);
 
+        /* Draws all the polygons stored in the state */
         {props.polygons.map(p =>
                 <Polygon
                     key={p.key}
@@ -554,6 +538,7 @@ const MyMapComponent = compose(
         )}
 
         <DrawingManager
+            /* Contains all the configuration for the google drawing manager */
             defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
             defaultOptions={{
                 drawingControl: false,

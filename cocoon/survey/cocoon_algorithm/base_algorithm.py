@@ -62,11 +62,18 @@ class CocoonAlgorithm(object):
         # Add homes to rent_algorithm, homes should be stored as a HomeScore
         polygons = self.generate_polygons(user_survey)
         for home in filtered_home_list:
+            # Only add homes that fall within the users polygon
             if self.polygon_filter(home, polygons, user_survey.polygon_filter_type):
                 self.homes = HomeScore(home)
 
     @staticmethod
     def generate_polygons(survey):
+        """
+        Generates all the polygons the user created. Converts the polygons from the django database version
+            to shapely polygonss
+        :param survey: (RentingSurvey) -> The survey
+        :return: (list(shapely.polygons)) -> The list of polygons that are formatted to shapely
+        """
         polygons = []
         for polygon_model in survey.polygons.all():
             vertices = []
@@ -78,6 +85,15 @@ class CocoonAlgorithm(object):
 
     @staticmethod
     def polygon_filter(home, polygons, filter_type):
+        """
+        Determines if a home is within any of the polygons the user created
+        :param home: (RentDatabaseModel) -> The home that is being tested
+        :param polygons: (list(shapely.polygons)) -> The list of polygons the user created
+        :param filter_type: (int) -> The filter type the user desires
+        :return: (boolean) -> Whether the home is within the polygon or not
+        """
+
+        # If the user selected draw on map then filter based on the polygons the user drew
         if filter_type is 1:
             point = Point(home.latitude, home.longitude)
             result = False
