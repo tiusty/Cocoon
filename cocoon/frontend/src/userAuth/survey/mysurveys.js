@@ -5,7 +5,7 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import SurveySmall from "./surveySmall/surveySmall";
-import SurveyLarge from "./surveyLarge/survey_large"
+import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
