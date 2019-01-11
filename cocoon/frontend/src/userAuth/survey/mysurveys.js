@@ -12,11 +12,16 @@ import survey_endpoints from "../../endpoints/survey_endpoints";
 // Import styling
 import './mysurveys.css'
 
+// For handling Post request with CSRF protection
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 export default class MySurveys extends Component {
 
     state = {
         // State regarding the document
         hunter_doc_manager_id: null,
+        pre_tour_template_id: null,
         is_pre_tour_signed: false,
         refreshing_document_status: false,
         pre_tour_forms_created: false,
@@ -112,6 +117,15 @@ export default class MySurveys extends Component {
             });
 
         /**
+         * Retrieves the hunter doc template id for the pre tour forms
+         */
+        axios.get(signature_endpoints['hunterDocTemplate'], {params: {type: 'pre_tour'}})
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState( {pre_tour_template_id: response.data[0].id })
+            });
+
+        /**
          * Updates the users pre_tour_docs and checks to see if it is signed.
          *  Since the id for the url doesn't matter, null can be passed so the
          *  update function is called
@@ -150,7 +164,7 @@ export default class MySurveys extends Component {
         let endpoint = signature_endpoints['hunterDoc'];
         axios.post(endpoint,
             {
-                type: 'pre_tour',
+                template_type_id: this.state.pre_tour_template_id,
             })
             .catch(error => {
                 this.setState({
@@ -168,6 +182,44 @@ export default class MySurveys extends Component {
             );
     };
 
+    refreshDocumentStatus = () => {
+        /**
+         * Sends an API request to update the status of the current document
+         */
+        this.setState({
+            refreshing_document_status: true,
+        });
+        let endpoint = signature_endpoints['hunterDoc'] + this.state.pre_tour_template_id + '/';
+        axios.put(endpoint,
+            {
+                'type': 'update'
+            })
+            .catch(error => {
+                this.setState({
+                    refreshing_document_status: false,
+                });
+                console.log('Bad', error)
+            })
+            .then(response =>
+                this.setState({
+                    id: response.data.id,
+                    is_signed: response.data.is_signed,
+                    created: true,
+                    refreshing: false,
+                })
+            );
+    };
+
+    handleOnClickRefreshDocument = () => {
+        if (this.state.refreshing_document_status) {
+            return false
+        } else {
+            console.log('hi')
+            this.refreshDocumentStatus()
+        }
+    }
+
+
     handleOnClickCreateDocument = () => {
         if (this.state.refreshing_document_status) {
             return false
@@ -178,10 +230,19 @@ export default class MySurveys extends Component {
 
     renderTourSummary() {
         if (!this.state.is_pre_tour_signed && !this.state.pre_tour_forms_created) {
-            return(
+            return (
                 <div>
                     <p>You need to sign the pre tour documents before scheduling a tour</p>
-                    <button className="btn btn-primary" onClick={this.handleOnClickCreateDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Send'}</button>
+                    <button className="btn btn-primary"
+                            onClick={this.handleOnClickCreateDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Send'}</button>
+                </div>
+            );
+        } else if (!this.state.is_pre_tour_signed && this.state.pre_tour_forms_created) {
+            return (
+                <div>
+                    <p>Still waiting for you to sign the documents!</p>
+                    <button className="btn btn-primary"
+                            onClick={this.handleOnClickRefreshDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Resend'}</button>
                 </div>
             );
         }

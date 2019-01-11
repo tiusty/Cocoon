@@ -41,8 +41,18 @@ class HunterDocTemplateViewset(viewsets.ReadOnlyModelViewSet):
     Returns all the HunterDocTemplates
     """
 
-    queryset = HunterDocTemplateModel.objects.all()
     serializer_class = HunterDocTemplateSerializer
+
+    def get_queryset(self):
+        template_type = self.request.query_params.get('type', None)
+
+        if template_type is not None:
+            if template_type == 'pre_tour':
+                return HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR)
+            else:
+                raise Http404
+        else:
+            return HunterDocTemplateModel.objects.all()
 
 
 class HunterDocViewset(viewsets.ModelViewSet):
@@ -121,15 +131,6 @@ class HunterDocViewset(viewsets.ModelViewSet):
             else:
                 # If the template type does not match any of the necessary template types then
                 #   return 404
-                raise Http404
-
-        # Case if the request has type in the data
-        elif 'type' in self.request.data:
-            doc_type = self.request.data['type']
-            if doc_type == 'pre_tour':
-                user_profile.user.doc_manager.create_pre_tour_documents()
-                template = user_profile.user.doc_manager.retrieve_pre_tour_template()
-            else:
                 raise Http404
 
         doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
