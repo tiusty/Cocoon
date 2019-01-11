@@ -62,7 +62,7 @@ class CocoonAlgorithm(object):
         # Add homes to rent_algorithm, homes should be stored as a HomeScore
         polygons = self.generate_polygons(user_survey)
         for home in filtered_home_list:
-            if self.polygon_filter(home, polygons):
+            if self.polygon_filter(home, polygons, user_survey.polygon_filter_type):
                 self.homes = HomeScore(home)
 
     @staticmethod
@@ -77,13 +77,16 @@ class CocoonAlgorithm(object):
         return polygons
 
     @staticmethod
-    def polygon_filter(home, polygons):
-        point = Point(home.latitude, home.longitude)
-        result = False
-        for polygon in polygons:
-            if polygon.contains(point):
-                result = True
-                break
+    def polygon_filter(home, polygons, filter_type):
+        if filter_type is 1:
+            point = Point(home.latitude, home.longitude)
+            result = False
+            for polygon in polygons:
+                if polygon.contains(point):
+                    result = True
+                    break
+        else:
+            result = True
 
         return result
 
