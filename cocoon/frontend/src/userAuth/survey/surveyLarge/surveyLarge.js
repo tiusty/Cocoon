@@ -74,6 +74,19 @@ export default class SurveyLarge extends Component {
                 </div>
                 <div className="survey-large-div-data">
                     <p className="survey-large-title">{this.state.name}</p>
+                    <div className="row survey-large-survey-div">
+                        <div className="col-md-5 survey-large-snapshot-outer">
+                            <div className="survey-large-snapshot">
+                                <h2 className="survey-large-title">Survey Snapshot</h2>
+                                <p className="survey-large-text">Desired price: ${this.state.desired_price}</p>
+                                <p className="survey-large-text">Number of bedrooms: {this.state.num_bedrooms}</p>
+                            </div>
+                        </div>
+                        <div className="col-md-7 survey-large-homes-outer">
+                            <div className="survey-large-homes">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

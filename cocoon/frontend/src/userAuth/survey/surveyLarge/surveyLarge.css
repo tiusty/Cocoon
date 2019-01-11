@@ -39,3 +39,38 @@
 
     color: #000000;
 }
+
+.survey-large-text {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 18px;
+
+    color: #000000;
+
+}
+
+.survey-large-survey-div {
+    width: 100%;
+}
+
+.survey-large-homes-outer,
+.survey-large-snapshot-outer {
+    padding: 15px;
+
+}
+
+.survey-large-homes,
+.survey-large-snapshot {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    background: #FFFFFF;
+    border: 1px solid #DFDFDF;
+    box-sizing: border-box;
+    border-radius: 10px;
+}

@@ -390,7 +390,7 @@ export default class MySurveys extends Component {
             } else {
                 let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
                 return (
-                    <div className="col-md-12">
+                    <div className="survey-large">
                         <SurveyLarge
                             id={survey.id}
                             onDelete={this.handleDelete}
