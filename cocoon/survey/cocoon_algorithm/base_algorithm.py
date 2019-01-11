@@ -8,6 +8,10 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 # Import HomeScore class
 from cocoon.survey.home_data.home_score import HomeScore
 
+# Import Python Modules
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 
 class CocoonAlgorithm(object):
     """
@@ -56,8 +60,32 @@ class CocoonAlgorithm(object):
         filtered_home_list = self.generate_static_filter_home_list(user_survey)
 
         # Add homes to rent_algorithm, homes should be stored as a HomeScore
+        polygons = self.generate_polygons(user_survey)
         for home in filtered_home_list:
-            self.homes = HomeScore(home)
+            if self.polygon_filter(home, polygons):
+                self.homes = HomeScore(home)
+
+    @staticmethod
+    def generate_polygons(survey):
+        polygons = []
+        for polygon_model in survey.polygons.all():
+            vertices = []
+            for vertices_model in polygon_model.vertices.all():
+                vertices.append((vertices_model.lat, vertices_model.lng))
+            polygon = Polygon(vertices)
+            polygons.append(polygon)
+        return polygons
+
+    @staticmethod
+    def polygon_filter(home, polygons):
+        point = Point(home.latitude, home.longitude)
+        result = False
+        for polygon in polygons:
+            if polygon.contains(point):
+                result = True
+                break
+
+        return result
 
     @staticmethod
     def generate_static_filter_home_list(user_survey):
@@ -67,7 +95,7 @@ class CocoonAlgorithm(object):
         :return: (RentDataBaseModel Queryset): All the homes that fit the static filter
         """
         # Query the database
-        house_query =  RentDatabaseModel.objects\
+        house_query = RentDatabaseModel.objects\
             .filter(last_updated=F('listing_provider__last_updated_feed')) \
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(currently_available=True) \
