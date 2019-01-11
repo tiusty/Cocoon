@@ -52,17 +52,6 @@ class HomeInformationForm(ModelForm):
         queryset=HomeTypeModel.objects.all()
     )
 
-    polygon_filter_type = forms.ChoiceField(
-        required=False,
-        choices=[(x, x) for x in range(0, 2)],
-        label="Filter type",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
-    )
-
     def is_valid(self):
         valid = super(HomeInformationForm, self).is_valid()
 
@@ -163,6 +152,17 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
             },
 
         ),
+    )
+
+    polygon_filter_type = forms.ChoiceField(
+        required=False,
+        choices=[(x, x) for x in range(0, 2)],
+        label="Filter type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
     )
 
     class Meta:

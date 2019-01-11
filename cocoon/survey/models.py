@@ -41,13 +41,17 @@ class InitialSurveyModel(models.Model):
     # Adds functionality to the save method. This checks to see if a survey with the same slug
     #   for that user already exists. If it does then delete that survey and save the new one instead
     def save(self, *args, **kwargs):
+        # Old url is saved to determine if the url for a survey changed
+        old_url = self.url
         self.url = self.generate_slug()
 
-        # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
-        if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                .filter(url=self.url).exists():
-            RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                .filter(url=self.url).delete()
+        # If it is a new model or the url changed then delete any conflicting surveys
+        if self.pk is None or old_url != self.url:
+            # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
+            if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
+                    .filter(url=self.url).exists():
+                RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
+                    .filter(url=self.url).delete()
 
         # When the model is being saved, make sure to generate the slug associated with the survey.
         # Since surveys with duplicate names are deleted, then it should guarantee uniqueness

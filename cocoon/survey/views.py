@@ -252,11 +252,9 @@ class RentingResultSurvey(UpdateView):
         # Makes sure that the tenant form is valid before saving
         if tenants.is_valid():
 
-            user = self.request.user
-
             # Save the survey
             with transaction.atomic():
-                form.instance.user_profile = get_object_or_404(UserProfile, user=user)
+                form.instance = self.object
                 survey = form.save()
 
             # Now save the the tenants
