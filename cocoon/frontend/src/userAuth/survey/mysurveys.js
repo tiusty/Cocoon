@@ -9,10 +9,10 @@ import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
-import CSRFToken from '../../common/csrftoken'
 
 // Import styling
 import './mysurveys.css'
+import TourSummary from "./tourSummary/tourSummary";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -312,44 +312,6 @@ export default class MySurveys extends Component {
             });
     };
 
-    renderTourSummary() {
-        if (!this.state.is_pre_tour_signed && !this.state.pre_tour_forms_created) {
-            return (
-                <div>
-                    <p>You need to sign the pre tour documents before scheduling a tour</p>
-                    <button className="btn btn-primary"
-                            onClick={this.handleOnClickCreateDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Send'}</button>
-                </div>
-            );
-        } else if (!this.state.is_pre_tour_signed && this.state.pre_tour_forms_created) {
-            return (
-                <div>
-                    <p>Refresh your document stats!</p>
-                    <button className="btn btn-primary"
-                            onClick={this.handleOnClickRefreshDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Refresh'}</button>
-                    <p>Can't find the email?</p>
-                    <button className="btn btn-primary"
-                            onClick={this.handleOnClickResendDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Resend'}</button>
-                </div>
-            );
-        } else if (this.state.is_pre_tour_signed && this.state.pre_tour_forms_created) {
-            return (
-                <div>
-                    <p>Estimated duration: TBD</p>
-                    <p>When you are done adding homes that you want to tour click schedule! Remember you can only have one tour scheduled at a time</p>
-                    <form method="post" style={{marginTop: '10px'}}>
-                        <CSRFToken/>
-                        <button name="submit-button"
-                                className="btn btn-success"
-                                value={this.props.id} type="submit">Schedule!
-                        </button>
-                    </form>
-                </div>
-            );
-
-        }
-    }
-
     renderSurveysBlock() {
         // If something is loading then render the loading page
         if (this.state.loading_clicked) {
@@ -426,7 +388,15 @@ export default class MySurveys extends Component {
                 <div className="col-md-4">
                     <div className="tour-summary">
                         <h2 className="surveys-title">Tour Summary</h2>
-                        {this.renderTourSummary()}
+                        <TourSummary
+                            survey_id={this.state.survey_clicked_id}
+                            is_pre_tour_signed={this.state.is_pre_tour_signed}
+                            pre_tour_forms_created={this.state.pre_tour_forms_created}
+                            refreshing_document_status={this.state.refreshing_document_status}
+                            onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
+                            onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
+                            onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                        />
                     </div>
                 </div>
             </div>
