@@ -201,3 +201,13 @@ class CommuteInformationModel(models.Model):
 
 class TenantModel(DestinationsModel, CommuteInformationModel, TenantPersonalInformationModel):
     survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
+
+
+class PolygonModel(models.Model):
+    survey = models.ForeignKey(RentingSurveyModel, related_name='polygons', blank=True)
+
+
+class VertexModel(models.Model):
+    polygon = models.ForeignKey(PolygonModel, related_name='vertices', blank=True)
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
+    lng = models.DecimalField(max_digits=9, decimal_places=6)

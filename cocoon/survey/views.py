@@ -21,9 +21,10 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import UserProfile
 
 # Import Survey algorithm modules
-from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
-from cocoon.survey.models import RentingSurveyModel
-from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
+from .cocoon_algorithm.rent_algorithm import RentAlgorithm
+from .models import RentingSurveyModel
+from .forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
+from .survey_helpers.save_polygons import save_polygons
 
 # Import Scheduler algorithm
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
@@ -416,6 +417,10 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
                     # Now the form can be saved
                     survey = form.save()
+
+                    # Save the polygons
+                    if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
+                        save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
                 # Now save the the tenants
                 tenants.instance = survey
