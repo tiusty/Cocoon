@@ -143,9 +143,9 @@ export default class MySurveys extends Component {
                         <p className='surveys-title-text'>When you are ready please follow the steps on the right side of the screen to
                             sign your documents so you can schedule a tour</p>
                     </div>
-                    <div className="row surveys-main">
+                    <div className="surveys-main">
                         {this.state.surveys.map(survey =>
-                            <div key={survey.id} className="col-sm-6 survey-small">
+                            <div key={survey.id} className="survey-small">
                                 <SurveySmall
                                     key={survey.id}
                                     id={survey.id}

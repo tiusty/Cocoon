@@ -8,36 +8,36 @@
 }
 
 .surveys-title {
-font-family: Montserrat;
-font-style: normal;
-font-weight: bold;
-line-height: normal;
-font-size: 24px;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: bold;
+    line-height: normal;
+    font-size: 24px;
 
-color: #000000;
+    color: #000000;
 }
 
 .surveys-title-text {
     font-family: Montserrat;
-font-style: normal;
-font-weight: normal;
-line-height: normal;
-font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    font-size: 14px;
 
-color: #000000;
+    color: #000000;
 }
 
 .surveys-main {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    border: 1px solid rgba(156, 156, 156, 0.7);
-    box-sizing: border-box;
-    border-radius: 10px;
-    height: 1000px;
+    align-content: stretch;
+    align-items: baseline;
 }
 
 .survey-small {
+    padding: 10px;
+    width: 350px;
     flex-grow: 1;
 }
 

@@ -62,14 +62,11 @@ export default class SurveySmall extends Component {
                                 </div>
                             </div>
                             <div className="survey-small-data">
+                                <p className="survey-small-title">Roomate Group:</p>
                                 <p className="survey-small-title">{this.props.name}</p>
                                 <p className="survey-small-favorites">Number of favorites: {this.props.favorites_length}</p>
                                 <p className="survey-small-visit-list">Number of visit list: {this.props.visit_list_length}</p>
-                                <p className="survey-small-help-text">Click here to open</p>
-                                <div className="col-lg-4 col-lg-offset-3 survey-small-load-button-div">
-                                    <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
-                                        className="btn btn-primary survey-small-load-button">Load</a>
-                                </div>
+                                <button className="btn btn-primary">Expand</button>
                             </div>
                         </div>
                     </div>
