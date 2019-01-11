@@ -8,6 +8,7 @@ import SurveySmall from "./surveySmall/surveySmall";
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
+import CSRFToken from '../../common/csrftoken'
 
 // Import styling
 import './mysurveys.css'
@@ -282,6 +283,21 @@ export default class MySurveys extends Component {
                             onClick={this.handleOnClickResendDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Resend'}</button>
                 </div>
             );
+        } else if (this.state.is_pre_tour_signed && this.state.pre_tour_forms_created) {
+            return (
+                <div>
+                    <p>Estimated duration: TBD</p>
+                    <p>When you are done adding homes that you want to tour click schedule! Remember you can only have one tour scheduled at a time</p>
+                    <form method="post" style={{marginTop: '10px'}}>
+                        <CSRFToken/>
+                        <button name="submit-button"
+                                className="btn btn-success"
+                                value={this.props.id} type="submit">Schedule!
+                        </button>
+                    </form>
+                </div>
+            );
+
         }
     }
 
