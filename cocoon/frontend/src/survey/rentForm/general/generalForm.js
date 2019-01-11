@@ -22,7 +22,6 @@ export default class GeneralForm extends Component {
             min: 2000,
             max: 3000,
         },
-        polygon_filter_type: 0,
         errorMessages: {
             name_error_undefined: 'You must enter the names of the tenants.',
             name_error_format: 'Enter first and last name separated by a space.',
@@ -418,7 +417,7 @@ export default class GeneralForm extends Component {
          */
 
         // 1 is draw on map
-        if (this.state.polygon_filter_type === 1) {
+        if (this.props.generalInfo.polygon_filter_type === 1) {
             return (
                 <>
                     <MyMapComponent
@@ -436,39 +435,21 @@ export default class GeneralForm extends Component {
 
     }
 
-    handleInputChange = (e, type) => {
-        /**
-         * Handles input that goes into the general form
-         *  i.e generalInfo dictionary
-         */
-        const {name, value} = e.target;
-        let data = "";
-        if (type === 'number') {
-            data = parseInt(value);
-        } else {
-            data = value
-        }
-
-        this.setState({
-                [name]: data,
-        })
-    };
-
     renderFilterQuestion() {
         /**
          * Renders the question for the map filter
          */
         return (
-            <div className="survey-question" onChange={(e) => this.handleInputChange(e, 'number')}>
+            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
                 <h2>Do you have <span>areas</span> where you would like to live?</h2>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name="polygon_filter_type" value="1" checked={this.state.polygon_filter_type === 1}
+                    <input type="radio" name="polygon_filter_type" value="1" checked={this.props.generalInfo.polygon_filter_type === 1}
                            onChange={() => {
                            }}/>
                     <div>Draw on map</div>
                 </label>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name="polygon_filter_type" value="0" checked={this.state.polygon_filter_type === 0} onChange={() => {this.props.onDeleteAllPolygons()}} />
+                    <input type="radio" name="polygon_filter_type" value="0" checked={this.props.generalInfo.polygon_filter_type === 0} />
                     <div>I am looking everywhere</div>
                 </label>
             </div>

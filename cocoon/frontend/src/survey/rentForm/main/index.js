@@ -30,6 +30,7 @@ export default class RentForm extends Component {
                 home_type: [],
                 move_weight: 0,
                 num_bedrooms: undefined,
+                polygon_filter_type: 0,
                 polygons: [],
                 desired_price: 1000,
                 max_price: 3000,
