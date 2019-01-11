@@ -15,6 +15,12 @@ import './mysurveys.css'
 export default class MySurveys extends Component {
 
     state = {
+        // State regarding the document
+        hunter_doc_manager_id: null,
+        is_pre_tour_signed: false,
+        refreshing_document_status: false,
+        pre_tour_forms_created: false,
+
         survey_clicked_id: undefined,
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
@@ -25,8 +31,6 @@ export default class MySurveys extends Component {
         itinerary_exists: false,
 
         // Stores information regarding the state of signing documents
-        hunter_doc_manager_id: null,
-        pre_tour_signed: false,
 
         // Stores the survey_endpoint needed for this Component
         survey_endpoint: survey_endpoints['rentSurvey'],
@@ -102,7 +106,8 @@ export default class MySurveys extends Component {
             .then(response => {
                 this.setState({
                     hunter_doc_manager_id: response.data[0].id,
-                    pre_tour_signed: response.data[0].is_pre_tour_signed,
+                    pre_tour_forms_created: response.data[0].pre_tour_forms_created,
+                    is_pre_tour_signed: response.data[0].is_pre_tour_signed,
                 })
             });
 
@@ -120,7 +125,8 @@ export default class MySurveys extends Component {
             .then(response => {
                 this.setState({
                     loaded: true,
-                    pre_tour_signed: response.data.is_pre_tour_signed
+                    is_pre_tour_signed: response.data.is_pre_tour_signed,
+                    pre_tour_forms_created: response.data.pre_tour_forms_created,
                 })
             });
 
@@ -134,16 +140,48 @@ export default class MySurveys extends Component {
             });
     }
 
-    sendPreTourDocuments() {
+    createDocument = () => {
+        /**
+         * Sends an API request to create the document specified by the template type
+         */
+        this.setState({
+            refreshing_document_status: true,
+        });
+        let endpoint = signature_endpoints['hunterDoc'];
+        axios.post(endpoint,
+            {
+                type: 'pre_tour',
+            })
+            .catch(error => {
+                this.setState({
+                    refreshing_document_status: false,
+                });
+                console.log('Bad', error)
+            })
+            .then(response =>
+                this.setState({
+                    id: response.data.id,
+                    is_signed: response.data.is_signed,
+                    pre_tour_forms_created: true,
+                    refreshing_document_status: false,
+                })
+            );
+    };
 
+    handleOnClickCreateDocument = () => {
+        if (this.state.refreshing_document_status) {
+            return false
+        } else {
+            this.createDocument()
+        }
     }
 
     renderTourSummary() {
-        if (!this.state.pre_tour_signed) {
+        if (!this.state.is_pre_tour_signed && !this.state.pre_tour_forms_created) {
             return(
                 <div>
                     <p>You need to sign the pre tour documents before scheduling a tour</p>
-                    <button className="btn btn-primary" onClick={this.sendPreTourDocuments}>Send</button>
+                    <button className="btn btn-primary" onClick={this.handleOnClickCreateDocument}>{this.state.refreshing_document_status ? 'Loading' : 'Send'}</button>
                 </div>
             );
         }
