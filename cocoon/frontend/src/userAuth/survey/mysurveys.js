@@ -134,6 +134,21 @@ export default class MySurveys extends Component {
             });
     }
 
+    sendPreTourDocuments() {
+
+    }
+
+    renderTourSummary() {
+        if (!this.state.pre_tour_signed) {
+            return(
+                <div>
+                    <p>You need to sign the pre tour documents before scheduling a tour</p>
+                    <button className="btn btn-primary" onClick={this.sendPreTourDocuments}>Send</button>
+                </div>
+            );
+        }
+    }
+
     render() {
         return (
             <div className="row">
@@ -162,6 +177,8 @@ export default class MySurveys extends Component {
                 </div>
                 <div className="col-md-4">
                     <div className="tour-summary">
+                        <h2 className="surveys-title">Tour Summary</h2>
+                        {this.renderTourSummary()}
                     </div>
                 </div>
             </div>
