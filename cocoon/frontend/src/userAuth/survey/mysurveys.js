@@ -145,7 +145,7 @@ export default class MySurveys extends Component {
                     </div>
                     <div className="row surveys-main">
                         {this.state.surveys.map(survey =>
-                            <div key={survey.id} className="col-md-3 survey-small">
+                            <div key={survey.id} className="col-sm-6 survey-small">
                                 <SurveySmall
                                     key={survey.id}
                                     id={survey.id}
