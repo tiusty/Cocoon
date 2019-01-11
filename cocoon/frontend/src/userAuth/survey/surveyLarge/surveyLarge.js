@@ -5,6 +5,7 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import './surveyLarge.css'
+import HomeTiles from "../../../common/homeTile/homeTiles";
 import survey_endpoints from "../../../endpoints/survey_endpoints";
 import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
 
@@ -66,8 +67,46 @@ export default class SurveyLarge extends Component {
             )
     }
 
+    generateLoadUrl = () => {
+        /**
+         * Generates the URl so that the user can load a survey and it directs them to the survey results page for that
+         *  survey
+         */
+        return survey_endpoints['rentSurveyResult'] + this.state.url + "/";
+    };
+
+    renderFavoriteHomes() {
+        if (this.state.favorites.length <=0) {
+            return (
+                <>
+                    <h2 className="survey-large-title">Please load the survey and favorite homes</h2>
+                    <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
+                        className="btn btn-primary survey-small-load-button">Load survey</a>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <h2 className="survey-large-title">Below are your favorite homes</h2>
+                    <div className="survey-large-home">
+                        <HomeTiles
+                            homes={this.state.favorites}
+                            visit_list={this.state.visit_list}
+                            curr_favorites={this.state.curr_favorites}
+                            onVisitClick={this.handleVisitClick}
+                            onFavoriteClick={this.handleFavoriteClick}
+                        />
+                    </div>
+                    <h2 className="survey-large-title">Want to favorite more homes?</h2>
+                    <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
+                        className="btn btn-primary survey-small-load-button">Load survey</a>
+                </>
+            );
+        }
+    }
+
     render() {
-        return(
+        return (
             <div className="survey-large-div">
                 <div className="survey-large-close-div">
                     <span onClick={() => this.props.onLargeSurveyClose()}
@@ -91,6 +130,9 @@ export default class SurveyLarge extends Component {
                     </div>
                     <div className="col-md-7 survey-large-homes-outer">
                         <div className="survey-large-homes">
+                            <div className="survey-large-homes-section">
+                                {this.renderFavoriteHomes()}
+                            </div>
                         </div>
                     </div>
                 </div>

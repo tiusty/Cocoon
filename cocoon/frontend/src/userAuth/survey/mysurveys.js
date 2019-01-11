@@ -395,12 +395,20 @@ export default class MySurveys extends Component {
                             id={survey.id}
                             onDelete={this.handleDelete}
                             onLargeSurveyClose={this.handleLargeSurveyClose}
+                            onLoadingClicked={this.setLoadingClick}
                         />
                     </div>
                 );
             }
         }
     }
+
+    setLoadingClick = () => {
+        /**
+         * Sets loading_clicked to true
+         */
+        this.setState({loading_clicked: true})
+    };
 
     render() {
         return (
