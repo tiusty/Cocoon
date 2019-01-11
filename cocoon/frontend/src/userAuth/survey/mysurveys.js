@@ -294,6 +294,24 @@ export default class MySurveys extends Component {
         this.setState({survey_clicked_id: id})
     };
 
+    handleLargeSurveyClose = () => {
+        /**
+         * Handles closing the large survey.
+         *
+         * Since information can be modified on the large tile, when the user closes
+         * it then the data on the page needs to be updated. Also, the clicked survey value
+         * should go back to undefined so the small survey tiles load again
+         */
+        this.setState({survey_clicked_id: undefined});
+
+        // See if any of the data changed
+        axios.get(this.state.survey_endpoint)
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({surveys: this.parseData(response.data)})
+            });
+    };
+
     renderTourSummary() {
         if (!this.state.is_pre_tour_signed && !this.state.pre_tour_forms_created) {
             return (
@@ -372,7 +390,7 @@ export default class MySurveys extends Component {
             } else {
                 let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
                 return (
-                    <div className="col-md-12 survey-large">
+                    <div className="col-md-12">
                         <SurveyLarge
                             id={survey.id}
                             onDelete={this.handleDelete}

@@ -4,6 +4,7 @@ import { Component } from 'react';
 import axios from 'axios'
 
 // Import Cocoon Components
+import './surveyLarge.css'
 import survey_endpoints from "../../../endpoints/survey_endpoints";
 import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
 
@@ -67,7 +68,14 @@ export default class SurveyLarge extends Component {
 
     render() {
         return(
-            <p> hi</p>
+            <div className="survey-large-div">
+                <div className="survey-large-close-div">
+                    <span onClick={() => this.props.onLargeSurveyClose()} className="survey-large-close-icon glyphicon glyphicon-remove"/>
+                </div>
+                <div className="survey-large-div-data">
+                    <p className="survey-large-title">{this.state.name}</p>
+                </div>
+            </div>
         );
     }
 }

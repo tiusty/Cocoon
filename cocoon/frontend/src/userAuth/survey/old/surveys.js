@@ -199,7 +199,6 @@ export default class Surveys extends Component {
                 </LoadingScreen>
             );
         } else {
-
             // If no survey is selected then render the small tiles
             if (this.state.survey_clicked_id === undefined) {
                 return (

@@ -1,0 +1,41 @@
+.survey-large-div {
+    background: #FFFFFF;
+    border: 1px solid #DFDFDF;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.survey-large-close-div {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding-top: 5px;
+    padding-right: 15px;
+}
+
+.survey-large-close-icon {
+    font-size: 40px;
+    cursor:pointer;
+}
+
+.survey-large-div-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+
+}
+
+.survey-large-title {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    font-size: 24px;
+
+    color: #000000;
+}
