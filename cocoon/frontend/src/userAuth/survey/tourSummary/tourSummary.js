@@ -72,6 +72,14 @@ export default class TourSummary extends Component {
     renderPage() {
         if (!this.props.loaded) {
             return <p>Loading</p>
+        } else if (this.props.itinerary_scheduled) {
+            return (
+                <>
+                    <p>To review more details of your tour please click below:</p>
+                    <a  href={scheduler_endpoints['clientScheduler']} onClick={this.props.onLoadingClicked}
+                        className="btn btn-primary survey-small-load-button">Load survey</a>
+                </>
+            );
         } else if (!this.props.is_pre_tour_signed && !this.props.pre_tour_forms_created) {
             return (
                 <>

@@ -443,7 +443,7 @@ export default class MySurveys extends Component {
                 <>
                     <p className="surveys-title-text-semi-bold">Lets schedule a tour for you so you can find your
                         perfect home!</p>
-                    <p className='surveys-title-text'>Please expand a survey and add homes to the tour. Remember you can only
+                    <p className='surveys-title-text'>Please expand a survey to add homes to the tour. Remember you can only
                     schedule one tour at a time, therefore you cannot schedule a tour for two different roommate groups at once</p>
                 </>
             );
@@ -459,9 +459,8 @@ export default class MySurveys extends Component {
         } else if (this.state.itinerary_exists) {
             return (
                 <>
-                    <p className="surveys-title-text-semi-bold">Lets schedule a tour for you so you can find your
-                        perfect home!</p>
-                    <p className='surveys-title-text'></p>
+                    <p className="surveys-title-text-semi-bold">You already have a tour scheduled!</p>
+                    <p className='surveys-title-text'>You can view more information about your tour in the tour summary column</p>
                 </>
             );
         }
@@ -500,11 +499,13 @@ export default class MySurveys extends Component {
                             survey_id={this.state.survey_clicked_id}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}
+                            itinerary_scheduled={this.state.itinerary_exists}
                             refreshing_document_status={this.state.refreshing_document_status}
                             onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
                             onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
                             onHandleOnClickResendDocument={this.handleOnClickResendDocument}
                             onHandleVisitListClicked={this.handleVisitClick}
+                            onLoadingClick={this.setLoadingClick}
                         />
                     </div>
                 </div>
