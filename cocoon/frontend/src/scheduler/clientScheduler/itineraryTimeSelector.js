@@ -8,9 +8,9 @@ export default class ItineraryTimeSelector extends Component {
         super(props);
         this.state = {
             time: this.props.date,
-            hour: undefined,
-            minute: undefined,
-            period: undefined,
+            hour: 0,
+            minute: 0,
+            period: '',
         }
     }
 
@@ -132,7 +132,6 @@ export default class ItineraryTimeSelector extends Component {
                 <div className="time-available-wrapper">
                     <p>How long are you free for?</p>
                     {this.renderAvailableOptions()}
-                    {/*<p className="time-available-error">NOTE: Cannot be shorter than {this.props.formatTimeAvailable(this.props.tour_duration_seconds)}</p>*/}
                 </div>
 
             </div>
