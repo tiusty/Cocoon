@@ -9,6 +9,10 @@ import HomeTiles from "../../../common/homeTile/homeTiles";
 import survey_endpoints from "../../../endpoints/survey_endpoints";
 import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
 
+// Import Pop-up button components
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
+
 export default class SurveyLarge extends Component {
 
     state = {
@@ -130,6 +134,27 @@ export default class SurveyLarge extends Component {
             );
     };
 
+    handleDelete = () => {
+        /**
+         Opens a confirmation page first before the survey is deleted.
+         If the user clicks yes then the survey gets deleted, if
+         no then nothing happens
+         */
+        confirmAlert({
+            title: 'Confirmation',
+            message: "Are you sure you want to delete " + this.state.name + "?",
+            buttons: [
+                {
+                    label: 'yes',
+                    onClick: () => this.props.onDelete(this.props.id)
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        })
+    };
+
     render() {
         return (
             <div className="survey-large-div">
@@ -149,7 +174,7 @@ export default class SurveyLarge extends Component {
                                 </div>
                             <div className="survey-large-snapshot-section">
                                 <p className="survey-large-text">Don't want this survey anymore?</p>
-                                <button className="btn btn-danger">Delete Survey</button>
+                                <button className="btn btn-danger" onClick={this.handleDelete}>Delete Survey</button>
                             </div>
                         </div>
                     </div>

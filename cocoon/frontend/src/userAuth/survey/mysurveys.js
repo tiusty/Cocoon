@@ -163,6 +163,36 @@ export default class MySurveys extends Component {
             });
     }
 
+    handleDelete = (survey_id) => {
+        /**
+         * When a survey wants to be deleted, it passes it to the backend and then
+         *  the list of surveys is returned again and the data is repopulated with the new
+         *  list of surveys.
+         *
+         *  Note: If no data race conditions happen, then the returned list of surveys should
+         *      be just the same list of surveys with the deleted one gone.
+         * @type {string} The survey id that is being deleted
+         */
+
+            // The survey id is appended to the survey_endpoint since the put request expects the survey id as
+            //  part of the url
+        let endpoint = this.state.survey_endpoint + survey_id + "/";
+
+        // Passes the survey id and the put type to the backend
+        axios.put(endpoint,
+            {
+                survey_id: survey_id,
+                type: 'survey_delete',
+            })
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    surveys: this.parseData(response.data),
+                    survey_clicked_id: undefined
+                })
+            });
+    };
+
     createDocument = () => {
         /**
          * Sends an API request to create the document specified by the template type
@@ -388,6 +418,7 @@ export default class MySurveys extends Component {
                             onLargeSurveyClose={this.handleLargeSurveyClose}
                             onLoadingClicked={this.setLoadingClick}
                             onHandleVisitListClicked={this.handleVisitClick}
+                            onDelete={this.handleDelete}
                         />
                     </div>
                 );
