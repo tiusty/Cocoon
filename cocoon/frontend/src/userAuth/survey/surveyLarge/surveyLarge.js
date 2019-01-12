@@ -105,6 +105,62 @@ export default class SurveyLarge extends Component {
         }
     }
 
+    handleFavoriteClick = (home, e) => {
+        /**
+         * This function handles when the user clicks the heart to favorite or unfavorite a home
+         *
+         * Note: This function updates the curr_favorites so that the loaded favorites don't disappear
+         *  and therefore the user has a chance to refavorite the home if they want
+         * @type {string} The home that is being toggled
+         */
+
+        // Prevents the onclick on the tile from triggering
+        e.stopPropagation();
+
+        // The survey id is passed to the put request to update the state of that particular survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
+        axios.put(endpoint,
+            {
+                home_id: home.id,
+                type: 'favorite_toggle',
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    curr_favorites: response.data.favorites
+                })
+            );
+    };
+
+    handleVisitClick = (home, e) => {
+        /**
+         *  Function handles when the user wants to add or remove a home from the visit list
+         *
+         *  The home that is being toggled is passed to the backend and then the updated state is
+         *      returned and the new visit list is passed to the state
+         * @type {string} The home that is being toggled
+         */
+
+        // Prevents the onclick on the tile from triggering
+        e.stopPropagation();
+
+        // The survey id is passed to the put request to update the state of that particular survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
+        axios.put(endpoint,
+            {
+                home_id: home.id,
+                type: 'visit_toggle'
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    visit_list: response.data.visit_list
+                })
+            );
+    };
+
     render() {
         return (
             <div className="survey-large-div">
