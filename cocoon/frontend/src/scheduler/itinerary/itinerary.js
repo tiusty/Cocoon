@@ -45,6 +45,9 @@ class Itinerary extends Component {
         if (prevProps.hash !== this.props.hash) {
             this.updateItinerary()
         }
+        if (prevProps.is_scheduled !== this.props.is_scheduled) {
+            this.updateItinerary();
+        }
     }
 
     componentDidMount() {

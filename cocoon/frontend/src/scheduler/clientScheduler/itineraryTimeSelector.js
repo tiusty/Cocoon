@@ -93,7 +93,7 @@ export default class ItineraryTimeSelector extends Component {
         return (
             <select id="picker_available" onChange={this.props.setTimeAvailable}>
                 {options.map(o => (
-                    <option value={o}>{o} hours</option>
+                    <option value={o} key={o}>{o} hours</option>
                 ))}
             </select>
         );

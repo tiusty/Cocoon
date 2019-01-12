@@ -56,10 +56,13 @@ class ClientScheduler extends Component {
         axios.get(scheduler_endpoints['itineraryClient'])
             .catch(error => console.log('Bad', error))
             .then(response => {
-                    this.setState(
-                        this.parseData(response.data)
-                    ),
-                    this.setState( {loaded: true } )
+                this.setState(
+                    this.parseData(response.data)
+                ),
+                this.setState( { loaded: true } );
+                if (response.data[0].start_times) {
+                    this.setState( { is_scheduled: true } )
+                }
             })
     }
 
@@ -146,6 +149,7 @@ class ClientScheduler extends Component {
             axios.put(endpoint, {
                 start_times: this.state.days,
                 type: 'start_times',
+                // set is_scheduled to true
             })
             .catch(error => console.log('Bad', error))
             .then(response => {
