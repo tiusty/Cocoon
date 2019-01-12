@@ -422,6 +422,7 @@ export default class MySurveys extends Component {
                             onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
                             onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
                             onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                            onHandleVisitListClicked={this.handleVisitClick}
                         />
                 </div>
             </div>

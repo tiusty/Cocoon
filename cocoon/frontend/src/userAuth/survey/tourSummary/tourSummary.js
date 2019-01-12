@@ -5,11 +5,26 @@ import axios from 'axios'
 
 // Import Cocoon Components
 import CSRFToken from '../../../common/csrftoken'
+import HomeTiles from "../../../common/homeTile/homeTiles";
 
 export default class TourSummary extends Component {
-    state = {
 
-    }
+    renderVisitList() {
+        /**
+         * Renders the visit list homes
+         */
+        if (this.props.visit_list.length === 0) return <h3 className="survey-large-no-homes">Please add homes to your visit list!</h3>;
+        return (
+            <div className="survey-large-home">
+                <HomeTiles
+                    homes={this.props.visit_list}
+                    visit_list={this.props.visit_list}
+                    curr_favorites={this.props.visit_list}
+                    onVisitClick={this.props.onHandleVisitListClicked}
+                />
+            </div>
+        );
+    };
 
     renderPage() {
         if (!this.props.loaded) {
@@ -54,6 +69,8 @@ export default class TourSummary extends Component {
                                 value={this.props.survey_id} type="submit">Schedule!
                         </button>
                     </form>
+                    <h2>Below are homes in your visit list!</h2>
+                    {this.renderVisitList()}
                 </>
             );
 
