@@ -469,7 +469,7 @@ export default class MySurveys extends Component {
                     <p className="surveys-title-text-semi-bold">Here you can load and view your past surveys for your
                         different roommate groups!</p>
                     <p className="surveys-title-text">When you are ready please follow the steps in the Tour Summary
-                        column on the right to sign your documents so you can schedule a tour!</p>
+                        column to sign your documents so you can schedule a tour!</p>
                 </>
             );
         } else if (!this.state.itinerary_scheduled && this.state.survey_clicked_id === undefined) {
