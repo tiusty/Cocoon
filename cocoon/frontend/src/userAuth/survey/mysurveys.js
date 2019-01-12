@@ -30,6 +30,7 @@ export default class MySurveys extends Component {
 
         // Handles opening a large survey
         survey_clicked_id: undefined,
+        visit_list: [],
 
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
@@ -272,7 +273,7 @@ export default class MySurveys extends Component {
          *
          * If the click is on the extra box then the survey should load
          */
-        this.setState({survey_clicked_id: id})
+        this.setState({survey_clicked_id: id}, ()  => this.retrieveVisitList());
     };
 
     handleLargeSurveyClose = () => {
@@ -283,7 +284,7 @@ export default class MySurveys extends Component {
          * it then the data on the page needs to be updated. Also, the clicked survey value
          * should go back to undefined so the small survey tiles load again
          */
-        this.setState({survey_clicked_id: undefined});
+        this.setState({survey_clicked_id: undefined, visit_list: []});
 
         // See if any of the data changed
         axios.get(this.state.survey_endpoint)
@@ -292,6 +293,48 @@ export default class MySurveys extends Component {
                 this.setState({surveys: this.parseData(response.data)})
             });
     };
+
+    handleVisitClick = (home, e) => {
+        /**
+         *  Function handles when the user wants to add or remove a home from the visit list
+         *
+         *  The home that is being toggled is passed to the backend and then the updated state is
+         *      returned and the new visit list is passed to the state
+         * @type {string} The home that is being toggled
+         */
+
+        // Prevents the onclick on the tile from triggering
+        e.stopPropagation();
+
+        // The survey id is passed to the put request to update the state of that particular survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id + "/";
+        axios.put(endpoint,
+            {
+                home_id: home.id,
+                type: 'visit_toggle'
+
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                this.setState({
+                    visit_list: response.data.visit_list
+                })
+            );
+    };
+
+    retrieveVisitList = () => {
+        let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                {
+                    this.setState({
+                        visit_list: response.data.visit_list,
+                    })
+                }
+            )
+    }
+
 
     renderSurveysBlock() {
         // If something is loading then render the loading page
@@ -336,9 +379,11 @@ export default class MySurveys extends Component {
                     <div className="survey-large">
                         <SurveyLarge
                             id={survey.id}
+                            visit_list={this.state.visit_list}
                             onDelete={this.handleDelete}
                             onLargeSurveyClose={this.handleLargeSurveyClose}
                             onLoadingClicked={this.setLoadingClick}
+                            onHandleVisitListClicked={this.handleVisitClick}
                         />
                     </div>
                 );
@@ -369,6 +414,7 @@ export default class MySurveys extends Component {
                 <div className="col-md-4">
                         <TourSummary
                             loaded={this.state.loaded}
+                            visit_list={this.state.visit_list}
                             survey_id={this.state.survey_clicked_id}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}

@@ -26,8 +26,6 @@ export default class SurveyLarge extends Component {
         //  the home will no longer be in this list. This is used so the user can favorite and unfavorite
         //  and the home won't disappear until the page is refreshed
         curr_favorites: [],
-
-        visit_list:  [],
     };
 
     componentDidMount() {
@@ -46,7 +44,6 @@ export default class SurveyLarge extends Component {
                         name: response.data.name,
                         favorites: response.data.favorites,
                         curr_favorites: response.data.favorites,
-                        visit_list: response.data.visit_list,
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
@@ -91,9 +88,9 @@ export default class SurveyLarge extends Component {
                     <div className="survey-large-home">
                         <HomeTiles
                             homes={this.state.favorites}
-                            visit_list={this.state.visit_list}
+                            visit_list={this.props.visit_list}
                             curr_favorites={this.state.curr_favorites}
-                            onVisitClick={this.handleVisitClick}
+                            onVisitClick={this.props.onHandleVisitListClicked}
                             onFavoriteClick={this.handleFavoriteClick}
                         />
                     </div>
@@ -129,34 +126,6 @@ export default class SurveyLarge extends Component {
             .then(response =>
                 this.setState({
                     curr_favorites: response.data.favorites
-                })
-            );
-    };
-
-    handleVisitClick = (home, e) => {
-        /**
-         *  Function handles when the user wants to add or remove a home from the visit list
-         *
-         *  The home that is being toggled is passed to the backend and then the updated state is
-         *      returned and the new visit list is passed to the state
-         * @type {string} The home that is being toggled
-         */
-
-        // Prevents the onclick on the tile from triggering
-        e.stopPropagation();
-
-        // The survey id is passed to the put request to update the state of that particular survey
-        let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
-        axios.put(endpoint,
-            {
-                home_id: home.id,
-                type: 'visit_toggle'
-
-            })
-            .catch(error => console.log('BAD', error))
-            .then(response =>
-                this.setState({
-                    visit_list: response.data.visit_list
                 })
             );
     };

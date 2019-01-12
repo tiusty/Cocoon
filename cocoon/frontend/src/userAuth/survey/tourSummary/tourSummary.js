@@ -7,6 +7,9 @@ import axios from 'axios'
 import CSRFToken from '../../../common/csrftoken'
 
 export default class TourSummary extends Component {
+    state = {
+
+    }
 
     renderPage() {
         if (!this.props.loaded) {
