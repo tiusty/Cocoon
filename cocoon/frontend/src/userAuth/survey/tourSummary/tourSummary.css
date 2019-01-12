@@ -32,6 +32,10 @@
     color: #000000;
 }
 
+.tour-summary-doc-button {
+    margin-bottom: 10px;
+}
+
 .tour-summary-h3 {
     font-family: Montserrat;
     font-style: normal;

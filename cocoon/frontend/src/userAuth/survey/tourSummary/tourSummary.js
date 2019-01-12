@@ -95,10 +95,10 @@ export default class TourSummary extends Component {
             return (
                 <>
                     <p className="tour-summary-text">Refresh your document stats!</p>
-                    <button className="btn btn-primary"
+                    <button className="btn btn-primary tour-summary-doc-button"
                             onClick={this.props.onHandleOnClickRefreshDocument}>{this.props.refreshing_document_status ? 'Loading' : 'Refresh'}</button>
                     <p className="tour-summary-text">Can't find the email?</p>
-                    <button className="btn btn-primary"
+                    <button className="btn btn-primary tour-summary-doc-button"
                             onClick={this.props.onHandleOnClickResendDocument}>{this.props.refreshing_document_status ? 'Loading' : 'Resend'}</button>
                 </>
             );
