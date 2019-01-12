@@ -91,8 +91,7 @@ export default class MySurveys extends Component {
         let result = false;
 
         // Determine if any of the itineraries are not finished
-        data.map(i =>
-            {
+        data.map(i => {
                 if (!i.finished) {
                     result = true
                 }
@@ -131,7 +130,7 @@ export default class MySurveys extends Component {
         axios.get(signature_endpoints['hunterDocTemplate'], {params: {type: 'pre_tour'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState( {pre_tour_template_id: response.data[0].id })
+                this.setState({pre_tour_template_id: response.data[0].id})
             });
 
         /**
@@ -307,7 +306,7 @@ export default class MySurveys extends Component {
          *
          * If the click is on the extra box then the survey should load
          */
-        this.setState({survey_clicked_id: id}, ()  => this.retrieveVisitList());
+        this.setState({survey_clicked_id: id}, () => this.retrieveVisitList());
     };
 
     handleLargeSurveyClose = () => {
@@ -360,8 +359,7 @@ export default class MySurveys extends Component {
         let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id;
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
-            .then(response =>
-                {
+            .then(response => {
                     this.setState({
                         visit_list: response.data.visit_list,
                     })
@@ -371,8 +369,18 @@ export default class MySurveys extends Component {
 
 
     renderSurveysBlock() {
+        // If there are no surveys then render a take survey page
+        if (this.state.surveys.length <= 0) {
+            return (
+                <div className="my-surveys-none-div">
+                    <h2>You have no surveys!</h2>
+                    <p>Please click below to take a survey so we can find you your perfect home!</p>
+                    <a href={survey_endpoints['rentingSurvey']} className="btn btn-success"
+                       onClick={this.setLoadingClick}>Take Survey</a>
+                </div>
+            );
         // If no survey is selected then render the small tiles
-        if (this.state.survey_clicked_id === undefined) {
+        } else if (this.state.survey_clicked_id === undefined) {
             return (
                 <>
                     {this.state.surveys.map(survey =>
@@ -391,8 +399,9 @@ export default class MySurveys extends Component {
                     )}
                 </>
             );
-            // If a survey is clicked then render the large survey
-        } else {
+        }
+        // If a survey is clicked then render the large survey
+        else {
             let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
             return (
                 <div className="survey-large">
@@ -406,6 +415,7 @@ export default class MySurveys extends Component {
                     />
                 </div>
             );
+
         }
     }
 
