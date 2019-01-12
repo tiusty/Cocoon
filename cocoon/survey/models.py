@@ -66,7 +66,6 @@ class HomeInformationModel(models.Model):
     max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
     min_bathrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeTypeModel)
-    wants_laundry_nearby = models.BooleanField(default=False)
 
     @property
     def home_types(self):
@@ -112,6 +111,16 @@ class PriceInformationModel(models.Model):
     class Meta:
         abstract = True
 
+class HouseNearbyAmenitiesModel(models.Model):
+    """
+    Contains amenities that are near the house
+    """
+    wants_laundry_nearby = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+
 class InteriorAmenitiesModel(models.Model):
     """
     Contains all the survey questions regarding the interior Amenities
@@ -137,9 +146,10 @@ class InteriorAmenitiesModel(models.Model):
     class Meta:
         abstract = True
 
-class AmenitiesModel(models.Model):
+
+class ExteriorAmenitiesModel(models.Model):
     """
-    Contains all the survey questions regarding the building/Exterior Amenities
+    Contains all the survey questions regarding the exterior Amenities
     All Questions are hybrid weighted
     """
     parking_spot = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
@@ -154,28 +164,10 @@ class AmenitiesModel(models.Model):
     wants_storage = models.BooleanField(default=False)
     storage_weight = models.IntegerField(default=0)
 
-    wants_laundry_in_unit = models.BooleanField(default=False)
-    wants_furnished = models.BooleanField(default=False)
-    furnished_weight = models.IntegerField(default=0)
-    wants_dogs = models.BooleanField(default=False)
-    number_of_dogs = models.IntegerField(default=0)
-    service_dogs = models.BooleanField(default=False)
-    dog_size = models.CharField(max_length=200, blank=True, default="")
-    breed_of_dogs = models.CharField(max_length=200, blank=True, default="")
-    wants_cats = models.BooleanField(default=False)
-    cat_weight = models.IntegerField(default=0)
-    wants_hardwood_floors = models.BooleanField(default=False)
-    hardwood_floors_weight = models.IntegerField(default=0)
-    wants_AC = models.BooleanField(default=False)
-    AC_weight = models.IntegerField(default=0)
-    wants_dishwasher = models.BooleanField(default=False)
-    dishwasher_weight = models.IntegerField(default=0)
-
     class Meta:
         abstract = True
 
-
-class RentingSurveyModel(AmenitiesModel,
+class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNearbyAmenitiesModel,
                          PriceInformationModel, HomeInformationModel, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.

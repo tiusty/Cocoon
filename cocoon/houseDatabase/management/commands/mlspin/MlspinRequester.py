@@ -117,8 +117,7 @@ class MlspinRequester(object):
             # If any of the fields give a value error, then don't save the apartment
             try:
                 #Initialize word scraper
-                word_scraper = WordScraper()
-                word_scraper.word_scraper(cells[REMARKS])
+                word_scraper = WordScraper(cells[REMARKS])
 
                 # Set the HomeBaseModel Fields
                 new_listing.street_address = normalize_street_address("{0} {1}".format(cells[STREET_NO], clean_address))

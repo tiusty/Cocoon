@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    AmenitiesForm, RentSurveyFormMini
+    RentSurveyFormMini, ExteriorAmenitiesForm, InteriorAmenitiesForm, HouseNearbyAmenitiesForm
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
@@ -586,6 +586,8 @@ class TestAmenitiesForm(TestCase):
         self.wants_dishwasher = False
         self.dishwasher_weight = 0
 
+        self.wants_laundry_nearby = False
+
     def tests_exterior_amenities_valid(self):
         # Arrange
         form_data = {
@@ -600,7 +602,7 @@ class TestAmenitiesForm(TestCase):
             'wants_storage': self.wants_storage,
             'storage_weight': self.storage_weight
         }
-        exterior_amenities_form = AmenitiesForm(data=form_data)
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
 
         # Act
         result = exterior_amenities_form.is_valid()
@@ -622,7 +624,7 @@ class TestAmenitiesForm(TestCase):
             'wants_storage':self.wants_storage,
             'storage_weight':self.storage_weight
         }
-        exterior_amenities_form = AmenitiesForm(data=form_data)
+        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
 
         # Act
         result = exterior_amenities_form.is_valid()
@@ -648,11 +650,24 @@ class TestAmenitiesForm(TestCase):
             'wants_dishwasher':self.wants_dishwasher,
             'dishwasher_weight':self.dishwasher_weight
         }
-        interior_amenities_form = AmenitiesForm(data=form_data)
+        interior_amenities_form = InteriorAmenitiesForm(data=form_data)
 
         # Act
         result = interior_amenities_form.is_valid()
         print(interior_amenities_form.errors)
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_nearby_amenities_valid(self):
+        # Arrange
+        form_data = {
+            "wants_laundry_nearby": self.wants_laundry_nearby
+        }
+        nearby_amenities_form = HouseNearbyAmenitiesForm(data=form_data)
+
+        # Act
+        result = nearby_amenities_form.is_valid()
 
         # Assert
         self.assertTrue(result)

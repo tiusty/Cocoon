@@ -4,13 +4,6 @@ from django.test import TestCase
 class TestWordScraper(TestCase):
 
     def setUp(self):
-        self.scraper1_easy = WordScraper()
-        self.scraper2_easy = WordScraper()
-        self.scraper3_easy = WordScraper()
-
-        self.scraper1_hard = WordScraper()
-        self.scraper2_hard = WordScraper()
-        self.scraper3_hard = WordScraper()
 
         basic_test_1 = "laundry in unit, air conditioning available, dogs allowed, cats allowed, hardwood floors"
         basic_test_2 = "laundry in building, ac, dogs allowed, unfurnished, gym in building, balcony, hot tub"
@@ -19,13 +12,14 @@ class TestWordScraper(TestCase):
         hard_test_2 = "no laundry in unit or building, air conditioning available, not furnished, no patio, no storage"
         hard_test_3 = "laundry in building, air conditioned unit, no hardwood floors, pool closed permanently"
 
-        self.scraper1_easy.word_scraper(basic_test_1)
-        self.scraper2_easy.word_scraper(basic_test_2)
-        self.scraper3_easy.word_scraper(basic_test_3)
+        self.scraper1_easy = WordScraper(basic_test_1)
+        self.scraper2_easy = WordScraper(basic_test_2)
+        self.scraper3_easy = WordScraper(basic_test_3)
 
-        self.scraper1_hard.word_scraper(hard_test_1)
-        self.scraper2_hard.word_scraper(hard_test_2)
-        self.scraper3_hard.word_scraper(hard_test_3)
+        self.scraper1_hard = WordScraper(hard_test_1)
+        self.scraper2_hard = WordScraper(hard_test_2)
+        self.scraper3_hard = WordScraper(hard_test_3)
+
 
 
     def test_word_laundry_in_unit(self):
