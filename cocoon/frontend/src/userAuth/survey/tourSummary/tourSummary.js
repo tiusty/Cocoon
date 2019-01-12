@@ -8,6 +8,9 @@ import CSRFToken from '../../../common/csrftoken'
 import HomeTiles from "../../../common/homeTile/homeTiles";
 import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
 
+// Import Styling
+import './tourSummary.css'
+
 export default class TourSummary extends Component {
 
     state = {

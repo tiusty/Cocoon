@@ -1,3 +1,7 @@
+.survey-large-home {
+    width: 100%;
+}
+
 .survey-large-div {
     background: #FFFFFF;
     border: 1px solid #DFDFDF;
@@ -78,5 +82,5 @@
 .survey-large-homes-section,
 .survey-large-snapshot-section {
     padding: 15px;
-
+    width: 100%;
 }
