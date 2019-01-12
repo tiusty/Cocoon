@@ -143,15 +143,15 @@ class ClientScheduler extends Component {
         }
     };
 
-    handleSaveItinerary() {
+    handleSaveItinerary = () => {
 
         confirmAlert({
-            title: 'Are you sure you are done adding times?',
-            message: "You may not add/delete times once you submit the itinerary?",
+            title: 'Are you done?',
+            message: "You won't be able to edit the itinerary afterwards?",
             buttons: [
                 {
                     label: 'yes',
-                    onClick: () => this.props.updateStartTimes()
+                    onClick: () => this.updateStartTimes()
                 },
                 {
                     label: 'No',
@@ -164,6 +164,7 @@ class ClientScheduler extends Component {
         /**
          *  Updates the tenants start_times when adding new dates
          */
+        console.log('h')
         if (this.state.days.length) {
             let endpoint = scheduler_endpoints['itineraryClient'] + this.state.id + '/';
             axios.put(endpoint, {
