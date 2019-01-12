@@ -29,13 +29,16 @@ class HomeTile extends Component {
          */
 
         // Toggles whether the home has a empty or full heart depending on favorite status
-        let heart_class = "glyphicon";
-        if (this.props.favorite) {
-            heart_class += " glyphicon-heart"
-        } else {
-            heart_class += " glyphicon-heart-empty"
+        let heart_span = "";
+        if (this.props.show_heart) {
+            let heart_class = "glyphicon";
+            if (this.props.favorite) {
+                heart_class += " glyphicon-heart"
+            } else {
+                heart_class += " glyphicon-heart-empty"
+            }
+            heart_span = <span className={heart_class} onClick={(e) => this.props.onFavoriteClick(home, e)}> </span>;
         }
-        let heart_span = <span className={heart_class} onClick={(e) => this.props.onFavoriteClick(home, e)}> </span>;
 
         let visit_classes = "glyphicon glyphicon-check-class";
         if (this.props.visit)

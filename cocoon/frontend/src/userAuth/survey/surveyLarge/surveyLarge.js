@@ -68,6 +68,22 @@ export default class SurveyLarge extends Component {
             )
     }
 
+    generateFavoriteHomes() {
+        /**
+         * Function checks if any of the homes in the favorites list is in the visit list
+         *  If so then the home should not show up in the favorites list
+         */
+        let favorite_list = [];
+        for (let i =0; i < this.state.favorites.length; i++) {
+            // Checks to see if the favorite home is in the visit list and if it doesn't, then we want to render
+            //  the homes with the favorites list
+            if (this.props.visit_list.filter(h => h.id === this.state.favorites[i].id).length === 0) {
+                favorite_list.push(this.state.favorites[i])
+            }
+        }
+        return favorite_list
+    }
+
     generateLoadUrl = () => {
         /**
          * Generates the URl so that the user can load a survey and it directs them to the survey results page for that
@@ -91,11 +107,12 @@ export default class SurveyLarge extends Component {
                     <h2 className="survey-large-title">Below are your favorite homes</h2>
                     <div className="survey-large-home">
                         <HomeTiles
-                            homes={this.state.favorites}
+                            homes={this.generateFavoriteHomes()}
                             visit_list={this.props.visit_list}
-                            curr_favorites={this.state.curr_favorites}
+                            curr_favorites={this.state.favorites}
                             onVisitClick={this.props.onHandleVisitListClicked}
                             onFavoriteClick={this.handleFavoriteClick}
+                            show_heart={true}
                         />
                     </div>
                     <h2 className="survey-large-title">Want to favorite more homes?</h2>

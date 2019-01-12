@@ -65,6 +65,7 @@ export default class HomeTiles extends Component {
                     <HomeTile
                         key={home.id}
                         id={home.id}
+                        show_heart={this.props.show_heart}
                         home={home}
                         favorite={this.inFavorites(home)}
                         visit={this.inVisitList(home)}
