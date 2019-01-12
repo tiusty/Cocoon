@@ -432,15 +432,39 @@ export default class MySurveys extends Component {
         } else if (!this.state.is_pre_tour_signed) {
             return (
                 <>
-                    <p className="surveys-title-text-semi-bold">Here you can load and view your past surveys for your different roommate groups!</p>
-                    <p className="surveys-title-text">When you are ready please follow the steps in the Tour Summary column on the right to sign your documents so you can schedule a tour!</p>
+                    <p className="surveys-title-text-semi-bold">Here you can load and view your past surveys for your
+                        different roommate groups!</p>
+                    <p className="surveys-title-text">When you are ready please follow the steps in the Tour Summary
+                        column on the right to sign your documents so you can schedule a tour!</p>
+                </>
+            );
+        } else if (!this.state.itinerary_exists && this.state.survey_clicked_id === undefined) {
+            return (
+                <>
+                    <p className="surveys-title-text-semi-bold">Lets schedule a tour for you so you can find your
+                        perfect home!</p>
+                    <p className='surveys-title-text'>Please expand a survey and add homes to the tour. Remember you can only
+                    schedule one tour at a time, therefore you cannot schedule a tour for two different roommate groups at once</p>
+                </>
+            );
+        } else if (!this.state.itinerary_exists && this.state.survey_clicked_id !== undefined) {
+            return (
+                <>
+                    <p className="surveys-title-text-semi-bold">Please add homes to your tour!</p>
+                    <p className='surveys-title-text'>Add homes from your favorites by clicking on the check mark on the home, you can
+                    view more info about the home by clicking on the home box. If you want to add more homes you can click load survey at the
+                    bottom of where your favorite homes are located</p>
+                </>
+            );
+        } else if (this.state.itinerary_exists) {
+            return (
+                <>
+                    <p className="surveys-title-text-semi-bold">Lets schedule a tour for you so you can find your
+                        perfect home!</p>
+                    <p className='surveys-title-text'></p>
                 </>
             );
         }
-        return (
-            <p className='surveys-title-text'>When you are ready please follow the steps on the right side of the screen to
-                sign your documents so you can schedule a tour</p>
-        );
     }
 
     render() {
