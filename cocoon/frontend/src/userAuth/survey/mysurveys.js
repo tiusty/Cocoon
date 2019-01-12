@@ -28,27 +28,8 @@ export default class MySurveys extends Component {
         refreshing_document_status: false,
         pre_tour_forms_created: false,
 
-
         // Handles opening a large survey
         survey_clicked_id: undefined,
-        survey: {
-            name: "",
-            url: "",
-            desired_price: 0,
-            num_bedrooms: 0,
-
-            duration: null,
-            refresh_duration: true,
-
-            // Favorites contains a lit of the favorites when the data was pulled from the backend
-            favorites: [],
-            // Stores the current list of favorites the user has, i.e if he unfavorited a home then
-            //  the home will no longer be in this list. This is used so the user can favorite and unfavorite
-            //  and the home won't disappear until the page is refreshed
-            curr_favorites: [],
-
-            visit_list: [],
-        },
 
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
@@ -386,9 +367,8 @@ export default class MySurveys extends Component {
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="tour-summary">
-                        <h2 className="surveys-title">Tour Summary</h2>
                         <TourSummary
+                            loaded={this.state.loaded}
                             survey_id={this.state.survey_clicked_id}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}
@@ -397,7 +377,6 @@ export default class MySurveys extends Component {
                             onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
                             onHandleOnClickResendDocument={this.handleOnClickResendDocument}
                         />
-                    </div>
                 </div>
             </div>
         );
