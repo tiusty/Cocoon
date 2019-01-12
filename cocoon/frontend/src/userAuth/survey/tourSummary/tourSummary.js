@@ -26,6 +26,14 @@ export default class TourSummary extends Component {
         );
     };
 
+    determineScheduleButtonStatus() {
+        if (this.props.visit_list <= 0) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     renderPage() {
         if (!this.props.loaded) {
             return <p>Loading</p>
@@ -66,7 +74,9 @@ export default class TourSummary extends Component {
                         <CSRFToken/>
                         <button name="submit-button"
                                 className="btn btn-success"
-                                value={this.props.survey_id} type="submit">Schedule!
+                                value={this.props.survey_id}
+                                disabled={this.determineScheduleButtonStatus()}
+                                type="submit">Schedule!
                         </button>
                     </form>
                     <h2>Below are homes in your visit list!</h2>
