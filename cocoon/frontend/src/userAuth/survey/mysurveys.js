@@ -42,7 +42,7 @@ export default class MySurveys extends Component {
         loaded: false,
 
         // Itinerary information
-        itinerary_exists: false,
+        itinerary_scheduled: false,
 
         // Stores information regarding the state of signing documents
 
@@ -157,7 +157,7 @@ export default class MySurveys extends Component {
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
-                    itinerary_exists: this.determineActiveItinerary(response.data),
+                    itinerary_scheduled: this.determineActiveItinerary(response.data),
                 })
             });
     }
@@ -438,7 +438,7 @@ export default class MySurveys extends Component {
                         column on the right to sign your documents so you can schedule a tour!</p>
                 </>
             );
-        } else if (!this.state.itinerary_exists && this.state.survey_clicked_id === undefined) {
+        } else if (!this.state.itinerary_scheduled && this.state.survey_clicked_id === undefined) {
             return (
                 <>
                     <p className="surveys-title-text-semi-bold">Lets schedule a tour for you so you can find your
@@ -447,7 +447,7 @@ export default class MySurveys extends Component {
                     schedule one tour at a time, therefore you cannot schedule a tour for two different roommate groups at once</p>
                 </>
             );
-        } else if (!this.state.itinerary_exists && this.state.survey_clicked_id !== undefined) {
+        } else if (!this.state.itinerary_scheduled && this.state.survey_clicked_id !== undefined) {
             return (
                 <>
                     <p className="surveys-title-text-semi-bold">Please add homes to your tour!</p>
@@ -456,7 +456,7 @@ export default class MySurveys extends Component {
                     bottom of where your favorite homes are located</p>
                 </>
             );
-        } else if (this.state.itinerary_exists) {
+        } else if (this.state.itinerary_scheduled) {
             return (
                 <>
                     <p className="surveys-title-text-semi-bold">You already have a tour scheduled!</p>
@@ -499,7 +499,7 @@ export default class MySurveys extends Component {
                             survey_id={this.state.survey_clicked_id}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}
-                            itinerary_scheduled={this.state.itinerary_exists}
+                            itinerary_scheduled={this.state.itinerary_scheduled}
                             refreshing_document_status={this.state.refreshing_document_status}
                             onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
                             onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
