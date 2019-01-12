@@ -45,6 +45,9 @@ class Itinerary extends Component {
         if (prevProps.hash !== this.props.hash) {
             this.updateItinerary()
         }
+        if (prevProps.is_pending !== this.props.is_pending) {
+            this.updateItinerary();
+        }
     }
 
     componentDidMount() {
@@ -127,17 +130,17 @@ class Itinerary extends Component {
                 </div>
             );
         }
-    }
+    };
 
     renderSavedStartTimes = () => (
         <div className="side-wrapper-times">
             {this.state.start_times.map((day, index) => {
-                let endTime = moment(day.date).add(day.time_available_seconds, 'seconds')
+                let endTime = moment(day.time).add(day.time_available_seconds, 'seconds')
                 return (
                     <div className="time-item" key={index}>
                         <div className="time-item_date">
-                            <span>{moment(day.date).format('MMMM Do')} @ </span>
-                            <span>{moment(day.date).format('h:mm A')} - {moment(endTime).format('h:mm A')}</span>
+                            <span>{moment(day.time).format('MMMM Do')} @ </span>
+                            <span>{moment(day.time).format('h:mm A')} - {moment(endTime).format('h:mm A')}</span>
                         </div>
                     </div>
                 )
@@ -158,7 +161,7 @@ class Itinerary extends Component {
                 </p>
             );
         }
-    }
+    };
 
     renderItinerary = ()=> {
         return (
@@ -167,10 +170,10 @@ class Itinerary extends Component {
                     <p>Your Itinerary</p>
                     <p>Estimated Duration: {this.props.formatTimeAvailable(this.state.tour_duration_seconds)}</p>
                 </div>
-                {!this.props.is_scheduled ? this.renderStartTimes() : this.renderSavedStartTimes()}
+                {this.props.is_pending ? this.renderStartTimes() : this.renderSavedStartTimes()}
             </>
         );
-    }
+    };
 
     render() {
         return (

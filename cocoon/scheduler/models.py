@@ -121,6 +121,16 @@ class ItineraryModel(models.Model):
         return self.tour_duration_minutes/60
 
     @property
+    def is_pending(self):
+        """
+        Returns if the itinerary has available start times or not. If it does not have available start times then it is
+            pending user input
+        :return: (boolean) -> True: The itinerary still is awaiting for the client to enter available start times
+                              False: The client added available start times
+        """
+        return self.start_times.count() == 0
+
+    @property
     def is_claimed(self):
         """
         Returns if the itinerary has been claimed (has an agent)
@@ -133,8 +143,9 @@ class ItineraryModel(models.Model):
     @property
     def is_scheduled(self):
         """
-        Returns if the itinerary has been schedueld (has a start time)
-        :return:
+        Returns if the itinerary has been scheduled (has a selected start time)
+        :return: (boolean) -> True: A start time has been selected for the tour
+                              False: A start time has not been selected for the tour
         """
         return self.selected_start_time is not None
 
@@ -223,6 +234,7 @@ class TimeModel(models.Model):
     """
     time = models.DateTimeField(default=timezone.now)
     itinerary = models.ForeignKey(ItineraryModel, related_name='start_times', on_delete=models.CASCADE, blank=False, null=False)
+    time_available_seconds = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.time)

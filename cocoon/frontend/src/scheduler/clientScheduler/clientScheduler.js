@@ -14,12 +14,17 @@ import userAuth_endpoints from "../../endpoints/userAuth_endpoints";
 import ItineraryTimeSelector from "./itineraryTimeSelector";
 import ItineraryDateSelector from './itineraryDateSelector';
 
+// Import Pop-up button components
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
+
 class ClientScheduler extends Component {
     state = {
         id: null,
         loaded: false,
         is_claimed: false,
         is_scheduled: false,
+        is_pending: false,
 
         is_canceling: false,
         tour_duration_seconds: 0,
@@ -43,9 +48,10 @@ class ClientScheduler extends Component {
         data.map(c =>
             itinerary_ids.push( { id: c.id,
                 is_claimed: c.is_claimed,
-                is_scheduled: c.is_scheduled} )
+                is_scheduled: c.is_scheduled,
+                is_pending: c.is_pending,
+            } )
         );
-
         return itinerary_ids[0]
     }
 
@@ -56,10 +62,10 @@ class ClientScheduler extends Component {
         axios.get(scheduler_endpoints['itineraryClient'])
             .catch(error => console.log('Bad', error))
             .then(response => {
-                    this.setState(
-                        this.parseData(response.data)
-                    ),
-                    this.setState( {loaded: true } )
+                this.setState(
+                    this.parseData(response.data),
+                ),
+                this.setState( { loaded: true } );
             })
     }
 
@@ -135,28 +141,44 @@ class ClientScheduler extends Component {
                 date: new Date()
             });
         }
+    };
+
+    handleSaveItinerary = () => {
+
+        confirmAlert({
+            title: 'Are you done?',
+            message: "You won't be able to edit the itinerary afterwards?",
+            buttons: [
+                {
+                    label: 'yes',
+                    onClick: () => this.updateStartTimes()
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        })
     }
 
     updateStartTimes = () => {
         /**
          *  Updates the tenants start_times when adding new dates
          */
+        console.log('h')
         if (this.state.days.length) {
             let endpoint = scheduler_endpoints['itineraryClient'] + this.state.id + '/';
             axios.put(endpoint, {
                 start_times: this.state.days,
                 type: 'start_times',
             })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                 if (response.data.result) {
-                     this.setState({
-                         is_scheduled: true
-                     })
-                 } else {
-                     // Some error happens
-                 }
-            })
+                .catch(error => console.log('Bad', error))
+                .then(response => {
+                    this.setState({
+                        is_claimed: response.data.is_claimed,
+                        is_pending: response.data.is_pending,
+                        is_scheduled: response.data.is_scheduled,
+                    })
+                })
         }
     }
 
@@ -187,7 +209,6 @@ class ClientScheduler extends Component {
         axios.delete(endpoint)
             .catch(err => console.log('BAD', err))
             .then(response => {
-                console.log(response);
                 this.setState({
                     id: null,
                     loaded: true,
@@ -195,25 +216,42 @@ class ClientScheduler extends Component {
                     is_scheduled: false
                 })
             })
+    };
+
+    disableSaveItinerary() {
+        if (this.state.days.length === 0) {
+            return true
+        } else {
+            return false
+        }
     }
 
     renderTimeSelector = () => {
 
         if (this.state.loaded === true) {
-            if (this.state.is_scheduled === true && !this.state.is_claimed) {
+
+            if (this.state.is_scheduled) {
+                return (
+                    <div className="onboard-wrapper onboard-wrapper_small">
+                        <img src={SavedItineraryImg} alt=""/>
+                        <h2>Congrats! Your itinerary is scheduled!</h2>
+                        <p>Please make sure to be at the designated location on time!</p>
+                    </div>
+                )
+            } else if (!this.state.is_pending === true && !this.state.is_claimed) {
                 return (
                     <div className="onboard-wrapper onboard-wrapper_small">
                         <img src={SavedItineraryImg} alt=""/>
                         <h2>Congrats! Your itinerary is saved.</h2>
-                        <p>Your Itinerary is currently being scheduled so you can't modify it.</p>
+                        <p>Your Itinerary is currently being view by our agents so you can't modify it.</p>
                     </div>
                 )
-            } else if (this.state.is_claimed === true) {
+            } else if (!this.state.is_pending && this.state.is_claimed === true) {
                 return (
                     <div className="onboard-wrapper onboard-wrapper_small">
                         <img src={ClaimedItineraryImg} alt=""/>
-                        <h2>Our agents are checking out your Itinerary.</h2>
-                        <p>Your Itinerary is currently being scheduled by one of our agents. Please wait to hear back from us.</p>
+                        <h2>One of our agents has claimed your itinerary!</h2>
+                        <p>They are currently contacting the landlords, please wait to hear back when the agent is done!</p>
                     </div>
                 )
             } else {
@@ -221,14 +259,15 @@ class ClientScheduler extends Component {
                     <div className="itinerary-main-wrapper">
                         <div className="itinerary-headline">
                             <h2>Please create an itinerary!</h2>
-                            <p>Add up to 10 dates and times that you're available for a tour</p>
+                            <p>Remember if you don't add enough times we may have to contact you for more availability which
+                            will slow down how quickly we can find a home for you!</p>
                         </div>
                         <div className="itinerary-date-time-wrapper">
                             <ItineraryDateSelector date={this.state.date} setDate={this.setDate} />
                             <ItineraryTimeSelector date={this.state.date} formatTimeAvailable={this.formatTimeAvailable} tour_duration_seconds={this.state.tour_duration_seconds} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
                         </div>
                         <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
-                        <button className="itinerary-button" onClick={this.updateStartTimes}>Save Itinerary</button>
+                        <button className="btn itinerary-button" disabled={this.disableSaveItinerary()} onClick={this.handleSaveItinerary}>Save Itinerary</button>
                     </div>
                 )
 
@@ -254,7 +293,7 @@ class ClientScheduler extends Component {
                         <Itinerary
                             id={this.state.id}
                             days={this.state.days}
-                            is_scheduled={this.state.is_scheduled}
+                            is_pending={this.state.is_pending}
                             formatTimeAvailable={this.formatTimeAvailable}
                             removeStartTime={this.removeStartTime}
                             setEstimatedDuration={this.setEstimatedDuration}
