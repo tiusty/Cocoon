@@ -48,7 +48,6 @@ class ClientScheduler extends Component {
                 is_pending: c.is_pending,
             } )
         );
-
         return itinerary_ids[0]
     }
 
@@ -138,7 +137,7 @@ class ClientScheduler extends Component {
                 date: new Date()
             });
         }
-    }
+    };
 
     updateStartTimes = () => {
         /**
@@ -152,9 +151,11 @@ class ClientScheduler extends Component {
             })
                 .catch(error => console.log('Bad', error))
                 .then(response => {
-                    this.setState(
-                        this.parseData(response.data),
-                    )
+                    this.setState({
+                        is_claimed: response.data.is_claimed,
+                        is_pending: response.data.is_pending,
+                        is_scheduled: response.data.is_scheduled,
+                    })
                 })
         }
     }
@@ -186,7 +187,6 @@ class ClientScheduler extends Component {
         axios.delete(endpoint)
             .catch(err => console.log('BAD', err))
             .then(response => {
-                console.log(response);
                 this.setState({
                     id: null,
                     loaded: true,
