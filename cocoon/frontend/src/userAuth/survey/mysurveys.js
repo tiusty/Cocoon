@@ -371,58 +371,41 @@ export default class MySurveys extends Component {
 
 
     renderSurveysBlock() {
-        // If something is loading then render the loading page
-        if (this.state.loading_clicked) {
+        // If no survey is selected then render the small tiles
+        if (this.state.survey_clicked_id === undefined) {
             return (
-                <LoadingScreen
-                    loading={true}
-                    bgColor='#f1f1f1'
-                    spinnerColor='#9ee5f8'
-                    textColor='#676767'
-                    logoSrc={surveyIcon}
-                    text='Please wait: Loading...'
-                >
-                    <div>Loadable content</div>
-                </LoadingScreen>
+                <>
+                    {this.state.surveys.map(survey =>
+                        <div key={survey.id} className="survey-small">
+                            <SurveySmall
+                                key={survey.id}
+                                id={survey.id}
+                                name={survey.name}
+                                url={survey.url}
+                                favorites_length={survey.favorites_length}
+                                visit_list_length={survey.visit_list_length}
+                                onLoadingClicked={this.setLoadingClick}
+                                onClickSurvey={this.handleClickSurvey}
+                            />
+                        </div>
+                    )}
+                </>
             );
+            // If a survey is clicked then render the large survey
         } else {
-            // If no survey is selected then render the small tiles
-            if (this.state.survey_clicked_id === undefined) {
-                return (
-                    <>
-                        {this.state.surveys.map(survey =>
-                            <div key={survey.id} className="survey-small">
-                                <SurveySmall
-                                    key={survey.id}
-                                    id={survey.id}
-                                    name={survey.name}
-                                    url={survey.url}
-                                    favorites_length={survey.favorites_length}
-                                    visit_list_length={survey.visit_list_length}
-                                    onLoadingClicked={this.setLoadingClick}
-                                    onClickSurvey={this.handleClickSurvey}
-                                />
-                            </div>
-                        )}
-                    </>
-                );
-                // If a survey is clicked then render the large survey
-            } else {
-                let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
-                return (
-                    <div className="survey-large">
-                        <SurveyLarge
-                            id={survey.id}
-                            visit_list={this.state.visit_list}
-                            onDelete={this.handleDelete}
-                            onLargeSurveyClose={this.handleLargeSurveyClose}
-                            onLoadingClicked={this.setLoadingClick}
-                            onHandleVisitListClicked={this.handleVisitClick}
-                            onDelete={this.handleDelete}
-                        />
-                    </div>
-                );
-            }
+            let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
+            return (
+                <div className="survey-large">
+                    <SurveyLarge
+                        id={survey.id}
+                        visit_list={this.state.visit_list}
+                        onDelete={this.handleDelete}
+                        onLargeSurveyClose={this.handleLargeSurveyClose}
+                        onLoadingClicked={this.setLoadingClick}
+                        onHandleVisitListClicked={this.handleVisitClick}
+                    />
+                </div>
+            );
         }
     }
 
@@ -451,7 +434,7 @@ export default class MySurveys extends Component {
     }
 
     render() {
-        if (this.state.loading_clicked) {
+        if (this.state.loading_clicked || !this.state.loaded) {
             return (
                 <LoadingScreen
                     loading={true}

@@ -45,6 +45,15 @@
     align-items: baseline;
 }
 
+.my-surveys-none-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+}
+
 .survey-small {
     padding: 10px;
     width: 350px;
