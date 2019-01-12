@@ -99,6 +99,9 @@ export default class SurveyLarge extends Component {
         } else {
             return (
                 <>
+                    <h2 className="survey-large-title">Want to favorite more homes?</h2>
+                    <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
+                        className="btn btn-primary survey-small-load-button">Load survey</a>
                     <h2 className="survey-large-title">Below are your favorite homes</h2>
                     <div className="survey-large-home">
                         <HomeTiles
@@ -110,9 +113,6 @@ export default class SurveyLarge extends Component {
                             show_heart={true}
                         />
                     </div>
-                    <h2 className="survey-large-title">Want to favorite more homes?</h2>
-                    <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
-                        className="btn btn-primary survey-small-load-button">Load survey</a>
                 </>
             );
         }

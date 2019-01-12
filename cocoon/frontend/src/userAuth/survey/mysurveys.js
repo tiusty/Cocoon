@@ -451,9 +451,9 @@ export default class MySurveys extends Component {
             return (
                 <>
                     <p className="surveys-title-text-semi-bold">Please add homes to your tour!</p>
-                    <p className='surveys-title-text'>Add homes from your favorites by clicking on the check mark on the home, you can
-                    view more info about the home by clicking on the home box. If you want to add more homes you can click load survey at the
-                    bottom of where your favorite homes are located</p>
+                    <p className='surveys-title-text'>Add homes to your tour by clicking on the check-mark on the home. You can also
+                    view more info about the home by clicking on the home. If you want to add more homes to your favorites list you can click load survey
+                    to load your survey</p>
                 </>
             );
         } else if (this.state.itinerary_scheduled) {
