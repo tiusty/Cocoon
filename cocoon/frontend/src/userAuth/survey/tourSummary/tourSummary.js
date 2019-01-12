@@ -6,8 +6,43 @@ import axios from 'axios'
 // Import Cocoon Components
 import CSRFToken from '../../../common/csrftoken'
 import HomeTiles from "../../../common/homeTile/homeTiles";
+import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
 
 export default class TourSummary extends Component {
+
+    state = {
+        // State for the tour duration
+        refresh_duration: true,
+        duration: undefined,
+    };
+
+    componentDidUpdate(prevProps) {
+
+        // When the visit list changes, updates the tour estimated time
+        if (prevProps.visit_list !== this.props.visit_list) {
+            // Make sure the survey id is valid and that the visit list is not less than 0
+            if (this.props.survey_id !== undefined && this.props.visit_list.length >= 0) {
+                let endpoint = scheduler_endpoints['itineraryDuration'] + this.props.survey_id;
+                this.setState({
+                    refresh_duration: true,
+                });
+                axios.get(endpoint)
+                    .catch(error => {
+                        console.log('BAD', error);
+                        this.setState({
+                            refresh_duration: false,
+                        })
+                    })
+                    .then(response => {
+                            this.setState({
+                                duration: response.data.duration,
+                                refresh_duration: false,
+                            })
+                        },
+                    )
+            }
+        }
+    }
 
     renderVisitList() {
         /**
@@ -69,7 +104,7 @@ export default class TourSummary extends Component {
                 <>
                     <p>When you are done adding homes that you want to tour, click schedule!</p>
                     <p>Remember you can only have one tour scheduled at a time</p>
-                    <p>Estimated duration: TBD</p>
+                    <p>Estimated duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}</p>
                     <form method="post" style={{marginTop: '10px'}}>
                         <CSRFToken/>
                         <button name="submit-button"

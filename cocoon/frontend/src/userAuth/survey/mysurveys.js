@@ -302,9 +302,9 @@ export default class MySurveys extends Component {
 
     handleClickSurvey = (id) => {
         /**
-         * Handles click on the survey box to load the large survey.
+         * Handles click on the expand button for a survey
          *
-         * If the click is on the extra box then the survey should load
+         * After the survey id is set, it will retrieve the visit list for that survey
          */
         this.setState({survey_clicked_id: id}, () => this.retrieveVisitList());
     };
@@ -365,7 +365,7 @@ export default class MySurveys extends Component {
                     })
                 }
             )
-    }
+    };
 
 
     renderSurveysBlock() {
