@@ -45,7 +45,7 @@ class Itinerary extends Component {
         if (prevProps.hash !== this.props.hash) {
             this.updateItinerary()
         }
-        if (prevProps.is_scheduled !== this.props.is_scheduled) {
+        if (prevProps.is_pending !== this.props.is_pending) {
             this.updateItinerary();
         }
     }
@@ -170,7 +170,7 @@ class Itinerary extends Component {
                     <p>Your Itinerary</p>
                     <p>Estimated Duration: {this.props.formatTimeAvailable(this.state.tour_duration_seconds)}</p>
                 </div>
-                {!this.props.is_scheduled ? this.renderStartTimes() : this.renderSavedStartTimes()}
+                {!this.props.is_pending ?  this.renderSavedStartTimes() : this.renderStartTimes()}
             </>
         );
     }

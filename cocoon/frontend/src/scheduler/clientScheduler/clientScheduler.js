@@ -20,6 +20,7 @@ class ClientScheduler extends Component {
         loaded: false,
         is_claimed: false,
         is_scheduled: false,
+        is_pending: false,
 
         is_canceling: false,
         tour_duration_seconds: 0,
@@ -43,7 +44,9 @@ class ClientScheduler extends Component {
         data.map(c =>
             itinerary_ids.push( { id: c.id,
                 is_claimed: c.is_claimed,
-                is_scheduled: c.is_scheduled} )
+                is_scheduled: c.is_scheduled,
+                is_pending: c.is_pending,
+            } )
         );
 
         return itinerary_ids[0]
@@ -57,12 +60,9 @@ class ClientScheduler extends Component {
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState(
-                    this.parseData(response.data)
+                    this.parseData(response.data),
                 ),
                 this.setState( { loaded: true } );
-                if (response.data[0].start_times) {
-                    this.setState( { is_scheduled: true } )
-                }
             })
     }
 
@@ -149,18 +149,14 @@ class ClientScheduler extends Component {
             axios.put(endpoint, {
                 start_times: this.state.days,
                 type: 'start_times',
-                // set is_scheduled to true
             })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                 if (response.data.result) {
-                     this.setState({
-                         is_scheduled: true
-                     })
-                 } else {
-                     // Some error happens
-                 }
-            })
+                .catch(error => console.log('Bad', error))
+                .then(response => {
+                    console.log(response.data),
+                    this.setState(
+                        this.parseData(response.data),
+                    )
+                })
         }
     }
 
@@ -204,20 +200,29 @@ class ClientScheduler extends Component {
     renderTimeSelector = () => {
 
         if (this.state.loaded === true) {
-            if (this.state.is_scheduled === true && !this.state.is_claimed) {
+
+            if (this.state.is_scheduled) {
+                return (
+                    <div className="onboard-wrapper onboard-wrapper_small">
+                        <img src={SavedItineraryImg} alt=""/>
+                        <h2>Congrats! Your itinerary is scheduled!</h2>
+                        <p>Please make sure to be at the designated location on time!</p>
+                    </div>
+                )
+            } else if (!this.state.is_pending === true && !this.state.is_claimed) {
                 return (
                     <div className="onboard-wrapper onboard-wrapper_small">
                         <img src={SavedItineraryImg} alt=""/>
                         <h2>Congrats! Your itinerary is saved.</h2>
-                        <p>Your Itinerary is currently being scheduled so you can't modify it.</p>
+                        <p>Your Itinerary is currently being view by our agents so you can't modify it.</p>
                     </div>
                 )
-            } else if (this.state.is_claimed === true) {
+            } else if (!this.state.is_pending && this.state.is_claimed === true) {
                 return (
                     <div className="onboard-wrapper onboard-wrapper_small">
                         <img src={ClaimedItineraryImg} alt=""/>
-                        <h2>Our agents are checking out your Itinerary.</h2>
-                        <p>Your Itinerary is currently being scheduled by one of our agents. Please wait to hear back from us.</p>
+                        <h2>One of our agents has claimed your itinerary!</h2>
+                        <p>They are currently contancting the landlords, please wait to hear back when the agent is done!</p>
                     </div>
                 )
             } else {
@@ -258,7 +263,7 @@ class ClientScheduler extends Component {
                         <Itinerary
                             id={this.state.id}
                             days={this.state.days}
-                            is_scheduled={this.state.is_scheduled}
+                            is_pending={this.state.is_pending}
                             formatTimeAvailable={this.formatTimeAvailable}
                             removeStartTime={this.removeStartTime}
                             setEstimatedDuration={this.setEstimatedDuration}

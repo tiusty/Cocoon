@@ -148,7 +148,9 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
             # if there were no errors then the adding times finished successfully
             result = True
 
-        return Response({'result': result})
+        itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
+        serializer = ItinerarySerializer(itinerary)
+        return Response(serializer.data)
 
 
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')

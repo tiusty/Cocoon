@@ -28,4 +28,4 @@ class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
         model = ItineraryModel
         fields = ('id', 'client', 'itinerary', 'agent', 'tour_duration_seconds_rounded',
                   'tour_duration_seconds', 'selected_start_time', 'homes',
-                  'is_claimed', 'is_scheduled', 'start_times', 'finished', 'hash')
+                  'is_claimed', 'is_scheduled', 'start_times', 'is_pending', 'finished', 'hash')
