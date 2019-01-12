@@ -24,6 +24,23 @@ export default class SurveySmall extends Component {
      *  this.props.visit_list_length: (int) -> The number of visit_list homes
      *  this.props.onClickSurvey: (function(int)) -> Handles when the small tile box is clicked
      */
+
+    generateFavoriteHomes() {
+        /**
+         * Function checks if any of the homes in the favorites list is in the visit list
+         *  If so then the home should not show up in the favorites list
+         */
+        let favorite_list = [];
+        for (let i =0; i < this.props.favorites.length; i++) {
+            // Checks to see if the favorite home is in the visit list and if it doesn't, then we want to render
+            //  the homes with the favorites list
+            if (this.props.visit_list.filter(h => h.id === this.props.favorites[i].id).length === 0) {
+                favorite_list.push(this.props.favorites[i])
+            }
+        }
+        return favorite_list
+    }
+
     render() {
         /**
          * If the default survey prop is true then it is the extra survey that loads the survey
@@ -41,9 +58,9 @@ export default class SurveySmall extends Component {
                         <div className="survey-small-data">
                             <p className="survey-small-title">Roomate Group:</p>
                             <p className="survey-small-title">{this.props.name}</p>
-                            <p className="survey-small-favorites">Number of favorites: {this.props.favorites_length}</p>
+                            <p className="survey-small-favorites">Number of favorites: {this.generateFavoriteHomes().length}</p>
                             <p className="survey-small-visit-list">Number of visit
-                                list: {this.props.visit_list_length}</p>
+                                list: {this.props.visit_list.length}</p>
                             <button className="btn btn-primary" onClick={() => this.props.onClickSurvey(this.props.id)}>Expand</button>
                         </div>
                     </div>

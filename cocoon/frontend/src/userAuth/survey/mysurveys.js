@@ -65,8 +65,8 @@ export default class MySurveys extends Component {
         data.map(c =>
             survey_ids.push({
                 id: c.id,
-                visit_list_length: c.visit_list.length,
-                favorites_length: c.favorites.length,
+                visit_list: c.visit_list,
+                favorites: c.favorites,
                 url: c.url,
                 name: c.name
             })
@@ -390,8 +390,8 @@ export default class MySurveys extends Component {
                                 id={survey.id}
                                 name={survey.name}
                                 url={survey.url}
-                                favorites_length={survey.favorites_length}
-                                visit_list_length={survey.visit_list_length}
+                                favorites={survey.favorites}
+                                visit_list={survey.visit_list}
                                 onLoadingClicked={this.setLoadingClick}
                                 onClickSurvey={this.handleClickSurvey}
                             />
