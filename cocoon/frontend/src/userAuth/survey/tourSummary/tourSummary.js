@@ -51,7 +51,7 @@ export default class TourSummary extends Component {
         /**
          * Renders the visit list homes
          */
-        if (this.props.visit_list.length === 0) return <h3 className="survey-large-no-homes">Please add homes to your visit list!</h3>;
+        if (this.props.visit_list.length === 0) return <h3 className="tour-summary-h3">Please add homes to your visit list!</h3>;
         return (
             <div className="survey-large-home">
                 <HomeTiles
@@ -74,11 +74,11 @@ export default class TourSummary extends Component {
 
     renderPage() {
         if (!this.props.loaded) {
-            return <p>Loading</p>
+            return <p className="tour-summary-text">Loading</p>
         } else if (this.props.itinerary_scheduled) {
             return (
                 <>
-                    <p>To review more details of your tour please click below:</p>
+                    <p className="tour-summary-text">To review more details of your tour please click below:</p>
                     <a  href={scheduler_endpoints['clientScheduler']} onClick={this.props.onLoadingClicked}
                         className="btn btn-primary survey-small-load-button">View Tour</a>
                 </>
@@ -86,7 +86,7 @@ export default class TourSummary extends Component {
         } else if (!this.props.is_pre_tour_signed && !this.props.pre_tour_forms_created) {
             return (
                 <>
-                    <p>You need to sign the pre tour documents before scheduling a tour</p>
+                    <p className="tour-summary-text">You need to sign the pre tour documents before scheduling a tour</p>
                     <button className="btn btn-primary"
                             onClick={this.props.onHandleOnClickCreateDocument}>{this.props.refreshing_document_status ? 'Loading' : 'Send'}</button>
                 </>
@@ -94,10 +94,10 @@ export default class TourSummary extends Component {
         } else if (!this.props.is_pre_tour_signed && this.props.pre_tour_forms_created) {
             return (
                 <>
-                    <p>Refresh your document stats!</p>
+                    <p className="tour-summary-text">Refresh your document stats!</p>
                     <button className="btn btn-primary"
                             onClick={this.props.onHandleOnClickRefreshDocument}>{this.props.refreshing_document_status ? 'Loading' : 'Refresh'}</button>
-                    <p>Can't find the email?</p>
+                    <p className="tour-summary-text">Can't find the email?</p>
                     <button className="btn btn-primary"
                             onClick={this.props.onHandleOnClickResendDocument}>{this.props.refreshing_document_status ? 'Loading' : 'Resend'}</button>
                 </>
@@ -105,17 +105,17 @@ export default class TourSummary extends Component {
         } else if (this.props.is_pre_tour_signed && this.props.pre_tour_forms_created && this.props.survey_id === undefined) {
             return(
                 <>
-                    <p>Please expand a survey to get started scheduling a tour</p>
-                    <p>Remember you may only have one tour scheduled at a time</p>
+                    <p className="tour-summary-text">Please expand a survey to get started scheduling a tour</p>
+                    <p className="tour-summary-text">Remember you may only have one tour scheduled at a time</p>
                 </>
             );
 
         } else if (this.props.is_pre_tour_signed && this.props.pre_tour_forms_created && this.props.survey_id !== undefined) {
             return (
                 <>
-                    <p>When you are done adding homes that you want to tour, click schedule!</p>
-                    <p>Remember you can only have one tour scheduled at a time</p>
-                    <p>Estimated duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}</p>
+                    <p className="tour-summary-text">When you are done adding homes that you want to tour, click schedule!</p>
+                    <p className="tour-summary-text">Remember you can only have one tour scheduled at a time</p>
+                    <p className="tour-summary-text">Estimated duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}</p>
                     <form method="post" style={{marginTop: '10px'}}>
                         <CSRFToken/>
                         <button name="submit-button"
@@ -125,7 +125,7 @@ export default class TourSummary extends Component {
                                 type="submit">Schedule!
                         </button>
                     </form>
-                    <h2>Below are homes in your visit list!</h2>
+                    <h2 className="tour-summary-semi-bold">Homes currently in tour</h2>
                     {this.renderVisitList()}
                 </>
             );
@@ -136,7 +136,7 @@ export default class TourSummary extends Component {
     render() {
         return(
             <div className="tour-summary">
-                <h2 className="surveys-title">Tour Summary</h2>
+                <h2 className="tour-summary-title">Tour Summary</h2>
                 {this.renderPage()}
             </div>
         );
