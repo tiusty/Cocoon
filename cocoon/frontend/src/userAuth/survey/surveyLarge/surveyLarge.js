@@ -26,10 +26,6 @@ export default class SurveyLarge extends Component {
 
         // Favorites contains a lit of the favorites when the data was pulled from the backend
         favorites:  [],
-        // Stores the current list of favorites the user has, i.e if he unfavorited a home then
-        //  the home will no longer be in this list. This is used so the user can favorite and unfavorite
-        //  and the home won't disappear until the page is refreshed
-        curr_favorites: [],
     };
 
     componentDidMount() {
@@ -47,13 +43,12 @@ export default class SurveyLarge extends Component {
                     this.setState({
                         name: response.data.name,
                         favorites: response.data.favorites,
-                        curr_favorites: response.data.favorites,
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
                     })
                 }
-            )
+            );
 
         // Retrieves the current estimated time for the tour
         endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
@@ -93,7 +88,7 @@ export default class SurveyLarge extends Component {
     };
 
     renderFavoriteHomes() {
-        if (this.state.favorites.length <=0) {
+        if (this.generateFavoriteHomes().length <=0) {
             return (
                 <>
                     <h2 className="survey-large-title">Please load the survey to favorite homes</h2>
@@ -132,9 +127,27 @@ export default class SurveyLarge extends Component {
          * @type {string} The home that is being toggled
          */
 
+
         // Prevents the onclick on the tile from triggering
         e.stopPropagation();
 
+        confirmAlert({
+            title: 'Confirmation',
+            message: "Are you sure you want to remove the home from the favorites list?",
+            buttons: [
+                {
+                    label: 'yes',
+                    onClick: () => this.handleFavoritePopulation(home)
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        });
+
+    };
+
+    handleFavoritePopulation(home) {
         // The survey id is passed to the put request to update the state of that particular survey
         let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
         axios.put(endpoint,
@@ -146,10 +159,10 @@ export default class SurveyLarge extends Component {
             .catch(error => console.log('BAD', error))
             .then(response =>
                 this.setState({
-                    curr_favorites: response.data.favorites
+                    favorites: response.data.favorites
                 })
             );
-    };
+    }
 
     handleDelete = () => {
         /**
