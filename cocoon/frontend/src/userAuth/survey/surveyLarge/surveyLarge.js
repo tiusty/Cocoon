@@ -42,7 +42,6 @@ export default class SurveyLarge extends Component {
                 {
                     this.setState({
                         name: response.data.name,
-                        favorites: response.data.favorites,
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
@@ -69,11 +68,11 @@ export default class SurveyLarge extends Component {
          *  If so then the home should not show up in the favorites list
          */
         let favorite_list = [];
-        for (let i =0; i < this.state.favorites.length; i++) {
+        for (let i =0; i < this.props.favorites.length; i++) {
             // Checks to see if the favorite home is in the visit list and if it doesn't, then we want to render
             //  the homes with the favorites list
-            if (this.props.visit_list.filter(h => h.id === this.state.favorites[i].id).length === 0) {
-                favorite_list.push(this.state.favorites[i])
+            if (this.props.visit_list.filter(h => h.id === this.props.favorites[i].id).length === 0) {
+                favorite_list.push(this.props.favorites[i])
             }
         }
         return favorite_list
@@ -107,7 +106,7 @@ export default class SurveyLarge extends Component {
                         <HomeTiles
                             homes={this.generateFavoriteHomes()}
                             visit_list={this.props.visit_list}
-                            curr_favorites={this.state.favorites}
+                            curr_favorites={this.props.favorites}
                             onVisitClick={this.props.onHandleVisitListClicked}
                             onFavoriteClick={this.handleFavoriteClick}
                             show_heart={true}
@@ -132,12 +131,12 @@ export default class SurveyLarge extends Component {
         e.stopPropagation();
 
         confirmAlert({
-            title: 'Confirmation',
-            message: "Are you sure you want to remove the home from the favorites list?",
+            title: 'Are you sure you want to unfavorite this home?',
+            message: "This home will not longer appear unless you find it again in the survey",
             buttons: [
                 {
                     label: 'yes',
-                    onClick: () => this.handleFavoritePopulation(home)
+                    onClick: () => this.props.onHandleFavoriteListClicked(home)
                 },
                 {
                     label: 'No',
@@ -146,23 +145,6 @@ export default class SurveyLarge extends Component {
         });
 
     };
-
-    handleFavoritePopulation(home) {
-        // The survey id is passed to the put request to update the state of that particular survey
-        let endpoint = survey_endpoints['rentSurvey'] + this.props.id + "/";
-        axios.put(endpoint,
-            {
-                home_id: home.id,
-                type: 'favorite_toggle',
-
-            })
-            .catch(error => console.log('BAD', error))
-            .then(response =>
-                this.setState({
-                    favorites: response.data.favorites
-                })
-            );
-    }
 
     handleDelete = () => {
         /**

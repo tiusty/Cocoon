@@ -35,6 +35,7 @@ export default class MySurveys extends Component {
         // Handles opening a large survey
         survey_clicked_id: undefined,
         visit_list: [],
+        favorites: [],
 
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
@@ -306,7 +307,7 @@ export default class MySurveys extends Component {
          *
          * After the survey id is set, it will retrieve the visit list for that survey
          */
-        this.setState({survey_clicked_id: id}, () => this.retrieveVisitList());
+        this.setState({survey_clicked_id: id}, () => this.retrieveHomes());
     };
 
     handleLargeSurveyClose = () => {
@@ -317,7 +318,7 @@ export default class MySurveys extends Component {
          * it then the data on the page needs to be updated. Also, the clicked survey value
          * should go back to undefined so the small survey tiles load again
          */
-        this.setState({survey_clicked_id: undefined, visit_list: []});
+        this.setState({survey_clicked_id: undefined, visit_list: [], favorites: [],});
 
         // See if any of the data changed
         axios.get(this.state.survey_endpoint)
@@ -347,21 +348,52 @@ export default class MySurveys extends Component {
                 type: 'visit_toggle'
 
             })
+            // Though the visit list is being updated, the response includes the favorite list so update
+            // the favorite list as well
             .catch(error => console.log('BAD', error))
             .then(response =>
                 this.setState({
-                    visit_list: response.data.visit_list
+                    visit_list: response.data.visit_list,
+                    favorites: response.data.favorites,
                 })
             );
     };
 
-    retrieveVisitList = () => {
+
+    handleFavoriteClick = (home) => {
+        /**
+         * This function handles toggles a home to either add or remove from the favorites list
+         *
+         * The response includes the updated favorite and visit list for the survey
+         * @type {string}
+         */
+        // The survey id is passed to the put request to update the state of that particular survey
+        let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id + "/";
+        axios.put(endpoint,
+            {
+                home_id: home.id,
+                type: 'favorite_toggle',
+
+            })
+            .catch(error => console.log('BAD', error))
+            // Though the favorites is being updated, the response includes the visit list so update with the
+            // latest visit list as well
+            .then(response =>
+                this.setState({
+                    favorites: response.data.favorites,
+                    visit_list: response.data.visit_list,
+                })
+            );
+    }
+
+    retrieveHomes = () => {
         let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id;
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
             .then(response => {
                     this.setState({
                         visit_list: response.data.visit_list,
+                        favorites: response.data.favorites
                     })
                 }
             )
@@ -408,10 +440,12 @@ export default class MySurveys extends Component {
                     <SurveyLarge
                         id={survey.id}
                         visit_list={this.state.visit_list}
+                        favorites={this.state.favorites}
                         onDelete={this.handleDelete}
                         onLargeSurveyClose={this.handleLargeSurveyClose}
                         onLoadingClicked={this.setLoadingClick}
                         onHandleVisitListClicked={this.handleVisitClick}
+                        onHandleFavoriteListClicked={this.handleFavoriteClick}
                     />
                 </div>
             );
