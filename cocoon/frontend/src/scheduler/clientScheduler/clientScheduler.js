@@ -152,7 +152,6 @@ class ClientScheduler extends Component {
             })
                 .catch(error => console.log('Bad', error))
                 .then(response => {
-                    console.log(response.data),
                     this.setState(
                         this.parseData(response.data),
                     )

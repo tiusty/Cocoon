@@ -234,6 +234,7 @@ class TimeModel(models.Model):
     """
     time = models.DateTimeField(default=timezone.now)
     itinerary = models.ForeignKey(ItineraryModel, related_name='start_times', on_delete=models.CASCADE, blank=False, null=False)
+    time_available_seconds = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.time)

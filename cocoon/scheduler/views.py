@@ -110,8 +110,6 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
 
-        result = False
-
         # Retrieve the user profile
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
@@ -127,27 +125,13 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
 
             # Loop through all the start_times so they can all be added
             for start_time in start_times:
-                # offset basically goes through each start time and the time free for each date and adds
-                #   all the available start times.
-                offset = 0
-
-                # Available start times are valid if the offset and the amount of time the tour will take is
-                #   less than then the amount of time the user said they would be free
-                while offset + itinerary.tour_duration_seconds_rounded <= start_time['time_available_seconds']:
+                if 'time_available_seconds' in start_time:
+                    time_available_seconds = start_time['time_available_seconds']
                     dt = dateutil.parser.parse(start_time['date'])
-                    dt += timedelta(seconds=offset)
-                    # Make sure that the seconds and miro-seconds are zero because otherwise
-                    #   the searching for equal time models will never work
                     dt = dt.replace(second=0, microsecond=0)
+                    itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
 
-                    # only add the time if it doesn't already exist
-                    if not TimeModel.objects.filter(time=dt).exists():
-                        itinerary.start_times.create(time=dt)
-                    offset += TIME_MODEL_OFFSET*60
-
-            # if there were no errors then the adding times finished successfully
-            result = True
-
+        # Retrieve the object again to get the updated fields
         itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
         serializer = ItinerarySerializer(itinerary)
         return Response(serializer.data)

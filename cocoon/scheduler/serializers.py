@@ -14,7 +14,7 @@ class TimeModelSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = TimeModel
-        fields = ('id', 'time')
+        fields = ('id', 'time', 'time_available_seconds')
 
 
 class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
