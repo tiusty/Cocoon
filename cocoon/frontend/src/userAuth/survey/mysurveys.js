@@ -2,6 +2,7 @@
 import React from 'react'
 import {Component} from 'react';
 import axios from 'axios'
+import LoadingScreen from 'react-loading-screen';
 
 // Import Cocoon Components
 import SurveySmall from "./surveySmall/surveySmall";
@@ -9,10 +10,13 @@ import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
+import TourSummary from "./tourSummary/tourSummary";
+
+// Import icons
+import surveyIcon from './survey_icon.png';
 
 // Import styling
 import './mysurveys.css'
-import TourSummary from "./tourSummary/tourSummary";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -416,18 +420,32 @@ export default class MySurveys extends Component {
     }
 
     render() {
-        return (
-            <div className="row">
-                <div className="col-md-8">
-                    <div className="surveys-div">
-                        <h2 className="surveys-title">My Surveys</h2>
-                        {this.renderMySurveysMessages()}
+        if (this.state.loading_clicked) {
+            return (
+                <LoadingScreen
+                    loading={true}
+                    bgColor='#f1f1f1'
+                    spinnerColor='#9ee5f8'
+                    textColor='#676767'
+                    logoSrc={surveyIcon}
+                    text='Please wait: Loading...'
+                >
+                    <div>Loadable content</div>
+                </LoadingScreen>
+            );
+        } else {
+            return (
+                <div className="row">
+                    <div className="col-md-8">
+                        <div className="surveys-div">
+                            <h2 className="surveys-title">My Surveys</h2>
+                            {this.renderMySurveysMessages()}
+                        </div>
+                        <div className="surveys-main">
+                            {this.renderSurveysBlock()}
+                        </div>
                     </div>
-                    <div className="surveys-main">
-                        {this.renderSurveysBlock()}
-                    </div>
-                </div>
-                <div className="col-md-4">
+                    <div className="col-md-4">
                         <TourSummary
                             loaded={this.state.loaded}
                             visit_list={this.state.visit_list}
@@ -440,8 +458,10 @@ export default class MySurveys extends Component {
                             onHandleOnClickResendDocument={this.handleOnClickResendDocument}
                             onHandleVisitListClicked={this.handleVisitClick}
                         />
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
+
     }
 }
