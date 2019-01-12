@@ -14,6 +14,10 @@ import userAuth_endpoints from "../../endpoints/userAuth_endpoints";
 import ItineraryTimeSelector from "./itineraryTimeSelector";
 import ItineraryDateSelector from './itineraryDateSelector';
 
+// Import Pop-up button components
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
+
 class ClientScheduler extends Component {
     state = {
         id: null,
@@ -139,6 +143,23 @@ class ClientScheduler extends Component {
         }
     };
 
+    handleSaveItinerary() {
+
+        confirmAlert({
+            title: 'Are you sure you are done adding times?',
+            message: "You may not add/delete times once you submit the itinerary?",
+            buttons: [
+                {
+                    label: 'yes',
+                    onClick: () => this.props.updateStartTimes()
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        })
+    }
+
     updateStartTimes = () => {
         /**
          *  Updates the tenants start_times when adding new dates
@@ -194,6 +215,14 @@ class ClientScheduler extends Component {
                     is_scheduled: false
                 })
             })
+    };
+
+    disableSaveItinerary() {
+        if (this.state.days.length === 0) {
+            return true
+        } else {
+            return false
+        }
     }
 
     renderTimeSelector = () => {
@@ -236,7 +265,7 @@ class ClientScheduler extends Component {
                             <ItineraryTimeSelector date={this.state.date} formatTimeAvailable={this.formatTimeAvailable} tour_duration_seconds={this.state.tour_duration_seconds} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
                         </div>
                         <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
-                        <button className="itinerary-button" onClick={this.updateStartTimes}>Save Itinerary</button>
+                        <button className="btn itinerary-button" disabled={this.disableSaveItinerary()} onClick={this.handleSaveItinerary}>Save Itinerary</button>
                     </div>
                 )
 
