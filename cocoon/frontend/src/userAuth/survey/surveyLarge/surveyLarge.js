@@ -76,7 +76,7 @@ export default class SurveyLarge extends Component {
         if (this.state.favorites.length <=0) {
             return (
                 <>
-                    <h2 className="survey-large-title">Please load the survey and favorite homes</h2>
+                    <h2 className="survey-large-title">Please load the survey to favorite homes</h2>
                     <a  href={this.generateLoadUrl()} onClick={() => this.props.onLoadingClicked()}
                         className="btn btn-primary survey-small-load-button">Load survey</a>
                 </>

@@ -27,6 +27,16 @@
     color: #000000;
 }
 
+.surveys-title-text-semi-bold {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    font-size: 14px;
+
+    color: #000000;
+}
+
 .surveys-main {
     display: flex;
     flex-wrap: wrap;

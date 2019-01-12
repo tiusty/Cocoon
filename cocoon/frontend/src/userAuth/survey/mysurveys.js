@@ -398,14 +398,30 @@ export default class MySurveys extends Component {
         this.setState({loading_clicked: true})
     };
 
+    renderMySurveysMessages() {
+        if (!this.state.loaded) {
+            return <p className='surveys-title-text'>Loading</p>
+        } else if (!this.state.is_pre_tour_signed) {
+            return (
+                <>
+                    <p className="surveys-title-text-semi-bold">Here you can load and view your past surveys for your different roommate groups!</p>
+                    <p className="surveys-title-text">When you are ready please follow the steps in the Tour Summary column on the right to sign your documents so you can schedule a tour!</p>
+                </>
+            );
+        }
+        return (
+            <p className='surveys-title-text'>When you are ready please follow the steps on the right side of the screen to
+                sign your documents so you can schedule a tour</p>
+        );
+    }
+
     render() {
         return (
             <div className="row">
                 <div className="col-md-8">
                     <div className="surveys-div">
                         <h2 className="surveys-title">My Surveys</h2>
-                        <p className='surveys-title-text'>When you are ready please follow the steps on the right side of the screen to
-                            sign your documents so you can schedule a tour</p>
+                        {this.renderMySurveysMessages()}
                     </div>
                     <div className="surveys-main">
                         {this.renderSurveysBlock()}
