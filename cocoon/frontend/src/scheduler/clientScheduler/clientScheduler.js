@@ -250,7 +250,7 @@ class ClientScheduler extends Component {
                     <div className="onboard-wrapper onboard-wrapper_small">
                         <img src={ClaimedItineraryImg} alt=""/>
                         <h2>One of our agents has claimed your itinerary!</h2>
-                        <p>They are currently contancting the landlords, please wait to hear back when the agent is done!</p>
+                        <p>They are currently contacting the landlords, please wait to hear back when the agent is done!</p>
                     </div>
                 )
             } else {
@@ -258,7 +258,8 @@ class ClientScheduler extends Component {
                     <div className="itinerary-main-wrapper">
                         <div className="itinerary-headline">
                             <h2>Please create an itinerary!</h2>
-                            <p>Add up to 10 dates and times that you're available for a tour</p>
+                            <p>Remember if you don't add enough times we may have to contact you for more availability which
+                            will slow down how quickly we can find a home for you!</p>
                         </div>
                         <div className="itinerary-date-time-wrapper">
                             <ItineraryDateSelector date={this.state.date} setDate={this.setDate} />
