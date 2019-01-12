@@ -34,14 +34,16 @@ export default class TourSummary extends Component {
             return(
                 <>
                     <p>Please expand a survey to get started scheduling a tour</p>
+                    <p>Remember you may only have one tour scheduled at a time</p>
                 </>
             );
 
         } else if (this.props.is_pre_tour_signed && this.props.pre_tour_forms_created && this.props.survey_id !== undefined) {
             return (
                 <>
+                    <p>When you are done adding homes that you want to tour, click schedule!</p>
+                    <p>Remember you can only have one tour scheduled at a time</p>
                     <p>Estimated duration: TBD</p>
-                    <p>When you are done adding homes that you want to tour click schedule! Remember you can only have one tour scheduled at a time</p>
                     <form method="post" style={{marginTop: '10px'}}>
                         <CSRFToken/>
                         <button name="submit-button"
