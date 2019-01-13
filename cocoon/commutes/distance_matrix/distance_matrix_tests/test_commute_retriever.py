@@ -50,6 +50,8 @@ class TestRetrieveExactCommuteClientScheduler(TestCase):
 
 class TestRetrieveApproximateCommuteClientScheduler(TestCase):
 
+    # Cannot call because we must use, assert_called_with() and the arguments are impossible to prediect
+    #   due to be being a class object
     @skip('Cannot assert')
     @patch('cocoon.commutes.distance_matrix.commute_retriever.retrieve_approximate_commute')
     def test_converting_format(self, mock_os):

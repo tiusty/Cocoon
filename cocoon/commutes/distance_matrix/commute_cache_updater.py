@@ -26,16 +26,16 @@ def update_commutes_cache_rent_algorithm(homes, destinations, accuracy=CommuteAc
     # Since each destination can have a commute type, loop through all the destinations
     for destination in destinations:
         if destination.commute_type.commute_type == CommuteType.DRIVING:
-            Driving(HomeCommute.home_score_to_home_cache(homes), HomeCommute.destination_to_home_cache(destination),
+            Driving(HomeCommute.home_score_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
                     accuracy=accuracy).run()
         elif destination.commute_type.commute_type == CommuteType.TRANSIT:
-            Transit(HomeCommute.home_score_to_home_cache(homes), HomeCommute.destination_to_home_cache(destination),
+            Transit(HomeCommute.home_score_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
                     accuracy=accuracy).run()
         elif destination.commute_type.commute_type == CommuteType.BICYCLING:
-            Bicycling(HomeCommute.home_score_to_home_cache(homes), HomeCommute.destination_to_home_cache(destination),
+            Bicycling(HomeCommute.home_score_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
                       accuracy=accuracy).run()
         elif destination.commute_type.commute_type == CommuteType.WALKING:
-            Walking(HomeCommute.home_score_to_home_cache(homes), HomeCommute.destination_to_home_cache(destination),
+            Walking(HomeCommute.home_score_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
                     accuracy=accuracy).run()
 
 
@@ -50,16 +50,16 @@ def update_commutes_cache_client_scheduler(homes, destination, accuracy=CommuteA
     """
 
     if commute_type == CommuteType.DRIVING:
-        Driving(HomeCommute.rentdatabases_to_home_cache(homes), HomeCommute.rentdatabase_to_home_cache(destination),
+        Driving(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
                 accuracy=accuracy).run()
     elif commute_type == CommuteType.TRANSIT:
-        Transit(HomeCommute.rentdatabases_to_home_cache(homes), HomeCommute.rentdatabase_to_home_cache(destination),
+        Transit(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
                 accuracy=accuracy).run()
     elif commute_type == CommuteType.BICYCLING:
-        Bicycling(HomeCommute.rentdatabases_to_home_cache(homes), HomeCommute.rentdatabase_to_home_cache(destination),
+        Bicycling(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
                   accuracy=accuracy).run()
     elif commute_type == CommuteType.WALKING:
-        Walking(HomeCommute.rentdatabases_to_home_cache(homes), HomeCommute.rentdatabase_to_home_cache(destination),
+        Walking(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
                 accuracy=accuracy).run()
 
 
