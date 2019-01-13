@@ -486,8 +486,8 @@ export default class MySurveys extends Component {
             return (
                 <>
                     <p className="surveys-title-text-semi-bold">Please add homes to your tour!</p>
-                    <p className='surveys-title-text'>Add homes to your tour by clicking on the check-mark on the home. You can also
-                    view more info about the home by clicking on the home. If you want to add more homes to your favorites list you can click load survey
+                    <p className='surveys-title-text'>Add homes to your tour by clicking on the check-mark on the hom. You can also
+                    view more info about the home by clicking on it. If you want to add more homes to your favorites list you can click load survey
                     to load your survey</p>
                 </>
             );
