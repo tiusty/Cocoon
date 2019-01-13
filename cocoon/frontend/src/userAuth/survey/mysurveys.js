@@ -214,7 +214,7 @@ export default class MySurveys extends Component {
             .then(response =>
                 this.setState({
                     id: response.data.id,
-                    is_signed: response.data.is_signed,
+                    is_pre_tour_signed: response.data.is_signed,
                     pre_tour_forms_created: true,
                     refreshing_document_status: false,
                 })
@@ -242,7 +242,7 @@ export default class MySurveys extends Component {
             .then(response =>
                 this.setState({
                     id: response.data.id,
-                    is_signed: response.data.is_signed,
+                    is_pre_tour_signed: response.data.is_signed,
                     refreshing_document_status: false,
                 })
             );
@@ -266,13 +266,14 @@ export default class MySurveys extends Component {
                 });
                 console.log('Bad', error)
             })
-            .then(response =>
-                this.setState({
-                    id: response.data.id,
-                    is_signed: response.data.is_signed,
-                    created: true,
-                    refreshing_document_status: false,
-                })
+            .then(response => {
+                    this.setState({
+                        id: response.data.id,
+                        is_pre_tour_signed: response.data.is_signed,
+                        created: true,
+                        refreshing_document_status: false,
+                    })
+                }
             );
     };
 

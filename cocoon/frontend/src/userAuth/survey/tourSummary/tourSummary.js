@@ -94,7 +94,7 @@ export default class TourSummary extends Component {
         } else if (!this.props.is_pre_tour_signed && this.props.pre_tour_forms_created) {
             return (
                 <>
-                    <p className="tour-summary-text">Refresh your document stats!</p>
+                    <p className="tour-summary-text">Refresh your document status!</p>
                     <button className="btn btn-primary tour-summary-doc-button"
                             onClick={this.props.onHandleOnClickRefreshDocument}>{this.props.refreshing_document_status ? 'Loading' : 'Refresh'}</button>
                     <p className="tour-summary-text">Can't find the email?</p>
