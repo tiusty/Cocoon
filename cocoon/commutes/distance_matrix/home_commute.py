@@ -5,7 +5,7 @@ class HomeCommute(object):
         self.state = state
 
     @staticmethod
-    def home_score_to_home_commute(homes):
+    def home_scores_to_home_commute(homes):
         """
         Converts a list of home scores to the home cache class
         :param homes: (list(HomeScore)) -> The homes to convert
