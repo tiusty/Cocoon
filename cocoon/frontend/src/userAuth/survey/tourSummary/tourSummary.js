@@ -51,7 +51,7 @@ export default class TourSummary extends Component {
         /**
          * Renders the visit list homes
          */
-        if (this.props.visit_list.length === 0) return <h3 className="tour-summary-h3">Please add homes to your visit list!</h3>;
+        if (this.props.visit_list.length === 0) return <h3 className="tour-summary-h3">No homes in visit list</h3>;
         return (
             <div className="survey-large-home">
                 <HomeTiles
@@ -75,12 +75,24 @@ export default class TourSummary extends Component {
     renderPage() {
         if (!this.props.loaded) {
             return <p className="tour-summary-text">Loading</p>
-        } else if (this.props.itinerary_scheduled) {
+        } else if (this.props.itinerary_scheduled && this.props.survey_id === undefined) {
             return (
                 <>
                     <p className="tour-summary-text">To review more details of your tour please click below:</p>
                     <a  href={scheduler_endpoints['clientScheduler']} onClick={this.props.onLoadingClicked}
                         className="btn btn-primary survey-small-load-button">View Tour</a>
+                </>
+            );
+        } else if (this.props.itinerary_scheduled && this.props.survey_id !== undefined) {
+            return (
+                <>
+                    <p className="tour-summary-text">To review more details of your tour please click below:</p>
+                    <a  href={scheduler_endpoints['clientScheduler']} onClick={this.props.onLoadingClicked}
+                        className="btn btn-primary survey-small-load-button">View Tour</a>
+                    <h2 className="tour-summary-semi-bold">For reference, your visit list is below</h2>
+                    <p className="tour-summary-text">Remember you cannot schedule another tour until your current tour
+                        is completed</p>
+                    {this.renderVisitList()}
                 </>
             );
         } else if (!this.props.is_pre_tour_signed && !this.props.pre_tour_forms_created) {
@@ -125,7 +137,7 @@ export default class TourSummary extends Component {
                                 type="submit">Schedule!
                         </button>
                     </form>
-                    <h2 className="tour-summary-semi-bold">Homes currently in tour</h2>
+                    <h2 className="tour-summary-semi-bold">Visit List</h2>
                     {this.renderVisitList()}
                 </>
             );
