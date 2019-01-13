@@ -164,7 +164,6 @@ class ClientScheduler extends Component {
         /**
          *  Updates the tenants start_times when adding new dates
          */
-        console.log('h')
         if (this.state.days.length) {
             let endpoint = scheduler_endpoints['itineraryClient'] + this.state.id + '/';
             axios.put(endpoint, {
