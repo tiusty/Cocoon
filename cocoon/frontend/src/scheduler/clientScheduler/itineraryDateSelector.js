@@ -28,7 +28,7 @@ export default class ItineraryDateSelector extends Component {
         return (
             <div className="calendar-wrapper">
                 <h3>Select a Date</h3>
-                <p>Pick a date for your tour</p>
+                <p>Pick dates for when you can go on a tour</p>
                 <Calendar
                     minDetail="month"
                     maxDetail="month"

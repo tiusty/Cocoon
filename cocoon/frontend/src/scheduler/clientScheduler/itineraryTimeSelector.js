@@ -105,7 +105,7 @@ export default class ItineraryTimeSelector extends Component {
             <div className="time-wrapper">
                 <div>
                     <h3>Select a Time</h3>
-                    <p>Pick a start time for your tour</p>
+                    <p>Pick times that you are free</p>
                     <div className="time-picker">
 
                         <div id="time-picker_hour">
