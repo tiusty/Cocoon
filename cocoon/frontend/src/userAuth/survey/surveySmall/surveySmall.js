@@ -56,7 +56,7 @@ export default class SurveySmall extends Component {
                             </div>
                         </div>
                         <div className="survey-small-data">
-                            <p className="survey-small-title">Roomate Group:</p>
+                            <p className="survey-small-title">Roommate Group:</p>
                             <p className="survey-small-title">{this.props.name}</p>
                             <p className="survey-small-favorites">Number of favorites: {this.generateFavoriteHomes().length}</p>
                             <p className="survey-small-visit-list">Number of visit
