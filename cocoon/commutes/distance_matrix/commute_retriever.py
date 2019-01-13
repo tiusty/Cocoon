@@ -35,8 +35,8 @@ def retrieve_approximate_commute_client_scheduler(homes, destination, commute_ty
     :return: (list(ints)) -> Returns the commute time for each home from the destination to that home. It is returned
         in the order it is sent
     """
-    return retrieve_approximate_commute(HomeCommute.rentdatabases_to_home_cache(homes),
-                                        HomeCommute.rentdatabase_to_home_cache(destination), commute_type)
+    return retrieve_approximate_commute(HomeCommute.rentdatabases_to_home_commute(homes),
+                                        HomeCommute.rentdatabase_to_home_commute(destination), commute_type)
 
 
 def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, with_traffic=False):
@@ -71,12 +71,13 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, with
 
 def retrieve_approximate_commute(homes, destination, commute_type):
     """
-    This wraps the get_durations_and_distances to prevent a user from calling the matrix with the wrong value
-
-    The commute type stored in the database is in a different form then what the google distance matrix accepts.
-        Therefore this does the conversion.
+    This retrieves the approximated commutes between the homes and the destination. This is computed using the
+        zip-codes of the two locations
 
     If the mode type is not recognized then an empty list is returned
+
+    -1 is returned for homes that don't have an approximate commute since the order of the list matters
+        for comparing the results afterwards... therefore if need spacers for homes that fail
     :param homes: (list(HomeCommute)) -> List of values that is accepted by the distance matrix
     :param destination: HomeCommute -> list of values that is accepted by the distance matrix
     :param commute_type: (CommuteType Model) -> The commute type that is stored in the commute type format
@@ -111,7 +112,8 @@ def retrieve_approximate_commute(homes, destination, commute_type):
                 approx.append(-1)
 
     # If the ZipCodeBase doesn't exist then... just don't compute, it should be there if the update_cache function
-    # is called before this
+    # is called before this.
+
     except ZipCodeBase.DoesNotExist:
         for home in homes:
             approx.append(-1)
