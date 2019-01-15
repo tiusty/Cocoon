@@ -451,11 +451,11 @@ export default class RentForm extends Component {
          */
         let polygons = [...this.state.generalInfo.polygons];
         let polygon = {};
-        let verticies = [];
+        let vertices = [];
 
         // Push all the vertices to an array in order
         for (let i = 0; i < p.getPath().length; i++) {
-            verticies.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
+            vertices.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
         }
 
         // Since we are just drawing the polygons ourselves, we will immediately remove the
@@ -463,10 +463,10 @@ export default class RentForm extends Component {
         p.setMap(null);
 
         // Only saves the polygon if it has more than 3 vertices
-        if (verticies.length >= 3) {
+        if (vertices.length >= 3) {
 
             // store the vertices
-            polygon.vertices = verticies;
+            polygon.vertices = vertices;
 
             // Store a key to refer to the polygon
             polygon.key = this.state.generalInfo.polygons.length + 1;
