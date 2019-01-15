@@ -70,7 +70,7 @@ class CocoonAlgorithm(object):
     def generate_polygons(survey):
         """
         Generates all the polygons the user created. Converts the polygons from the django database version
-            to shapely polygonss
+            to shapely polygons
         :param survey: (RentingSurvey) -> The survey
         :return: (list(shapely.polygons)) -> The list of polygons that are formatted to shapely
         """

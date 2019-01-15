@@ -11,14 +11,15 @@ def save_polygons(survey, polygons, filter_type):
 
     if filter_type is 1:
         for polygon in polygons:
-            polygon_model = survey.polygons.create()
-            for vertex in polygon['vertices']:
-                lat = None
-                lng = None
-                for key, value in vertex.items():
-                    if key == 'lat':
-                        lat = value
-                    elif key == 'lng':
-                        lng = value
-                if lat is not None or lng is not None:
-                    polygon_model.vertices.create(lat=lat, lng=lng)
+            if len(polygon['vertices']) >= 3:
+                polygon_model = survey.polygons.create()
+                for vertex in polygon['vertices']:
+                    lat = None
+                    lng = None
+                    for key, value in vertex.items():
+                        if key == 'lat':
+                            lat = value
+                        elif key == 'lng':
+                            lng = value
+                    if lat is not None or lng is not None:
+                        polygon_model.vertices.create(lat=lat, lng=lng)
