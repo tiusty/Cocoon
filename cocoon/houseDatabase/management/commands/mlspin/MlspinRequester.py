@@ -165,7 +165,6 @@ class MlspinRequester(object):
                     new_listing.laundromat_nearby = False
                     new_listing.laundry_inside = True
 
-
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
                 new_listing.listing_number = int(cells[LIST_NO])

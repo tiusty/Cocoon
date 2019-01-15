@@ -117,6 +117,7 @@ class PriceInformationForm(ModelForm):
         model = PriceInformationModel
         fields = '__all__'
 
+
 class HouseNearbyAmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the HouseNearbyAmenitiesModel Model
@@ -133,6 +134,7 @@ class HouseNearbyAmenitiesForm(ModelForm):
     class Meta:
         model = HouseNearbyAmenitiesModel
         fields = ["wants_laundry_nearby"]
+
 
 class ExteriorAmenitiesForm(ModelForm):
     """
@@ -235,6 +237,7 @@ class ExteriorAmenitiesForm(ModelForm):
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight'
                   ]
+
 
 class InteriorAmenitiesForm(ModelForm):
     """
@@ -368,8 +371,6 @@ class InteriorAmenitiesForm(ModelForm):
             }),
     )
 
-
-
     class Meta:
         model = InteriorAmenitiesModel
         fields = ["wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs",
@@ -377,7 +378,6 @@ class InteriorAmenitiesForm(ModelForm):
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"
                   ]
-
 
 
 class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm, HomeInformationForm):

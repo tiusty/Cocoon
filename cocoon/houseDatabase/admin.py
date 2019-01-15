@@ -23,9 +23,10 @@ class HouseAdmin(admin.ModelAdmin):
              'listing_provider',
              'listing_agent',
              'listing_office',
-             'listing_number'
+             'listing_number',
+             'remarks',
          )}
-        )
+        ),
     ]
 
     list_display = ('street_address', 'price', 'home_type', 'currently_available', 'last_updated', 'num_bedrooms',

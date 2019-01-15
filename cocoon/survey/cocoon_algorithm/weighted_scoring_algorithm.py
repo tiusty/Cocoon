@@ -65,3 +65,10 @@ class WeightScoringAlgorithm(object):
             (user_scale_factor * hybrid_question_weight)
         """
         return (1 if does_home_contain_item else -1) * user_scale_factor * self.hybrid_question_weight
+
+    def handle_weighted_question_score(self, user_scale_factor, home):
+        if not (self.compute_weighted_question_filter(user_scale_factor, home.home.parking_spot)):
+            home.eliminate_home()
+        home.accumulated_points = self.compute_weighted_question_score(user_scale_factor,
+                                                                       home.home.parking_spot)
+        home.total_possible_points = abs(user_scale_factor) * self.hybrid_question_weight
