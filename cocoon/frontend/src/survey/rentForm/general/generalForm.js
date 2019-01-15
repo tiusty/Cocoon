@@ -520,7 +520,7 @@ const MyMapComponent = compose(
         defaultOptions={defaultMapOptions}
     >
 
-        /* Draws all the polygons stored in the state */
+        {/* Draws all the polygons stored in the state */}
         {props.polygons.map(p =>
                 <Polygon
                     key={p.key}
