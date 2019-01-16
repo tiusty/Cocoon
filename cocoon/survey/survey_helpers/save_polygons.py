@@ -9,15 +9,30 @@ def save_polygons(survey, polygons, filter_type):
     :param filter_type: (int) -> The type of filter that is being used
                                     1 -> The user is drawing the polygons manually
                                     0 -> The polygons should not be saved
-    :return:
+
+    !!!!!! TODO: Fix saving mechanism
+    Once the survey results page gets edited change the method so it can update polygons/
+    not add polygons that already exist
     """
 
     if filter_type is 1:
+        # Right now we just delete all the polygons saved before re-adding them
+        #   this needs to get fixed with the new survey results page
+        survey.polygons.all().delete()
+
+        # Save all the new polygons
         for new_polygon in polygons:
-            if len(new_polygon['vertices']) >= 3:
+
+            # Only allow polygons with 3 or more vertices to be saved and needs to be less than 200
+            #   Make a arbitrarily big number to prevent getting spammed
+            if 3 <= len(new_polygon['vertices']) <= 200:
                 vertices_new = []
+
+                # Create the model. It needs to be saved to allow saving foreign keys to it
                 polygon_model = survey.polygons.create()
                 errors = False
+
+                # retrieve all the new vertices
                 for vertex in new_polygon['vertices']:
                     lat = None
                     lng = None
@@ -31,32 +46,11 @@ def save_polygons(survey, polygons, filter_type):
                     else:
                         errors = True
 
-                # Check to see if this polygon already exists
-                polygon_exist = False
-                for polygon_saved in PolygonModel.objects.filter(survey=survey):
-                    if check_matching_vertices(polygon_saved, vertices_new):
-                        polygon_exist = True
-                        break
-
-                if not errors and not polygon_exist:
+                # If there were no errors then save the vertices
+                if not errors:
                     for vertex in vertices_new:
                         vertex.save()
+                # If something happened then delete the polygon
                 else:
                     polygon_model.delete()
 
-
-def check_matching_vertices(polygon_saved, vertices_new):
-    """
-    Given a polygon model and a list of vertices, checks to see if the polygon has identical vertices to the new polygon
-
-    To be equivelent, all the vertices must exists in the polygon
-    :param polygon_saved: (PolygonModel) -> The polygon to compare against
-    :param vertices_new: (list(VertexModels)) -> THe list of vertices to check in the polygon
-    :return: (Boolean) -> True: The polygon has identical vertices to the passed in vertices
-                          False: The polygon is different
-    """
-    if polygon_saved.vertices.count() == len(vertices_new):
-        for vertex_new in vertices_new:
-            if not polygon_saved.vertices.filter(lat=vertex_new.lat, lng=vertex_new.lng):
-                return False
-    return True

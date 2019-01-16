@@ -132,8 +132,8 @@ class TestSavePolygons(TestCase):
 
     def test_delete_old_polygons_before_adding_new_ones(self):
         """
-        Tests that if there are any polygons already saved to the account,
-        :return:
+        Tests that if there are any polygons already saved to the account, then they are deleted
+        before adding new ones
         """
         # Arrange
         filter_type = 1
@@ -160,3 +160,48 @@ class TestSavePolygons(TestCase):
         self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.364159'), lng=Decimal('-70.976846')).exists())
         self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.310357'), lng=Decimal('-71.110742')).exists())
         self.assertFalse(VertexModel.objects.filter(lat=Decimal('45.454545'), lng=Decimal('12.23232')).exists())
+
+    def test_delete_old_polygons_before_adding_new_ones_not_touch_other_users(self):
+        """
+        Tests that if a survey already has a polygon then it gets deleted before adding more.
+        Also makes sure that the polygons of other users are not affected
+        """
+        # Arrange
+        filter_type = 1
+        user = MyUser.objects.create(email="test@email.com")
+        user_2 = MyUser.objects.create(email="test2@email.com")
+        survey = RentingSurveyModel.objects.create(user_profile=user.userProfile)
+        survey_2 = RentingSurveyModel.objects.create(user_profile=user_2.userProfile)
+
+        # Creates a polygon for first survey
+        polygon = survey.polygons.create()
+        polygon.vertices.create(lat=45.454545, lng=12.23232)
+
+        # Create a polygon for the second survey
+        polygon = survey_2.polygons.create()
+        polygon.vertices.create(lat=46.454545, lng=13.23232)
+
+        # Creates the new polygon being passed in
+        polygons = [{'key': 1, 'vertices': [{'lat': 42.400677237104745, 'lng': -71.12722122802734},
+                                            {'lat': 42.36415890370297, 'lng': -70.9768458618164},
+                                            {'lat': 42.31035715086906, 'lng': -71.11074173583984}]}]
+
+        # Act
+        save_polygons(survey, polygons, filter_type)
+
+        # Assert
+
+        # Asserts that the other user is unaffected by the deletion of the polygons
+        self.assertTrue(survey_2.polygons.all().count(), 1)
+
+        # Assert other values
+        self.assertTrue(survey.polygons.all().count(), 1)
+        self.assertEqual(PolygonModel.objects.count(), 2)
+        self.assertEqual(VertexModel.objects.count(), 4)
+
+        # Assert the vertices were created
+        self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.400677'), lng=Decimal('-71.127221')).exists())
+        self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.364159'), lng=Decimal('-70.976846')).exists())
+        self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.310357'), lng=Decimal('-71.110742')).exists())
+        self.assertFalse(VertexModel.objects.filter(lat=Decimal('45.454545'), lng=Decimal('12.23232')).exists())
+        self.assertTrue(VertexModel.objects.filter(lat=Decimal('46.454545'), lng=Decimal('13.23232')).exists())
