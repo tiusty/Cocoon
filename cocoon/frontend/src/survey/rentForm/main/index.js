@@ -462,27 +462,31 @@ export default class RentForm extends Component {
         //  default polygon so that the state polygon is used instead
         p.setMap(null);
 
-        // Only saves the polygon if it has more than 3 vertices
-        if (vertices.length >= 3) {
+        // Only saves the polygon if it has more than 3 vertices but less than 200
+        if (vertices.length < 3) {
+            alert('Selected area must have at least 3 points');
+        // Make sure they don't add an absurd amount of vertices
+        } else if (vertices.length > 200) {
+            alert('Selected area must have less than 200 vertices');
+        } else if (vertices.length >= 3) {
+                // store the vertices
+                polygon.vertices = vertices;
 
-            // store the vertices
-            polygon.vertices = vertices;
+                // Store a key to refer to the polygon
+                polygon.key = this.state.generalInfo.polygons.length + 1;
 
-            // Store a key to refer to the polygon
-            polygon.key = this.state.generalInfo.polygons.length + 1;
+                // Add the new polygon to the list
+                polygons.push(polygon);
 
-            // Add the new polygon to the list
-            polygons.push(polygon);
-
-            // Now update the state to store the new polygon
-            this.setState({
-                generalInfo: {
-                    ...this.state.generalInfo,
-                    polygons,
-                }
-            })
+                // Now update the state to store the new polygon
+                this.setState({
+                    generalInfo: {
+                        ...this.state.generalInfo,
+                        polygons,
+                    }
+                })
         } else {
-            alert('Selected area must have at least 3 points')
+            alert('Unknown error adding polygons')
         }
     };
 
