@@ -129,3 +129,34 @@ class TestSavePolygons(TestCase):
         # Assert
         self.assertEqual(PolygonModel.objects.count(), 0)
         self.assertEqual(VertexModel.objects.count(), 0)
+
+    def test_delete_old_polygons_before_adding_new_ones(self):
+        """
+        Tests that if there are any polygons already saved to the account,
+        :return:
+        """
+        # Arrange
+        filter_type = 1
+        user = MyUser.objects.create(email="test@email.com")
+        survey = RentingSurveyModel.objects.create(user_profile=user.userProfile)
+
+        # Creates a polygon already saved
+        polygon = survey.polygons.create()
+        polygon.vertices.create(lat=45.454545, lng=12.23232)
+        # Creates the new polygon being passed in
+        polygons = [{'key': 1, 'vertices': [{'lat': 42.400677237104745, 'lng': -71.12722122802734},
+                                            {'lat': 42.36415890370297, 'lng': -70.9768458618164},
+                                            {'lat': 42.31035715086906, 'lng': -71.11074173583984}]}]
+
+        # Act
+        save_polygons(survey, polygons, filter_type)
+
+        # Assert
+        self.assertEqual(PolygonModel.objects.count(), 1)
+        self.assertEqual(VertexModel.objects.count(), 3)
+
+        # Assert the vertices were created
+        self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.400677'), lng=Decimal('-71.127221')).exists())
+        self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.364159'), lng=Decimal('-70.976846')).exists())
+        self.assertTrue(VertexModel.objects.filter(lat=Decimal('42.310357'), lng=Decimal('-71.110742')).exists())
+        self.assertFalse(VertexModel.objects.filter(lat=Decimal('45.454545'), lng=Decimal('12.23232')).exists())
