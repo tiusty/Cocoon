@@ -30,6 +30,8 @@ export default class RentForm extends Component {
                 home_type: [],
                 move_weight: 0,
                 num_bedrooms: undefined,
+                polygon_filter_type: 0,
+                polygons: [],
                 desired_price: 1000,
                 max_price: 3000,
                 price_weight: 2,
@@ -199,6 +201,8 @@ export default class RentForm extends Component {
                         setPrice={this.setPrice}
                         handleEarliestClick={this.handleEarliestClick}
                         handleLatestClick={this.handleLatestClick}
+                        onCompletePolygon={this.handleCompletePolygon}
+                        onDeleteAllPolygons={this.handleDeleteAllPolygons}
                 />;
             case 2:
                 return <TenantsForm
@@ -425,6 +429,64 @@ export default class RentForm extends Component {
 
             }
             this.setState({tenants});
+        }
+    };
+
+    handleDeleteAllPolygons = () => {
+        /**
+         * Deletes all the polygons on the map and deletes it from the state
+         */
+        // Removes the polygons from the state since we deleted them
+        this.setState({
+            generalInfo: {
+                ...this.state.generalInfo,
+                polygons: [],
+            }
+        })
+    };
+
+    handleCompletePolygon = (p) => {
+        /**
+         * Adds the polygon to the state when it is completed
+         */
+        let polygons = [...this.state.generalInfo.polygons];
+        let polygon = {};
+        let vertices = [];
+
+        // Push all the vertices to an array in order
+        for (let i = 0; i < p.getPath().length; i++) {
+            vertices.push({lat: p.getPath().j[i].lat(), lng: p.getPath().j[i].lng()})
+        }
+
+        // Since we are just drawing the polygons ourselves, we will immediately remove the
+        //  default polygon so that the state polygon is used instead
+        p.setMap(null);
+
+        // Only saves the polygon if it has more than 3 vertices but less than 200
+        if (vertices.length < 3) {
+            alert('Selected area must have at least 3 points');
+        // Make sure they don't add an absurd amount of vertices
+        } else if (vertices.length > 200) {
+            alert('Selected area must have less than 200 vertices');
+        } else if (vertices.length >= 3) {
+                // store the vertices
+                polygon.vertices = vertices;
+
+                // Store a key to refer to the polygon
+                polygon.key = this.state.generalInfo.polygons.length + 1;
+
+                // Add the new polygon to the list
+                polygons.push(polygon);
+
+                // Now update the state to store the new polygon
+                this.setState({
+                    generalInfo: {
+                        ...this.state.generalInfo,
+                        polygons,
+                    }
+                })
+        } else {
+            alert('Unknown error adding polygons')
         }
     };
 
