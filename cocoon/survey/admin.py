@@ -1,11 +1,22 @@
 from django.contrib import admin
-from cocoon.survey.models import RentingSurveyModel, TenantModel
+from cocoon.survey.models import RentingSurveyModel, TenantModel, PolygonModel, VertexModel
 
 # Register your models here.
 
 
 class TenantInLine(admin.TabularInline):
     model = TenantModel
+    extra = 0
+
+
+class VertexInLine(admin.TabularInline):
+    model = VertexModel
+    extra = 0
+
+
+class PolygonInLine(admin.TabularInline):
+    model = PolygonModel
+    inlines = [VertexInLine]
     extra = 0
 
 
@@ -19,12 +30,12 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
                                'max_bathrooms', )}),
         ('Exterior Amenities', {'fields': ('parking_spot',)}),
         ('Created', {'fields': ('created', 'id', 'url')}),
-        ('Homes', {'fields': ('favorites', 'visit_list',)}),
+        ('Homes', {'fields': ('favorites', 'visit_list', 'polygon_filter_type',)}),
     )
     list_display = ('name', 'user_profile', )
     list_filter = ['user_profile']
     search_fields = ('name',)
-    inlines = [TenantInLine]
+    inlines = [TenantInLine, PolygonInLine]
 
 
 class TenantModelAdmin(admin.ModelAdmin):
@@ -38,5 +49,10 @@ class TenantModelAdmin(admin.ModelAdmin):
     ]
 
 
+class PolygonModelAdmin(admin.ModelAdmin):
+    inlines = [VertexInLine]
+
+
 admin.site.register(RentingSurveyModel, RentingSurveyModelAdmin)
+admin.site.register(PolygonModel, PolygonModelAdmin)
 admin.site.register(TenantModel, TenantModelAdmin)

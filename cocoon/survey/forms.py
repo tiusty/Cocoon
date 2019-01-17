@@ -154,12 +154,23 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
         ),
     )
 
+    polygon_filter_type = forms.ChoiceField(
+        required=False,
+        choices=[(x, x) for x in range(0, 2)],
+        label="Filter type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "number_of_tenants"]
+                  "parking_spot", "number_of_tenants", 'polygon_filter_type']
 
 
 class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
@@ -208,7 +219,7 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
         model = RentingSurveyModel
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "name"]
+                  "parking_spot", "name",]
 
 
 class DestinationForm(ModelForm):

@@ -30,6 +30,7 @@ class TestHomeInformationForm(TestCase):
         self.num_bedrooms = 1
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
+        self.polygon_filter_type = 0
         self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
 
     def tests_home_information_form_valid(self):
@@ -40,7 +41,8 @@ class TestHomeInformationForm(TestCase):
             'num_bedrooms': self.num_bedrooms,
             'max_bathrooms': self.max_num_bathrooms,
             'min_bathrooms': self.min_num_bathrooms,
-            'home_type': self.home_type
+            'home_type': self.home_type,
+            'polygon_filter_type': self.polygon_filter_type,
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -644,6 +646,7 @@ class TestRentSurveyForm(TestCase):
         self.storage_unit = 0
 
         self.number_of_destinations = 1
+        self.polygon_filter_type = 0
 
     def tests_rent_survey_valid(self):
         # Arrange
@@ -673,13 +676,13 @@ class TestRentSurveyForm(TestCase):
             'pool_hot_tub_survey': self.pool_hot_tub,
             'fitness_center_survey': self.fitness_center,
             'storage_unit_survey': self.storage_unit,
-            'number_of_tenants': 2
+            'number_of_tenants': 2,
+            'polygon_filter_type': self.polygon_filter_type
         }
         rent_survey_form = RentSurveyForm(data=form_data)
 
         # Act
         result = rent_survey_form.is_valid()
-        print(rent_survey_form.errors)
 
         # Assert
         self.assertTrue(result)
@@ -821,6 +824,7 @@ class TestRentSurveyMiniForm(TestCase):
         self.storage_unit = 0
 
         self.number_of_destinations = 1
+        self.polygon_filter_type = 0
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -865,13 +869,13 @@ class TestRentSurveyMiniForm(TestCase):
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
             'name': 'test_survey',
+            'polygon_filter_type': self.polygon_filter_type,
         }
 
         rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
 
         # Act
         result = rent_survey_form.is_valid()
-        print(rent_survey_form.errors)
 
         # Assert
         self.assertTrue(result)
@@ -952,6 +956,7 @@ class TestRentSurveyMiniForm(TestCase):
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
             'name': 'test_survey',
+            'polygon_filter_type': self.polygon_filter_type
         }
 
         rent_survey_form = RentSurveyFormMini(data=form_data, user=user2)

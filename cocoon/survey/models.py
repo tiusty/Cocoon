@@ -41,13 +41,17 @@ class InitialSurveyModel(models.Model):
     # Adds functionality to the save method. This checks to see if a survey with the same slug
     #   for that user already exists. If it does then delete that survey and save the new one instead
     def save(self, *args, **kwargs):
+        # Old url is saved to determine if the url for a survey changed
+        old_url = self.url
         self.url = self.generate_slug()
 
-        # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
-        if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                .filter(url=self.url).exists():
-            RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                .filter(url=self.url).delete()
+        # If it is a new model or the url changed then delete any conflicting surveys
+        if self.pk is None or old_url != self.url:
+            # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
+            if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
+                    .filter(url=self.url).exists():
+                RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
+                    .filter(url=self.url).delete()
 
         # When the model is being saved, make sure to generate the slug associated with the survey.
         # Since surveys with duplicate names are deleted, then it should guarantee uniqueness
@@ -65,6 +69,7 @@ class HomeInformationModel(models.Model):
     max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
     min_bathrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeTypeModel)
+    polygon_filter_type = models.IntegerField(default=0)
 
     @property
     def home_types(self):
@@ -201,3 +206,13 @@ class CommuteInformationModel(models.Model):
 
 class TenantModel(DestinationsModel, CommuteInformationModel, TenantPersonalInformationModel):
     survey = models.ForeignKey(RentingSurveyModel, related_name="tenants")
+
+
+class PolygonModel(models.Model):
+    survey = models.ForeignKey(RentingSurveyModel, related_name='polygons', blank=True)
+
+
+class VertexModel(models.Model):
+    polygon = models.ForeignKey(PolygonModel, related_name='vertices', blank=True)
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
+    lng = models.DecimalField(max_digits=9, decimal_places=6)
