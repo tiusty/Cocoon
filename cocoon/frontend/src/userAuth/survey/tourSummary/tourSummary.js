@@ -59,6 +59,7 @@ export default class TourSummary extends Component {
                     visit_list={this.props.visit_list}
                     curr_favorites={this.props.visit_list}
                     onVisitClick={this.props.onHandleVisitListClicked}
+                    canFavorite={false}
                 />
             </div>
         );

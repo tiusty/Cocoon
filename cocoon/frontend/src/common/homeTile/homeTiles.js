@@ -72,6 +72,8 @@ export default class HomeTiles extends Component {
                         onVisitClick={this.props.onVisitClick}
                         onFavoriteClick={this.props.onFavoriteClick}
                         onHomeClick={this.handleHomeClick}
+                        canVisit={this.props.canVisit}
+                        canFavorite={this.props.canFavorite}
                     />
                 )
             );
@@ -86,6 +88,8 @@ export default class HomeTiles extends Component {
                     onVisitClick={this.props.onVisitClick}
                     onFavoriteClick={this.props.onFavoriteClick}
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
+                    canVisit={this.props.canVisit}
+                    canFavorite={this.props.canFavorite}
                 />
             );
         }
