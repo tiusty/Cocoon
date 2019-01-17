@@ -26,14 +26,11 @@ from .models import RentingSurveyModel
 from .forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
 from .survey_helpers.save_polygons import save_polygons
 
-# Import Scheduler algorithm
-from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
-
-# Import Itinerary model
+# Cocoon Modules
 from cocoon.survey.serializers import RentSurveySerializer
-
-# import scheduler views
 from cocoon.scheduler import views as scheduler_views
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+from cocoon.commutes.constants import CommuteAccuracy
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
@@ -306,8 +303,8 @@ class VisitList(ListView):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler()
-        client_scheduler_alg.run(homes_list, self.request.user)
+        client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.EXACT)
+        client_scheduler_alg.calculate_duration(homes_list)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
 

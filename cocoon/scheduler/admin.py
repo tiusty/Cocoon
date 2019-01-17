@@ -3,6 +3,7 @@ from .models import ItineraryModel
 from .models import TimeModel
 
 
+
 class TimeInline(admin.StackedInline):
     model = TimeModel
     extra = 0

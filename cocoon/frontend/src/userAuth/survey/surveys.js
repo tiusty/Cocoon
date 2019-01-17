@@ -8,6 +8,7 @@ import './surveys.css'
 import SurveySmall from "./surveySmall/surveySmall";
 import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
+import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
 import surveyIcon from './survey_icon.png';
 import LoadingScreen from 'react-loading-screen';
@@ -30,6 +31,9 @@ export default class Surveys extends Component {
         // Stores the ids of all the surveys associated with the user
         surveys: [],
         loaded: false,
+
+        // Itinerary information
+        itinerary_exists: false,
 
         // Stores information regarding the state of signing documents
         hunter_doc_manager_id: null,
@@ -63,6 +67,32 @@ export default class Surveys extends Component {
 
         // Return the list of ids
         return survey_ids
+    }
+
+    determineActiveItinerary(data) {
+        /**
+         * Determines if there is an active itinerary are not
+         *  An active itinerary is one that finished is not true
+         *
+         *  Arguments:
+         *      data: list(ItinerarySerializer)
+         *
+         *  return (boolean):
+         *      true -> If an unfinished itinerary exists
+         *      false -> If there are no unfinished itineraries
+         */
+        let result = false;
+
+        // Determine if any of the itineraries are not finished
+        data.map(i =>
+            {
+                if (!i.finished) {
+                    result = true
+                }
+            }
+        );
+
+        return result
     }
 
     componentDidMount() {
@@ -102,6 +132,15 @@ export default class Surveys extends Component {
                 this.setState({
                     loaded: true,
                     pre_tour_signed: response.data.is_pre_tour_signed
+                })
+            });
+
+        // Determines if an itinerary exists yet already or not
+        axios.get(scheduler_endpoints['itineraryClient'])
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    itinerary_exists: this.determineActiveItinerary(response.data),
                 })
             });
     }
@@ -174,13 +213,13 @@ export default class Surveys extends Component {
                             </div>
                         </div>
 
-                        <div className="row">
-                            <div className="col-md-4 col-md-offset-4 search-bar-div">
-                                <input type="text" disabled={true} className="input search-bar"
-                                       placeholder="Search..."/>
-                                <button className="btn btn-primary search-button">Search</button>
-                            </div>
-                        </div>
+                        {/*<div className="row">*/}
+                            {/*<div className="col-md-4 col-md-offset-4 search-bar-div">*/}
+                                {/*<input type="text" disabled={true} className="input search-bar"*/}
+                                       {/*placeholder="Search..."/>*/}
+                                {/*<button className="btn btn-primary search-button">Search</button>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
 
                         <div className="row">
                             {this.state.surveys.map(survey =>
@@ -216,6 +255,7 @@ export default class Surveys extends Component {
                             pre_tour_signed={this.state.pre_tour_signed}
                             onDelete={this.handleDelete}
                             onLargeSurveyClose={this.handleLargeSurveyClose}
+                            itinerary_exists={this.state.itinerary_exists}
                         />
                     </div>
                 );

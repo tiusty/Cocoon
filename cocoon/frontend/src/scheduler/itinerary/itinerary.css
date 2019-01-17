@@ -1,5 +1,365 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700');
+
+:root {
+    --red: #A13718;
+    --teal: #39B1A7;
+    --tealOpacity: rgba(57, 177, 167, 0.04);
+    --black: #282828;
+    --grey: #888888;
+    --borderColor: #dfdfdf;
+    --borderRadius: 10px;
+}
+
 .available-times-wrapper {
     padding: 5px;
     margin: 5px;
     border: 1px dotted teal;
+}
+
+.onboard-wrapper {
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.onboard-wrapper_small {
+    height: auto;
+    padding: 30px 0px;
+}
+
+.itinerary-main-wrapper {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.itinerary-headline {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px 0px;
+}
+
+.onboard-wrapper img {
+    max-width: 200px;
+    height: auto;
+}
+
+.onboard-wrapper h2,
+.itinerary-headline h2 {
+    font-weight: 700;
+}
+
+.onboard-wrapper p,
+.itinerary-headline p {
+    color: #888;
+    font-weight: 600;
+}
+
+.onboard-wrapper a {
+    color: var(--teal);
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+.itinerary-date-time-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 20px;
+}
+
+.itinerary-main-wrapper .itinerary-button {
+    background: var(--teal);
+    color: white;
+    border: none;
+    padding: 25px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 16px;
+    width: 100%;
+}
+
+.itinerary-main-wrapper .itinerary-button:nth-of-type(1) {
+    border: 2px solid var(--teal);
+    margin-bottom: 10px;
+    background: white;
+    color: var(--teal);
+}
+
+.itinerary-date-time-wrapper .calendar-wrapper,
+.itinerary-date-time-wrapper .time-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 49%;
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+    padding: 10px 15px 15px;
+}
+
+.itinerary-date-time-wrapper .calendar-wrapper h3,
+.itinerary-date-time-wrapper .time-wrapper h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+}
+
+.itinerary-date-time-wrapper .calendar-wrapper p,
+.itinerary-date-time-wrapper .time-wrapper p {
+    text-align: center;
+    color: var(--grey);
+}
+
+/*DATE PICKER*/
+.itinerary-date-time-wrapper .react-calendar {
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.75;
+    border: none;
+}
+
+.itinerary-date-time-wrapper .react-calendar__tile--active,
+.itinerary-date-time-wrapper .react-calendar__tile--active:enabled:hover,
+.itinerary-date-time-wrapper .react-calendar__tile--active:enabled:focus {
+    background: var(--teal);
+    color: white !important;
+}
+
+.itinerary-date-time-wrapper .react-calendar__month-view__days__day--weekend {
+    color: inherit;
+}
+
+.itinerary-date-time-wrapper .react-calendar__tile:disabled {
+    text-decoration: line-through;
+}
+
+/*TIME PICKER */
+.time-wrapper .time-picker {
+    display: flex;
+    justify-content: space-between;
+}
+
+.time-wrapper .time-picker #time-picker_hour,
+.time-wrapper .time-picker #time-picker_min,
+.time-wrapper .time-picker #time-picker_period {
+    display: flex;
+    width: 32%;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-wrapper .time-picker #time-picker_hour input,
+.time-wrapper .time-picker #time-picker_min input,
+.time-wrapper .time-picker #time-picker_period input {
+    width: 100%;
+    text-align: center;
+    padding: 25px 5px;
+    font-size: 24px;
+    font-weight: 800;
+    border: 1px solid var(--teal);
+    color: var(--teal);
+}
+
+.time-wrapper .time-picker i {
+    color: var(--teal);
+    font-size: 40px;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.itinerary-date-time-wrapper .time-wrapper {
+    justify-content: space-between;
+}
+
+.time-available-wrapper {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid var(--borderColor);
+}
+
+.time-available-wrapper p {
+    display: inline-block;
+    font-size: 14px;
+    color: var(--black) !important;
+    font-weight: 700;
+}
+
+.time-available-wrapper input {
+    display: inline-block;
+    text-align: center;
+    width: 20%;
+    margin: 0 7px 10px;
+    font-weight: 800;
+    border: none;
+    border-bottom: 3px solid var(--teal);
+    padding-bottom: 4px;
+    font-size: 14px;
+    color: var(--teal);
+}
+
+p.time-available-error {
+    font-size: 11px;
+    color: var(--grey) !important;
+}
+
+.time-available-wrapper select#picker_available {
+    display: block;
+    width: 100%;
+    outline: none;
+    border: 1px solid var(--teal);
+    padding: 15px;
+    background: white;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 10px;
+}
+
+.time-available-wrapper select#picker_available option {
+    padding: 15px;
+    background: white;
+    font-weight: 700;
+    color: var(--black);
+}
+
+@media screen and (max-width: 724px) {
+    .itinerary-main-wrapper {
+        margin-bottom: 20px;
+    }
+    .itinerary-date-time-wrapper {
+        flex-direction: column;
+    }
+    .itinerary-date-time-wrapper .calendar-wrapper,
+    .itinerary-date-time-wrapper .time-wrapper {
+        width: 100%;
+    }
+    .itinerary-date-time-wrapper .calendar-wrapper {
+        margin-bottom: 20px;
+    }
+}
+
+/*ITINERARY SIDE SECTION*/
+
+.itinerary-side-wrapper {
+    margin-top: 30px;
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+    padding: 15px;
+    font-family: 'Montserrat', sans-serif;
+    padding-bottom: 0px;
+}
+
+.side-wrapper-top {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--grey);
+    padding: 20px 0px;
+    border-bottom: 1px solid var(--borderColor);
+}
+
+.side-wrapper-top p:first-of-type {
+    color: var(--teal);
+}
+
+.side-wrapper-times_empty {
+    padding: 30px 0px;
+    text-align: center;
+    font-weight: 800;
+    color: var(--grey);
+    font-size: 18px;
+}
+
+.side-wrapper-times_empty p {
+    padding: 10px;
+    margin: 0;
+}
+
+.side-wrapper-times .time-item {
+    padding: 25px 0px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--borderColor);
+    font-weight: 600;
+    font-size: 13px;
+    animation: PopIn .3s ease forwards;
+}
+
+.side-wrapper-times .time-item:last-of-type {
+    border: none;
+}
+
+@keyframes PopIn {
+    0% {
+        font-size: 0px;
+    }
+    70% {
+        font-size: 14px;
+    }
+    100% {
+        font-size: 13px;
+    }
+}
+
+.time-item_date span:last-of-type {
+    color: var(--grey);
+}
+
+.time-item_delete i {
+    font-size: 19px;
+    transform: rotate(45deg);
+    color: var(--red);
+    opacity: .4;
+    cursor: pointer;
+}
+
+#cancel-itinerary-btn {
+    padding-top: 15px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    text-decoration: underline;
+    cursor: pointer;
+    color: #bbbbbb;
+    font-family: 'Montserrat', sans-serif;
+    transition: all .2s ease;
+}
+
+#cancel-itinerary-btn_confirm {
+    padding-top: 15px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    color: #bbbbbb;
+    font-family: 'Montserrat', sans-serif;
+    transition: all .2s ease;
+}
+
+#cancel-itinerary-btn_confirm span {
+    padding: 0px 3px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#cancel-itinerary-btn_confirm span:nth-of-type(1):hover {
+    color: var(--red);
+}
+
+#cancel-itinerary-btn_confirm span:nth-of-type(2):hover {
+    color: var(--teal);
+}
+
+@media screen and (max-width: 724px) {
+    #cancel-itinerary-btn {
+        margin-bottom: 20px;
+    }
 }

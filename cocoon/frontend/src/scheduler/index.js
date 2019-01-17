@@ -8,9 +8,9 @@ import AgentSchedulerMarketplace from "./agentScheduler/agentSchedulerMarketplac
 // Determines which component to load via dictionary
 //  This should be passed in the context to the template
 const components = {
-    'ClientScheduler': ClientScheduler,
-    'AgentSchedulerPortal': AgentSchedulerPortal,
-    'AgentSchedulerMarketplace': AgentSchedulerMarketplace,
+    'ClientSchedulerView': ClientScheduler,
+    'AgentSchedulerPortalView': AgentSchedulerPortal,
+    'AgentSchedulerMarketplaceView': AgentSchedulerMarketplace,
 };
 
 ReactDOM.render(
