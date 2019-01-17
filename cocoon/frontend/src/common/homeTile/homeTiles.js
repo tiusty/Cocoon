@@ -77,9 +77,14 @@ export default class HomeTiles extends Component {
             );
         // Loads one home with extra info when it was clicked on
         } else {
+            let home = this.props.homes.find(home => home.id === this.state.home_click_id);
             return (
                 <HomeTileLarge
                     home={this.props.homes.find(home => home.id === this.state.home_click_id)}
+                    favorite={this.inFavorites(home)}
+                    visit={this.inVisitList(home)}
+                    onVisitClick={this.props.onVisitClick}
+                    onFavoriteClick={this.props.onFavoriteClick}
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
                 />
             );
