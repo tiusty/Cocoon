@@ -32,5 +32,6 @@ pytz==2018.4
 ratelim==0.1.6
 requests==2.11.1
 s3transfer==0.1.13
+Shapely==1.6.4.post2
 six==1.11.0
 urllib3==1.23

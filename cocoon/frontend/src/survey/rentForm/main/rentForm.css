@@ -56,6 +56,10 @@
     font-weight: 800;
 }
 
+.filter-delete-button {
+    margin-top: 10px;
+}
+
 .survey-btn {
     background: var(--teal);
     color: white;
