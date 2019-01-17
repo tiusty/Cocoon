@@ -109,10 +109,11 @@ class MlspinRequester(object):
             try:
                 # check for presence of apartment number with int()
                 int(cells[STREET_NAME][len(cells[STREET_NAME])-1])
-                clean_address = " ".join(split_address[:-1])
+                # the purpose of encoding and then decoding is to remove any non-ascii characters
+                clean_address = " ".join(split_address[:-1]).encode('ascii', errors='ignore').decode()
             # no int in last address element (not an apartment #)
             except ValueError:
-                clean_address = " ".join(split_address)
+                clean_address = " ".join(split_address).encode('ascii', errors='ignore').decode()
 
             # If any of the fields give a value error, then don't save the apartment
             try:
