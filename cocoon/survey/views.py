@@ -25,6 +25,7 @@ from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
 from .forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
 from .survey_helpers.save_polygons import save_polygons
+from .serializers import HomeScoreSerializer
 
 # Cocoon Modules
 from cocoon.survey.serializers import RentSurveySerializer
@@ -516,6 +517,34 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         # Returns the survey that was updated
         serializer = RentSurveySerializer(survey)
         return Response(serializer.data)
+
+
+class RentResultViewSet(viewsets.ViewSet):
+    """
+    This view set runs the survey algorithm. Given a survey that the user has
+        it computes the best homes
+    """
+
+    def retrieve(self, request, pk=None):
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, url=pk)
+
+        # Run the Rent Algorithm
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.run(survey)
+
+        # Save the response
+        data = [x for x in rent_algorithm.homes[:25] if x.percent_score() >= 0]
+
+        # Serialize the response
+        serializer = HomeScoreSerializer(data, many=True)
+
+        # Return the result
+        return Response(serializer.data)
+
 
 
 #######################################################

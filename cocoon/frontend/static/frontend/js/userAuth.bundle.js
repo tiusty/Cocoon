@@ -177,7 +177,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the survey app\n *\n * The format/naming should match the urls.py\n */\nvar survey_endpoints = {\n  'rentSurveyResult': '/survey/rent/',\n  'rentingSurvey': '/survey/rent/',\n  'rentSurvey': '/survey/api/rentSurvey/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (survey_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/survey_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the survey app\n *\n * The format/naming should match the urls.py\n */\nvar app_name = '/survey';\nvar api_path = app_name + '/api';\nvar survey_endpoints = {\n  'rentSurveyResult': '/survey/rent/',\n  'rentingSurvey': '/survey/rent/',\n  'rentSurvey': '/survey/api/rentSurvey/',\n  'rentResult': api_path + '/rentResult'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (survey_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/survey_endpoints.js?");
 
 /***/ }),
 

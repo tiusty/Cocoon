@@ -16,3 +16,9 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RentingSurveyModel
         fields = ('id', 'name', 'visit_list', 'favorites', 'url', 'desired_price', 'num_bedrooms')
+
+
+class HomeScoreSerializer(serializers.Serializer):
+    home = RentDatabaseSerializer(read_only=True)
+    accumulated_points = serializers.IntegerField()
+    total_possible_points = serializers.IntegerField()
