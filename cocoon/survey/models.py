@@ -111,6 +111,7 @@ class PriceInformationModel(models.Model):
     class Meta:
         abstract = True
 
+
 class HouseNearbyAmenitiesModel(models.Model):
     """
     Contains amenities that are near the house
@@ -152,6 +153,7 @@ class ExteriorAmenitiesModel(models.Model):
     Contains all the survey questions regarding the exterior Amenities
     All Questions are hybrid weighted
     """
+    wants_parking = models.BooleanField(default=False)
     parking_spot = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
     number_of_cars = models.IntegerField(default=0)
     wants_laundry_in_building = models.BooleanField(default=False)
@@ -166,6 +168,7 @@ class ExteriorAmenitiesModel(models.Model):
 
     class Meta:
         abstract = True
+
 
 class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNearbyAmenitiesModel,
                          PriceInformationModel, HomeInformationModel, InitialSurveyModel):
