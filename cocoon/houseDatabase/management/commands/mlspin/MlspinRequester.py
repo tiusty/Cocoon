@@ -137,7 +137,7 @@ class MlspinRequester(object):
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
-                if word_scraper.word_finder("laundromat") and word_scraper.word_finder("nearby"):
+                if word_scraper.word_finder(["laundromat","nearby"]):
                     new_listing.laundry_in_unit = False
                     new_listing.laundromat_nearby = True
                     new_listing.laundry_inside = False
@@ -149,18 +149,19 @@ class MlspinRequester(object):
                 new_listing.bath = True if num_baths > 0 else False
                 new_listing.num_bathrooms = num_baths
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
-                new_listing.furnished = word_scraper.word_finder("furnished")
-                new_listing.hardwood_floors = word_scraper.word_finder("hardwood")
-                if (word_scraper.word_finder("air") and word_scraper.word_finder("conditioning")) or word_scraper.word_finder("ac") or word_scraper.word_finder("a/c"):
+                new_listing.furnished = word_scraper.word_finder(["furnished"])
+                new_listing.hardwood_floors = word_scraper.word_finder(["hardwood"])
+                new_listing.diswasher = word_scraper.word_finder(["dishwasher"])
+                if (word_scraper.word_finder(["air","conditioning"])) or word_scraper.word_finder(["ac"]):
                     new_listing.air_conditioning = True
 
-                if (word_scraper.word_finder("dogs") and word_scraper.word_finder("allowed")) or word_scraper.word_finder("dogs"):
+                if word_scraper.word_finder(["dogs","allowed"]) and not word_scraper.word_finder(["no", "dogs","allowed"]):
                     new_listing.dogs_allowed = True
 
-                if (word_scraper.word_finder("cats") and word_scraper.word_finder("allowed")) or word_scraper.word_finder("cats"):
+                if word_scraper.word_finder(["cats","allowed"]) and not word_scraper.word_finder(["no", "cats","allowed"]):
                     new_listing.cats_allowed = True
 
-                if word_scraper.word_finder("laundry") and word_scraper.word_finder("building"):
+                if word_scraper.word_finder(["laundry","in","building"]):
                     new_listing.laundry_in_unit = False
                     new_listing.laundromat_nearby = False
                     new_listing.laundry_inside = True
@@ -179,16 +180,16 @@ class MlspinRequester(object):
                 # Set Exterior Amenities fields
                 if int(cells[PARKING_SPACES]) > 0:
                     new_listing.parking_spot = True
-                if word_scraper.word_finder("pool") or (word_scraper.word_finder("hot") and word_scraper.word_finder("tub")):
+                if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot","tub"]):
                     new_listing.pool = True
-                if word_scraper.word_finder("balcony") or word_scraper.word_finder("patio"):
+                if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
                     new_listing.patio_balcony = True
-                if word_scraper.word_finder("laundry") and word_scraper.word_finder("unit"):
+                if word_scraper.word_finder(["laundry", "in", "unit"]):
                     new_listing.laundry_in_unit = True
                     new_listing.laundromat_nearby = False
                     new_listing.laundry_inside = False
-                new_listing.gym = word_scraper.word_finder("gym")
-                new_listing.storage = word_scraper.word_finder("storage")
+                new_listing.gym = word_scraper.word_finder(["gym"])
+                new_listing.storage = word_scraper.word_finder(["storage"])
 
 
                 # Create the new home
