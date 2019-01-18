@@ -20,5 +20,4 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
 
 class HomeScoreSerializer(serializers.Serializer):
     home = RentDatabaseSerializer(read_only=True)
-    accumulated_points = serializers.IntegerField()
-    total_possible_points = serializers.IntegerField()
+    percent_match = serializers.IntegerField()
