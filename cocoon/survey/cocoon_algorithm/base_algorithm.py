@@ -67,24 +67,12 @@ class CocoonAlgorithm(object):
         :return: (RentDataBaseModel Queryset): All the homes that fit the static filter
         """
         # Query the database
-        house_query =  RentDatabaseModel.objects\
+        house_query = RentDatabaseModel.objects\
             .filter(last_updated=F('listing_provider__last_updated_feed')) \
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(currently_available=True) \
             .filter(num_bedrooms=user_survey.num_bedrooms) \
             .filter(num_bathrooms__range=(user_survey.min_bathrooms, user_survey.max_bathrooms)) \
             .filter(home_type__in=user_survey.home_type.all())\
-            .filter(pool=user_survey.wants_pool)\
-            .filter(patio_balcony=user_survey.wants_patio)\
-            .filter(gym=user_survey.wants_gym)\
-            .filter(storage=user_survey.wants_storage)\
-            .filter(laundry_in_unit=user_survey.wants_laundry_in_unit)\
-            .filter(furnished=user_survey.wants_furnished)\
-            .filter(hardwood_floors=user_survey.wants_hardwood_floors)\
-            .filter(air_conditioning=user_survey.wants_AC)\
-            .filter(dogs_allowed=user_survey.wants_dogs)\
-            .filter(cats_allowed=user_survey.wants_cats)\
-            .filter(laundry_inside=user_survey.wants_laundry_in_building)\
-            .filter(laundromat_nearby=user_survey.wants_laundry_nearby)
 
         return house_query

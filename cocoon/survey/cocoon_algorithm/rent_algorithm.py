@@ -274,8 +274,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 self.handle_weighted_question_score(survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
             if survey.wants_AC:
                 self.handle_weighted_question_score(survey.AC_weight, home_score, home_score.home.air_conditioning)
-            # if survey.wants_dishwasher:
-            #     self.handle_weighted_question_score(survey.dishwasher_weight, home_score, home_score.home.dishwasher)
+            if survey.wants_dishwasher:
+                self.handle_weighted_question_score(survey.dishwasher_weight, home_score, home_score.home.dishwasher)
 
     def run_sort_home_by_score(self):
         """
