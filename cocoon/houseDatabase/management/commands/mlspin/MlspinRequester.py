@@ -151,7 +151,7 @@ class MlspinRequester(object):
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
                 new_listing.furnished = word_scraper.word_finder(["furnished"])
                 new_listing.hardwood_floors = word_scraper.word_finder(["hardwood"])
-                new_listing.diswasher = word_scraper.word_finder(["dishwasher"])
+                new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
                 if (word_scraper.word_finder(["air","conditioning"])) or word_scraper.word_finder(["ac"]):
                     new_listing.air_conditioning = True
 
