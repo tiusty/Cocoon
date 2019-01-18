@@ -110,6 +110,7 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
     dogs_allowed = models.BooleanField(default=False)
     cats_allowed = models.BooleanField(default=False)
     laundry_inside = models.BooleanField(default=False)
+    dishwasher = models.BooleanField(default=False)
 
 
     def update(self, update_model):
@@ -126,6 +127,7 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
         self.dogs_allowed = update_model.dogs_allowed
         self.cats_allowed = update_model.cats_allowed
         self.laundry_inside = update_model.laundry_inside
+        self.dishwasher = update_model.dishwasher
 
     class Meta:
         abstract = True
