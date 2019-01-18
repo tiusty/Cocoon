@@ -253,7 +253,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param survey: (RentingSurvey Model) -> The survey the user took
         """
         for home_score in self.homes:
-            self.handle_weighted_question_score(survey.parking_spot, home_score, home_score.home.parking_spot)
             if survey.wants_patio:
                 self.handle_weighted_question_score(survey.wants_patio, home_score, home_score.home.patio_balcony)
             if survey.wants_pool:

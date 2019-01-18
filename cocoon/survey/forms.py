@@ -140,15 +140,8 @@ class ExteriorAmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the ExteriorAmenitiesModel Model
     """
-    parking_spot = forms.ChoiceField(
-        choices=HYBRID_WEIGHT_CHOICES,
-        initial=0,
-        label="Parking Spot",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
+    wants_parking = forms.BooleanField(
+        required=False,
     )
 
     wants_laundry_in_building = forms.BooleanField(
@@ -233,7 +226,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = ExteriorAmenitiesModel
-        fields = ["parking_spot", 'wants_laundry_in_building', 'number_of_cars',
+        fields = ["wants_parking", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight'
                   ]
@@ -401,7 +394,7 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
-                  "parking_spot", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
+                  "wants_parking", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
                   "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
@@ -459,7 +452,7 @@ class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNear
                    "name", "num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
-                  "parking_spot", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
+                  "wants_parking", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
                   "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
