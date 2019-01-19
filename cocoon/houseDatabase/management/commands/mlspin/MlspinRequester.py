@@ -138,9 +138,7 @@ class MlspinRequester(object):
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
                 if word_scraper.word_finder(["laundromat","nearby"]):
-                    new_listing.laundry_in_unit = False
                     new_listing.laundromat_nearby = True
-                    new_listing.laundry_inside = False
 
                 # Set InteriorAmenitiesModel Fields
                 # Currently don't support non-integers for num_bathrooms. Therefore
@@ -162,10 +160,7 @@ class MlspinRequester(object):
                     new_listing.cats_allowed = True
 
                 if word_scraper.word_finder(["laundry","in","building"]):
-                    new_listing.laundry_in_unit = False
-                    new_listing.laundromat_nearby = False
                     new_listing.laundry_inside = True
-
 
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
@@ -187,8 +182,6 @@ class MlspinRequester(object):
                     new_listing.patio_balcony = True
                 if word_scraper.word_finder(["laundry", "in", "unit"]):
                     new_listing.laundry_in_unit = True
-                    new_listing.laundromat_nearby = False
-                    new_listing.laundry_inside = False
                 new_listing.gym = word_scraper.word_finder(["gym"])
                 new_listing.storage = word_scraper.word_finder(["storage"])
 
