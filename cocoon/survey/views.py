@@ -21,18 +21,16 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import UserProfile
 
 # Import Survey algorithm modules
-from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
-from cocoon.survey.models import RentingSurveyModel
-from cocoon.survey.forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
+from .cocoon_algorithm.rent_algorithm import RentAlgorithm
+from .models import RentingSurveyModel
+from .forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
+from .survey_helpers.save_polygons import save_polygons
 
-# Import Scheduler algorithm
-from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
-
-# Import Itinerary model
+# Cocoon Modules
 from cocoon.survey.serializers import RentSurveySerializer
-
-# import scheduler views
 from cocoon.scheduler import views as scheduler_views
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+from cocoon.commutes.constants import CommuteAccuracy
 
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 
@@ -251,11 +249,9 @@ class RentingResultSurvey(UpdateView):
         # Makes sure that the tenant form is valid before saving
         if tenants.is_valid():
 
-            user = self.request.user
-
             # Save the survey
             with transaction.atomic():
-                form.instance.user_profile = get_object_or_404(UserProfile, user=user)
+                form.instance = self.object
                 survey = form.save()
 
             # Now save the the tenants
@@ -307,8 +303,8 @@ class VisitList(ListView):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler()
-        client_scheduler_alg.run(homes_list, self.request.user)
+        client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.EXACT)
+        client_scheduler_alg.calculate_duration(homes_list)
         messages.info(request, "Itinerary created")
         return HttpResponseRedirect(reverse('survey:visitList'))
 
@@ -416,6 +412,10 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
                     # Now the form can be saved
                     survey = form.save()
+
+                    # Save the polygons
+                    if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
+                        save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
                 # Now save the the tenants
                 tenants.instance = survey

@@ -1,16 +1,24 @@
+# import django modules
+from django.core.files.base import ContentFile
+
 # App imports
 from ..clientScheduler.base_algorithm import clientSchedulerAlgorithm
 from ..models import ItineraryModel
 
 # import distance matrix wrapper
-from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute_client_scheduler, retrieve_approximate_commute_client_scheduler
+from cocoon.commutes.distance_matrix.commute_cache_updater import update_commutes_cache_client_scheduler
 
-# import django modules
-from django.core.files.base import ContentFile
+# Import Cocoon modules
 from cocoon.commutes.models import CommuteType
+from cocoon.commutes.constants import CommuteAccuracy
+
 
 class ClientScheduler(clientSchedulerAlgorithm):
 
+    def __init__(self, accuracy=CommuteAccuracy.EXACT):
+        super().__init__()
+        self.commute_accuracy = accuracy
 
     def build_homes_matrix(self, homes_list):
         """
@@ -26,9 +34,15 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             home_one_distances = []
             commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
-            result_distance_wrapper = retrieve_exact_commute([home_one], homes_list, commute_type)
-            for source, time in result_distance_wrapper[0]:
-                home_one_distances.append(time)
+            if self.commute_accuracy == CommuteAccuracy.EXACT:
+                result_distance_wrapper = retrieve_exact_commute_client_scheduler(homes_list, home_one, commute_type)
+                for source, time in result_distance_wrapper[0]:
+                    home_one_distances.append(time)
+            else:
+                update_commutes_cache_client_scheduler(homes_list, home_one, accuracy=CommuteAccuracy.APPROXIMATE,
+                                                       commute_type=CommuteType.DRIVING)
+                home_one_distances = retrieve_approximate_commute_client_scheduler(homes_list, home_one,
+                                                                                   commute_type=CommuteType.DRIVING)
 
             homes_matrix.append(home_one_distances)
 
@@ -57,8 +71,10 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
         Creates the home matrix and calls the calculation algorithm to find the shortest path
         args:
-        :param homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
-        :return: (list): shortest_path List of indices that denote the shortest path, which is the output of the algorithms
+        :param homes_list: The matrix calculated using DistanceWrapper() with distances between every pair of homes in
+            favourited list
+        :return: (list): shortest_path List of indices that denote the shortest path, which is the output of the
+            algorithms
         """
 
         homes_matrix = self.build_homes_matrix(homes_list)
@@ -83,19 +99,17 @@ class ClientScheduler(clientSchedulerAlgorithm):
                               False: The itinerary was not created
         """
 
-        if not ItineraryModel.retrieve_unfinished_itinerary().exists():
-            total_time_secs, interpreted_route = self.run(homes_list)
+        if not ItineraryModel.retrieve_unfinished_itinerary(user).exists():
+            total_time_secs, interpreted_route = self.calculate_duration(homes_list)
             itinerary_model = ItineraryModel(client=user)
             itinerary_model.tour_duration_seconds = total_time_secs
 
             # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
             # Add 20 minutes to each home
-            s = ""
+            s = b""
             for item in interpreted_route:
-                s += item[0]
-                s += " "
-                s += str(item[1] / 60 + 20)
-                s += "\n"
+                line = "{0} {1}\n".format(item[0].full_address, item[1]/60 + 20).encode('utf-8')
+                s += line
 
             itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
             for home in homes_list:
@@ -105,7 +119,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
             return True
         return False
 
-    def run(self, homes_list):
+    def calculate_duration(self, homes_list):
         """
         Algorithm runner
         args:
@@ -113,18 +127,14 @@ class ClientScheduler(clientSchedulerAlgorithm):
                                     of homes in visit list
         """
 
-        destination_addresses = []
-        for item in homes_list:
-            destination_addresses.append(item.full_address)
-
-        shortest_path = self.run_client_scheduler_algorithm(destination_addresses)
-        interpreted_route = self.interpret_algorithm_output(destination_addresses, shortest_path)
+        shortest_path = self.run_client_scheduler_algorithm(homes_list)
+        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
 
         # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
         # Add 20 minutes to each home
-        total_time_secs = 20 * 60
+        total_time_secs = 0
         for item in interpreted_route:
-            total_time_secs = 20 * 60 + item[1]
+            total_time_secs = 20 * 60 + item[1] + total_time_secs
 
         # Update Itinerary Model
         # File name is unique based on user and current time (making it impossible to have duplicates)

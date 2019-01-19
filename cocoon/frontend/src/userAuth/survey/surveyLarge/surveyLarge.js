@@ -9,6 +9,7 @@ import deleteIcon from './delete_icon.png'
 import HomeTiles from "../../../common/homeTile/homeTiles";
 import survey_endpoints from "../../../endpoints/survey_endpoints";
 import signature_endpoints from "../../../endpoints/signatures_endpoints"
+import scheduler_endpoints from"../../../endpoints/scheduler_endpoints"
 import CSRFToken from '../../../common/csrftoken';
 
 // For handling Post request with CSRF protection
@@ -37,6 +38,9 @@ export default class SurveyLarge extends Component {
         desired_price: 0,
         num_bedrooms: 0,
 
+        duration: null,
+        refresh_duration: true,
+
         // Favorites contains a lit of the favorites when the data was pulled from the backend
         favorites:  [],
         // Stores the current list of favorites the user has, i.e if he unfavorited a home then
@@ -59,7 +63,6 @@ export default class SurveyLarge extends Component {
             .catch(error => console.log('BAD', error))
             .then(response =>
                 {
-                    console.log(response.data),
                     this.setState({
                         name: response.data.name,
                         favorites: response.data.favorites,
@@ -71,6 +74,43 @@ export default class SurveyLarge extends Component {
                     })
                 }
             )
+
+        // Retrieves the current estimated time for the tour
+        endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                    this.setState({
+                        duration: response.data.duration,
+                        refresh_duration: false,
+                    })
+                },
+            )
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+
+        // When the visit list changes, updates the tour estimated time
+        if (prevState.visit_list !== this.state.visit_list) {
+            let endpoint = scheduler_endpoints['itineraryDuration'] + this.props.id;
+            this.setState({
+                refresh_duration: true,
+            });
+            axios.get(endpoint)
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({
+                        refresh_duration: false,
+                    })
+                })
+                .then(response => {
+                        this.setState({
+                            duration: response.data.duration,
+                            refresh_duration: false,
+                        })
+                    },
+                )
+        }
     }
 
     handleDelete = () => {
@@ -193,6 +233,8 @@ export default class SurveyLarge extends Component {
          */
         if(!this.props.pre_tour_signed) {
             return 'Please sign pre tour docs'
+        } else if (this.props.itinerary_exists) {
+            return 'Itinerary already exists, click to view'
         } else {
             return 'You are read to schedule!'
         }
@@ -205,11 +247,19 @@ export default class SurveyLarge extends Component {
         // If the pre tour documents are not signed then generate a sign document button
         if(!this.props.pre_tour_signed) {
             return (
-                    <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button" role="button"
-                       href={signature_endpoints['signaturePage']}
-                       > Sign Documents </a>
+                <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button"
+                   role="button"
+                   href={signature_endpoints['signaturePage']}
+                > Sign Documents </a>
             );
-        // If the pre tour documents are signed then generate the tour summary button
+            // If the pre tour documents are signed then generate the tour summary button
+        } else if (this.props.itinerary_exists) {
+            return (
+                <a style={{width: '115px'}} className="btn btn-success btn-sm survey-large-tour-summary-button"
+                   role="button"
+                   href={scheduler_endpoints['clientScheduler']}
+                > See Itinerary </a>
+            );
         } else {
             return(
                 <form method="post" style={{marginTop: '10px'}}>
@@ -240,7 +290,7 @@ export default class SurveyLarge extends Component {
                     </div>
                     <div className="survey-large-tour-summary">
                         <p className="survey-large-tour-summary-title">Tour Summary</p>
-                        <p className="survey-large-tour-summary-estimate-duration">Estimated duration: To be Implemented</p>
+                        <p className="survey-large-tour-summary-estimate-duration">Estimated duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}</p>
                         <p className="survey-large-tour-summary-message">{this.scheduleButtonMessages()}</p>
                         {this.scheduleButton()}
                     </div>

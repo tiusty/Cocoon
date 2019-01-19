@@ -395,6 +395,17 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
         ),
     )
 
+    polygon_filter_type = forms.ChoiceField(
+        required=False,
+        choices=[(x, x) for x in range(0, 2)],
+        label="Filter type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
@@ -407,7 +418,8 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
                   "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
                   "service_dogs", "breed_of_dogs", "dog_size",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
-                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
+                  "number_of_tenants", 'polygon_filter_type']
 
 
 class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,

@@ -5,6 +5,14 @@ import InputRange from 'react-input-range';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
 import 'react-day-picker/lib/style.css';
 
+import { compose, withProps } from "recompose";
+import {
+  withGoogleMap,
+  GoogleMap,
+    Polygon
+} from "react-google-maps";
+import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
+
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
 export default class GeneralForm extends Component {
@@ -398,10 +406,67 @@ export default class GeneralForm extends Component {
          * Handles pressing the next button to make sure the section is valid
          *  before allowing the user to continue
          */
-        if(this.handleValidation()) {
+        if (this.handleValidation()) {
             this.props.handleNextStep(e)
         }
     }
+
+    renderGoogleMaps() {
+        /**
+         * Renders the correct google map depending on the type of filtering the user wants
+         */
+
+        // 1 is draw on map
+        if (this.props.generalInfo.polygon_filter_type === 1) {
+            return (
+                <>
+                    <MyMapComponent
+                        onCompletePolygon={this.props.onCompletePolygon}
+                        polygons={this.props.generalInfo.polygons}
+                    />
+                    <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete all areas</button>
+                </>
+            );
+
+        // If the user does not want to draw then make the component null
+        } else {
+            return null;
+        }
+
+    }
+
+    renderFilterQuestion() {
+        /**
+         * Renders the question for the map filter
+         */
+        return (
+            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
+                <h2>Do you have <span>areas</span> where you would like to live?</h2>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="polygon_filter_type" value="1" checked={this.props.generalInfo.polygon_filter_type === 1}
+                           onChange={() => {
+                           }}/>
+                    <div>Draw on map</div>
+                </label>
+                <label className="col-md-6 survey-label">
+                    <input type="radio" name="polygon_filter_type" value="0" checked={this.props.generalInfo.polygon_filter_type === 0} />
+                    <div>I am looking everywhere</div>
+                </label>
+            </div>
+        );
+    }
+
+    renderFilterZones() {
+        return (
+            <>
+                {this.renderFilterQuestion()}
+                {this.renderGoogleMaps()}
+            </>
+        );
+
+    }
+
+
 
     render() {
         return (
@@ -413,6 +478,7 @@ export default class GeneralForm extends Component {
                 {this.renderPriceWeightQuestion()}
                 {this.renderMoveAsapQuestion()}
                 {this.renderDatePickingQuestion()}
+                {this.renderFilterZones()}
                 {this.renderUrgencyQuestion()}
                 {this.renderBedroomQuestion()}
 
@@ -423,3 +489,77 @@ export default class GeneralForm extends Component {
         );
     }
 }
+
+const defaultMapOptions = {
+    // Disables the other types of maps, i.e satellite etc
+    mapTypeControlOptions: {
+        mapTypeIds: []
+    },
+
+    // Disables street view
+    streetViewControl: false,
+};
+
+const MyMapComponent = compose(
+    /**
+     * Note: This needs the google api key in the head of the script
+     */
+    withProps({
+        loadingElement: <div style={{height: `100%`}}/>,
+        containerElement: <div style={{height: `400px`}}/>,
+        mapElement: <div style={{height: `100%`}}/>
+    }),
+    withGoogleMap
+)(props => (
+    <GoogleMap
+        defaultZoom={11}
+        defaultCenter={{lat: 42.3601, lng: -71.0589}}
+        styles={
+            {elementType: 'geometry', stylers: [{color: '#242f3e'}]}
+        }
+        defaultOptions={defaultMapOptions}
+    >
+
+        {/* Draws all the polygons stored in the state */}
+        {props.polygons.map(p =>
+                <Polygon
+                    key={p.key}
+                    path={p.vertices}
+                    options={{
+                        fillColor: '#008080',
+                        strokeColor: '#a13718',
+                        fillOpacity: .5,
+                        strokeOpacity: .8,
+                        strokeWeight: 5,
+                        editable: true,
+                        zIndex: 1,
+                    }}
+                />
+        )}
+
+        <DrawingManager
+            /* Contains all the configuration for the google drawing manager */
+            defaultDrawingMode={google.maps.drawing.OverlayType.POLYGON}
+            defaultOptions={{
+                drawingControl: false,
+                drawingControlOptions: {
+                    drawingModes: [
+                        google.maps.drawing.OverlayType.POLYGON,
+                    ],
+                },
+                polygonOptions: {
+                    fillColor: '#008080',
+                    strokeColor: '#a13718',
+                    fillOpacity: .5,
+                    strokeOpacity: .8,
+                    strokeWeight: 5,
+                    editable: true,
+                    zIndex: 1,
+                },
+            }}
+            onPolygonComplete={props.onCompletePolygon}
+        />
+
+    </GoogleMap>
+));
+
