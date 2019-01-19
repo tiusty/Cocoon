@@ -18,11 +18,15 @@ export default class HomeTileLarge extends Component {
      *                                      False: Removes ability to favorite a home
      *  this.props.canVisit: (boolean) -> True: Adds ability to add/remove home to visit list
      *                                    False: Removes ability to add/remove home to visit list
+     *
+     * this.props.displayPercent: (boolean) -> True: renders the percent_match on the home tile.
+     *                                         False: (DEFAULT): Does not render the percent_match
      */
 
     static defaultProps = {
         canFavorite: true,
-        canVisit: true
+        canVisit: true,
+        displayPercent: false
     }
 
     renderInterior = (home) => {
@@ -149,7 +153,14 @@ export default class HomeTileLarge extends Component {
                 {this.props.canVisit ? visit_span : null}
             </div>
         );
+    }
 
+    renderPercentMatch = (home) => {
+        let percent_match = null;
+        if (this.props.displayPercent) {
+            percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
+        }
+        return percent_match;
     }
 
     render() {
@@ -167,6 +178,7 @@ export default class HomeTileLarge extends Component {
                     </div>
                     <div className="expanded-info">
                         <div className="home-tile-large-carousel-div">
+                            {this.renderPercentMatch(home)}
                             <Carousel
                                 dynamicHeight={true}
                                 infiniteLoop={true}
