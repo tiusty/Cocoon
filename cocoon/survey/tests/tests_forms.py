@@ -691,6 +691,7 @@ class TestRentSurveyForm(TestCase):
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
         self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
+        self.number_of_tenants = 1
 
         self.max_commute = 0
         self.min_commute = 0
@@ -734,6 +735,21 @@ class TestRentSurveyForm(TestCase):
     def tests_rent_survey_valid(self):
         # Arrange
         form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'number_of_tenants':self.number_of_tenants,
+            'home_type': self.home_type,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
+            'parking_spot': self.parking_spot,
             'wants_laundry_nearby': self.wants_laundry_nearby,
             'number_of_cars': self.number_of_cars,
             'wants_laundry_in_building': self.wants_laundry_in_building,
@@ -751,7 +767,7 @@ class TestRentSurveyForm(TestCase):
 
         # Act
         result = rent_survey_form.is_valid()
-
+        print(rent_survey_form.errors)
         # Assert
         self.assertTrue(result)
 
@@ -921,6 +937,19 @@ class TestRentSurveyMiniForm(TestCase):
         """
         # Arrange
         form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'number_of_tenants':self.number_of_tenants,
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
