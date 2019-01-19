@@ -3,7 +3,8 @@ import React from 'react'
 import { Component } from 'react';
 
 // Import Cocoon Components
-import './homeTile.css'
+import '../styles/variables.css';
+import './homeTile.css';
 
 class HomeTile extends Component {
     /**
