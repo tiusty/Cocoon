@@ -17,6 +17,8 @@ class HunterDocModelInLine(admin.StackedInline):
 
 
 class HunterDocManagerModelAdmin(admin.ModelAdmin):
+    search_fields = ('user__email',)
+    list_display = ('user', '__str__',)
     fieldsets = (
         (None, {'fields': ('user',)}),
     )

@@ -41,8 +41,18 @@ class HunterDocTemplateViewset(viewsets.ReadOnlyModelViewSet):
     Returns all the HunterDocTemplates
     """
 
-    queryset = HunterDocTemplateModel.objects.all()
     serializer_class = HunterDocTemplateSerializer
+
+    def get_queryset(self):
+        template_type = self.request.query_params.get('type', None)
+
+        if template_type is not None:
+            if template_type == 'pre_tour':
+                return HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR)
+            else:
+                raise Http404
+        else:
+            return HunterDocTemplateModel.objects.all()
 
 
 class HunterDocViewset(viewsets.ModelViewSet):
@@ -107,17 +117,21 @@ class HunterDocViewset(viewsets.ModelViewSet):
 
         # Retrieve the user profile
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        template_id = self.request.data['template_type_id']
 
-        template = get_object_or_404(HunterDocTemplateModel, id=template_id)
+        template = None
 
-        # Determine the template type used and update that document
-        if template.template_type == HunterDocTemplateModel.PRE_TOUR:
-            user_profile.user.doc_manager.create_pre_tour_documents()
-        else:
-            # If the template type does not match any of the necessary template types then
-            #   return 404
-            raise Http404
+        if 'template_type_id' in self.request.data:
+            template_id = self.request.data['template_type_id']
+
+            template = get_object_or_404(HunterDocTemplateModel, id=template_id)
+
+            # Determine the template type used and update that document
+            if template.template_type == HunterDocTemplateModel.PRE_TOUR:
+                user_profile.user.doc_manager.create_pre_tour_documents()
+            else:
+                # If the template type does not match any of the necessary template types then
+                #   return 404
+                raise Http404
 
         doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
         serializer = HunterDocSerializer(doc)
