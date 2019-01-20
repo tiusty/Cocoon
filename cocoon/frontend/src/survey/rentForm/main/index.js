@@ -10,6 +10,7 @@ import TenantsForm from '../tenant/tenantsForm';
 import AmenitiesForm from '../amenities/amenitiesForm';
 import DetailsForm from '../details/index';
 import survey_endpoints from "../../../endpoints/survey_endpoints";
+import '../../../common/styles/variables.css';
 import './rentForm.css';
 
 // Necessary XSRF headers for posting form
