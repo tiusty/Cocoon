@@ -25,7 +25,7 @@ export default class HomeTileLarge extends Component {
 
     static defaultProps = {
         canFavorite: true,
-        canVisit: true,
+        canVisit: false,
         displayPercent: false
     }
 

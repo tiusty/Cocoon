@@ -38,7 +38,7 @@ class HomeTile extends Component {
 
     static defaultProps = {
         canFavorite: true,
-        canVisit: true,
+        canVisit: false,
         isLarge: false,
         displayPercent: false
     }
