@@ -1,6 +1,7 @@
 // Import React Components
 import React from 'react'
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 // Import Cocoon Components
 import '../styles/variables.css';
@@ -189,3 +190,19 @@ class HomeTile extends Component {
     }
 }
 export default HomeTile;
+
+// Set the types and whether any props are required
+HomeTile.propTypes = {
+    id: PropTypes.number,
+    home: PropTypes.any.isRequired,
+    visit: PropTypes.bool.isRequired,
+    favorite: PropTypes.bool.isRequired,
+    onVisitClick: PropTypes.func.isRequired,
+    onFavoriteClick: PropTypes.func.isRequired,
+    onHomeClick: PropTypes.func.isRequired,
+    canVisit: PropTypes.bool,
+    canFavorite: PropTypes.bool,
+    isLarge: PropTypes.bool,
+    displayPercent: PropTypes.bool,
+};
+

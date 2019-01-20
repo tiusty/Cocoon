@@ -57,7 +57,7 @@ export default class TourSummary extends Component {
                 <HomeTiles
                     homes={this.props.visit_list}
                     visit_list={this.props.visit_list}
-                    curr_favorites={this.props.visit_list}
+                    favorites={this.props.visit_list}
                     onVisitClick={this.props.onHandleVisitListClicked}
                     canFavorite={false}
                     canVisit={true}

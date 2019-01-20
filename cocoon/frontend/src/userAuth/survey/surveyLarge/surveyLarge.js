@@ -106,7 +106,7 @@ export default class SurveyLarge extends Component {
                         <HomeTiles
                             homes={this.generateFavoriteHomes()}
                             visit_list={this.props.visit_list}
-                            curr_favorites={this.props.favorites}
+                            favorites={this.props.favorites}
                             onVisitClick={this.props.onHandleVisitListClicked}
                             onFavoriteClick={this.handleFavoriteClick}
                             canVisit={true}

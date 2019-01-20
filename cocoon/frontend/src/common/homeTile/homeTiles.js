@@ -16,7 +16,6 @@ export default class HomeTiles extends Component {
      *  this.props.homes: (RentDatabase Model) -> A list of homes that are displayed
      *  this.props.visit_list: (RentDatabase Model) -> The list of homes in the visit list
      *  this.props.favorites: (RentDatabase Model) -> The list of homes in the favorites list
-     *  this.props.curr_favorites: (RentDatabase Model) -> THe list of homes in the current favorites list
      *  this.props.onVisitClick: (function(RentDatabase Model, event)) -> Handles when the visit button is pressed
      *  this.props.onFavoriteClick: (function(RentDatabase Model, event)) -> Handles when the favorite button is clicked
      *  this.props.canVisit: (boolean) -> Determines if the visit button should show up for the home
@@ -31,7 +30,7 @@ export default class HomeTiles extends Component {
          * Tests whether a particular home is currently favorited
          */
         // Checks to see if the home exists within the favorites list
-        return this.props.curr_favorites.filter(c => c.id === home.id).length > 0;
+        return this.props.favorites.filter(c => c.id === home.id).length > 0;
     }
 
     inVisitList(home) {
@@ -115,7 +114,7 @@ HomeTiles.propTypes = {
     visit_list: PropTypes.array.isRequired,
     favorites: PropTypes.array.isRequired,
     onVisitClick: PropTypes.func.isRequired,
-    onFavoriteClick: PropTypes.func.isRequired,
+    onFavoriteClick: PropTypes.func,
     canVisit: PropTypes.bool,
     canFavorite: PropTypes.bool,
     displayPercent: PropTypes.bool,
