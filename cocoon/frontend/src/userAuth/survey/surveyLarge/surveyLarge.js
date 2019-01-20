@@ -172,6 +172,21 @@ export default class SurveyLarge extends Component {
         })
     };
 
+    updateTenantInfo = (e, type) => {
+        const { value } = e.target;
+        const name = value;
+        const index = e.target.dataset.tenantkey;
+        let tenants = [...this.state.tenants];
+
+        if (type === 'first') {
+            tenants[index].first_name = name
+        } else {
+            tenants[index].last_name = name
+        }
+
+        this.setState({tenants})
+    };
+
     render() {
         return (
             <div className="survey-large-div">
@@ -191,6 +206,7 @@ export default class SurveyLarge extends Component {
                                 </div>
                                 <TenantEdit
                                     tenants={this.state.tenants}
+                                    onUpdateTenantInfo={this.updateTenantInfo}
                                 />
                             <div className="survey-large-snapshot-section">
                                 <p className="survey-large-text">Don't want this survey anymore?</p>
@@ -214,7 +230,6 @@ export default class SurveyLarge extends Component {
 
 class TenantEdit extends Component {
     render() {
-        console.log(this.props.tenants)
         if (this.props.tenants.length > 0) {
             return (
                 <div className="survey-large-snapshot-section">
@@ -223,14 +238,16 @@ class TenantEdit extends Component {
                         <p className="survey-large-text">Your Info</p>
                         <div className="row">
                             <div className="col-sm-6">
-                                <input className="tenant-input" disabled={true} type="text" name="your_info"
+                                <input className="tenant-input" type="text" name="your_info"
                                        placeholder="First Name" autoCapitalize={'words'} data-tenantkey={0}
+                                       onChange={(e) => this.props.onUpdateTenantInfo(e, 'first')}
                                        value={this.props.tenants[0].first_name}
                                 />
                             </div>
                             <div className="col-sm-6">
-                                <input className="tenant-input" disabled={true} type="text" name="your_info"
+                                <input className="tenant-input" type="text" name="your_info"
                                        placeholder="Last Name" autoCapitalize={'words'} data-tenantkey={0}
+                                       onChange={(e) => this.props.onUpdateTenantInfo(e, 'last')}
                                        value={this.props.tenants[0].last_name}
                                 />
                             </div>
@@ -238,24 +255,29 @@ class TenantEdit extends Component {
                         {this.props.tenants.length > 1 && Array.from(Array(this.props.tenants.length - 1)).map((t, i) => {
                             return (
                                 <>
-                                    <p key={i} className="survey-large-text">Roommate #1</p>
+                                    <p key={i} className="survey-large-text">Roommate #{i + 1}</p>
                                     <div className="row">
                                         <div className="col-sm-6">
                                             <input className="tenant-input" type="text"
                                                    name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
                                                    data-tenantkey={i + 1} placeholder="First Name"
-                                                   key={i}/>
+                                                   key={i} onChange={(e) => this.props.onUpdateTenantInfo(e, 'first')}
+                                                   value={this.props.tenants[i+1].first_name}
+                                            />
                                         </div>
                                         <div className="col-sm-6">
                                             <input className="tenant-input" type="text"
                                                    name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
                                                    data-tenantkey={i + 1} placeholder="Last Name"
-                                                   key={i}/>
+                                                   key={i} onChange={(e) => this.props.onUpdateTenantInfo(e, 'last')}
+                                                   value={this.props.tenants[i +1 ].last_name}
+                                            />
                                         </div>
                                     </div>
                                 </>
                             );
                         })}
+                         <button className="btn btn-success">Save</button>
                     </form>
                 </div>
             );
