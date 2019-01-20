@@ -112,7 +112,6 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
     laundry_inside = models.BooleanField(default=False)
     dishwasher = models.BooleanField(default=False)
 
-
     def update(self, update_model):
         """
         Given another model, updates current model with fields from the new model
