@@ -518,6 +518,9 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         return Response(serializer.data)
 
 
+# class TenantViewSet(mixins.RetrieveModelMixin):
+
+
 #######################################################
 # Ajax Requests below
 #############################################################

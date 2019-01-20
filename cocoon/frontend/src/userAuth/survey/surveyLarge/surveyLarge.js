@@ -26,6 +26,9 @@ export default class SurveyLarge extends Component {
 
         // Favorites contains a lit of the favorites when the data was pulled from the backend
         favorites:  [],
+
+        // The tenants associated with the survey
+        tenants: [],
     };
 
     componentDidMount() {
@@ -45,6 +48,7 @@ export default class SurveyLarge extends Component {
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
+                        tenants: response.data.tenants,
                     })
                 }
             );
@@ -185,7 +189,9 @@ export default class SurveyLarge extends Component {
                                     <p className="survey-large-text">Desired price: ${this.state.desired_price}</p>
                                     <p className="survey-large-text">Number of bedrooms: {this.state.num_bedrooms}</p>
                                 </div>
-                                <TenantEdit/>
+                                <TenantEdit
+                                    tenants={this.state.tenants}
+                                />
                             <div className="survey-large-snapshot-section">
                                 <p className="survey-large-text">Don't want this survey anymore?</p>
                                 <button className="btn btn-danger" onClick={this.handleDelete}>Delete Survey</button>
@@ -207,53 +213,55 @@ export default class SurveyLarge extends Component {
 }
 
 class TenantEdit extends Component {
-    state = {
-        number_of_tenants: 4,
-        tenants: [],
-    }
-
     render() {
-        return (
-            <div className="survey-large-snapshot-section">
-                <h2 className="survey-large-title">Tenants</h2>
-                <form>
-                    <p className="survey-large-text">Your Info</p>
-                    <div className="row">
-                        <div className="col-sm-6">
-                            <input className="tenant-input" disabled={true} type="text" name="your_info"
-                                   placeholder="First Name" autoCapitalize={'words'} data-tenantkey={0}
-                            />
+        console.log(this.props.tenants)
+        if (this.props.tenants.length > 0) {
+            return (
+                <div className="survey-large-snapshot-section">
+                    <h2 className="survey-large-title">Tenants</h2>
+                    <form>
+                        <p className="survey-large-text">Your Info</p>
+                        <div className="row">
+                            <div className="col-sm-6">
+                                <input className="tenant-input" disabled={true} type="text" name="your_info"
+                                       placeholder="First Name" autoCapitalize={'words'} data-tenantkey={0}
+                                       value={this.props.tenants[0].first_name}
+                                />
+                            </div>
+                            <div className="col-sm-6">
+                                <input className="tenant-input" disabled={true} type="text" name="your_info"
+                                       placeholder="Last Name" autoCapitalize={'words'} data-tenantkey={0}
+                                       value={this.props.tenants[0].last_name}
+                                />
+                            </div>
                         </div>
-                        <div className="col-sm-6">
-                            <input className="tenant-input" disabled={true} type="text" name="your_info"
-                                   placeholder="Last Name" autoCapitalize={'words'} data-tenantkey={0}
-                            />
-                        </div>
-                    </div>
-                    {this.state.number_of_tenants > 1 && Array.from(Array(this.state.number_of_tenants - 1)).map((t, i) => {
-                        return (
-                            <>
-                                <p key={i} className="survey-large-text">Roommate #1</p>
-                                <div className="row">
-                                    <div className="col-sm-6">
-                                        <input className="tenant-input" type="text"
-                                               name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
-                                               data-tenantkey={i + 1} placeholder="First Name"
-                                               key={i}/>
+                        {this.props.tenants.length > 1 && Array.from(Array(this.props.tenants.length - 1)).map((t, i) => {
+                            return (
+                                <>
+                                    <p key={i} className="survey-large-text">Roommate #1</p>
+                                    <div className="row">
+                                        <div className="col-sm-6">
+                                            <input className="tenant-input" type="text"
+                                                   name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
+                                                   data-tenantkey={i + 1} placeholder="First Name"
+                                                   key={i}/>
+                                        </div>
+                                        <div className="col-sm-6">
+                                            <input className="tenant-input" type="text"
+                                                   name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
+                                                   data-tenantkey={i + 1} placeholder="Last Name"
+                                                   key={i}/>
+                                        </div>
                                     </div>
-                                    <div className="col-sm-6">
-                                        <input className="tenant-input" type="text"
-                                               name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
-                                               data-tenantkey={i + 1} placeholder="Last Name"
-                                               key={i}/>
-                                    </div>
-                                </div>
-                            </>
-                        );
-                    })}
-                </form>
-            </div>
-        );
+                                </>
+                            );
+                        })}
+                    </form>
+                </div>
+            );
 
+        } else {
+            return <p>loading</p>
+        }
     }
 }
