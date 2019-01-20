@@ -25,6 +25,17 @@ export default class HomeTiles extends Component {
         home_click_id: undefined,
     };
 
+    componentDidUpdate(prevProps) {
+        // When the home list changes then check to see if the home exists in the list, if it doesn't then set
+        //  the home_click_id to undefined. This usually happens when the user clicks the visit button/ favorite button
+        //  while the large home tile is open
+        if (prevProps.homes !== this.props.homes) {
+            if(!this.props.homes.find(home => home.id === this.state.home_click_id)) {
+                this.setState({home_click_id: undefined})
+            }
+        }
+    }
+
     inFavorites(home) {
         /**
          * Tests whether a particular home is currently favorited
@@ -61,7 +72,11 @@ export default class HomeTiles extends Component {
         /**
          * Renders the page based on the state
          */
+
         // Loads all the homes when no home is clicked on
+        // Note: Although the home_click_id is set to undefined in the componentDidUpdate, setState takes a little bit of time
+        //  to update, so a check here is necessary to display the small home tile before the componentDidUpdate will update
+        // the home_click_id state to null
         if (this.state.home_click_id === undefined || !this.props.homes.find(home => home.id === this.state.home_click_id)) {
             return (
                 this.props.homes.map(home =>
