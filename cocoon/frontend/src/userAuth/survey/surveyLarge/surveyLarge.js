@@ -173,17 +173,29 @@ export default class SurveyLarge extends Component {
     };
 
     updateTenantInfo = (e, type) => {
+        /**
+         * Handles when the user changes one of the tenants names
+         *
+         * e: -> The event pointer
+         * type: (string) -> determines which part of the name is being edited.
+         *              'first' for first name
+         *              'last' for last name
+         */
+
+        // Retrieve which tenant and the new value for the tenant
         const { value } = e.target;
         const name = value;
         const index = e.target.dataset.tenantkey;
         let tenants = [...this.state.tenants];
 
+        // Determines which part of the name is being edited
         if (type === 'first') {
             tenants[index].first_name = name
         } else {
             tenants[index].last_name = name
         }
 
+        // Save the value to the state
         this.setState({tenants})
     };
 
