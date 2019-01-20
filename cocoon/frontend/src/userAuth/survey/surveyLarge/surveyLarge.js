@@ -196,23 +196,25 @@ export default class SurveyLarge extends Component {
         }
 
         // Save the value to the state
-        this.setState({tenants})
+        this.setState({
+                tenants
+        })
     };
 
     handleSubmitTenantInfo = () => {
         let tenants = [...this.state.tenants];
         let tenantInfo = {};
-        for (let i=0; i<this.state.tenants.length; i++) {
+        for (let i=0; i<tenants.length; i++) {
             for(let key in tenants[i]) {
                 tenantInfo['tenants-' + i + '-' + key] = tenants[i][key]
             }
         }
 
         // Add the management data for the tenants needed by Django
-        tenantInfo['tenants-INITIAL_FORMS'] = this.state.tenants.length;
+        tenantInfo['tenants-INITIAL_FORMS'] = tenants.length;
         tenantInfo['tenants-MAX_NUM_FORMS'] = 1000;
         tenantInfo['tenants-MIN_NUM_FORMS'] = 0;
-        tenantInfo['tenants-TOTAL_FORMS'] = this.state.tenants.length;
+        tenantInfo['tenants-TOTAL_FORMS'] = tenants.length;
 
         let endpoint = survey_endpoints['tenants'] + this.props.id + '/';
         axios.put(endpoint,
@@ -277,10 +279,13 @@ export default class SurveyLarge extends Component {
 
 class TenantEdit extends Component {
 
-
     render() {
+        // let tenants = this.props.tenants;
         let tenants = this.props.tenants;
+        // Sort the arrays so they are in the same order
+        // tenants = tenants.sort((a, b) => a.id > b.id);
         tenants = tenants.sort((a, b) => a.id > b.id);
+
         if (tenants.length > 0) {
             return (
                 <div className="survey-large-snapshot-section">
@@ -303,7 +308,7 @@ class TenantEdit extends Component {
                                                    name={'roommate_name_' + i} autoCapitalize={'words'}
                                                    data-tenantkey={i} placeholder="Last Name"
                                                    onChange={(e) => this.props.onUpdateTenantInfo(e, 'last')}
-                                                   value={this.props.tenants[i].last_name}
+                                                   value={tenants[i].last_name}
                                             />
                                         </div>
                                     </div>
