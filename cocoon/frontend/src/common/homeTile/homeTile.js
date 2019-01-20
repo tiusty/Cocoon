@@ -3,7 +3,8 @@ import React from 'react'
 import { Component } from 'react';
 
 // Import Cocoon Components
-import './homeTile.css'
+import '../styles/variables.css';
+import './homeTile.css';
 
 class HomeTile extends Component {
     /**
@@ -26,6 +27,10 @@ class HomeTile extends Component {
      *
      * this.props.isLarge: (boolean) -> True: renders tile into square format i.e results page
      *                                  False (DEFAULT): renders tile horizontally
+     *
+     *
+     * this.props.displayPercent: (boolean) -> True: renders the percent_match on the home tile. [Should ONLY be true if isLarge is also true!]
+     *                                         False: (DEFAULT): Does not render the percent_match
      */
     state = {
         hover: false,
@@ -33,8 +38,9 @@ class HomeTile extends Component {
 
     static defaultProps = {
         canFavorite: true,
-        canVisit: true,
-        isLarge: false
+        canVisit: false,
+        isLarge: false,
+        displayPercent: false
     }
 
     renderScore(home) {
@@ -43,7 +49,7 @@ class HomeTile extends Component {
          * @type {string} THe home that is being rendered
          */
 
-        // Toggles whether the home text depending on favorite status
+        // Toggles the button text/color based on favorite status
         let favorite_style;
         if (!this.props.canVisit) {
             favorite_style = {
@@ -135,15 +141,23 @@ class HomeTile extends Component {
         /**
          * Renders the image portion of the tile
          */
+
         if (home.images) {
             let div_classes = "thumbnailDiv";
             let image_classes = "thumbnailImage";
+
+            // Sets percent_match to render on top of image
+            let percent_match = null;
+            if (this.props.isLarge && this.props.displayPercent) {
+                percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
+            }
 
             // Only renders first photo
             return (
                 <>
                     { home.images.slice(0,1).map(image =>
                         <div key={image.id} className={div_classes}>
+                            {percent_match}
                             <img className={image_classes} src={image.image} alt='Home image'/>
                         </div>
                     )}

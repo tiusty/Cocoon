@@ -57,9 +57,8 @@ export default class HomeTiles extends Component {
         /**
          * Renders the page based on the state
          */
-
         // Loads all the homes when no home is clicked on
-        if (this.state.home_click_id === undefined) {
+        if (this.state.home_click_id === undefined || !this.props.homes.find(home => home.id === this.state.home_click_id)) {
             return (
                 this.props.homes.map(home =>
                     <HomeTile
@@ -82,7 +81,7 @@ export default class HomeTiles extends Component {
             let home = this.props.homes.find(home => home.id === this.state.home_click_id);
             return (
                 <HomeTileLarge
-                    home={this.props.homes.find(home => home.id === this.state.home_click_id)}
+                    home={home}
                     favorite={this.inFavorites(home)}
                     visit={this.inVisitList(home)}
                     onVisitClick={this.props.onVisitClick}
