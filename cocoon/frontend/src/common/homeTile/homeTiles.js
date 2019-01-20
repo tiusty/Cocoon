@@ -1,6 +1,9 @@
 // Import React Components
 import React from 'react'
 import {Component} from 'react';
+import PropTypes from 'prop-types';
+
+// Cocoon Modules
 import HomeTile from "./homeTile";
 import HomeTileLarge from "./homeTileLarge";
 
@@ -16,6 +19,8 @@ export default class HomeTiles extends Component {
      *  this.props.curr_favorites: (RentDatabase Model) -> THe list of homes in the current favorites list
      *  this.props.onVisitClick: (function(RentDatabase Model, event)) -> Handles when the visit button is pressed
      *  this.props.onFavoriteClick: (function(RentDatabase Model, event)) -> Handles when the favorite button is clicked
+     *  this.props.canVisit: (boolean) -> Determines if the visit button should show up for the home
+     *  this.props.canFavorite: (boolean) -> Determines if the favorite button should show up for the home
      */
     state = {
         home_click_id: undefined,
@@ -64,7 +69,6 @@ export default class HomeTiles extends Component {
                     <HomeTile
                         key={home.id}
                         id={home.id}
-                        show_heart={this.props.show_heart}
                         home={home}
                         favorite={this.inFavorites(home)}
                         visit={this.inVisitList(home)}
@@ -73,6 +77,7 @@ export default class HomeTiles extends Component {
                         onHomeClick={this.handleHomeClick}
                         canVisit={this.props.canVisit}
                         canFavorite={this.props.canFavorite}
+                        displayPercent={this.displayPercent}
                     />
                 )
             );
@@ -89,6 +94,7 @@ export default class HomeTiles extends Component {
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
                     canVisit={this.props.canVisit}
                     canFavorite={this.props.canFavorite}
+                    displayPercent={this.displayPercent}
                 />
             );
         }
@@ -102,4 +108,23 @@ export default class HomeTiles extends Component {
         );
     }
 }
+
+// Set the types and whether any props are required
+HomeTiles.propTypes = {
+    homes: PropTypes.array.isRequired,
+    visit_list: PropTypes.array.isRequired,
+    favorites: PropTypes.array.isRequired,
+    onVisitClick: PropTypes.func.isRequired,
+    onFavoriteClick: PropTypes.func.isRequired,
+    canVisit: PropTypes.bool,
+    canFavorite: PropTypes.bool,
+    displayPercent: PropTypes.bool,
+};
+
+// Set the default props if they aren't passed
+HomeTiles.defaultProps = {
+        canFavorite: true,
+        canVisit: false,
+        displayPercent: false
+};
 

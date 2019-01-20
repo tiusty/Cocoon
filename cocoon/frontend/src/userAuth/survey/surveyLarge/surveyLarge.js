@@ -109,7 +109,8 @@ export default class SurveyLarge extends Component {
                             curr_favorites={this.props.favorites}
                             onVisitClick={this.props.onHandleVisitListClicked}
                             onFavoriteClick={this.handleFavoriteClick}
-                            show_heart={true}
+                            canVisit={true}
+                            canFavorite={true}
                         />
                     </div>
                 </>
