@@ -1,6 +1,9 @@
 // Import React Components
 import React from 'react'
 import {Component} from 'react';
+import PropTypes from 'prop-types';
+
+// Cocoon Modules
 import HomeTile from "./homeTile";
 import HomeTileLarge from "./homeTileLarge";
 
@@ -13,20 +16,32 @@ export default class HomeTiles extends Component {
      *  this.props.homes: (RentDatabase Model) -> A list of homes that are displayed
      *  this.props.visit_list: (RentDatabase Model) -> The list of homes in the visit list
      *  this.props.favorites: (RentDatabase Model) -> The list of homes in the favorites list
-     *  this.props.curr_favorites: (RentDatabase Model) -> THe list of homes in the current favorites list
      *  this.props.onVisitClick: (function(RentDatabase Model, event)) -> Handles when the visit button is pressed
      *  this.props.onFavoriteClick: (function(RentDatabase Model, event)) -> Handles when the favorite button is clicked
+     *  this.props.canVisit: (boolean) -> Determines if the visit button should show up for the home
+     *  this.props.canFavorite: (boolean) -> Determines if the favorite button should show up for the home
      */
     state = {
         home_click_id: undefined,
     };
+
+    componentDidUpdate(prevProps) {
+        // When the home list changes then check to see if the home exists in the list, if it doesn't then set
+        //  the home_click_id to undefined. This usually happens when the user clicks the visit button/ favorite button
+        //  while the large home tile is open
+        if (prevProps.homes !== this.props.homes) {
+            if(!this.props.homes.find(home => home.id === this.state.home_click_id)) {
+                this.setState({home_click_id: undefined})
+            }
+        }
+    }
 
     inFavorites(home) {
         /**
          * Tests whether a particular home is currently favorited
          */
         // Checks to see if the home exists within the favorites list
-        return this.props.curr_favorites.filter(c => c.id === home.id).length > 0;
+        return this.props.favorites.filter(c => c.id === home.id).length > 0;
     }
 
     inVisitList(home) {
@@ -57,7 +72,11 @@ export default class HomeTiles extends Component {
         /**
          * Renders the page based on the state
          */
+
         // Loads all the homes when no home is clicked on
+        // Note: Although the home_click_id is set to undefined in the componentDidUpdate, setState takes a little bit of time
+        //  to update, so a check here is necessary to display the small home tile before the componentDidUpdate will update
+        // the home_click_id state to null
         if (this.state.home_click_id === undefined || !this.props.homes.find(home => home.id === this.state.home_click_id)) {
             return (
                 this.props.homes.map(home =>
@@ -70,6 +89,9 @@ export default class HomeTiles extends Component {
                         onVisitClick={this.props.onVisitClick}
                         onFavoriteClick={this.props.onFavoriteClick}
                         onHomeClick={this.handleHomeClick}
+                        canVisit={this.props.canVisit}
+                        canFavorite={this.props.canFavorite}
+                        displayPercent={this.displayPercent}
                     />
                 )
             );
@@ -84,6 +106,9 @@ export default class HomeTiles extends Component {
                     onVisitClick={this.props.onVisitClick}
                     onFavoriteClick={this.props.onFavoriteClick}
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
+                    canVisit={this.props.canVisit}
+                    canFavorite={this.props.canFavorite}
+                    displayPercent={this.displayPercent}
                 />
             );
         }
@@ -97,4 +122,23 @@ export default class HomeTiles extends Component {
         );
     }
 }
+
+// Set the types and whether any props are required
+HomeTiles.propTypes = {
+    homes: PropTypes.array.isRequired,
+    visit_list: PropTypes.array.isRequired,
+    favorites: PropTypes.array.isRequired,
+    onVisitClick: PropTypes.func.isRequired,
+    onFavoriteClick: PropTypes.func,
+    canVisit: PropTypes.bool,
+    canFavorite: PropTypes.bool,
+    displayPercent: PropTypes.bool,
+};
+
+// Set the default props if they aren't passed
+HomeTiles.defaultProps = {
+        canFavorite: true,
+        canVisit: false,
+        displayPercent: false
+};
 
