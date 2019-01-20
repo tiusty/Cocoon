@@ -12,7 +12,7 @@ class TenantSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = TenantModel
-        fields = ('first_name', 'last_name')
+        fields = ('first_name', 'last_name', 'id')
 
 
 class RentSurveySerializer(serializers.HyperlinkedModelSerializer):

@@ -199,6 +199,40 @@ export default class SurveyLarge extends Component {
         this.setState({tenants})
     };
 
+    handleSubmitTenantInfo = () => {
+        let tenants = [...this.state.tenants];
+        let tenantInfo = {};
+        for (let i=0; i<this.state.tenants.length; i++) {
+            for(let key in tenants[i]) {
+                tenantInfo['tenants-' + i + '-' + key] = tenants[i][key]
+            }
+        }
+
+        // Add the management data for the tenants needed by Django
+        tenantInfo['tenants-INITIAL_FORMS'] = this.state.tenants.length;
+        tenantInfo['tenants-MAX_NUM_FORMS'] = 1000;
+        tenantInfo['tenants-MIN_NUM_FORMS'] = 0;
+        tenantInfo['tenants-TOTAL_FORMS'] = this.state.tenants.length;
+
+        let endpoint = survey_endpoints['tenants'] + this.props.id + '/';
+        axios.put(endpoint,
+            {
+                data: tenantInfo,
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response =>
+                {
+                    this.setState({
+                        name: response.data.name,
+                        url: response.data.url,
+                        desired_price: response.data.desired_price,
+                        num_bedrooms: response.data.num_bedrooms,
+                        tenants: response.data.tenants,
+                    })
+                }
+            );
+    }
+
     render() {
         return (
             <div className="survey-large-div">
@@ -219,6 +253,7 @@ export default class SurveyLarge extends Component {
                                 <TenantEdit
                                     tenants={this.state.tenants}
                                     onUpdateTenantInfo={this.updateTenantInfo}
+                                    onSubmitTenantInfo={this.handleSubmitTenantInfo}
                                 />
                             <div className="survey-large-snapshot-section">
                                 <p className="survey-large-text">Don't want this survey anymore?</p>
@@ -241,56 +276,41 @@ export default class SurveyLarge extends Component {
 }
 
 class TenantEdit extends Component {
+
+
     render() {
-        if (this.props.tenants.length > 0) {
+        let tenants = this.props.tenants;
+        tenants = tenants.sort((a, b) => a.id > b.id);
+        if (tenants.length > 0) {
             return (
                 <div className="survey-large-snapshot-section">
                     <h2 className="survey-large-title">Tenants</h2>
-                    <form>
-                        <p className="survey-large-text">Your Info</p>
-                        <div className="row">
-                            <div className="col-sm-6">
-                                <input className="tenant-input" type="text" name="your_info"
-                                       placeholder="First Name" autoCapitalize={'words'} data-tenantkey={0}
-                                       onChange={(e) => this.props.onUpdateTenantInfo(e, 'first')}
-                                       value={this.props.tenants[0].first_name}
-                                />
-                            </div>
-                            <div className="col-sm-6">
-                                <input className="tenant-input" type="text" name="your_info"
-                                       placeholder="Last Name" autoCapitalize={'words'} data-tenantkey={0}
-                                       onChange={(e) => this.props.onUpdateTenantInfo(e, 'last')}
-                                       value={this.props.tenants[0].last_name}
-                                />
-                            </div>
-                        </div>
-                        {this.props.tenants.length > 1 && Array.from(Array(this.props.tenants.length - 1)).map((t, i) => {
+                        {tenants.length > 0 && Array.from(Array(tenants.length)).map((t, i) => {
                             return (
-                                <>
-                                    <p key={i} className="survey-large-text">Roommate #{i + 1}</p>
+                                <div key={i}>
+                                    <p className="survey-large-text">Roommate #{i + 1}</p>
                                     <div className="row">
                                         <div className="col-sm-6">
                                             <input className="tenant-input" type="text"
-                                                   name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
-                                                   data-tenantkey={i + 1} placeholder="First Name"
-                                                   key={i} onChange={(e) => this.props.onUpdateTenantInfo(e, 'first')}
-                                                   value={this.props.tenants[i+1].first_name}
+                                                   name={'roommate_name_' + i} autoCapitalize={'words'}
+                                                   data-tenantkey={i} placeholder="First Name"
+                                                   onChange={(e) => this.props.onUpdateTenantInfo(e, 'first')}
+                                                   value={tenants[i].first_name}
                                             />
                                         </div>
                                         <div className="col-sm-6">
                                             <input className="tenant-input" type="text"
-                                                   name={'roommate_name_' + (i + 1)} autoCapitalize={'words'}
-                                                   data-tenantkey={i + 1} placeholder="Last Name"
-                                                   key={i} onChange={(e) => this.props.onUpdateTenantInfo(e, 'last')}
-                                                   value={this.props.tenants[i +1 ].last_name}
+                                                   name={'roommate_name_' + i} autoCapitalize={'words'}
+                                                   data-tenantkey={i} placeholder="Last Name"
+                                                   onChange={(e) => this.props.onUpdateTenantInfo(e, 'last')}
+                                                   value={this.props.tenants[i].last_name}
                                             />
                                         </div>
                                     </div>
-                                </>
+                                </div>
                             );
                         })}
-                         <button className="btn btn-success">Save</button>
-                    </form>
+                         <button className="btn btn-success" onClick={this.props.onSubmitTenantInfo}>Save</button>
                 </div>
             );
 
