@@ -41,7 +41,8 @@ class HomeTile extends Component {
         canFavorite: true,
         canVisit: false,
         isLarge: false,
-        displayPercent: false
+        displayPercent: false,
+        percent_match: null
     }
 
     renderScore(home) {
@@ -149,8 +150,8 @@ class HomeTile extends Component {
 
             // Sets percent_match to render on top of image
             let percent_match = null;
-            if (this.props.isLarge && this.props.displayPercent) {
-                percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
+            if (this.props.isLarge && this.props.displayPercent && this.props.percent_match) {
+                percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
             }
 
             // Only renders first photo
@@ -195,14 +196,15 @@ export default HomeTile;
 HomeTile.propTypes = {
     id: PropTypes.number,
     home: PropTypes.any.isRequired,
-    visit: PropTypes.bool.isRequired,
-    favorite: PropTypes.bool.isRequired,
-    onVisitClick: PropTypes.func.isRequired,
+    // visit: PropTypes.bool.isRequired,
+    // favorite: PropTypes.bool.isRequired,
+    // onVisitClick: PropTypes.func.isRequired,
     onFavoriteClick: PropTypes.func,
-    onHomeClick: PropTypes.func.isRequired,
+    // onHomeClick: PropTypes.func.isRequired,
     canVisit: PropTypes.bool,
     canFavorite: PropTypes.bool,
     isLarge: PropTypes.bool,
     displayPercent: PropTypes.bool,
+    percent_match: PropTypes.number,
 };
 

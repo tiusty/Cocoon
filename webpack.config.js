@@ -5,6 +5,7 @@ module.exports = {
         userAuth: './cocoon/frontend/src/userAuth',
         scheduler: './cocoon/frontend/src/scheduler',
         signature: './cocoon/frontend/src/signature',
+        surveyResults: './cocoon/frontend/src/surveyResults'
     },
     // Output name and directory for components
     output: {

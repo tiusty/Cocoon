@@ -174,17 +174,13 @@ class RentingSurvey(CreateView):
 class RentingResultSurvey(UpdateView):
     model = RentingSurveyModel
     form_class = RentSurveyFormMini
-    template_name = 'survey/surveyResultRent.html'
+    # template_name = 'survey/surveyResultRent.html'
+    template_name = 'survey/reactSurveyResultRent.html'
     slug_field = 'url'
     slug_url_kwarg = 'survey_url'
     context_object_name = 'survey'
 
     def get(self, request, **kwargs):
-        """
-        Add a message to the user whenever the page is loaded
-        """
-        messages.add_message(request, messages.INFO, "We've scoured the market to pick your personalized short list of "
-                                                     "the best places, now it's your turn to pick your favorites")
         return super().get(request, **kwargs)
 
     def get_form_kwargs(self):
@@ -234,6 +230,7 @@ class RentingResultSurvey(UpdateView):
 
         favorite_homes = self.object.favorites.all()
         data['user_favorite_houses'] = favorite_homes
+        data['component'] = 'SurveyResults'
         return data
 
     def form_invalid(self, form):
@@ -545,6 +542,7 @@ class RentResultViewSet(viewsets.ViewSet):
         # Return the result
         return Response(serializer.data)
 
+
 class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
     def update(self, request, *args, **kwargs):
@@ -578,7 +576,6 @@ class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
         serializer = RentSurveySerializer(survey)
         return Response(serializer.data)
-
 
 
 #######################################################
