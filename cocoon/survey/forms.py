@@ -283,7 +283,7 @@ class CommuteInformationForm(DestinationForm):
             }),
     )
 
-    min_commute = forms.IntegerField(
+    desired_commute = forms.IntegerField(
         required=False,
         widget=forms.HiddenInput(
             attrs={
@@ -366,12 +366,12 @@ class CommuteInformationForm(DestinationForm):
                     valid = False
 
                 if current_form['min_commute'] is not None:
-                    if int(current_form['min_commute']) < 0:
+                    if int(current_form['desired_commute']) < 0:
                         self.add_error('min_commute', "Min commute needs to be above 0")
                         valid = False
 
-                if current_form['min_commute'] is not None and current_form['max_commute'] is not None:
-                    if int(current_form['min_commute']) > int(current_form['max_commute']):
+                if current_form['desired_commute'] is not None and current_form['max_commute'] is not None:
+                    if int(current_form['desired_commute']) > int(current_form['max_commute']):
                         self.add_error('max_commute', "Max commute needs to be above min commute")
                         valid = False
 
@@ -419,7 +419,7 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
         fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option']
+                  'desired_commute', 'commute_weight', 'commute_type', 'traffic_option']
 
 
 class TenantFormJustNames(TenantPersonalInformationForm):

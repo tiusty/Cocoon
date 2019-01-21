@@ -213,6 +213,7 @@ export default class RentForm extends Component {
                         number_of_tenants={this.state.generalInfo.number_of_tenants}
                         initTenants={this.initializeTenant}
                         onInputChange={this.handleTenantInputChange}
+                        onTenantCommute={this.handleTenantCommute}
                 />;
             case 3:
                 return <AmenitiesForm
@@ -336,6 +337,13 @@ export default class RentForm extends Component {
         this.setState({generalInfo});
     };
 
+    handleTenantCommute = (desired, max, i) => {
+        let tenants = [...this.state.tenants];
+        tenants[i].desired_commute = desired;
+        tenants[i].max_commute = max;
+        this.setState({tenants})
+    };
+
 
     // Splits name inputs into first and last names
     handleTenantName = (e) => {
@@ -421,7 +429,7 @@ export default class RentForm extends Component {
                 tenants[i].traffic_option = this.state.tenants[index].traffic_option || false;
                 tenants[i].transit_options = this.state.tenants[index].transit_options || [];
                 tenants[i].max_commute = this.state.tenants[index].max_commute || 60;
-                tenants[i].min_commute = this.state.tenants[index].min_commute || 0;
+                tenants[i].desired_commute = this.state.tenants[index].desired_commute || 0;
                 tenants[i].commute_weight = this.state.tenants[index].commute_weight || 2;
 
                 //Other
