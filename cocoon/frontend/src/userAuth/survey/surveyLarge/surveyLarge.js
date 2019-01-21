@@ -366,6 +366,7 @@ class TenantEdit extends Component {
             return (
                 <div className="survey-large-snapshot-section">
                     <h2 className="survey-large-title">Tenants</h2>
+                    <p className='text-muted'>Please change the names if they are not correct</p>
                         {tenants.length > 0 && Array.from(Array(tenants.length)).map((t, i) => {
                             return (
                                 <div key={i}>
