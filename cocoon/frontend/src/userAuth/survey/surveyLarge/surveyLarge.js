@@ -68,7 +68,7 @@ export default class SurveyLarge extends Component {
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
                         // Sort the tenants so they always return in the same order
-                        tenants: response.data.tenants.sort((a, b) => a.id > b.id),
+                        tenants: response.data.tenants.sort((a, b) => a.id - b.id),
                     })
                 }
             );
@@ -227,7 +227,7 @@ export default class SurveyLarge extends Component {
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
                         // Sort the tenants so they always return in the same order
-                        tenants: response.data.tenants.sort((a, b) => a.id > b.id),
+                        tenants: response.data.tenants.sort((a, b) => a.id - b.id),
                     })
                 }
             );
