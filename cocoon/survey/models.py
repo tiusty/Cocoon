@@ -181,6 +181,10 @@ class CommuteInformationModel(models.Model):
     commute_type = models.ForeignKey(CommuteType)
     traffic_option = models.BooleanField(default=False)
 
+    @property
+    def min_commute(self):
+        return 0
+
     class Meta:
         abstract = True
 

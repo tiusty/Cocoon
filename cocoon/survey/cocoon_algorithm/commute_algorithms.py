@@ -94,11 +94,16 @@ class CommuteAlgorithm(object):
         elif commute_minutes > commuter.max_commute:
             commute_minutes = commuter.max_commute
 
-        commute_time_normalized = commute_minutes - commuter.min_commute
-        commute_range = commuter.max_commute - commuter.min_commute
+        commute_time_normalized = commute_minutes - commuter.desired_commute
+        commute_range = commuter.max_commute - commuter.desired_commute
 
-        if commute_range <= 0:
-            if commute_minutes == commuter.min_commute:
+        # Anything below the desired_commute gets a 100
+        if commute_minutes <= commuter.desired_commute:
+            return 1
+        # if the commute range is 0 then it only gets 100 if the
+        #   commute time is equal to the desired time then it gets 100 otherwise a 0
+        elif commute_range <= 0:
+            if commute_minutes == commuter.desired_commute:
                 return 1
             else:
                 return 0
