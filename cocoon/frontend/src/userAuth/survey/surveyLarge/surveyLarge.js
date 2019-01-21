@@ -48,7 +48,7 @@ export default class SurveyLarge extends Component {
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
-                        tenants: response.data.tenants,
+                        tenants: response.data.tenants.sort((a, b) => a.id > b.id),
                     })
                 }
             );
@@ -172,37 +172,7 @@ export default class SurveyLarge extends Component {
         })
     };
 
-    updateTenantInfo = (e, type) => {
-        /**
-         * Handles when the user changes one of the tenants names
-         *
-         * e: -> The event pointer
-         * type: (string) -> determines which part of the name is being edited.
-         *              'first' for first name
-         *              'last' for last name
-         */
-
-        // Retrieve which tenant and the new value for the tenant
-        const { value } = e.target;
-        const name = value;
-        const index = e.target.dataset.tenantkey;
-        let tenants = [...this.state.tenants];
-
-        // Determines which part of the name is being edited
-        if (type === 'first') {
-            tenants[index].first_name = name
-        } else {
-            tenants[index].last_name = name
-        }
-
-        // Save the value to the state
-        this.setState({
-                tenants
-        })
-    };
-
-    handleSubmitTenantInfo = () => {
-        let tenants = [...this.state.tenants];
+    handleSubmitTenantInfo = (tenants) => {
         let tenantInfo = {};
         for (let i=0; i<tenants.length; i++) {
             for(let key in tenants[i]) {
@@ -229,11 +199,11 @@ export default class SurveyLarge extends Component {
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
-                        tenants: response.data.tenants,
+                        tenants: response.data.tenants.sort((a, b) => a.id > b.id),
                     })
                 }
             );
-    }
+    };
 
     render() {
         return (
@@ -278,10 +248,62 @@ export default class SurveyLarge extends Component {
 }
 
 class TenantEdit extends Component {
+    state = {
+        curr_tenants: [],
+    };
+
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.tenants !== this.props.tenants) {
+            console.log('chanrged')
+            let curr_tenants = JSON.parse(JSON.stringify(this.props.tenants));
+            this.setState({curr_tenants})
+        }
+    }
+
+
+    updateTenantInfo = (e, type) => {
+        /**
+         * Handles when the user changes one of the tenants names
+         *
+         * e: -> The event pointer
+         * type: (string) -> determines which part of the name is being edited.
+         *              'first' for first name
+         *              'last' for last name
+         */
+
+            // Retrieve which tenant and the new value for the tenant
+        const { value } = e.target;
+        const name = value;
+        const index = e.target.dataset.tenantkey;
+        let tenants = [...this.state.curr_tenants];
+
+        // Determines which part of the name is being edited
+        if (type === 'first') {
+            tenants[index].first_name = name
+        } else {
+            tenants[index].last_name = name
+        }
+
+        // Save the value to the state
+        this.setState({curr_tenants: tenants})
+    };
+
+    handleDisableSubmit() {
+        for (let i=0; i<this.state.curr_tenants.length; i++) {
+            if (this.state.curr_tenants[i].id !== this.props.tenants[i].id
+            || this.state.curr_tenants[i].first_name !== this.props.tenants[i].first_name
+            || this.state.curr_tenants[i].last_name !== this.props.tenants[i].last_name) {
+                return false
+            }
+        }
+
+        return true
+    }
 
     render() {
         // let tenants = this.props.tenants;
-        let tenants = this.props.tenants;
+        let tenants = this.state.curr_tenants;
         // Sort the arrays so they are in the same order
         // tenants = tenants.sort((a, b) => a.id > b.id);
         tenants = tenants.sort((a, b) => a.id > b.id);
@@ -299,7 +321,7 @@ class TenantEdit extends Component {
                                             <input className="tenant-input" type="text"
                                                    name={'roommate_name_' + i} autoCapitalize={'words'}
                                                    data-tenantkey={i} placeholder="First Name"
-                                                   onChange={(e) => this.props.onUpdateTenantInfo(e, 'first')}
+                                                   onChange={(e) => this.updateTenantInfo(e, 'first')}
                                                    value={tenants[i].first_name}
                                             />
                                         </div>
@@ -307,7 +329,7 @@ class TenantEdit extends Component {
                                             <input className="tenant-input" type="text"
                                                    name={'roommate_name_' + i} autoCapitalize={'words'}
                                                    data-tenantkey={i} placeholder="Last Name"
-                                                   onChange={(e) => this.props.onUpdateTenantInfo(e, 'last')}
+                                                   onChange={(e) => this.updateTenantInfo(e, 'last')}
                                                    value={tenants[i].last_name}
                                             />
                                         </div>
@@ -315,7 +337,7 @@ class TenantEdit extends Component {
                                 </div>
                             );
                         })}
-                         <button className="btn btn-success" onClick={this.props.onSubmitTenantInfo}>Save</button>
+                         <button className="btn btn-success" disabled={this.handleDisableSubmit()} onClick={() => this.props.onSubmitTenantInfo(this.state.curr_tenants)}>Save</button>
                 </div>
             );
 
