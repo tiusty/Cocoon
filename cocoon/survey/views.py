@@ -23,7 +23,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
-from .forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini
+from .forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, RentSurveyFormMini, TenantFormSetJustNames
 from .survey_helpers.save_polygons import save_polygons
 from .serializers import HomeScoreSerializer
 
@@ -543,6 +543,40 @@ class RentResultViewSet(viewsets.ViewSet):
         serializer = HomeScoreSerializer(data, many=True)
 
         # Return the result
+        return Response(serializer.data)
+
+class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+
+    def update(self, request, *args, **kwargs):
+        """
+        This updates the tenants name for a given survey
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        # Retrieve the associated survey with the request
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+
+        tenant_data = self.request.data['data']
+
+        tenants = TenantFormSetJustNames(tenant_data, instance=survey)
+
+        # Test if form is valid
+        if tenants.is_valid():
+
+            # Save tenants form
+            tenants.save()
+
+        # Retrieve the associated survey with the request
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+        serializer = RentSurveySerializer(survey)
         return Response(serializer.data)
 
 

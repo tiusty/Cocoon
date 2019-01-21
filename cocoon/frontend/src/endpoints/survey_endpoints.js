@@ -10,7 +10,8 @@ const survey_endpoints = {
     'rentSurveyResult': '/survey/rent/',
     'rentingSurvey': '/survey/rent/',
     'rentSurvey': '/survey/api/rentSurvey/',
-    'rentResult': api_path + '/rentResult'
+    'rentResult': api_path + '/rentResult',
+    'tenants':  api_path + '/tenants/',
 };
 
 export default survey_endpoints;
