@@ -293,6 +293,8 @@ class TenantEdit extends Component {
      *     this.props.tenants: (list(Tenants)) -> The list of tenants corresponding to the survey
      */
     state = {
+        // Handles the current names of the tenants
+        // This is used to determine if the tenants names have been changed
         curr_tenants: [],
     };
 
