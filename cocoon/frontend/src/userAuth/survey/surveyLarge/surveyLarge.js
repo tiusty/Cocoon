@@ -306,6 +306,7 @@ class TenantEdit extends Component {
          *  and so this updates the new names saved in the backend
          */
         if (prevProps.tenants !== this.props.tenants) {
+            // This does a deep copy because otherwise it is a memory reference and causes issues
             let curr_tenants = JSON.parse(JSON.stringify(this.props.tenants));
             this.setState({curr_tenants})
         }
