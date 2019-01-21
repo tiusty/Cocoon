@@ -254,8 +254,14 @@ class TenantEdit extends Component {
 
 
     componentDidUpdate(prevProps) {
+        /**
+         * Handles if the parent tenants variable changes values.
+         * If it does then update the curr_tenants value.
+         *
+         * This is most common when the user submits the new tenants names for saving
+         *  and so this updates the new names saved in the backend
+         */
         if (prevProps.tenants !== this.props.tenants) {
-            console.log('chanrged')
             let curr_tenants = JSON.parse(JSON.stringify(this.props.tenants));
             this.setState({curr_tenants})
         }
@@ -290,6 +296,12 @@ class TenantEdit extends Component {
     };
 
     handleDisableSubmit() {
+        /**
+         * Determines if the tenants variables are the same. If anything was changed then
+         *  allow the user to save the data
+         *
+         * This assumes the tenants are in the correct order.
+         */
         for (let i=0; i<this.state.curr_tenants.length; i++) {
             if (this.state.curr_tenants[i].id !== this.props.tenants[i].id
             || this.state.curr_tenants[i].first_name !== this.props.tenants[i].first_name
