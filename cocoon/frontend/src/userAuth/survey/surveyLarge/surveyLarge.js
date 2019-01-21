@@ -279,7 +279,7 @@ SurveyLarge.propTypes = {
     id: PropTypes.number.isRequired,
     favorites: PropTypes.array.isRequired,
     visit_list: PropTypes.array.isRequired,
-    onLoadingClick: PropTypes.func.isRequired,
+    onLoadingClicked: PropTypes.func.isRequired,
     onHandleFavoriteListClicked: PropTypes.func.isRequired,
     onHandleVisitListClicked: PropTypes.func.isRequired,
     onLargeSurveyClose: PropTypes.func.isRequired,
