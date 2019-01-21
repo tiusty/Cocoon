@@ -2,6 +2,7 @@
 import React from 'react'
 import { Component } from 'react';
 import axios from 'axios'
+import PropTypes from 'prop-types';
 
 // Import Cocoon Components
 import './surveyLarge.css'
@@ -14,13 +15,31 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
 
 export default class SurveyLarge extends Component {
+    /**
+     * Handles when a survey is clicked and the large survey is displayed
+     *
+     * Props:
+     *  this.props.id: (int) -> The survey id
+     *  this.props.favorites: (list(RentDatabase Models)) -> The list of homes in the favorites list
+     *  this.props.visit_list: (list(RentDatabase Models)) -> The list of homes in the visit_list
+     *  this.props.onLoadingClicked: (func()) -> Handles when the load button is clicked for a survey
+     *  this.props.onHandleFavoriteListClicked: (func(home)) {home: The home associated with the home tile} -> Handles
+     *      when the favorite button is clicked on a home-tile
+     *  this.props.onHandleVisitListClicked: (func(home, e)) {home: Home associated with the home tile,
+     *                                                            e: the html pointer} -> Handles when the visit button
+*           is clicked on a home-tile
+     *  this.props.onLargeSurveyClose: (func()) -> Handles when the close button is clicked for a large survey
+     *  this.props.onDelete: (func(id)) {id: survey id} -> Handles when the delete button is clicked for a survey
+     */
 
     state = {
+        // Variables associated with the tour
         name: "",
         url: "",
         desired_price: 0,
         num_bedrooms: 0,
 
+        // Variables associated with the tour
         duration: null,
         refresh_duration: true,
 
@@ -37,7 +56,7 @@ export default class SurveyLarge extends Component {
          * @type {string}
          */
 
-            // The survey id is appended to the get request to get a specific survey
+        // The survey id is appended to the get request to get a specific survey
         let endpoint = survey_endpoints['rentSurvey'] + this.props.id;
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
@@ -48,6 +67,7 @@ export default class SurveyLarge extends Component {
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
+                        // Sort the tenants so they always return in the same order
                         tenants: response.data.tenants.sort((a, b) => a.id > b.id),
                     })
                 }
@@ -173,6 +193,13 @@ export default class SurveyLarge extends Component {
     };
 
     handleSubmitTenantInfo = (tenants) => {
+        /**
+         * Handles submitted the tenant information to the backend
+         * @type {{}}
+         */
+
+        // Put all the variables in the correct format so the django formset can handle
+        //  them properly
         let tenantInfo = {};
         for (let i=0; i<tenants.length; i++) {
             for(let key in tenants[i]) {
@@ -199,6 +226,7 @@ export default class SurveyLarge extends Component {
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
+                        // Sort the tenants so they always return in the same order
                         tenants: response.data.tenants.sort((a, b) => a.id > b.id),
                     })
                 }
@@ -247,7 +275,23 @@ export default class SurveyLarge extends Component {
     }
 }
 
+SurveyLarge.propTypes = {
+    id: PropTypes.number.isRequired,
+    favorites: PropTypes.array.isRequired,
+    visit_list: PropTypes.array.isRequired,
+    onLoadingClick: PropTypes.func.isRequired,
+    onHandleFavoriteListClicked: PropTypes.func.isRequired,
+    onHandleVisitListClicked: PropTypes.func.isRequired,
+    onLargeSurveyClose: PropTypes.func.isRequired,
+};
+
 class TenantEdit extends Component {
+    /**
+     * Component handles displaying and updating the tenants names
+     *
+     * Props:
+     *     this.props.tenants: (list(Tenants)) -> The list of tenants corresponding to the survey
+     */
     state = {
         curr_tenants: [],
     };
@@ -316,9 +360,6 @@ class TenantEdit extends Component {
     render() {
         // let tenants = this.props.tenants;
         let tenants = this.state.curr_tenants;
-        // Sort the arrays so they are in the same order
-        // tenants = tenants.sort((a, b) => a.id > b.id);
-        tenants = tenants.sort((a, b) => a.id > b.id);
 
         if (tenants.length > 0) {
             return (
@@ -354,7 +395,11 @@ class TenantEdit extends Component {
             );
 
         } else {
-            return <p>loading</p>
+            return <p>Loading</p>
         }
     }
 }
+
+TenantEdit.propTypes = {
+    tenants: PropTypes.array,
+};
