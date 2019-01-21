@@ -9,12 +9,12 @@ export default class TenantForm extends Component {
 
     constructor(props){
         super(props);
+        console.log(props.tenant)
+        console.log(props.tenant.max_commute)
+        console.log(props.tenant['max_commute'])
+        console.log(props.tenant.first_name)
         this.state = {
             is_active: false,
-            value: {
-                min: 60,
-                max: 100,
-            },
         };
     }
 
@@ -420,7 +420,7 @@ export default class TenantForm extends Component {
                         maxValue={180}
                         minValue={0}
                         step={5}
-                        value={this.state.value}
+                        value={{min: this.props.tenant.desired_commute,max: this.props.tenant.max_commute}}
                         onChange={value => {this.setState({value});this.props.onTenantCommute(this.state.value.min, this.state.value.max, this.props.index);}}
                         formatLabel={value => `$${value}`} />
                 </div>

@@ -18,10 +18,6 @@ import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints"
 export default class GeneralForm extends Component {
     state = {
         home_type_options: [],
-        value: {
-            min: 2000,
-            max: 3000,
-        },
         errorMessages: {
             name_error_undefined: 'You must enter the names of the tenants.',
             name_error_format: 'Enter first and last name separated by a space.',
@@ -270,7 +266,7 @@ export default class GeneralForm extends Component {
                     maxValue={this.getMaxPrice(this.props.number_of_tenants)}
                     minValue={0}
                     step={50}
-                    value={this.state.value}
+                    value={{min: this.props.generalInfo.desired_price, max: this.props.generalInfo.max_price}}
                     onChange={value => {this.setState({value});this.props.setPrice(this.state.value.min, this.state.value.max);}}
                     formatLabel={value => `$${value}`} />
             </div>
