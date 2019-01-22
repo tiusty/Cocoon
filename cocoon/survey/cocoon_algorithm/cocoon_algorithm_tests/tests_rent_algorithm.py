@@ -439,27 +439,12 @@ class TestRentAlgorithmJustPrice(TestCase):
 class TestRentAlgorithmRunComputeCommuteScoreApproximate(TestCase):
 
     def setUp(self):
-        # Create a commute type
+        # Create home provider model
         HomeProviderModel.objects.create(provider="MLSPIN")
+
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
-        self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
-
-        self.home_type = HomeTypeModel.objects.create(home_type='House')
-
-    def create_destination(self, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
-                           zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
-        return self.survey.tenants.create(
-            street_address=street_address,
-            city=city,
-            state=state,
-            zip_code=zip_code,
-            commute_type=commute_type,
-            commute_weight=commute_weight,
-            max_commute=max_commute,
-            min_commute=min_commute,
-        )
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user.userProfile)
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -476,14 +461,18 @@ class TestRentAlgorithmRunComputeCommuteScoreApproximate(TestCase):
         ))
 
     @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.compute_commute_score')
-    def test_run_compute_commute_score_approximate(self, mock_score):
+    def test_run_compute_commute_score_approximate_working(self, mock_score):
+        """
+        Tests a working case of the compute_commute_score_approximate
+        """
         # Arrange
+        home_type = HomeTypeModel.objects.create(home_type='House')
         commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
 
         rent_algorithm = RentAlgorithm()
-        home = self.create_home(self.home_type)
-        home1 = self.create_home(self.home_type)
-        home2 = self.create_home(self.home_type)
+        home = self.create_home(home_type)
+        home1 = self.create_home(home_type)
+        home2 = self.create_home(home_type)
 
         # Add homes to algorithm
         rent_algorithm.homes = [home, home1, home2]
@@ -499,9 +488,10 @@ class TestRentAlgorithmRunComputeCommuteScoreApproximate(TestCase):
             desired_commute=100,
         )
 
-        mock_score.side_effect = [1, 1, .5]
+        mock_score.side_effect = [1, .7, .5]
 
         # Set the commute times to the homes for the tenant
+        # Times don't matter because the actual scoring is mocked
         home.approx_commute_times = {tenant: 50}
         home1.approx_commute_times = {tenant: 10}
         home2.approx_commute_times = {tenant: 60}
@@ -513,149 +503,90 @@ class TestRentAlgorithmRunComputeCommuteScoreApproximate(TestCase):
         rent_algorithm.run_compute_commute_score_approximate()
 
         # Assert
-        # FINISH UNITTESTS!
+        # Home
         self.assertEqual(1 * tenant.commute_weight * rent_algorithm.price_question_weight, home.accumulated_points)
         self.assertEqual(tenant.commute_weight * rent_algorithm.price_question_weight, home.total_possible_points)
 
-
-    @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.approximate_commute_filter')
-    def test_run_compute_commute_score_approximate_working(self):
-        """
-        This tests to make sure when given correctly values, everything works properly. Kinda of a sanity check unit
-            test
-        """
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        self.home = self.create_home(self.home_type)
-        self.home1 = self.create_home(self.home_type)
-        self.home2 = self.create_home(self.home_type)
-
-        # Create the destinations
-        self.destination = self.create_destination(self.commute_type, min_commute=50, max_commute=110, commute_weight=1)
-
-        self.destination1 = self.create_destination(self.commute_type, min_commute=50, max_commute=90, commute_weight=2)
-
-        self.destination2 = self.create_destination(self.commute_type, min_commute=30, max_commute=110, commute_weight=3)
-
-        # Set the commute times to each destination
-
-        # Home 0
-        self.home.approx_commute_times = {self.destination: 50}
-        self.home.approx_commute_times = {self.destination1: 70}
-
         # Home 1
-        self.home1.approx_commute_times = {self.destination: 10}
-        self.home1.approx_commute_times = {self.destination1: 80}
-        self.home1.approx_commute_times = {self.destination2: 100}
+        self.assertEqual(.7 * tenant.commute_weight * rent_algorithm.price_question_weight, home1.accumulated_points)
+        self.assertEqual(tenant.commute_weight * rent_algorithm.price_question_weight, home1.total_possible_points)
 
         # Home 2
-        self.home2.approx_commute_times = {self.destination: 60}
+        self.assertEqual(.5 * tenant.commute_weight * rent_algorithm.price_question_weight, home2.accumulated_points)
+        self.assertEqual(tenant.commute_weight * rent_algorithm.price_question_weight, home2.total_possible_points)
+
+        # Assert the calls to the approximate_commute_filter
+        mock_score.assert_has_calls(
+            [
+                call(home.approx_commute_times[tenant], tenant),
+                call(home1.approx_commute_times[tenant], tenant),
+                call(home2.approx_commute_times[tenant], tenant),
+            ]
+        )
+
+    @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.compute_commute_score')
+    def test_run_compute_commute_score_approximate_working_different_scale_factor(self, mock_score):
+        """
+        Tests a working case of the compute_commute_score_approximate with a differetn scale factor
+        """
+        # Arrange
+        home_type = HomeTypeModel.objects.create(home_type='House')
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+
+        rent_algorithm = RentAlgorithm()
+        home = self.create_home(home_type)
+        home1 = self.create_home(home_type)
+        home2 = self.create_home(home_type)
 
         # Add homes to algorithm
-        rent_algorithm.homes = self.home
-        rent_algorithm.homes = self.home1
-        rent_algorithm.homes = self.home2
+        rent_algorithm.homes = [home, home1, home2]
+
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=4,
+            max_commute=100,
+            desired_commute=100,
+        )
+
+        mock_score.side_effect = [1, .7, .5]
+
+        # Set the commute times to the homes for the tenant
+        # Times don't matter because the actual scoring is mocked
+        home.approx_commute_times = {tenant: 50}
+        home1.approx_commute_times = {tenant: 10}
+        home2.approx_commute_times = {tenant: 60}
 
         # Overriding in case the config file changes
-        commute_question_weight = 100
-        rent_algorithm.price_question_weight = commute_question_weight
+        rent_algorithm.price_question_weight = 100
 
         # Act
         rent_algorithm.run_compute_commute_score_approximate()
 
         # Assert
-
-        # Home 0
-        self.assertEqual(((1 - (0 / 60)) * self.destination.commute_weight * commute_question_weight) +
-                         ((1 - (20 / 40)) * self.destination1.commute_weight * commute_question_weight),
-                         rent_algorithm.homes[0].accumulated_points)
-        self.assertEqual(self.destination.commute_weight * commute_question_weight +
-                         self.destination1.commute_weight * commute_question_weight,
-                         rent_algorithm.homes[0].total_possible_points)
+        # Home
+        self.assertEqual(1 * tenant.commute_weight * rent_algorithm.price_question_weight, home.accumulated_points)
+        self.assertEqual(tenant.commute_weight * rent_algorithm.price_question_weight, home.total_possible_points)
 
         # Home 1
-        self.assertEqual(((1 - (0 / 60)) * self.destination.commute_weight * commute_question_weight) +
-                         ((1 - (30 / 40)) * self.destination1.commute_weight * commute_question_weight) +
-                         ((1 - (70 / 80)) * self.destination2.commute_weight * commute_question_weight),
-                         rent_algorithm.homes[1].accumulated_points)
-        self.assertEqual(self.destination.commute_weight * commute_question_weight +
-                         self.destination1.commute_weight * commute_question_weight +
-                         self.destination2.commute_weight * commute_question_weight,
-                         rent_algorithm.homes[1].total_possible_points)
+        self.assertEqual(.7 * tenant.commute_weight * rent_algorithm.price_question_weight, home1.accumulated_points)
+        self.assertEqual(tenant.commute_weight * rent_algorithm.price_question_weight, home1.total_possible_points)
 
         # Home 2
-        self.assertEqual(((1 - (10 / 60)) * self.destination.commute_weight * commute_question_weight),
-                         rent_algorithm.homes[2].accumulated_points)
-        self.assertEqual(self.destination.commute_weight * commute_question_weight,
-                         rent_algorithm.homes[2].total_possible_points)
+        self.assertEqual(.5 * tenant.commute_weight * rent_algorithm.price_question_weight, home2.accumulated_points)
+        self.assertEqual(tenant.commute_weight * rent_algorithm.price_question_weight, home2.total_possible_points)
 
-    def test_run_compute_commute_score_approximate_working_large_user_scale_factor(self):
-        """
-        This unit tests checks that even with large user scale factors, everything works correctly
-        """
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        self.home = self.create_home(self.home_type)
-        self.home1 = self.create_home(self.home_type)
-        self.home2 = self.create_home(self.home_type)
-
-        # Create the destinations
-        self.destination = self.create_destination(self.commute_type, min_commute=0, max_commute=100, commute_weight=5)
-
-        self.destination1 = self.create_destination(self.commute_type, min_commute=10, max_commute=80, commute_weight=6)
-
-        self.destination2 = self.create_destination(self.commute_type, min_commute=7, max_commute=120, commute_weight=5)
-
-        # Set the commute times to each destination
-
-        # Home 0
-        self.home.approx_commute_times = {self.destination: 50}
-        self.home.approx_commute_times = {self.destination1: 70}
-
-        # Home 1
-        self.home1.approx_commute_times = {self.destination: 10}
-        self.home1.approx_commute_times = {self.destination1: 80}
-        self.home1.approx_commute_times = {self.destination2: 100}
-
-        # Home 2
-        self.home2.approx_commute_times = {self.destination: 60}
-
-        rent_algorithm.homes = self.home
-        rent_algorithm.homes = self.home1
-        rent_algorithm.homes = self.home2
-
-        # Overriding in case the config file changes
-        commute_question_weight = 100
-        rent_algorithm.price_question_weight = commute_question_weight
-
-        # Act
-        rent_algorithm.run_compute_commute_score_approximate()
-
-        # Assert
-
-        # Home 0
-        self.assertEqual(((1 - (50 / 100)) * self.destination.commute_weight * commute_question_weight) +
-                         ((1 - (60 / 70)) * self.destination1.commute_weight * commute_question_weight),
-                         rent_algorithm.homes[0].accumulated_points)
-        self.assertEqual(self.destination.commute_weight * commute_question_weight +
-                         self.destination1.commute_weight * commute_question_weight,
-                         rent_algorithm.homes[0].total_possible_points)
-
-        # Home 1
-        self.assertEqual(((1 - (10 / 100)) * self.destination.commute_weight * commute_question_weight) +
-                         ((1 - (70 / 70)) * self.destination1.commute_weight * commute_question_weight) +
-                         ((1 - (93 / 113)) * self.destination2.commute_weight * commute_question_weight),
-                         rent_algorithm.homes[1].accumulated_points)
-        self.assertEqual(self.destination.commute_weight * commute_question_weight +
-                         self.destination1.commute_weight * commute_question_weight +
-                         self.destination2.commute_weight * commute_question_weight,
-                         rent_algorithm.homes[1].total_possible_points)
-
-        # Home 2
-        self.assertEqual(((1 - (60 / 100)) * self.destination.commute_weight * commute_question_weight),
-                         rent_algorithm.homes[2].accumulated_points)
-        self.assertEqual(self.destination.commute_weight * commute_question_weight,
-                         rent_algorithm.homes[2].total_possible_points)
+        # Assert the calls to the approximate_commute_filter
+        mock_score.assert_has_calls(
+            [
+                call(home.approx_commute_times[tenant], tenant),
+                call(home1.approx_commute_times[tenant], tenant),
+                call(home2.approx_commute_times[tenant], tenant),
+            ]
+        )
 
 
 class TestRentAlgorithmJustExactCommuteScore(TestCase):
