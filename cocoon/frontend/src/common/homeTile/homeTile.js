@@ -208,7 +208,7 @@ HomeTile.propTypes = {
     home: PropTypes.any.isRequired,
     visit: PropTypes.bool.isRequired,
     favorite: PropTypes.bool.isRequired,
-    onVisitClick: PropTypes.func.isRequired,
+    onVisitClick: PropTypes.func,
     onFavoriteClick: PropTypes.func,
     onHomeClick: PropTypes.func.isRequired,
     canVisit: PropTypes.bool,

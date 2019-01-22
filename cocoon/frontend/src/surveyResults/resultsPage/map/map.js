@@ -1,8 +1,10 @@
 // Import React Components
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 
-const MapMarker = ({ score }) => <div className="map-marker">{score}</div>;
+import MapMarker from './mapMarker';
+// const MapMarker = ({ score }) => <div className="map-marker">{score}</div>;
 
 export default class Map extends Component {
 
@@ -13,13 +15,9 @@ export default class Map extends Component {
     static defaultProps = {
         center: {
             lat: 42.36,
-            lng: -71.054
+            lng: -71.05
         },
-        zoom: 14
-    };
-
-    componentDidMount = () => {
-
+        zoom: 11
     }
 
     getMapStyle = () => {
@@ -217,14 +215,21 @@ export default class Map extends Component {
                 bootstrapURLKeys={ {key: 'AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho'} }
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
-                options={mapOptions}
-            >
-          <MapMarker
-            lat={this.props.center.lat}
-            lng={this.props.center.lng}
-            score={91}
-          />
+                options={mapOptions}>
+                    {this.props.homes && this.props.homes.map(home => (
+                        <MapMarker
+                            lat={home.home.latitude}
+                            lng={home.home.longitude}
+                            score={home.percent_match}
+                            key={home.home.id}
+                            id={home.home.id}
+                        />
+                    ))}
             </GoogleMapReact>
         )
     }
+}
+
+Map.propTypes = {
+    homes: PropTypes.array.isRequired
 }

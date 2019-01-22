@@ -156,20 +156,25 @@ export default class HomeTileLarge extends Component {
         );
     }
 
-    renderPercentMatch = (home) => {
+    renderPercentMatch = () => {
+        let { home } = this.props;
         let percent_match = null;
-        if (this.props.displayPercent) {
+        if (this.props.displayPercent && home.percent_match) {
             percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
+        }
+        if (percent_match === null && this.props.percent_match) {
+            percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
         }
         return percent_match;
     }
 
-    renderImages = (home) => {
+    renderImages = () => {
+        let { home } = this.props;
         // renders placeholder image if home has no images
         if (home.images.length === 0) {
             return (
-                <div className={div_classes}>
-                    <img src={PlaceHolder} alt="place holder image" className={image_classes} />
+                <div className="thumbnailDiv">
+                    <img src={PlaceHolder} alt="place holder image" className="thumbnailImage" />
                 </div>
             );
         } else {
@@ -192,7 +197,7 @@ export default class HomeTileLarge extends Component {
     }
 
     render() {
-        let home = this.props.home;
+        let { home } = this.props;
         let bedInfo = home.num_bedrooms > 1 ? 'beds' : 'bed';
         let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
         return (
