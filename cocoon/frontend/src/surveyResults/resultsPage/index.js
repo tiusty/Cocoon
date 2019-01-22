@@ -22,6 +22,7 @@ export default class ResultsPage extends Component {
         this.state = {
             homeList: undefined,
             survey_name: undefined,
+            survey: undefined,
             clicked_home: undefined,
             hover_id: undefined,
             viewing_home: false,
@@ -31,11 +32,26 @@ export default class ResultsPage extends Component {
 
     componentDidMount = () => {
         this.setPageHeight();
+        this.getSurveyId();
         this.getResults();
     }
 
+    getSurveyId = () => {
+        /**
+         * Retrieves the Survey Id by passing the survey url
+         */
+        axios.get(survey_endpoints['rentSurvey'] + this.getSurveyUrl(), {params: {type: 'by_url'}})
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    survey: response.data
+                });
+            })
+
+    };
+
     getResults = () => {
-        axios.get(survey_endpoints['rentResult'] + '/' + this.getSurveyUrl())
+        axios.get(survey_endpoints['rentResult'] + this.getSurveyUrl())
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({

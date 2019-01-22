@@ -328,6 +328,35 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return RentingSurveyModel.objects.filter(user_profile=user_profile)
 
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieves a survey based on either the id or the survey url
+        :param request:
+        :param args:
+        :param kwargs:
+            type: 'by_url' -> The survey is retrieved by using the survey url
+                   other -> Anything else will default the request to retrieve the survey via id
+            pk: Stores either the survey url or the survey depending on the type
+        :return: A serailzed response with the survey that was retrieved
+        """
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Determine the method for getting the survey
+        retrieve_type = self.request.query_params.get('type', None)
+
+        # Retrieve the survey id/url
+        pk = kwargs.pop('pk', None)
+
+        if retrieve_type == 'by_url':
+            # Retrieve the associated survey with the request
+            survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, url=pk)
+        else:
+            survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
+
+        serializer = RentSurveySerializer(survey)
+        return Response(serializer.data)
+
     def create(self, request, *args, **kwargs):
         """
         Retrieves all the data from the frontend
