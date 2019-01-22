@@ -338,6 +338,10 @@ export default class RentForm extends Component {
     };
 
     handleTenantCommute = (desired, max, i) => {
+        /**
+         * Updates the tenants desired and max commute value
+         * @type {*[]}
+         */
         let tenants = [...this.state.tenants];
         tenants[i].desired_commute = desired;
         tenants[i].max_commute = max;
