@@ -1,7 +1,7 @@
 from django.test import TestCase
 from unittest import skip
 from django.utils import timezone
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, call
 
 # Import Google geolocator
 import cocoon.houseDatabase.maps_requester as geolocator
@@ -50,17 +50,17 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Arrange
         rent_algorithm = RentAlgorithm()
 
-        self.home = self.create_home(self.home_type)
-        self.home1 = self.create_home(self.home_type)
-        self.home2 = self.create_home(self.home_type)
+        home = self.create_home(self.home_type)
+        home1 = self.create_home(self.home_type)
+        home2 = self.create_home(self.home_type)
 
         # All of the approximate_commute_filter returns true
         mock_filter.side_effect = [True, True, True]
 
         # Create homes
-        rent_algorithm.homes = self.home
-        rent_algorithm.homes = self.home1
-        rent_algorithm.homes = self.home2
+        rent_algorithm.homes = home
+        rent_algorithm.homes = home1
+        rent_algorithm.homes = home2
 
         # Act
         rent_algorithm.run_compute_approximate_commute_filter()
@@ -70,6 +70,15 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.assertFalse(rent_algorithm.homes[1].eliminated)
         self.assertFalse(rent_algorithm.homes[2].eliminated)
 
+        # Assert the calls to the approximate_commute_filter
+        mock_filter.assert_has_calls(
+            [
+                call(home.approx_commute_times),
+                call(home1.approx_commute_times),
+                call(home2.approx_commute_times),
+            ]
+        )
+
     @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.approximate_commute_filter')
     def test_run_compute_approximate_commute_filter_one_elimination(self, mock_filter):
         """
@@ -78,17 +87,17 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Arrange
         rent_algorithm = RentAlgorithm()
 
-        self.home = self.create_home(self.home_type)
-        self.home1 = self.create_home(self.home_type)
-        self.home2 = self.create_home(self.home_type)
+        home = self.create_home(self.home_type)
+        home1 = self.create_home(self.home_type)
+        home2 = self.create_home(self.home_type)
 
         # The second home returns false
         mock_filter.side_effect = [True, False, True]
 
         # Create homes
-        rent_algorithm.homes = self.home
-        rent_algorithm.homes = self.home1
-        rent_algorithm.homes = self.home2
+        rent_algorithm.homes = home
+        rent_algorithm.homes = home1
+        rent_algorithm.homes = home2
 
         # Act
         rent_algorithm.run_compute_approximate_commute_filter()
@@ -98,6 +107,15 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.assertTrue(rent_algorithm.homes[1].eliminated)
         self.assertFalse(rent_algorithm.homes[2].eliminated)
 
+        # Assert the calls to the approximate_commute_filter
+        mock_filter.assert_has_calls(
+            [
+                call(home.approx_commute_times),
+                call(home1.approx_commute_times),
+                call(home2.approx_commute_times),
+            ]
+        )
+
     @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.approximate_commute_filter')
     def test_run_compute_approximate_commute_filter_all_eliminated(self, mock_filter):
         """
@@ -106,17 +124,17 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         # Arrange
         rent_algorithm = RentAlgorithm()
 
-        self.home = self.create_home(self.home_type)
-        self.home1 = self.create_home(self.home_type)
-        self.home2 = self.create_home(self.home_type)
+        home = self.create_home(self.home_type)
+        home1 = self.create_home(self.home_type)
+        home2 = self.create_home(self.home_type)
 
         # All of the homes are not in range
         mock_filter.side_effect = [False, False, False]
 
         # Create homes
-        rent_algorithm.homes = self.home
-        rent_algorithm.homes = self.home1
-        rent_algorithm.homes = self.home2
+        rent_algorithm.homes = home
+        rent_algorithm.homes = home1
+        rent_algorithm.homes = home2
 
         # Act
         rent_algorithm.run_compute_approximate_commute_filter()
@@ -126,7 +144,17 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
         self.assertTrue(rent_algorithm.homes[1].eliminated)
         self.assertTrue(rent_algorithm.homes[2].eliminated)
 
-    def test_run_compute_approximate_commute_filter_no_homes(self):
+        # Assert the calls to the approximate_commute_filter
+        mock_filter.assert_has_calls(
+            [
+                call(home.approx_commute_times),
+                call(home1.approx_commute_times),
+                call(home2.approx_commute_times),
+            ]
+        )
+
+    @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.approximate_commute_filter')
+    def test_run_compute_approximate_commute_filter_no_homes(self, mock_filter):
         """
         Tests that if there are no homes then nothing happens
         """
@@ -138,6 +166,9 @@ class TestRentAlgorithmJustApproximateCommuteFilter(TestCase):
 
         # Assert
         self.assertEqual(0, len(rent_algorithm.homes))
+
+        # Assert the calls to the approximate_commute_filter
+        mock_filter.assert_not_called()
 
 
 class TestRentAlgorithmJustPrice(TestCase):
@@ -445,6 +476,7 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
             listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
 
+    @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.approximate_commute_filter')
     def test_run_compute_commute_score_approximate_working(self):
         """
         This tests to make sure when given correctly values, everything works properly. Kinda of a sanity check unit
