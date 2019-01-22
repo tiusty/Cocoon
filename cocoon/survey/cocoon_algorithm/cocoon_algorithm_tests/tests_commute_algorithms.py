@@ -11,23 +11,7 @@ class TestApproximateCommutesFilter(TestCase):
     def setUp(self):
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
-        self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
-
-        # Add renting destination
-        self.street_address = '12 Stony Brook Rd'
-        self.city = 'Arlington'
-        self.state = 'MA'
-        self.zip_code = '02476'
-        self.commute_weight = 0
-
-        self.street_address1 = '8 Stony Brook Rd'
-        self.city1 = 'Arlington'
-        self.state1 = 'MA'
-        self.zip_code1 = '02476'
-        self.commute_weight1 = 1
-        self.min_commute1 = 10
-        self.max_commute1 = 70
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user.userProfile)
 
     def test_approximate_commute_filter_one_home_in_range(self):
         """
@@ -267,138 +251,225 @@ class TestApproximateCommutesFilter(TestCase):
 class TestComputeCommuteScore(TestCase):
 
     def setUp(self):
-        # The actually commute type doesn't matter for the tests
-        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
-
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
-        self.user_profile = UserProfile.objects.get(user=self.user)
-        self.survey = RentingSurveyModel.objects.create(user_profile=self.user_profile)
+        self.survey = RentingSurveyModel.objects.create(user_profile=self.user.userProfile)
 
-        # Add renting destination
-        self.street_address = '12 Stony Brook Rd'
-        self.city = 'Arlington'
-        self.state = 'MA'
-        self.zip_code = '02476'
-        self.commute_type = self.commute_type
-        self.commute_weight = 0
-
-    def test_compute_commute_score_working(self):
+    def test_compute_commute_between_desired_and_max(self):
+        """
+        Tests that if the commute time is between the desired and max, the score is calculated,
+            based on linear line
+        """
         # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        # Commute information
+        commute_score_algorithm = CommuteAlgorithm()
+        commute_time = 80
+
+        # Act
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
+
+        # Assert
+        self.assertEqual(1 - (20/40), commute_score)
+
+    def test_compute_commute_below_desired(self):
+        """
+        Tests that if the commute time is below desired then the home gets full points, i.e 1
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        # Commute information
         commute_score_algorithm = CommuteAlgorithm()
         commute_time = 50
 
-        self.min_commute = 30
-        self.max_commute = 80
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
-
         # Act
-        commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
-
-        # Assert
-        self.assertEqual(1 - (20/50), commute_score)
-
-    def test_compute_commute_less_than_min_commute(self):
-        # Arrange
-        commute_score_algorithm = CommuteAlgorithm()
-        self.max_commute = 80
-        self.min_commute = 30
-        commute_time = 20
-
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
-
-        # Act
-        commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
-
-        # Assert
-        self.assertEqual(1 - (0/50), commute_score)
-
-    def test_compute_commute_more_than_max_commute(self):
-        # Arrange
-        commute_score_algorithm = CommuteAlgorithm()
-        self.max_commute = 80
-        self.min_commute = 30
-        commute_time = 100
-
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
-
-        # Act
-        commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
-
-        # Assert
-        self.assertEqual(1 - (50/50), commute_score)
-
-    def test_compute_commute_equal_max_and_min_and_commute_not_equal(self):
-        # Arrange
-        commute_score_algorithm = CommuteAlgorithm()
-        self.max_commute = 80
-        self.min_commute = 80
-        commute_time = 50
-
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
-
-        # Act
-        commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
 
         # Assert
         self.assertEqual(1, commute_score)
 
-    def test_compute_commute_equal_max_and_min_and_commute_equal(self):
+    def test_compute_commute_above_max(self):
+        """
+        Tests that if the score is above the max, the home gets 0 points
+        """
         # Arrange
-        commute_score_algorithm = CommuteAlgorithm()
-        self.max_commute = 80
-        self.min_commute = 80
-        commute_time = 80
-
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
         )
 
+        # Commute information
+        commute_score_algorithm = CommuteAlgorithm()
+        commute_time = 110
+
         # Act
-        commute_score = commute_score_algorithm.compute_commute_score(commute_time, self.destination)
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
+
+        # Assert
+        self.assertEqual(0, commute_score)
+
+    def test_compute_commute_below_min(self):
+        """
+        Tests that if the commute time is below the min then the home gets 100 points
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        # Commute information
+        commute_score_algorithm = CommuteAlgorithm()
+        commute_time = -10
+
+        # Act
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
+
+        # Assert
+        self.assertEqual(1, commute_score)
+
+    def test_compute_commute_commute_equal_to_desired(self):
+        """
+        Tests that if the home is equal to the desired commute then it gets full points
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=50,
+        )
+
+        # Commute information
+        commute_score_algorithm = CommuteAlgorithm()
+        commute_time = 50
+
+        # Act
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
+
+        # Assert
+        self.assertEqual(1, commute_score)
+
+    def test_compute_commute_commute_equal_to_max(self):
+        """
+        Tests that if the commute is equal to the max then it gets zero points
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=50,
+        )
+
+        # Commute information
+        commute_score_algorithm = CommuteAlgorithm()
+        commute_time = 100
+
+        # Act
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
+
+        # Assert
+        self.assertEqual(0, commute_score)
+
+    def test_compute_commute_max_and_desired_equal_commute_equal(self):
+        """
+        Tests that if the max and desired are equal and the commute is equal to that,
+            then the home gets full points
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=100,
+        )
+
+        # Commute information
+        commute_score_algorithm = CommuteAlgorithm()
+        commute_time = 100
+
+        # Act
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
+
+        # Assert
+        self.assertEqual(1, commute_score)
+
+    def test_compute_commute_max_and_desired_commute_actual_commute_larger(self):
+        """
+        Tests that if the commute is greater but the max and desired are the same,
+            then the home gets full points
+        """
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=100,
+        )
+
+        # Commute information
+        commute_score_algorithm = CommuteAlgorithm()
+        commute_time = 110
+
+        # Act
+        commute_score = commute_score_algorithm.compute_commute_score(commute_time, tenant)
 
         # Assert
         self.assertEqual(1, commute_score)

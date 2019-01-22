@@ -42,7 +42,7 @@ class CommuteAlgorithm(object):
         Returns whether or not the approximate commute times are within the
         user acceptable range. If any of the commutes are not within the acceptable
         range, then False is returned. Thought if it is below the min_commute then it is eliminated
-        :param approx_commute_times: (dict{(Destination):(int)}): A dictionary containing the destinationModel as the
+        :param approx_commute_times: (dict{(Tenant):(int)}): A dictionary containing the destinationModel as the
             and the value as the commute time in minutes to that destination
         :return: (Boolean): True if the home is inside the range, False otherwise
         """
@@ -60,7 +60,7 @@ class CommuteAlgorithm(object):
         Note: Since the eliminating filter should have been done first, this computation
             does not mark any home for elimination
         :param commute_minutes: (int): The commute time in minutes.
-        :param commuter: (RentingDestinationModel): The renting destination model which holds all the information
+        :param commuter: (TenantModel): The renting destination model which holds all the information
             regarding the commute
         :return: (float) THe percent fit the home is or -1 if the home should be eliminated
         """
