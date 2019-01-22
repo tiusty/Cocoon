@@ -1,5 +1,5 @@
 # Import survey constants
-from cocoon.survey.constants import APPROX_COMMUTE_RANGE, COMMUTE_QUESTION_WEIGHT
+from cocoon.survey.constants import APPROX_COMMUTE_RANGE, COMMUTE_QUESTION_WEIGHT, MIN_COMMUTE_TIME
 
 
 class CommuteAlgorithm(object):
@@ -15,7 +15,6 @@ class CommuteAlgorithm(object):
         self._commute_user_scale_factor (int): The user defined scale for the commute factor
         self._commute_question_weight (int): The cocoon defined scale for the commute factor, should be loaded from
             global config file
-        self._min_possible_commute (int): The amount of minutes which everything below will be 100% match
         self._commute_type (str): The type of commute specified by the user
 
      """
@@ -24,39 +23,19 @@ class CommuteAlgorithm(object):
         """
         Sets the values to default values. Calls the super function so all parent init functions are called.
         """
-        self._approx_commute_range_minutes = APPROX_COMMUTE_RANGE
-        self.destinations = []
-        self.commute_question_weight = COMMUTE_QUESTION_WEIGHT
-        # TODO: Set the min_possible_commute from global config file. Also add implementation for min_possible_commute
-        self._min_possible_commute = 11
         # Need super to allow calling each classes constructor
         super(CommuteAlgorithm, self).__init__()
-
-    @property
-    def approx_commute_range(self):
-        """
-        Approx commute range is the +/- of the acceptable commute range
-        Therefore it the user desires 40-80 min commute, if the approx_commute range is 20,
-        then the range becomes 20-100 minutes. This is due to the approximations of zip codes.
-        Approx_commute_range is stored as minutes
-        :return: (int): the approx_commute_range in minutes
-        """
-        return self._approx_commute_range_minutes
-
-    @approx_commute_range.setter
-    def approx_commute_range(self, new_approx_commute_range_minutes):
-        """
-        Set the approx_commute range in minutes
-        :param new_approx_commute_range_minutes: (int): The new approx commute range in minutes
-        """
-        if new_approx_commute_range_minutes < 0:
-            self._approx_commute_range_minutes = 0
-        else:
-            self._approx_commute_range_minutes = new_approx_commute_range_minutes
+        self.tenants = []
+        self.approx_commute_range = APPROX_COMMUTE_RANGE  # Minutes
+        self.commute_question_weight = COMMUTE_QUESTION_WEIGHT
 
     def populate_commute_algorithm(self, user_survey):
-        # Retrieves all the destinations that the user recorded
-        self.destinations = user_survey.tenants.all()
+        """
+        Adds all the tenants from the survey to the class
+        :param user_survey: (RentSurveyModel) -> The survey the user took
+        """
+        # Retrieves all the tenants that the user recorded
+        self.tenants = user_survey.tenants.all()
 
     def compute_approximate_commute_filter(self, approx_commute_times):
         """

@@ -24,18 +24,6 @@ class TestApproximateCommutesFilter(TestCase):
         self.zip_code = '02476'
         self.commute_type = self.commute_type
         self.commute_weight = 0
-        self.min_commute = 40
-        self.max_commute = 80
-        self.destination = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=self.max_commute,
-            min_commute=self.min_commute,
-        )
 
         self.street_address1 = '8 Stony Brook Rd'
         self.city1 = 'Arlington'
@@ -74,12 +62,24 @@ class TestApproximateCommutesFilter(TestCase):
 
     def test_compute_approximate_commute_filter_one_home(self):
         # Arrange
+        desired_commute = 40
+        max_commute = 80
+        tenant = self.survey.tenants.create(
+            street_address=self.street_address,
+            city=self.city,
+            state=self.state,
+            zip_code=self.zip_code,
+            commute_type=self.commute_type,
+            commute_weight=self.commute_weight,
+            max_commute=max_commute,
+            desired_commute=desired_commute,
+        )
         approx_algorithm = CommuteAlgorithm()
         approx_algorithm.approx_commute_range = 20
         approx_algorithm.min_user_commute = 40
         approx_algorithm.max_user_commute = 80
         approx_algorithm.approx_commute_times = 40
-        approx_commutes_times = {self.destination: 40}
+        approx_commutes_times = {tenant: 40}
 
         # Act
         homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)

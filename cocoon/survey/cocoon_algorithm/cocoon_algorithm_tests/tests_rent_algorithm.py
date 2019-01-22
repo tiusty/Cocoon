@@ -1249,7 +1249,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Start the algorithm
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [home]
-        rent_algorithm.destinations = [destination]
+        rent_algorithm.tenants = [destination]
         homes = [home]
 
         # Mock the functions to just test this one function
@@ -1281,7 +1281,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Start the algorithm
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [home]
-        rent_algorithm.destinations = [destination]
+        rent_algorithm.tenants = [destination]
         homes = [home]
 
         # Mock the functions to just test this one function
@@ -1321,7 +1321,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Start the algorithm
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [home, home1, home2]
-        rent_algorithm.destinations = [destination, destination1, destination2]
+        rent_algorithm.tenants = [destination, destination1, destination2]
         homes = [home, home1, home2]
 
         # Mock the functions to just test this one function
@@ -1704,7 +1704,7 @@ class TestRetrieveExactCommutes(TestCase):
 
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [house]
-        rent_algorithm.destinations = [destination]
+        rent_algorithm.tenants = [destination]
 
         # Act
         rent_algorithm.retrieve_exact_commutes()
@@ -1721,7 +1721,7 @@ class TestRetrieveExactCommutes(TestCase):
                                               city="Arlington", state="MA", zip_code="02474")
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = []
-        rent_algorithm.destinations = [destination]
+        rent_algorithm.tenants = [destination]
 
         # Act
         rent_algorithm.retrieve_exact_commutes()
@@ -1737,7 +1737,7 @@ class TestRetrieveExactCommutes(TestCase):
                                  street_address="2 Snow Hill Lane")
         rent_algorithm = RentAlgorithm()
         rent_algorithm.homes = [house]
-        rent_algorithm.destinations = []
+        rent_algorithm.tenants = []
 
         # Act
         rent_algorithm.retrieve_exact_commutes()
@@ -1754,7 +1754,7 @@ class TestRetrieveExactCommutes(TestCase):
                                                "Belmont",
                                                "MA",
                                                "02478")
-        rent_algorithm.destinations = [destination1]
+        rent_algorithm.tenants = [destination1]
 
         # Act
         rent_algorithm.retrieve_exact_commutes()
