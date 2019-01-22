@@ -72,6 +72,7 @@ class HouseLocationInformationModel(UpdateBase, models.Model):
     zip_code = models.CharField(max_length=200)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    laundromat_nearby = models.BooleanField(default=False)
 
     @property
     def full_address(self):
@@ -91,6 +92,7 @@ class HouseLocationInformationModel(UpdateBase, models.Model):
         self.zip_code = update_model.zip_code
         self.latitude = update_model.latitude
         self.longitude = update_model.longitude
+        self.laundromat_nearby = update_model.laundromat_nearby
 
     class Meta:
         abstract = True
@@ -102,6 +104,13 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
     """
     num_bathrooms = models.IntegerField(default=0)
     num_bedrooms = models.IntegerField(default=0)
+    furnished = models.BooleanField(default=False)
+    hardwood_floors = models.BooleanField(default=False)
+    air_conditioning = models.BooleanField(default=False)
+    dogs_allowed = models.BooleanField(default=False)
+    cats_allowed = models.BooleanField(default=False)
+    laundry_inside = models.BooleanField(default=False)
+    dishwasher = models.BooleanField(default=False)
 
     def update(self, update_model):
         """
@@ -111,6 +120,13 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
         super(HouseInteriorAmenitiesModel, self).update(update_model)
         self.num_bathrooms = update_model.num_bathrooms
         self.num_bedrooms = update_model.num_bedrooms
+        self.furnished = update_model.furnished
+        self.hardwood_floors = update_model.hardwood_floors
+        self.air_conditioning = update_model.air_conditioning
+        self.dogs_allowed = update_model.dogs_allowed
+        self.cats_allowed = update_model.cats_allowed
+        self.laundry_inside = update_model.laundry_inside
+        self.dishwasher = update_model.dishwasher
 
     class Meta:
         abstract = True
@@ -121,6 +137,11 @@ class HouseExteriorAmenitiesModel(UpdateBase, models.Model):
     Contains all the information for homes about the Exterior Amenities
     """
     parking_spot = models.BooleanField(default=False)
+    pool = models.BooleanField(default=False)
+    patio_balcony = models.BooleanField(default=False)
+    gym = models.BooleanField(default=False)
+    storage = models.BooleanField(default=False)
+    laundry_in_unit = models.BooleanField(default=False)
 
     def update(self, update_model):
         """
@@ -129,6 +150,11 @@ class HouseExteriorAmenitiesModel(UpdateBase, models.Model):
         """
         super(HouseExteriorAmenitiesModel, self).update(update_model)
         self.parking_spot = update_model.parking_spot
+        self.pool = update_model.pool
+        self.patio_balcony = update_model.patio_balcony
+        self.gym = update_model.gym
+        self.storage = update_model.storage
+        self.laundry_in_unit = update_model.laundry_in_unit
 
     class Meta:
         abstract = True
