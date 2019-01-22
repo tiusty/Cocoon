@@ -368,7 +368,7 @@ class CommuteInformationForm(DestinationForm):
 
                 if current_form['desired_commute'] is not None:
                     if int(current_form['desired_commute']) < 0:
-                        self.add_error('min_commute', "Min commute needs to be above 0")
+                        self.add_error('desired_commute', "Min commute needs to be above 0")
                         valid = False
 
                 if current_form['desired_commute'] is not None and current_form['max_commute'] is not None:

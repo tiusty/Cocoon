@@ -402,7 +402,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': self.max_commute,
-                'min_commute': -1,
+                'desired_commute': -1,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",
@@ -458,7 +458,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': 1,
-                'min_commute': 2,
+                'desired_commute': 2,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",

@@ -905,7 +905,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
     @staticmethod
     def create_destination(survey, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_type=None,
-                           commute_weight=0, max_commute=60, min_commute=0):
+                           commute_weight=0, max_commute=60, desired_commute=0):
         if commute_type is None:
             commute_type = CommuteType.objects.get(commute_type=CommuteType.DRIVING)
         return survey.tenants.create(
@@ -916,7 +916,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
             commute_type=commute_type,
             commute_weight=commute_weight,
             max_commute=max_commute,
-            min_commute=min_commute,
+            desired_commute=desired_commute,
         )
 
     def tests_populate_survey_homes_2_bedrooms(self):
@@ -1023,7 +1023,7 @@ class TestRetrieveApproximateCommutes(TestCase):
 
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
-                           zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
+                           zip_code="02476", commute_weight=0, max_commute=60, desired_commute=0):
         return survey.tenants.create(
             street_address=street_address,
             city=city,
@@ -1032,7 +1032,7 @@ class TestRetrieveApproximateCommutes(TestCase):
             commute_type=commute_type,
             commute_weight=commute_weight,
             max_commute=max_commute,
-            min_commute=min_commute,
+            desired_commute=desired_commute,
         )
 
     @staticmethod
