@@ -18,7 +18,6 @@ from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY
 from .constants import MIN_PRICE_DELTA
 
 
-
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
