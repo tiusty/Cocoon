@@ -41,14 +41,14 @@ class CommuteAlgorithm(object):
         """
         Returns whether or not the approximate commute times are within the
         user acceptable range. If any of the commutes are not within the acceptable
-        range, then False is returned
+        range, then False is returned. Thought if it is below the min_commute then it is eliminated
         :param approx_commute_times: (dict{(Destination):(int)}): A dictionary containing the destinationModel as the
             and the value as the commute time in minutes to that destination
         :return: (Boolean): True if the home is inside the range, False otherwise
         """
         for commute in approx_commute_times:
             if (approx_commute_times[commute] > commute.max_commute + self.approx_commute_range) \
-                            or (approx_commute_times[commute] < commute.min_commute - self.approx_commute_range):
+                            or approx_commute_times[commute] < commute.min_commute:
                 return False
         return True
 

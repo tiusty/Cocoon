@@ -115,148 +115,153 @@ class TestApproximateCommutesFilter(TestCase):
         # Assert
         self.assertTrue(result)
 
-
-
-    def test_compute_approximate_commute_filter_one_home_no_approx_range(self):
+    def test_approximate_commute_filter_one_home_negative_commute(self):
+        """
+        Tests that if a home has a negative commute then the function returns false
+        """
         # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 50}
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        commute_algorithm = CommuteAlgorithm()
+        commute_algorithm.approx_commute_range = 20
+
+        approx_commute_times = {tenant: -1}
 
         # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
+        result = commute_algorithm.approximate_commute_filter(approx_commute_times)
 
         # Assert
-        self.assertTrue(homes_in_range)
+        self.assertFalse(result)
 
-    def test_compute_approximate_commute_filter_one_home_no_approx_range_to_far_zero_approx_commute_range(self):
+    def test_approximate_commute_filter_one_home_two_tenants_home_inside_both(self):
+        """
+        Tests that if a home is inside both of the tenants range than the function returns true
+        """
         # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_algorithm.approx_commute_range = 0
-        approx_commutes_times = {self.destination: 81}
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        tenant1 = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=120,
+            desired_commute=50,
+        )
+
+        commute_algorithm = CommuteAlgorithm()
+        commute_algorithm.approx_commute_range = 20
+
+        approx_commute_times = {tenant: 60,
+                                tenant1: 40}
 
         # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
+        result = commute_algorithm.approximate_commute_filter(approx_commute_times)
 
         # Assert
-        self.assertFalse(homes_in_range)
+        self.assertTrue(result)
 
-    def test_compute_approximate_commute_filter_one_home_no_approx_range_to_close_zero_approx_commute_range(self):
+    def test_approximate_commute_filter_one_home_two_tenants_home_inside_one_outside_other(self):
+        """
+        Tests if the home is inside one tenant but not the other than the function returns false
+        """
         # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_algorithm.approx_commute_range = 0
-        approx_commutes_times = {self.destination: 39}
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        tenant1 = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=120,
+            desired_commute=50,
+        )
+
+        commute_algorithm = CommuteAlgorithm()
+        commute_algorithm.approx_commute_range = 20
+
+        approx_commute_times = {tenant: 60,
+                                tenant1: 145}
 
         # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
+        result = commute_algorithm.approximate_commute_filter(approx_commute_times)
 
         # Assert
-        self.assertFalse(homes_in_range)
+        self.assertFalse(result)
 
-    def test_compute_approximate_commute_filter_one_home_at_max_distance(self):
+    def test_approximate_commute_filter_one_home_two_tenants_home_outside_both(self):
+        """
+        Tests if the range is outside both tenants, then the function returns false
+        """
         # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 80}
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        tenant1 = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=120,
+            desired_commute=50,
+        )
+
+        commute_algorithm = CommuteAlgorithm()
+        commute_algorithm.approx_commute_range = 20
+
+        approx_commute_times = {tenant: 130,
+                                tenant1: 145}
 
         # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
+        result = commute_algorithm.approximate_commute_filter(approx_commute_times)
 
         # Assert
-        self.assertTrue(homes_in_range)
-
-    def test_compute_approximate_commute_filter_one_home_at_min_distance(self):
-        # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 40}
-
-        # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
-
-        # Assert
-        self.assertTrue(homes_in_range)
-
-    def test_compute_approximate_commute_filter_multiple_home_in_range(self):
-        # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 45,
-                                 self.destination1: 70}
-
-        # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
-
-        # Assert
-        self.assertTrue(homes_in_range)
-
-    def test_compute_approximate_commute_filter_multiple_home_one_out_of_range_zero_approx_commute_range(self):
-        # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_algorithm.approx_commute_range = 0
-        approx_commutes_times = {self.destination: 45,
-                                 self.destination1: 90}
-
-        # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
-
-        # Assert
-        self.assertFalse(homes_in_range)
-
-    def test_compute_approximate_commute_filter_multiple_home_both_out_of_range_zero_approx_commute_range(self):
-        # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_algorithm.approx_commute_range = 0
-        approx_commutes_times = {self.destination: 30,
-                                 self.destination1: 90}
-
-        # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
-
-        # Assert
-        self.assertFalse(homes_in_range)
-
-    def test_compute_approximate_commute_filter_multiple_home_in_range_with_approximate_range_zero_approx_commute_range(self):
-        # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.approx_commute_range = 20
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 30,
-                                 self.destination1: 90}
-
-        # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
-
-        # Assert
-        self.assertTrue(homes_in_range)
-
-    def test_compute_approximate_commute_filter_multiple_home_out_range_with_approximate_range(self):
-        # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.approx_commute_range = 20
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 10,
-                                 self.destination1: 101}
-
-        # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
-
-        # Assert
-        self.assertFalse(homes_in_range)
+        self.assertFalse(result)
 
 
 class TestComputeCommuteScore(TestCase):
