@@ -13,34 +13,10 @@ class WeightScoringAlgorithm(object):
     """
 
     def __init__(self):
-        self._hybrid_weight_global_min = HYBRID_WEIGHT_MIN
-        self._hybrid_weight_global_max = HYBRID_WEIGHT_MAX
-        self._hybrid_question_weight = HYBRID_QUESTION_WEIGHT
+        self.hybrid_weight_global_min = HYBRID_WEIGHT_MIN
+        self.hybrid_weight_global_max = HYBRID_WEIGHT_MAX
+        self.hybrid_question_weight = HYBRID_QUESTION_WEIGHT
         super(WeightScoringAlgorithm, self).__init__()
-
-    @property
-    def hybrid_weight_global_min(self):
-        """
-        Gets the hybrid question global min
-        :return: (int): The hybrid question global min as an int
-        """
-        return self._hybrid_weight_global_min
-
-    @property
-    def hybrid_weight_global_max(self):
-        """
-        Gets the hybrid question global max
-        :return: (int): The hybrid question global max as an int
-        """
-        return self._hybrid_weight_global_max
-
-    @property
-    def hybrid_question_weight(self):
-        """
-        Gets the hybrid question weight
-        :return: (int): The hybrid question weight as an int
-        """
-        return self._hybrid_question_weight
 
     def compute_weighted_question_filter(self, user_scale_factor, does_home_contain_item):
         """
@@ -50,8 +26,6 @@ class WeightScoringAlgorithm(object):
         :return: (Boolean): True: The home is not eliminated, False: The home is eliminated
         """
         if user_scale_factor == self.hybrid_weight_global_max and does_home_contain_item is False:
-            return False
-        elif user_scale_factor == self.hybrid_weight_global_min and does_home_contain_item is True:
             return False
         else:
             return True
@@ -64,4 +38,17 @@ class WeightScoringAlgorithm(object):
         :return: (int): An int ranging from negative (user_scale_factor * hybrid question weight) to positive
             (user_scale_factor * hybrid_question_weight)
         """
-        return (1 if does_home_contain_item else -1) * user_scale_factor * self.hybrid_question_weight
+        return (1 if does_home_contain_item else 0) * user_scale_factor * self.hybrid_question_weight
+
+    def handle_weighted_question_score(self, user_scale_factor, home, does_home_contain_item):
+        """
+        Handles the weighted question score based on a scale factor and the home
+        :param user_scale_factor:
+        :param home: (HomeScore) -> The home that is being judged
+        :param does_home_contain_item: (Boolean): Boolean of whether or not the home as the item
+        :return:
+        """
+        if not (self.compute_weighted_question_filter(user_scale_factor, does_home_contain_item)):
+            home.eliminate_home()
+        home.accumulated_points = self.compute_weighted_question_score(user_scale_factor, does_home_contain_item)
+        home.total_possible_points = abs(user_scale_factor) * self.hybrid_question_weight

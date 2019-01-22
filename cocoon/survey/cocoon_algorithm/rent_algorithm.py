@@ -237,18 +237,45 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             home_data.accumulated_points = score_result * self.price_user_scale_factor * self.price_question_weight
             home_data.total_possible_points = self.price_user_scale_factor * self.price_question_weight
 
-    def run_compute_weighted_score_exterior_amenities(self, parking_spot_scale):
+    def run_compute_weighted_questions(self, survey):
         """
-        Runs the interior amenities scoring.
-        # TODO Think of better way to run this function since it is kinda messy
-        :param parking_spot_scale: Int -> User scale for parking spot
+        Runs all the weighted questions associated with the survey
+
+        All the homes are updated with the new score
+        :param survey: (RentingSurvey Model) -> The survey the user took
         """
-        for home_data in self.homes:
-            if not (self.compute_weighted_question_filter(parking_spot_scale, home_data.home.parking_spot)):
-                home_data.eliminate_home()
-            home_data.accumulated_points = self.compute_weighted_question_score(parking_spot_scale,
-                                                                                home_data.home.parking_spot)
-            home_data.total_possible_points = abs(parking_spot_scale) * self.hybrid_question_weight
+        self.run_compute_weighted_score_exterior_amenities(survey)
+        self.run_compute_weighted_score_interior_amenities(survey)
+
+    def run_compute_weighted_score_exterior_amenities(self, survey):
+        """
+        Runs the exterior amenities scoring.
+        :param survey: (RentingSurvey Model) -> The survey the user took
+        """
+        for home_score in self.homes:
+            if survey.wants_patio:
+                self.handle_weighted_question_score(survey.wants_patio, home_score, home_score.home.patio_balcony)
+            if survey.wants_pool:
+                self.handle_weighted_question_score(survey.pool_weight, home_score, home_score.home.pool)
+            if survey.wants_gym:
+                self.handle_weighted_question_score(survey.gym_weight, home_score, home_score.home.gym)
+            if survey.wants_storage:
+                self.handle_weighted_question_score(survey.storage_weight, home_score, home_score.home.storage)
+
+    def run_compute_weighted_score_interior_amenities(self, survey):
+        """
+        Runs the interior amenities scoring
+        :param survey: (RentingSurvey Model) -> The survey the user took
+        """
+        for home_score in self.homes:
+            if survey.wants_furnished:
+                self.handle_weighted_question_score(survey.furnished_weight, home_score, home_score.home.furnished)
+            if survey.wants_hardwood_floors:
+                self.handle_weighted_question_score(survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
+            if survey.wants_AC:
+                self.handle_weighted_question_score(survey.AC_weight, home_score, home_score.home.air_conditioning)
+            if survey.wants_dishwasher:
+                self.handle_weighted_question_score(survey.dishwasher_weight, home_score, home_score.home.dishwasher)
 
     def run_sort_home_by_score(self):
         """
@@ -279,7 +306,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         self.run_compute_commute_score_approximate()
         self.run_compute_price_score()
-        self.run_compute_weighted_score_exterior_amenities(survey.parking_spot)
+        self.run_compute_weighted_questions(survey)
         """
         STEP 5: Now sort all the homes from best homes to worst home
         """

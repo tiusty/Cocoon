@@ -5,8 +5,8 @@ from django.utils.text import slugify
 
 # Survey models
 from cocoon.survey.models import RentingSurveyModel, HomeInformationModel, CommuteInformationModel, \
-    PriceInformationModel, ExteriorAmenitiesModel, DestinationsModel, TenantModel, \
-    TenantPersonalInformationModel
+    PriceInformationModel, InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNearbyAmenitiesModel, \
+    DestinationsModel, TenantModel, TenantPersonalInformationModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 
@@ -119,28 +119,262 @@ class PriceInformationForm(ModelForm):
         fields = '__all__'
 
 
-class ExteriorAmenitiesForm(ModelForm):
+class HouseNearbyAmenitiesForm(ModelForm):
     """
-    Class stores all the form fields for the BuildingExteriorAmenitiesModel Model
+    Class stores all the form fields for the HouseNearbyAmenitiesModel Model
     """
-    parking_spot = forms.ChoiceField(
-        choices=HYBRID_WEIGHT_CHOICES,
-        initial=0,
-        label="Parking Spot",
-        widget=forms.Select(
+
+    wants_laundry_nearby = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
             attrs={
                 'class': 'form-control',
-            }
-        )
+            }),
+    )
+
+    class Meta:
+        model = HouseNearbyAmenitiesModel
+        fields = ["wants_laundry_nearby"]
+
+
+class ExteriorAmenitiesForm(ModelForm):
+    """
+    Class stores all the form fields for the ExteriorAmenitiesModel Model
+    """
+    wants_parking = forms.BooleanField(
+        required=False,
+    )
+
+    wants_laundry_in_building = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    number_of_cars = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_patio = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    patio_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_pool = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    pool_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_gym = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    gym_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_storage = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    storage_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
     )
 
     class Meta:
         model = ExteriorAmenitiesModel
-        fields = ["parking_spot", ]
+        fields = ["wants_parking", 'wants_laundry_in_building', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight'
+                  ]
 
 
-class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
-                     HomeInformationForm):
+class InteriorAmenitiesForm(ModelForm):
+    """
+    Class stores all the form fields for the BuildingExteriorAmenitiesModel Model
+    """
+    wants_laundry_in_unit = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_furnished = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    furnished_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_dogs = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    service_dogs = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    dog_size = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    breed_of_dogs = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    number_of_dogs = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_cats = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    cat_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_hardwood_floors = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    hardwood_floors_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_AC = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    AC_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    wants_dishwasher = forms.BooleanField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    dishwasher_weight = forms.IntegerField(
+        required=False,
+        widget=forms.HiddenInput(
+            attrs={
+                'class': 'form-control',
+            }),
+    )
+
+    class Meta:
+        model = InteriorAmenitiesModel
+        fields = ["wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs",
+                  "service_dogs", "breed_of_dogs", "dog_size", "number_of_dogs",
+                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"
+                  ]
+
+
+class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm, HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -171,10 +405,18 @@ class RentSurveyForm(ExteriorAmenitiesForm, PriceInformationForm,
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "number_of_tenants", 'polygon_filter_type']
+                  "wants_laundry_nearby",
+                  "wants_parking", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
+                  "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "service_dogs", "breed_of_dogs", "dog_size",
+                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
+                  "number_of_tenants", 'polygon_filter_type']
 
 
-class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
+class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
                          HomeInformationForm):
     """
     RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
@@ -220,7 +462,15 @@ class RentSurveyFormMini(ExteriorAmenitiesForm, PriceInformationForm,
         model = RentingSurveyModel
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                  "parking_spot", "name",]
+                   "name", "num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                  "max_price", "desired_price", "price_weight",
+                  "wants_laundry_nearby",
+                  "wants_parking", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
+                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
+                  "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
 
 
 class DestinationForm(ModelForm):

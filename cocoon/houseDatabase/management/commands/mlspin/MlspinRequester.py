@@ -10,7 +10,7 @@ from config.settings.Global_Config import gmaps_api_key
 from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
-
+from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
 # Load the logger
 import logging
 logger = logging.getLogger(__name__)
@@ -128,12 +128,17 @@ class MlspinRequester(object):
 
             # If any of the fields give a value error, then don't save the apartment
             try:
+                #Initialize word scraper
+                word_scraper = WordScraper(cells[REMARKS])
+
                 # Set the HomeBaseModel Fields
                 new_listing.street_address = normalize_street_address("{0} {1}".format(cells[STREET_NO], clean_address))
                 new_listing.city = self.towns[str(cells[TOWN_NUM])]["town"]
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
+                if word_scraper.word_finder(["laundromat","nearby"]):
+                    new_listing.laundromat_nearby = True
 
                 # Set InteriorAmenitiesModel Fields
                 # Currently don't support non-integers for num_bathrooms. Therefore
@@ -142,6 +147,20 @@ class MlspinRequester(object):
                 new_listing.bath = True if num_baths > 0 else False
                 new_listing.num_bathrooms = num_baths
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
+                new_listing.furnished = word_scraper.word_finder(["furnished"])
+                new_listing.hardwood_floors = word_scraper.word_finder(["hardwood"])
+                new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
+                if (word_scraper.word_finder(["air","conditioning"])) or word_scraper.word_finder(["ac"]):
+                    new_listing.air_conditioning = True
+
+                if word_scraper.word_finder(["dogs","allowed"]) and not word_scraper.word_finder(["no", "dogs","allowed"]):
+                    new_listing.dogs_allowed = True
+
+                if word_scraper.word_finder(["cats","allowed"]) and not word_scraper.word_finder(["no", "cats","allowed"]):
+                    new_listing.cats_allowed = True
+
+                if word_scraper.word_finder(["laundry","in","building"]):
+                    new_listing.laundry_inside = True
 
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
@@ -157,6 +176,15 @@ class MlspinRequester(object):
                 # Set Exterior Amenities fields
                 if int(cells[PARKING_SPACES]) > 0:
                     new_listing.parking_spot = True
+                if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot","tub"]):
+                    new_listing.pool = True
+                if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
+                    new_listing.patio_balcony = True
+                if word_scraper.word_finder(["laundry", "in", "unit"]):
+                    new_listing.laundry_in_unit = True
+                new_listing.gym = word_scraper.word_finder(["gym"])
+                new_listing.storage = word_scraper.word_finder(["storage"])
+
 
                 # Create the new home
                 # Define the home type
