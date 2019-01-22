@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 // Import Cocoon Components
 import '../styles/variables.css';
 import './homeTile.css';
+import PlaceHolder from './homelist-empty.jpg';
 
 class HomeTile extends Component {
     /**
@@ -154,17 +155,26 @@ class HomeTile extends Component {
                 percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
             }
 
-            // Only renders first photo
-            return (
-                <>
-                    { home.images.slice(0,1).map(image =>
-                        <div key={image.id} className={div_classes}>
-                            {percent_match}
-                            <img className={image_classes} src={image.image} alt='Home image'/>
-                        </div>
-                    )}
-                </>
-            );
+            // renders placeholder image if home has no images
+            if (home.images.length === 0) {
+                return (
+                    <div className={div_classes}>
+                        <img src={PlaceHolder} alt="place holder image" className={image_classes} />
+                    </div>
+                );
+            } else {
+                // Only renders first photo
+                return (
+                    <>
+                        { home.images.slice(0,1).map(image =>
+                            <div key={image.id} className={div_classes}>
+                                {percent_match}
+                                <img className={image_classes} src={image.image} alt='Home image'/>
+                            </div>
+                        )}
+                    </>
+                );
+            }
 
         }
     }
@@ -196,11 +206,11 @@ export default HomeTile;
 HomeTile.propTypes = {
     id: PropTypes.number,
     home: PropTypes.any.isRequired,
-    // visit: PropTypes.bool.isRequired,
-    // favorite: PropTypes.bool.isRequired,
-    // onVisitClick: PropTypes.func.isRequired,
+    visit: PropTypes.bool.isRequired,
+    favorite: PropTypes.bool.isRequired,
+    onVisitClick: PropTypes.func.isRequired,
     onFavoriteClick: PropTypes.func,
-    // onHomeClick: PropTypes.func.isRequired,
+    onHomeClick: PropTypes.func.isRequired,
     canVisit: PropTypes.bool,
     canFavorite: PropTypes.bool,
     isLarge: PropTypes.bool,

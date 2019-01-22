@@ -5,6 +5,7 @@ import {Component} from 'react';
 // Carousel
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
+import PlaceHolder from "./homelist-empty.jpg";
 
 export default class HomeTileLarge extends Component {
     /**
@@ -163,6 +164,33 @@ export default class HomeTileLarge extends Component {
         return percent_match;
     }
 
+    renderImages = (home) => {
+        // renders placeholder image if home has no images
+        if (home.images.length === 0) {
+            return (
+                <div className={div_classes}>
+                    <img src={PlaceHolder} alt="place holder image" className={image_classes} />
+                </div>
+            );
+        } else {
+            // renders carousel
+            return (
+                <Carousel
+                    dynamicHeight={true}
+                    infiniteLoop={true}
+                    showThumbs={false}
+                    showStatus={false}
+                >
+                    {home.images.map(image =>
+                            <div key={image.id}>
+                                <img src={image.image} alt="house image"/>
+                            </div>
+                    )}
+                </Carousel>
+            );
+        }
+    }
+
     render() {
         let home = this.props.home;
         let bedInfo = home.num_bedrooms > 1 ? 'beds' : 'bed';
@@ -179,18 +207,7 @@ export default class HomeTileLarge extends Component {
                     <div className="expanded-info">
                         <div className="home-tile-large-carousel-div">
                             {this.renderPercentMatch(home)}
-                            <Carousel
-                                dynamicHeight={true}
-                                infiniteLoop={true}
-                                showThumbs={false}
-                                showStatus={false}
-                            >
-                                {home.images.map(image =>
-                                    <div key={image.id}>
-                                        <img src={image.image} alt="house image"/>
-                                    </div>
-                                )}
-                            </Carousel>
+                            {this.renderImages(home)}
                         </div>
 
                         <div className="expanded-info-text">
