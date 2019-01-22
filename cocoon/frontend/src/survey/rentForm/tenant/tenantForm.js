@@ -9,10 +9,6 @@ export default class TenantForm extends Component {
 
     constructor(props){
         super(props);
-        console.log(props.tenant)
-        console.log(props.tenant.max_commute)
-        console.log(props.tenant['max_commute'])
-        console.log(props.tenant.first_name)
         this.state = {
             is_active: false,
         };
@@ -402,6 +398,31 @@ export default class TenantForm extends Component {
         }
     };
 
+    formatCommuteLengthSlider(num, string) {
+        /**
+         * Formats the commute slider dots label.
+         * @type {number}
+         */
+        let minutes = num % 60;
+        let hour = Math.floor(num/60);
+        if (hour >= 2) {
+            if (minutes > 0) {
+                return `${hour} hrs-${minutes} min`;
+            } else {
+                return `${hour} hrs`
+            }
+        }
+        else if (hour === 1) {
+            if (minutes > 0) {
+                return `${hour} hr-${minutes} min`
+            } else {
+                return `${hour} hr`
+            }
+        } else {
+            return `${minutes} min`
+        }
+    }
+
     renderCommuteLengthQuestion = (name) => {
         if (this.props.tenant.commute_type !== this.getCommuteId('Work From Home'))
             return (
@@ -422,7 +443,7 @@ export default class TenantForm extends Component {
                         step={5}
                         value={{min: this.props.tenant.desired_commute,max: this.props.tenant.max_commute}}
                         onChange={value => {this.setState({value});this.props.onTenantCommute(this.state.value.min, this.state.value.max, this.props.index);}}
-                        formatLabel={value => `$${value}`} />
+                        formatLabel={this.formatCommuteLengthSlider} />
                 </div>
             );
     };
