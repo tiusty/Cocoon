@@ -436,11 +436,10 @@ class TestRentAlgorithmJustPrice(TestCase):
         self.assertFalse(rent_algorithm.homes[2].eliminated)
 
 
-class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
+class TestRentAlgorithmRunComputeCommuteScoreApproximate(TestCase):
 
     def setUp(self):
         # Create a commute type
-        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
@@ -475,6 +474,49 @@ class TestRentAlgorithmJustApproximateCommuteScore(TestCase):
             state=state,
             listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"),
         ))
+
+    @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.compute_commute_score')
+    def test_run_compute_commute_score_approximate(self, mock_score):
+        # Arrange
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+
+        rent_algorithm = RentAlgorithm()
+        home = self.create_home(self.home_type)
+        home1 = self.create_home(self.home_type)
+        home2 = self.create_home(self.home_type)
+
+        # Add homes to algorithm
+        rent_algorithm.homes = [home, home1, home2]
+
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=2,
+            max_commute=100,
+            desired_commute=100,
+        )
+
+        mock_score.side_effect = [1, 1, .5]
+
+        # Set the commute times to the homes for the tenant
+        home.approx_commute_times = {tenant: 50}
+        home1.approx_commute_times = {tenant: 10}
+        home2.approx_commute_times = {tenant: 60}
+
+        # Overriding in case the config file changes
+        rent_algorithm.price_question_weight = 100
+
+        # Act
+        rent_algorithm.run_compute_commute_score_approximate()
+
+        # Assert
+        # FINISH UNITTESTS!
+        self.assertEqual(1 * tenant.commute_weight * rent_algorithm.price_question_weight, home.accumulated_points)
+        self.assertEqual(tenant.commute_weight * rent_algorithm.price_question_weight, home.total_possible_points)
+
 
     @patch('cocoon.survey.cocoon_algorithm.rent_algorithm.CommuteAlgorithm.approximate_commute_filter')
     def test_run_compute_commute_score_approximate_working(self):
