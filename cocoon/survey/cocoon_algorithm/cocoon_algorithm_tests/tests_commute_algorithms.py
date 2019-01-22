@@ -9,9 +9,6 @@ from cocoon.survey.models import RentingSurveyModel
 class TestApproximateCommutesFilter(TestCase):
 
     def setUp(self):
-        # The actually commute type doesn't matter for the tests
-        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
-
         # Create a user and survey so we can create renting destination models
         self.user = MyUser.objects.create(email="test@email.com")
         self.user_profile = UserProfile.objects.get(user=self.user)
@@ -22,98 +19,103 @@ class TestApproximateCommutesFilter(TestCase):
         self.city = 'Arlington'
         self.state = 'MA'
         self.zip_code = '02476'
-        self.commute_type = self.commute_type
         self.commute_weight = 0
 
         self.street_address1 = '8 Stony Brook Rd'
         self.city1 = 'Arlington'
         self.state1 = 'MA'
         self.zip_code1 = '02476'
-        self.commute_type1 = self.commute_type
         self.commute_weight1 = 1
         self.min_commute1 = 10
         self.max_commute1 = 70
-        self.destination1 = self.survey.tenants.create(
-            street_address=self.street_address1,
-            city=self.city1,
-            state=self.state1,
-            zip_code=self.zip_code1,
-            commute_type=self.commute_type1,
-            commute_weight=self.commute_weight1,
-            max_commute=self.max_commute1,
-            min_commute=self.min_commute1,
-        )
 
-    def test_adding_positive_approx_commute_range(self):
+    def test_approximate_commute_filter_one_home_in_range(self):
+        """
+        Tests that if one home is in range then the function returns true
+        """
         # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.approx_commute_range = 30
-
-        # Assert
-        self.assertEqual(30, approx_algorithm.approx_commute_range)
-
-    def test_adding_negative_approx_commute_range(self):
-        # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.approx_commute_range = -30
-
-        # Assert
-        self.assertEqual(0, approx_algorithm.approx_commute_range)
-
-    def test_compute_approximate_commute_filter_one_home(self):
-        # Arrange
-        desired_commute = 40
-        max_commute = 80
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         tenant = self.survey.tenants.create(
-            street_address=self.street_address,
-            city=self.city,
-            state=self.state,
-            zip_code=self.zip_code,
-            commute_type=self.commute_type,
-            commute_weight=self.commute_weight,
-            max_commute=max_commute,
-            desired_commute=desired_commute,
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
         )
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.approx_commute_range = 20
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_algorithm.approx_commute_times = 40
-        approx_commutes_times = {tenant: 40}
+
+        commute_algorithm = CommuteAlgorithm()
+        commute_algorithm.approx_commute_range = 20
+
+        approx_commute_times = {tenant: 40}
 
         # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
+        result = commute_algorithm.approximate_commute_filter(approx_commute_times)
 
         # Assert
-        self.assertTrue(homes_in_range)
+        self.assertTrue(result)
 
-    def test_compute_approximate_commute_filter_one_home_to_far(self):
+    def test_approximate_commute_filter_one_home_too_far(self):
+        """
+        Tests that if one home is farther than the approximate_commute_range then the
+            function returns false
+        """
         # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.approx_commute_range = 20
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 110}
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        commute_algorithm = CommuteAlgorithm()
+        commute_algorithm.approx_commute_range = 20
+
+        approx_commute_times = {tenant: 130}
 
         # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
+        result = commute_algorithm.approximate_commute_filter(approx_commute_times)
 
         # Assert
-        self.assertFalse(homes_in_range)
+        self.assertFalse(result)
 
-    def test_compute_approximate_commute_filter_one_home_to_close(self):
+    def test_approximate_commute_filter_one_home_on_border(self):
+        """
+        Tests that if one home is equal to the max commute + commute range than the approximate_commute_range then the
+            function returns true
+        """
         # Arrange
-        approx_algorithm = CommuteAlgorithm()
-        approx_algorithm.approx_commute_range = 20
-        approx_algorithm.min_user_commute = 40
-        approx_algorithm.max_user_commute = 80
-        approx_commutes_times = {self.destination: 10}
+        commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
+        tenant = self.survey.tenants.create(
+            street_address="test",
+            city="test",
+            state="test",
+            zip_code="test",
+            commute_type=commute_type,
+            commute_weight=0,
+            max_commute=100,
+            desired_commute=60,
+        )
+
+        commute_algorithm = CommuteAlgorithm()
+        commute_algorithm.approx_commute_range = 20
+
+        approx_commute_times = {tenant: 120}
 
         # Act
-        homes_in_range = approx_algorithm.compute_approximate_commute_filter(approx_commutes_times)
+        result = commute_algorithm.approximate_commute_filter(approx_commute_times)
 
         # Assert
-        self.assertFalse(homes_in_range)
+        self.assertTrue(result)
+
+
 
     def test_compute_approximate_commute_filter_one_home_no_approx_range(self):
         # Arrange

@@ -37,7 +37,7 @@ class CommuteAlgorithm(object):
         # Retrieves all the tenants that the user recorded
         self.tenants = user_survey.tenants.all()
 
-    def compute_approximate_commute_filter(self, approx_commute_times):
+    def approximate_commute_filter(self, approx_commute_times):
         """
         Returns whether or not the approximate commute times are within the
         user acceptable range. If any of the commutes are not within the acceptable

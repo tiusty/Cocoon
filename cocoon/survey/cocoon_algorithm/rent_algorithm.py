@@ -53,7 +53,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         of the users commute radius
         """
         for home_data in self.homes:
-            if not self.compute_approximate_commute_filter(home_data.approx_commute_times):
+            if not self.approximate_commute_filter(home_data.approx_commute_times):
                 home_data.eliminate_home()
 
     def run_compute_commute_score_approximate(self):
