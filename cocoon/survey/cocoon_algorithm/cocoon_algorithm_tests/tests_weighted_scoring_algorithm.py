@@ -4,7 +4,7 @@ from django.test import TestCase
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 # Import global config parameters
-from config.settings.Global_Config import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
+from cocoon.survey.constants import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
 
 
 class TestWeightedScoringAlgorithmFilter(TestCase):
