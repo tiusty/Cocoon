@@ -41,7 +41,10 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
             'home_type': home_type_ids,
             'num_bedrooms': obj.num_bedrooms,
             'polygon_filter_type': obj.polygon_filter_type,
-            'is_move_asap': True,
+
+            # need to store this in the survey
+            'is_move_asap': 'yes',
+            'move_weight': 2,
         }
 
     @staticmethod
