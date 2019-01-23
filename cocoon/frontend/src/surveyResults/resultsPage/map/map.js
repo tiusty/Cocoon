@@ -215,7 +215,9 @@ export default class Map extends Component {
                 bootstrapURLKeys={ {key: 'AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho'} }
                 defaultCenter={this.props.center}
                 defaultZoom={this.props.zoom}
-                options={mapOptions}>
+                options={mapOptions}
+                handleHomeClick={this.props.handleHomeClick}
+            >
                     {this.props.homes && this.props.homes.map(home => (
                         <MapMarker
                             lat={home.home.latitude}
@@ -223,6 +225,7 @@ export default class Map extends Component {
                             score={home.percent_match}
                             key={home.home.id}
                             id={home.home.id}
+                            handleHomeClick={this.props.handleHomeClick}
                         />
                     ))}
             </GoogleMapReact>

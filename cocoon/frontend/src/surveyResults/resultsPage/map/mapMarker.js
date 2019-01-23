@@ -22,6 +22,6 @@ export default class MapMarker extends Component {
     }
 
     render() {
-        return <div className={this.colorMarkers(this.props.score)}>{this.props.score}</div>
+        return <div onClick={() => this.props.handleHomeClick(this.props.id)} className={this.colorMarkers(this.props.score)}>{this.props.score}</div>
     }
 }

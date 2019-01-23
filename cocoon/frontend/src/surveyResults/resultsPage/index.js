@@ -44,8 +44,9 @@ export default class ResultsPage extends Component {
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
-                    survey: response.data
-                });
+                    survey: response.data,
+                    favorites: response.data.favorites
+                }, () => console.log(this.state.survey));
             })
 
     };
@@ -103,7 +104,7 @@ export default class ResultsPage extends Component {
          * @type {string}
          */
         // The survey id is passed to the put request to update the state of that particular survey
-        let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_id + "/";
+        let endpoint = survey_endpoints['rentSurvey'] + this.state.survey.id + "/";
         axios.put(endpoint,
             {
                 home_id: home.id,
@@ -116,8 +117,7 @@ export default class ResultsPage extends Component {
             .then(response =>
                 this.setState({
                     favorites: response.data.favorites,
-                    visit_list: response.data.visit_list,
-                })
+                }, () => console.log(this.state.favorites))
             );
     }
 
@@ -137,13 +137,13 @@ export default class ResultsPage extends Component {
                             percent_match={home.percent_match}
                             key={home.home.id}
                             home={home.home}
+                            canVisit={false}
                             visit={false}
-                            favorite={false}
+                            favorite={this.state.favorites.filter(fav => fav.id === home.home.id).length > 0}
                             onMouseEnter={() => this.setHoverId(home.home.id)}
                             onMouseLeave={this.removeHoverId}
                             onHomeClick={() => this.handleHomeClick(home.home.id)}
                             onFavoriteClick={() => this.handleFavoriteClick(home.home)}
-
                         />))}
                 </div>
             </>
@@ -171,8 +171,8 @@ export default class ResultsPage extends Component {
             <div className="expanded-wrapper">
                 <HomeTileLarge
                     home={home.home}
-                    // favorite={this.inFavorites(home)}
-                    // onFavoriteClick={this.props.onFavoriteClick}
+                    onFavoriteClick={() => this.handleFavoriteClick(home.home)}
+                    favorite={this.state.favorites.filter(fav => fav.id === home.home.id).length > 0}
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
                     displayPercent={true}
                     percent_match={home.percent_match}
@@ -192,7 +192,7 @@ export default class ResultsPage extends Component {
                     {this.state.viewing_home === false ? this.renderResults() : this.renderLargeHome()}
                 </div>
                 <div className="map-wrapper">
-                    {this.state.homeList !== undefined ? <Map homes={this.state.homeList} /> : null}
+                    {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} /> : null}
                 </div>
             </div>
         )

@@ -130,7 +130,7 @@ class HomeTile extends Component {
         let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
 
         return (
-            <div className="homeInfo">
+            <div onClick={() => this.props.onHomeClick(this.props.id)} className="homeInfo">
                 <div className="homeInfo-group">
                     <span className={bit_classes}>${home.price} <span className="homeInfo-month">/ month</span></span>
                     <span className={bit_classes}>{`${home.num_bedrooms} ${bedInfo} • ${home.num_bathrooms} ${bathInfo}` }</span>
@@ -158,7 +158,7 @@ class HomeTile extends Component {
             // renders placeholder image if home has no images
             if (home.images.length === 0) {
                 return (
-                    <div className={div_classes}>
+                    <div onClick={() => this.props.onHomeClick(this.props.id)} className={div_classes}>
                         <img src={PlaceHolder} alt="place holder image" className={image_classes} />
                     </div>
                 );
@@ -167,7 +167,7 @@ class HomeTile extends Component {
                 return (
                     <>
                         { home.images.slice(0,1).map(image =>
-                            <div key={image.id} className={div_classes}>
+                            <div onClick={() => this.props.onHomeClick(this.props.id)} key={image.id} className={div_classes}>
                                 {percent_match}
                                 <img className={image_classes} src={image.image} alt='Home image'/>
                             </div>
@@ -192,7 +192,7 @@ class HomeTile extends Component {
     render(){
         const { home } = this.props;
         return (
-            <div className={this.getTileClass()} onClick={() => this.props.onHomeClick(this.props.id)}>
+            <div className={this.getTileClass()}>
                 {this.renderScore(home)}
                 {this.renderInfo(home)}
                 {this.renderImages(home)}

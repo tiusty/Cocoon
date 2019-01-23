@@ -131,6 +131,7 @@
     position: relative;
     font-family: 'Montserrat', sans-serif;
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 
 .map-marker::before {
