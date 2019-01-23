@@ -87,6 +87,16 @@ export default class RentForm extends Component {
         this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
     }
 
+    componentDidMount() {
+        let survey = this.props.survey
+        if (survey) {
+            this.setState({
+                amenitiesInfo: survey.amenitiesInfo,
+                generalInfo: survey.generalInfo,
+            })
+        }
+    }
+
     componentDidUpdate(prevProps, prevState) {
         /*
         Anytime that the state updates this is called
