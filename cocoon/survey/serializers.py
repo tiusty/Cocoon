@@ -79,7 +79,7 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
             'wants_gym': obj.wants_gym,
             'gym_weight': obj.gym_weight,
             'wants_storage': obj.wants_storage,
-            'storage_weight': obj.sotrage_weight,
+            'storage_weight': obj.storage_weight,
         }
 
     class Meta:
