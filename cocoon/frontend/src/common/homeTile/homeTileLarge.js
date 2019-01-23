@@ -30,11 +30,17 @@ export default class HomeTileLarge extends Component {
     }
 
     renderInterior = (home) => {
-        if (home.interior_amenities) {
+        let interior_amenities = [];
+        for (var key in home.interior_amenities) {
+            if (home.interior_amenities[key]) {
+                interior_amenities.push(key)
+            }
+        }
+        if (interior_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Interior Amenities</h3>
-                    {home.interior_amenities.map(item => (
+                    {interior_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item}</p>
                     ))};
                 </div>
@@ -42,22 +48,28 @@ export default class HomeTileLarge extends Component {
         } else {
             return null;
         }
-    }
+    };
 
     renderExterior = (home) => {
-        if (home.exterior_amenities) {
+        let exterior_amenities = [];
+        for (var key in home.exterior_amenities) {
+            if (home.exterior_amenities[key]) {
+                exterior_amenities.push(key)
+            }
+        }
+        if (exterior_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Exterior Amenities</h3>
-                    {home.exterior_amenities.map(item => (
+                    {exterior_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item}</p>
-                    ))};
+                    ))}
                 </div>
             );
         } else {
             return null;
         }
-    }
+    };
 
     renderBonus = (home) => {
         if (home.bonus_amenities) {
@@ -66,13 +78,13 @@ export default class HomeTileLarge extends Component {
                     <h3>What's near here?</h3>
                     {home.bonus_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item}</p>
-                    ))};
+                    ))}
                 </div>
             );
         } else {
             return null;
         }
-    }
+    };
 
     renderPoints = () => {
         let home = this.props.home;
@@ -207,28 +219,28 @@ export default class HomeTileLarge extends Component {
                                 <p>{home.remarks}</p>
                             </div>
 
-                            {/*{this.renderPoints()}*/}
+                            {this.renderPoints()}
 
-                            {/*SAMPLE DATA BELOW FROM FROM this.renderPoints()*/}
-                            <div className="expanded-points">
-                                <div className="point-wrapper">
-                                    <h3>Interior Amenities</h3>
-                                    <p><i className="material-icons">check</i> Laundry in unit</p>
-                                    <p><i className="material-icons">check</i> Dishwasher</p>
-                                    <p><i className="material-icons">check</i> Hardwood floors</p>
-                                </div>
+                            {/*/!*SAMPLE DATA BELOW FROM FROM this.renderPoints()*!/*/}
+                            {/*<div className="expanded-points">*/}
+                                {/*<div className="point-wrapper">*/}
+                                    {/*<h3>Interior Amenities</h3>*/}
+                                    {/*<p><i className="material-icons">check</i> Laundry in unit</p>*/}
+                                    {/*<p><i className="material-icons">check</i> Dishwasher</p>*/}
+                                    {/*<p><i className="material-icons">check</i> Hardwood floors</p>*/}
+                                {/*</div>*/}
 
-                                <div className="point-wrapper">
-                                    <h3>Exterior Amenities</h3>
-                                    <p><i className="material-icons">check</i> 2 parking spots</p>
-                                </div>
+                                {/*<div className="point-wrapper">*/}
+                                    {/*<h3>Exterior Amenities</h3>*/}
+                                    {/*<p><i className="material-icons">check</i> 2 parking spots</p>*/}
+                                {/*</div>*/}
 
-                                <div className="point-wrapper">
-                                    <h3>What's Near Here?</h3>
-                                    <p><i className="material-icons">check</i> Grocery store</p>
-                                    <p><i className="material-icons">check</i> Laundry mats</p>
-                                </div>
-                            </div>
+                                {/*<div className="point-wrapper">*/}
+                                    {/*<h3>What's Near Here?</h3>*/}
+                                    {/*<p><i className="material-icons">check</i> Grocery store</p>*/}
+                                    {/*<p><i className="material-icons">check</i> Laundry mats</p>*/}
+                                {/*</div>*/}
+                            {/*</div>*/}
                             {/*END SAMPLE DATA*/}
 
                         </div>
