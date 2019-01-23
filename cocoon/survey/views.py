@@ -540,6 +540,53 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             # Return a list of all the current surveys
             return self.list(request, args, kwargs)
 
+        elif 'survey_edit' in self.request.data['type']:
+            data = self.request.data['data']
+
+            # Parse data to correct format
+            survey_data = None
+            tenant_data = None
+
+            # Save data if it exists
+            if 'generalInfo' in data:
+                survey_data = data['generalInfo']
+            if 'amenitiesInfo' in data:
+                survey_data.update(data['amenitiesInfo'])
+            if 'tenantInfo' in data:
+                tenant_data = data['tenantInfo']
+
+            form = RentSurveyForm(survey_data, instance=survey)
+            tenants = None
+
+            if form.is_valid():
+                tenants = TenantFormSet(tenant_data, instance=survey)
+                if tenants.is_valid():
+
+                    with transaction.atomic():
+                        survey = form.save()
+
+                        # Save the polygons
+                        if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
+                            save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
+
+                        # Now save the the tenants
+                        tenants.instance = survey
+                        tenants.save()
+
+                    serializer = RentSurveySerializer(survey)
+                    return Response({'result': True, 'survey': serializer.data})
+
+            tenants_errors = ""
+            if tenants is not None:
+                tenants.is_valid()
+                tenants_errors = tenants.errors
+
+            return Response({
+                'result': False,
+                'survey_errors': form.errors,
+                'tenants_errors': tenants_errors,
+            })
+
         # Returns the survey that was updated
         serializer = RentSurveySerializer(survey)
         return Response(serializer.data)
