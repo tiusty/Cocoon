@@ -42,11 +42,16 @@ export default class HomeTileLarge extends Component {
                     <h3>Interior Amenities</h3>
                     {interior_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item}</p>
-                    ))};
+                    ))}
                 </div>
             );
         } else {
-            return null;
+            return (
+                <div className="point-wrapper">
+                    <h3>Interior Amenities</h3>
+                    <p>No data</p>
+                </div>
+            );
         }
     };
 
@@ -67,22 +72,38 @@ export default class HomeTileLarge extends Component {
                 </div>
             );
         } else {
-            return null;
+            return (
+                <div className="point-wrapper">
+                    <h3>Exterior Amenities</h3>
+                    <p>No data</p>
+                </div>
+            );
         }
     };
 
     renderBonus = (home) => {
-        if (home.bonus_amenities) {
+        let nearby_amenities = [];
+        for (var key in home.nearby_amenities) {
+            if (home.nearby_amenities[key]) {
+                nearby_amenities.push(key)
+            }
+        }
+        if (nearby_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>What's near here?</h3>
-                    {home.bonus_amenities.map(item => (
+                    {nearby_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item}</p>
                     ))}
                 </div>
             );
         } else {
-            return null;
+            return (
+                <div className="point-wrapper">
+                    <h3>Nearby Amenities</h3>
+                    <p>No data</p>
+                </div>
+            );
         }
     };
 

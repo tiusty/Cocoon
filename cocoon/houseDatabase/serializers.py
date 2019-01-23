@@ -29,6 +29,7 @@ class InteriorAmenitiesSerializer(serializers.HyperlinkedModelSerializer):
 class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
     interior_amenities = serializers.SerializerMethodField()
     exterior_amenities = serializers.SerializerMethodField()
+    nearby_amenities = serializers.SerializerMethodField()
     home_type = HomeTypeSerializer(read_only=True)
     images = HomeImageSerializer(read_only=True, many=True)
 
@@ -52,9 +53,15 @@ class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
             'storage': obj.storage,
         }
 
+    @staticmethod
+    def get_nearby_amenities(obj):
+        return {
+            'laundromat_nearby': obj.laundromat_nearby
+        }
+
     class Meta:
         model = RentDatabaseModel
         fields = ('id', 'price', 'home_type', 'images', 'remarks', 'num_bedrooms', 'num_bathrooms',
                   'furnished', 'hardwood_floors', 'air_conditioning', 'laundry_in_unit', 'dishwasher',
                   'pool', 'patio_balcony', 'gym', 'storage', 'laundry_in_building', 'laundromat_nearby',
-                  'interior_amenities', 'exterior_amenities',)
+                  'interior_amenities', 'exterior_amenities', 'nearby_amenities')
