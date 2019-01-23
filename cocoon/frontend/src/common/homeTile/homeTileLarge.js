@@ -27,15 +27,23 @@ export default class HomeTileLarge extends Component {
         canFavorite: true,
         canVisit: false,
         displayPercent: false
-    }
+    };
 
     renderInterior = (home) => {
+        /**
+         * Renders all the interior amenities information
+         * @type {Array}
+         */
+
+        // Creates a list of all the interior amenities that exist
         let interior_amenities = [];
         for (var key in home.interior_amenities) {
             if (home.interior_amenities[key]) {
                 interior_amenities.push(key)
             }
         }
+
+        // If there is at least one amenity then render it
         if (interior_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
@@ -45,6 +53,8 @@ export default class HomeTileLarge extends Component {
                     ))}
                 </div>
             );
+
+        // If there is not data then render that there is no data
         } else {
             return (
                 <div className="point-wrapper">
@@ -56,12 +66,20 @@ export default class HomeTileLarge extends Component {
     };
 
     renderExterior = (home) => {
+        /**
+         * Renders all the exterior amenities information
+         * @type {Array}
+         */
+
+        // Creates a list of all the exterior amenities that exist
         let exterior_amenities = [];
         for (var key in home.exterior_amenities) {
             if (home.exterior_amenities[key]) {
                 exterior_amenities.push(key)
             }
         }
+
+        // If there is at least one amenity then render it
         if (exterior_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
@@ -71,6 +89,8 @@ export default class HomeTileLarge extends Component {
                     ))}
                 </div>
             );
+
+        // If there is not data then render that there is no data
         } else {
             return (
                 <div className="point-wrapper">
@@ -81,13 +101,21 @@ export default class HomeTileLarge extends Component {
         }
     };
 
-    renderBonus = (home) => {
+    renderNearby = (home) => {
+        /**
+         * Renders all the nearby amenity information
+         * @type {Array}
+         */
+
+        // Creates a list of all the nearby amenities that exist
         let nearby_amenities = [];
         for (var key in home.nearby_amenities) {
             if (home.nearby_amenities[key]) {
                 nearby_amenities.push(key)
             }
         }
+
+        // If there is at least one amenity then render it
         if (nearby_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
@@ -97,6 +125,8 @@ export default class HomeTileLarge extends Component {
                     ))}
                 </div>
             );
+
+        // If there is not data then render that there is no data
         } else {
             return (
                 <div className="point-wrapper">
@@ -107,25 +137,28 @@ export default class HomeTileLarge extends Component {
         }
     };
 
-    renderPoints = () => {
+    renderAmenities = () => {
+        /**
+         * Renders all the amenities information associated with the home
+         */
         let home = this.props.home;
         return (
             <div className="expanded-points">
                 {this.renderInterior(home)}
                 {this.renderExterior(home)}
-                {this.renderBonus(home)}
+                {this.renderNearby(home)}
             </div>
         );
 
-    }
+    };
 
-        renderScore(home) {
+    renderScore(home) {
         /**
          * Renders the score portion of the home tile
          * @type {string} THe home that is being rendered
          */
 
-        // Toggles whether the home text depending on favorite status
+            // Toggles whether the home text depending on favorite status
         let favorite_style;
         if (!this.props.canVisit) {
             favorite_style = {
@@ -189,6 +222,10 @@ export default class HomeTileLarge extends Component {
     }
 
     renderPercentMatch = (home) => {
+        /**
+         * Returns the percent match info if it is desired
+         * @type {null}
+         */
         let percent_match = null;
         if (this.props.displayPercent) {
             percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
@@ -240,7 +277,7 @@ export default class HomeTileLarge extends Component {
                                 <p>{home.remarks}</p>
                             </div>
 
-                            {this.renderPoints()}
+                            {this.renderAmenities()}
                         </div>
                         {this.renderScore(home)}
                     </div>
