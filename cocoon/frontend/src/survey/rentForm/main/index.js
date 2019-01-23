@@ -88,11 +88,18 @@ export default class RentForm extends Component {
     }
 
     componentDidMount() {
-        let survey = this.props.survey
+        let survey = this.props.survey;
         if (survey) {
+            // Make sure the tenants are sorted in the order of creation
+            // (the most recently created as the lowest id)
+            let tenants = survey.tenants.sort((a,b) => a.id - b.id);
+            for(let i=0; i<tenants.length; i++) {
+                tenants[i].index = i;
+            }
             this.setState({
                 amenitiesInfo: survey.amenitiesInfo,
                 generalInfo: survey.generalInfo,
+                tenants
             })
         }
     }
