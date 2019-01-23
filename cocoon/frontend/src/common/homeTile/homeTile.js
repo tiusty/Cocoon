@@ -159,6 +159,7 @@ class HomeTile extends Component {
             if (home.images.length === 0) {
                 return (
                     <div onClick={() => this.props.onHomeClick(this.props.id)} className={div_classes}>
+                        {percent_match}
                         <img src={PlaceHolder} alt="place holder image" className={image_classes} />
                     </div>
                 );
@@ -192,7 +193,7 @@ class HomeTile extends Component {
     render(){
         const { home } = this.props;
         return (
-            <div className={this.getTileClass()}>
+            <div className={this.getTileClass()} onMouseEnter={this.props.onMouseEnter} onMouseLeave={this.props.onMouseLeave}>
                 {this.renderScore(home)}
                 {this.renderInfo(home)}
                 {this.renderImages(home)}

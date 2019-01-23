@@ -31,7 +31,8 @@ export default class ResultsPage extends Component {
             hover_id: undefined,
             viewing_home: false,
             scroll_position: undefined,
-            isEditing: false
+            isEditing: false,
+            center: undefined
         }
     }
 
@@ -75,21 +76,6 @@ export default class ResultsPage extends Component {
         return name;
     }
 
-    setScrollPosition = () => {
-        // change wrapper class based on which component is rendered
-        // only listen for scroll when not viewing home or editing survey
-        if (document.querySelector('.results-wrapper')) {
-            const resultsDiv = document.querySelector('.results-wrapper');
-            if (this.state.viewing_home === false && this.state.isEditing) {
-                resultsDiv.addEventListener('scroll', () => {
-                    this.setState({
-                        scroll_position: resultsDiv.scrollTop
-                    }, () => console.log(this.state.scroll_position))
-                })
-            }
-        }
-    }
-
     setPageHeight = () => {
         document.querySelector('body').style.overflow = 'hidden';
         document.querySelector('.navbar').style.margin = 0;
@@ -100,16 +86,15 @@ export default class ResultsPage extends Component {
     }
 
     setHoverId = (id) => {
-        console.log(id)
-        // this.setState({
-        //     hover_id: id
-        // })
+        this.setState({
+            hover_id: id
+        })
     }
 
     removeHoverId = () => {
-        // this.setState({
-        //     hover_id: undefined
-        // })
+        this.setState({
+            hover_id: undefined
+        })
     }
 
     handleFavoriteClick = (home) => {
@@ -128,8 +113,6 @@ export default class ResultsPage extends Component {
 
             })
             .catch(error => console.log('BAD', error))
-            // Though the favorites is being updated, the response includes the visit list so update with the
-            // latest visit list as well
             .then(response =>
                 this.setState({
                     favorites: response.data.favorites,
@@ -156,10 +139,10 @@ export default class ResultsPage extends Component {
                             canVisit={false}
                             visit={false}
                             favorite={this.state.favorites.filter(fav => fav.id === home.home.id).length > 0}
-                            onMouseOver={() => this.setHoverId(home.home.id)}
-                            onMouseLeave={this.removeHoverId}
                             onHomeClick={() => this.handleHomeClick(home.home.id)}
                             onFavoriteClick={() => this.handleFavoriteClick(home.home)}
+                            onMouseLeave={() => this.removeHoverId(home.home.id)}
+                            onMouseEnter={() => this.setHoverId(home.home.id)}
                         />))}
                 </div>
             </>
@@ -167,6 +150,7 @@ export default class ResultsPage extends Component {
     }
 
     handleHomeClick = (id) => {
+        this.saveScrollPosition();
         this.setState({
             clicked_home: id,
             viewing_home: true
@@ -175,11 +159,11 @@ export default class ResultsPage extends Component {
     }
 
     handleCloseHomeTileLarge = () => {
+        this.removeHoverId();
         this.setState({
             clicked_home: undefined,
             viewing_home: false
-        })
-        // document.querySelector('.results-wrapper').scrollTop = this.state.scroll_position;
+        }, () => this.setScrollPosition())
     }
 
     renderLargeHome = () => {
@@ -224,10 +208,32 @@ export default class ResultsPage extends Component {
         }
     }
 
+    saveScrollPosition = () => {
+        if (document.querySelector('.homelist-wrapper')) {
+            const homeList = document.querySelector('.homelist-wrapper');
+            this.setState({
+                scroll_position: homeList.scrollTop
+            })
+        }
+    }
+
+    setScrollPosition = () => {
+        const homeList = document.querySelector('.results-wrapper');
+        homeList.scrollTop = this.state.scroll_position;
+    }
+
+    setResultsWrapperClass = () => {
+        let wrapper_class = 'results-wrapper';
+        if (this.state.viewing_home === false && this.state.isEditing === false) {
+            wrapper_class += ' homelist-wrapper';
+        }
+        return wrapper_class;
+    }
+
     render() {
         return (
             <div id="results-page">
-                <div className="results-wrapper">
+                <div className={this.setResultsWrapperClass()}>
                     <div className="results-btn-row">
                         <a href={userAuth_endpoints['surveys']}>Schedule Tour</a>
                         <span onClick={this.toggleEditing}><i className="material-icons">edit</i> {this.renderEditingText()}</span>
@@ -235,7 +241,7 @@ export default class ResultsPage extends Component {
                     {this.renderMainComponent()}
                 </div>
                 <div className="map-wrapper">
-                    {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} /> : null}
+                    {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} /> : null}
                 </div>
             </div>
         )

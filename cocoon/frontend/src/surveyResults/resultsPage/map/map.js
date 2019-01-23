@@ -217,6 +217,7 @@ export default class Map extends Component {
                 defaultZoom={this.props.zoom}
                 options={mapOptions}
                 handleHomeClick={this.props.handleHomeClick}
+                hover_id={this.props.hover_id}
             >
                     {this.props.homes && this.props.homes.map(home => (
                         <MapMarker
@@ -225,6 +226,7 @@ export default class Map extends Component {
                             score={home.percent_match}
                             key={home.home.id}
                             id={home.home.id}
+                            hover_id={this.props.hover_id}
                             handleHomeClick={this.props.handleHomeClick}
                         />
                     ))}

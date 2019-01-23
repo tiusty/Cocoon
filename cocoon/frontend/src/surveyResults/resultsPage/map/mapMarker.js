@@ -8,20 +8,32 @@ export default class MapMarker extends Component {
 
     colorMarkers = (score) => {
         let marker_class = 'map-marker';
+
         if (score > 86) {
-            return marker_class + ' map-marker_teal';
+            marker_class = marker_class + ' map-marker_teal';
         } else if (score > 79) {
-            return marker_class + ' map-marker_yellow';
+            marker_class = marker_class + ' map-marker_yellow';
         } else if (score > 69) {
-            return marker_class + ' map-marker_orange';
+            marker_class = marker_class + ' map-marker_orange';
         } else if (score > 59) {
-            return marker_class + ' map-marker_red';
+            marker_class = marker_class + ' map-marker_red';
         } else {
-            return marker_class + ' map-marker_dark-blue';
+            marker_class = marker_class + ' map-marker_dark-blue';
         }
+
+        if (this.props.hover_id === this.props.id) {
+            marker_class = marker_class + ' map-marker_hover';
+        }
+        return marker_class;
     }
 
     render() {
-        return <div onClick={() => this.props.handleHomeClick(this.props.id)} className={this.colorMarkers(this.props.score)}>{this.props.score}</div>
+        return (
+            <div
+                onClick={() => this.props.handleHomeClick(this.props.id)}
+                className={this.colorMarkers(this.props.score)}>
+                {this.props.score}
+            </div>
+        )
     }
 }

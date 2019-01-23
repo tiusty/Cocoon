@@ -134,6 +134,7 @@
 
 .tile_isLarge .thumbnailImage {
     max-height: 200px;
+    min-height: 200px;
     border-radius: 10px 10px 0 0;
 }
 
@@ -269,4 +270,13 @@
 .home-tile-large-carousel-div {
     width: 100%;
     position: relative;
+}
+
+.home-tile-large-carousel-div .thumbnailDiv {
+    width: 100%;
+}
+
+.home-tile-large-carousel-div .thumbnailImage {
+    border-radius: 0;
+    min-height: 250px;
 }

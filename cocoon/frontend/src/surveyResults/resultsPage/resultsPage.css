@@ -139,7 +139,7 @@
     position: absolute;
     background: var(--teal);
     bottom: -4px;
-    z-index: 1;
+    z-index: 998;
     left: 0;
     right: 0;
     margin: 0 auto;
@@ -170,6 +170,46 @@
     background: #264653;
 }
 
+.map-marker_hover,
+.map-marker_hover::before {
+    background: white;
+    color: var(--black);
+    z-index: 10000;
+}
+
+.map-marker_hover {
+    font-size: 20px;
+    padding: 7px 5px;
+    animation: growMarker .25s ease forwards;
+}
+
+@keyframes growMarker {
+    0% {
+        font-size: 16px;
+    }
+    75% {
+        font-size: 24px;
+    }
+    100% {
+        font-size: 20px;
+        background: white;
+        color: var(--white)
+    }
+}
+
 .results-wrapper .survey-wrapper {
     width: 90%;
+}
+
+/* MOBILE FIXES*/
+@media (max-width: 974px) and (min-width: 768px) {
+    body {
+        padding-top: 60px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px !important;
+    }
 }
