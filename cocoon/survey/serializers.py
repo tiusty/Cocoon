@@ -52,7 +52,7 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
         """
         Function returns all the amenities info as the frontend would expect it
         :param obj: (RentSurveyModel) -> The survey that the data is coming from
-        :return: (dict) -> All the fields in the amentiesInfo field on the frontend
+        :return: (dict) -> All the fields in the amenitiesInfo field on the frontend
         """
         return {
             'wants_laundry_in_unit': obj.wants_laundry_in_unit,
