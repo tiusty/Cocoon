@@ -5,10 +5,14 @@ import axios from 'axios';
 // Import Cocoon Components
 import '../../common/styles/variables.css';
 import './resultsPage.css';
+
 import survey_endpoints from '../../endpoints/survey_endpoints';
+import userAuth_endpoints from '../../endpoints/userAuth_endpoints';
+
 import HomeTile from '../../common/homeTile/homeTile';
 import HomeTileLarge from '../../common/homeTile/homeTileLarge';
-import Map from './map/map'
+import Map from './map/map';
+import RentForm from '../../survey/rentForm/main';
 
 
 // Necessary XSRF headers for posting form
@@ -26,7 +30,8 @@ export default class ResultsPage extends Component {
             clicked_home: undefined,
             hover_id: undefined,
             viewing_home: false,
-            scroll_position: undefined
+            scroll_position: undefined,
+            isEditing: false
         }
     }
 
@@ -71,7 +76,18 @@ export default class ResultsPage extends Component {
     }
 
     setScrollPosition = () => {
-
+        // change wrapper class based on which component is rendered
+        // only listen for scroll when not viewing home or editing survey
+        if (document.querySelector('.results-wrapper')) {
+            const resultsDiv = document.querySelector('.results-wrapper');
+            if (this.state.viewing_home === false && this.state.isEditing) {
+                resultsDiv.addEventListener('scroll', () => {
+                    this.setState({
+                        scroll_position: resultsDiv.scrollTop
+                    }, () => console.log(this.state.scroll_position))
+                })
+            }
+        }
     }
 
     setPageHeight = () => {
@@ -140,7 +156,7 @@ export default class ResultsPage extends Component {
                             canVisit={false}
                             visit={false}
                             favorite={this.state.favorites.filter(fav => fav.id === home.home.id).length > 0}
-                            onMouseEnter={() => this.setHoverId(home.home.id)}
+                            onMouseOver={() => this.setHoverId(home.home.id)}
                             onMouseLeave={this.removeHoverId}
                             onHomeClick={() => this.handleHomeClick(home.home.id)}
                             onFavoriteClick={() => this.handleFavoriteClick(home.home)}
@@ -163,6 +179,7 @@ export default class ResultsPage extends Component {
             clicked_home: undefined,
             viewing_home: false
         })
+        // document.querySelector('.results-wrapper').scrollTop = this.state.scroll_position;
     }
 
     renderLargeHome = () => {
@@ -181,15 +198,41 @@ export default class ResultsPage extends Component {
         );
     }
 
+    toggleEditing = () => {
+        this.setState({
+            isEditing: !this.state.isEditing,
+            clicked_home: undefined,
+            viewing_home: false
+        }, () => this.state.isEditing ? document.querySelector('.results-wrapper').scrollTop = 0 : null)
+    }
+
+    renderEditingText = () => {
+        if (!this.state.isEditing) {
+            return 'Edit Survey';
+        } else {
+            return 'Save Survey';
+        }
+    }
+
+    renderMainComponent = () => {
+        if (!this.state.viewing_home && !this.state.isEditing) {
+            return this.renderResults();
+        } else if (this.state.viewing_home && !this.state.isEditing) {
+            return this.renderLargeHome();
+        } else if (this.state.isEditing) {
+            return <RentForm isEditing={true} />
+        }
+    }
+
     render() {
         return (
             <div id="results-page">
                 <div className="results-wrapper">
                     <div className="results-btn-row">
-                        <span>Schedule Tour</span>
-                        <span><i className="material-icons">edit</i> Edit Survey</span>
+                        <a href={userAuth_endpoints['surveys']}>Schedule Tour</a>
+                        <span onClick={this.toggleEditing}><i className="material-icons">edit</i> {this.renderEditingText()}</span>
                     </div>
-                    {this.state.viewing_home === false ? this.renderResults() : this.renderLargeHome()}
+                    {this.renderMainComponent()}
                 </div>
                 <div className="map-wrapper">
                     {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} /> : null}

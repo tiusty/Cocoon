@@ -232,6 +232,10 @@
     padding: 15px;
 }
 
+.expanded-remarks p {
+    text-align: left;
+}
+
 .expanded-points {
     padding: 15px;
     display: flex;

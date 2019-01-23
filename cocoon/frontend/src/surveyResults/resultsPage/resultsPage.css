@@ -39,24 +39,21 @@
 
 .results-btn-row span {
     cursor: pointer;
-}
-
-.results-btn-row span:nth-of-type(1) {
-    color: var(--red);
-    font-size: 13px;
-    font-weight: 800;
-    text-decoration: underline;
-}
-
-.results-btn-row span:nth-of-type(2) {
     color: var(--grey);
     font-size: 11px;
     display: flex;
 }
 
-.results-btn-row span:nth-of-type(2) i {
+.results-btn-row span i {
     font-size: 13px;
     padding-right: 3px;
+}
+
+.results-btn-row a {
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: underline;
 }
 
 .results-info {
@@ -171,4 +168,8 @@
 .map-marker_dark-blue,
 .map-marker_dark-blue::before {
     background: #264653;
+}
+
+.results-wrapper .survey-wrapper {
+    width: 90%;
 }
