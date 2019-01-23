@@ -41,7 +41,7 @@ export default class HomeTileLarge extends Component {
                 <div className="point-wrapper">
                     <h3>Interior Amenities</h3>
                     {interior_amenities.map(item => (
-                        <p key={item}><i className="material-icons">check</i> {item}</p>
+                        <p key={item}><i className="material-icons">check</i> {item.replace('_',' ')}</p>
                     ))}
                 </div>
             );
@@ -67,7 +67,7 @@ export default class HomeTileLarge extends Component {
                 <div className="point-wrapper">
                     <h3>Exterior Amenities</h3>
                     {exterior_amenities.map(item => (
-                        <p key={item}><i className="material-icons">check</i> {item}</p>
+                        <p key={item}><i className="material-icons">check</i> {item.replace('_',' ')}</p>
                     ))}
                 </div>
             );
@@ -93,7 +93,7 @@ export default class HomeTileLarge extends Component {
                 <div className="point-wrapper">
                     <h3>What's near here?</h3>
                     {nearby_amenities.map(item => (
-                        <p key={item}><i className="material-icons">check</i> {item}</p>
+                        <p key={item}><i className="material-icons">check</i> {item.replace('_',' ')}</p>
                     ))}
                 </div>
             );
@@ -241,29 +241,6 @@ export default class HomeTileLarge extends Component {
                             </div>
 
                             {this.renderPoints()}
-
-                            {/*/!*SAMPLE DATA BELOW FROM FROM this.renderPoints()*!/*/}
-                            {/*<div className="expanded-points">*/}
-                                {/*<div className="point-wrapper">*/}
-                                    {/*<h3>Interior Amenities</h3>*/}
-                                    {/*<p><i className="material-icons">check</i> Laundry in unit</p>*/}
-                                    {/*<p><i className="material-icons">check</i> Dishwasher</p>*/}
-                                    {/*<p><i className="material-icons">check</i> Hardwood floors</p>*/}
-                                {/*</div>*/}
-
-                                {/*<div className="point-wrapper">*/}
-                                    {/*<h3>Exterior Amenities</h3>*/}
-                                    {/*<p><i className="material-icons">check</i> 2 parking spots</p>*/}
-                                {/*</div>*/}
-
-                                {/*<div className="point-wrapper">*/}
-                                    {/*<h3>What's Near Here?</h3>*/}
-                                    {/*<p><i className="material-icons">check</i> Grocery store</p>*/}
-                                    {/*<p><i className="material-icons">check</i> Laundry mats</p>*/}
-                                {/*</div>*/}
-                            {/*</div>*/}
-                            {/*END SAMPLE DATA*/}
-
                         </div>
                         {this.renderScore(home)}
                     </div>

@@ -58,8 +58,8 @@ export default class SurveySmall extends Component {
                         <div className="survey-small-data">
                             <p className="survey-small-title">Roommate Group:</p>
                             <p className="survey-small-title">{this.props.name}</p>
-                            <p className="survey-small-favorites">Number of favorites: {this.generateFavoriteHomes().length}</p>
-                            <p className="survey-small-visit-list">Number of visit
+                            <p className="survey-small-favorites">homes in favorites: {this.generateFavoriteHomes().length}</p>
+                            <p className="survey-small-visit-list">homes in visit
                                 list: {this.props.visit_list.length}</p>
                             <button className="btn btn-primary" onClick={() => this.props.onClickSurvey(this.props.id)}>Expand</button>
                         </div>
