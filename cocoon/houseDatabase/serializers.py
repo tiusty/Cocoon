@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Import App modules
-from .models import RentDatabaseModel, HomeTypeModel, HousePhotos, HouseInteriorAmenitiesModel
+from .models import RentDatabaseModel, HomeTypeModel, HousePhotos
 
 
 class HomeImageSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,13 +17,6 @@ class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HomeTypeModel
         fields = ('id', 'home_type')
-
-
-class InteriorAmenitiesSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = HouseInteriorAmenitiesModel
-        fields = ('furnished',)
 
 
 class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
