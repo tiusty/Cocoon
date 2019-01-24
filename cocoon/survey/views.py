@@ -2,7 +2,7 @@
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 from django.contrib.auth import login
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
@@ -42,12 +42,25 @@ class RentingSurveyTemplate(TemplateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class RentingResultTemplate(TemplateView):
+class RentingResultTemplate(DetailView):
     """
-    Template to load the react for the rent result page
+    Detail view to load the react for the rent result page
+
+    The reason why the detail view is used is to cause a 404 if the user
+        tries to load a survey that doesn't exist or they don't own
     """
 
     template_name = "survey/rentResult.html"
+    model = RentingSurveyModel
+    slug_field = 'url'
+    slug_url_kwarg = 'survey_url'
+
+    def get_queryset(self):
+        """
+        The survey must be associated with the currently logged in user
+        """
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)

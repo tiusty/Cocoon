@@ -102,12 +102,16 @@ export default class RentForm extends Component {
             this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;
 
             // Make sure the tenants are sorted in the order of creation
-            // (the most recently created as the lowest id)
+            // (the most recently created has the lowest id)
             let tenants = survey.tenants.sort((a,b) => a.id - b.id);
+
+            // Set data that is not properly set from the backend
             for(let i=0; i<tenants.length; i++) {
+                // The index matches the order of the tenants
+                tenants[i].index = i;
+
                 // Since the commute type is passed back in a dictionary,
                 //  retrieve it and store it directly in the tenant dictionary
-                tenants[i].index = i;
                 tenants[i].commute_type = tenants[i].commute_type.id
             }
             this.setState({
@@ -193,6 +197,8 @@ export default class RentForm extends Component {
             data['detailsInfo'] = userData
         }
 
+        // If the survey is being edited then return the survey data back to the survey results component
+        //  otherwise redirect to the survey results page
         if (this.state.isEditing) {
             // Posts the state which contains all the form elements that are needed
             axios.put(survey_endpoints['rentSurvey'] + this.props.survey.id + '/',
@@ -204,13 +210,12 @@ export default class RentForm extends Component {
                     console.log('BAD', error);
                     this.setState({loading: false})
                 })
-                // If the response was successful then don't set loading to true
-                //  because the page will redirect and we don't want the user to click
-                //  the button again
                 .then(response => {
-                        // On successful form submit then redirect to survey results page
+                        // On successful form submit update the survey state in survey results component
                         if (response.data.result) {
                             this.props.onUpdateSurvey(response.data.survey)
+
+                        // If there was an error then return the error
                         } else {
                             this.setState({
                                 errors: response.data
