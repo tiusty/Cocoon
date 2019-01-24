@@ -20,36 +20,33 @@ from cocoon.survey.constants import MAX_TENANTS_FOR_ONE_SURVEY
 
 
 class HomeInformationForm(ModelForm):
-    num_bedrooms = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, MAX_NUM_BEDROOMS)],
-        label="Number of Bedrooms",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
+    num_bedrooms = forms.IntegerField(
+        required=False
     )
 
     max_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+        required=False,
     )
 
     min_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+        required=False,
     )
 
     home_type = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
+        required=True,
         queryset=HomeTypeModel.objects.all()
+    )
+
+    polygon_filter_type = forms.IntegerField(
+        required=False,
+    )
+
+    is_move_asap = forms.BooleanField(
+        required=False
+    )
+
+    move_weight = forms.IntegerField(
+        required=False
     )
 
     def is_valid(self):
@@ -388,17 +385,6 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
         ),
     )
 
-    polygon_filter_type = forms.ChoiceField(
-        required=False,
-        choices=[(x, x) for x in range(0, 2)],
-        label="Filter type",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
-    )
-
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
@@ -412,7 +398,7 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
                   "service_dogs", "breed_of_dogs", "dog_size",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
-                  "number_of_tenants", 'polygon_filter_type']
+                  "number_of_tenants", 'polygon_filter_type', 'is_move_asap', 'move_weight']
 
 
 class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,

@@ -70,6 +70,8 @@ class HomeInformationModel(models.Model):
     min_bathrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeTypeModel)
     polygon_filter_type = models.IntegerField(default=0)
+    is_move_asap = models.BooleanField(default=False)
+    move_weight = models.IntegerField(default=0)
 
     @property
     def home_types(self):

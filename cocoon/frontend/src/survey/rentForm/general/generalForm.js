@@ -129,7 +129,7 @@ export default class GeneralForm extends Component {
 
     handleDatePickerValidation() {
         let valid = true;
-        if (this.props.generalInfo.is_move_asap !== 'yes') {
+        if (!this.props.generalInfo.is_move_asap) {
             if (this.props.generalInfo.earliest_move_in === undefined ||
             this.props.generalInfo.latest_move_in === undefined) {
                 document.querySelector('#date_error').style.display = 'block';
@@ -327,7 +327,7 @@ export default class GeneralForm extends Component {
     }
 
     renderDatePickingQuestion() {
-        if (this.props.generalInfo.is_move_asap !== "yes") {
+        if (!this.props.generalInfo.is_move_asap) {
             return (
                 <div className="survey-question">
                     <h2>When are you wanting to <span>move in</span>?</h2>

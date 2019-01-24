@@ -22,17 +22,24 @@ export default class DetailsForm extends Component {
     }
 
     handleSubmitErrors = (errors) => {
+        console.log(errors)
+        console.log('start')
         let valid = true;
+        console.log('first')
         if (errors.user_form_errors.email) {
             document.querySelector('#email_error').style.display = 'block';
             document.querySelector('#email_error').innerText = errors.user_form_errors.email[0];
             valid = false;
         } else if (!errors.user_form_errors.email) { document.querySelector('#email_error').style.display = 'none'; }
+        console.log('second')
         if (errors.user_form_errors.password2) {
             document.querySelector('#password_error').style.display = 'block';
             document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
             valid = false;
-        } else if (!errors.user_form_errors.password2) { document.querySelector('#password_error').style.display = 'none'; }
+        } else if (!errors.user_form_errors.password2) {
+            document.querySelector('#password_error').style.display = 'none';
+        }
+        console.log('third')
         if (errors.user_form_errors.creation_key) {
             document.querySelector('#creation_key_error').style.display = 'block';
             document.querySelector('#creation_key_error').innerText = errors.user_form_errors.creation_key[0];
