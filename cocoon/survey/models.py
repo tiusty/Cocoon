@@ -11,8 +11,7 @@ from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel, RentDa
 from cocoon.commutes.models import CommuteType
 
 # Import Global Variables
-from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, \
-    HYBRID_WEIGHT_CHOICES
+from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME
 
 # Import app constants
 from .constants import MIN_PRICE_DELTA
