@@ -634,31 +634,32 @@ class CommuteInformationForm(DestinationForm):
 
 class TenantPersonalInformationForm(ModelForm):
     first_name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'First Name',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
+        required=True
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Last Name',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
+        required=True
     )
 
-    is_student = forms.BooleanField(
+    occupation = forms.CharField(
         required=False,
-        widget=forms.CheckboxInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Student?',
-            }),
-        )
+    )
+
+    other_occupation_reason = forms.CharField(
+        required=False,
+    )
+
+    unemployed_follow_up = forms.CharField(
+        required=False,
+    )
+
+    income = forms.CharField(
+        required=False,
+    )
+
+    credit_score = forms.CharField(
+        required=False,
+    )
 
     class Meta:
         model = TenantPersonalInformationModel
@@ -668,8 +669,9 @@ class TenantPersonalInformationForm(ModelForm):
 class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
-        fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option']
+        fields = ['first_name', 'last_name', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
+                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option', 'occupation',
+                  'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score']
 
 
 class TenantFormJustNames(TenantPersonalInformationForm):
