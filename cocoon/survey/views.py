@@ -47,7 +47,7 @@ class RentingResultTemplate(TemplateView):
     Template to load the react for the rent result page
     """
 
-    template_name = "survey/rentForm.html"
+    template_name = "survey/rentResult.html"
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
