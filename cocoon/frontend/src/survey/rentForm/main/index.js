@@ -92,7 +92,9 @@ export default class RentForm extends Component {
          *
          * Otherwise the data is assumed to be blank
          */
-        let survey = this.props.survey;
+        // Do a deep copy... otherwise it is a memory reference and causes issues
+        //  when the component is unmounted
+        let survey = JSON.parse(JSON.stringify(this.props.survey));
         if (survey) {
             // We need to set the initial forms to the current number of tenants so
             //  tenants are duplicated
@@ -103,9 +105,8 @@ export default class RentForm extends Component {
             for(let i=0; i<tenants.length; i++) {
                 // Since the commute type is passed back in a dictionary,
                 //  retrieve it and store it directly in the tenant dictionary
-                let commute_id = tenants[i].commute_type.id;
                 tenants[i].index = i;
-                tenants[i].commute_type = commute_id
+                tenants[i].commute_type = tenants[i].commute_type.id
             }
             this.setState({
                 amenitiesInfo: survey.amenitiesInfo,
