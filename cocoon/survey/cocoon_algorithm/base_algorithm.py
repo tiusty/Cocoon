@@ -94,7 +94,7 @@ class CocoonAlgorithm(object):
         """
 
         # If the user selected draw on map then filter based on the polygons the user drew
-        if filter_type is 1:
+        if filter_type is 1 and len(polygons) > 0:
             point = Point(home.latitude, home.longitude)
             result = False
             for polygon in polygons:
