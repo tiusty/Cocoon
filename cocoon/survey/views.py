@@ -3,6 +3,8 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from django.contrib.auth import login
 from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -27,26 +29,27 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 class RentingSurveyTemplate(TemplateView):
+    """
+    Template to load the react for the rent survey page
+    """
 
     template_name = "survey/rentForm.html"
 
     def get_context_data(self, **kwargs):
-        """
-        Adds the TenantFormSet, and the user creation form to the context
-        """
         data = super().get_context_data(**kwargs)
         data['component'] = RentingSurveyTemplate.__name__
         return data
 
 
+@method_decorator(login_required, name='dispatch')
 class RentingResultTemplate(TemplateView):
+    """
+    Template to load the react for the rent result page
+    """
 
     template_name = "survey/rentForm.html"
 
     def get_context_data(self, **kwargs):
-        """
-        Adds the TenantFormSet, and the user creation form to the context
-        """
         data = super().get_context_data(**kwargs)
         data['component'] = RentingResultTemplate.__name__
         return data
