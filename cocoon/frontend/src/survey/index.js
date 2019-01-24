@@ -4,9 +4,11 @@ import ReactDOM from "react-dom";
 
 // Import Cocoon Components
 import RentForm from './rentForm/main/index';
+import ResultsPage from "./resultsPage";
 
 const components = {
-    'RentingSurvey': RentForm
+    'RentingSurveyTemplate': <RentForm is_authenticated={window.isUser} />,
+    'RentingResultTemplate': <ResultsPage/>,
 };
 
-ReactDOM.render(<RentForm is_authenticated={window.isUser} />, window.react_mount);
+ReactDOM.render(components[window.component], window.react_mount);

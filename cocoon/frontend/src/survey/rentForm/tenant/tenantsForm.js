@@ -166,13 +166,20 @@ export default class TenantsForm extends Component {
 
     handleFinancialValidation(id, show_errors) {
         let valid = true;
-        if (this.props.tenants[id].income === null) {
+        if (this.props.tenants[id].income === null || !Number.isInteger(this.props.tenants[id].income)) {
             if (show_errors) {
                 document.querySelector(`#tenants-${id}-income-error`).style.display = 'block';
-                document.querySelector(`#tenants-${id}-income-error`).innerText = `You must enter an annual income for ${this.props.tenants[id].first_name}.`;
+
+                if (this.props.tenants[id].income === null) {
+                    document.querySelector(`#tenants-${id}-income-error`).innerText = `You must enter an annual income for ${this.props.tenants[id].first_name}.`;
+                } else {
+                    document.querySelector(`#tenants-${id}-income-error`).innerText = `Income must be a number for ${this.props.tenants[id].first_name}.`;
+                }
             }
             valid = false
-        } else if (this.props.tenants[id].income) { document.querySelector(`#tenants-${id}-income-error`).style.display = 'none'; }
+        } else if (this.props.tenants[id].income) {
+            document.querySelector(`#tenants-${id}-income-error`).style.display = 'none';
+        }
 
         if (this.props.tenants[id].credit_score === null) {
             if (show_errors) {

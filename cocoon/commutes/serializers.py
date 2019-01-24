@@ -3,6 +3,13 @@ from rest_framework import serializers
 from cocoon.commutes.models import CommuteType
 
 
+class CommuteTypeSerializerJustId(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = CommuteType
+        fields = ('id',)
+
+
 class CommuteTypeSerializer(serializers.HyperlinkedModelSerializer):
 
     commute_type = serializers.SerializerMethodField()

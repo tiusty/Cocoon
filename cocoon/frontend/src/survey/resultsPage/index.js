@@ -38,13 +38,26 @@ export default class ResultsPage extends Component {
 
     componentDidMount = () => {
         this.setPageHeight();
-        this.getSurveyId();
+        this.getSurvey();
         this.getResults();
-    }
+    };
 
-    getSurveyId = () => {
+    handleUpdateSurvey = (survey) => {
         /**
-         * Retrieves the Survey Id by passing the survey url
+         * This is passed the new survey and saves it to the state.
+         *  Also after updating the survey it calls the getResults function to get the new results
+         */
+        this.setState({
+            survey: survey,
+            favorites: survey.favorites,
+            isEditing: false,
+            viewing_home: false,
+        }, () => this.getResults())
+    };
+
+    getSurvey = () => {
+        /**
+         * Retrieves the Survey by passing the survey url
          */
         axios.get(survey_endpoints['rentSurvey'] + this.getSurveyUrl(), {params: {type: 'by_url'}})
             .catch(error => console.log('Bad', error))
@@ -58,6 +71,16 @@ export default class ResultsPage extends Component {
     };
 
     getResults = () => {
+        /**
+         * Whenever the results are being retrieved remove the old list first
+         */
+        this.setState({
+            homeList: [],
+        });
+
+        /**
+         * Retrieve the survey results
+         */
         axios.get(survey_endpoints['rentResult'] + this.getSurveyUrl())
             .catch(error => console.log('Bad', error))
             .then(response => {
@@ -68,6 +91,10 @@ export default class ResultsPage extends Component {
     }
 
     getSurveyUrl = () => {
+        /**
+         * Retrieve the survey url via the web url
+         * @type {string[]}
+         */
         const url = window.location.pathname.split('/');
         const name =  url[url.length - 2];
         this.setState({
@@ -204,7 +231,7 @@ export default class ResultsPage extends Component {
         } else if (this.state.viewing_home && !this.state.isEditing) {
             return this.renderLargeHome();
         } else if (this.state.isEditing) {
-            return <RentForm isEditing={true} />
+            return <RentForm survey={this.state.survey} is_authenticated={true} onUpdateSurvey={this.handleUpdateSurvey}/>
         }
     }
 

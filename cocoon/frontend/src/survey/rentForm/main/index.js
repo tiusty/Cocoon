@@ -24,6 +24,7 @@ export default class RentForm extends Component {
         this.state = {
             step: 1,
             loading: false,
+            isEditing: false,
 
             // General Form Fields
             generalInfo: {
@@ -36,12 +37,9 @@ export default class RentForm extends Component {
                 desired_price: 1000,
                 max_price: 3000,
                 price_weight: 2,
-                min_bathrooms: 1,
-                max_bathrooms: 6,
-                parking_spot: 0,
                 earliest_move_in: undefined,
                 latest_move_in: undefined,
-                is_move_asap: 'yes',
+                is_move_asap: undefined,
             },
 
             // Amenities Form Fields
@@ -85,6 +83,44 @@ export default class RentForm extends Component {
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
         this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
+    }
+
+    componentDidMount() {
+        /**
+         * If a survey prop is passed in, then the data for the survey is populated
+         *  via the survey prop
+         *
+         * Otherwise the data is assumed to be blank
+         */
+        if (this.props.survey) {
+            // Do a deep copy... otherwise it is a memory reference and causes issues
+            //  when the component is unmounted
+            let survey = JSON.parse(JSON.stringify(this.props.survey));
+
+            // We need to set the initial forms to the current number of tenants so
+            //  tenants are not duplicated
+            this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;
+
+            // Make sure the tenants are sorted in the order of creation
+            // (the most recently created has the lowest id)
+            let tenants = survey.tenants.sort((a,b) => a.id - b.id);
+
+            // Set data that is not properly set from the backend
+            for(let i=0; i<tenants.length; i++) {
+                // The index matches the order of the tenants
+                tenants[i].index = i;
+
+                // Since the commute type is passed back in a dictionary,
+                //  retrieve it and store it directly in the tenant dictionary
+                tenants[i].commute_type = tenants[i].commute_type.id
+            }
+            this.setState({
+                amenitiesInfo: survey.amenitiesInfo,
+                generalInfo: survey.generalInfo,
+                tenants,
+                isEditing: true,
+            })
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -161,30 +197,59 @@ export default class RentForm extends Component {
             data['detailsInfo'] = userData
         }
 
-        // Posts the state which contains all the form elements that are needed
-        axios.post(survey_endpoints['rentSurvey'],
-            {
-                data: data,
-            })
-            .catch(error => {
-                console.log('BAD', error);
-                this.setState({loading: false})
-            })
-            // If the response was successful then don't set loading to true
-            //  because the page will redirect and we don't want the user to click
-            //  the button again
-            .then(response => {
-                // On successful form submit then redirect to survey results page
-                    if (response.data.result) {
-                        window.location = response.data.redirect_url
-                    } else {
-                        this.setState({
-                            errors: response.data
-                        });
-                        this.setState({loading: false})
+        // If the survey is being edited then return the survey data back to the survey results component
+        //  otherwise redirect to the survey results page
+        if (this.state.isEditing) {
+            // Posts the state which contains all the form elements that are needed
+            axios.put(survey_endpoints['rentSurvey'] + this.props.survey.id + '/',
+                {
+                    data: data,
+                    type: 'survey_edit'
+                })
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({loading: false})
+                })
+                .then(response => {
+                        // On successful form submit update the survey state in survey results component
+                        if (response.data.result) {
+                            this.props.onUpdateSurvey(response.data.survey)
+
+                        // If there was an error then return the error
+                        } else {
+                            this.setState({
+                                errors: response.data
+                            });
+                            this.setState({loading: false})
+                        }
                     }
-                }
-            );
+                );
+        } else {
+            // Posts the state which contains all the form elements that are needed
+            axios.post(survey_endpoints['rentSurvey'],
+                {
+                    data: data,
+                })
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({loading: false})
+                })
+                // If the response was successful then don't set loading to true
+                //  because the page will redirect and we don't want the user to click
+                //  the button again
+                .then(response => {
+                        // On successful form submit then redirect to survey results page
+                        if (response.data.result) {
+                            window.location = response.data.redirect_url
+                        } else {
+                            this.setState({
+                                errors: response.data
+                            });
+                            this.setState({loading: false})
+                        }
+                    }
+                );
+        }
     };
 
     // Renders the section of the form based on which step the user is on
@@ -289,6 +354,8 @@ export default class RentForm extends Component {
         let data = "";
         if (type === 'number') {
             data = parseInt(value);
+        } else if (type === 'boolean') {
+            data = (value === 'true');
         } else {
             data = value
         }

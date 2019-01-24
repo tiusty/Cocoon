@@ -129,7 +129,7 @@ export default class GeneralForm extends Component {
 
     handleDatePickerValidation() {
         let valid = true;
-        if (this.props.generalInfo.is_move_asap !== 'yes') {
+        if (!this.props.generalInfo.is_move_asap) {
             if (this.props.generalInfo.earliest_move_in === undefined ||
             this.props.generalInfo.latest_move_in === undefined) {
                 document.querySelector('#date_error').style.display = 'block';
@@ -312,14 +312,14 @@ export default class GeneralForm extends Component {
 
     renderMoveAsapQuestion() {
         return (
-            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'string')}>
+            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'boolean')}>
                 <h2>Are you looking to move in <span>as soon as possible?</span></h2>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name="is_move_asap" value="yes" checked={this.props.generalInfo.is_move_asap === 'yes'} onChange={() => {}} />
+                    <input type="radio" name="is_move_asap" value={true} checked={this.props.generalInfo.is_move_asap === true} onChange={() => {}} />
                     <div>Yes</div>
                 </label>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name="is_move_asap" value="no" checked={this.props.generalInfo.is_move_asap === 'no'} onChange={() => {}} />
+                    <input type="radio" name="is_move_asap" value={false} checked={this.props.generalInfo.is_move_asap === false} onChange={() => {}} />
                     <div>No</div>
                 </label>
             </div>
@@ -327,7 +327,7 @@ export default class GeneralForm extends Component {
     }
 
     renderDatePickingQuestion() {
-        if (this.props.generalInfo.is_move_asap !== "yes") {
+        if (!this.props.generalInfo.is_move_asap) {
             return (
                 <div className="survey-question">
                     <h2>When are you wanting to <span>move in</span>?</h2>
