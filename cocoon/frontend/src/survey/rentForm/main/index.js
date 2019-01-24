@@ -94,7 +94,11 @@ export default class RentForm extends Component {
             // (the most recently created as the lowest id)
             let tenants = survey.tenants.sort((a,b) => a.id - b.id);
             for(let i=0; i<tenants.length; i++) {
+                // Since the commute type is passed back in a dictionary,
+                //  retrieve it and store it directly in the tenant dictionary
+                let commute_id = tenants[i].commute_type.id;
                 tenants[i].index = i;
+                tenants[i].commute_type = commute_id
             }
             this.setState({
                 amenitiesInfo: survey.amenitiesInfo,

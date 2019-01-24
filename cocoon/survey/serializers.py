@@ -6,13 +6,18 @@ from .models import RentingSurveyModel, TenantModel
 
 # Import Third party modules
 from cocoon.houseDatabase.serializers import RentDatabaseSerializer
+from cocoon.commutes.serializers import CommuteTypeSerializerJustId
 
 
 class TenantSerializer(serializers.HyperlinkedModelSerializer):
+    commute_type = CommuteTypeSerializerJustId()
 
     class Meta:
         model = TenantModel
-        fields = ('first_name', 'last_name', 'id')
+        fields = ('first_name', 'last_name', 'id',
+                  'street_address', 'city', 'state', 'zip_code',
+                  'commute_type', 'commute_weight', 'traffic_option',
+                  'min_commute', 'max_commute')
 
 
 class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
