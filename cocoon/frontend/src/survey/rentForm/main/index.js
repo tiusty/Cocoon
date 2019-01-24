@@ -24,6 +24,7 @@ export default class RentForm extends Component {
         this.state = {
             step: 1,
             loading: false,
+            isEditing: false,
 
             // General Form Fields
             generalInfo: {
@@ -93,6 +94,9 @@ export default class RentForm extends Component {
          */
         let survey = this.props.survey;
         if (survey) {
+            // We need to set the initial forms to the current number of tenants so
+            //  tenants are duplicated
+            this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;
             // Make sure the tenants are sorted in the order of creation
             // (the most recently created as the lowest id)
             let tenants = survey.tenants.sort((a,b) => a.id - b.id);
@@ -186,30 +190,58 @@ export default class RentForm extends Component {
             data['detailsInfo'] = userData
         }
 
-        // Posts the state which contains all the form elements that are needed
-        axios.post(survey_endpoints['rentSurvey'],
-            {
-                data: data,
-            })
-            .catch(error => {
-                console.log('BAD', error);
-                this.setState({loading: false})
-            })
-            // If the response was successful then don't set loading to true
-            //  because the page will redirect and we don't want the user to click
-            //  the button again
-            .then(response => {
-                // On successful form submit then redirect to survey results page
-                    if (response.data.result) {
-                        window.location = response.data.redirect_url
-                    } else {
-                        this.setState({
-                            errors: response.data
-                        });
-                        this.setState({loading: false})
+        if (this.state.isEditing) {
+            // Posts the state which contains all the form elements that are needed
+            axios.put(survey_endpoints['rentSurvey'] + this.props.survey.id + '/',
+                {
+                    data: data,
+                    type: 'survey_edit'
+                })
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({loading: false})
+                })
+                // If the response was successful then don't set loading to true
+                //  because the page will redirect and we don't want the user to click
+                //  the button again
+                .then(response => {
+                        // On successful form submit then redirect to survey results page
+                        if (response.data.result) {
+                            this.props.onUpdateSurvey(response.data.survey)
+                        } else {
+                            this.setState({
+                                errors: response.data
+                            });
+                            this.setState({loading: false})
+                        }
                     }
-                }
-            );
+                );
+        } else {
+            // Posts the state which contains all the form elements that are needed
+            axios.post(survey_endpoints['rentSurvey'],
+                {
+                    data: data,
+                })
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({loading: false})
+                })
+                // If the response was successful then don't set loading to true
+                //  because the page will redirect and we don't want the user to click
+                //  the button again
+                .then(response => {
+                        // On successful form submit then redirect to survey results page
+                        if (response.data.result) {
+                            window.location = response.data.redirect_url
+                        } else {
+                            this.setState({
+                                errors: response.data
+                            });
+                            this.setState({loading: false})
+                        }
+                    }
+                );
+        }
     };
 
     // Renders the section of the form based on which step the user is on

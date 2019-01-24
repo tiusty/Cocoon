@@ -570,7 +570,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                             save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
                         # Now save the the tenants
-                        tenants.instance = survey
                         tenants.save()
 
                     serializer = RentSurveySerializer(survey)
