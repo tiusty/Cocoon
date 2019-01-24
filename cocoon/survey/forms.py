@@ -371,7 +371,7 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+        fields = ["num_bedrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
                   "wants_parking", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
@@ -430,7 +430,7 @@ class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNear
         model = RentingSurveyModel
         fields = ["num_bedrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                   "name", "num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                   "name", "num_bedrooms",  "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
                   "wants_parking", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
