@@ -17,7 +17,8 @@ class TenantSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('first_name', 'last_name', 'id',
                   'street_address', 'city', 'state', 'zip_code',
                   'commute_type', 'commute_weight', 'traffic_option',
-                  'min_commute', 'max_commute')
+                  'min_commute', 'max_commute', 'income', 'credit_score',
+                  'occupation', 'other_occupation_reason', 'unemployed_follow_up')
 
 
 class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
@@ -46,10 +47,8 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
             'home_type': home_type_ids,
             'num_bedrooms': obj.num_bedrooms,
             'polygon_filter_type': obj.polygon_filter_type,
-
-            # need to store this in the survey
-            'is_move_asap': 'yes',
-            'move_weight': 2,
+            'is_move_asap': obj.is_move_asap,
+            'move_weight': obj.move_weight,
         }
 
     @staticmethod
