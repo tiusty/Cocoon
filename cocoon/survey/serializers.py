@@ -39,6 +39,23 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
         home_type_ids = []
         for home_type in obj.home_type.all():
             home_type_ids.append(home_type.id)
+
+        # Converts the polygons from the database version to the frontend version
+        polygons = []
+        counter = 1
+        for polygon in obj.polygons.all():
+            vertices = []
+            for vertex in polygon.vertices.all():
+                vertices.append({
+                    'lat': vertex.lat,
+                    'lng': vertex.lng,
+                })
+            polygons.append({
+                'key': counter,
+                'vertices': vertices,
+            })
+            counter += 1
+
         return {
             'desired_price': obj.desired_price,
             'max_price': obj.max_price,
@@ -49,6 +66,7 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
             'polygon_filter_type': obj.polygon_filter_type,
             'is_move_asap': obj.is_move_asap,
             'move_weight': obj.move_weight,
+            'polygons': polygons,
         }
 
     @staticmethod
