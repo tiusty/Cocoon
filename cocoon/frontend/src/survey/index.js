@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 import RentForm from './rentForm/main/index';
 
 const components = {
-    'RentingSurvey': RentForm
+    'RentingSurveyTemplate': <RentForm is_authenticated={window.isUser} />,
 };
 
-ReactDOM.render(<RentForm is_authenticated={window.isUser} />, window.react_mount);
+ReactDOM.render(components[window.component], window.react_mount);

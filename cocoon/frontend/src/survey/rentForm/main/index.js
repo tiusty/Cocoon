@@ -92,10 +92,11 @@ export default class RentForm extends Component {
          *
          * Otherwise the data is assumed to be blank
          */
-        // Do a deep copy... otherwise it is a memory reference and causes issues
-        //  when the component is unmounted
-        let survey = JSON.parse(JSON.stringify(this.props.survey));
-        if (survey) {
+        if (this.props.survey) {
+            // Do a deep copy... otherwise it is a memory reference and causes issues
+            //  when the component is unmounted
+            let survey = JSON.parse(JSON.stringify(this.props.survey));
+
             // We need to set the initial forms to the current number of tenants so
             //  tenants are duplicated
             this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;

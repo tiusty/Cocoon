@@ -8,7 +8,7 @@ import ResultsPage from "./resultsPage";
 // Determines which component to load via dictionary
 //  This should be passed in the context to the template
 const components = {
-    'SurveyResults': ResultsPage,
+    'RentingResultTemplate': ResultsPage,
 };
 
 ReactDOM.render(
