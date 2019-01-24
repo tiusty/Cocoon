@@ -24,14 +24,6 @@ class HomeInformationForm(ModelForm):
         required=False
     )
 
-    max_bathrooms = forms.IntegerField(
-        required=False,
-    )
-
-    min_bathrooms = forms.IntegerField(
-        required=False,
-    )
-
     home_type = forms.ModelMultipleChoiceField(
         required=True,
         queryset=HomeTypeModel.objects.all()
@@ -67,15 +59,6 @@ class HomeInformationForm(ModelForm):
         # Make sure the bedrooms are not more than the max allowed
         if int(current_form['num_bedrooms']) > MAX_NUM_BEDROOMS:
             self.add_error('num_bedrooms', "There can't be more than " + str(MAX_NUM_BEDROOMS))
-            valid = False
-
-        # make sure that the max number of bathrooms is not greater than the max specified
-        if current_form['max_bathrooms'] > MAX_NUM_BATHROOMS:
-            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
-            valid = False
-
-        if current_form['min_bathrooms'] < 0:
-            self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
             valid = False
 
         return valid
@@ -445,7 +428,7 @@ class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNear
 
     class Meta:
         model = RentingSurveyModel
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+        fields = ["num_bedrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                    "name", "num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",

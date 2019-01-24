@@ -119,7 +119,6 @@ class CocoonAlgorithm(object):
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(currently_available=True) \
             .filter(num_bedrooms=user_survey.num_bedrooms) \
-            .filter(num_bathrooms__range=(user_survey.min_bathrooms, user_survey.max_bathrooms)) \
             .filter(home_type__in=user_survey.home_type.all())\
 
         return house_query

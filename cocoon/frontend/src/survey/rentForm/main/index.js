@@ -88,6 +88,12 @@ export default class RentForm extends Component {
     }
 
     componentDidMount() {
+        /**
+         * If a survey prop is passed in, then the data for the survey is populated
+         *  via the survey prop
+         *
+         * Otherwise the data is assumed to be blank
+         */
         let survey = this.props.survey;
         if (survey) {
             // Make sure the tenants are sorted in the order of creation
@@ -103,7 +109,8 @@ export default class RentForm extends Component {
             this.setState({
                 amenitiesInfo: survey.amenitiesInfo,
                 generalInfo: survey.generalInfo,
-                tenants
+                tenants,
+                isEditing: true,
             })
         }
     }

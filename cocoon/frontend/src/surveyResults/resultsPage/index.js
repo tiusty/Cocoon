@@ -204,7 +204,7 @@ export default class ResultsPage extends Component {
         } else if (this.state.viewing_home && !this.state.isEditing) {
             return this.renderLargeHome();
         } else if (this.state.isEditing) {
-            return <RentForm isEditing={true} survey={this.state.survey}/>
+            return <RentForm survey={this.state.survey} is_authenticated={true}/>
         }
     }
 
