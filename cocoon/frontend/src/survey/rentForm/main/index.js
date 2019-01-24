@@ -98,8 +98,9 @@ export default class RentForm extends Component {
             let survey = JSON.parse(JSON.stringify(this.props.survey));
 
             // We need to set the initial forms to the current number of tenants so
-            //  tenants are duplicated
+            //  tenants are not duplicated
             this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;
+
             // Make sure the tenants are sorted in the order of creation
             // (the most recently created as the lowest id)
             let tenants = survey.tenants.sort((a,b) => a.id - b.id);
