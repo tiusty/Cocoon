@@ -11,7 +11,7 @@ export default class Map extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            commutes: []
+            commutes: [],
         }
     }
 
@@ -24,7 +24,7 @@ export default class Map extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.survey !== prevProps.survey) {
+        if (this.props.tenants !== prevProps.tenants) {
             this.getCommuteCoords();
         }
     }
@@ -217,57 +217,35 @@ export default class Map extends Component {
 
     getCommuteCoords = () => {
         let commutes = [];
-        this.props.survey.tenants.forEach(t => {
-            if (t.street_address) {
-                let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
-                let coords = {};
-                const geocoder = new google.maps.Geocoder();
-                geocoder.geocode( { 'address': address }, (results, status) => {
-                    if (status === google.maps.GeocoderStatus.OK) {
-                        coords.lat = results[0].geometry.location.lat();
-                        coords.lng = results[0].geometry.location.lng();
-                        commutes.push(coords)
-                    }
-                });
-            }
-        })
+        if (this.props.tenants) {
+            this.props.tenants.forEach(t => {
+                if (t.street_address) {
+                    let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
+                    let name = `${t.first_name}`;
+                    let coords = {};
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode( { 'address': address }, (results, status) => {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            coords.name = name;
+                            coords.lat = results[0].geometry.location.lat();
+                            coords.lng = results[0].geometry.location.lng();
+                            commutes.push(coords)
+                        }
+                    });
+                }
+            })
+        }
         this.setState({
             commutes: commutes
         })
     }
 
-    renderCommutes = () => {
-        if (this.state.commutes.length > 0) {
-            console.log(this.state.commutes)
-            this.state.commutes.map(commute => (
-                <CommuteMarker
-                    lat={commute.lat}
-                    lng={commute.lng}
-                    key={commute.lat}
-                />
-            ))
-        }
-    }
-
-    render() {
-
-        const mapOptions = {
-            styles: this.getMapStyle()
-        }
-
-        let homesCopy = [...this.props.homes];
-
-        return (
-            <GoogleMapReact
-                defaultCenter={this.props.center}
-                defaultZoom={this.props.zoom}
-                options={mapOptions}
-                handleHomeClick={this.props.handleHomeClick}
-                hover_id={this.props.hover_id}
-                setHoverId={this.props.setHoverId}
-                removeHoverId={this.props.removeHoverId}
-            >
-                {this.props.homes && homesCopy.reverse().map(home => (
+    renderMapMarkers = () => {
+        let mapMarkers = [];
+        if (this.props.homes) {
+            let homesCopy = [...this.props.homes];
+            homesCopy.reverse().map(home => {
+                let newMarker = (
                     <MapMarker
                         lat={home.home.latitude}
                         lng={home.home.longitude}
@@ -279,8 +257,42 @@ export default class Map extends Component {
                         setHoverId={this.props.setHoverId}
                         removeHoverId={this.props.removeHoverId}
                     />
-                ))}
+                );
+                mapMarkers.push(newMarker);
+            })
+        }
+        if (this.state.commutes.length > 0) {
+            this.state.commutes.map(commute => {
+                let newMarker = (
+                    <CommuteMarker
+                        lat={commute.lat}
+                        lng={commute.lng}
+                        name={commute.name}
+                        key={commute.name}
+                    />
+                );
+                mapMarkers.push(newMarker);
+            })
+        }
+        return mapMarkers;
+    }
 
+    render() {
+
+        const mapOptions = {
+            styles: this.getMapStyle()
+        }
+
+        return (
+            <GoogleMapReact
+                defaultCenter={this.props.center}
+                defaultZoom={this.props.zoom}
+                options={mapOptions}
+                handleHomeClick={this.props.handleHomeClick}
+                hover_id={this.props.hover_id}
+                setHoverId={this.props.setHoverId}
+                removeHoverId={this.props.removeHoverId}>
+                {this.renderMapMarkers()}
             </GoogleMapReact>
         )
     }

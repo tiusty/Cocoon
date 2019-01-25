@@ -144,6 +144,12 @@
     margin: 0 auto;
 }
 
+.commute-marker {
+    width: auto;
+    font-size: 11px;
+    padding: 7px;
+}
+
 .map-marker_teal,
 .map-marker_teal::before {
     background: #39b0a6;

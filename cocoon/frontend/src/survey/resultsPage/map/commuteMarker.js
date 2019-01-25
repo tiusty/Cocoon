@@ -8,9 +8,8 @@ export default class CommuteMarker extends Component {
 
     render() {
         return (
-            <div
-                className={'map-marker'}>
-                C
+            <div className={'map-marker commute-marker'}>
+                {`${this.props.name}'s Commute`}
             </div>
         )
     }

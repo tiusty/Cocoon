@@ -70,6 +70,7 @@ export default class ResultsPage extends Component {
             .then(response => {
                 this.setState({
                     survey: response.data,
+                    tenants: response.data.tenants,
                     favorites: response.data.favorites
                 }, () => console.log(this.state.survey));
             })
@@ -322,7 +323,7 @@ export default class ResultsPage extends Component {
                         {this.renderMainComponent()}
                     </div>
                     <div className="map-wrapper">
-                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} survey={this.state.survey} /> : null}
+                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} tenants={this.state.tenants} /> : null}
                     </div>
                 </div>
             );
