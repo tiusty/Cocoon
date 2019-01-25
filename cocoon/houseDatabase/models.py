@@ -53,6 +53,7 @@ class HomeProviderModel(models.Model):
                 raise ValidationError("There should only be one {0} management object".format(self.provider))
         return super(HomeProviderModel, self).save(*args, **kwargs)
 
+
 # This is used as a "hack" so that every abstract model class has a base class that contains
 #   the update function. This way when the chain of super's is done being called, it will call
 #   into this base class which will prevent the super function from breaking
@@ -72,7 +73,6 @@ class HouseLocationInformationModel(UpdateBase, models.Model):
     zip_code = models.CharField(max_length=200)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
-    laundromat_nearby = models.BooleanField(default=False)
 
     @property
     def full_address(self):
@@ -92,7 +92,6 @@ class HouseLocationInformationModel(UpdateBase, models.Model):
         self.zip_code = update_model.zip_code
         self.latitude = update_model.latitude
         self.longitude = update_model.longitude
-        self.laundromat_nearby = update_model.laundromat_nearby
 
     class Meta:
         abstract = True
@@ -109,7 +108,7 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
     air_conditioning = models.BooleanField(default=False)
     dogs_allowed = models.BooleanField(default=False)
     cats_allowed = models.BooleanField(default=False)
-    laundry_inside = models.BooleanField(default=False)
+    laundry_in_unit = models.BooleanField(default=False)
     dishwasher = models.BooleanField(default=False)
 
     def update(self, update_model):
@@ -125,7 +124,7 @@ class HouseInteriorAmenitiesModel(UpdateBase, models.Model):
         self.air_conditioning = update_model.air_conditioning
         self.dogs_allowed = update_model.dogs_allowed
         self.cats_allowed = update_model.cats_allowed
-        self.laundry_inside = update_model.laundry_inside
+        self.laundry_in_unit = update_model.laundry_in_unit
         self.dishwasher = update_model.dishwasher
 
     class Meta:
@@ -141,7 +140,7 @@ class HouseExteriorAmenitiesModel(UpdateBase, models.Model):
     patio_balcony = models.BooleanField(default=False)
     gym = models.BooleanField(default=False)
     storage = models.BooleanField(default=False)
-    laundry_in_unit = models.BooleanField(default=False)
+    laundry_in_building = models.BooleanField(default=False)
 
     def update(self, update_model):
         """
@@ -154,7 +153,25 @@ class HouseExteriorAmenitiesModel(UpdateBase, models.Model):
         self.patio_balcony = update_model.patio_balcony
         self.gym = update_model.gym
         self.storage = update_model.storage
-        self.laundry_in_unit = update_model.laundry_in_unit
+        self.laundry_in_building = update_model.laundry_in_building
+
+    class Meta:
+        abstract = True
+
+
+class HouseNearbyAmenitiesModel(UpdateBase, models.Model):
+    """
+    Contains all the nearby ameneties associated with the home
+    """
+    laundromat_nearby = models.BooleanField(default=False)
+
+    def update(self, update_model):
+        """
+        Given another model, updates current model with fields from the new model
+        :param update_model: (HouseNearbyAmenitiesModel) -> The model to use to update current model
+        """
+        super(HouseNearbyAmenitiesModel, self).update(update_model)
+        self.laundromat_nearby = update_model.laundromat_nearby
 
     class Meta:
         abstract = True
@@ -189,7 +206,7 @@ class HouseManagementModel(UpdateBase, models.Model):
 
 
 class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, HouseLocationInformationModel,
-                        HouseInteriorAmenitiesModel):
+                        HouseInteriorAmenitiesModel, HouseNearbyAmenitiesModel):
     """
     This model stores all the information associated with a home
     """
