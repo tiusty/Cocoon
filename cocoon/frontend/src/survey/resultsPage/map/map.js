@@ -4,12 +4,15 @@ import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 
 import MapMarker from './mapMarker';
-// const MapMarker = ({ score }) => <div className="map-marker">{score}</div>;
+import CommuteMarker from './commuteMarker';
 
 export default class Map extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            commutes: []
+        }
     }
 
     static defaultProps = {
@@ -18,6 +21,12 @@ export default class Map extends Component {
             lng: -71.05
         },
         zoom: 11
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.survey !== prevProps.survey) {
+            this.getCommuteCoords();
+        }
     }
 
     getMapStyle = () => {
@@ -206,10 +215,48 @@ export default class Map extends Component {
         return mapStyle;
     }
 
+    getCommuteCoords = () => {
+        let commutes = [];
+        this.props.survey.tenants.forEach(t => {
+            if (t.street_address) {
+                let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
+                let coords = {};
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode( { 'address': address }, (results, status) => {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        coords.lat = results[0].geometry.location.lat();
+                        coords.lng = results[0].geometry.location.lng();
+                        commutes.push(coords)
+                    }
+                });
+            }
+        })
+        this.setState({
+            commutes: commutes
+        })
+    }
+
+    renderCommutes = () => {
+        if (this.state.commutes.length > 0) {
+            console.log(this.state.commutes)
+            this.state.commutes.map(commute => (
+                <CommuteMarker
+                    lat={commute.lat}
+                    lng={commute.lng}
+                    key={commute.lat}
+                />
+            ))
+        }
+    }
+
     render() {
+
         const mapOptions = {
             styles: this.getMapStyle()
         }
+
+        let homesCopy = [...this.props.homes];
+
         return (
             <GoogleMapReact
                 defaultCenter={this.props.center}
@@ -217,18 +264,23 @@ export default class Map extends Component {
                 options={mapOptions}
                 handleHomeClick={this.props.handleHomeClick}
                 hover_id={this.props.hover_id}
+                setHoverId={this.props.setHoverId}
+                removeHoverId={this.props.removeHoverId}
             >
-                    {this.props.homes && this.props.homes.map(home => (
-                        <MapMarker
-                            lat={home.home.latitude}
-                            lng={home.home.longitude}
-                            score={home.percent_match}
-                            key={home.home.id}
-                            id={home.home.id}
-                            hover_id={this.props.hover_id}
-                            handleHomeClick={this.props.handleHomeClick}
-                        />
-                    ))}
+                {this.props.homes && homesCopy.reverse().map(home => (
+                    <MapMarker
+                        lat={home.home.latitude}
+                        lng={home.home.longitude}
+                        score={home.percent_match}
+                        key={home.home.id}
+                        id={home.home.id}
+                        hover_id={this.props.hover_id}
+                        handleHomeClick={this.props.handleHomeClick}
+                        setHoverId={this.props.setHoverId}
+                        removeHoverId={this.props.removeHoverId}
+                    />
+                ))}
+
             </GoogleMapReact>
         )
     }

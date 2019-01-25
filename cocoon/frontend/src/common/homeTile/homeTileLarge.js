@@ -181,7 +181,7 @@ export default class HomeTileLarge extends Component {
             // renders carousel
             return (
                 <Carousel
-                    dynamicHeight={true}
+                    dynamicHeight={false}
                     infiniteLoop={true}
                     showThumbs={false}
                     showStatus={false}

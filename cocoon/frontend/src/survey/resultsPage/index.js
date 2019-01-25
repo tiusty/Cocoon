@@ -5,10 +5,13 @@ import axios from 'axios';
 // Import Cocoon Components
 import '../../common/styles/variables.css';
 import './resultsPage.css';
+import BlurredImg from './not-verified-bg.jpg';
+
 
 import survey_endpoints from '../../endpoints/survey_endpoints';
 import userAuth_endpoints from '../../endpoints/userAuth_endpoints';
 
+import Preloader from '../../common/preloader';
 import HomeTile from '../../common/homeTile/homeTile';
 import HomeTileLarge from '../../common/homeTile/homeTileLarge';
 import Map from './map/map';
@@ -32,15 +35,18 @@ export default class ResultsPage extends Component {
             viewing_home: false,
             scroll_position: undefined,
             isEditing: false,
+            isLoading: true,
             center: undefined
         }
     }
 
     componentDidMount = () => {
         this.setPageHeight();
-        this.getSurvey();
-        this.getResults();
-    };
+        if (this.props.is_verified) {
+            this.getSurvey();
+            this.getResults();
+        }
+    }
 
     handleUpdateSurvey = (survey) => {
         /**
@@ -76,6 +82,7 @@ export default class ResultsPage extends Component {
          */
         this.setState({
             homeList: [],
+            isLoading: true
         });
 
         /**
@@ -85,7 +92,8 @@ export default class ResultsPage extends Component {
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
-                    homeList: response.data
+                    homeList: response.data,
+                    isLoading: false
                 }, () => console.log(this.state.homeList));
             })
     }
@@ -104,6 +112,10 @@ export default class ResultsPage extends Component {
     }
 
     setPageHeight = () => {
+        /**
+         *  On render this function resizes the divs to be 100% off the screen
+         *  size. Also disables the scroll for the body element
+        **/
         document.querySelector('body').style.overflow = 'hidden';
         document.querySelector('.navbar').style.margin = 0;
         document.querySelector('#siteWrapper').style.width = '100%';
@@ -113,12 +125,20 @@ export default class ResultsPage extends Component {
     }
 
     setHoverId = (id) => {
+        /**
+         *  On hover this sets the hover_id to
+         *  the id of the home.
+         *  Active on the home tiles and map markers
+        **/
         this.setState({
             hover_id: id
         })
     }
 
     removeHoverId = () => {
+        /**
+         *  Removes the hover_id on mouse leave
+        **/
         this.setState({
             hover_id: undefined
         })
@@ -148,6 +168,9 @@ export default class ResultsPage extends Component {
     }
 
     renderResults = () => {
+        /**
+         *  Renders the list of home tiles
+        **/
         return (
             <>
                 <div className="results-info">
@@ -177,6 +200,10 @@ export default class ResultsPage extends Component {
     }
 
     handleHomeClick = (id) => {
+        /**
+         * On the click of a homeTile or map marker, this sets the clicked_home id
+         * to the target id to be used to render the large home tile.
+        **/
         this.saveScrollPosition();
         this.setState({
             clicked_home: id,
@@ -186,6 +213,9 @@ export default class ResultsPage extends Component {
     }
 
     handleCloseHomeTileLarge = () => {
+        /**
+         *  Clears the clicked_home id and renders the home list
+        **/
         this.removeHoverId();
         this.setState({
             clicked_home: undefined,
@@ -210,6 +240,9 @@ export default class ResultsPage extends Component {
     }
 
     toggleEditing = () => {
+        /**
+         *  Renders the survey
+        **/
         this.setState({
             isEditing: !this.state.isEditing,
             clicked_home: undefined,
@@ -221,13 +254,29 @@ export default class ResultsPage extends Component {
         if (!this.state.isEditing) {
             return 'Edit Survey';
         } else {
-            return 'Save Survey';
+            return 'Cancel Survey';
         }
+    }
+
+    renderEmptyHomes = () => {
+        return (
+            <div className="results-info empty-results">
+                <h2>Nothing's here!</h2>
+                <p>Sorry, no homes exist for your requirements. Please update your survey criteria.</p>
+                <span onClick={this.toggleEditing}>Edit Survey</span>
+            </div>
+        );
     }
 
     renderMainComponent = () => {
         if (!this.state.viewing_home && !this.state.isEditing) {
-            return this.renderResults();
+            if (this.state.isLoading) {
+                return <Preloader color={'var(--teal)'} size={12} />
+            } if (!this.state.isLoading && (!this.state.homeList || this.state.homeList.length === 0)) {
+                return this.renderEmptyHomes();
+            } else {
+                return this.renderResults();
+            }
         } else if (this.state.viewing_home && !this.state.isEditing) {
             return this.renderLargeHome();
         } else if (this.state.isEditing) {
@@ -257,20 +306,39 @@ export default class ResultsPage extends Component {
         return wrapper_class;
     }
 
-    render() {
-        return (
-            <div id="results-page">
-                <div className={this.setResultsWrapperClass()}>
-                    <div className="results-btn-row">
-                        <a href={userAuth_endpoints['surveys']}>Schedule Tour</a>
-                        <span onClick={this.toggleEditing}><i className="material-icons">edit</i> {this.renderEditingText()}</span>
+    handleVerification = () => {
+        /**
+         *  If the user is verified this will render the normal page.
+         *  And if not verified, they will have the resend confirmation email modal
+        **/
+        if (this.props.is_verified) {
+            return (
+                <div id="results-page">
+                    <div className={this.setResultsWrapperClass()}>
+                        <div className="results-btn-row">
+                            <a href={userAuth_endpoints['surveys']}>Schedule Tour</a>
+                            <span onClick={this.toggleEditing}><i className="material-icons">edit</i> {this.renderEditingText()}</span>
+                        </div>
+                        {this.renderMainComponent()}
                     </div>
-                    {this.renderMainComponent()}
+                    <div className="map-wrapper">
+                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} survey={this.state.survey} /> : null}
+                    </div>
                 </div>
-                <div className="map-wrapper">
-                    {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} /> : null}
-                </div>
-            </div>
-        )
+            );
+        } else {
+            return (
+              <div id="unverified-wrapper" style={{backgroundImage: `url(${BlurredImg})`}}>
+                  <div className="unverified-modal">
+                      <h2>Confirm your email before viewing your results.</h2>
+                      <a href="#">Resend confirmation email</a>
+                  </div>
+              </div>
+            );
+        }
+    }
+
+    render() {
+        return this.handleVerification();
     }
 }

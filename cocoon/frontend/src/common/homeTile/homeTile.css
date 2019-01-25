@@ -280,3 +280,7 @@
     border-radius: 0;
     min-height: 250px;
 }
+
+.carousel .slide img {
+    max-height: 400px;
+}

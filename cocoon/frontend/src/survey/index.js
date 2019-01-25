@@ -8,7 +8,7 @@ import ResultsPage from "./resultsPage";
 
 const components = {
     'RentingSurveyTemplate': <RentForm is_authenticated={window.isUser} />,
-    'RentingResultTemplate': <ResultsPage/>,
+    'RentingResultTemplate': <ResultsPage is_verified={window.isVerified}/>,
 };
 
 ReactDOM.render(components[window.component], window.react_mount);
