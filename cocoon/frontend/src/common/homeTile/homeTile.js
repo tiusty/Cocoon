@@ -62,17 +62,20 @@ class HomeTile extends Component {
         }
         let favorite_text = "Add to Favorites";
         let favorite_class = 'home_add_default';
+        let favorite_icon = "favorite_border";
         if (this.props.favorite) {
             favorite_text = "Added to Favorites";
             favorite_class += " home_added";
+            favorite_icon = "favorite";
         } else {
             favorite_text = "Add to Favorites";
             favorite_class = 'home_add_default';
+            favorite_icon = "favorite_border";
         }
         let heart_span = (
             <div className={favorite_class} style={favorite_style} onClick={(e) => this.props.onFavoriteClick(home, e)}>
                 <i className="icon_heart material-icons">
-                    favorite
+                    {favorite_icon}
                 </i>
                 <span>{favorite_text}</span>
             </div>
