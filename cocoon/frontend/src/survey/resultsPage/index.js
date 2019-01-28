@@ -101,10 +101,7 @@ export default class ResultsPage extends Component {
             })
         }
         return commutes;
-        // this.setState({
-        //     commutes: commutes
-        // })
-    }
+    };
 
     getResults = () => {
         /**
@@ -126,7 +123,7 @@ export default class ResultsPage extends Component {
                     isLoading: false
                 }, () => console.log(this.state.homeList));
             })
-    }
+    };
 
     getSurveyUrl = () => {
         /**
@@ -139,7 +136,7 @@ export default class ResultsPage extends Component {
             survey_name: name
         });
         return name;
-    }
+    };
 
     setPageHeight = () => {
         /**
@@ -152,7 +149,7 @@ export default class ResultsPage extends Component {
         document.querySelector('#siteWrapper').style.height = 'auto';
         document.querySelector('#siteWrapper').style.padding = 0;
         document.querySelector('#reactWrapper').style.height = 'calc(100vh - 60px)';
-    }
+    };
 
     setHoverId = (id) => {
         /**
@@ -163,7 +160,7 @@ export default class ResultsPage extends Component {
         this.setState({
             hover_id: id
         })
-    }
+    };
 
     removeHoverId = () => {
         /**
@@ -172,7 +169,7 @@ export default class ResultsPage extends Component {
         this.setState({
             hover_id: undefined
         })
-    }
+    };
 
     handleFavoriteClick = (home) => {
         /**
@@ -195,7 +192,7 @@ export default class ResultsPage extends Component {
                     favorites: response.data.favorites,
                 }, () => console.log(this.state.favorites))
             );
-    }
+    };
 
     renderResults = () => {
         /**
@@ -227,7 +224,7 @@ export default class ResultsPage extends Component {
                 </div>
             </>
         );
-    }
+    };
 
     handleHomeClick = (id) => {
         /**
@@ -238,9 +235,9 @@ export default class ResultsPage extends Component {
         this.setState({
             clicked_home: id,
             viewing_home: true
-        })
+        });
         document.querySelector('.results-wrapper').scrollTop = 0;
-    }
+    };
 
     handleCloseHomeTileLarge = () => {
         /**
@@ -251,7 +248,7 @@ export default class ResultsPage extends Component {
             clicked_home: undefined,
             viewing_home: false
         }, () => this.setScrollPosition())
-    }
+    };
 
     renderLargeHome = () => {
         let home = this.state.homeList.find(home => home.home.id === this.state.clicked_home);
@@ -267,7 +264,7 @@ export default class ResultsPage extends Component {
                 />
             </div>
         );
-    }
+    };
 
     toggleEditing = () => {
         /**
@@ -278,7 +275,7 @@ export default class ResultsPage extends Component {
             clicked_home: undefined,
             viewing_home: false
         }, () => this.state.isEditing ? document.querySelector('.results-wrapper').scrollTop = 0 : null)
-    }
+    };
 
     renderEditingText = () => {
         if (!this.state.isEditing) {
@@ -286,7 +283,7 @@ export default class ResultsPage extends Component {
         } else {
             return 'Cancel Survey';
         }
-    }
+    };
 
     renderEmptyHomes = () => {
         return (
@@ -296,7 +293,7 @@ export default class ResultsPage extends Component {
                 <span onClick={this.toggleEditing}>Edit Survey</span>
             </div>
         );
-    }
+    };
 
     renderMainComponent = () => {
         if (!this.state.viewing_home && !this.state.isEditing) {
@@ -312,7 +309,7 @@ export default class ResultsPage extends Component {
         } else if (this.state.isEditing) {
             return <RentForm survey={this.state.survey} is_authenticated={true} onUpdateSurvey={this.handleUpdateSurvey}/>
         }
-    }
+    };
 
     saveScrollPosition = () => {
         if (document.querySelector('.homelist-wrapper')) {
@@ -321,12 +318,12 @@ export default class ResultsPage extends Component {
                 scroll_position: homeList.scrollTop
             })
         }
-    }
+    };
 
     setScrollPosition = () => {
         const homeList = document.querySelector('.results-wrapper');
         homeList.scrollTop = this.state.scroll_position;
-    }
+    };
 
     setResultsWrapperClass = () => {
         let wrapper_class = 'results-wrapper';
@@ -334,7 +331,7 @@ export default class ResultsPage extends Component {
             wrapper_class += ' homelist-wrapper';
         }
         return wrapper_class;
-    }
+    };
 
     handleVerification = () => {
         /**
