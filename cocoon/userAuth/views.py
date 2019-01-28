@@ -19,13 +19,18 @@ from django.utils.encoding import force_text
 from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, BrokerSignupForm
 from .tokens import account_activation_token
 from .models import UserProfile, MyUser
+from .helpers.send_verification_email import send_verification_email
 
 # Import Cocoon Modules
-from cocoon.signature.models import HunterDocManagerModel
-from cocoon.scheduler import views as scheduler_views
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 from cocoon.commutes.constants import CommuteAccuracy
 from cocoon.survey.models import RentingSurveyModel
+
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
 def index(request):
@@ -115,6 +120,18 @@ class SignUpView(TemplateView):
             return HttpResponseRedirect(reverse('homePage:index'))
         else:
             return super().get(request, **kwargs)
+
+
+class ResendVerificationEmail(viewsets.ViewSet):
+
+    def partial_update(self, request, pk=None):
+        # Retrieve the user profile
+        user_prof = get_object_or_404(UserProfile, user=request.user)
+
+        send_verification_email(request, user_prof.user)
+        return Response({
+            'result': True,
+        })
 
 
 class ApartmentHunterSignupView(CreateView):
