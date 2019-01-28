@@ -123,10 +123,24 @@ class SignUpView(TemplateView):
 
 
 class ResendVerificationEmail(viewsets.ViewSet):
+    """
+    This view set handles resending the verification email for the users
+    """
 
     def partial_update(self, request, pk=None):
+        """
+        This viewset resend the verification email to the current user logged in. Therefore,
+            the pk is not needed
+        :param request:
+        :param pk:
+        :return: (dict)
+        {
+            'result': (Boolean) -> True: The email was successfully sent
+        }
+        """
+
         # Retrieve the user profile
-        user_prof = get_object_or_404(UserProfile, user=request.user)
+        user_prof = get_object_or_404(UserProfile, user=self.request.user)
 
         send_verification_email(request, user_prof.user)
         return Response({
