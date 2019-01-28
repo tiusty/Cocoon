@@ -12,7 +12,7 @@ const userAuth_endpoints = {
     'surveys': app_name + '/surveys/',
 
     // Api urls
-    'resendVerificationEmail': api_path + '/resendVerificationEmail',
+    'resendVerificationEmail': api_path + '/resendVerificationEmail/',
 };
 
 export default userAuth_endpoints;

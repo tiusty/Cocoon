@@ -253,7 +253,7 @@
     margin: 30px auto;
 }
 
-.unverified-modal a {
+.unverified-modal button {
     background: var(--teal);
     color: white;
     border: none;
@@ -265,7 +265,7 @@
     display: block;
 }
 
-.unverified-modal a:hover {
+.unverified-modal button:hover {
     text-decoration: none;
 }
 

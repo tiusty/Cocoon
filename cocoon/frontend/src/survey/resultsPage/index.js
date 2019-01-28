@@ -37,7 +37,9 @@ export default class ResultsPage extends Component {
             scroll_position: undefined,
             isEditing: false,
             isLoading: true,
-            center: undefined
+            center: undefined,
+            verificationEmailSent: false,
+            verificationEmailLoading: false,
         }
     }
 
@@ -333,6 +335,29 @@ export default class ResultsPage extends Component {
         return wrapper_class;
     };
 
+    resendConfirmationEmail = () => {
+
+        if (!this.state.verificationEmailLoading) {
+            // Patch request needs an id, but in reality it isn't needed so none is sent
+            this.setState({
+                verificationEmailLoading: true,
+            });
+            let endpoint = userAuth_endpoints['resendVerificationEmail'] + 'none/';
+            axios.patch(endpoint)
+                .catch(error => console.log('BAD', error))
+                .then(response =>
+                    {
+                        if (response.data.result) {
+                            this.setState({
+                                verificationEmailSent: true,
+                                verificationEmailLoading: false,
+                            })
+                        }
+                    }
+                );
+        }
+    };
+
     handleVerification = () => {
         /**
          *  If the user is verified this will render the normal page.
@@ -358,7 +383,10 @@ export default class ResultsPage extends Component {
               <div id="unverified-wrapper" style={{backgroundImage: `url(${BlurredImg})`}}>
                   <div className="unverified-modal">
                       <h2>Confirm your email before viewing your results.</h2>
-                      <a href="#">Resend confirmation email</a>
+                      {this.state.verificationEmailSent ? <p>Email sent!</p> : null}
+                      <button className="btn btn-primary" onClick={this.resendConfirmationEmail}>
+                          {this.state.verificationEmailLoading ? 'Loading' : 'Resend confirmation email'}
+                      </button>
                   </div>
               </div>
             );
