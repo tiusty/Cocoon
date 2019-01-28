@@ -50,10 +50,16 @@
 }
 
 .results-btn-row a {
-    color: var(--red);
+    color: #ffffff;
+    background: #a13718;
     font-size: 13px;
     font-weight: 800;
-    text-decoration: underline;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.results-btn-row a:hover {
+    text-decoration: none;
 }
 
 .results-info {

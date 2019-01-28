@@ -30,6 +30,7 @@ export default class ResultsPage extends Component {
             homeList: undefined,
             survey_name: undefined,
             survey: undefined,
+            commutes: [],
             clicked_home: undefined,
             hover_id: undefined,
             viewing_home: false,
@@ -71,11 +72,39 @@ export default class ResultsPage extends Component {
                 this.setState({
                     survey: response.data,
                     tenants: response.data.tenants,
-                    favorites: response.data.favorites
+                    favorites: response.data.favorites,
+                    commutes: this.getCommuteCoords(response.data.tenants)
                 }, () => console.log(this.state.survey));
             })
 
     };
+
+    getCommuteCoords = (tenants) => {
+        let commutes = [];
+        if (tenants) {
+            tenants.forEach(t => {
+                if (t.street_address) {
+                    let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
+                    let name = `${t.first_name}`;
+                    let coords = {};
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode( { 'address': address }, (results, status) => {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            console.log(results)
+                            coords.name = name;
+                            coords.lat = results[0].geometry.location.lat();
+                            coords.lng = results[0].geometry.location.lng();
+                            commutes.push(coords)
+                        }
+                    });
+                }
+            })
+        }
+        return commutes;
+        // this.setState({
+        //     commutes: commutes
+        // })
+    }
 
     getResults = () => {
         /**
@@ -323,7 +352,7 @@ export default class ResultsPage extends Component {
                         {this.renderMainComponent()}
                     </div>
                     <div className="map-wrapper">
-                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} tenants={this.state.tenants} /> : null}
+                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} commutes={this.state.commutes} /> : null}
                     </div>
                 </div>
             );

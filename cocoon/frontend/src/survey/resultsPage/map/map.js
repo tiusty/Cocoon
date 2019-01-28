@@ -8,13 +8,6 @@ import CommuteMarker from './commuteMarker';
 
 export default class Map extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            commutes: [],
-        }
-    }
-
     static defaultProps = {
         center: {
             lat: 42.36,
@@ -23,9 +16,9 @@ export default class Map extends Component {
         zoom: 11
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.tenants !== prevProps.tenants) {
-            this.getCommuteCoords();
+    componentDidUpdate = (prevProps) => {
+        if (this.props.commutes !== prevProps.commutes) {
+            this.renderMapMarkers();
         }
     }
 
@@ -215,31 +208,6 @@ export default class Map extends Component {
         return mapStyle;
     }
 
-    getCommuteCoords = () => {
-        let commutes = [];
-        if (this.props.tenants) {
-            this.props.tenants.forEach(t => {
-                if (t.street_address) {
-                    let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
-                    let name = `${t.first_name}`;
-                    let coords = {};
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode( { 'address': address }, (results, status) => {
-                        if (status === google.maps.GeocoderStatus.OK) {
-                            coords.name = name;
-                            coords.lat = results[0].geometry.location.lat();
-                            coords.lng = results[0].geometry.location.lng();
-                            commutes.push(coords)
-                        }
-                    });
-                }
-            })
-        }
-        this.setState({
-            commutes: commutes
-        })
-    }
-
     renderMapMarkers = () => {
         let mapMarkers = [];
         if (this.props.homes) {
@@ -261,8 +229,8 @@ export default class Map extends Component {
                 mapMarkers.push(newMarker);
             })
         }
-        if (this.state.commutes.length > 0) {
-            this.state.commutes.map(commute => {
+        if (this.props.commutes.length) {
+            this.props.commutes.map(commute => {
                 let newMarker = (
                     <CommuteMarker
                         lat={commute.lat}
