@@ -18,11 +18,23 @@ export default class TenantsForm extends Component {
 
     componentDidMount() {
         // Retrieve all the commute type options
+        // After retrieving the commute types, update the validation to see
+        //  if the tenants are valid
         axios.get(commutes_endpoints['commute_types'])
             .then(res => {
                 const commute_type_options = res.data;
-                this.setState({ commute_type_options });
-            });
+                this.setState({ commute_type_options }, () => this.validateAllTenants());
+            })
+    }
+
+    validateAllTenants() {
+        /**
+         * Runs validation on all the tenants to update whether or not they are valid
+         */
+        for (let i=0; i<this.props.tenants.length; i++) {
+            this.handleValidation(i, false);
+        }
+
     }
 
     // VALIDATION FUNCTIONS //
@@ -55,7 +67,12 @@ export default class TenantsForm extends Component {
             }
             valid = false;
         }
-        if(valid) { document.querySelector(`#tenants-${index}-occupation-error`).style.display = 'none'; }
+        if(valid) {
+            let selection = document.querySelector(`#tenants-${index}-occupation-error`);
+            if (selection) {
+                selection.style.display = 'none';
+            }
+        }
         return valid
     }
 
@@ -108,7 +125,12 @@ export default class TenantsForm extends Component {
             }
 
             valid = false;
-        } else if (valid) { document.querySelector(`#tenants-${id}-commute_type-error`).style.display = 'none'; }
+        } else if (valid) {
+            let selection = document.querySelector(`#tenants-${id}-commute_type-error`);
+            if (selection) {
+                selection.style.display = 'none';
+            }
+        }
 
         // If the option is not work from home then make sure the address fields are filled in
         if (this.props.tenants[id].commute_type !== this.getCommuteId('Work From Home')) {
@@ -119,7 +141,13 @@ export default class TenantsForm extends Component {
                     document.querySelector(`#tenants-${id}-commute_address-error`).innerText = `You must enter a commute address for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenants-${id}-commute_address-error`).style.display = 'none'; }
+            } else if (valid) {
+
+                let selection = document.querySelector(`#tenants-${id}-commute_address-error`)
+                if (selection) {
+                    selection.style.display = 'none';
+                }
+            }
 
             // Make sure if the option is not work from home then the max commute is set
             if (this.props.tenants[id].max_commute === null) {
@@ -128,7 +156,12 @@ export default class TenantsForm extends Component {
                     document.querySelector(`#tenants-${id}-desired_commute-error`).innerText = `You must enter a maximum commute time for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenants-${id}-desired_commute-error`).style.display = 'none'; }
+            } else if (valid) {
+                let selection = document.querySelector(`#tenants-${id}-desired_commute-error`);
+                if (selection) {
+                    selection.style.display = 'none';
+                }
+            }
 
             if (this.props.tenants[id].commute_weight < 0 || this.props.tenants[id].commute_weight > 6) {
                 if (show_errors) {
@@ -136,7 +169,12 @@ export default class TenantsForm extends Component {
                     document.querySelector(`#tenants-${id}-commute_weight-error`).innerText = `You must choose how important commute time is for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenants-${id}-commute_weight-error`).style.display = 'none'; }
+            } else if (valid) {
+                let selection = document.querySelector(`#tenants-${id}-commute_weight-error`);
+                if (selection) {
+                    selection.style.display = 'none';
+                }
+            }
         }
 
         // Make sure if driving then driving options selected
@@ -147,7 +185,12 @@ export default class TenantsForm extends Component {
                     document.querySelector(`#tenants-${id}-driving_options_error`).innerText = `You must select a driving option for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenants-${id}-driving_options_error`).style.display = 'none'; }
+            } else if (valid) {
+                let selection = document.querySelector(`#tenants-${id}-driving_options_error`);
+                if (selection) {
+                    selection.style.display = 'none';
+                }
+            }
         }
 
         // Make sure a transit option is selected if transit is selected
@@ -158,7 +201,12 @@ export default class TenantsForm extends Component {
                     document.querySelector(`#tenants-${id}-transit_options_error`).innerText = `You must select a transit option for ${this.props.tenants[id].first_name}.`;
                 }
                 valid = false;
-            } else if (valid) { document.querySelector(`#tenants-${id}-transit_options_error`).style.display = 'none'; }
+            } else if (valid) {
+                let selection = document.querySelector(`#tenants-${id}-transit_options_error`);
+                if (selection) {
+                    selection.style.display = 'none';
+                }
+            }
         }
 
         return valid
@@ -178,7 +226,10 @@ export default class TenantsForm extends Component {
             }
             valid = false
         } else if (this.props.tenants[id].income) {
-            document.querySelector(`#tenants-${id}-income-error`).style.display = 'none';
+            let selection = document.querySelector(`#tenants-${id}-income-error`);
+            if (selection) {
+                selection.style.display = 'none';
+            }
         }
 
         if (this.props.tenants[id].credit_score === null) {
@@ -187,7 +238,12 @@ export default class TenantsForm extends Component {
                 document.querySelector(`#tenants-${id}-credit_score-error`).innerText = `You must select an approximate credit score for ${this.props.tenants[id].first_name}.`;
             }
             valid = false;
-        } else if (this.props.tenants[id].credit_score) { document.querySelector(`#tenants-${id}-credit_score-error`).style.display = 'none'; }
+        } else if (this.props.tenants[id].credit_score) {
+            let selection = document.querySelector(`#tenants-${id}-credit_score-error`);
+            if (selection) {
+                selection.style.display = 'none';
+            }
+        }
 
         return valid
     }
