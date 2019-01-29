@@ -269,6 +269,7 @@ export default class RentForm extends Component {
                         handleLatestClick={this.handleLatestClick}
                         onCompletePolygon={this.handleCompletePolygon}
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
+                        is_editing={this.props.is_editing}
                 />;
             case 2:
                 return <TenantsForm
