@@ -497,6 +497,8 @@ const defaultMapOptions = {
         mapTypeIds: []
     },
 
+    gestureHandling: 'cooperative',
+
     // Disables street view
     streetViewControl: false,
 
