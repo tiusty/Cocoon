@@ -65,7 +65,7 @@ class HomeInformationForm(ModelForm):
 
     class Meta:
         model = HomeInformationModel
-        fields = '__all__'
+        fields = ('num_bedrooms', 'home_type', 'polygon_filter_type', 'is_move_asap', 'move_weight')
 
 
 class PriceInformationForm(ModelForm):
@@ -84,7 +84,7 @@ class PriceInformationForm(ModelForm):
 
     class Meta:
         model = PriceInformationModel
-        fields = '__all__'
+        fields = ('max_price', 'desired_price', 'price_weight')
 
 
 class HouseNearbyAmenitiesForm(ModelForm):
@@ -102,7 +102,7 @@ class HouseNearbyAmenitiesForm(ModelForm):
 
     class Meta:
         model = HouseNearbyAmenitiesModel
-        fields = '__all__'
+        fields = ('wants_laundry_nearby', 'laundry_nearby_weight')
 
 
 class ExteriorAmenitiesForm(ModelForm):
@@ -159,7 +159,9 @@ class ExteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = ExteriorAmenitiesModel
-        fields = '__all__'
+        fields = ('wants_parking', 'wants_laundry_in_building', 'laundry_in_building_weight', 'number_of_cars',
+                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight', 'wants_gym', 'gym_weight',
+                  'wants_storage', 'storage_weight',)
 
 
 class InteriorAmenitiesForm(ModelForm):
@@ -236,10 +238,14 @@ class InteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = InteriorAmenitiesModel
-        fields = '__all__'
+        fields = ('wants_laundry_in_unit', 'laundry_in_unit_weight', 'wants_furnished', 'furnished_weight',
+                  'wants_dogs', 'service_dogs', 'dog_size', 'breed_of_dogs', 'number_of_dogs', 'wants_cats',
+                  'cat_weight', 'wants_hardwood_floors', 'hardwood_floors_weight', 'wants_AC', 'AC_weight',
+                  'wants_dishwasher', 'dishwasher_weight')
 
 
-class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm, HomeInformationForm):
+class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
+                     HomeInformationForm):
     """
     Rent Survey is the rent survey on the main survey page
     """
@@ -249,38 +255,22 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
 
     class Meta:
         model = RentingSurveyModel
-        # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms", "home_type", "max_price", "desired_price", "price_weight", "wants_laundry_nearby",
-                  "wants_parking", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
-                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
-                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
-                  "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
-                  "service_dogs", "breed_of_dogs", "dog_size",
-                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
-                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
-                  "number_of_tenants", 'polygon_filter_type', 'is_move_asap', 'move_weight',
-                  'laundry_in_building_weight', 'laundry_in_unit_weight', 'laundry_nearby_weight']
+        fields = InteriorAmenitiesForm.Meta.fields + ExteriorAmenitiesForm.Meta.fields + \
+            HouseNearbyAmenitiesForm.Meta.fields + PriceInformationForm.Meta.fields + \
+            HomeInformationForm.Meta.fields + ('number_of_tenants',)
 
 
 class RentSurveyFormEdit(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
                          HomeInformationForm):
     """
-    RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
-    quick changes. This should be mostly a subset of the RentSurveyForm
+    Same as above but the user cannot change how many tenants there are
     """
 
     class Meta:
         model = RentingSurveyModel
-        fields = ["num_bedrooms", "home_type", "max_price", "desired_price", "price_weight", "wants_laundry_nearby",
-                  "wants_parking", 'wants_laundry_in_building', 'number_of_cars',
-                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
-                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
-                  "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
-                  "service_dogs", "breed_of_dogs", "dog_size",
-                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
-                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
-                  "number_of_tenants", 'polygon_filter_type', 'is_move_asap', 'move_weight',
-                  'laundry_in_building_weight', 'laundry_in_unit_weight', 'laundry_nearby_weight']
+        fields = InteriorAmenitiesForm.Meta.fields + ExteriorAmenitiesForm.Meta.fields + \
+            HouseNearbyAmenitiesForm.Meta.fields + PriceInformationForm.Meta.fields + \
+            HomeInformationForm.Meta.fields
 
 
 class DestinationForm(ModelForm):
