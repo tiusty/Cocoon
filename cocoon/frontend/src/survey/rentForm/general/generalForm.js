@@ -478,7 +478,7 @@ export default class GeneralForm extends Component {
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
                 {this.renderMoveAsapQuestion()}
-                {this.renderDatePickingQuestion()}
+                {/*{this.renderDatePickingQuestion()}*/}
                 {this.renderFilterZones()}
                 {this.renderUrgencyQuestion()}
                 {this.renderBedroomQuestion()}
