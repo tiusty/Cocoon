@@ -195,13 +195,17 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
 
     @property
     def survey_name(self):
+        """
+        Generates the name for the survey based on the tenants
+        """
         num_of_tenants = self.tenants.count()
         if num_of_tenants is 1:
             return "Just Me"
         else:
             counter = 1
             survey_name = ""
-            for tenant in self.tenants.reverse():
+            # need to order the tenants, because the first tenant is the user of the account
+            for tenant in self.tenants.order_by('id').reverse():
                 if counter == num_of_tenants - 1:
                     survey_name = "{0}{1} ".format(survey_name, tenant.first_name)
                 elif counter == num_of_tenants:
