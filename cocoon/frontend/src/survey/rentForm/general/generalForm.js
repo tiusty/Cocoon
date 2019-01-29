@@ -685,9 +685,6 @@ const defaultMapOptions = {
 };
 
 const MyMapComponent = compose(
-    /**
-     * Note: This needs the google api key in the head of the script
-     */
     withProps({
         loadingElement: <div style={{height: `100%`}}/>,
         containerElement: <div style={{height: `400px`}}/>,
@@ -700,9 +697,6 @@ const MyMapComponent = compose(
     <GoogleMap
         defaultZoom={11}
         defaultCenter={{lat: 42.3601, lng: -71.0589}}
-        styles={
-            {elementType: 'geometry', stylers: [{color: '#242f3e'}]}
-        }
         defaultOptions={defaultMapOptions}
     >
 
