@@ -276,100 +276,51 @@ class RentSurveyFormEdit(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNear
 class DestinationForm(ModelForm):
     street_address = forms.CharField(
         required=False,
-        label="Destination",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Street Address',
-                'readonly': 'readonly',
-            }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
     city = forms.CharField(
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'City',
-                'readonly': 'readonly',
-            }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
     state = forms.CharField(
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'State',
-                'readonly': 'readonly',
-            }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
     zip_code = forms.CharField(
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Zip Code',
-                'readonly': 'readonly',
-            }),
         max_length=MAX_TEXT_INPUT_LENGTH,
     )
 
     class Meta:
         model = DestinationsModel
-        fields = '__all__'
+        fields = ('street_address', 'city', 'state', 'zip_code')
 
 
 class CommuteInformationForm(DestinationForm):
 
     max_commute = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     min_commute = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     commute_weight = forms.ChoiceField(
         required=False,
         choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
-        label="Commute Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     commute_type = forms.ModelChoiceField(
         required=True,
         queryset=CommuteType.objects.all(),
-        label="Commute Type",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
     )
 
     traffic_option = forms.BooleanField(
         required=False,
-        widget=forms.CheckboxInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Consider Traffic?',
-            }),
     )
 
     def is_valid(self):
@@ -430,7 +381,8 @@ class CommuteInformationForm(DestinationForm):
 
     class Meta:
         model = CommuteInformationModel
-        fields = '__all__'
+        fields = DestinationForm.Meta.fields + ('max_commute', 'min_commute', 'commute_weight', 'commute_type',
+                                                'traffic_option')
 
 
 class TenantPersonalInformationForm(ModelForm):
@@ -468,21 +420,20 @@ class TenantPersonalInformationForm(ModelForm):
 
     class Meta:
         model = TenantPersonalInformationModel
-        fields = '__all__'
+        fields = ('first_name', 'last_name', 'occupation', 'other_occupation_reason', 'unemployed_follow_up',
+                  'income', 'credit_score', 'new_job')
 
 
 class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
-        fields = ['first_name', 'last_name', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option', 'occupation',
-                  'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score', 'new_job']
+        fields = CommuteInformationForm.Meta.fields + TenantPersonalInformationForm.Meta.fields
 
 
 class TenantFormJustNames(TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
-        fields = ['first_name', 'last_name']
+        fields = ('first_name', 'last_name')
 
 
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
