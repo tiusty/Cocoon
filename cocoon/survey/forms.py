@@ -71,26 +71,15 @@ class HomeInformationForm(ModelForm):
 class PriceInformationForm(ModelForm):
 
     max_price = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+        required=True
     )
 
     desired_price = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+        required=True
     )
 
     price_weight = forms.ChoiceField(
         choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
-        label="Price Weight",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     class Meta:
@@ -105,10 +94,10 @@ class HouseNearbyAmenitiesForm(ModelForm):
 
     wants_laundry_nearby = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+    )
+
+    laundry_nearby_weight = forms.IntegerField(
+        required=False
     )
 
     class Meta:
@@ -126,82 +115,46 @@ class ExteriorAmenitiesForm(ModelForm):
 
     wants_laundry_in_building = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+    )
+
+    laundry_in_building_weight = forms.IntegerField(
+        required=False
     )
 
     number_of_cars = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_patio = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     patio_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_pool = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     pool_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_gym = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     gym_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_storage = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     storage_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     class Meta:
@@ -215,130 +168,70 @@ class InteriorAmenitiesForm(ModelForm):
     """
     wants_laundry_in_unit = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+    )
+
+    laundry_in_unit_weight = forms.IntegerField(
+        required=False
     )
 
     wants_furnished = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     furnished_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_dogs = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     service_dogs = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     dog_size = forms.CharField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     breed_of_dogs = forms.CharField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     number_of_dogs = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_cats = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     cat_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_hardwood_floors = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     hardwood_floors_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_AC = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     AC_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     wants_dishwasher = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     dishwasher_weight = forms.IntegerField(
         required=False,
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
     )
 
     class Meta:
