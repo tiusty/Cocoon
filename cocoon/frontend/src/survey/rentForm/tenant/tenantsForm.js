@@ -274,6 +274,7 @@ export default class TenantsForm extends Component {
         }
     };
 
+
     render() {
         return (
             <>
@@ -286,6 +287,8 @@ export default class TenantsForm extends Component {
                         commute_type_options={this.state.commute_type_options}
                         onInputChange={this.props.onInputChange}
                         onHandleValidation={this.handleValidation}
+                        onAddressChange={this.props.onAddressChange}
+                        onAddressSelected={this.props.onAddressSelected}
                     />
                 )}
                 <div className="row survey-btn-wrapper">
