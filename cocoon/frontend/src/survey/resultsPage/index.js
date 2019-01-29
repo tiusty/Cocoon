@@ -383,9 +383,9 @@ export default class ResultsPage extends Component {
             );
         } else {
             const imgArray = [BlurredImg, BlurredImg2, BlurredImg3];
-            const ramdomImage = imgArray[Math.floor(Math.random() * imgArray.length)]
+            const randomImage = imgArray[Math.floor(Math.random() * imgArray.length)]
             return (
-              <div id="unverified-wrapper" style={{backgroundImage: `url(${ramdomImage})`}}>
+              <div id="unverified-wrapper" style={{backgroundImage: `url(${randomImage})`}}>
                   <div className="unverified-modal">
                       <h2>Confirm your email before viewing your results.</h2>
                       {this.state.verificationEmailSent ? <p>Email sent!</p> : null}
