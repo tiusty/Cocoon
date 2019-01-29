@@ -22,6 +22,7 @@ class TestWordScraper(TestCase):
 
 
 
+
     def test_word_laundry_in_unit(self):
         scraper_1_basic = False
         scraper_2_basic = False
@@ -393,3 +394,4 @@ class TestWordScraper(TestCase):
         self.assertEqual(scraper1_hard, False)
         self.assertEqual(scraper2_hard, True) # EDGE CASE
         self.assertEqual(scraper3_hard, False)
+

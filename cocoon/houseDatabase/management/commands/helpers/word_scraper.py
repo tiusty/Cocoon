@@ -6,6 +6,7 @@ class WordScraper:
         self.input_description = input_description.lower().replace("a/c","ac")
         self.input_dictionary = self.make_input_dictionary()
 
+
     def make_input_dictionary(self):
         """
         Makes a dictionary using input description in lowercase, with "a/c" being replaced with "ac"
