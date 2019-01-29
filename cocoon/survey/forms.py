@@ -113,7 +113,7 @@ class HouseNearbyAmenitiesForm(ModelForm):
 
     class Meta:
         model = HouseNearbyAmenitiesModel
-        fields = ["wants_laundry_nearby"]
+        fields = '__all__'
 
 
 class ExteriorAmenitiesForm(ModelForm):
@@ -206,10 +206,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = ExteriorAmenitiesModel
-        fields = ["wants_parking", 'wants_laundry_in_building', 'number_of_cars',
-                  'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
-                  'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight'
-                  ]
+        fields = '__all__'
 
 
 class InteriorAmenitiesForm(ModelForm):
@@ -346,11 +343,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = InteriorAmenitiesModel
-        fields = ["wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs",
-                  "service_dogs", "breed_of_dogs", "dog_size", "number_of_dogs",
-                  "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
-                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"
-                  ]
+        fields = '__all__'
 
 
 class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm, HomeInformationForm):
@@ -371,9 +364,7 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms", "home_type",
-                  "max_price", "desired_price", "price_weight",
-                  "wants_laundry_nearby",
+        fields = ["num_bedrooms", "home_type", "max_price", "desired_price", "price_weight", "wants_laundry_nearby",
                   "wants_parking", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
@@ -381,7 +372,8 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
                   "service_dogs", "breed_of_dogs", "dog_size",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
-                  "number_of_tenants", 'polygon_filter_type', 'is_move_asap', 'move_weight']
+                  "number_of_tenants", 'polygon_filter_type', 'is_move_asap', 'move_weight',
+                  'laundry_in_building_weight', 'laundry_in_unit_weight', 'laundry_nearby_weight']
 
 
 class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
