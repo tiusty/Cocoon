@@ -95,11 +95,11 @@ export default class ResultsPage extends Component {
                     const geocoder = new google.maps.Geocoder();
                     geocoder.geocode( { 'address': address }, (results, status) => {
                         if (status === google.maps.GeocoderStatus.OK) {
-                            console.log(results)
-                            coords.name = name;
+                            console.log(results);
                             coords.lat = results[0].geometry.location.lat();
                             coords.lng = results[0].geometry.location.lng();
-                            commutes.push(coords)
+                            coords.name = name;
+                            commutes.push(coords);
                         }
                     });
                 }
