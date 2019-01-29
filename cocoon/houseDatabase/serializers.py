@@ -20,9 +20,60 @@ class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
+    interior_amenities = serializers.SerializerMethodField(read_only=True)
+    exterior_amenities = serializers.SerializerMethodField(read_only=True)
+    nearby_amenities = serializers.SerializerMethodField(read_only=True)
     home_type = HomeTypeSerializer(read_only=True)
     images = HomeImageSerializer(read_only=True, many=True)
 
+    @staticmethod
+    def get_interior_amenities(obj):
+        """
+        Returns all the interior amenities so it is grouped in the serializer.
+
+        All the data here will be returned in a interior_amenities dictionary
+        :param obj: (RentDatabaseModel) -> The rent database model associated with the serializer
+        :return: (dict) -> The dictionary for the interior amenities field
+        """
+        return {
+            'furnished': obj.furnished,
+            'hardwood_floors': obj.hardwood_floors,
+            'air_conditioning': obj.air_conditioning,
+            'laundry_in_unit': obj.laundry_in_unit,
+            'dishwasher': obj.dishwasher,
+        }
+
+    @staticmethod
+    def get_exterior_amenities(obj):
+        """
+        Returns all the exterior amenities so it is grouped in the serializer.
+
+        All the data here will be returned in a exterior_amenities dictionary
+        :param obj: (RentDatabaseModel) -> The rent database model associated with the serializer
+        :return: (dict) -> The dictionary for the exterior amenities field
+        """
+        return {
+            'pool': obj.pool,
+            'patio/balcony': obj.patio_balcony,
+            'gym': obj.gym,
+            'laundry_in_building': obj.laundry_in_building,
+            'storage': obj.storage,
+        }
+
+    @staticmethod
+    def get_nearby_amenities(obj):
+        """
+        Returns all the nearby amenities so it is grouped in the serializer.
+
+        All the data here will be returned in a nearby_amenities dictionary
+        :param obj: (RentDatabaseModel) -> The rent database model associated with the serializer
+        :return: (dict) -> The dictionary for the nearby amenities field
+        """
+        return {
+            'laundromat_nearby': obj.laundromat_nearby
+        }
+
     class Meta:
         model = RentDatabaseModel
-        fields = ('id', 'price', 'home_type', 'images', 'remarks', 'num_bedrooms', 'num_bathrooms')
+        fields = ('id', 'price', 'home_type', 'images', 'remarks', 'num_bedrooms', 'num_bathrooms',
+                  'interior_amenities', 'exterior_amenities', 'nearby_amenities')

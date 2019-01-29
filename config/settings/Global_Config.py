@@ -16,7 +16,7 @@ MAX_NUM_BATHROOMS = 7  # Base 0, I guess should be base 1
 MAX_NUM_BEDROOMS = 6  # Base 0, so from 0 bedroom to 6 bedrooms, 0 bedrooms means studio
 MAX_TEXT_INPUT_LENGTH = 200
 HYBRID_WEIGHT_MAX = 3
-HYBRID_WEIGHT_MIN = -3
+HYBRID_WEIGHT_MIN = 0
 HYBRID_WEIGHT_CHOICES = (
     (3, "Must have"),
     (2, "Really want"),

@@ -18,7 +18,6 @@ from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY
 from .constants import MIN_PRICE_DELTA
 
 
-
 class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
@@ -116,6 +115,7 @@ class PriceInformationModel(models.Model):
     class Meta:
         abstract = True
 
+
 class HouseNearbyAmenitiesModel(models.Model):
     """
     Contains amenities that are near the house
@@ -157,7 +157,7 @@ class ExteriorAmenitiesModel(models.Model):
     Contains all the survey questions regarding the exterior Amenities
     All Questions are hybrid weighted
     """
-    parking_spot = models.IntegerField(choices=HYBRID_WEIGHT_CHOICES, default=0)
+    wants_parking = models.BooleanField(default=False)
     number_of_cars = models.IntegerField(default=0)
     wants_laundry_in_building = models.BooleanField(default=False)
     wants_patio = models.BooleanField(default=False)
@@ -171,6 +171,7 @@ class ExteriorAmenitiesModel(models.Model):
 
     class Meta:
         abstract = True
+
 
 class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNearbyAmenitiesModel,
                          PriceInformationModel, HomeInformationModel, InitialSurveyModel):

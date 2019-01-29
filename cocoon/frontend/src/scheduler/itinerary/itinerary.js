@@ -7,7 +7,8 @@ import moment from 'moment';
 // Import Cocoon Components
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import HomeTile from "../../common/homeTile/homeTile";
-import "./itinerary.css"
+import '../../common/styles/variables.css';
+import "./itinerary.css";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';

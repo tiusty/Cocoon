@@ -610,53 +610,30 @@ class TestAmenitiesForm(TestCase):
         result = exterior_amenities_form.is_valid()
 
         # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_parking_spot_missing(self):
-        # Arrange
-        form_data = {
-            'number_of_cars': self.number_of_cars,
-            'wants_laundry_in_building':self.wants_laundry_in_building,
-            'wants_patio':self.wants_patio,
-            'patio_weight':self.patio_weight,
-            'wants_pool':self.wants_pool,
-            'pool_weight':self.pool_weight,
-            'wants_gym':self.wants_gym,
-            'gym_weight':self.gym_weight,
-            'wants_storage':self.wants_storage,
-            'storage_weight':self.storage_weight
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
+        self.assertTrue(result)
 
     def tests_interior_amenities_valid(self):
         # Arrange
         form_data = {
             'parking_spot': self.parking_spot,
-            "wants_laundry_in_unit":self.wants_laundry_in_unit,
-            'wants_furnished':self.wants_furnished,
-            'furnished_weight':self.furnished_weight,
-            'wants_dogs':self.wants_dogs,
-            'number_of_dogs':self.number_of_dogs,
-            'wants_cats':self.wants_cats,
-            'cat_weight':self.cat_weight,
-            'wants_hardwood_floors':self.wants_hardwood_floors,
-            'hardwood_floors_weight':self.hardwood_floors_weight,
-            'wants_AC':self.wants_AC,
-            'AC_weight':self.AC_weight,
-            'wants_dishwasher':self.wants_dishwasher,
-            'dishwasher_weight':self.dishwasher_weight
+            "wants_laundry_in_unit": self.wants_laundry_in_unit,
+            'wants_furnished': self.wants_furnished,
+            'furnished_weight': self.furnished_weight,
+            'wants_dogs': self.wants_dogs,
+            'number_of_dogs': self.number_of_dogs,
+            'wants_cats': self.wants_cats,
+            'cat_weight': self.cat_weight,
+            'wants_hardwood_floors': self.wants_hardwood_floors,
+            'hardwood_floors_weight': self.hardwood_floors_weight,
+            'wants_AC': self.wants_AC,
+            'AC_weight': self.AC_weight,
+            'wants_dishwasher': self.wants_dishwasher,
+            'dishwasher_weight': self.dishwasher_weight
         }
         interior_amenities_form = InteriorAmenitiesForm(data=form_data)
 
         # Act
         result = interior_amenities_form.is_valid()
-        print(interior_amenities_form.errors)
 
         # Assert
         self.assertTrue(result)
