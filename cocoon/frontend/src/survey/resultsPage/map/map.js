@@ -5,6 +5,14 @@ import GoogleMapReact from 'google-map-react';
 
 import MapMarker from './mapMarker';
 import CommuteMarker from './commuteMarker';
+import { compose, withProps } from "recompose";
+
+import {
+    withGoogleMap,
+    GoogleMap,
+    Polygon,
+    withScriptjs,
+} from "react-google-maps";
 
 export default class Map extends Component {
 
@@ -251,20 +259,81 @@ export default class Map extends Component {
             styles: this.getMapStyle()
         }
 
-        return (
-            <GoogleMapReact
-                defaultCenter={this.props.center}
-                defaultZoom={this.props.zoom}
-                options={mapOptions}
-                handleHomeClick={this.props.handleHomeClick}
-                hover_id={this.props.hover_id}
-                setHoverId={this.props.setHoverId}
-                removeHoverId={this.props.removeHoverId}>
-                {this.renderMapMarkers()}
-            </GoogleMapReact>
-        )
+        // return (
+        //     <GoogleMapReact
+        //         bootstrapURLKeys={ {key: 'AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho'} }
+        //         defaultCenter={this.props.center}
+        //         defaultZoom={this.props.zoom}
+        //         options={mapOptions}
+        //         handleHomeClick={this.props.handleHomeClick}
+        //         hover_id={this.props.hover_id}
+        //         setHoverId={this.props.setHoverId}
+        //         removeHoverId={this.props.removeHoverId}>
+        //         {this.renderMapMarkers()}
+        //     </GoogleMapReact>
+        // )
+        // console.log(google)
+
+            return (
+                <MyMapComponent
+                    // onCompletePolygon={this.props.onCompletePolygon}
+                    // polygons={this.props.generalInfo.polygons}
+                />
+            );
     }
 }
+
+const defaultMapOptions = {
+    // Disables the other types of maps, i.e satellite etc
+    mapTypeControlOptions: {
+        mapTypeIds: []
+    },
+
+    // Disables street view
+    streetViewControl: false,
+};
+
+const MyMapComponent = compose(
+    /**
+     * Note: This needs the google api key in the head of the script
+     */
+    withProps({
+        loadingElement: <div style={{height: `100%`}}/>,
+        containerElement: <div style={{height: `400px`}}/>,
+        mapElement: <div style={{height: `100%`}}/>,
+        googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing,places",
+    }),
+    withScriptjs,
+    withGoogleMap)(
+    (props) => (
+        <GoogleMap
+            defaultZoom={11}
+            defaultCenter={{lat: 42.3601, lng: -71.0589}}
+            styles={
+                {elementType: 'geometry', stylers: [{color: '#242f3e'}]}
+            }
+            defaultOptions={defaultMapOptions}
+        >
+
+            {/*/!* Draws all the polygons stored in the state *!/*/}
+            {/*{props.polygons.map(p =>*/}
+            {/*<Polygon*/}
+            {/*key={p.key}*/}
+            {/*path={p.vertices}*/}
+            {/*options={{*/}
+            {/*fillColor: '#008080',*/}
+            {/*strokeColor: '#a13718',*/}
+            {/*fillOpacity: .5,*/}
+            {/*strokeOpacity: .8,*/}
+            {/*strokeWeight: 5,*/}
+            {/*editable: true,*/}
+            {/*zIndex: 1,*/}
+            {/*}}*/}
+            {/*/>*/}
+            {/*)}*/}
+
+        </GoogleMap>
+    ));
 
 Map.propTypes = {
     homes: PropTypes.array.isRequired

@@ -9,7 +9,8 @@ import { compose, withProps } from "recompose";
 import {
   withGoogleMap,
   GoogleMap,
-    Polygon
+    Polygon,
+    withScriptjs,
 } from "react-google-maps";
 import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
 
@@ -507,8 +508,10 @@ const MyMapComponent = compose(
     withProps({
         loadingElement: <div style={{height: `100%`}}/>,
         containerElement: <div style={{height: `400px`}}/>,
-        mapElement: <div style={{height: `100%`}}/>
+        mapElement: <div style={{height: `100%`}}/>,
+        googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing,places",
     }),
+    withScriptjs,
     withGoogleMap
 )(props => (
     <GoogleMap
