@@ -69,7 +69,7 @@ export default class MySurveys extends Component {
                 visit_list: c.visit_list,
                 favorites: c.favorites,
                 url: c.url,
-                name: c.name
+                survey_name: c.survey_name
             })
         );
 
@@ -421,7 +421,7 @@ export default class MySurveys extends Component {
                             <SurveySmall
                                 key={survey.id}
                                 id={survey.id}
-                                name={survey.name}
+                                survey_name={survey.survey_name}
                                 url={survey.url}
                                 favorites={survey.favorites}
                                 visit_list={survey.visit_list}
