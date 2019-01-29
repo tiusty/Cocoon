@@ -274,10 +274,12 @@ export default class Map extends Component {
         // )
         // console.log(google)
 
+        console.log(mapOptions)
             return (
                 <MyMapComponent
                     // onCompletePolygon={this.props.onCompletePolygon}
                     // polygons={this.props.generalInfo.polygons}
+                    mapOptions={mapOptions}
                 />
             );
     }
@@ -299,7 +301,7 @@ const MyMapComponent = compose(
      */
     withProps({
         loadingElement: <div style={{height: `100%`}}/>,
-        containerElement: <div style={{height: `400px`}}/>,
+        containerElement: <div style={{height: `100%`}}/>,
         mapElement: <div style={{height: `100%`}}/>,
         googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing,places",
     }),
@@ -309,28 +311,9 @@ const MyMapComponent = compose(
         <GoogleMap
             defaultZoom={11}
             defaultCenter={{lat: 42.3601, lng: -71.0589}}
-            styles={
-                {elementType: 'geometry', stylers: [{color: '#242f3e'}]}
-            }
-            defaultOptions={defaultMapOptions}
+            styles={props.mapOptions.styles}
+            defaultOptions={props.mapOptions}
         >
-
-            {/*/!* Draws all the polygons stored in the state *!/*/}
-            {/*{props.polygons.map(p =>*/}
-            {/*<Polygon*/}
-            {/*key={p.key}*/}
-            {/*path={p.vertices}*/}
-            {/*options={{*/}
-            {/*fillColor: '#008080',*/}
-            {/*strokeColor: '#a13718',*/}
-            {/*fillOpacity: .5,*/}
-            {/*strokeOpacity: .8,*/}
-            {/*strokeWeight: 5,*/}
-            {/*editable: true,*/}
-            {/*zIndex: 1,*/}
-            {/*}}*/}
-            {/*/>*/}
-            {/*)}*/}
 
         </GoogleMap>
     ));
