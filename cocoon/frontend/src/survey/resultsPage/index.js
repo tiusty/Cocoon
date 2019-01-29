@@ -30,6 +30,7 @@ export default class ResultsPage extends Component {
             homeList: undefined,
             survey_name: undefined,
             survey: undefined,
+            favorites: [],
             commutes: [],
             clicked_home: undefined,
             hover_id: undefined,
@@ -123,7 +124,7 @@ export default class ResultsPage extends Component {
                 this.setState({
                     homeList: response.data,
                     isLoading: false
-                }, () => console.log(this.state.homeList));
+                });
             })
     };
 
@@ -192,7 +193,7 @@ export default class ResultsPage extends Component {
             .then(response =>
                 this.setState({
                     favorites: response.data.favorites,
-                }, () => console.log(this.state.favorites))
+                })
             );
     };
 
