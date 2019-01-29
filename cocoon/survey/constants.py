@@ -3,7 +3,10 @@
 MIN_PRICE_DELTA = 300
 
 # Number of homes that have exact commutes computed in the survey
-NUMBER_OF_EXACT_COMMUTES_COMPUTED = 24
+NUMBER_OF_EXACT_COMMUTES_COMPUTED = 45
+
+# Number of homes returned with the survey results
+NUMBER_OF_HOMES_RETURNED = 35
 
 # Number of minutes that is allowed for the approximation
 APPROX_COMMUTE_RANGE = 20
