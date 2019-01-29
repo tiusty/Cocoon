@@ -11,7 +11,7 @@ from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel, RentDa
 from cocoon.commutes.models import CommuteType
 
 # Import Global Variables
-from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME
+from config.settings.Global_Config import MAX_NUM_BATHROOMS
 
 # Import third party libraries
 import hashlib
@@ -29,7 +29,7 @@ class InitialSurveyModel(models.Model):
     number_of_tenants = models.IntegerField(default=1)
     favorites = models.ManyToManyField(RentDatabaseModel, related_name="favorite_list", blank=True)
     visit_list = models.ManyToManyField(RentDatabaseModel, related_name="visit_list", blank=True)
-    url = models.SlugField(max_length=100)
+    url = models.SlugField(max_length=100, default="not-set")
 
     def generate_slug(self):
         """
@@ -49,22 +49,6 @@ class InitialSurveyModel(models.Model):
 
         # Now return the has has the url
         return slugify(m.hexdigest())
-
-    def save(self, *args, **kwargs):
-        """
-        Function is called to generate the slug for the url
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        # Call save so the id for the survey is created
-        super().save(*args, **kwargs)  # Call the "real" save() method.
-
-        # Generates the url associated with the survey
-        self.url = self.generate_slug()
-
-        # Call save again to save the new slug
-        super().save(*args, **kwargs)  # Call the "real" save() method.
 
     class Meta:
         abstract = True
