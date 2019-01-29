@@ -11,8 +11,10 @@ from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel, RentDa
 from cocoon.commutes.models import CommuteType
 
 # Import Global Variables
-from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME, \
-    HYBRID_WEIGHT_CHOICES
+from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME
+
+# Import third party libraries
+import hashlib
 
 # Import app constants
 from .constants import MIN_PRICE_DELTA
@@ -32,29 +34,37 @@ class InitialSurveyModel(models.Model):
 
     def generate_slug(self):
         """
-        The slug should just be the name without spaces and with dashes instead.
-        This is because spaces look weird in urls and should be dashes instead
+        Generates a unique slug for the survey
         :return: (string) -> The generated slug
         """
-        return slugify(self.name)
 
-    # Adds functionality to the save method. This checks to see if a survey with the same slug
-    #   for that user already exists. If it does then delete that survey and save the new one instead
+        # Create the unique string that will be hashed
+        # Multiple things are added so people can reverse hash the id
+        hashable_string = "{0}{1}{2}{3}".format(self.user_profile.user.id, self.created, self.number_of_tenants, self.id)
+
+        # Create the md5 object
+        m = hashlib.md5()
+
+        # Add the string to the hash function
+        m.update(hashable_string.encode('utf-8'))
+
+        # Now return the has has the url
+        return slugify(m.hexdigest())
+
     def save(self, *args, **kwargs):
-        # Old url is saved to determine if the url for a survey changed
-        old_url = self.url
+        """
+        Function is called to generate the slug for the url
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        # Call save so the id for the survey is created
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
+        # Generates the url associated with the survey
         self.url = self.generate_slug()
 
-        # If it is a new model or the url changed then delete any conflicting surveys
-        if self.pk is None or old_url != self.url:
-            # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
-            if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                    .filter(url=self.url).exists():
-                RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                    .filter(url=self.url).delete()
-
-        # When the model is being saved, make sure to generate the slug associated with the survey.
-        # Since surveys with duplicate names are deleted, then it should guarantee uniqueness
+        # Call save again to save the new slug
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
     class Meta:
