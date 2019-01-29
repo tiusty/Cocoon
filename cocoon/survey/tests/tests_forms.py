@@ -4,14 +4,13 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    RentSurveyFormMini, ExteriorAmenitiesForm, InteriorAmenitiesForm, HouseNearbyAmenitiesForm
+    ExteriorAmenitiesForm, InteriorAmenitiesForm, HouseNearbyAmenitiesForm, RentSurveyFormEdit
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 from cocoon.userAuth.models import MyUser
 
 # Import cocoon global config values
-from config.settings.Global_Config import WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
 
 
 class TestHomeInformationForm(TestCase):
@@ -58,21 +57,6 @@ class TestHomeInformationForm(TestCase):
         # Arrange
         form_data = {}
 
-        home_information_form = HomeInformationForm(data=form_data)
-
-        # Act
-        result = home_information_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_home_information_form_num_bedrooms_missing(self):
-        # Arrange
-        form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'home_type': self.home_type
-        }
         home_information_form = HomeInformationForm(data=form_data)
 
         # Act
@@ -872,7 +856,7 @@ class TestRentSurveyMiniForm(TestCase):
             'polygon_filter_type': self.polygon_filter_type,
         }
 
-        rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
+        rent_survey_form = RentSurveyFormEdit(data=form_data)
 
         # Act
         result = rent_survey_form.is_valid()
@@ -906,7 +890,7 @@ class TestRentSurveyMiniForm(TestCase):
             'name': 'test_survey',
         }
 
-        rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
+        rent_survey_form = RentSurveyFormEdit(data=form_data)
 
         # Act
         result = rent_survey_form.is_valid()
@@ -951,7 +935,7 @@ class TestRentSurveyMiniForm(TestCase):
             'polygon_filter_type': self.polygon_filter_type
         }
 
-        rent_survey_form = RentSurveyFormMini(data=form_data, user=user2)
+        rent_survey_form = RentSurveyFormEdit(data=form_data)
 
         # Act
         result = rent_survey_form.is_valid()

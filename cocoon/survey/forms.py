@@ -19,7 +19,9 @@ from cocoon.survey.constants import MAX_TENANTS_FOR_ONE_SURVEY
 
 class HomeInformationForm(ModelForm):
     num_bedrooms = forms.IntegerField(
-        required=False
+        required=False,
+        max_value=MAX_NUM_BEDROOMS,
+        min_value=0,
     )
 
     home_type = forms.ModelMultipleChoiceField(
@@ -29,6 +31,8 @@ class HomeInformationForm(ModelForm):
 
     polygon_filter_type = forms.IntegerField(
         required=False,
+        max_value=1,
+        min_value=0,
     )
 
     is_move_asap = forms.BooleanField(
@@ -36,30 +40,10 @@ class HomeInformationForm(ModelForm):
     )
 
     move_weight = forms.IntegerField(
-        required=False
+        required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0
     )
-
-    def is_valid(self):
-        valid = super(HomeInformationForm, self).is_valid()
-
-        if not valid:
-            return valid
-
-        # Need to make a copy because otherwise when an error is added, that field
-        # is removed from the cleaned_data, then any subsequent checks of that field
-        # will cause a key error
-        current_form = self.cleaned_data.copy()
-
-        if int(current_form['num_bedrooms']) < 0:
-            self.add_error('num_bedrooms', "There can't be less than 1 bedroom")
-            valid = False
-
-        # Make sure the bedrooms are not more than the max allowed
-        if int(current_form['num_bedrooms']) > MAX_NUM_BEDROOMS:
-            self.add_error('num_bedrooms', "There can't be more than " + str(MAX_NUM_BEDROOMS))
-            valid = False
-
-        return valid
 
     class Meta:
         model = HomeInformationModel
@@ -76,8 +60,10 @@ class PriceInformationForm(ModelForm):
         required=True
     )
 
-    price_weight = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
+    price_weight = forms.IntegerField(
+        required=True,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     class Meta:
@@ -95,7 +81,9 @@ class HouseNearbyAmenitiesForm(ModelForm):
     )
 
     laundry_nearby_weight = forms.IntegerField(
-        required=False
+        required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     class Meta:
@@ -116,11 +104,14 @@ class ExteriorAmenitiesForm(ModelForm):
     )
 
     laundry_in_building_weight = forms.IntegerField(
-        required=False
+        required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     number_of_cars = forms.IntegerField(
         required=False,
+        min_value=0,
     )
 
     wants_patio = forms.BooleanField(
@@ -129,6 +120,8 @@ class ExteriorAmenitiesForm(ModelForm):
 
     patio_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_pool = forms.BooleanField(
@@ -137,6 +130,8 @@ class ExteriorAmenitiesForm(ModelForm):
 
     pool_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_gym = forms.BooleanField(
@@ -145,6 +140,8 @@ class ExteriorAmenitiesForm(ModelForm):
 
     gym_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_storage = forms.BooleanField(
@@ -153,6 +150,8 @@ class ExteriorAmenitiesForm(ModelForm):
 
     storage_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     class Meta:
@@ -171,7 +170,9 @@ class InteriorAmenitiesForm(ModelForm):
     )
 
     laundry_in_unit_weight = forms.IntegerField(
-        required=False
+        required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_furnished = forms.BooleanField(
@@ -180,6 +181,8 @@ class InteriorAmenitiesForm(ModelForm):
 
     furnished_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_dogs = forms.BooleanField(
@@ -200,6 +203,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     number_of_dogs = forms.IntegerField(
         required=False,
+        min_value=0,
     )
 
     wants_cats = forms.BooleanField(
@@ -208,6 +212,8 @@ class InteriorAmenitiesForm(ModelForm):
 
     cat_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_hardwood_floors = forms.BooleanField(
@@ -216,6 +222,8 @@ class InteriorAmenitiesForm(ModelForm):
 
     hardwood_floors_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_AC = forms.BooleanField(
@@ -224,6 +232,8 @@ class InteriorAmenitiesForm(ModelForm):
 
     AC_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     wants_dishwasher = forms.BooleanField(
@@ -232,6 +242,8 @@ class InteriorAmenitiesForm(ModelForm):
 
     dishwasher_weight = forms.IntegerField(
         required=False,
+        max_value=WEIGHT_QUESTION_MAX,
+        min_value=0,
     )
 
     class Meta:
@@ -247,8 +259,10 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
     """
     Rent Survey is the rent survey on the main survey page
     """
-    number_of_tenants = forms.ChoiceField(
-        choices=[(x, x) for x in range(1, MAX_TENANTS_FOR_ONE_SURVEY)],
+    number_of_tenants = forms.IntegerField(
+        required=True,
+        max_value=MAX_TENANTS_FOR_ONE_SURVEY,
+        min_value=1,
     )
 
     class Meta:
@@ -307,9 +321,9 @@ class CommuteInformationForm(DestinationForm):
         required=False,
     )
 
-    commute_weight = forms.ChoiceField(
+    commute_weight = forms.IntegerField(
         required=False,
-        choices=[(x, x) for x in range(0, WEIGHT_QUESTION_MAX)],
+        min_value=0,
     )
 
     commute_type = forms.ModelChoiceField(
