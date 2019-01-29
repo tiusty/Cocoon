@@ -187,22 +187,20 @@
 }
 
 .map-marker_hover {
-    font-size: 24px;
-    padding: 7px 5px;
-    width: 54px;
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
     animation: growMarker .25s ease forwards;
+    transform-origin: 50% 100%;
 }
 
 @keyframes growMarker {
     0% {
-        font-size: 16px;
+        transform: scale(.7);
     }
     75% {
-        font-size: 28px;
+        transform: scale(2);
     }
     100% {
-        font-size: 24px;
+        transform: scale(1.5);
     }
 }
 
