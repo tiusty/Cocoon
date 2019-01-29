@@ -106,7 +106,7 @@ class TestCommuteInformationForm(TestCase):
     def setUp(self):
         self.max_commute = 0
         self.min_commute = 0
-        self.commute_weight = 0
+        self.commute_weight = 1
         self.driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         self.transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)

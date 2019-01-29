@@ -323,7 +323,6 @@ class CommuteInformationForm(DestinationForm):
 
     commute_weight = forms.IntegerField(
         required=False,
-        min_value=0,
     )
 
     commute_type = forms.ModelChoiceField(
