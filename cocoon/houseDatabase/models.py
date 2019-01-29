@@ -161,7 +161,7 @@ class HouseExteriorAmenitiesModel(UpdateBase, models.Model):
 
 class HouseNearbyAmenitiesModel(UpdateBase, models.Model):
     """
-    Contains all the nearby ameneties associated with the home
+    Contains all the nearby amenities associated with the home
     """
     laundromat_nearby = models.BooleanField(default=False)
 

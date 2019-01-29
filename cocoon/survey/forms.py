@@ -245,13 +245,6 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
     """
     number_of_tenants = forms.ChoiceField(
         choices=[(x, x) for x in range(1, MAX_TENANTS_FOR_ONE_SURVEY)],
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-                'onchange': 'updateNumTenants()',
-            },
-
-        ),
     )
 
     class Meta:
@@ -269,61 +262,25 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
                   'laundry_in_building_weight', 'laundry_in_unit_weight', 'laundry_nearby_weight']
 
 
-class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
+class RentSurveyFormEdit(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
                          HomeInformationForm):
     """
     RentSurveyFormMini is the survey that is on the survey results page and allows the user to create
     quick changes. This should be mostly a subset of the RentSurveyForm
     """
 
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super(RentSurveyFormMini, self).__init__(*args, **kwargs)
-
-    name = forms.CharField(
-        label="Survey Name",
-        initial=DEFAULT_RENT_SURVEY_NAME,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter the name of the survey',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
-    )
-
-    def is_valid(self):
-        valid = super(RentSurveyFormMini, self).is_valid()
-
-        if not valid:
-            return valid
-
-        # Need to make a copy because otherwise when an error is added, that field
-        # is removed from the cleaned_data, then any subsequent checks of that field
-        # will cause a key error
-        current_form = self.cleaned_data.copy()
-
-        # Since slugs need to be unique and the survey name generates the slug, make sure that the new slug
-        #   will not conflict with a current survey. If it does, force them to choose a new name.
-        if 'name' in self.changed_data:
-            if self.user.userProfile.rentingsurveymodel_set.filter(url=slugify(current_form['name'])).exists():
-                self.add_error('name', "You already have a very similar name, please choose a more unique name")
-                valid = False
-
-        return valid
-
     class Meta:
         model = RentingSurveyModel
-        fields = ["num_bedrooms", "home_type",
-                  "max_price", "desired_price", "price_weight",
-                   "name", "num_bedrooms",  "home_type",
-                  "max_price", "desired_price", "price_weight",
-                  "wants_laundry_nearby",
-                  "wants_parking", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
+        fields = ["num_bedrooms", "home_type", "max_price", "desired_price", "price_weight", "wants_laundry_nearby",
+                  "wants_parking", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
                   "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
+                  "service_dogs", "breed_of_dogs", "dog_size",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
-                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
+                  "number_of_tenants", 'polygon_filter_type', 'is_move_asap', 'move_weight',
+                  'laundry_in_building_weight', 'laundry_in_unit_weight', 'laundry_nearby_weight']
 
 
 class DestinationForm(ModelForm):
