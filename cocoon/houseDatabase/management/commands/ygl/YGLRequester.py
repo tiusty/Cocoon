@@ -7,6 +7,7 @@ from cocoon.houseDatabase.constants import YGL_URL
 from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.houseDatabase.models import HomeProviderModel, HomeTypeModel
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
+from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
 
 # Import third party libraries
 import os
@@ -112,7 +113,71 @@ class YGLRequester(object):
                     elif element.tag == 'Price':
                         new_listing.price = int(element.text)
                     elif element.tag == 'Features':
-                        new_listing.remarks = element.text
+                        # Initialize word scraper
+                        word_scraper = WordScraper(element.text)
+
+                        if word_scraper.word_finder(["laundromat", "nearby"]):
+                            new_listing.laundromat_nearby = True
+                        if word_scraper.word_finder(["laundry", "in", "building"]):
+                            new_listing.laundry_in_building = True
+                        if word_scraper.word_finder(["laundry", "in", "unit"]):
+                            new_listing.laundry_in_unit = True
+
+                        new_listing.furnished = word_scraper.word_finder(["furnished"])
+                        new_listing.hardwood_floors = word_scraper.word_finder(["hardwood"]) \
+                                                      or word_scraper.word_finder(["hard", "wood"]) \
+                                                      or word_scraper.word_finder(["wooden", "floors"]) \
+                                                      or word_scraper.word_finder(["wood"])
+                        new_listing.diswasher = word_scraper.word_finder(["dishwasher"])
+
+                        if (word_scraper.word_finder(["air", "conditioning"])) or word_scraper.word_finder(["ac"]):
+                            new_listing.air_conditioning = True
+
+                        if word_scraper.word_finder(["dogs", "allowed"]) and not word_scraper.word_finder(
+                                ["no", "dogs", "allowed"]):
+                            new_listing.dogs_allowed = True
+
+                        if word_scraper.word_finder(["cats", "allowed"]) and not word_scraper.word_finder(
+                                ["no", "cats", "allowed"]):
+                            new_listing.cats_allowed = True
+
+                        if word_scraper.word_finder(["laundry", "in", "building"]) or word_scraper.word_finder(
+                                ["laundry", "in", "bldg"]) \
+                                or word_scraper.word_finder(["washer", "dryer", "in", "building"]) \
+                                or word_scraper.word_finder(["washer", "and", "dryer", "in", "building"]) \
+                                or word_scraper.word_finder(["w/d", "in", "building"]) \
+                                or word_scraper.word_finder(["washer&dryer", "in", "building"]) \
+                                or word_scraper.word_finder(["wd", "in", "building"]):
+                            new_listing.laundry_inside = True
+
+                        if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot", "tub"]):
+                            new_listing.pool = True
+                        if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
+                            new_listing.patio_balcony = True
+                        if word_scraper.word_finder(["laundry", "in", "unit"]) or word_scraper.word_finder(
+                                ["in-unit", "laundry"]) \
+                                or word_scraper.word_finder(["in", "unit", "laundry"]) \
+                                or word_scraper.word_finder(
+                            ["washer", "dryer", "in", "unit"]) or word_scraper.word_finder(
+                            ["in", "unit", "washer", "dryer"]) \
+                                or word_scraper.word_finder(["in-unit", "washer", "dryer"]) \
+                                or word_scraper.word_finder(
+                            ["washer", "and", "dryer", "in", "unit"]) or word_scraper.word_finder(
+                            ["in", "unit", "washer", "and", "dryer"]) \
+                                or word_scraper.word_finder(["in-unit", "washer", "and", "dryer"]) \
+                                or word_scraper.word_finder(["w/d", "in", "unit"]) or word_scraper.word_finder(
+                            ["in", "unit", "w/d"]) \
+                                or word_scraper.word_finder(["in-unit", "w/d"]) \
+                                or word_scraper.word_finder(["in", "unit", "washer&dryer"]) \
+                                or word_scraper.word_finder(["in-unit", "washer&dryer"]) \
+                                or word_scraper.word_finder(["in", "unit", "wd"]) \
+                                or word_scraper.word_finder(["in-unit", "wd"]):
+                            new_listing.laundry_in_unit = True
+                        new_listing.gym = word_scraper.word_finder(["gym"]) or word_scraper.word_finder(
+                            ["fitness", "center"]) or word_scraper.word_finder(["fitness"])
+                        new_listing.storage = word_scraper.word_finder(["storage"])
+
+
 
                 except ValueError:
                     print("[ VALUE ERROR ] Could not add home")

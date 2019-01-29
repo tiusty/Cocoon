@@ -17,7 +17,7 @@ class HouseAdmin(admin.ModelAdmin):
         ('Exterior Amenities',
          {'fields': ('parking_spot', 'pool', 'patio_balcony', 'gym', 'storage', 'laundry_in_unit'), }),
         ('Interior Amenities',
-         {'fields': ('furnished', 'hardwood_floors', 'air_conditioning', 'dogs_allowed', 'cats_allowed', 'laundry_inside'), }),
+         {'fields': ('furnished', 'hardwood_floors', 'air_conditioning', 'dogs_allowed', 'cats_allowed', 'laundry_in_building'), }),
         ('Provider Data',
          {'fields': (
              'listing_provider',
