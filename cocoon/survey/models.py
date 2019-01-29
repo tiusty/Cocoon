@@ -199,6 +199,7 @@ class TenantPersonalInformationModel(models.Model):
     unemployed_follow_up = models.CharField(max_length=200, blank=True, default="")
     income = models.IntegerField(blank=True, null=True)
     credit_score = models.CharField(max_length=200, blank=True, default="")
+    new_job = models.CharField(max_length=200, blank=True, default="")
 
     class Meta:
         abstract = True

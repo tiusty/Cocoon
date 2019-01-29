@@ -18,7 +18,7 @@ class TenantSerializer(serializers.HyperlinkedModelSerializer):
                   'street_address', 'city', 'state', 'zip_code',
                   'commute_type', 'commute_weight', 'traffic_option',
                   'min_commute', 'max_commute', 'income', 'credit_score',
-                  'occupation', 'other_occupation_reason', 'unemployed_follow_up')
+                  'occupation', 'other_occupation_reason', 'unemployed_follow_up', 'new_job')
 
 
 class RentSurveySerializer(serializers.HyperlinkedModelSerializer):

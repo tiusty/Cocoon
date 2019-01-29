@@ -630,6 +630,10 @@ class TenantPersonalInformationForm(ModelForm):
         required=False,
     )
 
+    new_job = forms.CharField(
+        required=False,
+    )
+
     class Meta:
         model = TenantPersonalInformationModel
         fields = '__all__'
@@ -640,7 +644,7 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
         model = TenantModel
         fields = ['first_name', 'last_name', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
                   'min_commute', 'commute_weight', 'commute_type', 'traffic_option', 'occupation',
-                  'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score']
+                  'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score', 'new_job']
 
 
 class TenantFormJustNames(TenantPersonalInformationForm):
