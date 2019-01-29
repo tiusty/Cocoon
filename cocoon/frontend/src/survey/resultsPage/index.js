@@ -6,6 +6,8 @@ import axios from 'axios';
 import '../../common/styles/variables.css';
 import './resultsPage.css';
 import BlurredImg from './not-verified-bg.jpg';
+import BlurredImg2 from './not-verified-bg-2.jpg';
+import BlurredImg3 from './not-verified-bg-3.jpg';
 
 
 import survey_endpoints from '../../endpoints/survey_endpoints';
@@ -380,8 +382,10 @@ export default class ResultsPage extends Component {
                 </div>
             );
         } else {
+            const imgArray = [BlurredImg, BlurredImg2, BlurredImg3];
+            const ramdomImage = imgArray[Math.floor(Math.random() * imgArray.length)]
             return (
-              <div id="unverified-wrapper" style={{backgroundImage: `url(${BlurredImg})`}}>
+              <div id="unverified-wrapper" style={{backgroundImage: `url(${ramdomImage})`}}>
                   <div className="unverified-modal">
                       <h2>Confirm your email before viewing your results.</h2>
                       {this.state.verificationEmailSent ? <p>Email sent!</p> : null}
