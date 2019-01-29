@@ -647,14 +647,6 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
                   'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score', 'new_job']
 
 
-class TenantFormSurveyResult(CommuteInformationForm, TenantPersonalInformationForm):
-    class Meta:
-        model = TenantModel
-        fields = ['street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option', 'occupation',
-                  'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score', 'new_job']
-
-
 class TenantFormJustNames(TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
@@ -663,7 +655,5 @@ class TenantFormJustNames(TenantPersonalInformationForm):
 
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                       extra=4, can_delete=False)
-TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantFormSurveyResult,
-                                             extra=0, can_delete=False)
 TenantFormSetJustNames = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantFormJustNames,
                                                extra=0, can_delete=False)
