@@ -391,25 +391,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                 with transaction.atomic():
                     form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
-                    # Creates a the survey name based on the people in the roommate group
-                    survey_name = ""
-                    if number_of_tenants is 1:
-                        survey_name = "Just Me"
-                    else:
-                        counter = 1
-                        for tenant in reversed(tenants):
-                            if counter == number_of_tenants - 1:
-                                survey_name = "{0}{1} ".format(survey_name, tenant.cleaned_data['first_name'])
-                            elif counter == number_of_tenants:
-                                survey_name = "{0}and I".format(survey_name, tenant.cleaned_data['first_name'])
-                            elif counter != number_of_tenants:
-                                survey_name = "{0}{1}, ".format(survey_name, tenant.cleaned_data['first_name'])
-
-                            counter = counter + 1
-
-                    # Set the form name
-                    form.instance.name = survey_name
-
                     # Now the form can be saved
                     survey = form.save()
 

@@ -24,7 +24,6 @@ class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
     """
-    name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
     created = models.DateField(auto_now_add=True)
     user_profile = models.ForeignKey(UserProfile)
     number_of_tenants = models.IntegerField(default=1)
@@ -194,9 +193,27 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
     of one survey
     """
 
+    @property
+    def survey_name(self):
+        num_of_tenants = self.tenants.count()
+        if num_of_tenants is 1:
+            return "Just Me"
+        else:
+            counter = 1
+            survey_name = ""
+            for tenant in self.tenants.reverse():
+                if counter == num_of_tenants - 1:
+                    survey_name = "{0}{1} ".format(survey_name, tenant.first_name)
+                elif counter == num_of_tenants:
+                    survey_name = "{0}and I".format(survey_name, tenant.first_name)
+                elif counter != num_of_tenants:
+                    survey_name = "{0}{1}, ".format(survey_name, tenant.first_name)
+                counter += 1
+            return survey_name
+
     def __str__(self):
         user_short_name = self.user_profile.user.get_short_name()
-        survey_name = self.name
+        survey_name = self.survey_name
         return "{0}: {1}".format(user_short_name, survey_name)
 
 
