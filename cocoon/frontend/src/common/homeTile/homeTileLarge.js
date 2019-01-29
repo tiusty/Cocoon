@@ -5,6 +5,7 @@ import {Component} from 'react';
 // Carousel
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
+import PlaceHolder from "./homelist-empty.jpg";
 
 export default class HomeTileLarge extends Component {
     /**
@@ -27,72 +28,144 @@ export default class HomeTileLarge extends Component {
         canFavorite: true,
         canVisit: false,
         displayPercent: false
-    }
+    };
 
     renderInterior = (home) => {
-        if (home.interior_amenities) {
+        /**
+         * Renders all the interior amenities information
+         * @type {Array}
+         */
+
+        // Creates a list of all the interior amenities that exist
+        let interior_amenities = [];
+        for (var key in home.interior_amenities) {
+            if (home.interior_amenities[key]) {
+                interior_amenities.push(key)
+            }
+        }
+
+        // If there is at least one amenity then render it
+        // Since the names have a _ instead of a space, when rendering the name
+        //  replace all _ with spaces
+        if (interior_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Interior Amenities</h3>
-                    {home.interior_amenities.map(item => (
-                        <p key={item}><i className="material-icons">check</i> {item}</p>
-                    ))};
+                    {interior_amenities.map(item => (
+                        <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
                 </div>
             );
+
+        // If there is not data then render that there is no data
         } else {
-            return null;
+            return (
+                <div className="point-wrapper">
+                    <h3>Interior Amenities</h3>
+                    <p>No data</p>
+                </div>
+            );
         }
-    }
+    };
 
     renderExterior = (home) => {
-        if (home.exterior_amenities) {
+        /**
+         * Renders all the exterior amenities information
+         * @type {Array}
+         */
+
+        // Creates a list of all the exterior amenities that exist
+        let exterior_amenities = [];
+        for (var key in home.exterior_amenities) {
+            if (home.exterior_amenities[key]) {
+                exterior_amenities.push(key)
+            }
+        }
+
+        // If there is at least one amenity then render it
+        // Since the names have a _ instead of a space, when rendering the name
+        //  replace all _ with spaces
+        if (exterior_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Exterior Amenities</h3>
-                    {home.exterior_amenities.map(item => (
-                        <p key={item}><i className="material-icons">check</i> {item}</p>
-                    ))};
+                    {exterior_amenities.map(item => (
+                        <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
                 </div>
             );
-        } else {
-            return null;
-        }
-    }
 
-    renderBonus = (home) => {
-        if (home.bonus_amenities) {
+        // If there is not data then render that there is no data
+        } else {
+            return (
+                <div className="point-wrapper">
+                    <h3>Exterior Amenities</h3>
+                    <p>No data</p>
+                </div>
+            );
+        }
+    };
+
+    renderNearby = (home) => {
+        /**
+         * Renders all the nearby amenity information
+         * @type {Array}
+         */
+
+        // Creates a list of all the nearby amenities that exist
+        let nearby_amenities = [];
+        for (var key in home.nearby_amenities) {
+            if (home.nearby_amenities[key]) {
+                nearby_amenities.push(key)
+            }
+        }
+
+        // If there is at least one amenity then render it
+        // Since the names have a _ instead of a space, when rendering the name
+        //  replace all _ with spaces
+        if (nearby_amenities.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>What's near here?</h3>
-                    {home.bonus_amenities.map(item => (
-                        <p key={item}><i className="material-icons">check</i> {item}</p>
-                    ))};
+                    {nearby_amenities.map(item => (
+                        <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
                 </div>
             );
-        } else {
-            return null;
-        }
-    }
 
-    renderPoints = () => {
+        // If there is not data then render that there is no data
+        } else {
+            return (
+                <div className="point-wrapper">
+                    <h3>Nearby Amenities</h3>
+                    <p>No data</p>
+                </div>
+            );
+        }
+    };
+
+    renderAmenities = () => {
+        /**
+         * Renders all the amenities information associated with the home
+         */
         let home = this.props.home;
         return (
             <div className="expanded-points">
                 {this.renderInterior(home)}
                 {this.renderExterior(home)}
-                {this.renderBonus(home)}
+                {this.renderNearby(home)}
             </div>
         );
 
-    }
+    };
 
-        renderScore(home) {
+    renderScore(home) {
         /**
          * Renders the score portion of the home tile
          * @type {string} THe home that is being rendered
          */
 
-        // Toggles whether the home text depending on favorite status
+            // Toggles whether the home text depending on favorite status
         let favorite_style;
         if (!this.props.canVisit) {
             favorite_style = {
@@ -102,17 +175,20 @@ export default class HomeTileLarge extends Component {
         }
         let favorite_text = "Add to Favorites";
         let favorite_class = 'home_add_default';
+        let favorite_icon = "favorite_border";
         if (this.props.favorite) {
             favorite_text = "Added to Favorites";
             favorite_class += " home_added";
+            favorite_icon = "favorite";
         } else {
             favorite_text = "Add to Favorites";
             favorite_class = 'home_add_default';
+            favorite_icon = "favorite_border";
         }
         let heart_span = (
             <div className={favorite_class} style={favorite_style} onClick={(e) => this.props.onFavoriteClick(home, e)}>
                 <i className="icon_heart material-icons">
-                    favorite
+                    {favorite_icon}
                 </i>
                 <span>{favorite_text}</span>
             </div>
@@ -155,16 +231,51 @@ export default class HomeTileLarge extends Component {
         );
     }
 
-    renderPercentMatch = (home) => {
+renderPercentMatch = (home) => {
+        /**
+         * Returns the percent match info if it is desired
+         * @type {null}
+         */
         let percent_match = null;
-        if (this.props.displayPercent) {
+        if (this.props.displayPercent && home.percent_match) {
             percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
+        }
+        if (percent_match === null && this.props.percent_match) {
+            percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
         }
         return percent_match;
     }
 
+    renderImages = () => {
+        let { home } = this.props;
+        // renders placeholder image if home has no images
+        if (home.images.length === 0) {
+            return (
+                <div className="thumbnailDiv">
+                    <img src={PlaceHolder} alt="place holder image" className="thumbnailImage" />
+                </div>
+            );
+        } else {
+            // renders carousel
+            return (
+                <Carousel
+                    dynamicHeight={false}
+                    infiniteLoop={true}
+                    showThumbs={false}
+                    showStatus={false}
+                >
+                    {home.images.map(image =>
+                            <div key={image.id}>
+                                <img src={image.image} alt="house image"/>
+                            </div>
+                    )}
+                </Carousel>
+            );
+        }
+    }
+
     render() {
-        let home = this.props.home;
+        let { home } = this.props;
         let bedInfo = home.num_bedrooms > 1 ? 'beds' : 'bed';
         let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
         return (
@@ -179,18 +290,7 @@ export default class HomeTileLarge extends Component {
                     <div className="expanded-info">
                         <div className="home-tile-large-carousel-div">
                             {this.renderPercentMatch(home)}
-                            <Carousel
-                                dynamicHeight={true}
-                                infiniteLoop={true}
-                                showThumbs={false}
-                                showStatus={false}
-                            >
-                                {home.images.map(image =>
-                                    <div key={image.id}>
-                                        <img src={image.image} alt="house image"/>
-                                    </div>
-                                )}
-                            </Carousel>
+                            {this.renderImages(home)}
                         </div>
 
                         <div className="expanded-info-text">
@@ -207,30 +307,7 @@ export default class HomeTileLarge extends Component {
                                 <p>{home.remarks}</p>
                             </div>
 
-                            {/*{this.renderPoints()}*/}
-
-                            {/*SAMPLE DATA BELOW FROM FROM this.renderPoints()*/}
-                            <div className="expanded-points">
-                                <div className="point-wrapper">
-                                    <h3>Interior Amenities</h3>
-                                    <p><i className="material-icons">check</i> Laundry in unit</p>
-                                    <p><i className="material-icons">check</i> Dishwasher</p>
-                                    <p><i className="material-icons">check</i> Hardwood floors</p>
-                                </div>
-
-                                <div className="point-wrapper">
-                                    <h3>Exterior Amenities</h3>
-                                    <p><i className="material-icons">check</i> 2 parking spots</p>
-                                </div>
-
-                                <div className="point-wrapper">
-                                    <h3>What's Near Here?</h3>
-                                    <p><i className="material-icons">check</i> Grocery store</p>
-                                    <p><i className="material-icons">check</i> Laundry mats</p>
-                                </div>
-                            </div>
-                            {/*END SAMPLE DATA*/}
-
+                            {this.renderAmenities()}
                         </div>
                         {this.renderScore(home)}
                     </div>

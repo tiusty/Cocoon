@@ -21,36 +21,25 @@ from cocoon.survey.constants import MAX_TENANTS_FOR_ONE_SURVEY
 
 
 class HomeInformationForm(ModelForm):
-    num_bedrooms = forms.ChoiceField(
-        choices=[(x, x) for x in range(0, MAX_NUM_BEDROOMS)],
-        label="Number of Bedrooms",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
-    )
-
-    max_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
-    )
-
-    min_bathrooms = forms.IntegerField(
-        widget=forms.HiddenInput(
-            attrs={
-                'class': 'form-control',
-            }),
+    num_bedrooms = forms.IntegerField(
+        required=False
     )
 
     home_type = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(
-            attrs={
-                'class': 'form-control',
-            }),
+        required=True,
         queryset=HomeTypeModel.objects.all()
+    )
+
+    polygon_filter_type = forms.IntegerField(
+        required=False,
+    )
+
+    is_move_asap = forms.BooleanField(
+        required=False
+    )
+
+    move_weight = forms.IntegerField(
+        required=False
     )
 
     def is_valid(self):
@@ -71,15 +60,6 @@ class HomeInformationForm(ModelForm):
         # Make sure the bedrooms are not more than the max allowed
         if int(current_form['num_bedrooms']) > MAX_NUM_BEDROOMS:
             self.add_error('num_bedrooms', "There can't be more than " + str(MAX_NUM_BEDROOMS))
-            valid = False
-
-        # make sure that the max number of bathrooms is not greater than the max specified
-        if current_form['max_bathrooms'] > MAX_NUM_BATHROOMS:
-            self.add_error('max_bathrooms', "You can't have more bathrooms than " + str(MAX_NUM_BATHROOMS))
-            valid = False
-
-        if current_form['min_bathrooms'] < 0:
-            self.add_error('min_bathrooms', "You can't have less than 0 bathrooms")
             valid = False
 
         return valid
@@ -389,21 +369,10 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
         ),
     )
 
-    polygon_filter_type = forms.ChoiceField(
-        required=False,
-        choices=[(x, x) for x in range(0, 2)],
-        label="Filter type",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
-    )
-
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+        fields = ["num_bedrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
                   "wants_parking", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
@@ -413,7 +382,7 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
                   "service_dogs", "breed_of_dogs", "dog_size",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
-                  "number_of_tenants", 'polygon_filter_type']
+                  "number_of_tenants", 'polygon_filter_type', 'is_move_asap', 'move_weight']
 
 
 class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
@@ -460,9 +429,9 @@ class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNear
 
     class Meta:
         model = RentingSurveyModel
-        fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+        fields = ["num_bedrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
-                   "name", "num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
+                   "name", "num_bedrooms",  "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
                   "wants_parking", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
@@ -635,31 +604,36 @@ class CommuteInformationForm(DestinationForm):
 
 class TenantPersonalInformationForm(ModelForm):
     first_name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'First Name',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
+        required=True
     )
 
     last_name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Last Name',
-            }),
-        max_length=MAX_TEXT_INPUT_LENGTH,
+        required=True
     )
 
-    is_student = forms.BooleanField(
+    occupation = forms.CharField(
         required=False,
-        widget=forms.CheckboxInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'Student?',
-            }),
-        )
+    )
+
+    other_occupation_reason = forms.CharField(
+        required=False,
+    )
+
+    unemployed_follow_up = forms.CharField(
+        required=False,
+    )
+
+    income = forms.CharField(
+        required=False,
+    )
+
+    credit_score = forms.CharField(
+        required=False,
+    )
+
+    new_job = forms.CharField(
+        required=False,
+    )
 
     class Meta:
         model = TenantPersonalInformationModel
@@ -669,8 +643,9 @@ class TenantPersonalInformationForm(ModelForm):
 class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
-        fields = ['first_name', 'last_name', 'is_student', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'desired_commute', 'commute_weight', 'commute_type', 'traffic_option']
+        fields = ['first_name', 'last_name', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
+                  'desired_commute', 'commute_weight', 'commute_type', 'traffic_option', 'occupation',
+                  'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score', 'new_job']
 
 
 class TenantFormJustNames(TenantPersonalInformationForm):
@@ -681,7 +656,5 @@ class TenantFormJustNames(TenantPersonalInformationForm):
 
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                       extra=4, can_delete=False)
-TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
-                                             extra=0, can_delete=False)
 TenantFormSetJustNames = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantFormJustNames,
                                                extra=0, can_delete=False)

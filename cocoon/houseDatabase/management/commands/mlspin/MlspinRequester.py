@@ -128,7 +128,7 @@ class MlspinRequester(object):
 
             # If any of the fields give a value error, then don't save the apartment
             try:
-                #Initialize word scraper
+                # Initialize word scraper
                 word_scraper = WordScraper(cells[REMARKS])
 
                 # Set the HomeBaseModel Fields
@@ -139,6 +139,10 @@ class MlspinRequester(object):
                 new_listing.price = int(cells[LIST_PRICE])
                 if word_scraper.word_finder(["laundromat","nearby"]):
                     new_listing.laundromat_nearby = True
+                if word_scraper.word_finder(["laundry","in","building"]):
+                    new_listing.laundry_in_building = True
+                if word_scraper.word_finder(["laundry", "in", "unit"]):
+                    new_listing.laundry_in_unit = True
 
                 # Set InteriorAmenitiesModel Fields
                 # Currently don't support non-integers for num_bathrooms. Therefore
@@ -159,9 +163,6 @@ class MlspinRequester(object):
                 if word_scraper.word_finder(["cats","allowed"]) and not word_scraper.word_finder(["no", "cats","allowed"]):
                     new_listing.cats_allowed = True
 
-                if word_scraper.word_finder(["laundry","in","building"]):
-                    new_listing.laundry_inside = True
-
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
                 new_listing.listing_number = int(cells[LIST_NO])
@@ -180,11 +181,8 @@ class MlspinRequester(object):
                     new_listing.pool = True
                 if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
                     new_listing.patio_balcony = True
-                if word_scraper.word_finder(["laundry", "in", "unit"]):
-                    new_listing.laundry_in_unit = True
                 new_listing.gym = word_scraper.word_finder(["gym"])
                 new_listing.storage = word_scraper.word_finder(["storage"])
-
 
                 # Create the new home
                 # Define the home type
