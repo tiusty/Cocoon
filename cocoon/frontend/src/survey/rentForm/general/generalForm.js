@@ -50,7 +50,7 @@ export default class GeneralForm extends Component {
         valid = valid && this.handleHomeTypeValidation();
         valid = valid && this.handlePriceValidation();
         valid = valid && this.handleMoveAsapValidation();
-        valid = valid && this.handleDatePickerValidation();
+        // valid = valid && this.handleDatePickerValidation();
         valid = valid && this.handleUrgencyValidation();
         valid = valid && this.handleBedroomValidation();
         return valid
