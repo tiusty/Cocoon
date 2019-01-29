@@ -32,6 +32,78 @@ export default class AmenitiesForm extends Component {
         );
     }
 
+    renderLaundryInUnitFollowUp() {
+        if (this.props.amenitiesInfo.wants_laundry_in_unit) {
+            return (
+                <div className="survey-question" onChange={(e) => {this.props.onInputChange(e, 'number');}}>
+                    <h2>How badly do you want your <span>laundry in unit</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_in_unit_weight" value="1" checked={this.props.amenitiesInfo.laundry_in_unit_weight === 1} onChange={() => {}} />
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_in_unit_weight" value="2" checked={this.props.amenitiesInfo.laundry_in_unit_weight === 2} onChange={() => {}} />
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_in_unit_weight" value="3" checked={this.props.amenitiesInfo.laundry_in_unit_weight === 3} onChange={() => {}} />
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
+    renderLaundryInBuldingFollowUp() {
+        if (this.props.amenitiesInfo.wants_laundry_in_building) {
+            return (
+                <div className="survey-question" onChange={(e) => {this.props.onInputChange(e, 'number');}}>
+                    <h2>How badly do you want your <span>laundry in your building</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_in_building_weight" value="1" checked={this.props.amenitiesInfo.laundry_in_building_weight === 1} onChange={() => {}} />
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_in_building_weight" value="2" checked={this.props.amenitiesInfo.laundry_in_building_weight === 2} onChange={() => {}} />
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_in_building_weight" value="3" checked={this.props.amenitiesInfo.laundry_in_building_weight === 3} onChange={() => {}} />
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
+    renderLaundryNearbyFollowUp() {
+        if (this.props.amenitiesInfo.wants_laundry_nearby) {
+            return (
+                <div className="survey-question" onChange={(e) => {this.props.onInputChange(e, 'number');}}>
+                    <h2>How badly do you want your <span>laundry nearby</span>?</h2>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_nearby_weight" value="1" checked={this.props.amenitiesInfo.laundry_nearby_weight === 1} onChange={() => {}} />
+                        <div>Kinda want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_nearby_weight" value="2" checked={this.props.amenitiesInfo.laundry_nearby_weight === 2} onChange={() => {}} />
+                        <div>Really want</div>
+                    </label>
+                    <label className="col-md-4 survey-label">
+                        <input type="radio" name="laundry_nearby_weight" value="3" checked={this.props.amenitiesInfo.laundry_nearby_weight === 3} onChange={() => {}} />
+                        <div>Need it</div>
+                    </label>
+                </div>
+            );
+        } else {
+            return null
+        }
+    }
+
     renderAmenitiesQuestions() {
         return (
             <div className="survey-question">
@@ -413,6 +485,9 @@ export default class AmenitiesForm extends Component {
         return(
             <>
                 {this.renderLaundryQuestion()}
+                {this.renderLaundryInUnitFollowUp()}
+                {this.renderLaundryInBuldingFollowUp()}
+                {this.renderLaundryNearbyFollowUp()}
                 {this.renderAmenitiesQuestions()}
                 {this.renderParkingFollowUp()}
                 {this.renderFurnishedFollowUp()}
