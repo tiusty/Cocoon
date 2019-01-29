@@ -472,7 +472,7 @@ export default class GeneralForm extends Component {
     render() {
         return (
             <>
-                {this.renderNumberOfPeopleQuestion()}
+                {!this.props.is_editing ? this.renderNumberOfPeopleQuestion() : null}
                 {this.renderNameQuestion()}
                 {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
