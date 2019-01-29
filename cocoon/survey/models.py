@@ -38,7 +38,7 @@ class InitialSurveyModel(models.Model):
         """
 
         # Create the unique string that will be hashed
-        # Multiple things are added so people can reverse hash the id
+        # Multiple things are added so people can't reverse hash the id
         hashable_string = "{0}{1}{2}{3}".format(self.user_profile.user.id, self.created, self.number_of_tenants, self.id)
 
         # Create the md5 object
