@@ -15,7 +15,7 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
-from .forms import RentSurveyForm, TenantFormSet, TenantFormSetJustNames
+from .forms import RentSurveyForm, TenantFormSet, TenantFormSetResults, TenantFormSetJustNames
 from .survey_helpers.save_polygons import save_polygons
 from .serializers import HomeScoreSerializer, RentSurveySerializer
 
@@ -333,7 +333,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             tenants = None
 
             if form.is_valid():
-                tenants = TenantFormSet(tenant_data, instance=survey)
+                tenants = TenantFormSetResults(tenant_data, instance=survey)
                 if tenants.is_valid():
 
                     with transaction.atomic():
