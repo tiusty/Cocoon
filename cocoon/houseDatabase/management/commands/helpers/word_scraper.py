@@ -1,19 +1,19 @@
 import re
 
+
 class WordScraper:
 
     def __init__(self, input_description):
-        self.input_description = input_description.lower().replace("a/c","ac")
+        self.input_description = input_description.lower()
         self.input_dictionary = self.make_input_dictionary()
-
 
     def make_input_dictionary(self):
         """
         Makes a dictionary using input description in lowercase, with "a/c" being replaced with "ac"
-        self.input_dictionary : {"word" : [list of indicies of occurance]}
+        self.input_dictionary : {"word" : [list of indicies of occurrence]}
         uses regex expression to find all words and punctuations
         """
-        word_list = re.findall(r"[\w']+|[.,!?;]", self.input_description)
+        word_list = re.findall(r"[\w']+|[.,!?;&/]", self.input_description)
         word_dictionary = {}
         for i in range(len(word_list)):
             if word_list[i] in word_dictionary:
@@ -58,11 +58,12 @@ class WordScraper:
         Looks for laundry in building using multiple synonyms and abbreviations. Returns True if any one of the
         conditions match, returns False otherwise
         """
-        if self.word_finder(["laundry", "in", "building"]) or self.word_finder(["laundry", "in", "bldg"]) \
+        if self.word_finder(["laundry", "in", "building"]) \
+                or self.word_finder(["laundry", "in", "bldg"]) \
                 or self.word_finder(["washer", "dryer", "in", "building"]) \
                 or self.word_finder(["washer", "and", "dryer", "in", "building"]) \
-                or self.word_finder(["w/d", "in", "building"]) \
-                or self.word_finder(["washer&dryer", "in", "building"]) \
+                or self.word_finder(["w", "/", "d", "in", "building"]) \
+                or self.word_finder(["washer", "&", "dryer", "in", "building"]) \
                 or self.word_finder(["wd", "in", "building"]):
             return True
         return False
@@ -72,20 +73,29 @@ class WordScraper:
         Looks for laundry in unit using multiple synonyms and abbreviations. Returns True if any one of the
         conditions match, returns False otherwise
         """
-        if self.word_finder(["laundry", "in", "unit"]) or self.word_finder(["in-unit", "laundry"]) \
-                or self.word_finder(["in", "unit", "laundry"]) \
-                or self.word_finder(["washer", "dryer", "in", "unit"]) or self.word_finder(["in", "unit", "washer", "dryer"]) \
-                or self.word_finder(["in-unit", "washer", "dryer"]) \
-                or self.word_finder(["washer", "and", "dryer", "in", "unit"]) or self.word_finder(["in", "unit", "washer", "and", "dryer"]) \
-                or self.word_finder(["in-unit", "washer", "and", "dryer"]) \
-                or self.word_finder(["w/d", "in", "unit"]) or self.word_finder(["in", "unit", "w/d"]) \
-                or self.word_finder(["in-unit", "w/d"]) \
-                or self.word_finder(["in", "unit", "washer&dryer"]) \
-                or self.word_finder(["in-unit", "washer&dryer"]) \
-                or self.word_finder(["in", "unit", "wd"]) \
-                or self.word_finder(["in-unit", "wd"]):
-
+        if self.word_finder(["laundry", "in", "unit"]):
             return True
+        if self.word_finder(["in", "unit", "laundry"]):
+            return True
+        if self.word_finder(["washer", "dryer", "in", "unit"]):
+            return True
+        if self.word_finder(["in", "unit", "washer", "dryer"]):
+            return True
+        if self.word_finder(["washer", "and", "dryer", "in", "unit"]):
+            return True
+        if self.word_finder(["in", "unit", "washer", "and", "dryer"]):
+            return True
+        if self.word_finder(["w", "/", "d", "in", "unit"]):
+            return True
+        if self.word_finder(["in", "unit", "w", "/", "d"]):
+            return True
+        if self.word_finder(["in", "unit", "washer", "&", "dryer"]):
+            return True
+        if self.word_finder(["in", "unit", "wd"]):
+            return True
+        if self.word_finder(["personal", "washing", "machine", "and", "dryer"]):
+            return True
+
         return False
 
     def look_for_hardwood_floors(self):

@@ -137,7 +137,7 @@ class MlspinRequester(object):
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
-                if word_scraper.word_finder(["laundromat","nearby"]):
+                if word_scraper.word_finder(["laundromat"]):
                     new_listing.laundromat_nearby = True
 
                 # Set InteriorAmenitiesModel Fields
@@ -149,8 +149,10 @@ class MlspinRequester(object):
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
                 new_listing.furnished = word_scraper.word_finder(["furnished"])
                 new_listing.hardwood_floors = word_scraper.look_for_hardwood_floors()
-                new_listing.diswasher = word_scraper.word_finder(["dishwasher"])
-                if (word_scraper.word_finder(["air","conditioning"])) or word_scraper.word_finder(["ac"]):
+                new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
+                if (word_scraper.word_finder(["air", "conditioning"]))\
+                        or word_scraper.word_finder(["ac"])\
+                        or word_scraper.word_finder(["a", "/", "c"]):
                     new_listing.air_conditioning = True
 
                 if word_scraper.word_finder(["dogs","allowed"]) and not word_scraper.word_finder(["no", "dogs","allowed"]):

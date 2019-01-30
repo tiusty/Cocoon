@@ -116,14 +116,16 @@ class YGLRequester(object):
                         # Initialize word scraper
                         word_scraper = WordScraper(element.text)
 
-                        if word_scraper.word_finder(["laundromat", "nearby"]):
+                        if word_scraper.word_finder(["laundromat"]):
                             new_listing.laundromat_nearby = True
 
                         new_listing.furnished = word_scraper.word_finder(["furnished"])
                         new_listing.hardwood_floors = word_scraper.look_for_hardwood_floors()
-                        new_listing.diswasher = word_scraper.word_finder(["dishwasher"])
+                        new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
 
-                        if (word_scraper.word_finder(["air", "conditioning"])) or word_scraper.word_finder(["ac"]):
+                        if (word_scraper.word_finder(["air", "conditioning"])) \
+                                or word_scraper.word_finder(["ac"])\
+                                or word_scraper.word_finder(["a", "/", "c"]):
                             new_listing.air_conditioning = True
 
                         if word_scraper.word_finder(["dogs", "allowed"]) and not word_scraper.word_finder(
@@ -133,7 +135,6 @@ class YGLRequester(object):
                         if word_scraper.word_finder(["cats", "allowed"]) and not word_scraper.word_finder(
                                 ["no", "cats", "allowed"]):
                             new_listing.cats_allowed = True
-
 
                         new_listing.laundry_in_building = word_scraper.look_for_laundry_in_unit()
 

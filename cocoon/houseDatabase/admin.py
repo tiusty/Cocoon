@@ -15,9 +15,10 @@ class HouseAdmin(admin.ModelAdmin):
          {'fields': ['currently_available', 'last_updated', 'street_address', 'city', 'state', 'zip_code', 'price',
                      'home_type', 'latitude', 'longitude', 'apartment_number','laundromat_nearby', ]}),
         ('Exterior Amenities',
-         {'fields': ('parking_spot', 'pool', 'patio_balcony', 'gym', 'storage', 'laundry_in_unit'), }),
+         {'fields': ('parking_spot', 'pool', 'patio_balcony', 'gym', 'storage', 'laundry_in_building'), }),
         ('Interior Amenities',
-         {'fields': ('furnished', 'hardwood_floors', 'air_conditioning', 'dogs_allowed', 'cats_allowed', 'laundry_in_building'), }),
+         {'fields': ('furnished', 'hardwood_floors', 'air_conditioning', 'dogs_allowed', 'cats_allowed',
+                     'laundry_in_unit', 'dishwasher'), }),
         ('Provider Data',
          {'fields': (
              'listing_provider',
