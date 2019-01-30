@@ -8,3 +8,6 @@ ACCOUNT_ID = "6769317"
 
 # Template IDs
 PRE_TOUR_TEMPLATE_ID = 'e998b44f-28cb-4d20-ad67-97a033cbbab1'
+
+# Docusign api throttle
+DOCUSIGN_REFRESH_RATE_MINUTES = 5

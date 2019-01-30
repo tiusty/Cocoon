@@ -31,6 +31,7 @@ export default class MySurveys extends Component {
         is_pre_tour_signed: false,
         refreshing_document_status: false,
         pre_tour_forms_created: false,
+        last_resend_request_pre_tour: undefined,
 
         // Handles opening a large survey
         survey_clicked_id: undefined,
@@ -122,6 +123,7 @@ export default class MySurveys extends Component {
                     hunter_doc_manager_id: response.data[0].id,
                     pre_tour_forms_created: response.data[0].pre_tour_forms_created,
                     is_pre_tour_signed: response.data[0].is_pre_tour_signed,
+                    last_resend_request_pre_tour: response.data[0].last_resend_request_pre_tour,
                 })
             });
 
@@ -213,7 +215,6 @@ export default class MySurveys extends Component {
             })
             .then(response =>
                 this.setState({
-                    id: response.data.id,
                     is_pre_tour_signed: response.data.is_signed,
                     pre_tour_forms_created: true,
                     refreshing_document_status: false,
@@ -241,8 +242,8 @@ export default class MySurveys extends Component {
             })
             .then(response =>
                 this.setState({
-                    id: response.data.id,
-                    is_pre_tour_signed: response.data.is_signed,
+                    is_pre_tour_signed: response.data.is_pre_tour_signed,
+                    last_resend_request_pre_tour: response.data[0].last_resend_request_pre_tour,
                     refreshing_document_status: false,
                 })
             );

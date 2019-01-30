@@ -31,4 +31,5 @@ class HunterDocManagerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HunterDocManagerModel
-        fields = ('id', 'is_all_documents_signed', 'is_pre_tour_signed', 'pre_tour_forms_created',)
+        fields = ('id', 'is_all_documents_signed', 'is_pre_tour_signed', 'pre_tour_forms_created',
+                  'last_resend_request_pre_tour')

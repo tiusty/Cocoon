@@ -2,6 +2,10 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
 
+# Import python mdules
+from datetime import datetime, timedelta
+from pytz import timezone as pytimezone
+
 # Import docusign wrapper classes
 from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
 
@@ -9,7 +13,7 @@ from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
 from cocoon.userAuth.models import MyUser
 
 # Import constants
-from cocoon.signature.constants import PRE_TOUR_TEMPLATE_ID
+from .constants import PRE_TOUR_TEMPLATE_ID, DOCUSIGN_REFRESH_RATE_MINUTES
 
 # Load the logger
 import logging
@@ -25,6 +29,7 @@ class HunterDocManagerModel(models.Model):
         self.user: (OneToOneField) -> A link to the user that the doc manager is related to
     """
     user = models.OneToOneField(MyUser, related_name="doc_manager", on_delete=models.CASCADE)
+    last_resend_request_pre_tour = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return self.user.full_name
@@ -94,6 +99,10 @@ class HunterDocManagerModel(models.Model):
         template = self.retrieve_pre_tour_template()
         return self.documents.filter(template=template).exists()
 
+    @staticmethod
+    def api_throttle_test(last_send_time):
+        return pytimezone('UTC').localize(datetime.now()) >= last_send_time + timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES)
+
     def resend_pre_tour_documents(self):
         """
         Re-sends the pre tour forms to the user.
@@ -117,7 +126,12 @@ class HunterDocManagerModel(models.Model):
                     HunterDocManagerModel.resend_pre_tour_documents.__name__
                 ))
                 return False
-            return docusign.resend_envelope(envelope_id)
+            if self.api_throttle_test(self.last_resend_request_pre_tour):
+                self.last_resend_request_pre_tour = datetime.now()
+                self.save()
+                return docusign.resend_envelope(envelope_id)
+            else:
+                return False
         else:
             return False
 
@@ -128,8 +142,9 @@ class HunterDocManagerModel(models.Model):
         """
         docusign = DocusignWrapper()
         for document in self.documents.all():
-            document.is_signed = docusign.determine_is_signed(document.envelope_id)
-            document.save()
+            if not document.is_signed:
+                document.is_signed = docusign.determine_is_signed(document.envelope_id)
+                document.save()
 
     def update_pre_tour_is_signed(self):
         """
@@ -140,8 +155,9 @@ class HunterDocManagerModel(models.Model):
         if self.documents.filter(template=template).exists():
             try:
                 doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
-                doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
-                doc.save()
+                if not doc.is_signed:
+                    doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
+                    doc.save()
             except HunterDocModel.DoesNotExist:
                 pass
 
