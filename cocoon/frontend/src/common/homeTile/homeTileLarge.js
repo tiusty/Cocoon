@@ -5,6 +5,7 @@ import {Component} from 'react';
 // Carousel
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
+import PlaceHolder from "./homelist-empty.jpg";
 
 export default class HomeTileLarge extends Component {
     /**
@@ -174,17 +175,20 @@ export default class HomeTileLarge extends Component {
         }
         let favorite_text = "Add to Favorites";
         let favorite_class = 'home_add_default';
+        let favorite_icon = "favorite_border";
         if (this.props.favorite) {
             favorite_text = "Added to Favorites";
             favorite_class += " home_added";
+            favorite_icon = "favorite";
         } else {
             favorite_text = "Add to Favorites";
             favorite_class = 'home_add_default';
+            favorite_icon = "favorite_border";
         }
         let heart_span = (
             <div className={favorite_class} style={favorite_style} onClick={(e) => this.props.onFavoriteClick(home, e)}>
                 <i className="icon_heart material-icons">
-                    favorite
+                    {favorite_icon}
                 </i>
                 <span>{favorite_text}</span>
             </div>
@@ -227,20 +231,51 @@ export default class HomeTileLarge extends Component {
         );
     }
 
-    renderPercentMatch = (home) => {
+renderPercentMatch = (home) => {
         /**
          * Returns the percent match info if it is desired
          * @type {null}
          */
         let percent_match = null;
-        if (this.props.displayPercent) {
+        if (this.props.displayPercent && home.percent_match) {
             percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
+        }
+        if (percent_match === null && this.props.percent_match) {
+            percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
         }
         return percent_match;
     }
 
+    renderImages = () => {
+        let { home } = this.props;
+        // renders placeholder image if home has no images
+        if (home.images.length === 0) {
+            return (
+                <div className="thumbnailDiv">
+                    <img src={PlaceHolder} alt="place holder image" className="thumbnailImage" />
+                </div>
+            );
+        } else {
+            // renders carousel
+            return (
+                <Carousel
+                    dynamicHeight={false}
+                    infiniteLoop={true}
+                    showThumbs={false}
+                    showStatus={false}
+                >
+                    {home.images.map(image =>
+                            <div key={image.id}>
+                                <img src={image.image} alt="house image"/>
+                            </div>
+                    )}
+                </Carousel>
+            );
+        }
+    }
+
     render() {
-        let home = this.props.home;
+        let { home } = this.props;
         let bedInfo = home.num_bedrooms > 1 ? 'beds' : 'bed';
         let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
         return (
@@ -255,18 +290,7 @@ export default class HomeTileLarge extends Component {
                     <div className="expanded-info">
                         <div className="home-tile-large-carousel-div">
                             {this.renderPercentMatch(home)}
-                            <Carousel
-                                dynamicHeight={true}
-                                infiniteLoop={true}
-                                showThumbs={false}
-                                showStatus={false}
-                            >
-                                {home.images.map(image =>
-                                    <div key={image.id}>
-                                        <img src={image.image} alt="house image"/>
-                                    </div>
-                                )}
-                            </Carousel>
+                            {this.renderImages(home)}
                         </div>
 
                         <div className="expanded-info-text">

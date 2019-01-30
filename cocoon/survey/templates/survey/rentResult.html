@@ -1,20 +1,16 @@
 {% extends "bootstrapJQuery.html" %}
 {% load static %}
-{% block title %}Cocoon | Survey Form{% endblock %}
+{% block title %}Survey Result{% endblock %}
+
 {% block head %}
     {{ block.super }}
-    <!-- JQuery UI style sheet, mostly used for slider ui -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=places"
             async defer></script>
 {% endblock %}
 
-{% block nav-survey %}<li class="active"><a>Survey</a></li>{% endblock %}
-
 {% block content %}
     <div id="reactWrapper"></div>
 {% endblock %}
-
 
 {% block endScripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -26,9 +22,4 @@
 {% endblock %}
 
 {% block footer %}
-
-    <footer class="footer">
-       Copyright Cocoon 2018. All rights reserved.
-    </footer>
-
 {% endblock %}
