@@ -2,7 +2,9 @@ import React from 'react';
 import { Component } from 'react';
 
 import Autocomplete from 'react-google-autocomplete';
-import './tenantForm.css'
+import './tenantForm.css';
+import validImage from './valid-address.jpg';
+import invalidImage from './invalid-address.jpg';
 
 export default class TenantForm extends Component {
 
@@ -20,7 +22,15 @@ export default class TenantForm extends Component {
                 is_active: !this.state.is_active
             });
         }
+        setTimeout(() => {
+            this.disableAutocomplete();
+        }, 0)
     };
+
+    disableAutocomplete = () => {
+        const el = document.querySelector('.survey-address-input');
+        el.setAttribute('autocomplete', 'off');
+    }
 
     toggleQuestions = () => {
         this.setState({
@@ -274,9 +284,11 @@ export default class TenantForm extends Component {
                     <h2>What's the <span>street address</span>?</h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-commute_address-error`}></span>
-                    {this.props.tenant.address_valid ? 'valid' : 'not valid'}
+                    <span className="col-md-12 survey-error-message" style={{color: `var(--grey)`, display: 'block'}}>Please be sure to choose a location from the dropdown list.</span>
                     <Autocomplete
-                        className="col-md-12 survey-input"
+                        className="col-md-12 survey-input survey-address-input"
+                        style={{backgroundImage: `url(${this.props.tenant.address_valid ? validImage : invalidImage})`}}
+                        autoComplete="off"
                         onPlaceSelected={(place) => {
                             this.props.onAddressSelected(this.props.index, place)
                         }}

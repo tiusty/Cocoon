@@ -137,18 +137,18 @@
     cursor: pointer;
 }
 
-.map-marker::before {
-    content: '';
-    height: 10px;
-    width: 10px;
-    transform: rotate(45deg);
-    position: absolute;
-    background: var(--teal);
-    bottom: -4px;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-}
+/*.map-marker::before {*/
+    /*content: '';*/
+    /*height: 10px;*/
+    /*width: 10px;*/
+    /*transform: rotate(45deg);*/
+    /*position: absolute;*/
+    /*background: var(--teal);*/
+    /*bottom: -4px;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*margin: 0 auto;*/
+/*}*/
 
 .commute-marker {
     width: auto;
@@ -189,7 +189,7 @@
 .map-marker_hover {
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
     animation: growMarker .25s ease forwards;
-    transform-origin: 50% 100%;
+    transform-origin: 50% 150%;
 }
 
 @keyframes growMarker {
