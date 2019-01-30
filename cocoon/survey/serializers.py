@@ -17,7 +17,7 @@ class TenantSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('first_name', 'last_name', 'id',
                   'street_address', 'city', 'state', 'zip_code',
                   'commute_type', 'commute_weight', 'traffic_option',
-                  'min_commute', 'max_commute', 'income', 'credit_score',
+                  'desired_commute', 'max_commute', 'income', 'credit_score',
                   'occupation', 'other_occupation_reason', 'unemployed_follow_up', 'new_job', 'full_address')
 
 

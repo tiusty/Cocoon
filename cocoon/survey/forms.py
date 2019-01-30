@@ -12,7 +12,8 @@ from cocoon.commutes.models import CommuteType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, DEFAULT_RENT_SURVEY_NAME, \
-    WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS, HYBRID_WEIGHT_CHOICES
+    MAX_NUM_BATHROOMS
+from .constants import HYBRID_WEIGHT_CHOICES, WEIGHT_QUESTION_MAX
 from django.forms.models import inlineformset_factory
 
 # import constants
@@ -502,7 +503,7 @@ class CommuteInformationForm(DestinationForm):
             }),
     )
 
-    min_commute = forms.IntegerField(
+    desired_commute = forms.IntegerField(
         required=False,
         widget=forms.HiddenInput(
             attrs={
@@ -584,13 +585,13 @@ class CommuteInformationForm(DestinationForm):
                     self.add_error('max_commute', "Max Commute Needed")
                     valid = False
 
-                if current_form['min_commute'] is not None:
-                    if int(current_form['min_commute']) < 0:
-                        self.add_error('min_commute', "Min commute needs to be above 0")
+                if current_form['desired_commute'] is not None:
+                    if int(current_form['desired_commute']) < 0:
+                        self.add_error('desired_commute', "Min commute needs to be above 0")
                         valid = False
 
-                if current_form['min_commute'] is not None and current_form['max_commute'] is not None:
-                    if int(current_form['min_commute']) > int(current_form['max_commute']):
+                if current_form['desired_commute'] is not None and current_form['max_commute'] is not None:
+                    if int(current_form['desired_commute']) > int(current_form['max_commute']):
                         self.add_error('max_commute', "Max commute needs to be above min commute")
                         valid = False
 
@@ -643,7 +644,7 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
     class Meta:
         model = TenantModel
         fields = ['first_name', 'last_name', 'street_address', 'city', 'state', 'zip_code', 'max_commute',
-                  'min_commute', 'commute_weight', 'commute_type', 'traffic_option', 'occupation',
+                  'desired_commute', 'commute_weight', 'commute_type', 'traffic_option', 'occupation',
                   'other_occupation_reason', 'unemployed_follow_up', 'income', 'credit_score', 'new_job']
 
 

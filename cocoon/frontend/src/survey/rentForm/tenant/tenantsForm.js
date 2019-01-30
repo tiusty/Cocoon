@@ -293,6 +293,7 @@ export default class TenantsForm extends Component {
                         commute_type_options={this.state.commute_type_options}
                         onInputChange={this.props.onInputChange}
                         onHandleValidation={this.handleValidation}
+                        onTenantCommute={this.props.onTenantCommute}
                         onAddressChange={this.props.onAddressChange}
                         onAddressSelected={this.props.onAddressSelected}
                     />

@@ -54,7 +54,7 @@ class TenantModelAdmin(admin.ModelAdmin):
              'fields': ['first_name', 'last_name', 'is_student', 'survey'],
          }),
         ('Rent Destination',
-         {'fields': ['street_address', 'max_commute', 'min_commute', 'commute_weight', 'commute_type',]})
+         {'fields': ['street_address', 'max_commute', 'desired_commute', 'commute_weight', 'commute_type',]})
     ]
 
 
