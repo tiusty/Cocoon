@@ -6,6 +6,8 @@ import axios from 'axios';
 import '../../common/styles/variables.css';
 import './resultsPage.css';
 import BlurredImg from './not-verified-bg.jpg';
+import BlurredImg2 from './not-verified-bg-2.jpg';
+import BlurredImg3 from './not-verified-bg-3.jpg';
 
 
 import survey_endpoints from '../../endpoints/survey_endpoints';
@@ -93,11 +95,11 @@ export default class ResultsPage extends Component {
                     const geocoder = new google.maps.Geocoder();
                     geocoder.geocode( { 'address': address }, (results, status) => {
                         if (status === google.maps.GeocoderStatus.OK) {
-                            console.log(results)
-                            coords.name = name;
+                            console.log(results);
                             coords.lat = results[0].geometry.location.lat();
                             coords.lng = results[0].geometry.location.lng();
-                            commutes.push(coords)
+                            coords.name = name;
+                            commutes.push(coords);
                         }
                     });
                 }
@@ -310,7 +312,7 @@ export default class ResultsPage extends Component {
         } else if (this.state.viewing_home && !this.state.isEditing) {
             return this.renderLargeHome();
         } else if (this.state.isEditing) {
-            return <RentForm survey={this.state.survey} is_authenticated={true} onUpdateSurvey={this.handleUpdateSurvey}/>
+            return <RentForm survey={this.state.survey} is_authenticated={true} onUpdateSurvey={this.handleUpdateSurvey} is_editing={true}/>
         }
     };
 
@@ -380,8 +382,10 @@ export default class ResultsPage extends Component {
                 </div>
             );
         } else {
+            const imgArray = [BlurredImg, BlurredImg2, BlurredImg3];
+            const randomImage = imgArray[Math.floor(Math.random() * imgArray.length)]
             return (
-              <div id="unverified-wrapper" style={{backgroundImage: `url(${BlurredImg})`}}>
+              <div id="unverified-wrapper" style={{backgroundImage: `url(${randomImage})`}}>
                   <div className="unverified-modal">
                       <h2>Confirm your email before viewing your results.</h2>
                       {this.state.verificationEmailSent ? <p>Email sent!</p> : null}
