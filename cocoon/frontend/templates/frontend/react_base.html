@@ -7,4 +7,9 @@
         {% else %}
             window.isUser = false;
     {% endif %}
+    {% if user.is_verified %}
+        window.isVerified = true;
+    {% else %}
+        window.isVerified = false;
+    {% endif %}
 </script>

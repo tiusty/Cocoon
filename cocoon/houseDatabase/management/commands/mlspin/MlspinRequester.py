@@ -137,12 +137,8 @@ class MlspinRequester(object):
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
-                if word_scraper.word_finder(["laundromat","nearby"]):
+                if word_scraper.word_finder(["laundromat"]):
                     new_listing.laundromat_nearby = True
-                if word_scraper.word_finder(["laundry","in","building"]):
-                    new_listing.laundry_in_building = True
-                if word_scraper.word_finder(["laundry", "in", "unit"]):
-                    new_listing.laundry_in_unit = True
 
                 # Set InteriorAmenitiesModel Fields
                 # Currently don't support non-integers for num_bathrooms. Therefore
@@ -152,9 +148,11 @@ class MlspinRequester(object):
                 new_listing.num_bathrooms = num_baths
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
                 new_listing.furnished = word_scraper.word_finder(["furnished"])
-                new_listing.hardwood_floors = word_scraper.word_finder(["hardwood"])
+                new_listing.hardwood_floors = word_scraper.look_for_hardwood_floors()
                 new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
-                if (word_scraper.word_finder(["air","conditioning"])) or word_scraper.word_finder(["ac"]):
+                if (word_scraper.word_finder(["air", "conditioning"]))\
+                        or word_scraper.word_finder(["ac"])\
+                        or word_scraper.word_finder(["a", "/", "c"]):
                     new_listing.air_conditioning = True
 
                 if word_scraper.word_finder(["dogs","allowed"]) and not word_scraper.word_finder(["no", "dogs","allowed"]):
@@ -162,6 +160,8 @@ class MlspinRequester(object):
 
                 if word_scraper.word_finder(["cats","allowed"]) and not word_scraper.word_finder(["no", "cats","allowed"]):
                     new_listing.cats_allowed = True
+
+                new_listing.laundry_in_building = word_scraper.look_for_laundry_in_building()
 
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
@@ -181,7 +181,10 @@ class MlspinRequester(object):
                     new_listing.pool = True
                 if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
                     new_listing.patio_balcony = True
-                new_listing.gym = word_scraper.word_finder(["gym"])
+
+                new_listing.laundry_in_unit = word_scraper.look_for_laundry_in_unit()
+                if word_scraper.word_finder(["gym"]) or word_scraper.word_finder(["fitness", "center"]):
+                    new_listing.gym = True
                 new_listing.storage = word_scraper.word_finder(["storage"])
 
                 # Create the new home

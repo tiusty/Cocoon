@@ -9,7 +9,8 @@ import { compose, withProps } from "recompose";
 import {
   withGoogleMap,
   GoogleMap,
-    Polygon
+    Polygon,
+    withScriptjs,
 } from "react-google-maps";
 import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
 
@@ -49,7 +50,7 @@ export default class GeneralForm extends Component {
         valid = valid && this.handleHomeTypeValidation();
         valid = valid && this.handlePriceValidation();
         valid = valid && this.handleMoveAsapValidation();
-        valid = valid && this.handleDatePickerValidation();
+        // valid = valid && this.handleDatePickerValidation();
         valid = valid && this.handleUrgencyValidation();
         valid = valid && this.handleBedroomValidation();
         return valid
@@ -129,7 +130,7 @@ export default class GeneralForm extends Component {
 
     handleDatePickerValidation() {
         let valid = true;
-        if (this.props.generalInfo.is_move_asap !== 'yes') {
+        if (!this.props.generalInfo.is_move_asap) {
             if (this.props.generalInfo.earliest_move_in === undefined ||
             this.props.generalInfo.latest_move_in === undefined) {
                 document.querySelector('#date_error').style.display = 'block';
@@ -312,14 +313,14 @@ export default class GeneralForm extends Component {
 
     renderMoveAsapQuestion() {
         return (
-            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'string')}>
+            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'boolean')}>
                 <h2>Are you looking to move in <span>as soon as possible?</span></h2>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name="is_move_asap" value="yes" checked={this.props.generalInfo.is_move_asap === 'yes'} onChange={() => {}} />
+                    <input type="radio" name="is_move_asap" value={true} checked={this.props.generalInfo.is_move_asap === true} onChange={() => {}} />
                     <div>Yes</div>
                 </label>
                 <label className="col-md-6 survey-label">
-                    <input type="radio" name="is_move_asap" value="no" checked={this.props.generalInfo.is_move_asap === 'no'} onChange={() => {}} />
+                    <input type="radio" name="is_move_asap" value={false} checked={this.props.generalInfo.is_move_asap === false} onChange={() => {}} />
                     <div>No</div>
                 </label>
             </div>
@@ -327,7 +328,7 @@ export default class GeneralForm extends Component {
     }
 
     renderDatePickingQuestion() {
-        if (this.props.generalInfo.is_move_asap !== "yes") {
+        if (!this.props.generalInfo.is_move_asap) {
             return (
                 <div className="survey-question">
                     <h2>When are you wanting to <span>move in</span>?</h2>
@@ -471,13 +472,13 @@ export default class GeneralForm extends Component {
     render() {
         return (
             <>
-                {this.renderNumberOfPeopleQuestion()}
+                {!this.props.is_editing ? this.renderNumberOfPeopleQuestion() : null}
                 {this.renderNameQuestion()}
                 {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
                 {this.renderMoveAsapQuestion()}
-                {this.renderDatePickingQuestion()}
+                {/*{this.renderDatePickingQuestion()}*/}
                 {this.renderFilterZones()}
                 {this.renderUrgencyQuestion()}
                 {this.renderBedroomQuestion()}
@@ -496,27 +497,208 @@ const defaultMapOptions = {
         mapTypeIds: []
     },
 
+    gestureHandling: 'cooperative',
+
     // Disables street view
     streetViewControl: false,
+
+    styles: [
+            {
+                "featureType": "all",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "simplified"
+                    },
+                    {
+                        "color": "#5b6571"
+                    },
+                    {
+                        "lightness": "35"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.neighborhood",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    },
+                    {
+                        "color": "#f3f4f4"
+                    }
+                ]
+            },
+            {
+                "featureType": "landscape.man_made",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "weight": 0.9
+                    },
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi.park",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    },
+                    {
+                        "color": "#83cead"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    },
+                    {
+                        "color": "#ffffff"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    },
+                    {
+                        "color": "#fee379"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "labels.icon",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway.controlled_access",
+                "elementType": "labels.icon",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.arterial",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "simplified"
+                    },
+                    {
+                        "color": "#ffffff"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.arterial",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.arterial",
+                "elementType": "labels.icon",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [
+                    {
+                        "visibility": "on"
+                    },
+                    {
+                        "color": "#7fc8ed"
+                    }
+                ]
+            }
+        ],
 };
 
 const MyMapComponent = compose(
-    /**
-     * Note: This needs the google api key in the head of the script
-     */
     withProps({
         loadingElement: <div style={{height: `100%`}}/>,
         containerElement: <div style={{height: `400px`}}/>,
-        mapElement: <div style={{height: `100%`}}/>
+        mapElement: <div style={{height: `100%`}}/>,
+        googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing,places",
     }),
+    withScriptjs,
     withGoogleMap
 )(props => (
     <GoogleMap
         defaultZoom={11}
         defaultCenter={{lat: 42.3601, lng: -71.0589}}
-        styles={
-            {elementType: 'geometry', stylers: [{color: '#242f3e'}]}
-        }
         defaultOptions={defaultMapOptions}
     >
 

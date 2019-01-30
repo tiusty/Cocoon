@@ -63,6 +63,8 @@ class HomeInformationModel(models.Model):
     min_bathrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeTypeModel)
     polygon_filter_type = models.IntegerField(default=0)
+    is_move_asap = models.BooleanField(default=False)
+    move_weight = models.IntegerField(default=0)
 
     @property
     def home_types(self):
@@ -208,7 +210,12 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
 class TenantPersonalInformationModel(models.Model):
     first_name = models.CharField(max_length=200, blank=True, default="")
     last_name = models.CharField(max_length=200, blank=True, default="")
-    is_student = models.BooleanField(default=False)
+    occupation = models.CharField(max_length=200, blank=True, default="")
+    other_occupation_reason = models.CharField(max_length=200, blank=True, default="")
+    unemployed_follow_up = models.CharField(max_length=200, blank=True, default="")
+    income = models.IntegerField(blank=True, null=True)
+    credit_score = models.CharField(max_length=200, blank=True, default="")
+    new_job = models.CharField(max_length=200, blank=True, default="")
 
     class Meta:
         abstract = True

@@ -32,7 +32,9 @@ export default class DetailsForm extends Component {
             document.querySelector('#password_error').style.display = 'block';
             document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
             valid = false;
-        } else if (!errors.user_form_errors.password2) { document.querySelector('#password_error').style.display = 'none'; }
+        } else if (!errors.user_form_errors.password2) {
+            document.querySelector('#password_error').style.display = 'none';
+        }
         if (errors.user_form_errors.creation_key) {
             document.querySelector('#creation_key_error').style.display = 'block';
             document.querySelector('#creation_key_error').innerText = errors.user_form_errors.creation_key[0];
