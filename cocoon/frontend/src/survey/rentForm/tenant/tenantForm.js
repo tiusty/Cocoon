@@ -1,5 +1,6 @@
 import React from 'react';
 import { Component } from 'react';
+import InputRange from 'react-input-range';
 
 import Autocomplete from 'react-google-autocomplete';
 import './tenantForm.css';
@@ -16,7 +17,7 @@ export default class TenantForm extends Component {
     }
 
     componentDidMount = () => {
-        this.props.initTenant(this.props.index)
+        this.props.initTenant(this.props.index);
         if(this.props.index === 0) {
             this.setState({
                 is_active: !this.state.is_active
@@ -29,7 +30,9 @@ export default class TenantForm extends Component {
 
     disableAutocomplete = () => {
         const el = document.querySelector('.survey-address-input');
-        el.setAttribute('autocomplete', 'off');
+        if (el) {
+            el.setAttribute('autocomplete', 'off');
+        }
     }
 
     toggleQuestions = () => {
@@ -396,6 +399,31 @@ export default class TenantForm extends Component {
         }
     };
 
+    formatCommuteLengthSlider(num, string) {
+        /**
+         * Formats the commute slider dots label.
+         * @type {number}
+         */
+        let minutes = num % 60;
+        let hour = Math.floor(num/60);
+        if (hour >= 2) {
+            if (minutes > 0) {
+                return `${hour} hrs-${minutes} min`;
+            } else {
+                return `${hour} hrs`
+            }
+        }
+        else if (hour === 1) {
+            if (minutes > 0) {
+                return `${hour} hr-${minutes} min`
+            } else {
+                return `${hour} hr`
+            }
+        } else {
+            return `${minutes} min`
+        }
+    }
+
     renderCommuteLengthQuestion = (name) => {
         if (this.props.tenant.commute_type !== this.getCommuteId('Work From Home'))
             return (
@@ -407,12 +435,16 @@ export default class TenantForm extends Component {
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-desired_commute-error`}></span>
-                    <input className="col-md-12 survey-input"
-                           type="number"
-                           name={`${this.props.tenant.tenant_identifier}-max_commute`}
-                           placeholder="Time in minutes"
-                           value={this.props.tenant.max_commute || ''}
-                           onChange={(e) => {this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index)}}/>
+                    <small id="priceHelp" className="form-text text-muted">Left dot is your desired commute, the right dot is the max commute you are willing to have
+                    </small>
+                    <InputRange
+                        draggableTrack
+                        maxValue={180}
+                        minValue={0}
+                        step={5}
+                        value={{min: this.props.tenant.desired_commute,max: this.props.tenant.max_commute}}
+                        onChange={value => {this.setState({value});this.props.onTenantCommute(this.state.value.min, this.state.value.max, this.props.index);}}
+                        formatLabel={this.formatCommuteLengthSlider} />
                 </div>
             );
     };

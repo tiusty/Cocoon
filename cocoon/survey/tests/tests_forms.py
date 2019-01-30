@@ -11,7 +11,7 @@ from cocoon.commutes.models import CommuteType
 from cocoon.userAuth.models import MyUser
 
 # Import cocoon global config values
-from config.settings.Global_Config import WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
+from config.settings.Global_Config import MAX_NUM_BATHROOMS
 
 
 class TestHomeInformationForm(TestCase):
@@ -332,7 +332,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': self.max_commute,
-                'min_commute': -1,
+                'desired_commute': -1,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",
@@ -388,7 +388,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': 1,
-                'min_commute': 2,
+                'desired_commute': 2,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",

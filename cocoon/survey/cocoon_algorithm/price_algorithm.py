@@ -1,4 +1,4 @@
-from config.settings.Global_Config import price_question_weight
+from ..constants import PRICE_WEIGHT_QUESTION
 
 
 class PriceAlgorithm(object):
@@ -18,7 +18,7 @@ class PriceAlgorithm(object):
         self._min_price = 0
         self._desired_price = 0
         self._price_user_scale_factor = 1
-        self._price_question_weight = price_question_weight
+        self._price_question_weight = PRICE_WEIGHT_QUESTION
         super(PriceAlgorithm, self).__init__()
 
     def populate_price_algorithm_information(self, user_price_scale, user_max_price, user_desired_price,
