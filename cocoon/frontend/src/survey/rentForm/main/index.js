@@ -540,7 +540,9 @@ export default class RentForm extends Component {
                 tenants[i].transit_options = this.state.tenants[index].transit_options || [];
                 tenants[i].max_commute = this.state.tenants[index].max_commute || 60;
                 tenants[i].min_commute = this.state.tenants[index].min_commute || 0;
-                tenants[i].commute_weight = this.state.tenants[index].commute_weight || 2;
+                if (!("commute_weight" in tenants[i]) || tenants[i].commute_weight < 0) {
+                    tenants[i].commute_weight = 2;
+                }
 
                 //Other
                 tenants[i].income = this.state.tenants[index].income || null;
