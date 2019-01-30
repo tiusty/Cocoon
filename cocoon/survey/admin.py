@@ -21,8 +21,8 @@ class PolygonInLine(admin.TabularInline):
 
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
-    readonly_fields = ("created", 'id', 'url')
-    raw_id_fields = ("favorites", "visit_list",)
+    readonly_fields = ("created", 'id', 'url', 'survey_name')
+    raw_id_fields = ("favorites", "visit_list")
     # noinspection SpellCheckingInspection
     fieldsets = (
         (None, {'fields': ('survey_name', 'user_profile')}),
@@ -42,7 +42,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
         ('Created', {'fields': ('created', 'id', 'url')}),
         ('Homes', {'fields': ('favorites', 'visit_list', 'polygon_filter_type',)}),
     )
-    list_display = ('name', 'user_profile',)
+    list_display = ('survey_name', 'user_profile',)
     list_filter = ['user_profile']
     search_fields = ('name',)
     inlines = [TenantInLine, PolygonInLine]
@@ -55,7 +55,7 @@ class TenantModelAdmin(admin.ModelAdmin):
              'fields': ['first_name', 'last_name', 'is_student', 'survey'],
          }),
         ('Rent Destination',
-         {'fields': ['street_address', 'max_commute', 'min_commute', 'commute_weight', 'commute_type',]})
+         {'fields': ['street_address', 'max_commute', 'desired_commute', 'commute_weight', 'commute_type',]})
     ]
 
 

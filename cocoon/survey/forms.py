@@ -10,7 +10,8 @@ from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 
 # Python global configurations
-from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS, WEIGHT_QUESTION_MAX
+from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS
+from .constants import HYBRID_WEIGHT_CHOICES, WEIGHT_QUESTION_MAX
 from django.forms.models import inlineformset_factory
 
 # import constants
@@ -317,7 +318,7 @@ class CommuteInformationForm(DestinationForm):
         required=False,
     )
 
-    min_commute = forms.IntegerField(
+    desired_commute = forms.IntegerField(
         required=False,
     )
 
@@ -378,13 +379,13 @@ class CommuteInformationForm(DestinationForm):
                     self.add_error('max_commute', "Max Commute Needed")
                     valid = False
 
-                if current_form['min_commute'] is not None:
-                    if int(current_form['min_commute']) < 0:
-                        self.add_error('min_commute', "Min commute needs to be above 0")
+                if current_form['desired_commute'] is not None:
+                    if int(current_form['desired_commute']) < 0:
+                        self.add_error('desired_commute', "Min commute needs to be above 0")
                         valid = False
 
-                if current_form['min_commute'] is not None and current_form['max_commute'] is not None:
-                    if int(current_form['min_commute']) > int(current_form['max_commute']):
+                if current_form['desired_commute'] is not None and current_form['max_commute'] is not None:
+                    if int(current_form['desired_commute']) > int(current_form['max_commute']):
                         self.add_error('max_commute', "Max commute needs to be above min commute")
                         valid = False
 
@@ -392,7 +393,7 @@ class CommuteInformationForm(DestinationForm):
 
     class Meta:
         model = CommuteInformationModel
-        fields = DestinationForm.Meta.fields + ('max_commute', 'min_commute', 'commute_weight', 'commute_type',
+        fields = DestinationForm.Meta.fields + ('max_commute', 'desired_commute', 'commute_weight', 'commute_type',
                                                 'traffic_option')
 
 

@@ -134,7 +134,13 @@ export default class TenantsForm extends Component {
 
         // If the option is not work from home then make sure the address fields are filled in
         if (this.props.tenants[id].commute_type !== this.getCommuteId('Work From Home')) {
-            if (this.props.tenants[id].full_address === null || this.props.tenants[id].street_address === null || this.props.tenants[id].city === null
+            if (!this.props.tenants[id].address_valid) {
+                if (show_errors) {
+                    document.querySelector(`#tenants-${id}-commute_address-error`).style.display = 'block';
+                    document.querySelector(`#tenants-${id}-commute_address-error`).innerText = `You must select an address from the drop down of the auto complete for ${this.props.tenants[id].first_name}.`;
+                }
+                valid = false;
+            }else if (this.props.tenants[id].full_address === null || this.props.tenants[id].street_address === null || this.props.tenants[id].city === null
                 || this.props.tenants[id].zip_code === null || this.props.tenants[id].state === null) {
                 if (show_errors) {
                     document.querySelector(`#tenants-${id}-commute_address-error`).style.display = 'block';
@@ -274,6 +280,7 @@ export default class TenantsForm extends Component {
         }
     };
 
+
     render() {
         return (
             <>
@@ -286,6 +293,9 @@ export default class TenantsForm extends Component {
                         commute_type_options={this.state.commute_type_options}
                         onInputChange={this.props.onInputChange}
                         onHandleValidation={this.handleValidation}
+                        onTenantCommute={this.props.onTenantCommute}
+                        onAddressChange={this.props.onAddressChange}
+                        onAddressSelected={this.props.onAddressSelected}
                     />
                 )}
                 <div className="row survey-btn-wrapper">

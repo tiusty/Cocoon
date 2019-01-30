@@ -60,7 +60,7 @@ class TestUpdateCommutesCache(TestCase):
 
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
-                           zip_code="02476", commute_weight=0, max_commute=60, min_commute=0):
+                           zip_code="02476", commute_weight=0, max_commute=100, desired_commute=60):
         return survey.tenants.create(
             street_address=street_address,
             city=city,
@@ -69,7 +69,7 @@ class TestUpdateCommutesCache(TestCase):
             commute_type=commute_type,
             commute_weight=commute_weight,
             max_commute=max_commute,
-            min_commute=min_commute,
+            desired_commute=desired_commute,
         )
 
     def test_one_destination_driving(self):

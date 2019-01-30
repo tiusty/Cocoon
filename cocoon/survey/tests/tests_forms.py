@@ -10,8 +10,6 @@ from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 from cocoon.userAuth.models import MyUser
 
-# Import cocoon global config values
-
 
 class TestHomeInformationForm(TestCase):
 
@@ -316,7 +314,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': self.max_commute,
-                'min_commute': -1,
+                'desired_commute': -1,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",
@@ -372,7 +370,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': 1,
-                'min_commute': 2,
+                'desired_commute': 2,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",
@@ -758,187 +756,3 @@ class TestRentSurveyForm(TestCase):
 
         # Assert
         self.assertFalse(result)
-
-
-class TestRentSurveyMiniForm(TestCase):
-
-    def setUp(self):
-
-        # Creating user
-        self.user = MyUser.objects.create(email="test@email.com")
-
-        # Create home type objects
-        HomeTypeModel.objects.create(home_type="Apartment")
-        HomeTypeModel.objects.create(home_type="Condo")
-        HomeTypeModel.objects.create(home_type="Town House")
-        HomeTypeModel.objects.create(home_type="House")
-
-        # Home Information form fields
-        self.move_in_date_start = timezone.now()
-        self.move_in_date_end = timezone.now()
-        self.num_bedrooms = 1
-        self.max_num_bathrooms = 0
-        self.min_num_bathrooms = 0
-        self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
-        self.number_of_tenants = 0
-
-        self.max_commute = 0
-        self.min_commute = 0
-        self.commute_weight = 0
-        self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
-
-        self.max_price = 0
-        self.desired_price = 0
-        self.price_weight = 0
-
-        self.air_conditioning = 0
-        self.interior_washer_dryer = 0
-        self.dish_washer = 0
-        self.bath = 0
-
-        self.parking_spot = 0
-        self.building_washer_dryer = 0
-        self.elevator = 0
-        self.handicap_access = 0
-        self.pool_hot_tub = 0
-        self.fitness_center = 0
-        self.storage_unit = 0
-
-        self.number_of_destinations = 1
-        self.polygon_filter_type = 0
-
-    @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2, name="Recent Rent Survey"):
-        return RentingSurveyModel.objects.create(
-            name=name,
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-        )
-
-    def tests_saving_a_form_without_name_conflict(self):
-        """
-        Test that is there is no name conflict, the survey saves successfully
-        """
-        # Arrange
-        form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms': self.num_bedrooms,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': self.min_num_bathrooms,
-            'home_type': self.home_type,
-            'max_commute': self.max_commute,
-            'min_commute': self.min_commute,
-            'commute_weight': self.commute_weight,
-            'commute_type': self.commute_type,
-            'max_price': self.max_price,
-            'desired_price': self.desired_price,
-            'price_weight': self.price_weight,
-            'number_of_tenants':self.number_of_tenants,
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms': self.num_bedrooms,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': self.min_num_bathrooms,
-            'max_commute': self.max_commute,
-            'min_commute': self.min_commute,
-            'commute_weight': self.commute_weight,
-            'max_price': self.max_price,
-            'desired_price': self.desired_price,
-            'price_weight': self.price_weight,
-            'parking_spot':self.parking_spot,
-            'name': 'test_survey',
-            'polygon_filter_type': self.polygon_filter_type,
-        }
-
-        rent_survey_form = RentSurveyFormEdit(data=form_data)
-
-        # Act
-        result = rent_survey_form.is_valid()
-
-        # Assert
-        self.assertTrue(result)
-
-    def tests_saving_a_form_with_name_conflict(self):
-        """
-        Tests that if a naming conflict occurs, i.e trying to save a survey with a survey with
-            the same slug, then prevent the saving
-        """
-        # Arrange
-        self.create_survey(self.user.userProfile, name='test_survey')
-
-        form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms': self.num_bedrooms,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': self.min_num_bathrooms,
-            'max_commute': self.max_commute,
-            'min_commute': self.min_commute,
-            'commute_weight': self.commute_weight,
-            'max_price': self.max_price,
-            'desired_price': self.desired_price,
-            'price_weight': self.price_weight,
-            'parking_spot': self.parking_spot,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'name': 'test_survey',
-        }
-
-        rent_survey_form = RentSurveyFormEdit(data=form_data)
-
-        # Act
-        result = rent_survey_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
-    def tests_saving_a_form_with_name_conflict_different_users(self):
-        """
-        Tests that if there is a naming conflict but with a different user, then allow the saving
-        """
-        # Arrange
-        self.create_survey(self.user.userProfile, name='test_survey')
-        user2 = MyUser.objects.create(email="test2@gmail.com")
-
-        form_data = {
-            'number_of_tenants':self.number_of_tenants,
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms': self.num_bedrooms,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': self.min_num_bathrooms,
-            'max_commute': self.max_commute,
-            'min_commute': self.min_commute,
-            'commute_weight': self.commute_weight,
-            'max_price': self.max_price,
-            'desired_price': self.desired_price,
-            'price_weight': self.price_weight,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
-            'fitness_center_survey': self.fitness_center,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'home_type': self.home_type,
-            'storage_unit_survey': self.storage_unit,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'parking_spot': self.parking_spot,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'name': 'test_survey',
-            'polygon_filter_type': self.polygon_filter_type
-        }
-
-        rent_survey_form = RentSurveyFormEdit(data=form_data)
-
-        # Act
-        result = rent_survey_form.is_valid()
-
-        # Assert
-        self.assertTrue(result)

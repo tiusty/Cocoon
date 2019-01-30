@@ -18,6 +18,7 @@ from .models import RentingSurveyModel
 from .forms import RentSurveyForm, RentSurveyFormEdit, TenantFormSet, TenantFormSetJustNames
 from .survey_helpers.save_polygons import save_polygons
 from .serializers import HomeScoreSerializer, RentSurveySerializer
+from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
@@ -179,27 +180,10 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                 with transaction.atomic():
                     form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
-                    # Creates a the survey name based on the people in the roommate group
-                    survey_name = ""
-                    if number_of_tenants is 1:
-                        survey_name = "Just Me"
-                    else:
-                        counter = 1
-                        for tenant in reversed(tenants):
-                            if counter == number_of_tenants - 1:
-                                survey_name = "{0}{1} ".format(survey_name, tenant.cleaned_data['first_name'])
-                            elif counter == number_of_tenants:
-                                survey_name = "{0}and I".format(survey_name, tenant.cleaned_data['first_name'])
-                            elif counter != number_of_tenants:
-                                survey_name = "{0}{1}, ".format(survey_name, tenant.cleaned_data['first_name'])
-
-                            counter = counter + 1
-
-                    # Set the form name
-                    form.instance.name = survey_name
-
                     # Now the form can be saved
                     survey = form.save()
+                    survey.url = survey.generate_slug()
+                    survey.save()
 
                     # Save the polygons
                     if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
@@ -383,7 +367,7 @@ class RentResultViewSet(viewsets.ViewSet):
         rent_algorithm.run(survey)
 
         # Save the response
-        data = [x for x in rent_algorithm.homes[:25] if x.percent_score() >= 0]
+        data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]
 
         # Serialize the response
         serializer = HomeScoreSerializer(data, many=True)

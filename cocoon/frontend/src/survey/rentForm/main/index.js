@@ -113,6 +113,9 @@ export default class RentForm extends Component {
                 // The index matches the order of the tenants
                 tenants[i].index = i;
 
+                // Since the addresses are loaded, they should all be marked as valid initially
+                tenants[i].address_valid = true;
+
                 // Since the commute type is passed back in a dictionary,
                 //  retrieve it and store it directly in the tenant dictionary
                 tenants[i].commute_type = tenants[i].commute_type.id
@@ -282,6 +285,9 @@ export default class RentForm extends Component {
                         number_of_tenants={this.state.generalInfo.number_of_tenants}
                         initTenants={this.initializeTenant}
                         onInputChange={this.handleTenantInputChange}
+                        onTenantCommute={this.handleTenantCommute}
+                        onAddressChange={this.handleAddressChange}
+                        onAddressSelected={this.handleAddressSelected}
                 />;
             case 3:
                 return <AmenitiesForm
@@ -407,6 +413,17 @@ export default class RentForm extends Component {
         this.setState({generalInfo});
     };
 
+    handleTenantCommute = (desired, max, i) => {
+        /**
+         * Updates the tenants desired and max commute value
+         * @type {*[]}
+         */
+        let tenants = [...this.state.tenants];
+        tenants[i].desired_commute = desired;
+        tenants[i].max_commute = max;
+        this.setState({tenants})
+    };
+
 
     // Splits name inputs into first and last names
     handleTenantName = (e) => {
@@ -438,6 +455,51 @@ export default class RentForm extends Component {
             tenants[index].last_name = last_name;
         }
         this.setState({tenants});
+    }
+
+
+    handleAddressChange = (id, value) => {
+        /**
+         * This handles when the user manually types the address
+         *
+         * Since this handles the user changing the addresses, the address_valid
+         *  is set to default because it wasn't selected from the dropdown of choices
+         */
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.tenants.length; i++) {
+            if (tenants[id].index === i) {
+                tenants[id].full_address = value;
+                tenants[id].address_valid = false;
+            }
+        }
+        this.setState({tenants})
+    }
+
+    handleAddressSelected = (index, place) => {
+        /**
+         * This handles when the user selects the address from the drop down of selected homes
+         *
+         * Since this handles the suggested addresses, this sets the addresses to valid
+         */
+        const city = place.address_components.filter(c => c.types[0] === 'locality');
+        const formatCity = city[0].long_name;
+        const state = place.address_components.filter(c => c.types[0] === 'administrative_area_level_1');
+        const formatState = state[0].short_name;
+        const zip_code = place.address_components.filter(c => c.types[0] === 'postal_code');
+        const formatZip = zip_code[0].long_name;
+
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.tenants.length; i++) {
+            if (tenants[index].index === i) {
+                tenants[index].street_address = place.name;
+                tenants[index].city = formatCity;
+                tenants[index].state = formatState;
+                tenants[index].zip_code = formatZip;
+                tenants[index].full_address = place.formatted_address;
+                tenants[index].address_valid = true;
+            }
+        }
+        this.setState({tenants})
     }
 
 
@@ -485,15 +547,23 @@ export default class RentForm extends Component {
                 tenants[i].city = this.state.tenants[index].city || null;
                 tenants[i].state = this.state.tenants[index].state || null;
                 tenants[i].zip_code = this.state.tenants[index].zip_code || null;
-                tenants[i].full_address = this.state.tenants[index].full_address || null;
+                tenants[i].address_valid = this.state.tenants[index].address_valid || false;
 
                 // Commute questions
                 tenants[i].commute_type = this.state.tenants[index].commute_type || null;
                 tenants[i].traffic_option = this.state.tenants[index].traffic_option || false;
                 tenants[i].transit_options = this.state.tenants[index].transit_options || [];
-                tenants[i].max_commute = this.state.tenants[index].max_commute || 60;
-                tenants[i].min_commute = this.state.tenants[index].min_commute || 0;
-                tenants[i].commute_weight = this.state.tenants[index].commute_weight || 2;
+                tenants[i].max_commute = this.state.tenants[index].max_commute || 100;
+                if (!("desired_commute" in this.state.tenants[index])) {
+                    tenants[i].desired_commute = 60;
+                } else {
+                    tenants[i].desired_commute = this.state.tenants[index].desired_commute;
+                }
+                if (!("commute_weight" in this.state.tenants[index])) {
+                    tenants[i].commute_weight = 2;
+                } else {
+                    tenants[i].commute_weight = this.state.tenants[index].commute_weight;
+                }
 
                 //Other
                 tenants[i].income = this.state.tenants[index].income || null;
