@@ -116,6 +116,7 @@ class HouseNearbyAmenitiesModel(models.Model):
     Contains amenities that are near the house
     """
     wants_laundry_nearby = models.BooleanField(default=False)
+    laundry_nearby_weight = models.IntegerField(default=0)
 
     class Meta:
         abstract = True
@@ -127,6 +128,7 @@ class InteriorAmenitiesModel(models.Model):
     All Questions are hybrid weighted
     """
     wants_laundry_in_unit = models.BooleanField(default=False)
+    laundry_in_unit_weight = models.IntegerField(default=0)
     wants_furnished = models.BooleanField(default=False)
     furnished_weight = models.IntegerField(default=0)
     wants_dogs = models.BooleanField(default=False)
@@ -155,6 +157,7 @@ class ExteriorAmenitiesModel(models.Model):
     wants_parking = models.BooleanField(default=False)
     number_of_cars = models.IntegerField(default=0)
     wants_laundry_in_building = models.BooleanField(default=False)
+    laundry_in_building_weight = models.IntegerField(default=0)
     wants_patio = models.BooleanField(default=False)
     patio_weight = models.IntegerField(default=0)
     wants_pool = models.BooleanField(default=False)

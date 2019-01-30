@@ -78,8 +78,11 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
         """
         return {
             'wants_laundry_in_unit': obj.wants_laundry_in_unit,
+            'laundry_in_unit_weight': obj.laundry_in_unit_weight,
             'wants_laundry_in_building': obj.wants_laundry_in_building,
+            'laundry_in_building_weight': obj.laundry_in_building_weight,
             'wants_laundry_nearby': obj.wants_laundry_nearby,
+            'laundry_nearby_weight': obj.laundry_nearby_weight,
             'wants_parking': obj.wants_parking,
             'number_of_cars': obj.number_of_cars,
             'wants_furnished': obj.wants_furnished,

@@ -45,8 +45,11 @@ export default class RentForm extends Component {
             // Amenities Form Fields
             amenitiesInfo: {
                 wants_laundry_in_unit: false,
+                laundry_in_unit_weight: 0,
                 wants_laundry_in_building: false,
+                laundry_in_building_weight: 0,
                 wants_laundry_nearby: false,
+                laundry_nearby_weight: 0,
                 wants_parking: false,
                 number_of_cars: 0,
                 wants_furnished: false,
