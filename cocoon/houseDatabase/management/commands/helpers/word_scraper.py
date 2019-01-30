@@ -53,9 +53,52 @@ class WordScraper:
                         return False
             return True
 
+    def look_for_laundry_in_building(self):
+        """
+        Looks for laundry in building using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        if self.word_finder(["laundry", "in", "building"]) or self.word_finder(["laundry", "in", "bldg"]) \
+                or self.word_finder(["washer", "dryer", "in", "building"]) \
+                or self.word_finder(["washer", "and", "dryer", "in", "building"]) \
+                or self.word_finder(["w/d", "in", "building"]) \
+                or self.word_finder(["washer&dryer", "in", "building"]) \
+                or self.word_finder(["wd", "in", "building"]):
+            return True
+        return False
 
+    def look_for_laundry_in_unit(self):
+        """
+        Looks for laundry in unit using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        if self.word_finder(["laundry", "in", "unit"]) or self.word_finder(["in-unit", "laundry"]) \
+                or self.word_finder(["in", "unit", "laundry"]) \
+                or self.word_finder(["washer", "dryer", "in", "unit"]) or self.word_finder(["in", "unit", "washer", "dryer"]) \
+                or self.word_finder(["in-unit", "washer", "dryer"]) \
+                or self.word_finder(["washer", "and", "dryer", "in", "unit"]) or self.word_finder(["in", "unit", "washer", "and", "dryer"]) \
+                or self.word_finder(["in-unit", "washer", "and", "dryer"]) \
+                or self.word_finder(["w/d", "in", "unit"]) or self.word_finder(["in", "unit", "w/d"]) \
+                or self.word_finder(["in-unit", "w/d"]) \
+                or self.word_finder(["in", "unit", "washer&dryer"]) \
+                or self.word_finder(["in-unit", "washer&dryer"]) \
+                or self.word_finder(["in", "unit", "wd"]) \
+                or self.word_finder(["in-unit", "wd"]):
 
+            return True
+        return False
 
+    def look_for_hardwood_floors(self):
+        """
+        Looks for hardwood floors using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
 
+        if self.word_finder(["hardwood"]) \
+            or self.word_finder(["hard", "wood"]) \
+            or self.word_finder(["wooden", "floors"]) \
+            or self.word_finder(["wood", "floors"]):
+            return True
 
+        return False
 
