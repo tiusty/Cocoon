@@ -11,7 +11,10 @@ from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel, RentDa
 from cocoon.commutes.models import CommuteType
 
 # Import Global Variables
-from config.settings.Global_Config import MAX_NUM_BATHROOMS, DEFAULT_RENT_SURVEY_NAME
+from config.settings.Global_Config import MAX_NUM_BATHROOMS
+
+# Import third party libraries
+import hashlib
 
 # Import app constants
 from .constants import MIN_PRICE_DELTA
@@ -21,40 +24,31 @@ class InitialSurveyModel(models.Model):
     """
     Stores the default information across all the surveys
     """
-    name = models.CharField(max_length=200, default=DEFAULT_RENT_SURVEY_NAME)
     created = models.DateField(auto_now_add=True)
     user_profile = models.ForeignKey(UserProfile)
     number_of_tenants = models.IntegerField(default=1)
     favorites = models.ManyToManyField(RentDatabaseModel, related_name="favorite_list", blank=True)
     visit_list = models.ManyToManyField(RentDatabaseModel, related_name="visit_list", blank=True)
-    url = models.SlugField(max_length=100)
+    url = models.SlugField(max_length=100, default="not-set")
 
     def generate_slug(self):
         """
-        The slug should just be the name without spaces and with dashes instead.
-        This is because spaces look weird in urls and should be dashes instead
+        Generates a unique slug for the survey
         :return: (string) -> The generated slug
         """
-        return slugify(self.name)
 
-    # Adds functionality to the save method. This checks to see if a survey with the same slug
-    #   for that user already exists. If it does then delete that survey and save the new one instead
-    def save(self, *args, **kwargs):
-        # Old url is saved to determine if the url for a survey changed
-        old_url = self.url
-        self.url = self.generate_slug()
+        # Create the unique string that will be hashed
+        # Multiple things are added so people can't reverse hash the id
+        hashable_string = "{0}{1}{2}{3}".format(self.user_profile.user.id, self.created, self.number_of_tenants, self.id)
 
-        # If it is a new model or the url changed then delete any conflicting surveys
-        if self.pk is None or old_url != self.url:
-            # Makes sure that the same slug doesn't exist for that user. If it does, then delete that survey
-            if RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                    .filter(url=self.url).exists():
-                RentingSurveyModel.objects.filter(user_profile=self.user_profile)\
-                    .filter(url=self.url).delete()
+        # Create the md5 object
+        m = hashlib.md5()
 
-        # When the model is being saved, make sure to generate the slug associated with the survey.
-        # Since surveys with duplicate names are deleted, then it should guarantee uniqueness
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+        # Add the string to the hash function
+        m.update(hashable_string.encode('utf-8'))
+
+        # Now return the has has the url
+        return slugify(m.hexdigest())
 
     class Meta:
         abstract = True
@@ -185,9 +179,31 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
     of one survey
     """
 
+    @property
+    def survey_name(self):
+        """
+        Generates the name for the survey based on the tenants
+        """
+        num_of_tenants = self.tenants.count()
+        if num_of_tenants is 1:
+            return "Just Me"
+        else:
+            counter = 1
+            survey_name = ""
+            # need to order the tenants, because the first tenant is the user of the account
+            for tenant in self.tenants.order_by('id').reverse():
+                if counter == num_of_tenants - 1:
+                    survey_name = "{0}{1} {2} ".format(survey_name, tenant.first_name, tenant.last_name[0])
+                elif counter == num_of_tenants:
+                    survey_name = "{0}and I".format(survey_name)
+                elif counter != num_of_tenants:
+                    survey_name = "{0}{1} {2}, ".format(survey_name, tenant.first_name, tenant.last_name[0])
+                counter += 1
+            return survey_name
+
     def __str__(self):
         user_short_name = self.user_profile.user.get_short_name()
-        survey_name = self.name
+        survey_name = self.survey_name
         return "{0}: {1}".format(user_short_name, survey_name)
 
 
