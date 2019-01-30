@@ -30,7 +30,9 @@ export default class TenantForm extends Component {
 
     disableAutocomplete = () => {
         const el = document.querySelector('.survey-address-input');
-        el.setAttribute('autocomplete', 'off');
+        if (el) {
+            el.setAttribute('autocomplete', 'off');
+        }
     }
 
     toggleQuestions = () => {
