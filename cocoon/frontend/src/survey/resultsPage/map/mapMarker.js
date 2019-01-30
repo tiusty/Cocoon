@@ -8,9 +8,8 @@ export default class MapMarker extends Component {
 
     colorMarkers = (score) => {
         let marker_class = 'map-marker';
-
         if (score > 89) {
-            marker_class = marker_class + ' map-marker_dark-green';
+            marker_class = marker_class + ' map-marker_green';
         } else if (score > 69) {
             marker_class = marker_class + ' map-marker_light-green';
         } else if (score > 49) {

@@ -156,6 +156,16 @@
     padding: 7px;
 }
 
+.map-marker_green,
+.map-marker_green::before {
+    background: #008000;
+}
+
+.map-marker_light-green,
+.map-marker_light-green::before {
+    background: #CDDC39;
+}
+
 .map-marker_teal,
 .map-marker_teal::before {
     background: #39b0a6;
@@ -163,17 +173,17 @@
 
 .map-marker_yellow,
 .map-marker_yellow::before {
-    background: #e9c43a;
+    background: #FFC107;
 }
 
 .map-marker_orange,
 .map-marker_orange::before {
-    background: #f4a261;
+    background: #FF6D00;
 }
 
 .map-marker_red,
 .map-marker_red::before {
-    background: #a13718;
+    background: #DD2C00;
 }
 
 .map-marker_dark-blue,
