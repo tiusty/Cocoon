@@ -1,26 +1,34 @@
 # Django modules
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
+from django.http import Http404
 
-# Models
-from cocoon.userAuth.models import UserProfile
-from cocoon.scheduler.models import ItineraryModel, TimeModel
+# App Models
+from .models import ItineraryModel, TimeModel
 from .serializers import ItinerarySerializer
+from .constants import TIME_MODEL_OFFSET
+
+# Cocoon Modules
+from cocoon.userAuth.models import UserProfile
+from cocoon.survey.models import RentingSurveyModel
+from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
+from cocoon.commutes.constants import CommuteAccuracy
 
 # Python Modules
 import json
+from datetime import timedelta
+import dateutil.parser
 
 # Rest Framework
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
 
-class ClientScheduler(TemplateView):
+class ClientSchedulerView(TemplateView):
     """
     Loads the template for the ClientScheduler
 
@@ -33,11 +41,11 @@ class ClientScheduler(TemplateView):
         data = super().get_context_data(**kwargs)
 
         # Tells React which component to load onto the page
-        data['component'] = ClientScheduler.__name__
+        data['component'] = ClientSchedulerView.__name__
         return data
 
 
-class AgentSchedulerPortal(TemplateView):
+class AgentSchedulerPortalView(TemplateView):
     """
     Loads the template for the AgentSchedulerPortal
 
@@ -50,11 +58,11 @@ class AgentSchedulerPortal(TemplateView):
         data = super().get_context_data(**kwargs)
 
         # Tells React which component to load onto the page
-        data['component'] = AgentSchedulerPortal.__name__
+        data['component'] = AgentSchedulerPortalView.__name__
         return data
 
 
-class AgentSchedulerMarketplace(TemplateView):
+class AgentSchedulerMarketplaceView(TemplateView):
     """
         Loads the template for the AgentSchedulerMarketplace
 
@@ -67,23 +75,73 @@ class AgentSchedulerMarketplace(TemplateView):
         data = super().get_context_data(**kwargs)
 
         # Tells React which component to load onto the page
-        data['component'] = AgentSchedulerMarketplace.__name__
+        data['component'] = AgentSchedulerMarketplaceView.__name__
         return data
 
 
-@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
-class ItineraryClientViewSet(viewsets.ModelViewSet):
+class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
+    """
+    Used for retrieving a generic itinerary. Base on the account type the user
+    can get access to more itinerary models
+    """
 
     serializer_class = ItinerarySerializer
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        print(user_profile)
-        return ItineraryModel.objects.filter(client=user_profile.user)
+
+        if user_profile.user.is_broker or user_profile.user.is_admin:
+            return ItineraryModel.objects.all()
+        else:
+            return ItineraryModel.objects.filter(client=user_profile.user)
+
+
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+class ItineraryClientViewSet(viewsets.ModelViewSet):
+    """
+    Used on the client scheduler page to retrieve the itineraries for the current user
+    """
+
+    serializer_class = ItinerarySerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return ItineraryModel.objects.filter(client=user_profile.user).filter(finished=False)
+
+    def update(self, request, *args, **kwargs):
+
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the itinerary id
+        pk = kwargs.pop('pk', None)
+
+        # Retrieve the associated itinerary with the request
+        itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
+
+        # Case if an agent is trying to schedule an itinerary they already claimed
+        if 'start_times' in self.request.data['type']:
+            start_times = self.request.data['start_times']
+
+            # Loop through all the start_times so they can all be added
+            for start_time in start_times:
+                if 'time_available_seconds' in start_time:
+                    time_available_seconds = start_time['time_available_seconds']
+                    dt = dateutil.parser.parse(start_time['date'])
+                    dt = dt.replace(second=0, microsecond=0)
+                    itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
+
+        # Retrieve the object again to get the updated fields
+        itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
+        serializer = ItinerarySerializer(itinerary)
+        return Response(serializer.data)
 
 
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
 class ItineraryAgentViewSet(viewsets.ModelViewSet):
+    """
+    Used to pull the itineraries associated with that the current user which should be an agent
+    """
 
     serializer_class = ItinerarySerializer
 
@@ -97,6 +155,8 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
         elif itinerary_type == 'scheduled':
             return ItineraryModel.objects.filter(agent=user_profile.user).exclude(selected_start_time=None)\
                 .exclude(finished=True)
+        else:
+            raise Http404
 
     def update(self, request, *args, **kwargs):
 
@@ -148,6 +208,40 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
         client_itinerary = get_object_or_404(queryset, pk=pk)
         serializer = ItinerarySerializer(client_itinerary)
         return Response(serializer.data)
+
+
+class ClientItineraryCalculateDuration(viewsets.ViewSet):
+    """
+    Used to calculate the itinerary approximate duration to inform the user before
+        they decide to schedule a group of homes
+    """
+
+    @staticmethod
+    def list(request, *args, **kwargs):
+        return Response({'message': 'List not implemented'})
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Given the survey passed via the url, returns the total duration to do the commute
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        user_prof = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        survey = get_object_or_404(RentingSurveyModel, pk=pk, user_profile=user_prof)
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        # Run client_scheduler algorithm
+        client_scheduler_alg = ClientScheduler(accuracy=CommuteAccuracy.APPROXIMATE)
+        result = client_scheduler_alg.calculate_duration(homes_list)[0]
+        return Response({'duration': result})
 
 
 @method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')

@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from "react-dom";
 
 // Import Cocoon Components
-import Surveys from "./survey/surveys";
+import Surveys from "./survey/mysurveys";
 
 // Determines which component to load via dictionary
 //  This should be passed in the context to the template

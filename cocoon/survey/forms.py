@@ -117,6 +117,7 @@ class PriceInformationForm(ModelForm):
         model = PriceInformationModel
         fields = '__all__'
 
+
 class HouseNearbyAmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the HouseNearbyAmenitiesModel Model
@@ -134,19 +135,13 @@ class HouseNearbyAmenitiesForm(ModelForm):
         model = HouseNearbyAmenitiesModel
         fields = ["wants_laundry_nearby"]
 
+
 class ExteriorAmenitiesForm(ModelForm):
     """
     Class stores all the form fields for the ExteriorAmenitiesModel Model
     """
-    parking_spot = forms.ChoiceField(
-        choices=HYBRID_WEIGHT_CHOICES,
-        initial=0,
-        label="Parking Spot",
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control',
-            }
-        )
+    wants_parking = forms.BooleanField(
+        required=False,
     )
 
     wants_laundry_in_building = forms.BooleanField(
@@ -231,10 +226,11 @@ class ExteriorAmenitiesForm(ModelForm):
 
     class Meta:
         model = ExteriorAmenitiesModel
-        fields = ["parking_spot", 'wants_laundry_in_building', 'number_of_cars',
+        fields = ["wants_parking", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight'
                   ]
+
 
 class InteriorAmenitiesForm(ModelForm):
     """
@@ -368,8 +364,6 @@ class InteriorAmenitiesForm(ModelForm):
             }),
     )
 
-
-
     class Meta:
         model = InteriorAmenitiesModel
         fields = ["wants_laundry_in_unit", "wants_furnished", "furnished_weight", "wants_dogs",
@@ -377,7 +371,6 @@ class InteriorAmenitiesForm(ModelForm):
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
                   "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"
                   ]
-
 
 
 class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm, HomeInformationForm):
@@ -395,19 +388,31 @@ class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAm
         ),
     )
 
+    polygon_filter_type = forms.ChoiceField(
+        required=False,
+        choices=[(x, x) for x in range(0, 2)],
+        label="Filter type",
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+
     class Meta:
         model = RentingSurveyModel
         # Make sure to set the name later, in the survey result if they want to save the result
         fields = ["num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
-                  "parking_spot", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
+                  "wants_parking", "number_of_tenants", 'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
                   "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
                   "service_dogs", "breed_of_dogs", "dog_size",
                   "wants_cats", "cat_weight", "wants_hardwood_floors", "hardwood_floors_weight",
-                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight"]
+                  "wants_AC", "AC_weight", "wants_dishwasher", "dishwasher_weight",
+                  "number_of_tenants", 'polygon_filter_type']
 
 
 class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,
@@ -459,7 +464,7 @@ class RentSurveyFormMini(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNear
                    "name", "num_bedrooms", "max_bathrooms", "min_bathrooms", "home_type",
                   "max_price", "desired_price", "price_weight",
                   "wants_laundry_nearby",
-                  "parking_spot", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
+                  "wants_parking", "number_of_tenants",  'wants_laundry_in_building', 'number_of_cars',
                   'wants_patio', 'patio_weight', 'wants_pool', 'pool_weight',
                   'wants_gym', 'gym_weight', 'wants_storage', 'storage_weight', "wants_laundry_in_unit",
                   "wants_furnished", "furnished_weight", "wants_dogs", "number_of_dogs",
@@ -667,7 +672,15 @@ class TenantForm(CommuteInformationForm, TenantPersonalInformationForm):
                   'min_commute', 'commute_weight', 'commute_type', 'traffic_option']
 
 
+class TenantFormJustNames(TenantPersonalInformationForm):
+    class Meta:
+        model = TenantModel
+        fields = ['first_name', 'last_name']
+
+
 TenantFormSet = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                       extra=4, can_delete=False)
 TenantFormSetResults = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantForm,
                                              extra=0, can_delete=False)
+TenantFormSetJustNames = inlineformset_factory(RentingSurveyModel, TenantModel, form=TenantFormJustNames,
+                                               extra=0, can_delete=False)

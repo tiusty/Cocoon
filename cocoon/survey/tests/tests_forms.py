@@ -30,6 +30,7 @@ class TestHomeInformationForm(TestCase):
         self.num_bedrooms = 1
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
+        self.polygon_filter_type = 0
         self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
         self.wants_laundry_nearby = True
 
@@ -42,7 +43,8 @@ class TestHomeInformationForm(TestCase):
             'max_bathrooms': self.max_num_bathrooms,
             'min_bathrooms': self.min_num_bathrooms,
             'home_type': self.home_type,
-            'wants_laundry_nearby': self.wants_laundry_nearby
+            'wants_laundry_nearby': self.wants_laundry_nearby,
+            'polygon_filter_type': self.polygon_filter_type,
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -608,53 +610,30 @@ class TestAmenitiesForm(TestCase):
         result = exterior_amenities_form.is_valid()
 
         # Assert
-        self.assertFalse(result)
-
-    def tests_exterior_amenities_parking_spot_missing(self):
-        # Arrange
-        form_data = {
-            'number_of_cars': self.number_of_cars,
-            'wants_laundry_in_building':self.wants_laundry_in_building,
-            'wants_patio':self.wants_patio,
-            'patio_weight':self.patio_weight,
-            'wants_pool':self.wants_pool,
-            'pool_weight':self.pool_weight,
-            'wants_gym':self.wants_gym,
-            'gym_weight':self.gym_weight,
-            'wants_storage':self.wants_storage,
-            'storage_weight':self.storage_weight
-        }
-        exterior_amenities_form = ExteriorAmenitiesForm(data=form_data)
-
-        # Act
-        result = exterior_amenities_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
+        self.assertTrue(result)
 
     def tests_interior_amenities_valid(self):
         # Arrange
         form_data = {
             'parking_spot': self.parking_spot,
-            "wants_laundry_in_unit":self.wants_laundry_in_unit,
-            'wants_furnished':self.wants_furnished,
-            'furnished_weight':self.furnished_weight,
-            'wants_dogs':self.wants_dogs,
-            'number_of_dogs':self.number_of_dogs,
-            'wants_cats':self.wants_cats,
-            'cat_weight':self.cat_weight,
-            'wants_hardwood_floors':self.wants_hardwood_floors,
-            'hardwood_floors_weight':self.hardwood_floors_weight,
-            'wants_AC':self.wants_AC,
-            'AC_weight':self.AC_weight,
-            'wants_dishwasher':self.wants_dishwasher,
-            'dishwasher_weight':self.dishwasher_weight
+            "wants_laundry_in_unit": self.wants_laundry_in_unit,
+            'wants_furnished': self.wants_furnished,
+            'furnished_weight': self.furnished_weight,
+            'wants_dogs': self.wants_dogs,
+            'number_of_dogs': self.number_of_dogs,
+            'wants_cats': self.wants_cats,
+            'cat_weight': self.cat_weight,
+            'wants_hardwood_floors': self.wants_hardwood_floors,
+            'hardwood_floors_weight': self.hardwood_floors_weight,
+            'wants_AC': self.wants_AC,
+            'AC_weight': self.AC_weight,
+            'wants_dishwasher': self.wants_dishwasher,
+            'dishwasher_weight': self.dishwasher_weight
         }
         interior_amenities_form = InteriorAmenitiesForm(data=form_data)
 
         # Act
         result = interior_amenities_form.is_valid()
-        print(interior_amenities_form.errors)
 
         # Assert
         self.assertTrue(result)
@@ -689,6 +668,7 @@ class TestRentSurveyForm(TestCase):
         self.max_num_bathrooms = 0
         self.min_num_bathrooms = 0
         self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
+        self.number_of_tenants = 1
 
         self.max_commute = 0
         self.min_commute = 0
@@ -727,6 +707,7 @@ class TestRentSurveyForm(TestCase):
 
 
         self.number_of_destinations = 1
+        self.polygon_filter_type = 0
 
     def tests_rent_survey_valid(self):
         # Arrange
@@ -736,27 +717,16 @@ class TestRentSurveyForm(TestCase):
             'num_bedrooms': self.num_bedrooms,
             'max_bathrooms': self.max_num_bathrooms,
             'min_bathrooms': self.min_num_bathrooms,
+            'number_of_tenants':self.number_of_tenants,
             'home_type': self.home_type,
             'max_commute': self.max_commute,
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
-            'number_destinations_filled_out': self.number_of_destinations,
-            'commute_type': 1,
+            'commute_type': self.commute_type,
             'max_price': self.max_price,
             'desired_price': self.desired_price,
             'price_weight': self.price_weight,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
             'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit,
-            'number_of_tenants': 2,
             'wants_laundry_nearby': self.wants_laundry_nearby,
             'number_of_cars': self.number_of_cars,
             'wants_laundry_in_building': self.wants_laundry_in_building,
@@ -767,14 +737,14 @@ class TestRentSurveyForm(TestCase):
             'wants_gym': self.wants_gym,
             'gym_weight': self.gym_weight,
             'wants_storage': self.wants_storage,
-            'storage_weight': self.storage_weight
+            'storage_weight': self.storage_weight,
+            'polygon_filter_type': self.polygon_filter_type
         }
         rent_survey_form = RentSurveyForm(data=form_data)
 
         # Act
         result = rent_survey_form.is_valid()
         print(rent_survey_form.errors)
-
         # Assert
         self.assertTrue(result)
 
@@ -788,17 +758,6 @@ class TestRentSurveyForm(TestCase):
             'max_price': self.max_price,
             'desired_price': self.desired_price,
             'price_weight': self.price_weight,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit,
             'parking_spot': self.parking_spot,
             'number_of_cars': self.number_of_cars,
             'wants_laundry_in_building': self.wants_laundry_in_building,
@@ -832,17 +791,6 @@ class TestRentSurveyForm(TestCase):
             'min_commute': self.min_commute,
             'commute_weight': self.commute_weight,
             'commute_type': self.commute_type,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
-            'parking_spot': self.parking_spot,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'fitness_center_survey': self.fitness_center,
-            'storage_unit_survey': self.storage_unit,
             'parking_spot': self.parking_spot,
             'number_of_cars': self.number_of_cars,
             'wants_laundry_in_building': self.wants_laundry_in_building,
@@ -879,10 +827,6 @@ class TestRentSurveyForm(TestCase):
             'max_price': self.max_price,
             'desired_price': self.desired_price,
             'price_weight': self.price_weight,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
             'parking_spot': self.parking_spot,
             'number_of_cars': self.number_of_cars,
             'wants_laundry_in_building': self.wants_laundry_in_building,
@@ -949,6 +893,7 @@ class TestRentSurveyMiniForm(TestCase):
         self.storage_unit = 0
 
         self.number_of_destinations = 1
+        self.polygon_filter_type = 0
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
@@ -969,6 +914,19 @@ class TestRentSurveyMiniForm(TestCase):
         """
         # Arrange
         form_data = {
+            'move_in_date_start_survey': self.move_in_date_start,
+            'move_in_date_end_survey': self.move_in_date_end,
+            'num_bedrooms': self.num_bedrooms,
+            'max_bathrooms': self.max_num_bathrooms,
+            'min_bathrooms': self.min_num_bathrooms,
+            'home_type': self.home_type,
+            'max_commute': self.max_commute,
+            'min_commute': self.min_commute,
+            'commute_weight': self.commute_weight,
+            'commute_type': self.commute_type,
+            'max_price': self.max_price,
+            'desired_price': self.desired_price,
+            'price_weight': self.price_weight,
             'number_of_tenants':self.number_of_tenants,
             'move_in_date_start_survey': self.move_in_date_start,
             'move_in_date_end_survey': self.move_in_date_end,
@@ -981,26 +939,15 @@ class TestRentSurveyMiniForm(TestCase):
             'max_price': self.max_price,
             'desired_price': self.desired_price,
             'price_weight': self.price_weight,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
-            'fitness_center_survey': self.fitness_center,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'home_type': self.home_type,
-            'storage_unit_survey': self.storage_unit,
-            'pool_hot_tub_survey': self.pool_hot_tub,
-            'parking_spot': self.parking_spot,
-            'elevator_survey': self.elevator,
-            'handicap_access_survey': self.handicap_access,
+            'parking_spot':self.parking_spot,
             'name': 'test_survey',
+            'polygon_filter_type': self.polygon_filter_type,
         }
 
         rent_survey_form = RentSurveyFormMini(data=form_data, user=self.user)
 
         # Act
         result = rent_survey_form.is_valid()
-        print(rent_survey_form.errors)
 
         # Assert
         self.assertTrue(result)
@@ -1025,15 +972,6 @@ class TestRentSurveyMiniForm(TestCase):
             'max_price': self.max_price,
             'desired_price': self.desired_price,
             'price_weight': self.price_weight,
-            'air_conditioning_survey': self.air_conditioning,
-            'interior_washer_dryer_survey': self.interior_washer_dryer,
-            'dish_washer_survey': self.dish_washer,
-            'bath_survey': self.bath,
-            'fitness_center_survey': self.fitness_center,
-            'building_washer_dryer_survey': self.building_washer_dryer,
-            'home_type': self.home_type,
-            'storage_unit_survey': self.storage_unit,
-            'pool_hot_tub_survey': self.pool_hot_tub,
             'parking_spot': self.parking_spot,
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
@@ -1082,6 +1020,7 @@ class TestRentSurveyMiniForm(TestCase):
             'elevator_survey': self.elevator,
             'handicap_access_survey': self.handicap_access,
             'name': 'test_survey',
+            'polygon_filter_type': self.polygon_filter_type
         }
 
         rent_survey_form = RentSurveyFormMini(data=form_data, user=user2)

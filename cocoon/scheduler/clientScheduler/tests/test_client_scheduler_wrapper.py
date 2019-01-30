@@ -7,7 +7,7 @@ class TestClientScheduler(TestCase):
     def setUp(self):
         self.clientScheduler = ClientScheduler()
 
-    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute')
+    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
     def test_build_home_matrix_empty(self, mock_commute):
         '''
         Test to see if empty, should return empty
@@ -19,7 +19,7 @@ class TestClientScheduler(TestCase):
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertTrue(len(homes_matrix) == 0)
 
-    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute')
+    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
     def test_build_home_matrix_zeros(self, mock_commute):
         '''
         Test to see if all the distances are 0
@@ -31,7 +31,7 @@ class TestClientScheduler(TestCase):
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
-    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute')
+    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
     def test_build_home_matrix_different_vals(self, mock_commute):
         '''
         Test Case: homes 0,1,2
@@ -48,7 +48,7 @@ class TestClientScheduler(TestCase):
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 1, 2], [1, 0, 3], [2, 3, 0]])
 
-    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute')
+    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
     def test_build_home_matrix_same_distances(self, mock_commute):
         '''
         Test Case: homes 0,1,2
@@ -65,7 +65,7 @@ class TestClientScheduler(TestCase):
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 5, 5], [5, 0, 5], [5, 5, 0]])
 
-    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute')
+    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
     def test_build_home_matrix_same_distances(self, mock_commute):
         '''
         Test Case: homes 0,1,2
@@ -82,7 +82,7 @@ class TestClientScheduler(TestCase):
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 5, 5], [5, 0, 5], [5, 5, 0]])
 
-    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute')
+    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
     def test_build_home_matrix_decreasing_distances(self, mock_commute):
         '''
         Test Case: homes 0,1,2

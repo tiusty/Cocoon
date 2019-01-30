@@ -7,7 +7,7 @@ import os, sys
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel
 from cocoon.houseDatabase.management.commands.mlspin._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
-from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
+from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
@@ -28,7 +28,7 @@ class MlspinRequester(object):
 
     NUM_COLS = 29
 
-    def __init__(self, timestamp, pull_idx_feed=True, **kwargs):
+    def __init__(self, timestamp, num_homes=-1, pull_idx_feed=True, **kwargs):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
@@ -58,14 +58,19 @@ class MlspinRequester(object):
 
         # Builds a dictionary of town codes to towns
         self.towns = {}
-        self.town_lines = self.town_txt.split('\n')
-        for line in self.town_lines[1:-1]: # skips the col headers
+        town_lines = self.town_txt.split('\n')
+        # Strips any new lines. There was issues on windows due to different new lines characters
+        #   This makes sure all the elements in the area do no have new line/carriage return characters
+        self.town_lines = list(map(str.rstrip, town_lines))
+        for line in self.town_lines[1:-1]:  # skips the col headers
             fields = line.split('|')
             self.towns[str(fields[0])] = {
                 "town": fields[1],
                 "county": fields[2],
                 "state": fields[3]
             }
+
+        self.num_homes = num_homes
 
     def parse_idx_feed(self):
 
@@ -85,7 +90,13 @@ class MlspinRequester(object):
         num_updated_homes = 0
         num_homes_not_enough_cells = 0
 
+        counter = 0
         for line in lines[1:]:  # skips the col headers
+            # if self.num_homes is equal to -1, then it means to loop through all homes,
+            #   otherwise just loop for the indicated number of homes
+            if self.num_homes != -1 and counter >= self.num_homes:
+                break
+            counter = counter + 1
             num_houses += 1
             new_listing = RentDatabaseModel()
 
@@ -109,14 +120,15 @@ class MlspinRequester(object):
             try:
                 # check for presence of apartment number with int()
                 int(cells[STREET_NAME][len(cells[STREET_NAME])-1])
-                clean_address = " ".join(split_address[:-1])
+                # the purpose of encoding and then decoding is to remove any non-ascii characters
+                clean_address = " ".join(split_address[:-1]).encode('ascii', errors='ignore').decode()
             # no int in last address element (not an apartment #)
             except ValueError:
-                clean_address = " ".join(split_address)
+                clean_address = " ".join(split_address).encode('ascii', errors='ignore').decode()
 
             # If any of the fields give a value error, then don't save the apartment
             try:
-                #Initialize word scraper
+                # Initialize word scraper
                 word_scraper = WordScraper(cells[REMARKS])
 
                 # Set the HomeBaseModel Fields
@@ -125,10 +137,12 @@ class MlspinRequester(object):
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
-                if word_scraper.word_finder("laundromat") and word_scraper.word_finder("nearby"):
-                    new_listing.laundry_in_unit = False
+                if word_scraper.word_finder(["laundromat","nearby"]):
                     new_listing.laundromat_nearby = True
-                    new_listing.laundry_inside = False
+                if word_scraper.word_finder(["laundry","in","building"]):
+                    new_listing.laundry_in_building = True
+                if word_scraper.word_finder(["laundry", "in", "unit"]):
+                    new_listing.laundry_in_unit = True
 
                 # Set InteriorAmenitiesModel Fields
                 # Currently don't support non-integers for num_bathrooms. Therefore
@@ -137,22 +151,17 @@ class MlspinRequester(object):
                 new_listing.bath = True if num_baths > 0 else False
                 new_listing.num_bathrooms = num_baths
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
-                new_listing.furnished = word_scraper.word_finder("furnished")
-                new_listing.hardwood_floors = word_scraper.word_finder("hardwood")
-                if (word_scraper.word_finder("air") and word_scraper.word_finder("conditioning")) or word_scraper.word_finder("ac") or word_scraper.word_finder("a/c"):
+                new_listing.furnished = word_scraper.word_finder(["furnished"])
+                new_listing.hardwood_floors = word_scraper.word_finder(["hardwood"])
+                new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
+                if (word_scraper.word_finder(["air","conditioning"])) or word_scraper.word_finder(["ac"]):
                     new_listing.air_conditioning = True
 
-                if (word_scraper.word_finder("dogs") and word_scraper.word_finder("allowed")) or word_scraper.word_finder("dogs"):
+                if word_scraper.word_finder(["dogs","allowed"]) and not word_scraper.word_finder(["no", "dogs","allowed"]):
                     new_listing.dogs_allowed = True
 
-                if (word_scraper.word_finder("cats") and word_scraper.word_finder("allowed")) or word_scraper.word_finder("cats"):
+                if word_scraper.word_finder(["cats","allowed"]) and not word_scraper.word_finder(["no", "cats","allowed"]):
                     new_listing.cats_allowed = True
-
-                if word_scraper.word_finder("laundry") and word_scraper.word_finder("building"):
-                    new_listing.laundry_in_unit = False
-                    new_listing.laundromat_nearby = False
-                    new_listing.laundry_inside = True
-
 
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
@@ -168,17 +177,12 @@ class MlspinRequester(object):
                 # Set Exterior Amenities fields
                 if int(cells[PARKING_SPACES]) > 0:
                     new_listing.parking_spot = True
-                if word_scraper.word_finder("pool") or (word_scraper.word_finder("hot") and word_scraper.word_finder("tub")):
+                if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot","tub"]):
                     new_listing.pool = True
-                if word_scraper.word_finder("balcony") or word_scraper.word_finder("patio"):
+                if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
                     new_listing.patio_balcony = True
-                if word_scraper.word_finder("laundry") and word_scraper.word_finder("unit"):
-                    new_listing.laundry_in_unit = True
-                    new_listing.laundromat_nearby = False
-                    new_listing.laundry_inside = False
-                new_listing.gym = word_scraper.word_finder("gym")
-                new_listing.storage = word_scraper.word_finder("storage")
-
+                new_listing.gym = word_scraper.word_finder(["gym"])
+                new_listing.storage = word_scraper.word_finder(["storage"])
 
                 # Create the new home
                 # Define the home type
@@ -254,8 +258,8 @@ class MlspinRequester(object):
                     print("[ Integrity Error ] ")
                     num_integrity_error += 1
 
-        manager = MlsManagementModel.objects.all().first()
-        manager.last_updated_mls = self.update_timestamp
+        manager = HomeProviderModel.objects.get(provider="MLSPIN")
+        manager.last_updated_feed = self.update_timestamp
         manager.save()
 
         print("")

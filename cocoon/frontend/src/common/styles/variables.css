@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:600,700,800');
+
+/*
+* Import this file into a component and use the variables
+* in the css file i.e. color: var(--red);
+*/
+
+:root {
+    --red: #A13718;
+    --teal: #39B1A7;
+    --tealOpacity: rgba(57, 177, 167, 0.04);
+    --black: #282828;
+    --grey: #888888;
+    --borderColor: #dfdfdf;
+    --borderRadius: 10px;
+}

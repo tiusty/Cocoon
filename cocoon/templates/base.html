@@ -49,7 +49,7 @@
                             </ul>
                         </li>
                     {% else %}
-                            <li><a class="register-link" href="{% url 'userAuth:signup' %}"><button class="btn-primary btn login-button signup-button">Sign Up</button></a></li>
+                            <li><a class="register-link" href="{% url 'userAuth:hunter_signup' %}"><button class="btn-primary btn login-button signup-button">Sign Up</button></a></li>
                             <li><a class="register-link" href="{% url 'userAuth:loginPage' %}"><button class="btn-primary btn login-button signup-button signup-button-right">Login</button></a></li>
                     {% endif %}
                 </ul>
@@ -63,7 +63,6 @@
                             {% block nav-agent-portal %}<li><a class="link" href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a></li>{% endblock %}
                             {% block nav-agent-marketplace %}<li><a class="link" href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a></li>{% endblock %}
                         {% endif %}
-                        {% block nav-docmanager %}<li><a class="link" href="{% url 'signature:signaturePage' %}">Doc Manager</a></li>{% endblock %}
                         {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
                     {% endif %}
                 </ul>

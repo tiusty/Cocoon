@@ -31,18 +31,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("laundry") and self.scraper1_easy.word_finder("unit"):
+        if self.scraper1_easy.word_finder(["laundry", "in", "unit"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("laundry") and self.scraper2_easy.word_finder("unit"):
+        if self.scraper2_easy.word_finder(["laundry", "in", "unit"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("laundry") and self.scraper3_easy.word_finder("unit"):
+        if self.scraper3_easy.word_finder(["laundry", "in", "unit"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("laundry") and self.scraper1_hard.word_finder("unit"):
+        if self.scraper1_hard.word_finder(["laundry", "in", "unit"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("laundry") and self.scraper2_hard.word_finder("unit"):
+        if self.scraper2_hard.word_finder(["laundry", "in", "unit"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("laundry") and self.scraper3_hard.word_finder("unit"):
+        if self.scraper3_hard.word_finder(["laundry", "in", "unit"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, True)
@@ -51,7 +51,7 @@ class TestWordScraper(TestCase):
 
         self.assertEqual(scraper1_hard, False)
         self.assertEqual(scraper2_hard, True) # EDGE CASE
-        self.assertEqual(scraper3_hard, True) # EDGE CASE
+        self.assertEqual(scraper3_hard, False) # EDGE CASE
 
     def test_word_laundry_in_building(self):
         scraper_1_basic = False
@@ -62,18 +62,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("laundry") and self.scraper1_easy.word_finder("building"):
+        if self.scraper1_easy.word_finder(["laundry","in", "building"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("laundry") and self.scraper2_easy.word_finder("building"):
+        if self.scraper2_easy.word_finder(["laundry","in", "building"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("laundry") and self.scraper3_easy.word_finder("building"):
+        if self.scraper3_easy.word_finder(["laundry","in", "building"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("laundry") and self.scraper1_hard.word_finder("building"):
+        if self.scraper1_hard.word_finder(["laundry","in", "building"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("laundry") and self.scraper2_hard.word_finder("building"):
+        if self.scraper2_hard.word_finder(["laundry","in", "building"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("laundry") and self.scraper3_hard.word_finder("building"):
+        if self.scraper3_hard.word_finder(["laundry","in", "building"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, False)
@@ -81,7 +81,7 @@ class TestWordScraper(TestCase):
         self.assertEqual(scraper_3_basic, False)
 
         self.assertEqual(scraper1_hard, False)
-        self.assertEqual(scraper2_hard, True)  # EDGE CASE
+        self.assertEqual(scraper2_hard, False)  # EDGE CASE
         self.assertEqual(scraper3_hard, True)
 
     def test_word_laundromat_nearby(self):
@@ -93,18 +93,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("laundromat") and self.scraper1_easy.word_finder("nearby"):
+        if self.scraper1_easy.word_finder(["laundromat","nearby"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("laundromat") and self.scraper2_easy.word_finder("nearby"):
+        if self.scraper2_easy.word_finder(["laundromat","nearby"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("laundromat") and self.scraper3_easy.word_finder("nearby"):
+        if self.scraper3_easy.word_finder(["laundromat","nearby"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("laundromat") and self.scraper1_hard.word_finder("nearby"):
+        if self.scraper1_hard.word_finder(["laundromat","nearby"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("laundromat") and self.scraper2_hard.word_finder("nearby"):
+        if self.scraper2_hard.word_finder(["laundromat","nearby"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("laundromat") and self.scraper3_hard.word_finder("nearby"):
+        if self.scraper3_hard.word_finder(["laundromat","nearby"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, False)
@@ -124,18 +124,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if (self.scraper1_easy.word_finder("air") and self.scraper1_easy.word_finder("conditioning")) or self.scraper1_easy.word_finder("ac") or self.scraper1_easy.word_finder("a/c"):
+        if self.scraper1_easy.word_finder(["air","conditioning"])  or self.scraper1_easy.word_finder(["ac"]):
             scraper_1_basic = True
-        if (self.scraper2_easy.word_finder("air") and self.scraper2_easy.word_finder("conditioning")) or self.scraper2_easy.word_finder("ac") or self.scraper2_easy.word_finder("a/c"):
+        if self.scraper2_easy.word_finder(["air","conditioning"])  or self.scraper2_easy.word_finder(["ac"]):
             scraper_2_basic = True
-        if (self.scraper3_easy.word_finder("air") and self.scraper3_easy.word_finder("conditioning")) or self.scraper3_easy.word_finder("ac") or self.scraper3_easy.word_finder("a/c"):
+        if self.scraper3_easy.word_finder(["air","conditioning"])  or self.scraper3_easy.word_finder(["ac"]):
             scraper_3_basic = True
 
-        if (self.scraper1_hard.word_finder("air") and self.scraper1_hard.word_finder("conditioning")) or self.scraper1_hard.word_finder("ac") or self.scraper1_hard.word_finder("a/c"):
+        if self.scraper1_hard.word_finder(["air","conditioning"])  or self.scraper1_hard.word_finder(["ac"]):
             scraper1_hard = True
-        if (self.scraper2_hard.word_finder("air") and self.scraper2_hard.word_finder("conditioning")) or self.scraper2_hard.word_finder("ac") or self.scraper2_hard.word_finder("a/c"):
+        if self.scraper2_hard.word_finder(["air","conditioning"])  or self.scraper2_hard.word_finder(["ac"]):
             scraper2_hard = True
-        if (self.scraper3_hard.word_finder("air") and self.scraper3_hard.word_finder("conditioning")) or self.scraper3_hard.word_finder("ac") or self.scraper3_hard.word_finder("a/c"):
+        if self.scraper3_hard.word_finder(["air","conditioning"])  or self.scraper3_hard.word_finder(["ac"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, True)
@@ -155,25 +155,25 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if (self.scraper1_easy.word_finder("dogs") and self.scraper1_easy.word_finder("allowed")) or self.scraper1_easy.word_finder("dogs"):
+        if (self.scraper1_easy.word_finder(["dogs","allowed"])):
             scraper_1_basic = True
-        if (self.scraper2_easy.word_finder("dogs") and self.scraper2_easy.word_finder("allowed")) or self.scraper2_easy.word_finder("dogs"):
+        if (self.scraper2_easy.word_finder(["dogs","allowed"])):
             scraper_2_basic = True
-        if (self.scraper3_easy.word_finder("dogs") and self.scraper3_easy.word_finder("allowed")) or self.scraper3_easy.word_finder("dogs"):
+        if (self.scraper3_easy.word_finder(["dogs","allowed"])):
             scraper_3_basic = True
 
-        if (self.scraper1_hard.word_finder("dogs") and self.scraper1_hard.word_finder("allowed")) or self.scraper1_hard.word_finder("dogs"):
+        if (self.scraper1_hard.word_finder(["dogs","allowed"])):
             scraper1_hard = True
-        if (self.scraper2_hard.word_finder("dogs") and self.scraper2_hard.word_finder("allowed")) or self.scraper2_hard.word_finder("dogs"):
+        if (self.scraper2_hard.word_finder(["dogs","allowed"])):
             scraper2_hard = True
-        if (self.scraper3_hard.word_finder("dogs") and self.scraper3_hard.word_finder("allowed")) or self.scraper3_hard.word_finder("dogs"):
+        if (self.scraper3_hard.word_finder(["dogs","allowed"])):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, True)
         self.assertEqual(scraper_2_basic, True)
         self.assertEqual(scraper_3_basic, False)
 
-        self.assertEqual(scraper1_hard, True) # EDGE CASE
+        self.assertEqual(scraper1_hard, False) # EDGE CASE
         self.assertEqual(scraper2_hard, False)
         self.assertEqual(scraper3_hard, False)
 
@@ -186,18 +186,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if (self.scraper1_easy.word_finder("cats") and self.scraper1_easy.word_finder("allowed")) or self.scraper1_easy.word_finder("cats"):
+        if (self.scraper1_easy.word_finder(["cats","allowed"])):
             scraper_1_basic = True
-        if (self.scraper2_easy.word_finder("cats") and self.scraper2_easy.word_finder("allowed")) or self.scraper2_easy.word_finder("cats"):
+        if (self.scraper2_easy.word_finder(["cats","allowed"])):
             scraper_2_basic = True
-        if (self.scraper3_easy.word_finder("cats") and self.scraper3_easy.word_finder("allowed")) or self.scraper3_easy.word_finder("cats"):
+        if (self.scraper3_easy.word_finder(["cats","allowed"])):
             scraper_3_basic = True
 
-        if (self.scraper1_hard.word_finder("cats") and self.scraper1_hard.word_finder("allowed")) or self.scraper1_hard.word_finder("cats"):
+        if (self.scraper1_hard.word_finder(["cats","allowed"])):
             scraper1_hard = True
-        if (self.scraper2_hard.word_finder("cats") and self.scraper2_hard.word_finder("allowed")) or self.scraper2_hard.word_finder("cats"):
+        if (self.scraper2_hard.word_finder(["cats","allowed"])):
             scraper2_hard = True
-        if (self.scraper3_hard.word_finder("cats") and self.scraper3_hard.word_finder("allowed")) or self.scraper3_hard.word_finder("cats"):
+        if (self.scraper3_hard.word_finder(["cats","allowed"])):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, True)
@@ -217,18 +217,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("hardwood"):
+        if self.scraper1_easy.word_finder(["hardwood"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("hardwood"):
+        if self.scraper2_easy.word_finder(["hardwood"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("hardwood"):
+        if self.scraper3_easy.word_finder(["hardwood"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("hardwood"):
+        if self.scraper1_hard.word_finder(["hardwood"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("hardwood"):
+        if self.scraper2_hard.word_finder(["hardwood"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("hardwood"):
+        if self.scraper3_hard.word_finder(["hardwood"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, True)
@@ -248,22 +248,22 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("furnished"):
+        if self.scraper1_easy.word_finder(["furnished"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("furnished"):
+        if self.scraper2_easy.word_finder(["furnished"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("furnished"):
+        if self.scraper3_easy.word_finder(["furnished"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("furnished"):
+        if self.scraper1_hard.word_finder(["furnished"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("furnished"):
+        if self.scraper2_hard.word_finder(["furnished"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("furnished"):
+        if self.scraper3_hard.word_finder(["furnished"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, False)
-        self.assertEqual(scraper_2_basic, True) # EDGE CASE
+        self.assertEqual(scraper_2_basic, False) # EDGE CASE
         self.assertEqual(scraper_3_basic, True)
 
         self.assertEqual(scraper1_hard, False)
@@ -279,18 +279,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("gym"):
+        if self.scraper1_easy.word_finder(["gym"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("gym"):
+        if self.scraper2_easy.word_finder(["gym"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("gym"):
+        if self.scraper3_easy.word_finder(["gym"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("gym"):
+        if self.scraper1_hard.word_finder(["gym"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("gym"):
+        if self.scraper2_hard.word_finder(["gym"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("gym"):
+        if self.scraper3_hard.word_finder(["gym"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, False)
@@ -310,18 +310,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("balcony") or self.scraper1_easy.word_finder("patio"):
+        if self.scraper1_easy.word_finder(["balcony"]) or self.scraper1_easy.word_finder(["patio"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("balcony") or self.scraper2_easy.word_finder("patio"):
+        if self.scraper2_easy.word_finder(["balcony"]) or self.scraper2_easy.word_finder(["patio"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("balcony") or self.scraper3_easy.word_finder("patio"):
+        if self.scraper3_easy.word_finder(["balcony"]) or self.scraper3_easy.word_finder(["patio"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("balcony") or self.scraper1_hard.word_finder("patio"):
+        if self.scraper1_hard.word_finder(["balcony"]) or self.scraper1_hard.word_finder(["patio"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("balcony") or self.scraper2_hard.word_finder("patio"):
+        if self.scraper2_hard.word_finder(["balcony"]) or self.scraper2_hard.word_finder(["patio"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("balcony") or self.scraper3_hard.word_finder("patio"):
+        if self.scraper3_hard.word_finder(["balcony"]) or self.scraper3_hard.word_finder(["patio"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, False)
@@ -341,18 +341,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("pool") or (self.scraper1_easy.word_finder("hot") and self.scraper1_easy.word_finder("tub")):
+        if self.scraper1_easy.word_finder(["pool"]) or self.scraper1_easy.word_finder(["hot","tub"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("pool") or (self.scraper2_easy.word_finder("hot") and self.scraper2_easy.word_finder("tub")):
+        if self.scraper2_easy.word_finder(["pool"]) or self.scraper2_easy.word_finder(["hot","tub"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("pool") or (self.scraper3_easy.word_finder("hot") and self.scraper3_easy.word_finder("tub")):
+        if self.scraper3_easy.word_finder(["pool"]) or self.scraper3_easy.word_finder(["hot","tub"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("pool") or (self.scraper1_hard.word_finder("hot") and self.scraper1_hard.word_finder("tub")):
+        if self.scraper1_hard.word_finder(["pool"]) or self.scraper1_hard.word_finder(["hot","tub"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("pool") or (self.scraper2_hard.word_finder("hot") and self.scraper2_hard.word_finder("tub")):
+        if self.scraper2_hard.word_finder(["pool"]) or self.scraper2_hard.word_finder(["hot","tub"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("pool") or (self.scraper3_hard.word_finder("hot") and self.scraper3_hard.word_finder("tub")):
+        if self.scraper3_hard.word_finder(["pool"]) or self.scraper3_hard.word_finder(["hot","tub"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, False)
@@ -372,18 +372,18 @@ class TestWordScraper(TestCase):
         scraper2_hard = False
         scraper3_hard = False
 
-        if self.scraper1_easy.word_finder("storage"):
+        if self.scraper1_easy.word_finder(["storage"]):
             scraper_1_basic = True
-        if self.scraper2_easy.word_finder("storage"):
+        if self.scraper2_easy.word_finder(["storage"]):
             scraper_2_basic = True
-        if self.scraper3_easy.word_finder("storage"):
+        if self.scraper3_easy.word_finder(["storage"]):
             scraper_3_basic = True
 
-        if self.scraper1_hard.word_finder("storage"):
+        if self.scraper1_hard.word_finder(["storage"]):
             scraper1_hard = True
-        if self.scraper2_hard.word_finder("storage"):
+        if self.scraper2_hard.word_finder(["storage"]):
             scraper2_hard = True
-        if self.scraper3_hard.word_finder("storage"):
+        if self.scraper3_hard.word_finder(["storage"]):
             scraper3_hard = True
 
         self.assertEqual(scraper_1_basic, False)

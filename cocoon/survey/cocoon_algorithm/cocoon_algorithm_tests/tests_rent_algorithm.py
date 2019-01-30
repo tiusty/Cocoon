@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, Mock, patch, call
 import cocoon.houseDatabase.maps_requester as geolocator
 
 # Import external models
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, MlsManagementModel, HomeProviderModel
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
 from cocoon.commutes.distance_matrix import commute_cache_updater
 from cocoon.commutes.models import ZipCodeBase, CommuteType
 from cocoon.commutes.constants import CommuteAccuracy
@@ -1062,8 +1062,6 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         self.state = "MA"
         self.zip_code = '02476'
 
-        MlsManagementModel.objects.create()
-
     @staticmethod
     def create_home(home_type, price=1500,
                     currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
@@ -1259,14 +1257,14 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Tests that the home is valid and is not eliminated
         rent_algorithm.populate_approx_commutes = MagicMock()
         # Doesn't have a return but prevents updating the database unnecessarily
-        commute_cache_updater.update_commutes_cache = MagicMock()
+        commute_cache_updater.update_commutes_cache_rent_algorithm = MagicMock()
 
         # Act
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        commute_cache_updater.update_commutes_cache.assert_called_once_with(homes, [destination],
-                                                                            accuracy=CommuteAccuracy.APPROXIMATE)
+        commute_cache_updater.update_commutes_cache_rent_algorithm.assert_called_once_with(homes, [destination],
+                                                                                           accuracy=CommuteAccuracy.APPROXIMATE)
         rent_algorithm.populate_approx_commutes.assert_called_once_with(homes, destination, lat_lng_dest="")
 
     def test_retrieve_approx_commutes_walking(self):
@@ -1291,7 +1289,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Tests that the home is valid and is not eliminated
         rent_algorithm.populate_approx_commutes = MagicMock(return_value=True)
         # Doesn't have a return but prevents updating the database unnecessarily
-        commute_cache_updater.update_commutes_cache = MagicMock()
+        commute_cache_updater.update_commutes_cache_rent_algorithm = MagicMock()
         # Prevent google maps query
         geolocator.maps_requester.get_lat_lon_from_address = MagicMock(return_value=(42.4080528, -71.1632442))
 
@@ -1299,8 +1297,8 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        commute_cache_updater.update_commutes_cache.assert_called_once_with(homes, [destination],
-                                                                            accuracy=CommuteAccuracy.APPROXIMATE)
+        commute_cache_updater.update_commutes_cache_rent_algorithm.assert_called_once_with(homes, [destination],
+                                                                                           accuracy=CommuteAccuracy.APPROXIMATE)
         rent_algorithm.populate_approx_commutes.assert_called_once_with(homes, destination,
                                                               lat_lng_dest=(42.4080528, -71.1632442))
 
@@ -1331,7 +1329,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         # Tests that the home is valid and is not eliminated
         rent_algorithm.populate_approx_commutes = MagicMock()
         # Doesn't have a return but prevents updating the database unnecessarily
-        commute_cache_updater.update_commutes_cache = MagicMock()
+        commute_cache_updater.update_commutes_cache_rent_algorithm = MagicMock()
         # Prevent google maps query
         geolocator.maps_requester.get_lat_lon_from_address = MagicMock(return_value=(42.4080528, -71.1632442))
 
@@ -1339,9 +1337,9 @@ class TestRetrieveApproximateCommutes(TestCase):
         rent_algorithm.retrieve_all_approximate_commutes()
 
         # Assert
-        commute_cache_updater.update_commutes_cache.assert_called_once_with(homes,
-                                                                            [destination, destination1, destination2],
-                                                                            accuracy=CommuteAccuracy.APPROXIMATE)
+        commute_cache_updater.update_commutes_cache_rent_algorithm.assert_called_once_with(homes,
+                                                                                           [destination, destination1, destination2],
+                                                                                           accuracy=CommuteAccuracy.APPROXIMATE)
         rent_algorithm.populate_approx_commutes.assert_has_calls(
             [call(homes, destination, lat_lng_dest=""),
              call(homes, destination1, lat_lng_dest=""),
@@ -1715,6 +1713,7 @@ class TestRetrieveExactCommutes(TestCase):
         self.assertEqual(rent_algorithm.homes[0].exact_commute_times,
                          {destination: 39})
 
+    @skip('Calls api')
     def test_retrieve_exact_commute_zero_origin(self):
         # Arrange
         survey = self.create_survey(self.user.userProfile)
@@ -1730,6 +1729,7 @@ class TestRetrieveExactCommutes(TestCase):
         # Assert
         self.assertEqual(len(rent_algorithm.homes), 0)
 
+    @skip('calls api')
     def test_retrieve_exact_commute_no_destinations(self):
         # Arrange
         survey = self.create_survey(self.user.userProfile)

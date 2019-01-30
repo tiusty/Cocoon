@@ -5,8 +5,10 @@ from googlemaps import distance_matrix, client
 from config.settings.Global_Config import gmaps_api_key
 
 # Retrieve Constants
-from cocoon.commutes.constants import COMMUTE_TIME_WITH_TRAFFIC, COMMUTE_TIME_WITHOUT_TRAFFIC, TRAFFIC_MODEL_BEST_GUESS,\
-    TRAFFIC_MODEL_PESSIMISTIC, GoogleCommuteNaming
+from cocoon.commutes.constants import TRAFFIC_MODEL_BEST_GUESS, TRAFFIC_MODEL_PESSIMISTIC, GoogleCommuteNaming
+
+# App Modules
+from ..compute_departure_time import compute_departure_time_with_traffic, compute_departure_time_without_traffic
 
 # Load the logger
 import logging
@@ -113,15 +115,25 @@ class DistanceWrapper:
         :param with_traffic: (Boolean) -> Determines whether or not the user wants traffic to be included
         :return: (int) -> The departure time in unix seconds
         """
-        departure_time = COMMUTE_TIME_WITH_TRAFFIC
-        if mode == GoogleCommuteNaming.TRANSIT:
-            departure_time = COMMUTE_TIME_WITH_TRAFFIC
-        elif with_traffic and mode == GoogleCommuteNaming.DRIVING:
-            departure_time = COMMUTE_TIME_WITH_TRAFFIC
-        elif not with_traffic and mode == GoogleCommuteNaming.DRIVING:
-            departure_time = COMMUTE_TIME_WITHOUT_TRAFFIC
 
-        return departure_time
+        # Determines if the departure time should be with traffic or not
+        during_traffic = False
+
+        # Since the transit value is only accurate during rush hour, then use the rush hour time
+        if mode == GoogleCommuteNaming.TRANSIT:
+            during_traffic = True
+        # If the user wants traffic with driving then use the rush hour departure time
+        elif with_traffic and mode == GoogleCommuteNaming.DRIVING:
+            during_traffic = True
+        # If the user does not want traffic with driving then use a non-rush hour time
+        elif not with_traffic and mode == GoogleCommuteNaming.DRIVING:
+            during_traffic = False
+
+        # Depending on what the user wants get the timestamp corresponding to the desired time
+        if during_traffic:
+            return compute_departure_time_with_traffic()
+        else:
+            return compute_departure_time_without_traffic()
 
     @staticmethod
     def determine_traffic_model(mode, with_traffic):
