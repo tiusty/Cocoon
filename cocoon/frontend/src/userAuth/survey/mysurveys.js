@@ -535,6 +535,7 @@ export default class MySurveys extends Component {
                             survey_id={this.state.survey_clicked_id}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}
+                            last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
                             itinerary_scheduled={this.state.itinerary_scheduled}
                             refreshing_document_status={this.state.refreshing_document_status}
                             onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
