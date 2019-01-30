@@ -4,7 +4,7 @@ import {Component} from 'react';
 import axios from 'axios'
 
 // Import Cocoon Components
-import Itinerary from "../itinerary/itinerary";
+import ItineraryAgent from "../itinerary/itinerary_agent";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 
 import "./agentScheduler.css"
@@ -103,8 +103,8 @@ class AgentSchedulerPortal extends Component {
 
     renderItinerary = (itinerary, key, showTimes, canSelect, viewType) => {
         return (
-            <div key={key} className="single-itinerary">
-                <Itinerary
+            <div key={key} className="itinerary-section-wrapper">
+                <ItineraryAgent
                     id={itinerary.id}
                     key={"itinerary" + key}
                     hash={itinerary.hash}
@@ -112,7 +112,7 @@ class AgentSchedulerPortal extends Component {
                     canSelect={canSelect}
                     viewType={viewType}
                 />
-                <button key={"claim" + key} onClick={() => this.claimButtonAction(itinerary.id)}>
+                <button className="claim-button" key={"claim" + key} onClick={() => this.claimButtonAction(itinerary.id)}>
                     {this.state.refreshing ? 'Loading' : 'claim'}
                 </button>
             </div>
@@ -139,7 +139,7 @@ class AgentSchedulerPortal extends Component {
                 <div className="agent-scheduler-wrapper">
                     <button onClick={this.refreshItineraries}>Refresh itineraries</button>
                     <div className='row'>
-                        <div className='col-md-4'>
+                        <div className='col-md-6'>
                             <h2>Available unclaimed itineraries</h2>
                             {this.renderMarketplaceItineraries()}
                         </div>
