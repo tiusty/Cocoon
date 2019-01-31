@@ -228,6 +228,14 @@ class HunterDocModel(models.Model):
     last_resend = models.DateTimeField(default=timezone.now)
 
     def can_resend(self):
+        """
+        Docusign won't let us resend documents within 15 minutes
+
+        Therefore we throttle the ability to send documents to every 15 minutes.
+        If it hasn't been within the specified amount of time, this will return false
+        :return: (Boolean) -> True: The user can resend the document again
+                              False: The user cannot resend the document at this moment
+        """
         return timezone.now() >= self.last_resend + timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES)
 
     def __str__(self):
