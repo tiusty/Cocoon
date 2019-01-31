@@ -1,5 +1,3 @@
-
-
 class IntercomUserData:
     """ Allows intercom to inject user information to the intercom conversation """
 
