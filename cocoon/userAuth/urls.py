@@ -1,6 +1,11 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from . import views
+
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'resendVerificationEmail', views.ResendVerificationEmail, base_name='userAuth-resend-verification')
 
 app_name = 'userAuth'
 urlpatterns = [
@@ -19,4 +24,7 @@ urlpatterns = [
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate_account, name='activateAccount'),
     url(r'^termsofuse', views.TermsOfUse.as_view(), name='terms_of_use'),
+
+    # Api
+    url(r'^api/', include(router.urls))
 ]

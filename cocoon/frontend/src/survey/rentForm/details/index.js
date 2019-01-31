@@ -23,21 +23,25 @@ export default class DetailsForm extends Component {
 
     handleSubmitErrors = (errors) => {
         let valid = true;
-        if (errors.user_form_errors.email) {
-            document.querySelector('#email_error').style.display = 'block';
-            document.querySelector('#email_error').innerText = errors.user_form_errors.email[0];
-            valid = false;
-        } else if (!errors.user_form_errors.email) { document.querySelector('#email_error').style.display = 'none'; }
-        if (errors.user_form_errors.password2) {
-            document.querySelector('#password_error').style.display = 'block';
-            document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
-            valid = false;
-        } else if (!errors.user_form_errors.password2) { document.querySelector('#password_error').style.display = 'none'; }
-        if (errors.user_form_errors.creation_key) {
-            document.querySelector('#creation_key_error').style.display = 'block';
-            document.querySelector('#creation_key_error').innerText = errors.user_form_errors.creation_key[0];
-            valid = false;
-        } else if (errors.user_form_errors.creation_key) { document.querySelector('#creation_key_error').style.display = 'none'; }
+        if (errors.user_form_errors) {
+            if (errors.user_form_errors.email) {
+                document.querySelector('#email_error').style.display = 'block';
+                document.querySelector('#email_error').innerText = errors.user_form_errors.email[0];
+                valid = false;
+            } else if (!errors.user_form_errors.email) { document.querySelector('#email_error').style.display = 'none'; }
+            if (errors.user_form_errors.password2) {
+                document.querySelector('#password_error').style.display = 'block';
+                document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
+                valid = false;
+            } else if (!errors.user_form_errors.password2) {
+                document.querySelector('#password_error').style.display = 'none';
+            }
+            if (errors.user_form_errors.creation_key) {
+                document.querySelector('#creation_key_error').style.display = 'block';
+                document.querySelector('#creation_key_error').innerText = errors.user_form_errors.creation_key[0];
+                valid = false;
+            } else if (errors.user_form_errors.creation_key) { document.querySelector('#creation_key_error').style.display = 'none'; }
+        }
         return valid;
     }
 
