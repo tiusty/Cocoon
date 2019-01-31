@@ -3,6 +3,7 @@ import React from 'react'
 import {Component} from 'react';
 import axios from 'axios'
 import moment from 'moment';
+import _ from 'lodash';
 
 // Import Cocoon Components
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
@@ -26,6 +27,9 @@ class ItineraryAgent extends Component {
     };
 
     updateItinerary() {
+        this.setState({
+            refreshing: true,
+        });
         axios.get(scheduler_endpoints['itinerary'] + this.props.id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
@@ -37,6 +41,9 @@ class ItineraryAgent extends Component {
                     tour_duration_seconds: response.data.tour_duration_seconds_rounded,
                     start_times: response.data.start_times,
                 })
+                this.setState({
+                    refreshing: true,
+                });
             })
     }
 
@@ -93,7 +100,22 @@ class ItineraryAgent extends Component {
         }
     }
 
+    formatTimeAvailable = (time) => {
+        let hours = Math.floor(time / 3600);
+        let minuteDivisor = time % 3600;
+        let minutes = Math.ceil((Math.floor(minuteDivisor / 60)) / 15) * 15;
+        if (minutes === 0) {
+            return `${hours}hrs`;
+        } else {
+            return `${hours}hrs ${minutes}min`;
+        }
+    }
+
     renderClientInfo = () => {
+        if (this.state.client === null || this.state.tour_duration_seconds === null) {
+            return null;
+        }
+
         return (
             <div className="itinerary-section">
                 <div className="itinerary-section-item first-item">
@@ -101,15 +123,19 @@ class ItineraryAgent extends Component {
                 </div>
                 <div className="itinerary-section-item">
                     <span className="item-left-text">Name:</span>
-                    <span className="item-right-text">Sean Rayment</span>
+                    <span className="item-right-text">{_.isUndefined(this.state.client.full_name) ? "Loading" : this.state.client.full_name}</span>
+                </div>
+                <div className="itinerary-section-item">
+                    <span className="item-left-text">Phone:</span>
+                    <span className="item-right-text">{_.isUndefined(this.state.client.phone_number) ? "Loading" : this.state.client.phone_number}</span>
                 </div>
                 <div className="itinerary-section-item">
                     <span className="item-left-text">Email:</span>
-                    <span className="item-right-text">sar5498@gmail.com</span>
+                    <span className="item-right-text">{_.isUndefined(this.state.client.email) ? "Loading" : this.state.client.email}</span>
                 </div>
                 <div className="itinerary-section-item last-item">
                     <span className="item-left-text">Duration:</span>
-                    <span className="item-right-text">3 hr. 15 min.</span>
+                    <span className="item-right-text">{_.isUndefined(this.state.tour_duration_seconds) ? "Loading" : this.formatTimeAvailable(this.state.tour_duration_seconds) }</span>
                 </div>
             </div>
         );
@@ -173,7 +199,6 @@ class ItineraryAgent extends Component {
             let buffer = parseInt(time_available) - parseInt(this.state.tour_duration_seconds);
             while (buffer >= 0) {
                 let unix_moment = moment(time).valueOf();
-                console.log(moment(unix_moment))
                 if (!valid_start_times.includes(unix_moment)) {
                     valid_start_times.push(unix_moment);
                 }
