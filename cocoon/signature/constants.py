@@ -10,4 +10,6 @@ ACCOUNT_ID = "6769317"
 PRE_TOUR_TEMPLATE_ID = 'e998b44f-28cb-4d20-ad67-97a033cbbab1'
 
 # Docusign api throttle
+# They don't allow refreshs faster than 15 minutes.
+# We set it to 16 to be safe
 DOCUSIGN_REFRESH_RATE_MINUTES = 16
