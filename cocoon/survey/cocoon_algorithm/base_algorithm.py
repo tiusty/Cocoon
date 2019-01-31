@@ -94,7 +94,7 @@ class CocoonAlgorithm(object):
         """
 
         # If the user selected draw on map then filter based on the polygons the user drew
-        if filter_type is 1:
+        if filter_type is 1 and len(polygons) > 0:
             point = Point(home.latitude, home.longitude)
             result = False
             for polygon in polygons:
@@ -119,7 +119,6 @@ class CocoonAlgorithm(object):
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
             .filter(currently_available=True) \
             .filter(num_bedrooms=user_survey.num_bedrooms) \
-            .filter(num_bathrooms__range=(user_survey.min_bathrooms, user_survey.max_bathrooms)) \
             .filter(home_type__in=user_survey.home_type.all())\
 
         return house_query

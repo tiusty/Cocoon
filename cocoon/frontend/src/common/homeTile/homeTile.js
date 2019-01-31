@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 // Import Cocoon Components
 import '../styles/variables.css';
 import './homeTile.css';
+import PlaceHolder from './homelist-empty.jpg';
 
 class HomeTile extends Component {
     /**
@@ -41,7 +42,8 @@ class HomeTile extends Component {
         canFavorite: true,
         canVisit: false,
         isLarge: false,
-        displayPercent: false
+        displayPercent: false,
+        percent_match: null
     }
 
     renderScore(home) {
@@ -60,17 +62,20 @@ class HomeTile extends Component {
         }
         let favorite_text = "Add to Favorites";
         let favorite_class = 'home_add_default';
+        let favorite_icon = "favorite_border";
         if (this.props.favorite) {
             favorite_text = "Added to Favorites";
             favorite_class += " home_added";
+            favorite_icon = "favorite";
         } else {
             favorite_text = "Add to Favorites";
             favorite_class = 'home_add_default';
+            favorite_icon = "favorite_border";
         }
         let heart_span = (
             <div className={favorite_class} style={favorite_style} onClick={(e) => this.props.onFavoriteClick(home, e)}>
                 <i className="icon_heart material-icons">
-                    favorite
+                    {favorite_icon}
                 </i>
                 <span>{favorite_text}</span>
             </div>
@@ -128,7 +133,7 @@ class HomeTile extends Component {
         let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
 
         return (
-            <div className="homeInfo">
+            <div onClick={() => this.props.onHomeClick(this.props.id)} className="homeInfo">
                 <div className="homeInfo-group">
                     <span className={bit_classes}>${home.price} <span className="homeInfo-month">/ month</span></span>
                     <span className={bit_classes}>{`${home.num_bedrooms} ${bedInfo} • ${home.num_bathrooms} ${bathInfo}` }</span>
@@ -149,21 +154,31 @@ class HomeTile extends Component {
 
             // Sets percent_match to render on top of image
             let percent_match = null;
-            if (this.props.isLarge && this.props.displayPercent) {
-                percent_match = <span className="homeInfo-percent">{home.percent_match}</span>
+            if (this.props.isLarge && this.props.displayPercent && this.props.percent_match) {
+                percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
             }
 
-            // Only renders first photo
-            return (
-                <>
-                    { home.images.slice(0,1).map(image =>
-                        <div key={image.id} className={div_classes}>
-                            {percent_match}
-                            <img className={image_classes} src={image.image} alt='Home image'/>
-                        </div>
-                    )}
-                </>
-            );
+            // renders placeholder image if home has no images
+            if (home.images.length === 0) {
+                return (
+                    <div onClick={() => this.props.onHomeClick(this.props.id)} className={div_classes}>
+                        {percent_match}
+                        <img src={PlaceHolder} alt="place holder image" className={image_classes} />
+                    </div>
+                );
+            } else {
+                // Only renders first photo
+                return (
+                    <>
+                        { home.images.slice(0,1).map(image =>
+                            <div onClick={() => this.props.onHomeClick(this.props.id)} key={image.id} className={div_classes}>
+                                {percent_match}
+                                <img className={image_classes} src={image.image} alt='Home image'/>
+                            </div>
+                        )}
+                    </>
+                );
+            }
 
         }
     }
@@ -181,7 +196,7 @@ class HomeTile extends Component {
     render(){
         const { home } = this.props;
         return (
-            <div className={this.getTileClass()} onClick={() => this.props.onHomeClick(this.props.id)}>
+            <div className={this.getTileClass()} onMouseEnter={this.props.onMouseEnter} onMouseLeave={this.props.onMouseLeave}>
                 {this.renderScore(home)}
                 {this.renderInfo(home)}
                 {this.renderImages(home)}
@@ -197,12 +212,13 @@ HomeTile.propTypes = {
     home: PropTypes.any.isRequired,
     visit: PropTypes.bool.isRequired,
     favorite: PropTypes.bool.isRequired,
-    onVisitClick: PropTypes.func.isRequired,
+    onVisitClick: PropTypes.func,
     onFavoriteClick: PropTypes.func,
     onHomeClick: PropTypes.func.isRequired,
     canVisit: PropTypes.bool,
     canFavorite: PropTypes.bool,
     isLarge: PropTypes.bool,
     displayPercent: PropTypes.bool,
+    percent_match: PropTypes.number,
 };
 

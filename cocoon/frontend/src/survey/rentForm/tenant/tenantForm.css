@@ -62,3 +62,10 @@
 .tenant-questions-inactive {
     display: none;
 }
+
+/* Address form input */
+.survey-address-input {
+    background-repeat: no-repeat;
+    background-size: 17px;
+    background-position: 10px;
+}

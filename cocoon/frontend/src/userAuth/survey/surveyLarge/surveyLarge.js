@@ -34,7 +34,7 @@ export default class SurveyLarge extends Component {
 
     state = {
         // Variables associated with the tour
-        name: "",
+        survey_name: "",
         url: "",
         desired_price: 0,
         num_bedrooms: 0,
@@ -63,7 +63,7 @@ export default class SurveyLarge extends Component {
             .then(response =>
                 {
                     this.setState({
-                        name: response.data.name,
+                        survey_name: response.data.survey_name,
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
@@ -179,7 +179,7 @@ export default class SurveyLarge extends Component {
          */
         confirmAlert({
             title: 'Confirmation',
-            message: "Are you sure you want to delete " + this.state.name + "?",
+            message: "Are you sure you want to delete " + this.state.survey_name + "?",
             buttons: [
                 {
                     label: 'yes',
@@ -222,7 +222,7 @@ export default class SurveyLarge extends Component {
             .then(response =>
                 {
                     this.setState({
-                        name: response.data.name,
+                        survey_name: response.data.survey_name,
                         url: response.data.url,
                         desired_price: response.data.desired_price,
                         num_bedrooms: response.data.num_bedrooms,
@@ -241,7 +241,7 @@ export default class SurveyLarge extends Component {
                           className="survey-large-close-icon glyphicon glyphicon-remove"/>
                 </div>
                 <div className="survey-large-div-data">
-                    <p className="survey-large-title">{this.state.name}</p>
+                    <p className="survey-large-title">{this.state.survey_name}</p>
                     <div className="row survey-large-survey-div">
                         <div className="col-md-5 survey-large-snapshot-outer">
                             <div className="survey-large-snapshot">

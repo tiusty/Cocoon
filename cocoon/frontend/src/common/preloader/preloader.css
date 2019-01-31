@@ -1,0 +1,38 @@
+.preloader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; width: 100%;
+}
+
+.preloader-dot {
+  animation: Pulse 1.2s ease-in-out infinite;
+  border-radius: 100%;
+}
+
+.preloader-dot:nth-child(1) {
+  animation-delay: 0s;
+  -webkit-animation-delay: 0s;
+}
+
+.preloader-dot:nth-child(2) {
+  animation-delay: .2s;
+  -webkit-animation-delay: .2s;
+}
+
+.preloader-dot:nth-child(3) {
+  animation-delay: .4s;
+  -webkit-animation-delay: .4s;
+}
+
+@keyframes Pulse {
+  0% {
+    transform: rotate(0.001deg) scale(1.0);
+  }
+  40% {
+    transform: rotate(0.001deg) scale(1.2);
+  }
+  70% {
+    transform: rotate(0.001deg) scale(0);
+  }
+}

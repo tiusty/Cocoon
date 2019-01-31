@@ -24,6 +24,7 @@ export default class RentForm extends Component {
         this.state = {
             step: 1,
             loading: false,
+            isEditing: false,
 
             // General Form Fields
             generalInfo: {
@@ -36,19 +37,19 @@ export default class RentForm extends Component {
                 desired_price: 1000,
                 max_price: 3000,
                 price_weight: 2,
-                min_bathrooms: 1,
-                max_bathrooms: 6,
-                parking_spot: 0,
                 earliest_move_in: undefined,
                 latest_move_in: undefined,
-                is_move_asap: 'yes',
+                is_move_asap: undefined,
             },
 
             // Amenities Form Fields
             amenitiesInfo: {
                 wants_laundry_in_unit: false,
+                laundry_in_unit_weight: 0,
                 wants_laundry_in_building: false,
+                laundry_in_building_weight: 0,
                 wants_laundry_nearby: false,
+                laundry_nearby_weight: 0,
                 wants_parking: false,
                 number_of_cars: 0,
                 wants_furnished: false,
@@ -85,6 +86,47 @@ export default class RentForm extends Component {
         this.state['tenants-MAX_NUM_FORMS'] = 1000;
         this.state['tenants-MIN_NUM_FORMS'] = 0;
         this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
+    }
+
+    componentDidMount() {
+        /**
+         * If a survey prop is passed in, then the data for the survey is populated
+         *  via the survey prop
+         *
+         * Otherwise the data is assumed to be blank
+         */
+        if (this.props.survey) {
+            // Do a deep copy... otherwise it is a memory reference and causes issues
+            //  when the component is unmounted
+            let survey = JSON.parse(JSON.stringify(this.props.survey));
+
+            // We need to set the initial forms to the current number of tenants so
+            //  tenants are not duplicated
+            this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;
+
+            // Make sure the tenants are sorted in the order of creation
+            // (the most recently created has the lowest id)
+            let tenants = survey.tenants.sort((a,b) => a.id - b.id);
+
+            // Set data that is not properly set from the backend
+            for(let i=0; i<tenants.length; i++) {
+                // The index matches the order of the tenants
+                tenants[i].index = i;
+
+                // Since the addresses are loaded, they should all be marked as valid initially
+                tenants[i].address_valid = true;
+
+                // Since the commute type is passed back in a dictionary,
+                //  retrieve it and store it directly in the tenant dictionary
+                tenants[i].commute_type = tenants[i].commute_type.id
+            }
+            this.setState({
+                amenitiesInfo: survey.amenitiesInfo,
+                generalInfo: survey.generalInfo,
+                tenants,
+                isEditing: true,
+            })
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -161,30 +203,59 @@ export default class RentForm extends Component {
             data['detailsInfo'] = userData
         }
 
-        // Posts the state which contains all the form elements that are needed
-        axios.post(survey_endpoints['rentSurvey'],
-            {
-                data: data,
-            })
-            .catch(error => {
-                console.log('BAD', error);
-                this.setState({loading: false})
-            })
-            // If the response was successful then don't set loading to true
-            //  because the page will redirect and we don't want the user to click
-            //  the button again
-            .then(response => {
-                // On successful form submit then redirect to survey results page
-                    if (response.data.result) {
-                        window.location = response.data.redirect_url
-                    } else {
-                        this.setState({
-                            errors: response.data
-                        });
-                        this.setState({loading: false})
+        // If the survey is being edited then return the survey data back to the survey results component
+        //  otherwise redirect to the survey results page
+        if (this.state.isEditing) {
+            // Posts the state which contains all the form elements that are needed
+            axios.put(survey_endpoints['rentSurvey'] + this.props.survey.id + '/',
+                {
+                    data: data,
+                    type: 'survey_edit'
+                })
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({loading: false})
+                })
+                .then(response => {
+                        // On successful form submit update the survey state in survey results component
+                        if (response.data.result) {
+                            this.props.onUpdateSurvey(response.data.survey)
+
+                        // If there was an error then return the error
+                        } else {
+                            this.setState({
+                                errors: response.data
+                            });
+                            this.setState({loading: false})
+                        }
                     }
-                }
-            );
+                );
+        } else {
+            // Posts the state which contains all the form elements that are needed
+            axios.post(survey_endpoints['rentSurvey'],
+                {
+                    data: data,
+                })
+                .catch(error => {
+                    console.log('BAD', error);
+                    this.setState({loading: false})
+                })
+                // If the response was successful then don't set loading to true
+                //  because the page will redirect and we don't want the user to click
+                //  the button again
+                .then(response => {
+                        // On successful form submit then redirect to survey results page
+                        if (response.data.result) {
+                            window.location = response.data.redirect_url
+                        } else {
+                            this.setState({
+                                errors: response.data
+                            });
+                            this.setState({loading: false})
+                        }
+                    }
+                );
+        }
     };
 
     // Renders the section of the form based on which step the user is on
@@ -204,6 +275,7 @@ export default class RentForm extends Component {
                         handleLatestClick={this.handleLatestClick}
                         onCompletePolygon={this.handleCompletePolygon}
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
+                        is_editing={this.props.is_editing}
                 />;
             case 2:
                 return <TenantsForm
@@ -213,6 +285,9 @@ export default class RentForm extends Component {
                         number_of_tenants={this.state.generalInfo.number_of_tenants}
                         initTenants={this.initializeTenant}
                         onInputChange={this.handleTenantInputChange}
+                        onTenantCommute={this.handleTenantCommute}
+                        onAddressChange={this.handleAddressChange}
+                        onAddressSelected={this.handleAddressSelected}
                 />;
             case 3:
                 return <AmenitiesForm
@@ -289,6 +364,8 @@ export default class RentForm extends Component {
         let data = "";
         if (type === 'number') {
             data = parseInt(value);
+        } else if (type === 'boolean') {
+            data = (value === 'true');
         } else {
             data = value
         }
@@ -336,6 +413,17 @@ export default class RentForm extends Component {
         this.setState({generalInfo});
     };
 
+    handleTenantCommute = (desired, max, i) => {
+        /**
+         * Updates the tenants desired and max commute value
+         * @type {*[]}
+         */
+        let tenants = [...this.state.tenants];
+        tenants[i].desired_commute = desired;
+        tenants[i].max_commute = max;
+        this.setState({tenants})
+    };
+
 
     // Splits name inputs into first and last names
     handleTenantName = (e) => {
@@ -367,6 +455,51 @@ export default class RentForm extends Component {
             tenants[index].last_name = last_name;
         }
         this.setState({tenants});
+    }
+
+
+    handleAddressChange = (id, value) => {
+        /**
+         * This handles when the user manually types the address
+         *
+         * Since this handles the user changing the addresses, the address_valid
+         *  is set to default because it wasn't selected from the dropdown of choices
+         */
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.tenants.length; i++) {
+            if (tenants[id].index === i) {
+                tenants[id].full_address = value;
+                tenants[id].address_valid = false;
+            }
+        }
+        this.setState({tenants})
+    }
+
+    handleAddressSelected = (index, place) => {
+        /**
+         * This handles when the user selects the address from the drop down of selected homes
+         *
+         * Since this handles the suggested addresses, this sets the addresses to valid
+         */
+        const city = place.address_components.filter(c => c.types[0] === 'locality');
+        const formatCity = city[0].long_name;
+        const state = place.address_components.filter(c => c.types[0] === 'administrative_area_level_1');
+        const formatState = state[0].short_name;
+        const zip_code = place.address_components.filter(c => c.types[0] === 'postal_code');
+        const formatZip = zip_code[0].long_name;
+
+        let tenants = [...this.state.tenants];
+        for (let i=0; i<this.state.tenants.length; i++) {
+            if (tenants[index].index === i) {
+                tenants[index].street_address = place.name;
+                tenants[index].city = formatCity;
+                tenants[index].state = formatState;
+                tenants[index].zip_code = formatZip;
+                tenants[index].full_address = place.formatted_address;
+                tenants[index].address_valid = true;
+            }
+        }
+        this.setState({tenants})
     }
 
 
@@ -414,15 +547,23 @@ export default class RentForm extends Component {
                 tenants[i].city = this.state.tenants[index].city || null;
                 tenants[i].state = this.state.tenants[index].state || null;
                 tenants[i].zip_code = this.state.tenants[index].zip_code || null;
-                tenants[i].full_address = this.state.tenants[index].full_address || null;
+                tenants[i].address_valid = this.state.tenants[index].address_valid || false;
 
                 // Commute questions
                 tenants[i].commute_type = this.state.tenants[index].commute_type || null;
                 tenants[i].traffic_option = this.state.tenants[index].traffic_option || false;
                 tenants[i].transit_options = this.state.tenants[index].transit_options || [];
-                tenants[i].max_commute = this.state.tenants[index].max_commute || 60;
-                tenants[i].min_commute = this.state.tenants[index].min_commute || 0;
-                tenants[i].commute_weight = this.state.tenants[index].commute_weight || 2;
+                tenants[i].max_commute = this.state.tenants[index].max_commute || 100;
+                if (!("desired_commute" in this.state.tenants[index])) {
+                    tenants[i].desired_commute = 60;
+                } else {
+                    tenants[i].desired_commute = this.state.tenants[index].desired_commute;
+                }
+                if (!("commute_weight" in this.state.tenants[index])) {
+                    tenants[i].commute_weight = 2;
+                } else {
+                    tenants[i].commute_weight = this.state.tenants[index].commute_weight;
+                }
 
                 //Other
                 tenants[i].income = this.state.tenants[index].income || null;
