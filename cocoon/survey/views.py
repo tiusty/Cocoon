@@ -15,9 +15,10 @@ from cocoon.userAuth.models import UserProfile
 # Import Survey algorithm modules
 from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
-from .forms import RentSurveyForm, TenantFormSet, TenantFormSetJustNames
+from .forms import RentSurveyForm, RentSurveyFormEdit, TenantFormSet, TenantFormSetJustNames
 from .survey_helpers.save_polygons import save_polygons
 from .serializers import HomeScoreSerializer, RentSurveySerializer
+from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
@@ -312,7 +313,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             if 'tenantInfo' in data:
                 tenant_data = data['tenantInfo']
 
-            form = RentSurveyForm(survey_data, instance=survey)
+            form = RentSurveyFormEdit(survey_data, instance=survey)
             tenants = None
 
             if form.is_valid():
@@ -366,7 +367,7 @@ class RentResultViewSet(viewsets.ViewSet):
         rent_algorithm.run(survey)
 
         # Save the response
-        data = [x for x in rent_algorithm.homes[:25] if x.percent_score() >= 0]
+        data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]
 
         # Serialize the response
         serializer = HomeScoreSerializer(data, many=True)

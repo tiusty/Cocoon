@@ -64,7 +64,8 @@ class WordScraper:
                 or self.word_finder(["washer", "and", "dryer", "in", "building"]) \
                 or self.word_finder(["w", "/", "d", "in", "building"]) \
                 or self.word_finder(["washer", "&", "dryer", "in", "building"]) \
-                or self.word_finder(["wd", "in", "building"]):
+                or self.word_finder(["wd", "in", "building"])\
+                or self.word_finder(["common", "laundry", "room"]):
             return True
         return False
 

@@ -116,6 +116,7 @@ class HouseNearbyAmenitiesModel(models.Model):
     Contains amenities that are near the house
     """
     wants_laundry_nearby = models.BooleanField(default=False)
+    laundry_nearby_weight = models.IntegerField(default=0)
 
     class Meta:
         abstract = True
@@ -127,6 +128,7 @@ class InteriorAmenitiesModel(models.Model):
     All Questions are hybrid weighted
     """
     wants_laundry_in_unit = models.BooleanField(default=False)
+    laundry_in_unit_weight = models.IntegerField(default=0)
     wants_furnished = models.BooleanField(default=False)
     furnished_weight = models.IntegerField(default=0)
     wants_dogs = models.BooleanField(default=False)
@@ -155,6 +157,7 @@ class ExteriorAmenitiesModel(models.Model):
     wants_parking = models.BooleanField(default=False)
     number_of_cars = models.IntegerField(default=0)
     wants_laundry_in_building = models.BooleanField(default=False)
+    laundry_in_building_weight = models.IntegerField(default=0)
     wants_patio = models.BooleanField(default=False)
     patio_weight = models.IntegerField(default=0)
     wants_pool = models.BooleanField(default=False)
@@ -243,30 +246,15 @@ class CommuteInformationModel(models.Model):
     """
     Contains all the commute information for a given home
     """
-    max_commute = models.IntegerField(default=0)
-    min_commute = models.IntegerField(default=0)
+    max_commute = models.IntegerField(default=100)
+    desired_commute = models.IntegerField(default=60)
     commute_weight = models.IntegerField(default=0)
     commute_type = models.ForeignKey(CommuteType)
     traffic_option = models.BooleanField(default=False)
 
     @property
-    def commute_range(self):
-        """
-        Return the commute range as a string
-        :return: String -> Commute range
-        """
-        if self.max_commute > 60:
-            max_output = str(math.floor(self.max_commute / 60)) + " hours " + str(self.max_commute % 60) \
-                         + " Minutes"
-        else:
-            max_output = str(self.max_commute) + " Minutes"
-        if self.min_commute > 60:
-            min_output = str(math.floor(self.min_commute / 60)) + " hours " + str(self.min_commute % 60) \
-                         + " Minutes"
-        else:
-            min_output = str(self.min_commute) + " Minutes"
-
-        return min_output + " - " + max_output
+    def min_commute(self):
+        return 0
 
     class Meta:
         abstract = True

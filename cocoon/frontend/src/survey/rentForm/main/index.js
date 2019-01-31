@@ -45,8 +45,11 @@ export default class RentForm extends Component {
             // Amenities Form Fields
             amenitiesInfo: {
                 wants_laundry_in_unit: false,
+                laundry_in_unit_weight: 0,
                 wants_laundry_in_building: false,
+                laundry_in_building_weight: 0,
                 wants_laundry_nearby: false,
+                laundry_nearby_weight: 0,
                 wants_parking: false,
                 number_of_cars: 0,
                 wants_furnished: false,
@@ -282,6 +285,7 @@ export default class RentForm extends Component {
                         number_of_tenants={this.state.generalInfo.number_of_tenants}
                         initTenants={this.initializeTenant}
                         onInputChange={this.handleTenantInputChange}
+                        onTenantCommute={this.handleTenantCommute}
                         onAddressChange={this.handleAddressChange}
                         onAddressSelected={this.handleAddressSelected}
                 />;
@@ -407,6 +411,17 @@ export default class RentForm extends Component {
         generalInfo.desired_price = desired;
         generalInfo.max_price = max;
         this.setState({generalInfo});
+    };
+
+    handleTenantCommute = (desired, max, i) => {
+        /**
+         * Updates the tenants desired and max commute value
+         * @type {*[]}
+         */
+        let tenants = [...this.state.tenants];
+        tenants[i].desired_commute = desired;
+        tenants[i].max_commute = max;
+        this.setState({tenants})
     };
 
 
@@ -538,9 +553,17 @@ export default class RentForm extends Component {
                 tenants[i].commute_type = this.state.tenants[index].commute_type || null;
                 tenants[i].traffic_option = this.state.tenants[index].traffic_option || false;
                 tenants[i].transit_options = this.state.tenants[index].transit_options || [];
-                tenants[i].max_commute = this.state.tenants[index].max_commute || 60;
-                tenants[i].min_commute = this.state.tenants[index].min_commute || 0;
-                tenants[i].commute_weight = this.state.tenants[index].commute_weight || 2;
+                tenants[i].max_commute = this.state.tenants[index].max_commute || 100;
+                if (!("desired_commute" in this.state.tenants[index])) {
+                    tenants[i].desired_commute = 60;
+                } else {
+                    tenants[i].desired_commute = this.state.tenants[index].desired_commute;
+                }
+                if (!("commute_weight" in this.state.tenants[index])) {
+                    tenants[i].commute_weight = 2;
+                } else {
+                    tenants[i].commute_weight = this.state.tenants[index].commute_weight;
+                }
 
                 //Other
                 tenants[i].income = this.state.tenants[index].income || null;

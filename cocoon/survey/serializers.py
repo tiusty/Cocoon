@@ -17,7 +17,7 @@ class TenantSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('first_name', 'last_name', 'id',
                   'street_address', 'city', 'state', 'zip_code',
                   'commute_type', 'commute_weight', 'traffic_option',
-                  'min_commute', 'max_commute', 'income', 'credit_score',
+                  'desired_commute', 'max_commute', 'income', 'credit_score',
                   'occupation', 'other_occupation_reason', 'unemployed_follow_up', 'new_job', 'full_address')
 
 
@@ -78,8 +78,11 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
         """
         return {
             'wants_laundry_in_unit': obj.wants_laundry_in_unit,
+            'laundry_in_unit_weight': obj.laundry_in_unit_weight,
             'wants_laundry_in_building': obj.wants_laundry_in_building,
+            'laundry_in_building_weight': obj.laundry_in_building_weight,
             'wants_laundry_nearby': obj.wants_laundry_nearby,
+            'laundry_nearby_weight': obj.laundry_nearby_weight,
             'wants_parking': obj.wants_parking,
             'number_of_cars': obj.number_of_cars,
             'wants_furnished': obj.wants_furnished,

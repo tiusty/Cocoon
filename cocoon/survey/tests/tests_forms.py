@@ -4,14 +4,11 @@ from django.utils import timezone
 
 # Import Survey Models and forms
 from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    RentSurveyFormMini, ExteriorAmenitiesForm, InteriorAmenitiesForm, HouseNearbyAmenitiesForm
+    ExteriorAmenitiesForm, InteriorAmenitiesForm, HouseNearbyAmenitiesForm, RentSurveyFormEdit
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 from cocoon.userAuth.models import MyUser
-
-# Import cocoon global config values
-from config.settings.Global_Config import WEIGHT_QUESTION_MAX, MAX_NUM_BATHROOMS
 
 
 class TestHomeInformationForm(TestCase):
@@ -66,21 +63,6 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_home_information_form_num_bedrooms_missing(self):
-        # Arrange
-        form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'home_type': self.home_type
-        }
-        home_information_form = HomeInformationForm(data=form_data)
-
-        # Act
-        result = home_information_form.is_valid()
-
-        # Assert
-        self.assertFalse(result)
-
     def tests_home_information_form_num_bedrooms_less_than_one(self):
         # Arrange
         form_data = {
@@ -122,7 +104,7 @@ class TestCommuteInformationForm(TestCase):
     def setUp(self):
         self.max_commute = 0
         self.min_commute = 0
-        self.commute_weight = 0
+        self.commute_weight = 1
         self.driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         self.transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
@@ -332,7 +314,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': self.max_commute,
-                'min_commute': -1,
+                'desired_commute': -1,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",
@@ -388,7 +370,7 @@ class TestCommuteInformationForm(TestCase):
             # Arrange
             form_data = {
                 'max_commute': 1,
-                'min_commute': 2,
+                'desired_commute': 2,
                 'commute_weight': 1,
                 'commute_type': commute_type.pk,
                 'street_address': "Test Address",
