@@ -44,13 +44,6 @@ Installation
     {% intercom_tag %}
 
 
- Guides
---------
-
-We use custom methods for retrieving data to intercom
-
-Copied from the docs:
-
 User Data
 =========
 By default, django-intercom will send the following user information to intercom.io:
