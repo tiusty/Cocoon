@@ -32,6 +32,7 @@ export default class MapMarker extends Component {
                 onMouseEnter={() => this.props.setHoverId(this.props.id)}
                 onMouseLeave={this.props.removeHoverId}
                 onClick={() => this.props.handleHomeClick(this.props.id)}
+                style={ { position: 'absolute', transform: 'translate(-50%, -50%)' } }
                 className={this.colorMarkers(this.props.score)}>
                 {this.props.score}
             </div>
