@@ -134,6 +134,7 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 raise Http404
 
         doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
+        # doc = get_object_or_404(HunterDocModel, doc_manager=user_profile)
         serializer = HunterDocSerializer(doc)
         return Response(serializer.data)
 
