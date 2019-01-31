@@ -74,7 +74,7 @@ class AgentSchedulerPortal extends Component {
 
     }
 
-    renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {
+    renderItinerary = (itinerary, key, viewType) => {
         return (
             <div key={key} className='itinerary-section-wrapper single-itinerary'>
                 <ItineraryAgent
@@ -82,8 +82,6 @@ class AgentSchedulerPortal extends Component {
                     key={"itinerary" + key}
                     hash={itinerary.hash}
                     refreshItineraries={this.refreshItineraries}
-                    showTimes={showTimes}
-                    canSelect={canSelect}
                     brokerRequest
                     viewType={viewType}
                 />
@@ -99,7 +97,7 @@ class AgentSchedulerPortal extends Component {
             } else {
                 return (
                     <div className='unscheduled-wrapper'>
-                        {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false, true, "itineraryAgent"))}
+                        {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, "itineraryAgentUnscheduled"))}
                     </div>
                 );
             }
@@ -113,7 +111,7 @@ class AgentSchedulerPortal extends Component {
             } else {
                 return (
                     <div className='scheduled-wrapper'>
-                        {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, false, false, false, "itineraryAgent"))}
+                        {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, "itineraryAgentScheduled"))}
                     </div>
                 )
             }

@@ -93,85 +93,6 @@ class ItineraryAgent extends Component {
         }
     }
 
-    // renderStartTimes = () => {
-    //     if (this.props.days.length === 0) {
-    //         return <div className="side-wrapper-times_empty"><p> No start times chosen</p></div>
-    //     } else {
-    //         return (
-    //             <div className="side-wrapper-times">
-    //                 {this.props.days.map((day, index) => {
-    //                     let endTime = moment(day.date).add(day.time_available_seconds, 'seconds')
-    //                     return (
-    //                         <div className="time-item" key={index}>
-    //                             <div className="time-item_date">
-    //                                 <span>{moment(day.date).format('MMMM Do')} @ </span>
-    //                                 <span>{moment(day.date).format('h:mm A')} - {moment(endTime).format('h:mm A')}</span>
-    //                             </div>
-    //                             <div className="time-item_delete" onClick={(event) => this.props.removeStartTime(this.props.id, index, event)}>
-    //                                 <i className="material-icons">add_circle</i>
-    //                             </div>
-    //                         </div>
-    //                     )
-    //                     })}
-    //             </div>
-    //         );
-    //     }
-    // };
-
-    // renderSavedStartTimes = () => (
-    //     <div className="side-wrapper-times">
-    //         {this.state.start_times.map((day, index) => {
-    //             let endTime = moment(day.time).add(day.time_available_seconds, 'seconds')
-    //             return (
-    //                 <div className="time-item" key={index}>
-    //                     <div className="time-item_date">
-    //                         <span>{moment(day.time).format('MMMM Do')} @ </span>
-    //                         <span>{moment(day.time).format('h:mm A')} - {moment(endTime).format('h:mm A')}</span>
-    //                     </div>
-    //                 </div>
-    //             )
-    //         })}
-    //     </div>
-    // );
-
-    // renderCancelButton = () => {
-    //     if (!this.props.is_canceling) {
-    //         return <p id="cancel-itinerary-btn" onClick={this.props.toggleIsCanceling}>Cancel Itinerary</p>
-    //     } else {
-    //         return (
-    //             <p id="cancel-itinerary-btn_confirm">
-    //                 Are you sure?
-    //                 <span onClick={this.props.confirmCancelItinerary}>Yes</span>
-    //                 or
-    //                 <span onClick={this.props.toggleIsCanceling}>No</span>
-    //             </p>
-    //         );
-    //     }
-    // };
-
-    // renderItinerary = ()=> {
-    //     return (
-    //         <>
-    //             <div className="side-wrapper-top">
-    //                 <p>Your Itinerary</p>
-    //                 <p>Estimated Duration: {this.props.formatTimeAvailable(this.state.tour_duration_seconds)}</p>
-    //             </div>
-    //             {this.props.is_pending ? this.renderStartTimes() : this.renderSavedStartTimes()}
-    //         </>
-    //     );
-    // };
-
-    // render() {
-    //     return (
-    //         <>
-    //             <div className="itinerary-side-wrapper">
-    //                 {this.renderItinerary()}
-    //             </div>
-    //             {this.renderCancelButton()}
-    //         </>
-    //     );
-    // }
-
     renderClientInfo = () => {
         return (
             <div className="itinerary-section">
@@ -224,33 +145,6 @@ class ItineraryAgent extends Component {
         );
     }
 
-    renderSavedStartTimes = () => (
-        <div className="side-wrapper-times">
-            {this.state.start_times.map((day, index) => {
-                let endTime = moment(day.time).add(day.time_available_seconds, 'seconds')
-                return (
-                    <div className="time-item" key={index}>
-                        <div className="time-item_date">
-                            <span>{moment(day.time).format('MMMM Do')} @ </span>
-                            <span>{moment(day.time).format('h:mm A')} - {moment(endTime).format('h:mm A')}</span>
-                        </div>
-                    </div>
-                )
-            })}
-        </div>
-    );
-
-    formatTimeAvailable = (time) => {
-        let hours = Math.floor(time / 3600);
-        let minuteDivisor = time % 3600;
-        let minutes = Math.ceil((Math.floor(minuteDivisor / 60)) / 15) * 15;
-        if (minutes === 0) {
-            return `${hours}hrs`;
-        } else {
-            return `${hours}hrs ${minutes}min`;
-        }
-    }
-
     generateTimeDivs = () => {
         let time_list = []
         for (let i = 0; i < this.state.start_times.length; i++) {
@@ -276,7 +170,6 @@ class ItineraryAgent extends Component {
         for (let i=0; i<this.state.start_times.length; i++) {
             let time_available = this.state.start_times[i].time_available_seconds;
             let time = new moment(this.state.start_times[i].time);
-            console.log(time)
             let buffer = parseInt(time_available) - parseInt(this.state.tour_duration_seconds);
             while (buffer >= 0) {
                 let unix_moment = moment(time).valueOf();
@@ -291,11 +184,15 @@ class ItineraryAgent extends Component {
         return valid_start_times;
     }
 
+    renderSelectTime = (unix_time) => {
+             return (<button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="select-time-button">select</button>);
+    }
+
     renderSchedulingInformation = () => {
-        if (this.props.showTimes) {
+        if (this.props.viewType === "itineraryAgentUnscheduled") {
             return (
                 <div className="itinerary-section">
-                    <div className="itinerary-section-item first-item">Available Start Times</div>
+                    <div className="itinerary-section-item first-item">Client Openings</div>
                     {this.getValidStartTimes().map((unix_time, index) => {
                         let start_time = moment(unix_time)
                         return (
@@ -303,7 +200,7 @@ class ItineraryAgent extends Component {
                                 <span>{start_time.format('MMMM Do')} @ </span>
                                 <span>{start_time.format('h:mm')} - {start_time.add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
                                 <span className="item-right-text">
-                                    <button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="select-time-button">select</button>
+                                    {this.renderSelectTime(unix_time)}
                                 </span>
                             </div>
                         );
@@ -311,7 +208,7 @@ class ItineraryAgent extends Component {
                 </div>
             );
 
-        } else if (this.state.selected_start_time) {
+        } else if (this.props.viewType === "itineraryAgentScheduled") {
             return (
                 <div className="itinerary-section">
                     <div className="itinerary-section-item first-item">Selected Start Time</div>
@@ -329,21 +226,6 @@ class ItineraryAgent extends Component {
                 {this.generateTimeDivs()}
             </div>
         );
-
-
-        // return (
-        //     <div className="itinerary-section">
-        //         <div className="itinerary-section-item first-item">
-        //             Schedule Tour
-        //         </div>
-        //         <div className="itinerary-section-item">
-        //             <span className="item-left-text">Jan 1. 4:15 - 7pm</span>
-        //             <span className="item-right-text">
-        //                 <button className="schedule-button">schedule</button>
-        //             </span>
-        //         </div>
-        //     </div>
-        // );
     }
 
     render() {

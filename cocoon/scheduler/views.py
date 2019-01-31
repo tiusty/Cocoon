@@ -179,7 +179,7 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
         if 'schedule' in self.request.data.get('type', None):
             iso_start_time = self.request.data.get('iso_str', None)
             if iso_start_time is not None:
-                proposed_time = TimeModel.objects.get_or_create(
+                proposed_time, created = TimeModel.objects.get_or_create(
                     time=dateparse.parse_datetime(iso_start_time),
                     itinerary=itinerary,
                     time_available_seconds=itinerary.tour_duration_seconds_rounded)
