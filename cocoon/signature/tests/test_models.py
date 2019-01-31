@@ -9,9 +9,10 @@ from cocoon.signature.docusign.docusign_base import DocusignLogin
 
 # Import third party modules
 from unittest.mock import MagicMock, Mock
+from datetime import datetime, timedelta
 
 # Import Constants
-from cocoon.signature.constants import PRE_TOUR_TEMPLATE_ID
+from ..constants import PRE_TOUR_TEMPLATE_ID, DOCUSIGN_REFRESH_RATE_MINUTES
 
 
 class TestSignatureModelsAllDocuments(TestCase):
@@ -159,8 +160,8 @@ class TestSignatureModelsAllDocuments(TestCase):
 
     def test_update_all_is_signed_both_not_signed(self):
         """
-        Tests that if documents state have been changed to signed or not, then the database
-            updates the documents is_signed accordingly
+        Tests that if documents state has been signed then it an api request is not sent to check it,
+            if it is false then it is checked
         """
         # Arrange
         user = MyUser.objects.create(email="test@test.com")
@@ -181,7 +182,7 @@ class TestSignatureModelsAllDocuments(TestCase):
         doc1 = HunterDocModel.objects.get(id=doc1.id)
 
         # Assert
-        self.assertFalse(doc.is_signed)
+        self.assertTrue(doc.is_signed)
         self.assertFalse(doc1.is_signed)
 
     def test_update_all_is_signed_one_signed_one_not(self):
@@ -434,16 +435,19 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         self.assertTrue(result)
         self.assertFalse(result1)
 
-    def test_resend_pre_tour_documents_exists(self):
+    def test_resend_pre_tour_documents_exists_not_within_api_limit(self):
         """
         Tests that if the user wants to resend the pre_tour_forms then if the document exists
-            the document is sent
+            and the api throttle time limit has not been reached the document is sent.
         """
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
         template = HunterDocTemplateModel.create_pre_tour_template()
-        doc = manager.documents.create(template=template, envelope_id='123')
+        doc = manager.documents.create(template=template,
+                                       envelope_id='123',
+                                       last_resend=datetime.now()
+                                                   - timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES))
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -455,6 +459,30 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Assert
         self.assertTrue(result)
         DocusignWrapper.resend_envelope.assert_called_once_with(doc.envelope_id)
+
+    def test_resend_pre_tour_documents_exists_within_api_limit(self):
+        """
+        Tests that if the user wants to resend the pre_tour_forms then if the document exists
+            and the last document resend was within the api throttle limit, then the document is not resent
+        """
+        # Arrange
+        user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
+        manager = HunterDocManagerModel.objects.create(user=user)
+        template = HunterDocTemplateModel.create_pre_tour_template()
+        doc = manager.documents.create(template=template,
+                                       envelope_id='123',
+                                       last_resend=datetime.now())
+
+        # Magic mock to prevent remote api call
+        DocusignLogin.set_up_docusign_api = MagicMock()
+        DocusignWrapper.resend_envelope = MagicMock(return_value=True)
+
+        # Act
+        result = manager.resend_pre_tour_documents()
+
+        # Assert
+        self.assertFalse(result)
+        DocusignWrapper.resend_envelope.assert_not_called()
 
     def test_resend_pre_tour_documents_not_exist(self):
         """
