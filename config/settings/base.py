@@ -315,3 +315,15 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+# Intercom ID from our account
+INTERCOM_APPID = "sivq8o13"
+
+# Intercom configuration for user data
+INTERCOM_USER_DATA_CLASS = 'config.settings.intercom.intercom_user_data.IntercomUserData'
+
+# Intercom configuration for custom data
+INTERCOM_CUSTOM_DATA_CLASSES = [
+    'config.settings.intercom.intercom_user_data.IntercomCustomData',
+]
+
