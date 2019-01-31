@@ -42,7 +42,7 @@ class ItineraryAgent extends Component {
                     start_times: response.data.start_times,
                 })
                 this.setState({
-                    refreshing: true,
+                    refreshing: false,
                 });
             })
     }
@@ -210,7 +210,9 @@ class ItineraryAgent extends Component {
     }
 
     renderSelectTime = (unix_time) => {
-             return (<button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="select-time-button">select</button>);
+             return (<button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="select-time-button">
+                 {this.state.refreshing ? "..." : "select"}
+             </button>);
     }
 
     renderSchedulingInformation = () => {
