@@ -74,6 +74,13 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         # The user is identified by their email address
         return self.email
 
+    @property
+    def date_joined(self):
+        """
+        Needed by intercom. Intercom looks for date_joined field
+        """
+        return self.joined
+
     def has_perm(self, perm, obj=None):
         "Does the user have a spcific premission?"
         # Simpliest possible answer: yes, always

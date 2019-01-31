@@ -1,4 +1,6 @@
 {% load static %}
+{% load intercom %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,7 +90,6 @@
 {% block endScripts %}
     <script src="{% static 'cocoon/main/js/base.js' %}"></script>
 {% endblock %}
-
 {% block footer %}
 
     <footer class="footer">
@@ -96,6 +97,6 @@
     </footer>
 
 {% endblock %}
-
+{% intercom_tag %}
 </body>
 </html>
