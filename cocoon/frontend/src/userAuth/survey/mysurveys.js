@@ -31,6 +31,7 @@ export default class MySurveys extends Component {
         is_pre_tour_signed: false,
         refreshing_document_status: false,
         pre_tour_forms_created: false,
+        last_resend_request_pre_tour: undefined,
 
         // Handles opening a large survey
         survey_clicked_id: undefined,
@@ -213,7 +214,6 @@ export default class MySurveys extends Component {
             })
             .then(response =>
                 this.setState({
-                    id: response.data.id,
                     is_pre_tour_signed: response.data.is_signed,
                     pre_tour_forms_created: true,
                     refreshing_document_status: false,
@@ -241,8 +241,8 @@ export default class MySurveys extends Component {
             })
             .then(response =>
                 this.setState({
-                    id: response.data.id,
                     is_pre_tour_signed: response.data.is_signed,
+                    last_resend_request_pre_tour: response.data.last_resend,
                     refreshing_document_status: false,
                 })
             );
@@ -270,6 +270,7 @@ export default class MySurveys extends Component {
                     this.setState({
                         id: response.data.id,
                         is_pre_tour_signed: response.data.is_signed,
+                        last_resend_request_pre_tour: response.data.last_resend,
                         created: true,
                         refreshing_document_status: false,
                     })
@@ -534,6 +535,7 @@ export default class MySurveys extends Component {
                             survey_id={this.state.survey_clicked_id}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}
+                            last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
                             itinerary_scheduled={this.state.itinerary_scheduled}
                             refreshing_document_status={this.state.refreshing_document_status}
                             onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}

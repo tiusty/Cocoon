@@ -1,6 +1,10 @@
 # Django modules
 from django.db import models
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+
+# Import python modules
+from datetime import timedelta
 
 # Import docusign wrapper classes
 from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
@@ -9,7 +13,7 @@ from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
 from cocoon.userAuth.models import MyUser
 
 # Import constants
-from cocoon.signature.constants import PRE_TOUR_TEMPLATE_ID
+from .constants import PRE_TOUR_TEMPLATE_ID, DOCUSIGN_REFRESH_RATE_MINUTES
 
 # Load the logger
 import logging
@@ -117,7 +121,12 @@ class HunterDocManagerModel(models.Model):
                     HunterDocManagerModel.resend_pre_tour_documents.__name__
                 ))
                 return False
-            return docusign.resend_envelope(envelope_id)
+            if document.can_resend():
+                document.last_resend = timezone.now()
+                document.save()
+                return docusign.resend_envelope(envelope_id)
+            else:
+                return False
         else:
             return False
 
@@ -128,8 +137,9 @@ class HunterDocManagerModel(models.Model):
         """
         docusign = DocusignWrapper()
         for document in self.documents.all():
-            document.is_signed = docusign.determine_is_signed(document.envelope_id)
-            document.save()
+            if not document.is_signed:
+                document.is_signed = docusign.determine_is_signed(document.envelope_id)
+                document.save()
 
     def update_pre_tour_is_signed(self):
         """
@@ -140,8 +150,9 @@ class HunterDocManagerModel(models.Model):
         if self.documents.filter(template=template).exists():
             try:
                 doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
-                doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
-                doc.save()
+                if not doc.is_signed:
+                    doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
+                    doc.save()
             except HunterDocModel.DoesNotExist:
                 pass
 
@@ -214,6 +225,18 @@ class HunterDocModel(models.Model):
     template = models.ForeignKey(HunterDocTemplateModel, related_name="documents", on_delete=models.CASCADE)
     is_signed = models.BooleanField(default=False)
     envelope_id = models.CharField(max_length=200)
+    last_resend = models.DateTimeField(default=timezone.now)
+
+    def can_resend(self):
+        """
+        Docusign won't let us resend documents within 15 minutes
+
+        Therefore we throttle the ability to send documents to every 15 minutes.
+        If it hasn't been within the specified amount of time, this will return false
+        :return: (Boolean) -> True: The user can resend the document again
+                              False: The user cannot resend the document at this moment
+        """
+        return timezone.now() >= self.last_resend + timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES)
 
     def __str__(self):
         return "{0} Document".format(self.template.get_template_type_display())
