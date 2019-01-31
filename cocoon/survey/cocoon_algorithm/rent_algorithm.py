@@ -1,5 +1,4 @@
 # Import global settings
-from config.settings.Global_Config import number_of_exact_commutes_computed
 from cocoon.survey.cocoon_algorithm.base_algorithm import CocoonAlgorithm
 
 # Import survey modules
@@ -7,6 +6,7 @@ from cocoon.survey.cocoon_algorithm.commute_algorithms import CommuteAlgorithm
 from cocoon.survey.cocoon_algorithm.price_algorithm import PriceAlgorithm
 from cocoon.survey.cocoon_algorithm.sorting_algorithms import SortingAlgorithms
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
+from ..constants import NUMBER_OF_EXACT_COMMUTES_COMPUTED
 
 # Import Commutes modules
 from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
@@ -53,7 +53,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         of the users commute radius
         """
         for home_data in self.homes:
-            if not self.compute_approximate_commute_filter(home_data.approx_commute_times):
+            if not self.approximate_commute_filter(home_data.approx_commute_times):
                 home_data.eliminate_home()
 
     def run_compute_commute_score_approximate(self):
@@ -86,8 +86,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         First the function updates all the caches for the new homes and destinations. Then it will populate the rent
             algorithm with valid commutes
         """
-        commute_cache_updater.update_commutes_cache_rent_algorithm(self.homes, self.destinations, accuracy=CommuteAccuracy.APPROXIMATE)
-        for destination in self.destinations:
+        commute_cache_updater.update_commutes_cache_rent_algorithm(self.homes, self.tenants, accuracy=CommuteAccuracy.APPROXIMATE)
+        for destination in self.tenants:
             lat_lng = ""
 
             # If the commute type is walking or bicycling then we need to generate a lat and lng for the destination
@@ -206,11 +206,11 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         updates the exact_commute_minutes property for the top homes, based on a global variable
         in Global_Config. Uses the distance_matrix wrapper.
         """
-        for destination in self.destinations:
+        for destination in self.tenants:
             try:
                 # map list of HomeScore objects to full addresses
                 origin_addresses = list(map(lambda house: house.home.full_address,
-                                        self.homes[:number_of_exact_commutes_computed]))
+                                        self.homes[:NUMBER_OF_EXACT_COMMUTES_COMPUTED]))
 
                 destination_address = destination.full_address
                 results = retrieve_exact_commute(origin_addresses, [destination_address],
@@ -218,7 +218,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                                                  with_traffic=destination.traffic_option)
 
                 # iterates over min of number to be computed and length of results in case lens don't match
-                for i in range(min(number_of_exact_commutes_computed, len(results))):
+                for i in range(min(NUMBER_OF_EXACT_COMMUTES_COMPUTED, len(results))):
                     # update exact commute time with in minutes
                     self.homes[i].exact_commute_times[destination] = int(results[i][0][0] / 60)
 
@@ -244,23 +244,9 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         All the homes are updated with the new score
         :param survey: (RentingSurvey Model) -> The survey the user took
         """
-        self.run_compute_weighted_score_exterior_amenities(survey)
         self.run_compute_weighted_score_interior_amenities(survey)
-
-    def run_compute_weighted_score_exterior_amenities(self, survey):
-        """
-        Runs the exterior amenities scoring.
-        :param survey: (RentingSurvey Model) -> The survey the user took
-        """
-        for home_score in self.homes:
-            if survey.wants_patio:
-                self.handle_weighted_question_score(survey.wants_patio, home_score, home_score.home.patio_balcony)
-            if survey.wants_pool:
-                self.handle_weighted_question_score(survey.pool_weight, home_score, home_score.home.pool)
-            if survey.wants_gym:
-                self.handle_weighted_question_score(survey.gym_weight, home_score, home_score.home.gym)
-            if survey.wants_storage:
-                self.handle_weighted_question_score(survey.storage_weight, home_score, home_score.home.storage)
+        self.run_compute_weighted_score_exterior_amenities(survey)
+        self.run_compute_weighted_score_nearby_amenities(survey)
 
     def run_compute_weighted_score_interior_amenities(self, survey):
         """
@@ -268,6 +254,8 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param survey: (RentingSurvey Model) -> The survey the user took
         """
         for home_score in self.homes:
+            if survey.wants_laundry_in_unit:
+                self.handle_weighted_question_score(survey.laundry_in_unit_weight, home_score, home_score.home.laundry_in_unit)
             if survey.wants_furnished:
                 self.handle_weighted_question_score(survey.furnished_weight, home_score, home_score.home.furnished)
             if survey.wants_hardwood_floors:
@@ -276,6 +264,32 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
                 self.handle_weighted_question_score(survey.AC_weight, home_score, home_score.home.air_conditioning)
             if survey.wants_dishwasher:
                 self.handle_weighted_question_score(survey.dishwasher_weight, home_score, home_score.home.dishwasher)
+
+    def run_compute_weighted_score_exterior_amenities(self, survey):
+        """
+        Runs the exterior amenities scoring.
+        :param survey: (RentingSurvey Model) -> The survey the user took
+        """
+        for home_score in self.homes:
+            if survey.wants_laundry_in_building:
+                self.handle_weighted_question_score(survey.laundry_in_building_weight, home_score, home_score.home.laundry_in_building)
+            if survey.wants_patio:
+                self.handle_weighted_question_score(survey.patio_weight, home_score, home_score.home.patio_balcony)
+            if survey.wants_pool:
+                self.handle_weighted_question_score(survey.pool_weight, home_score, home_score.home.pool)
+            if survey.wants_gym:
+                self.handle_weighted_question_score(survey.gym_weight, home_score, home_score.home.gym)
+            if survey.wants_storage:
+                self.handle_weighted_question_score(survey.storage_weight, home_score, home_score.home.storage)
+
+    def run_compute_weighted_score_nearby_amenities(self, survey):
+        """
+        Runs the interior amenities scoring
+        :param survey: (RentingSurvey Model) -> The survey the user took
+        """
+        for home_score in self.homes:
+            if survey.wants_laundry_nearby:
+                self.handle_weighted_question_score(survey.laundry_nearby_weight, home_score, home_score.home.laundromat_nearby)
 
     def run_sort_home_by_score(self):
         """

@@ -18,7 +18,7 @@ export default class SurveySmall extends Component {
      *  this.props.default_survey: (boolean) True -> Loads a default survey that loads the survey
      *                                       False/Blank -> Loads a survey based on the props passed in
      *  this.props.id: (int) -> The id for the survey
-     *  this.props.name: (string) -> The name of the survey
+     *  this.props.survey_name: (string) -> The name of the survey
      *  this.props.url: (string) -> The url to load the survey
      *  this.props.favorites_length: (int) -> The number of favorite homes for that survey
      *  this.props.visit_list_length: (int) -> The number of visit_list homes
@@ -57,7 +57,7 @@ export default class SurveySmall extends Component {
                         </div>
                         <div className="survey-small-data">
                             <p className="survey-small-title">Roommate Group:</p>
-                            <p className="survey-small-title">{this.props.name}</p>
+                            <p className="survey-small-title">{this.props.survey_name}</p>
                             <p className="survey-small-favorites">homes in favorites: {this.generateFavoriteHomes().length}</p>
                             <p className="survey-small-visit-list">homes in visit
                                 list: {this.props.visit_list.length}</p>

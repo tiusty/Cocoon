@@ -9,7 +9,8 @@ const api_path = app_name + '/api';
 const survey_endpoints = {
     'rentSurveyResult': '/survey/rent/',
     'rentingSurvey': '/survey/rent/',
-    'rentSurvey': '/survey/api/rentSurvey/',
+    'rentSurvey': api_path + '/rentSurvey/',
+    'rentResult': api_path + '/rentResult/',
     'tenants':  api_path + '/tenants/',
 };
 
