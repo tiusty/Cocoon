@@ -174,9 +174,14 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
 
         # Case if an agent is trying to schedule an itinerary they already claimed
         if 'schedule' in self.request.data['type']:
-            time_id = self.request.data['time_id']
+            start_time = self.request.data['unix_time']
 
-            # The start time must be one of the available start times for that itinerary
+            start_time_valid = False
+
+            # find an available start time that works
+            qs = TimeModel.objects.filter(itinerary=itinerary)
+            for time_object in qs:
+                if
             try:
                 time = TimeModel.objects.filter(itinerary=itinerary).get(id=time_id)
                 itinerary.select_start_time(time.time)

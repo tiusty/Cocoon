@@ -58,7 +58,7 @@ class ItineraryAgent extends Component {
         this.updateItinerary();
     }
 
-    selectTime = (id) => {
+    selectTime = (unix_time) => {
         /**
          * Schedules a claimed itinerary by selecting a start time
          */
@@ -66,7 +66,7 @@ class ItineraryAgent extends Component {
         let endpoint = scheduler_endpoints['itineraryAgent'] + this.props.id + '/';
         axios.put(endpoint, {
             type: 'schedule',
-            time_id: id,
+            unix_time: unix_time,
         })
         .catch(error => {
             this.setState({
@@ -194,16 +194,32 @@ class ItineraryAgent extends Component {
         );
     }
 
-    renderApartmentInformation = () => {
+    renderApartmentInformation = (home, index) => {
         return (
-            <div className="itinerary-section">
-                <div className="itinerary-section-item first-item">
-                    2 Snow Hill Lane Medfield, MA 02052
+            <div key={index} className="itinerary-section">
+                <div className="itinerary-section-item home-item">
+                    {home.full_address}
                 </div>
                 <div className="itinerary-section-item">
-                    <span className="item-left-text">MLS No.</span>
-                    <span className="item-right-text">A2349182</span>
+                    <span className="item-left-text">Listing No.</span>
+                    <span className="item-right-text">{home.listing_number}</span>
                 </div>
+                <div className="itinerary-section-item">
+                    <span className="item-left-text">Listing Agent</span>
+                    <span className="item-right-text">{home.listing_agent}</span>
+                </div>
+                <div className="itinerary-section-item">
+                    <span className="item-left-text">Listing Office</span>
+                    <span className="item-right-text">{home.listing_office}</span>
+                </div>
+            </div>
+        );
+    }
+
+    renderTourHomes = () => {
+        return (
+            <div className="itinerary-section-wrapper tour-homes-wrapper">
+                {this.state.homes.map((home, index) => this.renderApartmentInformation(home, index))}
             </div>
         );
     }
@@ -249,12 +265,43 @@ class ItineraryAgent extends Component {
         return time_list;
     }
 
-    getStartTimes = () => {
-
+    getValidStartTimes = () => {
+        let valid_start_times = [];
+        for (let i=0; i<this.state.start_times.length; i++) {
+            let time_available = this.state.start_times[i].time_available_seconds;
+            let time = new moment(this.state.start_times[i].time);
+            console.log(time)
+            let buffer = parseInt(time_available) - parseInt(this.state.tour_duration_seconds);
+            while (buffer >= 0) {
+                let unix_moment = moment(time).valueOf();
+                console.log(moment(unix_moment))
+                if (!valid_start_times.includes(unix_moment)) {
+                    valid_start_times.push(unix_moment);
+                }
+                buffer -= 15 * 60;
+                time.add(15, 'minutes');
+            }
+        }
+        return valid_start_times;
     }
 
     renderSchedulingInformation = () => {
         if (this.props.showTimes) {
+            return (
+                <div className="itinerary-section">
+                    <div className="itinerary-section-item first-item">Available Start Times</div>
+                    {this.getValidStartTimes().map((unix_time, index) => {
+                        let start_time = moment(unix_time)
+                        return (
+                            <div key={index} className="itinerary-section-item">
+                                <span>{start_time.format('MMMM Do')} @ </span>
+                                <span>{start_time.format('h:mm')} - {start_time.add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
+                                <span className="item-right-text"><button onclick={this.selectTimeButton(unix_time)} className="select-time-button">select</button></span>
+                            </div>
+                        );
+                    })}
+                </div>
+            );
 
         }
 
@@ -285,7 +332,7 @@ class ItineraryAgent extends Component {
         return (
             <>
                 {this.renderClientInfo()}
-                {this.renderApartmentInformation()}
+                {this.renderTourHomes()}
                 {this.renderSchedulingInformation()}
             </>
         );

@@ -395,3 +395,6 @@
     float: right;
 }
 
+.home-item {
+    color: var(--teal);
+}
