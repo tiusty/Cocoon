@@ -58,7 +58,7 @@ class ItineraryAgent extends Component {
         this.updateItinerary();
     }
 
-    selectTime = (unix_time) => {
+    selectTime = (iso_time_string) => {
         /**
          * Schedules a claimed itinerary by selecting a start time
          */
@@ -66,7 +66,7 @@ class ItineraryAgent extends Component {
         let endpoint = scheduler_endpoints['itineraryAgent'] + this.props.id + '/';
         axios.put(endpoint, {
             type: 'schedule',
-            unix_time: unix_time,
+            iso_str: iso_time_string,
         })
         .catch(error => {
             this.setState({
@@ -85,9 +85,9 @@ class ItineraryAgent extends Component {
         });
     };
 
-    selectTimeButton(timeObject) {
+    selectTimeButton(iso_time_string) {
         if (!this.state.refreshing) {
-            return this.selectTime(timeObject.id, timeObject.time)
+            return this.selectTime(iso_time_string)
         } else {
             return null
         }
@@ -296,7 +296,9 @@ class ItineraryAgent extends Component {
                             <div key={index} className="itinerary-section-item">
                                 <span>{start_time.format('MMMM Do')} @ </span>
                                 <span>{start_time.format('h:mm')} - {start_time.add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
-                                <span className="item-right-text"><button onclick={this.selectTimeButton(unix_time)} className="select-time-button">select</button></span>
+                                <span className="item-right-text">
+                                    <button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="select-time-button">select</button>
+                                </span>
                             </div>
                         );
                     })}

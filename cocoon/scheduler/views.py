@@ -21,7 +21,9 @@ from cocoon.commutes.constants import CommuteAccuracy
 # Python Modules
 import json
 from datetime import timedelta
-import dateutil.parser
+from django.utils import dateparse
+import datetime
+import dateutil
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -173,22 +175,31 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
         itinerary = get_object_or_404(ItineraryModel, pk=pk)
 
         # Case if an agent is trying to schedule an itinerary they already claimed
-        if 'schedule' in self.request.data['type']:
-            start_time = self.request.data['unix_time']
+        print(self.request.data)
+        if 'schedule' in self.request.data.get('type', None):
+            iso_start_time = self.request.data.get('iso_str', None)
+            if iso_start_time is not None:
+                proposed_time = TimeModel.objects.get_or_create(
+                    time=dateparse.parse_datetime(iso_start_time),
+                    itinerary=itinerary,
+                    time_available_seconds=itinerary.tour_duration_seconds_rounded)
+                start_time_valid = False
 
-            start_time_valid = False
+                # find an available start time that works
+                qs = TimeModel.objects.filter(itinerary=itinerary)
+                for time_object in qs:
+                    if proposed_time.time + datetime.timedelta(seconds=itinerary.tour_duration_seconds_rounded) <= \
+                                    time_object.time + datetime.timedelta(seconds=time_object.time_available_seconds):
+                        start_time_valid = True
+                        break
 
-            # find an available start time that works
-            qs = TimeModel.objects.filter(itinerary=itinerary)
-            for time_object in qs:
-                if
-            try:
-                time = TimeModel.objects.filter(itinerary=itinerary).get(id=time_id)
-                itinerary.select_start_time(time.time)
-                result = True
-            except TimeModel.DoesNotExist:
-                result = False
-                reason = 'Start time is not one of the available start times'
+                if start_time_valid:
+                    itinerary.select_start_time(proposed_time.time)
+                    result = True
+                else:
+                    proposed_time.delete()
+                    result = False
+                    reason = 'Start time is not valid given user preferences'
 
         # Case if the agent is trying to claim an itinerary from the market
         elif 'claim' in self.request.data['type']:
