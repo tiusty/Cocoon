@@ -1,10 +1,10 @@
 # Django modules
 from django.db import models
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
-# Import python mdules
-from datetime import datetime, timedelta
-from pytz import timezone as pytimezone
+# Import python modules
+from datetime import timedelta
 
 # Import docusign wrapper classes
 from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
@@ -29,7 +29,7 @@ class HunterDocManagerModel(models.Model):
         self.user: (OneToOneField) -> A link to the user that the doc manager is related to
     """
     user = models.OneToOneField(MyUser, related_name="doc_manager", on_delete=models.CASCADE)
-    last_resend_request_pre_tour = models.DateTimeField(default=datetime.now)
+    # last_resend_request_pre_tour = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return self.user.full_name
@@ -99,10 +99,6 @@ class HunterDocManagerModel(models.Model):
         template = self.retrieve_pre_tour_template()
         return self.documents.filter(template=template).exists()
 
-    @staticmethod
-    def api_throttle_test(last_send_time):
-        return pytimezone('UTC').localize(datetime.now()) >= last_send_time + timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES)
-
     def resend_pre_tour_documents(self):
         """
         Re-sends the pre tour forms to the user.
@@ -126,9 +122,9 @@ class HunterDocManagerModel(models.Model):
                     HunterDocManagerModel.resend_pre_tour_documents.__name__
                 ))
                 return False
-            if self.api_throttle_test(self.last_resend_request_pre_tour):
-                self.last_resend_request_pre_tour = datetime.now()
-                self.save()
+            if document.can_resend():
+                document.last_resend = timezone.now()
+                document.save()
                 return docusign.resend_envelope(envelope_id)
             else:
                 return False
@@ -230,6 +226,10 @@ class HunterDocModel(models.Model):
     template = models.ForeignKey(HunterDocTemplateModel, related_name="documents", on_delete=models.CASCADE)
     is_signed = models.BooleanField(default=False)
     envelope_id = models.CharField(max_length=200)
+    last_resend = models.DateTimeField(default=timezone.now)
+
+    def can_resend(self):
+        return timezone.now() >= self.last_resend + timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES)
 
     def __str__(self):
         return "{0} Document".format(self.template.get_template_type_display())
