@@ -29,7 +29,6 @@ class HunterDocManagerModel(models.Model):
         self.user: (OneToOneField) -> A link to the user that the doc manager is related to
     """
     user = models.OneToOneField(MyUser, related_name="doc_manager", on_delete=models.CASCADE)
-    # last_resend_request_pre_tour = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return self.user.full_name
