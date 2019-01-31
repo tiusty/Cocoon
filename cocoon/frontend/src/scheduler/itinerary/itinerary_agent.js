@@ -255,10 +255,16 @@ class ItineraryAgent extends Component {
         let time_list = []
         for (let i = 0; i < this.state.start_times.length; i++) {
             if (i == this.state.start_times.length - 1) {
-                let time = <div key={i} className="itinerary-section-item last-item">{this.state.start_times[i].time}</div>
+                let time = <div key={i} className="itinerary-section-item last-item">
+                    <span>{moment(this.state.start_times[i].time).format('MMMM Do')} @ </span>
+                <span>{moment(this.state.start_times[i].time).format('h:mm')} - {moment(this.state.start_times[i].time).add(this.state.start_times[i].time_available_seconds, 'seconds').format('h:mm')}</span>
+                </div>
                 time_list.push(time)
             } else {
-                let time = <div key={i} className="itinerary-section-item">{this.state.start_times[i].time}</div>
+                let time = <div key={i} className="itinerary-section-item">
+                    <span>{moment(this.state.start_times[i].time).format('MMMM Do')} @ </span>
+                <span>{moment(this.state.start_times[i].time).format('h:mm')} - {moment(this.state.start_times[i].time).add(this.state.start_times[i].time_available_seconds, 'seconds').format('h:mm')}</span>
+                </div>
                 time_list.push(time)
             }
         }
@@ -305,11 +311,21 @@ class ItineraryAgent extends Component {
                 </div>
             );
 
+        } else if (this.state.selected_start_time) {
+            return (
+                <div className="itinerary-section">
+                    <div className="itinerary-section-item first-item">Selected Start Time</div>
+                    <div className="itinerary-section-item last-item">
+                        <span>{moment(this.state.selected_start_time).format('MMMM Do')} @ </span>
+                        <span>{moment(this.state.selected_start_time).format('h:mm')} - {moment(this.state.selected_start_time).add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
+                    </div>
+                </div>
+            );
         }
 
         return (
             <div className="itinerary-section">
-                <div className="itinerary-section-item first-item">Available Start Times</div>
+                <div className="itinerary-section-item first-item">Client Openings</div>
                 {this.generateTimeDivs()}
             </div>
         );
