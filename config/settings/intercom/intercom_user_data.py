@@ -1,9 +1,7 @@
-from django.utils.dateformat import DateFormat
 
 
 class IntercomUserData:
-    """ User data class located anywhere in your project
-        This one is located in thepostman/utils/user_data.py """
+    """ Allows intercom to inject user information to the intercom conversation """
 
     def user_data(self, user):
         """ Required method, same name and only accepts one attribute (django User model) """
@@ -17,8 +15,7 @@ class IntercomUserData:
 
 
 class IntercomCustomData:
-    """ User data class located anywhere in your project
-        This one is located in thepostman/utils/user_data.py """
+    """ Allows intercom to inject custom information to the intercom conversation """
 
     def custom_data(self, user):
         """ Required method, same name and only accepts one attribute (django User model) """
