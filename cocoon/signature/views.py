@@ -16,6 +16,10 @@ from .serializers import HunterDocManagerSerializer, HunterDocSerializer, Hunter
 # Load Cocoon Modules
 from cocoon.userAuth.models import UserProfile
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
 
 @method_decorator(login_required, name='dispatch')
 class SignaturePage(TemplateView):
@@ -48,7 +52,8 @@ class HunterDocTemplateViewset(viewsets.ReadOnlyModelViewSet):
 
         if template_type is not None:
             if template_type == 'pre_tour':
-                return HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR)
+                return HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR,
+                                                             id=HunterDocTemplateModel.get_pre_tour_template().id)
             else:
                 raise Http404
         else:
@@ -114,7 +119,6 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 template_type_id: (string) -> The template type id associated with the document
         :return:
         """
-
         # Retrieve the user profile
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
