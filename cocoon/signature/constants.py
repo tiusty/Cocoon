@@ -29,7 +29,7 @@ else:
     AUTHENTICATION_VALUE = get_secret('AUTHENTICATION_VALUE_PROD')
 
     # Templates in prod
-    PRE_TOUR_TEMPLATE_ID = '161b9cfd-42e7-44ed-b1e4-f3e2b070c13e'
+    PRE_TOUR_TEMPLATE_ID = 'c6c2685f-5d82-44f8-b886-387ecc07a7a3'
 
 
 # Docusign api throttle
