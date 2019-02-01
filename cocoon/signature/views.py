@@ -133,7 +133,7 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 #   return 404
                 raise Http404
 
-        doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
+        doc = get_object_or_404(HunterDocModel, doc_manager=user_profile.user.doc_manager, template=template)
         serializer = HunterDocSerializer(doc)
         return Response(serializer.data)
 
@@ -174,7 +174,7 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 user_profile.user.doc_manager.resend_pre_tour_documents()
 
         # Return the document again
-        doc = HunterDocModel.objects.get(doc_manager=user_profile.user.doc_manager, template=template)
+        doc = get_object_or_404(HunterDocModel, doc_manager=user_profile.user.doc_manager, template=template)
         serializer = HunterDocSerializer(doc)
         return Response(serializer.data)
 

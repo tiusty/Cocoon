@@ -1,5 +1,6 @@
 # Import Django Modules
 from django.test import TestCase
+from django.utils import timezone
 
 # Import Cocoon modules
 from cocoon.signature.models import HunterDocModel, HunterDocTemplateModel, HunterDocManagerModel
@@ -9,7 +10,7 @@ from cocoon.signature.docusign.docusign_base import DocusignLogin
 
 # Import third party modules
 from unittest.mock import MagicMock, Mock
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # Import Constants
 from ..constants import PRE_TOUR_TEMPLATE_ID, DOCUSIGN_REFRESH_RATE_MINUTES
@@ -446,7 +447,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         template = HunterDocTemplateModel.create_pre_tour_template()
         doc = manager.documents.create(template=template,
                                        envelope_id='123',
-                                       last_resend=datetime.now()
+                                       last_resend=timezone.now()
                                                    - timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES))
 
         # Magic mock to prevent remote api call
@@ -471,7 +472,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         template = HunterDocTemplateModel.create_pre_tour_template()
         doc = manager.documents.create(template=template,
                                        envelope_id='123',
-                                       last_resend=datetime.now())
+                                       last_resend=timezone.now())
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()

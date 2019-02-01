@@ -187,7 +187,6 @@ class HunterDocTemplateModel(models.Model):
     )
 
     template_type = models.CharField(
-        unique=True,
         max_length=2,
         choices=DOC_TYPE,
         default=PRE_TOUR,
