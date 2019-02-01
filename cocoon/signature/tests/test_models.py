@@ -119,7 +119,7 @@ class TestSignatureModelsAllDocuments(TestCase):
         user1 = MyUser.objects.create(email="test@test1.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
-        template = HunterDocManagerModel.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         template2 = HunterDocTemplateModel.objects.create(template_type="tb", template_id="123")
 
         # Act
@@ -300,7 +300,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         user1 = MyUser.objects.create(email="test@test1.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
-        template = HunterDocManagerModel.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
 
         # Act
         manager1.documents.create(template=template, envelope_id="123", is_signed=True)
@@ -319,7 +319,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         user1 = MyUser.objects.create(email="test@test1.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
-        template = HunterDocManagerModel.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
 
         # Act
         manager.documents.create(template=template, envelope_id="123", is_signed=False)

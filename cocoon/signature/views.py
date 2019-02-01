@@ -53,7 +53,7 @@ class HunterDocTemplateViewset(viewsets.ReadOnlyModelViewSet):
         if template_type is not None:
             if template_type == 'pre_tour':
                 return HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR,
-                                                             template_id=HunterDocTemplateModel.get_pre_tour_template())
+                                                             id=HunterDocTemplateModel.get_pre_tour_template().id)
             else:
                 raise Http404
         else:
@@ -119,7 +119,6 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 template_type_id: (string) -> The template type id associated with the document
         :return:
         """
-        logger.warning('in fucntion')
         # Retrieve the user profile
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
@@ -138,10 +137,7 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 #   return 404
                 raise Http404
 
-        logger.warning('before 404')
-
         doc = get_object_or_404(HunterDocModel, doc_manager=user_profile.user.doc_manager, template=template)
-        logger.warning('after 404')
         serializer = HunterDocSerializer(doc)
         return Response(serializer.data)
 
