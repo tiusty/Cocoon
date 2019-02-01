@@ -47,6 +47,10 @@ jobs:
       # https://pytest.org
       # https://nose.readthedocs.io
       - run:
+          name: move secrets file to correct location
+          command: |
+            mv config/settings/secrets.json.template config/settings/secrets.json
+      - run:
           name: run makemigrations
           command: |
             . venv/bin/activate
