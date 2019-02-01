@@ -1,28 +1,32 @@
 from django.conf import settings
 
+from config.settings.base import get_secret
+
 # Docusign account variables
 REDIRECT_URI = "https://bostoncocoon.com"
 
 # Docusign variables dependent on settings file
 if settings.DEBUG:
-    OAUTH_BASE_URL = "account-d.docusign.com" # use account.docusign.com for Live/Production
-    BASE_URL = "https://demo.docusign.net/restapi"
-    USER_ID = "4d882612-2587-4842-b32b-8d7e24458aba"
-    ACCOUNT_ID = "6769317"
-    INTEGRATOR_KEY = "37951692-e5fe-4e15-af79-9183ac019a57"
+    OAUTH_BASE_URL = get_secret("OAUTH_BASE_URL_DEV")
+    BASE_URL = get_secret('BASE_URL_DEV')
+    USER_ID = get_secret('USER_ID_DEV')
+    ACCOUNT_ID = get_secret('ACCOUNT_ID_DEV')
+    INTEGRATOR_KEY = get_secret('INTEGRATOR_KEY_DEV')
     DOCUSIGN_KEY = "DOCUSIGN_PRIVATE_KEY_DEV"
-    AUTHENTICATION_VALUE = ""
+    AUTHENTICATION_VALUE = get_secret('AUTHENTICATION_VALUE_DEV')
 
     # Templates in dev
     PRE_TOUR_TEMPLATE_ID = 'e998b44f-28cb-4d20-ad67-97a033cbbab1'
 else:
-    OAUTH_BASE_URL = "account.docusign.com"
-    INTEGRATOR_KEY = "37951692-e5fe-4e15-af79-9183ac019a57"
-    ACCOUNT_ID = "42932310"
-    USER_ID = "60c09393-42c2-4319-a6fe-92d345e4540c"
-    BASE_URL = "https://na3.docusign.net/restapi"
+    OAUTH_BASE_URL = get_secret("OAUTH_BASE_URL_PROD")
+    BASE_URL = get_secret('BASE_URL_PROD')
+    USER_ID = get_secret('USER_ID_PROD')
+    ACCOUNT_ID = get_secret('ACCOUNT_ID_PROD')
+    INTEGRATOR_KEY = get_secret('INTEGRATOR_KEY_PROD')
     DOCUSIGN_KEY = "DOCUSIGN_PRIVATE_KEY_PROD"
-    AUTHENTICATION_VALUE = "Mzc5NTE2OTItZTVmZS00ZTE1LWFmNzktOTE4M2FjMDE5YTU3OmFiZDViYjI0LWRmMjctNDEwYS1hYTk3LWQzOTUwZGJhNDk0NQ=="
+
+    # Authentication value is needed for production
+    AUTHENTICATION_VALUE = get_secret('AUTHENTICATION_VALUE_PROD')
 
     # Templates in prod
     PRE_TOUR_TEMPLATE_ID = '161b9cfd-42e7-44ed-b1e4-f3e2b070c13e'
