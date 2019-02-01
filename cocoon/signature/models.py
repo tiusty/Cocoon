@@ -194,9 +194,10 @@ class HunterDocTemplateModel(models.Model):
     template_id = models.CharField(max_length=200)
 
     @staticmethod
-    def create_pre_tour_template():
+    def get_pre_tour_template():
         """
-        Creates the pre_tour_template with the correct template_id
+        Creates the pre_tour_template with the correct template_id if it doesn't exist
+            and returns it
         :return: (HunterDocTemplateModel) -> The created template
         """
         (template, created) = HunterDocTemplateModel.objects.get_or_create(

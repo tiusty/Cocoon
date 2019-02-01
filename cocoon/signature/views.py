@@ -52,7 +52,8 @@ class HunterDocTemplateViewset(viewsets.ReadOnlyModelViewSet):
 
         if template_type is not None:
             if template_type == 'pre_tour':
-                return HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR)
+                return HunterDocTemplateModel.objects.filter(template_type=HunterDocTemplateModel.PRE_TOUR,
+                                                             template_id=HunterDocTemplateModel.get_pre_tour_template())
             else:
                 raise Http404
         else:
