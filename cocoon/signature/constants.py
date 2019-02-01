@@ -33,6 +33,6 @@ else:
 
 
 # Docusign api throttle
-# They don't allow refreshs faster than 15 minutes.
+# They don't allow refresh faster than 15 minutes.
 # We set it to 16 to be safe
 DOCUSIGN_REFRESH_RATE_MINUTES = 16
