@@ -118,7 +118,7 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 template_type_id: (string) -> The template type id associated with the document
         :return:
         """
-        logger.warn('in fucntion')
+        logger.warning('in fucntion')
         # Retrieve the user profile
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
@@ -137,10 +137,10 @@ class HunterDocViewset(viewsets.ModelViewSet):
                 #   return 404
                 raise Http404
 
-        print('before 404')
+        logger.warning('before 404')
 
         doc = get_object_or_404(HunterDocModel, doc_manager=user_profile.user.doc_manager, template=template)
-        print('after 404')
+        logger.warning('after 404')
         serializer = HunterDocSerializer(doc)
         return Response(serializer.data)
 
