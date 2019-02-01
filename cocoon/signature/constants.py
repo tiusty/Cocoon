@@ -6,7 +6,7 @@ from config.settings.base import get_secret
 REDIRECT_URI = "https://bostoncocoon.com"
 
 # Docusign variables dependent on settings file
-if not settings.DEBUG:
+if settings.DEBUG:
     OAUTH_BASE_URL = get_secret("OAUTH_BASE_URL_DEV")
     BASE_URL = get_secret('BASE_URL_DEV')
     USER_ID = get_secret('USER_ID_DEV')
