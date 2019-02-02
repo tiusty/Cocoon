@@ -170,21 +170,27 @@ nav .nav-links_mobile .hamburger-menu.mobile-links_open span:nth-of-type(2) {
     width: 100%;
     z-index: 999999;
     box-shadow: inset 0 9px 20px rgba(0, 0, 0, 0.2);
+    font-family: 'Montserrat', sans-serif;
 }
 
 .mobile-links a {
     text-decoration: none;
-    font-size: 2em;
+    font-size: 20px;
     margin-bottom: 30px;
     font-weight: 700;
     color: #ffffff;
-    padding-left: 30px;
+    padding-left: 15px;
 }
 
 .mobile-links a:last-of-type {
     border: none;
     opacity: .6;
     margin-bottom: 0;
+}
+
+.mobile-links a:hover {
+    color: var(--redOrange);
+    text-decoration: none;
 }
 
 .mobile-links {
@@ -204,7 +210,7 @@ nav .nav-links_mobile .hamburger-menu.mobile-links_open span:nth-of-type(2) {
 
 @media screen and (max-width: 768px) {
     nav {
-        padding: 0 30px;
+        padding: 0 15px;
     }
     nav .nav-links_desktop {
         display: none;
