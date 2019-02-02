@@ -9,11 +9,12 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Cocoon | Find yours with us.</title>
   <meta name="theme-color" content="#A13718" />
+  <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
   <link href="{% static 'homePage/newLandingPage.css' %}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/tiny-slider.css">
+  <link rel="stylesheet" href="{% static 'homePage/aos-scroll-reveal.css' %}" />
+  <link rel="stylesheet" href="{% static 'homePage/tiny-slider.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -38,18 +39,20 @@
       {% else %}
       <!-- Authorized Links -->
       <div>
-        <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
-        <span>/</span>
-        <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
-        <span>/</span>
+        {% if user.is_hunter %}
+            <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
+            <span>/</span>
+            <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
+            <span>/</span>
+        {% endif %}
         {% if user.is_broker or user.is_admin%}
-          <a href="#">Agent Portal</a>
+          <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>
           <span>/</span>
-          <a href="#">Marketplace</a>
+          <a href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a>
           <span>/</span>
         {% endif %}
         <div id="dropdown">
-          <button>nelsonc19@gmail.com <i class="material-icons">arrow_drop_down</i></button>
+          <button>{{ user.email }} <i class="material-icons">arrow_drop_down</i></button>
           <div class="dropdown-content">
             <a href="{% url 'userAuth:user_profile' %}">Profile</a>
             <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
@@ -121,6 +124,16 @@
               <a href="{% url 'survey:rentingSurvey' %}">Get Started</a>
             </div>
           </div>
+
+            <div class="slider-controls">
+                <span class="slider-text" id="slider-prev">Prev</span>
+                <div class="circle-controls">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="slider-text" id="slider-next">Next</span>
+            </div>
 
         </div>
       </section>
@@ -246,7 +259,7 @@
 
 {% intercom_tag %}
 {% block endScripts %}
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/min/tiny-slider.js"></script>
+    <script src="{% static 'homePage/aos-scroll-reveal.js' %}"></script>
+    <script src="{% static 'homePage/tiny-slider.js' %}"></script>
     <script src="{% static 'homePage/landingPage.js' %}"></script>
 {% endblock %}
