@@ -96,6 +96,9 @@ nav #dropdown {
     border-radius: 5px;
     text-align: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+    /* Make sure that the dropdown goes on top of the divs */
+    z-index: 1;
 }
 
 #dropdown .dropdown-content a {
@@ -372,7 +375,3 @@ footer p {
     font-size: 1.1em;
     color: white;
 }
-/**,*::before,*::after {*/
-  /*border: 1px solid red !important;*/
-/*}*/
-
