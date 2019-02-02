@@ -5,10 +5,23 @@
 <html lang="en">
 <head>
     <title>{% block title %} Base Page {% endblock %}</title>
+    <!-- JQuery CDN -->
+    <script
+            src="https://code.jquery.com/jquery-2.2.4.js"
+            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+            crossorigin="anonymous"></script>
+    <!-- Bootstrap style sheet -->
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="theme-color" content="#A13718" />
     <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
+    <link rel="stylesheet" href="{% static 'bootstrap-3.4.0-custom/css/bootstrap.css' %}">
     <link href="{% static 'cocoon/main/css/base.css' %}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -109,6 +122,7 @@
 
 </div>
 {% block endScripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="{% static 'cocoon/main/js/base.js' %}"></script>
     <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>
 {% endblock %}

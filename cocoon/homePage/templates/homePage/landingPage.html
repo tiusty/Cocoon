@@ -3,15 +3,12 @@
 {% load intercom %}
 
 {% block head %}
+    {{ block.super }}
   {% comment %} Domain Verfication{% endcomment %}
   <meta name="google-site-verification" content="EZpbJ3VrkWORskv6xVg5hoxs3cjmN7UBjbKu6AZW4C8"/>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Cocoon | Find yours with us.</title>
   <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="{% static 'homePage/newLandingPage.css' %}" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'homePage/aos-scroll-reveal.css' %}" />
   <link rel="stylesheet" href="{% static 'homePage/tiny-slider.css' %}">
@@ -182,7 +179,7 @@
 
 {% intercom_tag %}
 {% block endScripts %}
-    <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>
+    {{ block.super }}
     <script src="{% static 'homePage/aos-scroll-reveal.js' %}"></script>
     <script src="{% static 'homePage/tiny-slider.js' %}"></script>
     <script src="{% static 'homePage/landingPage.js' %}"></script>
