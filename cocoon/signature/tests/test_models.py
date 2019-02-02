@@ -119,7 +119,7 @@ class TestSignatureModelsAllDocuments(TestCase):
         user1 = MyUser.objects.create(email="test@test1.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
-        template = HunterDocManagerModel.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         template2 = HunterDocTemplateModel.objects.create(template_type="tb", template_id="123")
 
         # Act
@@ -300,7 +300,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         user1 = MyUser.objects.create(email="test@test1.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
-        template = HunterDocManagerModel.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
 
         # Act
         manager1.documents.create(template=template, envelope_id="123", is_signed=True)
@@ -319,7 +319,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         user1 = MyUser.objects.create(email="test@test1.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
-        template = HunterDocManagerModel.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
 
         # Act
         manager.documents.create(template=template, envelope_id="123", is_signed=False)
@@ -352,7 +352,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
-        HunterDocTemplateModel.create_pre_tour_template()
+        HunterDocTemplateModel.get_pre_tour_template()
         DocusignLogin.set_up_docusign_api = MagicMock()
         DocusignWrapper.send_document_for_signatures = MagicMock(return_value="123")
 
@@ -406,7 +406,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.create_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         manager.documents.create(template=template)
 
         # Act
@@ -425,7 +425,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         user1 = MyUser.objects.create(email="awagud121@gmail.com")
         manager = HunterDocManagerModel.objects.create(user=user)
         manager1 = HunterDocManagerModel.objects.create(user=user1)
-        template = HunterDocTemplateModel.create_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         manager.documents.create(template=template)
 
         # Act
@@ -444,7 +444,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.create_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         doc = manager.documents.create(template=template,
                                        envelope_id='123',
                                        last_resend=timezone.now()
@@ -469,7 +469,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.create_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         doc = manager.documents.create(template=template,
                                        envelope_id='123',
                                        last_resend=timezone.now())
@@ -493,7 +493,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
-        HunterDocTemplateModel.create_pre_tour_template()
+        HunterDocTemplateModel.get_pre_tour_template()
 
         # Magic mock to prevent remote api call
         DocusignLogin.set_up_docusign_api = MagicMock()
@@ -514,7 +514,7 @@ class TestSignatureModelsPreTourDocuments(TestCase):
         # Arrange
         user = MyUser.objects.create(email="awagud12@gmail.com", first_name="TestName", last_name="TestLast")
         manager = HunterDocManagerModel.objects.create(user=user)
-        template = HunterDocTemplateModel.create_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         manager.documents.create(template=template, envelope_id='123')
         manager.documents.create(template=template, envelope_id='321')
 

@@ -58,7 +58,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: The document is signed
                               False: The document is not signed
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         if self.documents.filter(template=template).exists():
             try:
                 doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
@@ -77,7 +77,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: The document was successfully created
                               False: The document was not successfully created
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         docusign = DocusignWrapper()
         envelope_id = docusign.send_document_for_signatures(template.template_id,
                                                             self.user.email,
@@ -95,7 +95,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: The pre_tour forms were created
                               False: The pre_tour forms were not created
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         return self.documents.filter(template=template).exists()
 
     def resend_pre_tour_documents(self):
@@ -105,7 +105,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: If the pre tour documents are resent
                               False: IF the pre tour documents are not resent
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         docusign = DocusignWrapper()
         if self.documents.filter(template=template).exists():
             try:
@@ -146,7 +146,7 @@ class HunterDocManagerModel(models.Model):
         Checks the status of the pre tour documents and sees if it is signed
         """
         docusign = DocusignWrapper()
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         if self.documents.filter(template=template).exists():
             try:
                 doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
@@ -155,21 +155,6 @@ class HunterDocManagerModel(models.Model):
                     doc.save()
             except HunterDocModel.DoesNotExist:
                 pass
-
-    @staticmethod
-    def retrieve_pre_tour_template():
-        """
-        Wrapper class to retrieve the pre_tour template
-
-        This will either return the template if it exists, or creates it with the correct
-            template_id if it doesn't exist
-        :return: (HunterDocTemplateModel) -> Returns the pre tour template model
-        """
-        (template, created) = HunterDocTemplateModel.objects.get_or_create(
-            template_type=HunterDocTemplateModel.PRE_TOUR,
-            template_id=PRE_TOUR_TEMPLATE_ID,
-        )
-        return template
 
 
 class HunterDocTemplateModel(models.Model):
@@ -194,9 +179,10 @@ class HunterDocTemplateModel(models.Model):
     template_id = models.CharField(max_length=200)
 
     @staticmethod
-    def create_pre_tour_template():
+    def get_pre_tour_template():
         """
-        Creates the pre_tour_template with the correct template_id
+        Creates the pre_tour_template with the correct template_id if it doesn't exist
+            and returns it
         :return: (HunterDocTemplateModel) -> The created template
         """
         (template, created) = HunterDocTemplateModel.objects.get_or_create(

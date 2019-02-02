@@ -28,4 +28,4 @@ class Command(BaseCommand):
         """
         Creates the hunter doc template for pre tour
         """
-        HunterDocTemplateModel.create_pre_tour_template()
+        HunterDocTemplateModel.get_pre_tour_template()
