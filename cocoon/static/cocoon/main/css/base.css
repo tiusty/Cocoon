@@ -214,6 +214,10 @@ nav .nav-links_mobile .hamburger-menu.mobile-links_open span:nth-of-type(2) {
     }
 }
 
+#siteWrapper {
+    min-height: calc(100vh - 54px);
+}
+
 /* Customizes the buttons */
 .btn {
     display: inline-block;
