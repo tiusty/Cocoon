@@ -2,7 +2,8 @@
   "vars": {},
   "css": [
     "grid.less",
-    "forms.less"
+    "forms.less",
+    "wells.less"
   ],
   "js": []
 }
