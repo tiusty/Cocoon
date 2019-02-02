@@ -21,7 +21,6 @@
 </head>
 <body>
 
-<div id="siteWrapper" class="{% block container_type %}container{% endblock %}">
 {% block nav_bar %}
     <nav id="bootstrap-override-nav">
         <div class="logo">
@@ -94,6 +93,8 @@
     </div>
     {% comment %}END OF HEADER & NAV MENUS{% endcomment %}
 {% endblock nav_bar %}
+
+<div id="siteWrapper" class="{% block container_type %}container{% endblock %}">
         {% for message in messages %}
             <div class="alert {{ message.tags }} alert-dismissible message_timeout" role="alert" style="text-align: center; margin-bottom: 0">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
