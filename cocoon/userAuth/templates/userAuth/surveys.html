@@ -2,6 +2,11 @@
 {% load static %}
 {% block title %}My Surveys{% endblock %}
 
+{% block head %}
+    {{ block.super }}
+{#    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist-old/css/bootstrap.css' %}">#}
+{% endblock %}
+
 {% block container_type %}
 {% endblock %}
 

@@ -14,7 +14,7 @@
     <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="{% static 'homePage/newLandingPage.css' %}" rel="stylesheet">
+{#    <link href="{% static 'homePage/newLandingPage.css' %}" rel="stylesheet">#}
 {% block head %}
 
 {% endblock %}
@@ -23,7 +23,7 @@
 
 <div id="siteWrapper" class="{% block container_type %}container{% endblock %}">
 {% block nav_bar %}
-    <nav>
+    <nav id="bootstrap-override-nav">
         <div class="logo">
             <a href="{% url 'homePage:index' %}">
                 <img src="{% static 'homePage/cocoon-logo_beta.png' %}" alt="">
@@ -32,7 +32,7 @@
 
         <div class="nav-links_desktop">
 
-            <!-- Unauthorized Links -->
+            {% comment %}Unauthorized Links{% endcomment %}
             {% if not user.is_authenticated %}
 
                 <div>
@@ -42,7 +42,7 @@
                 </div>
 
             {% else %}
-                <!-- Authorized Links -->
+                {% comment %}Authorized Links{% endcomment %}
                 <div>
                     {% if user.is_hunter or user.is_admin %}
                         <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
@@ -67,7 +67,7 @@
             {% endif %}
         </div>
 
-        <!-- Mobile Nav -->
+        {% comment %}Mobile Nav{% endcomment %}
         <div class="nav-links_mobile">
             <div class="hamburger-menu">
                 <span></span>
@@ -92,7 +92,7 @@
             <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
         {% endif %}
     </div>
-    <!-- END OF HEADER & NAV MENUS -->
+    {% comment %}END OF HEADER & NAV MENUS{% endcomment %}
 {% endblock nav_bar %}
         {% for message in messages %}
             <div class="alert {{ message.tags }} alert-dismissible message_timeout" role="alert" style="text-align: center; margin-bottom: 0">
