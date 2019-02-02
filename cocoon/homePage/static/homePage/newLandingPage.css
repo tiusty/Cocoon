@@ -7,6 +7,12 @@ h1 {
   margin-bottom: 15px;
 }
 
+/*body {*/
+  /*font-family: 'Montserrat', sans-serif;*/
+  /*color: var(--black);*/
+  /*font-size: 62.5%;*/
+/*}*/
+
 h2 {
   font-size: 2.4em;
   line-height: 1.5;
