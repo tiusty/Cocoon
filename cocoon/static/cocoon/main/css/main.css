@@ -48,87 +48,87 @@ body {
 
 ************************/
 
-.navbar {
-    position: absolute;
-    z-index: 7;
-}
+/*.navbar {*/
+    /*position: absolute;*/
+    /*z-index: 7;*/
+/*}*/
 
-.navbar-animated {
-    position: fixed !important;
-    border: none;
-    box-shadow: 0px 0px 2px 0px black;
-    opacity: 0.96;
-}
+/*.navbar-animated {*/
+    /*position: fixed !important;*/
+    /*border: none;*/
+    /*box-shadow: 0px 0px 2px 0px black;*/
+    /*opacity: 0.96;*/
+/*}*/
 
-.navbar-default .navbar-nav .open .dropdown-menu > li > a {
-    color: black;
-}
+/*.navbar-default .navbar-nav .open .dropdown-menu > li > a {*/
+    /*color: black;*/
+/*}*/
 
-.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-    background-color: #c67969;
-}
+/*.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {*/
+    /*background-color: #c67969;*/
+/*}*/
 
-.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {
-    background-color: #c67969;
-}
+/*.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {*/
+    /*background-color: #c67969;*/
+/*}*/
 
-li.dropdown-header {
-    color: #efefef;
-}
+/*li.dropdown-header {*/
+    /*color: #efefef;*/
+/*}*/
 
-li.dropdown-header {
-    color: white;
-}
+/*li.dropdown-header {*/
+    /*color: white;*/
+/*}*/
 
-.navbar-default .navbar-nav > li > a {
-    color: #fff;
-}
+/*.navbar-default .navbar-nav > li > a {*/
+    /*color: #fff;*/
+/*}*/
 
-.navbar-default .navbar-nav > li > a:hover {
-    color: #eee !important;
-}
+/*.navbar-default .navbar-nav > li > a:hover {*/
+    /*color: #eee !important;*/
+/*}*/
 
-.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-    background: none;
-    color: white;
-}
+/*.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {*/
+    /*background: none;*/
+    /*color: white;*/
+/*}*/
 
-.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-    background-color: #a13718;
-    color: #fff;
-}
+/*.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {*/
+    /*background-color: #a13718;*/
+    /*color: #fff;*/
+/*}*/
 
-.navbar, .navbar-default, navbar-fixed-top {
-    z-index: 3000;
-}
+/*.navbar, .navbar-default, navbar-fixed-top {*/
+    /*z-index: 3000;*/
+/*}*/
 
-.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-    color: #efefef;
-}
+/*.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {*/
+    /*color: #efefef;*/
+/*}*/
 
-.navbar-default .navbar-toggle {
-    background-color: #fff;
-}
+/*.navbar-default .navbar-toggle {*/
+    /*background-color: #fff;*/
+/*}*/
 
-.navbar-brand {
-    font-family: 'Lobster', cursive;
-    color: #fff !important;
-    text-decoration: none;
-}
+/*.navbar-brand {*/
+    /*font-family: 'Lobster', cursive;*/
+    /*color: #fff !important;*/
+    /*text-decoration: none;*/
+/*}*/
 
-.navbar-brand:hover {
-    color: #efefef !important;
-}
+/*.navbar-brand:hover {*/
+    /*color: #efefef !important;*/
+/*}*/
 
-.navbar-fixed-top {
-    background-color: #a13718;
+/*.navbar-fixed-top {*/
+    /*background-color: #a13718;*/
 
-}
+/*}*/
 
-.navbar-right > li.login-block {
-    min-width: 150px;
-    text-align: center;
-}
+/*.navbar-right > li.login-block {*/
+    /*min-width: 150px;*/
+    /*text-align: center;*/
+/*}*/
 
 /***********************
 
@@ -330,199 +330,199 @@ fieldset[disabled] .btn-danger.focus {
 
  ********************************/
 
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {*/
 
-    .navbar-nav > li > a.link {
-        font-size: 16px;
-        padding: auto 15px;
-        height: 60px;
-        line-height: 28px;
-        /*line-height: 10px;*/
-    }
+    /*.navbar-nav > li > a.link {*/
+        /*font-size: 16px;*/
+        /*padding: auto 15px;*/
+        /*height: 60px;*/
+        /*line-height: 28px;*/
+        /*!*line-height: 10px;*!*/
+    /*}*/
 
-    .navbar-brand {
-        padding: 0px 1px;
-        font-size: 42px;
-        height: 60px;
-        margin-left: 0px !important;
-        line-height: 55px;
-    }
+    /*.navbar-brand {*/
+        /*padding: 0px 1px;*/
+        /*font-size: 42px;*/
+        /*height: 60px;*/
+        /*margin-left: 0px !important;*/
+        /*line-height: 55px;*/
+    /*}*/
 
-    .navbar-nav {
-        float: right;
-    }
+    /*.navbar-nav {*/
+        /*float: right;*/
+    /*}*/
 
-    #rightmost-nav-item {
-        border-right: 1px solid #efefef;
-    }
+    /*#rightmost-nav-item {*/
+        /*border-right: 1px solid #efefef;*/
+    /*}*/
 
-    .nav-brand-animated {
-        padding-left: 15px;
-        line-height: 45px !important;
-        font-size: 36px !important;
-        height: 45px;
+    /*.nav-brand-animated {*/
+        /*padding-left: 15px;*/
+        /*line-height: 45px !important;*/
+        /*font-size: 36px !important;*/
+        /*height: 45px;*/
 
-        /* Uncomment these lines to add animated nav back */
+        /*!* Uncomment these lines to add animated nav back *!*/
 
-        /*transition: padding-top .2s ease-in;*/
-        /*transition: padding-bottom .2s ease-in;*/
-    }
+        /*!*transition: padding-top .2s ease-in;*!*/
+        /*!*transition: padding-bottom .2s ease-in;*!*/
+    /*}*/
 
-    .navbar {
-        min-height: 45px !important;
-    }
+    /*.navbar {*/
+        /*min-height: 45px !important;*/
+    /*}*/
 
-    .navbar-nav > li > a.link-animated {
-        font-size: 14px !important;
-        padding: 0px 10px !important;
-        line-height: 40px !important;
-        height: 45px;
+    /*.navbar-nav > li > a.link-animated {*/
+        /*font-size: 14px !important;*/
+        /*padding: 0px 10px !important;*/
+        /*line-height: 40px !important;*/
+        /*height: 45px;*/
 
-        /* Uncomment these lines to add animated nav back */
+        /*!* Uncomment these lines to add animated nav back *!*/
 
-        /*transition: padding-top .2s ease-in;*/
-        /*transition: padding-bottom .2s ease-in;*/
-    }
+        /*!*transition: padding-top .2s ease-in;*!*/
+        /*!*transition: padding-bottom .2s ease-in;*!*/
+    /*}*/
 
-    .nav-logo-animated {
-        display: none;
-    }
+    /*.nav-logo-animated {*/
+        /*display: none;*/
+    /*}*/
 
-    li.dropdown-header {
-        color: black;
-    }
+    /*li.dropdown-header {*/
+        /*color: black;*/
+    /*}*/
 
-}
+/*}*/
 
-@media (max-width: 1021px) and (min-width: 768px) {
+/*@media (max-width: 1021px) and (min-width: 768px) {*/
 
-    .navbar-nav > li > a.link {
-        padding: 0px 15px;
-        line-height: 60px;
-    }
+    /*.navbar-nav > li > a.link {*/
+        /*padding: 0px 15px;*/
+        /*line-height: 60px;*/
+    /*}*/
 
-    .navbar-right > li.login-block {
-        min-width: 300px;
-        text-align: right;
-    }
+    /*.navbar-right > li.login-block {*/
+        /*min-width: 300px;*/
+        /*text-align: right;*/
+    /*}*/
 
-    .navbar-brand {
-        font-size: 36px;
-        line-height: 60px;
-        padding-right: 25px;
-    }
+    /*.navbar-brand {*/
+        /*font-size: 36px;*/
+        /*line-height: 60px;*/
+        /*padding-right: 25px;*/
+    /*}*/
 
-    body {
-        padding-top: 60px;
-    }
+    /*body {*/
+        /*padding-top: 60px;*/
+    /*}*/
 
-    .navbar-nav {
-        float: left;
-    }
+    /*.navbar-nav {*/
+        /*float: left;*/
+    /*}*/
 
-    #rightmost-nav-item {
-        border-right: 0px;
-    }
-}
+    /*#rightmost-nav-item {*/
+        /*border-right: 0px;*/
+    /*}*/
+/*}*/
 
-@media (max-width: 1021px) and (min-width: 974px) {
-    body {
-        padding-top: 60px;
-    }
+/*@media (max-width: 1021px) and (min-width: 974px) {*/
+    /*body {*/
+        /*padding-top: 60px;*/
+    /*}*/
 
-}
+/*}*/
 
-@media (max-width: 868px) {
+/*@media (max-width: 868px) {*/
 
-    .login-block {
-        min-width: 220px !important;
-        width: 220px;
-    }
+    /*.login-block {*/
+        /*min-width: 220px !important;*/
+        /*width: 220px;*/
+    /*}*/
 
-    .login-block > a {
-        font-size: 14px !important;
-    }
+    /*.login-block > a {*/
+        /*font-size: 14px !important;*/
+    /*}*/
 
-}
+/*}*/
 
-@media (min-width: 1280px) {
+/*@media (min-width: 1280px) {*/
 
-    .nav > li > a.link {
-        font-size: 16px;
-    }
+    /*.nav > li > a.link {*/
+        /*font-size: 16px;*/
+    /*}*/
 
-    #rightmost-nav-item {
-        border-right: 1px solid white;
-    }
-}
+    /*#rightmost-nav-item {*/
+        /*border-right: 1px solid white;*/
+    /*}*/
+/*}*/
 
-@media (min-width: 768px) and (max-width: 974px) {
-    body {
-        padding-top: 50px;
-    }
-}
+/*@media (min-width: 768px) and (max-width: 974px) {*/
+    /*body {*/
+        /*padding-top: 50px;*/
+    /*}*/
+/*}*/
 
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {*/
 
-    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-        background-color: #4eb7ad;
-    }
+    /*.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {*/
+        /*background-color: #4eb7ad;*/
+    /*}*/
 
-    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {
-        background-color: #4eb7ad;
-    }
+    /*.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:active {*/
+        /*background-color: #4eb7ad;*/
+    /*}*/
 
-    .navbar-right > li.login-block {
-        min-width: 150px;
-    }
+    /*.navbar-right > li.login-block {*/
+        /*min-width: 150px;*/
+    /*}*/
 
-    .navbar-brand {
-        line-height: 0px;
-        font-size: 36px;
-        line-height: 25px;
-    }
+    /*.navbar-brand {*/
+        /*line-height: 0px;*/
+        /*font-size: 36px;*/
+        /*line-height: 25px;*/
+    /*}*/
 
-    .nav > li > a.link {
-        font-size: 18px;
-        padding-top: 10px !important;
-        width: 100%;
-    }
+    /*.nav > li > a.link {*/
+        /*font-size: 18px;*/
+        /*padding-top: 10px !important;*/
+        /*width: 100%;*/
+    /*}*/
 
-    .login-block {
-        text-align: left;
-        width: 100%;
-    }
+    /*.login-block {*/
+        /*text-align: left;*/
+        /*width: 100%;*/
+    /*}*/
 
-    .welcome-text, .dropdown-toggle {
-        text-align: left;
-    }
+    /*.welcome-text, .dropdown-toggle {*/
+        /*text-align: left;*/
+    /*}*/
 
-    li.dropdown-header > a {
-        color: white !important;
-        font-size: 12px;
-    }
+    /*li.dropdown-header > a {*/
+        /*color: white !important;*/
+        /*font-size: 12px;*/
+    /*}*/
 
-    .nav > li:hover {
-        /*background-color: #e88f7d;*/
-    }
+    /*.nav > li:hover {*/
+        /*!*background-color: #e88f7d;*!*/
+    /*}*/
 
-    .nav-logo {
-        width: 60px;
-        padding: 5px;
-    }
+    /*.nav-logo {*/
+        /*width: 60px;*/
+        /*padding: 5px;*/
+    /*}*/
 
-    .navbar-default .navbar-toggle {
-        background-color: #ededed;
-        margin-top: 12px;
-    }
+    /*.navbar-default .navbar-toggle {*/
+        /*background-color: #ededed;*/
+        /*margin-top: 12px;*/
+    /*}*/
 
-    body {
-        padding-top: 50px !important;
-    }
-}
+    /*body {*/
+        /*padding-top: 50px !important;*/
+    /*}*/
+/*}*/
 
-@media (max-width: 767px) {
-    #navbar {
-        background-color: #4eb7ad;
-    }
-}
+/*@media (max-width: 767px) {*/
+    /*#navbar {*/
+        /*background-color: #4eb7ad;*/
+    /*}*/
+/*}*/

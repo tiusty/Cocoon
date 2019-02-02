@@ -9,13 +9,14 @@
             crossorigin="anonymous"></script>
     <!-- Bootstrap style sheet -->
     <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.css' %}">
-    <link rel="stylesheet" href="{% static 'cocoon/main/css/main.css' %}">
+{#    <link rel="stylesheet" href="{% static 'cocoon/main/css/main.css' %}">#}
     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
+    {{ block.super }}
 
 {% endblock %}
 
@@ -26,5 +27,5 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
-    <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>
+{#    <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>#}
 {% endblock %}

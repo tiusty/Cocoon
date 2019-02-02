@@ -1,3 +1,4 @@
+{% extends 'base.html' %}
 {% load static %}
 {% load intercom %}
 
@@ -10,85 +11,13 @@
   <title>Cocoon | Find yours with us.</title>
   <meta name="theme-color" content="#A13718" />
   <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
-  <link href="{% static 'homePage/newLandingPage.css' %}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'homePage/aos-scroll-reveal.css' %}" />
-  <link rel="stylesheet" href="{% static 'homePage/tiny-slider.css' %}">
 {% endblock %}
 
+{% block container_type %}{% endblock %}
+
 {% block content %}
-<nav>
-    <div class="logo">
-      <a href="{% url 'homePage:index' %}">
-        <img src="{% static 'homePage/cocoon-logo_beta.png' %}" alt="">
-      </a>
-    </div>
-
-    <div class="nav-links_desktop">
-
-      <!-- Unauthorized Links -->
-      {% if not user.is_authenticated %}
-
-      <div>
-        <a href="{% url 'userAuth:loginPage' %}">Login</a>
-        <span>/</span>
-        <a href="{% url 'userAuth:hunter_signup' %}" class="redOrange">Sign Up</a>
-      </div>
-
-      {% else %}
-      <!-- Authorized Links -->
-      <div>
-        {% if user.is_hunter or user.is_admin %}
-            <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
-            <span>/</span>
-            <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
-            <span>/</span>
-        {% endif %}
-        {% if user.is_broker or user.is_admin %}
-          <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>
-          <span>/</span>
-          <a href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a>
-          <span>/</span>
-        {% endif %}
-        <div id="dropdown">
-          <button>{{ user.email }} <i class="material-icons">arrow_drop_down</i></button>
-          <div class="dropdown-content">
-            <a href="{% url 'userAuth:user_profile' %}">Profile</a>
-            <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
-          </div>
-        </div>
-      </div>
-        {% endif %}
-    </div>
-
-    <!-- Mobile Nav -->
-    <div class="nav-links_mobile">
-      <div class="hamburger-menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-
-  </nav>
-
-  <div class="mobile-links">
-      {% if not user.is_authenticated %}
-          <a href="{% url 'userAuth:loginPage' %}">Login</a>
-          <a href="{% url 'userAuth:hunter_signup' %}">Sign Up</a>
-      {% else %}
-          <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
-          <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
-          {% if user.is_broker or user.is_admin%}
-            <a href="#">Agent Portal</a>
-            <a href="#">Marketplace</a>
-          {% endif %}
-          <a href="{% url 'userAuth:user_profile' %}">Profile</a>
-          <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
-      {% endif %}
-  </div>
-  <!-- END OF HEADER & NAV MENUS -->
 
     <!-- SLIDER START -->
       <section id="onboarding">
@@ -247,14 +176,6 @@
           </div>
         </section>
       </div>
-
-
-      <footer>
-        <div class="container">
-          <p>All rights reserved. Cocoon © 2018</p>
-        </div>
-      </footer>
-
 {% endblock %}
 
 {% intercom_tag %}
