@@ -3,6 +3,7 @@
   "css": [
     "grid.less",
     "forms.less",
+    "glyphicons.less",
     "wells.less"
   ],
   "js": []
