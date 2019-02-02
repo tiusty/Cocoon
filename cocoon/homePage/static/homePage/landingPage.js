@@ -86,7 +86,6 @@ const Slider = (function() {
     * AOS -> scroll reveal elements
     * Slider -> options for onboarding slider
   **/
-  handleMenu();
   AOS.init();
   Slider.init();
 })();
