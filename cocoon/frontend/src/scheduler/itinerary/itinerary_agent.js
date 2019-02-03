@@ -40,7 +40,8 @@ class ItineraryAgent extends Component {
                     selected_start_time: response.data.selected_start_time,
                     tour_duration_seconds: response.data.tour_duration_seconds_rounded,
                     start_times: response.data.start_times,
-                })
+                    itinerary_file: response.data.itinerary,
+                });
                 this.setState({
                     refreshing: false,
                 });
@@ -158,6 +159,12 @@ class ItineraryAgent extends Component {
                 <div className="itinerary-section-item">
                     <span className="item-left-text">Email:</span>
                     <span className="item-right-text">{_.isUndefined(this.state.client.email) ? "Loading" : this.state.client.email}</span>
+                </div>
+                <div className="itinerary-section-item">
+                    <span className="item-left-text">Itinerary File:</span>
+                    <span className="item-right-text">{_.isUndefined(this.state.itinerary_file) ? "Loading" :
+                        <a href={this.state.itinerary_file}>Itinerary</a>
+                    }</span>
                 </div>
                 <div className="itinerary-section-item last-item">
                     <span className="item-left-text">Duration:</span>
@@ -289,7 +296,7 @@ class ItineraryAgent extends Component {
                 {this.generateTimeDivs()}
             </div>
         );
-    }
+    };
 
     render() {
         return (
