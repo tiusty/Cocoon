@@ -39,7 +39,6 @@ export default class RentForm extends Component {
                 price_weight: 2,
                 earliest_move_in: undefined,
                 latest_move_in: undefined,
-                is_move_asap: undefined,
             },
 
             // Amenities Form Fields

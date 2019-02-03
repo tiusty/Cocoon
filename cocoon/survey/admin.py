@@ -27,7 +27,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('survey_name', 'user_profile')}),
         ('Survey', {'fields': ('home_type', 'desired_price', 'max_price', 'price_weight', 'min_bathrooms',
-                               'max_bathrooms', 'is_move_asap', 'move_weight')}),
+                               'max_bathrooms', 'move_weight')}),
         ('Nearby Amenities', {'fields': ('wants_laundry_nearby', 'laundry_nearby_weight',)}),
         ('Exterior Amenities', {'fields': ('wants_parking', 'wants_laundry_in_building', 'laundry_in_building_weight',
                                            'wants_patio',
