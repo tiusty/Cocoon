@@ -149,7 +149,6 @@ class YGLRequester(object):
                         new_listing.storage = word_scraper.word_finder(["storage"])
 
 
-
                 except ValueError:
                     print("[ VALUE ERROR ] Could not add home")
                     num_of_value_errors += 1

@@ -210,13 +210,13 @@ class ItineraryAgent extends Component {
             if (i == this.state.start_times.length - 1) {
                 let time = <div key={i} className="itinerary-section-item last-item">
                     <span>{moment(this.state.start_times[i].time).format('MMMM Do')} @ </span>
-                <span>{moment(this.state.start_times[i].time).format('h:mm')} - {moment(this.state.start_times[i].time).add(this.state.start_times[i].time_available_seconds, 'seconds').format('h:mm')}</span>
+                <span>{moment(this.state.start_times[i].time).format('h:mm A')} - {moment(this.state.start_times[i].time).add(this.state.start_times[i].time_available_seconds, 'seconds').format('h:mm A')}</span>
                 </div>
                 time_list.push(time)
             } else {
                 let time = <div key={i} className="itinerary-section-item">
                     <span>{moment(this.state.start_times[i].time).format('MMMM Do')} @ </span>
-                <span>{moment(this.state.start_times[i].time).format('h:mm')} - {moment(this.state.start_times[i].time).add(this.state.start_times[i].time_available_seconds, 'seconds').format('h:mm')}</span>
+                <span>{moment(this.state.start_times[i].time).format('h:mm A')} - {moment(this.state.start_times[i].time).add(this.state.start_times[i].time_available_seconds, 'seconds').format('h:mm A')}</span>
                 </div>
                 time_list.push(time)
             }
@@ -258,7 +258,7 @@ class ItineraryAgent extends Component {
                         return (
                             <div key={index} className="itinerary-section-item">
                                 <span>{start_time.format('MMMM Do')} @ </span>
-                                <span>{start_time.format('h:mm')} - {start_time.add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
+                                <span>{start_time.format('h:mm A')} - {start_time.add(this.state.tour_duration_seconds, 'seconds').format('h:mm A')}</span>
                                 <span className="item-right-text">
                                     {this.renderSelectTime(unix_time)}
                                 </span>
@@ -275,7 +275,7 @@ class ItineraryAgent extends Component {
                         <div className="itinerary-section-item first-item">Selected Start Time</div>
                         <div className="itinerary-section-item">
                             <span>{moment(this.state.selected_start_time).format('MMMM Do')} @ </span>
-                            <span>{moment(this.state.selected_start_time).format('h:mm')} - {moment(this.state.selected_start_time).add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
+                            <span>{moment(this.state.selected_start_time).format('h:mm A')} - {moment(this.state.selected_start_time).add(this.state.tour_duration_seconds, 'seconds').format('h:mm A')}</span>
                         </div>
                         <div className="itinerary-section-item last-item">
                         <span className="item-left-text">Done with the tour?</span>
