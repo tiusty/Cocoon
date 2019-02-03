@@ -10,7 +10,6 @@ from django.http import Http404
 # App Models
 from .models import ItineraryModel, TimeModel
 from .serializers import ItinerarySerializer
-from .constants import TIME_MODEL_OFFSET
 
 # Cocoon Modules
 from cocoon.userAuth.models import UserProfile
@@ -20,7 +19,6 @@ from cocoon.commutes.constants import CommuteAccuracy
 
 # Python Modules
 import json
-from datetime import timedelta
 from django.utils import dateparse
 import datetime
 import dateutil
@@ -30,6 +28,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
 
+@method_decorator(login_required, name='dispatch')
 class ClientSchedulerView(TemplateView):
     """
     Loads the template for the ClientScheduler
@@ -47,6 +46,7 @@ class ClientSchedulerView(TemplateView):
         return data
 
 
+@method_decorator(login_required, name='dispatch')
 class AgentSchedulerPortalView(TemplateView):
     """
     Loads the template for the AgentSchedulerPortal
@@ -64,6 +64,7 @@ class AgentSchedulerPortalView(TemplateView):
         return data
 
 
+@method_decorator(login_required, name='dispatch')
 class AgentSchedulerMarketplaceView(TemplateView):
     """
         Loads the template for the AgentSchedulerMarketplace
@@ -175,7 +176,6 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
         itinerary = get_object_or_404(ItineraryModel, pk=pk)
 
         # Case if an agent is trying to schedule an itinerary they already claimed
-        print(self.request.data)
         if 'schedule' in self.request.data.get('type', None):
             iso_start_time = self.request.data.get('iso_str', None)
             if iso_start_time is not None:
@@ -197,9 +197,9 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
                     itinerary.select_start_time(proposed_time.time)
                     result = True
                 else:
-                    proposed_time.delete()
                     result = False
                     reason = 'Start time is not valid given user preferences'
+                proposed_time.delete()
 
         # Case if the agent is trying to claim an itinerary from the market
         elif 'claim' in self.request.data['type']:
@@ -211,6 +211,15 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
             else:
                 result = False
                 reason = 'Itinerary already claimed'
+        elif 'finish' in self.request.data['type']:
+
+            if itinerary.agent.id is user_profile.user.id:
+                itinerary.finished = True
+                itinerary.save()
+                result = True
+            else:
+                result = False
+                reason = 'Only the assigned agent is allowed to finish the itinerary'
 
         return Response({'result': result,
                          'reason': reason})

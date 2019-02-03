@@ -12,6 +12,7 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 
 # Import third party libraries
 import hashlib
+import pytz
 
 
 def itinerary_directory_path(instance, filename):
@@ -158,17 +159,18 @@ class ItineraryModel(models.Model):
         self.selected_start_time = start_time
         self.save()
 
+        eastern_datetime = timezone.localtime(self.selected_start_time, pytz.timezone('US/Eastern')).strftime('%Y-%m-%d %H:%M:%S')
         message = render_to_string(
             'scheduler/email/itinerary_confirmation_email.html',
             {
                 'user': self.client.first_name,
                 'agent_name': self.agent.first_name,
                 'agent_email': self.agent.email,
-                'start_time': self.selected_start_time,
+                'start_time': eastern_datetime,
                 'homes': self.homes,
             }
         )
-        subject = 'Tour confirmed for %s'%(str(self.selected_start_time))
+        subject = 'Tour confirmed for {0}'.format(eastern_datetime)
         recipient = self.client.email
         email = EmailMessage(
             subject=subject, body=message, to=[recipient]
@@ -210,7 +212,7 @@ class ItineraryModel(models.Model):
                 'agent_name': self.agent.first_name,
                 'domain': current_site.domain,
                 'agent_email': self.agent.email,
-                'start_time': unscheduled_time,
+                'start_time': timezone.localtime(unscheduled_time, pytz.timezone('US/Eastern')),
             }
         )
         subject = 'Tour with %s cancelled' % (str(self.client.first_name))

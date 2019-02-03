@@ -122,7 +122,7 @@ class AgentSchedulerPortal extends Component {
         return (
             <React.Fragment>
                 <div className="agent-scheduler-wrapper">
-                    <button onClick={this.refreshItineraries}>Refresh itineraries</button>
+                    <button className="btn btn-primary" onClick={this.refreshItineraries}>Refresh itineraries</button>
                     <div className='itinerary-wrapper row'>
                         <div className="col-md-4">
                             <h2>Unscheduled Itineraries</h2>

@@ -110,7 +110,7 @@ class AgentSchedulerPortal extends Component {
                     hash={itinerary.hash}
                     viewType={viewType}
                 />
-                <button className="claim-button" key={"claim" + key} onClick={() => this.claimButtonAction(itinerary.id)}>
+                <button className="btn btn-primary claim-button" key={"claim" + key} onClick={() => this.claimButtonAction(itinerary.id)}>
                     {this.state.refreshing ? 'Loading' : 'claim'}
                 </button>
             </div>
@@ -135,7 +135,7 @@ class AgentSchedulerPortal extends Component {
         return (
             <React.Fragment>
                 <div className="agent-scheduler-wrapper">
-                    <button onClick={this.refreshItineraries}>Refresh itineraries</button>
+                    <button className="btn btn-primary" onClick={this.refreshItineraries}>Refresh itineraries</button>
                     <div className='row'>
                         <div className='col-md-6'>
                             <h2>Available unclaimed itineraries</h2>
