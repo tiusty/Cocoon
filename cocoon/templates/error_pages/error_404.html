@@ -1,41 +1,43 @@
 {% load static %}
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <link rel="stylesheet" href="{% static 'cocoon/error_pages/css/error_404.css' %}">
-    <!-- Bootstrap style sheet -->
-    <link rel="stylesheet" href="{% static 'bootstrap-3.4.0-custom/css/bootstrap.css' %}">
-    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+	<title>404 HTML Template by Colorlib</title>
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:900" rel="stylesheet">
+
+	<!-- Custom stlylesheet -->
+	<link type="text/css" rel="stylesheet" href="{% static 'cocoon/error_pages/css/error_404.css' %}" />
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
 </head>
-<link href='https://fonts.googleapis.com/css?family=Anton|Passion+One|PT+Sans+Caption' rel='stylesheet' type='text/css'>
+
 <body>
 
-<!-- Error Page -->
-<div class="error">
-    <div class="container-fluid">
-        <div class="col-xs-12 ground-color text-center">
-            <div class="container-error-404">
-                <div class="clip">
-                    <div class="shadow"><span class="digit thirdDigit"></span></div>
-                </div>
-                <div class="clip">
-                    <div class="shadow"><span class="digit secondDigit"></span></div>
-                </div>
-                <div class="clip">
-                    <div class="shadow"><span class="digit firstDigit"></span></div>
-                </div>
-                <div class="msg">OH!<span class="triangle"></span></div>
-            </div>
-            <h2 class="h1">Sorry! Page not found</h2>
-        </div>
-    </div>
-</div>
-<!-- Error Page -->
-</body>
-{#<script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>#}
-<script src="{% static 'cocoon/error_pages/js/error_404.js' %}"></script>
+	<div id="notfound">
+		<div class="notfound">
+			<div class="notfound-404">
+				<h3>Oops! Page not found</h3>
+				<h1><span>4</span><span>0</span><span>4</span></h1>
+			</div>
+			<h2>we are sorry, but the page you requested was not found</h2>
+		</div>
+	</div>
+
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+
 </html>
