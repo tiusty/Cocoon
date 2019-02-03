@@ -92,6 +92,32 @@ class ItineraryAgent extends Component {
         });
     };
 
+    finishItinerary = () => {
+        /**
+         * Schedules a claimed itinerary by selecting a start time
+         */
+        this.setState({'refreshing': true});
+        let endpoint = scheduler_endpoints['itineraryAgent'] + this.props.id + '/';
+        axios.put(endpoint, {
+            type: 'finish',
+        })
+            .catch(error => {
+                this.setState({
+                    refreshing: false,
+                });
+                console.log('Bad', error)
+            })
+            .then(response => {
+                if (response.data.result) {
+                    this.props.refreshItineraries()
+                } else {
+                    alert(response.data.reason);
+                    this.updateItinerary()
+                }
+                this.setState({refreshing: false});
+            });
+    }
+
     selectTimeButton(iso_time_string) {
         if (!this.state.refreshing) {
             return this.selectTime(iso_time_string)
@@ -210,7 +236,7 @@ class ItineraryAgent extends Component {
     }
 
     renderSelectTime = (unix_time) => {
-             return (<button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="select-time-button">
+             return (<button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="btn btn-primary select-time-button">
                  {this.state.refreshing ? "..." : "select"}
              </button>);
     }
@@ -237,13 +263,23 @@ class ItineraryAgent extends Component {
 
         } else if (this.props.viewType === "itineraryAgentScheduled") {
             return (
-                <div className="itinerary-section">
-                    <div className="itinerary-section-item first-item">Selected Start Time</div>
-                    <div className="itinerary-section-item last-item">
-                        <span>{moment(this.state.selected_start_time).format('MMMM Do')} @ </span>
-                        <span>{moment(this.state.selected_start_time).format('h:mm')} - {moment(this.state.selected_start_time).add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
+                <>
+                    <div className="itinerary-section">
+                        <div className="itinerary-section-item first-item">Selected Start Time</div>
+                        <div className="itinerary-section-item">
+                            <span>{moment(this.state.selected_start_time).format('MMMM Do')} @ </span>
+                            <span>{moment(this.state.selected_start_time).format('h:mm')} - {moment(this.state.selected_start_time).add(this.state.tour_duration_seconds, 'seconds').format('h:mm')}</span>
+                        </div>
+                        <div className="itinerary-section-item last-item">
+                        <span className="item-left-text">Done with the tour?</span>
+                            <span className="item-right-text">
+                        <button className="btn btn-primary" onClick={this.finishItinerary}>
+                            {this.state.refreshing ? "..." : 'Finished Itinerary' }
+                        </button>
+                            </span>
+                        </div>
                     </div>
-                </div>
+                </>
             );
         }
 
