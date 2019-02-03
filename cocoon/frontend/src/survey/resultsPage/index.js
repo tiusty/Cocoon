@@ -79,7 +79,7 @@ export default class ResultsPage extends Component {
                     tenants: response.data.tenants,
                     favorites: response.data.favorites,
                     commutes: this.getCommuteCoords(response.data.tenants)
-                }, () => console.log(this.state.survey));
+                });
             })
 
     };

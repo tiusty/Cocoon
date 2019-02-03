@@ -231,7 +231,10 @@ class DestinationsModel(models.Model):
 
     @property
     def full_address(self):
-        return "{0}, {1}, {2}, {3}".format(self.street_address, self.city, self.state, self.zip_code)
+        if self.street_address == "" and self.city == "" and self.state == "" and self.zip_code == "":
+            return ""
+        else:
+            return "{0}, {1}, {2}, {3}".format(self.street_address, self.city, self.state, self.zip_code)
 
     @property
     def short_address(self):
