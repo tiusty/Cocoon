@@ -1,6 +1,10 @@
 # Django modules
 from django.db import models
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+
+# Import python modules
+from datetime import timedelta
 
 # Import docusign wrapper classes
 from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
@@ -9,7 +13,7 @@ from cocoon.signature.docusign.docusign_wrapper import DocusignWrapper
 from cocoon.userAuth.models import MyUser
 
 # Import constants
-from cocoon.signature.constants import PRE_TOUR_TEMPLATE_ID
+from .constants import PRE_TOUR_TEMPLATE_ID, DOCUSIGN_REFRESH_RATE_MINUTES
 
 # Load the logger
 import logging
@@ -54,7 +58,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: The document is signed
                               False: The document is not signed
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         if self.documents.filter(template=template).exists():
             try:
                 doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
@@ -73,7 +77,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: The document was successfully created
                               False: The document was not successfully created
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         docusign = DocusignWrapper()
         envelope_id = docusign.send_document_for_signatures(template.template_id,
                                                             self.user.email,
@@ -91,7 +95,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: The pre_tour forms were created
                               False: The pre_tour forms were not created
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         return self.documents.filter(template=template).exists()
 
     def resend_pre_tour_documents(self):
@@ -101,7 +105,7 @@ class HunterDocManagerModel(models.Model):
         :return: (boolean) -> True: If the pre tour documents are resent
                               False: IF the pre tour documents are not resent
         """
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         docusign = DocusignWrapper()
         if self.documents.filter(template=template).exists():
             try:
@@ -117,7 +121,12 @@ class HunterDocManagerModel(models.Model):
                     HunterDocManagerModel.resend_pre_tour_documents.__name__
                 ))
                 return False
-            return docusign.resend_envelope(envelope_id)
+            if document.can_resend():
+                document.last_resend = timezone.now()
+                document.save()
+                return docusign.resend_envelope(envelope_id)
+            else:
+                return False
         else:
             return False
 
@@ -128,37 +137,24 @@ class HunterDocManagerModel(models.Model):
         """
         docusign = DocusignWrapper()
         for document in self.documents.all():
-            document.is_signed = docusign.determine_is_signed(document.envelope_id)
-            document.save()
+            if not document.is_signed:
+                document.is_signed = docusign.determine_is_signed(document.envelope_id)
+                document.save()
 
     def update_pre_tour_is_signed(self):
         """
         Checks the status of the pre tour documents and sees if it is signed
         """
         docusign = DocusignWrapper()
-        template = self.retrieve_pre_tour_template()
+        template = HunterDocTemplateModel.get_pre_tour_template()
         if self.documents.filter(template=template).exists():
             try:
                 doc = get_object_or_404(HunterDocModel, template=template, doc_manager=self)
-                doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
-                doc.save()
+                if not doc.is_signed:
+                    doc.is_signed = docusign.determine_is_signed(doc.envelope_id)
+                    doc.save()
             except HunterDocModel.DoesNotExist:
                 pass
-
-    @staticmethod
-    def retrieve_pre_tour_template():
-        """
-        Wrapper class to retrieve the pre_tour template
-
-        This will either return the template if it exists, or creates it with the correct
-            template_id if it doesn't exist
-        :return: (HunterDocTemplateModel) -> Returns the pre tour template model
-        """
-        (template, created) = HunterDocTemplateModel.objects.get_or_create(
-            template_type=HunterDocTemplateModel.PRE_TOUR,
-            template_id=PRE_TOUR_TEMPLATE_ID,
-        )
-        return template
 
 
 class HunterDocTemplateModel(models.Model):
@@ -176,7 +172,6 @@ class HunterDocTemplateModel(models.Model):
     )
 
     template_type = models.CharField(
-        unique=True,
         max_length=2,
         choices=DOC_TYPE,
         default=PRE_TOUR,
@@ -184,9 +179,10 @@ class HunterDocTemplateModel(models.Model):
     template_id = models.CharField(max_length=200)
 
     @staticmethod
-    def create_pre_tour_template():
+    def get_pre_tour_template():
         """
-        Creates the pre_tour_template with the correct template_id
+        Creates the pre_tour_template with the correct template_id if it doesn't exist
+            and returns it
         :return: (HunterDocTemplateModel) -> The created template
         """
         (template, created) = HunterDocTemplateModel.objects.get_or_create(
@@ -214,6 +210,18 @@ class HunterDocModel(models.Model):
     template = models.ForeignKey(HunterDocTemplateModel, related_name="documents", on_delete=models.CASCADE)
     is_signed = models.BooleanField(default=False)
     envelope_id = models.CharField(max_length=200)
+    last_resend = models.DateTimeField(default=timezone.now)
+
+    def can_resend(self):
+        """
+        Docusign won't let us resend documents within 15 minutes
+
+        Therefore we throttle the ability to send documents to every 15 minutes.
+        If it hasn't been within the specified amount of time, this will return false
+        :return: (Boolean) -> True: The user can resend the document again
+                              False: The user cannot resend the document at this moment
+        """
+        return timezone.now() >= self.last_resend + timedelta(minutes=DOCUSIGN_REFRESH_RATE_MINUTES)
 
     def __str__(self):
         return "{0} Document".format(self.template.get_template_type_display())

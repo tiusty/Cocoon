@@ -2,6 +2,7 @@
 import React from 'react'
 import {Component} from 'react';
 import axios from 'axios'
+import moment from 'moment';
 
 // Import Cocoon Components
 import CSRFToken from '../../../common/csrftoken'
@@ -114,6 +115,9 @@ export default class TourSummary extends Component {
                     <p className="tour-summary-text">Can't find the email?</p>
                     <button className="btn btn-primary tour-summary-doc-button"
                             onClick={this.props.onHandleOnClickResendDocument}>{this.props.refreshing_document_status ? 'Loading' : 'Resend'}</button>
+                    {this.props.last_resend_request_pre_tour !== undefined ?
+                        <p>You can't resend the documents until {moment(this.props.last_resend_request_pre_tour).add({minutes: 16}).format("h:mm A")}</p>
+                        : null}
                 </>
             );
         } else if (this.props.is_pre_tour_signed && this.props.pre_tour_forms_created && this.props.survey_id === undefined) {

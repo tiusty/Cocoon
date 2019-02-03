@@ -149,7 +149,6 @@ export default class ResultsPage extends Component {
          *  size. Also disables the scroll for the body element
         **/
         document.querySelector('body').style.overflow = 'hidden';
-        document.querySelector('.navbar').style.margin = 0;
         document.querySelector('#siteWrapper').style.width = '100%';
         document.querySelector('#siteWrapper').style.height = 'auto';
         document.querySelector('#siteWrapper').style.padding = 0;
