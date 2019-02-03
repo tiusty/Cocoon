@@ -53,12 +53,10 @@
             {% else %}
                 {% comment %}Authorized Links{% endcomment %}
                 <div>
-                    {% if user.is_hunter or user.is_admin %}
-                        <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
-                        <span>/</span>
-                        <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
-                        <span>/</span>
-                    {% endif %}
+                    <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
+                    <span>/</span>
+                    <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
+                    <span>/</span>
                     {% if user.is_broker or user.is_admin %}
                         <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>
                         <span>/</span>
