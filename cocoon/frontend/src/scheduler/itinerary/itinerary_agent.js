@@ -11,6 +11,10 @@ import HomeTile from "../../common/homeTile/homeTile";
 import '../../common/styles/variables.css';
 import "./itinerary_agent.css";
 
+// Import Pop-up button components
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css'
+
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -93,6 +97,25 @@ class ItineraryAgent extends Component {
         });
     };
 
+    finishItineraryConfirmation = () => {
+        /**
+         Opens a confirmation page first before the survey is finished.
+         */
+        confirmAlert({
+            title: 'Confirmation',
+            message: "Are you sure you want to finish this itinerary?",
+            buttons: [
+                {
+                    label: 'yes',
+                    onClick: () => this.finishItinerary()
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        })
+    }
+
     finishItinerary = () => {
         /**
          * Schedules a claimed itinerary by selecting a start time
@@ -117,6 +140,25 @@ class ItineraryAgent extends Component {
                 }
                 this.setState({refreshing: false});
             });
+    }
+
+    selectTimeButtonConfirmation(unix_time) {
+        /**
+         Opens a confirmation page first before the time is selected
+         */
+        confirmAlert({
+            title: 'Confirmation',
+            message: "Are you sure you want to select: " + moment(unix_time).format('MMMM Do h:mm A'),
+            buttons: [
+                {
+                    label: 'yes',
+                    onClick: () => this.selectTimeButton(moment(unix_time).toISOString())
+                },
+                {
+                    label: 'No',
+                }
+            ]
+        })
     }
 
     selectTimeButton(iso_time_string) {
@@ -243,7 +285,7 @@ class ItineraryAgent extends Component {
     }
 
     renderSelectTime = (unix_time) => {
-             return (<button onClick={() => {this.selectTimeButton(moment(unix_time).toISOString())}} className="btn btn-primary select-time-button">
+             return (<button onClick={() => {this.selectTimeButtonConfirmation(unix_time)}} className="btn btn-primary select-time-button">
                  {this.state.refreshing ? "..." : "select"}
              </button>);
     }
@@ -280,7 +322,7 @@ class ItineraryAgent extends Component {
                         <div className="itinerary-section-item last-item">
                         <span className="item-left-text">Done with the tour?</span>
                             <span className="item-right-text">
-                        <button className="btn btn-primary" onClick={this.finishItinerary}>
+                        <button className="btn btn-primary" onClick={this.finishItineraryConfirmation}>
                             {this.state.refreshing ? "..." : 'Finished Itinerary' }
                         </button>
                             </span>

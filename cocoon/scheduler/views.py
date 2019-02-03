@@ -197,9 +197,9 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
                     itinerary.select_start_time(proposed_time.time)
                     result = True
                 else:
-                    proposed_time.delete()
                     result = False
                     reason = 'Start time is not valid given user preferences'
+                proposed_time.delete()
 
         # Case if the agent is trying to claim an itinerary from the market
         elif 'claim' in self.request.data['type']:
