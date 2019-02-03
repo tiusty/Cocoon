@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import json
 from django.contrib.messages import constants as messages
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -327,3 +329,16 @@ INTERCOM_CUSTOM_DATA_CLASSES = [
     'config.settings.intercom.intercom_user_data.IntercomCustomData',
 ]
 
+# Location for secret
+SECRET_FILE_PATH = os.path.join(BASE_DIR, 'settings/secrets.json')
+
+
+# Function for loading variables from secret file
+def get_secret(setting):
+    with open(SECRET_FILE_PATH) as f:
+        secrets = json.loads(f.read())
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = 'Set the {0} environment variable'.format(setting)
+        raise ImproperlyConfigured(error_msg)

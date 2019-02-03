@@ -23,7 +23,7 @@ def index(request):
             context['error_message'].append("Form not valid, please try again")
 
     context['form'] = form
-    return render(request, 'homePage/index.html', context)
+    return render(request, 'homePage/landingPage.html', context)
 
 
 def about(request):

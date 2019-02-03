@@ -199,18 +199,17 @@
 .map-marker_hover {
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
     animation: growMarker .25s ease forwards;
-    transform-origin: 50% 150%;
 }
 
 @keyframes growMarker {
     0% {
-        transform: scale(.7);
+        transform: translate(-50%, -50%) scale(.7);
     }
     75% {
-        transform: scale(2);
+        transform: translate(-50%, -50%) scale(2);
     }
     100% {
-        transform: scale(1.5);
+        transform: translate(-50%, -50%) scale(1.5);
     }
 }
 

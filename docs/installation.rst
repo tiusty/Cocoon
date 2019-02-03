@@ -49,12 +49,33 @@ Setting up Software
         
 5. Copy over secrets file
 
-* Not really used in locally development but still needed
-
         ::
 
                 cd ~/work/Cocoon/config/settings
                 cp secrets.json.template secrets.json
+                
+        Now go to the google drive and open the secrets.json file in development/security Files/.
+        There copy over the dev secret keys. The prod keys are not needed for local development
+        so don't copy those over
+        
+6. Copy/create necessary files:
+
+        Form google drive in the development/security Files/ folder:
+        
+        Copy:
+        1) docusign/docusign-development/docusign_private_key_demo.txt
+                to the cocoon/config/keys directory
+        Create:
+        1) From the root of the django project:
+        
+                ::
+                        
+                        cd config/keys
+                        touch docusign_private_key_prod.txt
+                        
+        Note: You do not need the acutal docusign_private_key_prod in development unless you want to test using the producation docusign information
+                
+         
 
 Creating the Postgres Database
 ------------------------------

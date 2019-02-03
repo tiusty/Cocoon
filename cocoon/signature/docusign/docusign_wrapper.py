@@ -62,7 +62,7 @@ class DocusignWrapper(DocusignLogin):
         """
 
         # Create the role name
-        template_role_name = 'Needs to sign'
+        template_role_name = 'Client'
 
         # create an envelope to be signed
         envelope_definition = docusign.EnvelopeDefinition()

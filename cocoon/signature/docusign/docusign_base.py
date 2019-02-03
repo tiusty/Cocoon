@@ -6,7 +6,7 @@ import docusign_esign as docusign
 
 # Import constants
 from cocoon.signature.constants import INTEGRATOR_KEY, BASE_URL, OAUTH_BASE_URL, REDIRECT_URI, \
-    USER_ID
+    USER_ID, DOCUSIGN_KEY, AUTHENTICATION_VALUE
 from config.keys.keys_filepaths import KEY_FILE_PATHS
 
 
@@ -28,16 +28,17 @@ class DocusignLogin(object):
         self.base_url = BASE_URL
         self.oauth_base_url = OAUTH_BASE_URL
         self.redirect_uri = REDIRECT_URI
-        self.private_key_filename = KEY_FILE_PATHS['DOCUSIGN_PRIVATE_KEY']
+        self.private_key_filename = KEY_FILE_PATHS[DOCUSIGN_KEY]
         self.user_id = USER_ID
         self.api_client = None
 
     def set_up_docusign_api(self):
         api_client = docusign.ApiClient(self.base_url)
-        oauth_login_url = api_client.get_jwt_uri(self.integrator_key, self.redirect_uri, self.oauth_base_url)
+        api_client.set_default_header('Authorization', AUTHENTICATION_VALUE)
 
         # Print only needed for first time use
         # On first time put link into URL to allow permission
+        # oauth_login_url = api_client.get_jwt_uri(self.integrator_key, self.redirect_uri, self.oauth_base_url)
         # print(oauth_login_url)
 
         # configure the ApiClient to asynchronously get an access token and store it

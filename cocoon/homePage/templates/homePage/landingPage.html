@@ -1,0 +1,265 @@
+{% load static %}
+{% load intercom %}
+
+{% block head %}
+  {% comment %} Domain Verfication{% endcomment %}
+  <meta name="google-site-verification" content="EZpbJ3VrkWORskv6xVg5hoxs3cjmN7UBjbKu6AZW4C8"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Cocoon | Find yours with us.</title>
+  <meta name="theme-color" content="#A13718" />
+  <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
+  <link href="{% static 'homePage/newLandingPage.css' %}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'homePage/aos-scroll-reveal.css' %}" />
+  <link rel="stylesheet" href="{% static 'homePage/tiny-slider.css' %}">
+{% endblock %}
+
+{% block content %}
+<nav>
+    <div class="logo">
+      <a href="{% url 'homePage:index' %}">
+        <img src="{% static 'homePage/cocoon-logo_beta.png' %}" alt="">
+      </a>
+    </div>
+
+    <div class="nav-links_desktop">
+
+      <!-- Unauthorized Links -->
+      {% if not user.is_authenticated %}
+
+      <div>
+        <a href="{% url 'userAuth:loginPage' %}">Login</a>
+        <span>/</span>
+        <a href="{% url 'userAuth:hunter_signup' %}" class="redOrange">Sign Up</a>
+      </div>
+
+      {% else %}
+      <!-- Authorized Links -->
+      <div>
+        {% if user.is_hunter or user.is_admin %}
+            <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
+            <span>/</span>
+            <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
+            <span>/</span>
+        {% endif %}
+        {% if user.is_broker or user.is_admin %}
+          <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>
+          <span>/</span>
+          <a href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a>
+          <span>/</span>
+        {% endif %}
+        <div id="dropdown">
+          <button>{{ user.email }} <i class="material-icons">arrow_drop_down</i></button>
+          <div class="dropdown-content">
+            <a href="{% url 'userAuth:user_profile' %}">Profile</a>
+            <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
+          </div>
+        </div>
+      </div>
+        {% endif %}
+    </div>
+
+    <!-- Mobile Nav -->
+    <div class="nav-links_mobile">
+      <div class="hamburger-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+  </nav>
+
+  <div class="mobile-links">
+      {% if not user.is_authenticated %}
+          <a href="{% url 'userAuth:loginPage' %}">Login</a>
+          <a href="{% url 'userAuth:hunter_signup' %}">Sign Up</a>
+      {% else %}
+          <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
+          <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
+          {% if user.is_broker or user.is_admin%}
+            <a href="#">Agent Portal</a>
+            <a href="#">Marketplace</a>
+          {% endif %}
+          <a href="{% url 'userAuth:user_profile' %}">Profile</a>
+          <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
+      {% endif %}
+  </div>
+  <!-- END OF HEADER & NAV MENUS -->
+
+    <!-- SLIDER START -->
+      <section id="onboarding">
+        <span id="close-slider" class="toggle-slider">x</span>
+        <div class="container">
+
+          <div class="my-slider">
+            <div class="slide">
+              <div class="image-wrapper">
+                <img src="{% static 'homePage/survey-shot.png' %}" alt="">
+              </div>
+              <h2>1) Complete our survey detailing your every need!</h2>
+              <p>Cocoon finds the perfect rental for you by analyzing every apartment on-market with our powerful proprietary
+                algorithms, so you don't have to spend any time searching for that diamond in the rough.</p>
+              <a href="{% url 'survey:rentingSurvey' %}">Get Started</a>
+            </div>
+
+            <div class="slide">
+              <div class="image-wrapper">
+                <img src="{% static 'homePage/results-shot.png' %}" alt="">
+              </div>
+              <h2>2) See your favorites with an expert tour guide.</h2>
+              <p>Once you’re ready to go see your favorite places in person (or over Facetime/Skype!), we’ll pair you with an expert local licensed real estate agent to serve as your tour guide. We pay them per hour - so you don’t have to worry about aggressive hard sells. Our software will calculate the best route for you to see your favorite apartments, and the tour guide will pick you up before the best tour of your life!</p>
+              <a href="{% url 'survey:rentingSurvey' %}">Get Started</a>
+            </div>
+
+            <div class="slide">
+              <div class="image-wrapper">
+                <img src="{% static 'homePage/schedule-shot.png' %}" alt="">
+              </div>
+              <h2>3) Found the one? We’ll help you get it quickly and painlessly!</h2>
+              <p>Once you’ve decided on the dream place, Cocoon makes it super easy for you to apply and win the apartment by making several vital steps available to you instantly via our digital platform. Fill out and sign paperwork, safely instantly send money (if you want), reach out to our customer success and negotiation teams anytime, check on your credit report, and more all through our always-available digital platform.</p>
+              <a href="{% url 'survey:rentingSurvey' %}">Get Started</a>
+            </div>
+          </div>
+
+            <div class="slider-controls">
+                <span class="slider-text" id="slider-prev">Prev</span>
+                <div class="circle-controls">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="slider-text" id="slider-next">Next</span>
+            </div>
+
+        </div>
+      </section>
+      <!-- SLIDER END -->
+
+      <div id="landing-page-body">
+        <section id="hero">
+          <div class="container">
+            <div class="hero-text">
+              <h1>The <span class="redOrange">easiest</span> apartment hunting platform. Ever.</h1>
+              <p>Cocoon pairs our cutting edge software with clever new best practices to find your next home. Join our
+                closed beta and find yours with us.</p>
+              <div class="hero-buttons">
+                <a href="{% url 'survey:rentingSurvey' %}">Start Survey</a>
+                <span class="toggle-slider">Learn More</span>
+              </div>
+              <div class="beta-note">
+                  <p>Note: Beta key required to take a survey. If you don’t have one please enter your <a href="#email-list">email below</a>.</p>
+              </div>
+            </div>
+            <div class="hero-img">
+              <img src="{% static 'homePage/isometric-homes_red.png' %}" alt="">
+            </div>
+          </div>
+        </section>
+
+        <section id="steps">
+          <div class="container">
+            <h2>Find your next place in <b>3 simple steps</b></h2>
+          </div>
+          <div class="steps-wrapper">
+            <div class="img-wrapper">
+              <img src="{% static 'homePage/room-with-dog.jpg' %}" alt="">
+            </div>
+            <div class="how-to-wrapper">
+
+              <div data-aos="zoom-in-left" class="step-box">
+                <div class="icon">
+                  <img src="{% static 'homePage/screen.svg' %}" alt="">
+                </div>
+                <div class="step-text">
+                  <h2>Take a smart survey that zeroes in on your needs and preferences!</h2>
+                  <p>Cocoon finds the perfect rental for you by analyzing every apartment on-market with our powerful
+                    proprietary
+                    AI algorithms, so you don't have to spend any time searching for that diamond in the rough.</p>
+                  <span id="learn-1" class="step-learn-more">Learn More <i class="material-icons">keyboard_arrow_right</i></span>
+                </div>
+              </div>
+
+              <div data-aos="zoom-in-left" class="step-box">
+                <div class="icon">
+                  <img src="{% static 'homePage/houses.svg' %}" alt="">
+                </div>
+                <div class="step-text">
+                  <h2>See your favorites with an expert tour guide.</h2>
+                  <p>Once you’re ready to go see your favorite places in person (or over Facetime/Skype!), we’ll pair you
+                    with an expert local licensed real estate agent to serve as your tour guide.</p>
+                  <span id="learn-2" class="step-learn-more">Learn More <i class="material-icons">keyboard_arrow_right</i></span>
+                </div>
+              </div>
+
+              <div data-aos="zoom-in-left" class="step-box">
+                <div class="icon">
+                  <img src="{% static 'homePage/home.svg' %}" alt="">
+                </div>
+                <div class="step-text">
+                  <h2>Found the one? We’ll help you get it quickly and painlessly!</h2>
+                  <p>Once you’ve decided on the dream place, Cocoon makes it super easy for you to apply and win the
+                    apartment via our digital platform.</p>
+                  <span id="learn-3" class="step-learn-more">Learn More <i class="material-icons">keyboard_arrow_right</i></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <section id="banner">
+          <div class="container">
+            <h3 class="red">Put our first-in-class tech to work helping you work less on apartment hunting</h3>
+            <h2>Cocoon exists to save you the stress and energy of finding - and getting - your dream apartment. So kick
+              back your feet, fire up your laptop, and find yours with us. </h2>
+          </div>
+        </section>
+
+        <section id="email-list">
+          <div class="container">
+            <h3>Join the Cocoon Beta!</h3>
+            <h2>Get access by signing up below</h2>
+
+            <div class="signup-form" id="mc_embed_signup">
+              <form action="https://bostoncocoon.us20.list-manage.com/subscribe/post?u=dd1335b892ed074d699f35cd3&amp;id=3d87b53a1c"
+                method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank"
+                novalidate>
+                <div id="mc_embed_signup_scroll">
+                  <div class="mc-field-group">
+                    <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="Email Address">
+                    <input type="submit" value="Sign Up" name="subscribe" id="mc-embedded-subscribe" class="button">
+                  </div>
+                  <div id="mce-responses" class="clear">
+                    <div class="response" id="mce-error-response" style="display:none"></div>
+                    <div class="response" id="mce-success-response" style="display:none"></div>
+                  </div>
+                  <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                  <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_dd1335b892ed074d699f35cd3_3d87b53a1c"
+                      tabindex="-1" value=""></div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+
+      <footer>
+        <div class="container">
+          <p>All rights reserved. Cocoon © 2018</p>
+        </div>
+      </footer>
+
+{% endblock %}
+
+{% intercom_tag %}
+{% block endScripts %}
+    <script src="{% static 'homePage/aos-scroll-reveal.js' %}"></script>
+    <script src="{% static 'homePage/tiny-slider.js' %}"></script>
+    <script src="{% static 'homePage/landingPage.js' %}"></script>
+{% endblock %}
