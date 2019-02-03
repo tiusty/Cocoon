@@ -76,4 +76,6 @@ class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RentDatabaseModel
         fields = ('id', 'price', 'home_type', 'images', 'remarks', 'num_bedrooms', 'num_bathrooms',
-                  'interior_amenities', 'exterior_amenities', 'nearby_amenities', 'latitude','longitude')
+                  'interior_amenities', 'exterior_amenities', 'nearby_amenities', 'full_address', 'listing_number',
+                  'listing_agent', 'listing_office', 'latitude', 'longitude')
+

@@ -4,7 +4,7 @@ import {Component} from 'react';
 import axios from 'axios'
 
 // Import Cocoon Components
-import Itinerary from "../itinerary/itinerary";
+import ItineraryAgent from "../itinerary/itinerary_agent";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 
 import "./agentScheduler.css"
@@ -74,16 +74,14 @@ class AgentSchedulerPortal extends Component {
 
     }
 
-    renderItinerary = (itinerary, key, showTimes, canClaim, canSelect, viewType) => {
+    renderItinerary = (itinerary, key, viewType) => {
         return (
-            <div key={key} className='single-itinerary'>
-                <Itinerary
+            <div key={key} className='itinerary-section-wrapper single-itinerary'>
+                <ItineraryAgent
                     id={itinerary.id}
                     key={"itinerary" + key}
                     hash={itinerary.hash}
                     refreshItineraries={this.refreshItineraries}
-                    showTimes={showTimes}
-                    canSelect={canSelect}
                     brokerRequest
                     viewType={viewType}
                 />
@@ -95,11 +93,11 @@ class AgentSchedulerPortal extends Component {
         if (this.state.unscheduled_loaded) {
 
             if (this.state.unscheduled_itineraries.length <= 0) {
-                return <p> There is no unscheduled itineraries </p>
+                return <p> There are no unscheduled itineraries </p>
             } else {
                 return (
                     <div className='unscheduled-wrapper'>
-                        {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, true, false, true, "itineraryAgent"))}
+                        {this.state.unscheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, "itineraryAgentUnscheduled"))}
                     </div>
                 );
             }
@@ -109,11 +107,11 @@ class AgentSchedulerPortal extends Component {
     renderScheduledItineraries = () => {
         if (this.state.scheduled_loaded) {
             if (this.state.scheduled_itineraries.length <= 0) {
-                return <div> There is no scheduled itineraries </div>
+                return <div> There are no scheduled itineraries </div>
             } else {
                 return (
                     <div className='scheduled-wrapper'>
-                        {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, false, false, false, "itineraryAgent"))}
+                        {this.state.scheduled_itineraries.map((itn, i) => this.renderItinerary(itn, i, "itineraryAgentScheduled"))}
                     </div>
                 )
             }
@@ -124,7 +122,7 @@ class AgentSchedulerPortal extends Component {
         return (
             <React.Fragment>
                 <div className="agent-scheduler-wrapper">
-                    <button onClick={this.refreshItineraries}>Refresh itineraries</button>
+                    <button className="btn btn-primary" onClick={this.refreshItineraries}>Refresh itineraries</button>
                     <div className='itinerary-wrapper row'>
                         <div className="col-md-4">
                             <h2>Unscheduled Itineraries</h2>
