@@ -332,8 +332,6 @@ def get_secret(setting):
         error_msg = 'Set the {0} environment variable'.format(setting)
         raise ImproperlyConfigured(error_msg)
 
-# Intercom ID from our account
-INTERCOM_APPID = "sivq8o13"
 
 # Intercom configuration for user data
 INTERCOM_USER_DATA_CLASS = 'config.settings.intercom.intercom_user_data.IntercomUserData'
