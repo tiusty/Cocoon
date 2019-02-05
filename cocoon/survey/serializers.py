@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .models import RentingSurveyModel, TenantModel
 
 # Import Third party modules
-from cocoon.houseDatabase.serializers import RentDatabaseSerializer
+from cocoon.houseDatabase.serializers import RentDatabaseSerializer, RentDatabaseSerializerBroker
 from cocoon.commutes.serializers import CommuteTypeSerializerJustId
 
 
@@ -24,9 +24,37 @@ class TenantSerializer(serializers.HyperlinkedModelSerializer):
 class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
     generalInfo = serializers.SerializerMethodField()
     amenitiesInfo = serializers.SerializerMethodField()
-    favorites = RentDatabaseSerializer(read_only=True, many=True)
-    visit_list = RentDatabaseSerializer(read_only=True, many=True)
+    favorites = serializers.SerializerMethodField()
+    visit_list = serializers.SerializerMethodField()
     tenants = TenantSerializer(read_only=True, many=True)
+
+    def get_visit_list(self, obj):
+        """
+        If the user is a broker or admin they get more info regarding the home
+        :param obj:
+        :return:
+        """
+        homes = obj.visit_list.all()
+        if 'user' in self.context:
+            user = self.context['user']
+            if user.is_broker or user.is_admin:
+                return RentDatabaseSerializerBroker(homes, read_only=True, many=True).data
+
+        return RentDatabaseSerializer(homes, read_only=True, many=True).data
+
+    def get_favorites(self, obj):
+        """
+        If the user is a broker or admin they get more info regarding the home
+        :param obj:
+        :return:
+        """
+        homes = obj.favorites.all()
+        if 'user' in self.context:
+            user = self.context['user']
+            if user.is_broker or user.is_admin:
+                return RentDatabaseSerializerBroker(homes, read_only=True, many=True).data
+
+        return RentDatabaseSerializer(homes, read_only=True, many=True).data
 
     @staticmethod
     def get_generalInfo(obj):

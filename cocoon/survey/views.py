@@ -75,6 +75,13 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
     serializer_class = RentSurveySerializer
 
+    def get_serializer_context(self):
+        """
+        Gets the context data for the serializer so that broker accounts get the information regarding
+            the home
+        """
+        return {'user': self.request.user}
+
     def get_permissions(self):
         """
         Dynamically get permissions because we only allow the user to not be authenticated on the
@@ -117,7 +124,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         else:
             survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
 
-        serializer = RentSurveySerializer(survey)
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -334,7 +341,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                         # Now save the the tenants
                         tenants.save()
 
-                    serializer = RentSurveySerializer(survey)
+                    serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
                     return Response({'result': True, 'survey': serializer.data})
 
             tenants_errors = ""
@@ -349,7 +356,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             })
 
         # Returns the survey that was updated
-        serializer = RentSurveySerializer(survey)
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
         return Response(serializer.data)
 
 
@@ -411,5 +418,5 @@ class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
         # Retrieve the associated survey with the request
         survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
-        serializer = RentSurveySerializer(survey)
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
         return Response(serializer.data)
