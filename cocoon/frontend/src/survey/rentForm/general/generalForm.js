@@ -395,6 +395,9 @@ export default class GeneralForm extends Component {
         if (this.props.generalInfo.polygon_filter_type === 1) {
             return (
                 <>
+                    <small className="form-text text-muted">
+                        Please click on the map to add dots to construct your area
+                    </small>
                     <MyMapComponent
                         onCompletePolygon={this.props.onCompletePolygon}
                         polygons={this.props.generalInfo.polygons}
