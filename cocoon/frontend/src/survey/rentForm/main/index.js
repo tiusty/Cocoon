@@ -367,7 +367,6 @@ export default class RentForm extends Component {
          */
         let home_type_id = undefined;
         home_types.map(type => {
-            console.log(type)
             if (type.home_type === 'Apartment') {
                 home_type_id = type.id
             }

@@ -20,6 +20,11 @@ class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    This is the default home serializer that does not include information
+        that is only for a broker,
+        i.e full_address, listing_number... etc
+    """
     interior_amenities = serializers.SerializerMethodField(read_only=True)
     exterior_amenities = serializers.SerializerMethodField(read_only=True)
     nearby_amenities = serializers.SerializerMethodField(read_only=True)
@@ -82,7 +87,7 @@ class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
 
 class RentDatabaseSerializerBroker(serializers.HyperlinkedModelSerializer):
     """
-    This serializer is meant for broker account becomes it also returns info regarding the listing
+    This serializer is meant for a broker account because it also returns info regarding the listing
     """
     interior_amenities = serializers.SerializerMethodField(read_only=True)
     exterior_amenities = serializers.SerializerMethodField(read_only=True)
