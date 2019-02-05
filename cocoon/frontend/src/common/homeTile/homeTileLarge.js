@@ -144,6 +144,44 @@ export default class HomeTileLarge extends Component {
         }
     };
 
+    renderBrokerInfo = (home) => {
+        /**
+         * Renders all the nearby amenity information
+         * @type {Array}
+         */
+
+            // Creates a list of all the nearby amenities that exist
+        let nearby_amenities = [];
+        for (var key in home.nearby_amenities) {
+            if (home.nearby_amenities[key]) {
+                nearby_amenities.push(key)
+            }
+        }
+
+        // If there is at least one amenity then render it
+        // Since the names have a _ instead of a space, when rendering the name
+        //  replace all _ with spaces
+        if (nearby_amenities.length > 0) {
+            return (
+                <div className="point-wrapper">
+                    <h3>What's near here?</h3>
+                    {nearby_amenities.map(item => (
+                        <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
+                </div>
+            );
+
+            // If there is not data then render that there is no data
+        } else {
+            return (
+                <div className="point-wrapper">
+                    <h3>Nearby Amenities</h3>
+                    <p>No data</p>
+                </div>
+            );
+        }
+    };
+
     renderAmenities = () => {
         /**
          * Renders all the amenities information associated with the home
@@ -154,6 +192,7 @@ export default class HomeTileLarge extends Component {
                 {this.renderInterior(home)}
                 {this.renderExterior(home)}
                 {this.renderNearby(home)}
+                {this.renderBrokerInfo(home)}
             </div>
         );
 

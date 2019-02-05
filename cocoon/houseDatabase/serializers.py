@@ -87,8 +87,18 @@ class RentDatabaseSerializerBroker(serializers.HyperlinkedModelSerializer):
     interior_amenities = serializers.SerializerMethodField(read_only=True)
     exterior_amenities = serializers.SerializerMethodField(read_only=True)
     nearby_amenities = serializers.SerializerMethodField(read_only=True)
+    broker_info = serializers.SerializerMethodField(read_only=True)
     home_type = HomeTypeSerializer(read_only=True)
     images = HomeImageSerializer(read_only=True, many=True)
+
+    @staticmethod
+    def get_broker_info(obj):
+        return {
+            'full_address': obj.full_address,
+            'listing_number': obj.listing_number,
+            'listing_agent': obj.listing_agent,
+            'listing_office': obj.listing_office,
+        }
 
     @staticmethod
     def get_interior_amenities(obj):
@@ -140,5 +150,5 @@ class RentDatabaseSerializerBroker(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RentDatabaseModel
         fields = ('id', 'price', 'home_type', 'images', 'remarks', 'num_bedrooms', 'num_bathrooms',
-                  'interior_amenities', 'exterior_amenities', 'nearby_amenities', 'full_address', 'listing_number',
-                  'listing_agent', 'listing_office', 'latitude', 'longitude')
+                  'interior_amenities', 'exterior_amenities', 'nearby_amenities', 'broker_info',
+                  'latitude', 'longitude')

@@ -90,6 +90,13 @@ class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = ItinerarySerializer
 
+    def get_serializer_context(self):
+        """
+        Gets the context data for the serializer so that broker accounts get the information regarding
+            the home
+        """
+        return {'user': self.request.user}
+
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
@@ -106,6 +113,13 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = ItinerarySerializer
+
+    def get_serializer_context(self):
+        """
+        Gets the context data for the serializer so that broker accounts get the information regarding
+            the home
+        """
+        return {'user': self.request.user}
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
@@ -147,6 +161,13 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = ItinerarySerializer
+
+    def get_serializer_context(self):
+        """
+        Gets the context data for the serializer so that broker accounts get the information regarding
+            the home
+        """
+        return {'user': self.request.user}
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
