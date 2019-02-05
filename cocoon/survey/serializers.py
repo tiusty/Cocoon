@@ -144,5 +144,18 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class HomeScoreSerializer(serializers.Serializer):
-    home = RentDatabaseSerializer(read_only=True)
+    home = serializers.SerializerMethodField()
     percent_match = serializers.IntegerField()
+
+    def get_home(self, obj):
+        """
+        If the user is a broker or admin they get more info regarding the home
+        :param obj:
+        :return:
+        """
+        if 'user' in self.context:
+            user = self.context['user']
+            if user.is_broker or user.is_admin:
+                return RentDatabaseSerializerBroker(obj.home, read_only=True).data
+
+        return RentDatabaseSerializer(obj.home, read_only=True).data

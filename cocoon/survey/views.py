@@ -381,7 +381,7 @@ class RentResultViewSet(viewsets.ViewSet):
         data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]
 
         # Serialize the response
-        serializer = HomeScoreSerializer(data, many=True)
+        serializer = HomeScoreSerializer(data, many=True, context={'user': user_profile.user})
 
         # Return the result
         return Response(serializer.data)

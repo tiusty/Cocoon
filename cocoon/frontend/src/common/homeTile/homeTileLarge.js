@@ -151,22 +151,24 @@ export default class HomeTileLarge extends Component {
          */
 
             // Creates a list of all the nearby amenities that exist
-        let nearby_amenities = [];
-        for (var key in home.nearby_amenities) {
-            if (home.nearby_amenities[key]) {
-                nearby_amenities.push(key)
-            }
+        let broker_info = [];
+        for (var key in home.broker_info) {
+            console.log(key)
+                broker_info.push(key)
         }
 
         // If there is at least one amenity then render it
         // Since the names have a _ instead of a space, when rendering the name
         //  replace all _ with spaces
-        if (nearby_amenities.length > 0) {
+        if (broker_info.length > 0) {
             return (
-                <div className="point-wrapper">
-                    <h3>What's near here?</h3>
-                    {nearby_amenities.map(item => (
-                        <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                <div className="broker_info">
+                    <h3>Broker Info</h3>
+                    {broker_info.map(item => (
+                        <div key={item} className="itinerary-section-item">
+                            <span className="item-left-text">{item.replace(/_/g,' ')}</span>
+                            <span className="item-right-text">{home.broker_info[item]}</span>
+                        </div>
                     ))}
                 </div>
             );
@@ -175,7 +177,7 @@ export default class HomeTileLarge extends Component {
         } else {
             return (
                 <div className="point-wrapper">
-                    <h3>Nearby Amenities</h3>
+                    <h3>Broker Info</h3>
                     <p>No data</p>
                 </div>
             );
@@ -192,7 +194,6 @@ export default class HomeTileLarge extends Component {
                 {this.renderInterior(home)}
                 {this.renderExterior(home)}
                 {this.renderNearby(home)}
-                {this.renderBrokerInfo(home)}
             </div>
         );
 
@@ -347,6 +348,7 @@ renderPercentMatch = (home) => {
                             </div>
 
                             {this.renderAmenities()}
+                            {this.renderBrokerInfo(home)}
                         </div>
                         {this.renderScore(home)}
                     </div>
