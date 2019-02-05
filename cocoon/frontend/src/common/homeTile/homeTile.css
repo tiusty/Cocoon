@@ -38,8 +38,8 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 11px;
-    padding: 10px;
+    font-size: 12px;
+    padding: 15px;
 }
 
 .home_add_default:nth-of-type(1) {
@@ -283,6 +283,7 @@
 
 .carousel .slide img {
     max-height: 400px;
+    object-fit: cover;
 }
 
 .broker_info {
