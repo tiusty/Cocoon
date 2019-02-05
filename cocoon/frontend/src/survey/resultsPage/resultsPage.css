@@ -37,6 +37,13 @@
     z-index: 10000;
 }
 
+.schedule-tour-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+
 .results-btn-row span {
     cursor: pointer;
     color: var(--grey);
