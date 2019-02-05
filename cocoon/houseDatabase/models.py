@@ -11,10 +11,7 @@ class HomeTypeModel(models.Model):
     If another home gets added it needs to be added here in the HOME_TYPE
     """
     HOME_TYPE = (
-        ('House', 'House'),
         ('Apartment', 'Apartment'),
-        ('Condo', 'Condo'),
-        ('Town House', 'Town House'),
     )
     home_type = models.CharField(
         unique=True,
