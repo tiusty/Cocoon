@@ -146,17 +146,17 @@ export default class HomeTileLarge extends Component {
 
     renderBrokerInfo = (home) => {
         /**
-         * Renders all the nearby amenity information
+         * Renders all broker information
          * @type {Array}
          */
 
-            // Creates a list of all the nearby amenities that exist
+        // Creates a list of all broker information that exist
         let broker_info = [];
         for (var key in home.broker_info) {
             broker_info.push(key)
         }
 
-        // If there is at least one amenity then render it
+        // If there is at least broker info then render it
         // Since the names have a _ instead of a space, when rendering the name
         //  replace all _ with spaces
         if (broker_info.length > 0) {
