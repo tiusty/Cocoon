@@ -98,6 +98,7 @@ class RentDatabaseSerializerBroker(serializers.HyperlinkedModelSerializer):
             'listing_number': obj.listing_number,
             'listing_agent': obj.listing_agent,
             'listing_office': obj.listing_office,
+            'listing_provider': obj.listing_provider.provider
         }
 
     @staticmethod
