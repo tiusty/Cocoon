@@ -391,6 +391,7 @@ export default class ResultsPage extends Component {
                       <button className="btn btn-primary" onClick={this.resendConfirmationEmail}>
                           {this.state.verificationEmailLoading ? 'Loading' : 'Resend confirmation email'}
                       </button>
+                      <h3>Please refresh your page once you confirm your email</h3>
                   </div>
               </div>
             );
