@@ -284,16 +284,3 @@
         width: 90%;
     }
 }
-
-/* MOBILE FIXES*/
-@media (max-width: 974px) and (min-width: 768px) {
-    body {
-        padding-top: 60px !important;
-    }
-}
-
-@media (max-width: 768px) {
-    body {
-        padding-top: 60px !important;
-    }
-}
