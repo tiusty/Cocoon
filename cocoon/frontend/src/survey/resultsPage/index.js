@@ -376,8 +376,6 @@ export default class ResultsPage extends Component {
                 <div className="results-btn-row">
                     <div className="schedule-tour-div">
                         {this.renderScheduleButton()}
-                        {/*<p>Done favoriting homes? Click below to continue</p>*/}
-                        {/*<a href={userAuth_endpoints['surveys']}>Schedule Tour</a>*/}
                     </div>
                     <span onClick={this.toggleEditing}><i className="material-icons">edit</i> {this.renderEditingText()}</span>
                 </div>
