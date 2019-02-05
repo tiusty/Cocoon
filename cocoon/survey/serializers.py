@@ -64,7 +64,6 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
             'home_type': home_type_ids,
             'num_bedrooms': obj.num_bedrooms,
             'polygon_filter_type': obj.polygon_filter_type,
-            'is_move_asap': obj.is_move_asap,
             'move_weight': obj.move_weight,
             'polygons': polygons,
         }

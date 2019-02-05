@@ -137,7 +137,7 @@ export default class TourSummary extends Component {
                     <form method="post" style={{marginTop: '10px'}}>
                         <CSRFToken/>
                         <button name="submit-button"
-                                className="btn btn-success"
+                                className="btn btn-primary"
                                 value={this.props.survey_id}
                                 disabled={this.determineScheduleButtonStatus()}
                                 type="submit">Schedule!

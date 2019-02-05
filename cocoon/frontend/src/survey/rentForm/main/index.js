@@ -39,7 +39,6 @@ export default class RentForm extends Component {
                 price_weight: 2,
                 earliest_move_in: undefined,
                 latest_move_in: undefined,
-                is_move_asap: undefined,
             },
 
             // Amenities Form Fields
@@ -114,7 +113,11 @@ export default class RentForm extends Component {
                 tenants[i].index = i;
 
                 // Since the addresses are loaded, they should all be marked as valid initially
-                tenants[i].address_valid = true;
+                if (tenants[i].full_address !== "") {
+                    tenants[i].address_valid = true;
+                } else {
+                    tenants[i].address_valid = false;
+                }
 
                 // Since the commute type is passed back in a dictionary,
                 //  retrieve it and store it directly in the tenant dictionary

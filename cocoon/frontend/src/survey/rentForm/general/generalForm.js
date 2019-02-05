@@ -45,7 +45,6 @@ export default class GeneralForm extends Component {
         valid = valid && this.handleNameValidation();
         valid = valid && this.handleHomeTypeValidation();
         valid = valid && this.handlePriceValidation();
-        valid = valid && this.handleMoveAsapValidation();
         // valid = valid && this.handleDatePickerValidation();
         valid = valid && this.handleUrgencyValidation();
         valid = valid && this.handleBedroomValidation();
@@ -113,14 +112,6 @@ export default class GeneralForm extends Component {
         }
         if(valid) { document.querySelector('#price_weight_error').style.display = 'none'; }
         if(valid) { document.querySelector('#price_error').style.display = 'none'; }
-        return valid
-    }
-
-    handleMoveAsapValidation() {
-        let valid = true;
-        if (!this.props.generalInfo.is_move_asap === 'no' || !this.props.generalInfo.is_move_asap === 'yes') {
-            valid = false
-        }
         return valid
     }
 
@@ -307,22 +298,6 @@ export default class GeneralForm extends Component {
         );
     }
 
-    renderMoveAsapQuestion() {
-        return (
-            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'boolean')}>
-                <h2>Are you looking to move in <span>as soon as possible?</span></h2>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="is_move_asap" value={true} checked={this.props.generalInfo.is_move_asap === true} onChange={() => {}} />
-                    <div>Yes</div>
-                </label>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="is_move_asap" value={false} checked={this.props.generalInfo.is_move_asap === false} onChange={() => {}} />
-                    <div>No</div>
-                </label>
-            </div>
-        );
-    }
-
     renderDatePickingQuestion() {
         if (!this.props.generalInfo.is_move_asap) {
             return (
@@ -367,7 +342,7 @@ export default class GeneralForm extends Component {
                 </label>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="3" checked={this.props.generalInfo.move_weight === 3} onChange={() => {}} />
-                    <div>{this.props.number_of_tenants === 1 ? "I" : "We"} gotta move!</div>
+                    <div>{this.props.number_of_tenants === 1 ? "I" : "We"} gotta move ASAP!</div>
                 </label>
             </div>
         );
@@ -473,7 +448,6 @@ export default class GeneralForm extends Component {
                 {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
-                {this.renderMoveAsapQuestion()}
                 {/*{this.renderDatePickingQuestion()}*/}
                 {this.renderFilterZones()}
                 {this.renderUrgencyQuestion()}

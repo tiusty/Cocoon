@@ -394,7 +394,7 @@ class TenantEdit extends Component {
                                 </div>
                             );
                         })}
-                         <button className="btn btn-success" disabled={this.handleDisableSubmit()} onClick={() => this.props.onSubmitTenantInfo(this.state.curr_tenants)}>Save</button>
+                         <button className="btn btn-primary" disabled={this.handleDisableSubmit()} onClick={() => this.props.onSubmitTenantInfo(this.state.curr_tenants)}>Save</button>
                 </div>
             );
 

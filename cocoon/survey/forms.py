@@ -36,10 +36,6 @@ class HomeInformationForm(ModelForm):
         min_value=0,
     )
 
-    is_move_asap = forms.BooleanField(
-        required=False
-    )
-
     move_weight = forms.IntegerField(
         required=False,
         max_value=WEIGHT_QUESTION_MAX,
@@ -48,7 +44,7 @@ class HomeInformationForm(ModelForm):
 
     class Meta:
         model = HomeInformationModel
-        fields = ('num_bedrooms', 'home_type', 'polygon_filter_type', 'is_move_asap', 'move_weight')
+        fields = ('num_bedrooms', 'home_type', 'polygon_filter_type', 'move_weight')
 
 
 class PriceInformationForm(ModelForm):
