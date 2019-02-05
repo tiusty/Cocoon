@@ -22,6 +22,7 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
+from cocoon.houseDatabase.models import HomeTypeModel
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -74,6 +75,13 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
     serializer_class = RentSurveySerializer
 
+    def get_serializer_context(self):
+        """
+        Gets the context data for the serializer so that broker accounts get the information regarding
+            the home
+        """
+        return {'user': self.request.user}
+
     def get_permissions(self):
         """
         Dynamically get permissions because we only allow the user to not be authenticated on the
@@ -116,7 +124,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         else:
             survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
 
-        serializer = RentSurveySerializer(survey)
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -141,6 +149,10 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         # Save data if it exists
         if 'generalInfo' in data:
             survey_data = data['generalInfo']
+            # Since the home type is set automatically. This is a check to make sure it is set.
+            # if it isn't then it is set to apartment
+            if 'home_type' not in survey_data or len(survey_data['home_type']) <= 0:
+                survey_data['home_type'] = [HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.APARTMENT)[0].id]
         if 'amenitiesInfo' in data:
             survey_data.update(data['amenitiesInfo'])
         if 'tenantInfo' in data:
@@ -148,7 +160,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         if 'detailsInfo' in data:
             user_data = data['detailsInfo']
 
-        number_of_tenants = survey_data['number_of_tenants']
         form = RentSurveyForm(survey_data)
 
         tenants = None
@@ -330,7 +341,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                         # Now save the the tenants
                         tenants.save()
 
-                    serializer = RentSurveySerializer(survey)
+                    serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
                     return Response({'result': True, 'survey': serializer.data})
 
             tenants_errors = ""
@@ -345,7 +356,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             })
 
         # Returns the survey that was updated
-        serializer = RentSurveySerializer(survey)
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
         return Response(serializer.data)
 
 
@@ -370,7 +381,7 @@ class RentResultViewSet(viewsets.ViewSet):
         data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]
 
         # Serialize the response
-        serializer = HomeScoreSerializer(data, many=True)
+        serializer = HomeScoreSerializer(data, many=True, context={'user': user_profile.user})
 
         # Return the result
         return Response(serializer.data)
@@ -407,5 +418,5 @@ class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
 
         # Retrieve the associated survey with the request
         survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
-        serializer = RentSurveySerializer(survey)
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
         return Response(serializer.data)

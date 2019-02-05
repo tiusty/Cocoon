@@ -279,6 +279,7 @@ export default class RentForm extends Component {
                         onCompletePolygon={this.handleCompletePolygon}
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
                         is_editing={this.props.is_editing}
+                        setHomeType={this.setHomeType}
                 />;
             case 2:
                 return <TenantsForm
@@ -356,6 +357,29 @@ export default class RentForm extends Component {
                 [name]: data,
             }
         })
+    };
+
+    setHomeType = (home_types) => {
+        /**
+         * This function is used as a workaround since we only have one home type right now
+         *
+         * Therefore when the component mounts, it automatically sets the home type to apartment
+         */
+        let home_type_id = undefined;
+        home_types.map(type => {
+            if (type.home_type === 'Apartment') {
+                home_type_id = type.id
+            }
+        });
+
+        if (home_type_id !== undefined) {
+            this.setState({
+                generalInfo: {
+                    ...this.state.generalInfo,
+                    home_type: [home_type_id],
+                }
+            })
+        }
     };
 
     handleGeneralInputChange = (e, type) => {
