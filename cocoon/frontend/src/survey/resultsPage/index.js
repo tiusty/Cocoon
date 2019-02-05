@@ -206,7 +206,7 @@ export default class ResultsPage extends Component {
             <>
                 <div className="results-info">
                     <h2>Time to pick your favorites!</h2>
-                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites.</p>
+                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match!</p>
                 </div>
                 <div className="results">
                     {this.state.homeList && this.state.homeList.map(home => (
