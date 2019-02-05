@@ -361,7 +361,7 @@ export default class RentForm extends Component {
 
     setHomeType = (home_types) => {
         /**
-         * This function is used as a workout since we only have one home type right now
+         * This function is used as a workaround since we only have one home type right now
          *
          * Therefore when the component mounts, it automatically sets the home type to apartment
          */
