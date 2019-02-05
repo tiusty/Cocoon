@@ -153,8 +153,7 @@ export default class HomeTileLarge extends Component {
             // Creates a list of all the nearby amenities that exist
         let broker_info = [];
         for (var key in home.broker_info) {
-            console.log(key)
-                broker_info.push(key)
+            broker_info.push(key)
         }
 
         // If there is at least one amenity then render it
@@ -166,19 +165,10 @@ export default class HomeTileLarge extends Component {
                     <h3>Broker Info</h3>
                     {broker_info.map(item => (
                         <div key={item} className="itinerary-section-item">
-                            <span className="item-left-text">{item.replace(/_/g,' ')}</span>
+                            <span className="item-left-text">{item.replace(/_/g, ' ')}</span>
                             <span className="item-right-text">{home.broker_info[item]}</span>
                         </div>
                     ))}
-                </div>
-            );
-
-            // If there is not data then render that there is no data
-        } else {
-            return (
-                <div className="point-wrapper">
-                    <h3>Broker Info</h3>
-                    <p>No data</p>
                 </div>
             );
         }
