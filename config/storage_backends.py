@@ -1,18 +1,20 @@
-# Third party imports
-from storages.backends.s3boto3 import S3Boto3Storage
+# Import Django modules
 from django.contrib.staticfiles.storage import ManifestFilesMixin
+
+# Third party imports
+import os
+from storages.backends.s3boto3 import S3Boto3Storage, SpooledTemporaryFile
 
 # Settings import
 from config.settings.production import AWS_STATIC_LOCATION, AWS_PUBLIC_MEDIA_LOCATION
-
-from storages.backends.s3boto3 import S3Boto3Storage, SpooledTemporaryFile
-import os
 
 
 # Determines the storage location for static files
 class StaticStorage(ManifestFilesMixin, S3Boto3Storage):
     location = AWS_STATIC_LOCATION
 
+    # This override is necessary due to a bug in S3-bucket django backend library
+    #   From online
     def _save_content(self, obj, content, parameters):
         """
         We create a clone of the content file as when this is passed to boto3 it wrongly closes
