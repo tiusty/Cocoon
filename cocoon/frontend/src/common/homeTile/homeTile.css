@@ -306,13 +306,8 @@
 .itinerary-section-item {
     display: inline-block;
     width: 100%;
-    padding: 10px 25px;
+    padding: 10px 15px;
     color: var(--grey);
     font-weight: 300;
-    border: 1px solid var(--borderColor);
-    /*border-top-left-radius: var(--borderRadius);*/
-    /*border-top-right-radius: var(--borderRadius);*/
-    /*background-color: var(--teal);*/
-    /*color: white;*/
-    /*font-weight: 700;*/
+    border-top: 1px solid var(--borderColor);
 }
