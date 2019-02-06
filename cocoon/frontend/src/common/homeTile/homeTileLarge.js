@@ -164,7 +164,7 @@ export default class HomeTileLarge extends Component {
                 <div className="broker_info">
                     <h3>Broker Info</h3>
                     {broker_info.map(item => (
-                        <div key={item} className="itinerary-section-item">
+                        <div key={item} className="broker_info-section-item">
                             <span className="item-left-text">{item.replace(/_/g, ' ')}</span>
                             <span className="item-right-text">{home.broker_info[item]}</span>
                         </div>
