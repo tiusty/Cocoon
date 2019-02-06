@@ -48,7 +48,7 @@ cocoon/houseDatabase/management/commands/ygl/ygl_feed.xml
 cocoon/media
 
 # Ignore the collect static folder *
-cocoon/config/static/*
+config/static/
 
 # Sqlite database #
 db.sqlite3

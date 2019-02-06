@@ -343,6 +343,3 @@ INTERCOM_CUSTOM_DATA_CLASSES = [
 
 INTERCOM_SECURE_KEY = get_secret('INTERCOM_SECRET_CODE')
 
-# Cache settings
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
-
