@@ -38,8 +38,8 @@
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 11px;
-    padding: 10px;
+    font-size: 12px;
+    padding: 15px;
 }
 
 .home_add_default:nth-of-type(1) {
@@ -283,4 +283,31 @@
 
 .carousel .slide img {
     max-height: 400px;
+    object-fit: cover;
+}
+
+.broker_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.item-left-text {
+    font-weight: 700;
+    float: left;
+}
+
+.item-right-text {
+    float: right;
+}
+
+
+.broker_info-section-item {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 15px;
+    color: var(--grey);
+    font-weight: 300;
+    border-top: 1px solid var(--borderColor);
 }

@@ -10,11 +10,9 @@ class HomeTypeModel(models.Model):
     This generates the multiple select field in the survey
     If another home gets added it needs to be added here in the HOME_TYPE
     """
+    APARTMENT = "Apartment"
     HOME_TYPE = (
-        ('House', 'House'),
-        ('Apartment', 'Apartment'),
-        ('Condo', 'Condo'),
-        ('Town House', 'Town House'),
+        (APARTMENT, 'Apartment'),
     )
     home_type = models.CharField(
         unique=True,

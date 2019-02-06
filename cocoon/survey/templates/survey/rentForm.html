@@ -15,6 +15,7 @@
 
 
 {% block endScripts %}
+    {{ block.super }}
     <script src="{% static 'cocoon/main/ajax/getCookie.js' %}"></script>
     {% include 'frontend/react_base.html' %}
     <script src="{% static 'frontend/js/survey.bundle.js' %}"></script>

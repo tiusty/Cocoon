@@ -199,21 +199,22 @@ export default class TenantsForm extends Component {
             }
         }
 
+        // Right now we don't support transit options so it is commented out until we do
         // Make sure a transit option is selected if transit is selected
-        if (this.props.tenants[id].commute_type === this.getCommuteId('Transit')) {
-            if (this.props.tenants[id].transit_options === null) {
-                if (show_errors) {
-                    document.querySelector(`#tenants-${id}-transit_options_error`).style.display = 'block';
-                    document.querySelector(`#tenants-${id}-transit_options_error`).innerText = `You must select a transit option for ${this.props.tenants[id].first_name}.`;
-                }
-                valid = false;
-            } else if (valid) {
-                let selection = document.querySelector(`#tenants-${id}-transit_options_error`);
-                if (selection) {
-                    selection.style.display = 'none';
-                }
-            }
-        }
+        // if (this.props.tenants[id].commute_type === this.getCommuteId('Transit')) {
+        //     if (this.props.tenants[id].transit_options.length <= 0) {
+        //         if (show_errors) {
+        //             document.querySelector(`#tenants-${id}-transit_options_error`).style.display = 'block';
+        //             document.querySelector(`#tenants-${id}-transit_options_error`).innerText = `You must select a transit option for ${this.props.tenants[id].first_name}.`;
+        //         }
+        //         valid = false;
+        //     } else if (valid) {
+        //         let selection = document.querySelector(`#tenants-${id}-transit_options_error`);
+        //         if (selection) {
+        //             selection.style.display = 'none';
+        //         }
+        //     }
+        // }
 
         return valid
     }

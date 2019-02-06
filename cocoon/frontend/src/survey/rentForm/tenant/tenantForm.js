@@ -313,7 +313,9 @@ export default class TenantForm extends Component {
         if (this.props.tenant.commute_type === this.getCommuteId('Driving')) {
             return this.renderDrivingOptions()
         } else if (this.props.tenant.commute_type === this.getCommuteId('Transit')) {
-            return this.renderTransitOptions()
+            // Right now we don't support transit options
+            // return this.renderTransitOptions()
+            return null
         } else {
             return null;
         }

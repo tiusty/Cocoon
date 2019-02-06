@@ -16,7 +16,7 @@ if settings.DEBUG:
     AUTHENTICATION_VALUE = get_secret('AUTHENTICATION_VALUE_DEV')
 
     # Templates in dev
-    PRE_TOUR_TEMPLATE_ID = 'e998b44f-28cb-4d20-ad67-97a033cbbab1'
+    PRE_TOUR_TEMPLATE_ID = 'd77cb639-fc56-434b-8aa7-5b6052ae2465'
 else:
     OAUTH_BASE_URL = get_secret("OAUTH_BASE_URL_PROD")
     BASE_URL = get_secret('BASE_URL_PROD')

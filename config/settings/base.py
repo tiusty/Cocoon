@@ -318,17 +318,6 @@ REST_FRAMEWORK = {
     )
 }
 
-# Intercom ID from our account
-INTERCOM_APPID = "sivq8o13"
-
-# Intercom configuration for user data
-INTERCOM_USER_DATA_CLASS = 'config.settings.intercom.intercom_user_data.IntercomUserData'
-
-# Intercom configuration for custom data
-INTERCOM_CUSTOM_DATA_CLASSES = [
-    'config.settings.intercom.intercom_user_data.IntercomCustomData',
-]
-
 # Location for secret
 SECRET_FILE_PATH = os.path.join(BASE_DIR, 'settings/secrets.json')
 
@@ -342,3 +331,15 @@ def get_secret(setting):
     except KeyError:
         error_msg = 'Set the {0} environment variable'.format(setting)
         raise ImproperlyConfigured(error_msg)
+
+
+# Intercom configuration for user data
+INTERCOM_USER_DATA_CLASS = 'config.settings.intercom.intercom_user_data.IntercomUserData'
+
+# Intercom configuration for custom data
+INTERCOM_CUSTOM_DATA_CLASSES = [
+    'config.settings.intercom.intercom_user_data.IntercomCustomData',
+]
+
+INTERCOM_SECURE_KEY = get_secret('INTERCOM_SECRET_CODE')
+

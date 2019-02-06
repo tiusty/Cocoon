@@ -92,8 +92,8 @@
             <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
             <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
             {% if user.is_broker or user.is_admin%}
-                <a href="#">Agent Portal</a>
-                <a href="#">Marketplace</a>
+                <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>
+                <a href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a>
             {% endif %}
             <a href="{% url 'userAuth:user_profile' %}">Profile</a>
             <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
@@ -121,6 +121,7 @@
 </div>
 {% block endScripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static 'bootstrap-3.4.0-custom/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'cocoon/main/js/base.js' %}"></script>
     <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>
 {% endblock %}
