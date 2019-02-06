@@ -8,24 +8,15 @@ https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/
 """
 
 import os
-import json
 
 from django.core.wsgi import get_wsgi_application
-from django.core.exceptions import ImproperlyConfigured
 
-# Opens the secrets file and loads the values
-with open(os.path.expanduser("~") + '/work/Cocoon/config/settings/secrets.json') as f:
-        secrets = json.loads(f.read())
+from config.settings.base import get_secret
+from config.keys.keys_filepaths import KEY_FILE_PATHS
 
-
-# Function loads a value from the secrets file
-def get_secret(setting, secrets=secrets):
-        try:
-                return secrets[setting]
-        except KeyError:
-                        error_msg = 'Set the {0} environment variable'.format(setting)
-                        raise ImproperlyConfigured(error_msg)
-
+# Tests loading all the keys to make sure they exists (does not verify that they are valid)
+for key, path in KEY_FILE_PATHS.items():
+    assert os.path.exists(path), "File: {0} does not exist at path {1}".format(key, path)
 
 # Loads the settings file via the secrets file settings
 os.environ["DJANGO_SETTINGS_MODULE"] = get_secret('DJANGO_SETTINGS_MODULE')

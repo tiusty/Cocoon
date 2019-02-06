@@ -7,10 +7,10 @@ import os, sys
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel
 from cocoon.houseDatabase.management.commands.mlspin._mls_fields import *
 from config.settings.Global_Config import gmaps_api_key
-from cocoon.houseDatabase.models import HomeTypeModel, MlsManagementModel
+from cocoon.houseDatabase.models import HomeTypeModel, HomeProviderModel
 from cocoon.houseDatabase.constants import MLSpin_URL
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
-
+from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
 # Load the logger
 import logging
 logger = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ class MlspinRequester(object):
 
     NUM_COLS = 29
 
-    def __init__(self, timestamp, pull_idx_feed=True, **kwargs):
+    def __init__(self, timestamp, num_homes=-1, pull_idx_feed=True, **kwargs):
         """
         Retrieves IDX feed data from MLSPIN, including txt formatted information on
         over 4000 apartments in Massachusetts.
@@ -58,14 +58,19 @@ class MlspinRequester(object):
 
         # Builds a dictionary of town codes to towns
         self.towns = {}
-        self.town_lines = self.town_txt.split('\n')
-        for line in self.town_lines[1:-1]: # skips the col headers
+        town_lines = self.town_txt.split('\n')
+        # Strips any new lines. There was issues on windows due to different new lines characters
+        #   This makes sure all the elements in the area do no have new line/carriage return characters
+        self.town_lines = list(map(str.rstrip, town_lines))
+        for line in self.town_lines[1:-1]:  # skips the col headers
             fields = line.split('|')
             self.towns[str(fields[0])] = {
                 "town": fields[1],
                 "county": fields[2],
                 "state": fields[3]
             }
+
+        self.num_homes = num_homes
 
     def parse_idx_feed(self):
 
@@ -85,7 +90,13 @@ class MlspinRequester(object):
         num_updated_homes = 0
         num_homes_not_enough_cells = 0
 
+        counter = 0
         for line in lines[1:]:  # skips the col headers
+            # if self.num_homes is equal to -1, then it means to loop through all homes,
+            #   otherwise just loop for the indicated number of homes
+            if self.num_homes != -1 and counter >= self.num_homes:
+                break
+            counter = counter + 1
             num_houses += 1
             new_listing = RentDatabaseModel()
 
@@ -117,12 +128,17 @@ class MlspinRequester(object):
 
             # If any of the fields give a value error, then don't save the apartment
             try:
+                # Initialize word scraper
+                word_scraper = WordScraper(cells[REMARKS])
+
                 # Set the HomeBaseModel Fields
                 new_listing.street_address = normalize_street_address("{0} {1}".format(cells[STREET_NO], clean_address))
                 new_listing.city = self.towns[str(cells[TOWN_NUM])]["town"]
                 new_listing.state = self.towns[str(cells[TOWN_NUM])]["state"]
                 new_listing.zip_code = cells[ZIP_CODE]
                 new_listing.price = int(cells[LIST_PRICE])
+                if word_scraper.word_finder(["laundromat"]):
+                    new_listing.laundromat_nearby = True
 
                 # Set InteriorAmenitiesModel Fields
                 # Currently don't support non-integers for num_bathrooms. Therefore
@@ -131,6 +147,21 @@ class MlspinRequester(object):
                 new_listing.bath = True if num_baths > 0 else False
                 new_listing.num_bathrooms = num_baths
                 new_listing.num_bedrooms = int(cells[NO_BEDROOMS])
+                new_listing.furnished = word_scraper.word_finder(["furnished"])
+                new_listing.hardwood_floors = word_scraper.look_for_hardwood_floors()
+                new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
+                if (word_scraper.word_finder(["air", "conditioning"]))\
+                        or word_scraper.word_finder(["ac"])\
+                        or word_scraper.word_finder(["a", "/", "c"]):
+                    new_listing.air_conditioning = True
+
+                if word_scraper.word_finder(["dogs","allowed"]) and not word_scraper.word_finder(["no", "dogs","allowed"]):
+                    new_listing.dogs_allowed = True
+
+                if word_scraper.word_finder(["cats","allowed"]) and not word_scraper.word_finder(["no", "cats","allowed"]):
+                    new_listing.cats_allowed = True
+
+                new_listing.laundry_in_building = word_scraper.look_for_laundry_in_building()
 
                 # Set MLSpinDataModel fields
                 new_listing.remarks = cells[REMARKS]
@@ -146,6 +177,15 @@ class MlspinRequester(object):
                 # Set Exterior Amenities fields
                 if int(cells[PARKING_SPACES]) > 0:
                     new_listing.parking_spot = True
+                if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot","tub"]):
+                    new_listing.pool = True
+                if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
+                    new_listing.patio_balcony = True
+
+                new_listing.laundry_in_unit = word_scraper.look_for_laundry_in_unit()
+                if word_scraper.word_finder(["gym"]) or word_scraper.word_finder(["fitness", "center"]):
+                    new_listing.gym = True
+                new_listing.storage = word_scraper.word_finder(["storage"])
 
                 # Create the new home
                 # Define the home type
@@ -221,8 +261,8 @@ class MlspinRequester(object):
                     print("[ Integrity Error ] ")
                     num_integrity_error += 1
 
-        manager = MlsManagementModel.objects.all().first()
-        manager.last_updated_mls = self.update_timestamp
+        manager = HomeProviderModel.objects.get(provider="MLSPIN")
+        manager.last_updated_feed = self.update_timestamp
         manager.save()
 
         print("")

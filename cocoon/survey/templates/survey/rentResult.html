@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Survey Result{% endblock %}
+
+{% block head %}
+    {{ block.super }}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=places"
+            async defer></script>
+{% endblock %}
+
+{% block content %}
+    <div id="reactWrapper"></div>
+{% endblock %}
+
+{% block endScripts %}
+    {{ block.super }}
+    <script src="{% static 'cocoon/main/ajax/getCookie.js' %}"></script>
+    {% include 'frontend/react_base.html' %}
+    <script src="{% static 'frontend/js/survey.bundle.js' %}"></script>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

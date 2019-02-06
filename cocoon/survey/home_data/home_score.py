@@ -1,12 +1,3 @@
-from cocoon.commutes.models import ZipCodeBase, ZipCodeChild
-
-from cocoon.commutes.constants import GoogleCommuteNaming
-from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED, EXTRA_DISTANCE_LAT_LNG_APPROX
-import geopy.distance
-
-import math
-
-
 class HomeScore(object):
     # noinspection SpellCheckingInspection
     """
@@ -32,6 +23,21 @@ class HomeScore(object):
         self._approx_commute_times_minutes = {}
         self._exact_commute_times_minutes = {}
         self._eliminated = False
+
+    @property
+    def percent_match(self):
+        """
+        Generates the percent match
+        :return: (int): The percent fit the home is, 100 being perfect, 0 being the worst
+        """
+        if self.eliminated:
+            return -1
+        elif self.accumulated_points < 0 or self.total_possible_points < 0:
+            return -1
+        elif self.total_possible_points != 0:
+            return (self.accumulated_points / self.total_possible_points) * 100
+        else:
+            return 0
 
     @property
     def eliminated(self):
@@ -107,84 +113,6 @@ class HomeScore(object):
         """
         self._exact_commute_times_minutes.update(new_exact_commute_time)
 
-    def populate_approx_commutes(self, home, destination, lat_lng_dest=""):
-        """
-        Based on the commute type of the destination, this function determines the algorithm method that will
-            be used to generate the approximation
-        :param home: (RentDatabaseModel) -> The home that the user is computing for
-        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
-        :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
-        :return (Boolean): True if a valid pair match is found, False otherwise.
-        """
-        if destination.commute_type.commute_type == GoogleCommuteNaming.DRIVING:
-            return self.zip_code_approximation(home.zip_code, destination)
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.TRANSIT:
-            return self.zip_code_approximation(home.zip_code, destination)
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING:
-            return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_BICYCLING_SPEED)
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
-            return self.lat_lng_approximation(home, destination, lat_lng_dest, AVERAGE_WALKING_SPEED)
-
-    def lat_lng_approximation(self, home, destination, lat_lng_dest, average_speed):
-        """
-        This function given a home and a destination will determine the distance between the two homes based off of the
-            lat and lng points. Then once the distance is determined, then the commute time is determined based off of
-            the average speed.
-        :param home: (RentDatabaseModel) -> The home that the user is computing for
-        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
-        :param lat_lng_dest: ((decimal, decimal)): -> A Tuple of (latitude, longitude) for the destination
-        :param average_speed: (int) -> The average speed in mph that the person moves for the given mode of transport
-        :return: (Boolean): -> True: The home approximation was found and added
-                               False: The home was not able to have a approximation created
-        """
-        # Stores the lat and lng points for the home
-        lat_lng_home = (home.latitude, home.longitude)
-
-        # Returns the distance from the two lat lng points in miles
-        distance = geopy.distance.geodesic(lat_lng_home, lat_lng_dest).miles
-
-        # If the distance is less than a mile then don't add any distance since it is already so close
-        if distance > 1:
-            # Extra distance is determined by giving more distance to homes farther away
-            extra_distance = EXTRA_DISTANCE_LAT_LNG_APPROX * (1 - 1.0/distance)
-            # This normalizes the value since walking needs less of a weight than biking since homes
-            #   are more direct when walking.
-            distance += extra_distance * average_speed/AVERAGE_BICYCLING_SPEED
-        if average_speed is not 0:
-            commute_time_hours = distance / average_speed
-            commute_time = commute_time_hours * 60
-        else:
-            return False
-        self.approx_commute_times[destination] = commute_time
-        return True
-
-    def zip_code_approximation(self, origin_zip, destination):
-        """
-        This is the zip_code_approximation algorithm. This assumes that the zip-code cache is already updated
-            and that all the valid pairs are already generated. This just goes through and finds the valid pairs
-            for the given zip_code and the destination
-        :param origin_zip: (string) -> The zip code of the origin, i.e home
-        :param destination: (DestinationModel): The destination as a RentingDestinationsModel object
-        :return (Boolean): True if a valid pair exists, False otherwise.
-        """
-        parent_zip_code_dictionary = ZipCodeBase.objects.filter(zip_code__exact=origin_zip)
-        if parent_zip_code_dictionary.exists():
-            for parent in parent_zip_code_dictionary:
-                zip_code_dictionary = ZipCodeChild.objects.filter(
-                    base_zip_code_id=parent).filter(zip_code__exact=destination.zip_code) \
-                    .filter(commute_type=destination.commute_type)
-                if zip_code_dictionary.exists():
-                    for match in zip_code_dictionary:
-                        if match.zip_code_cache_still_valid():
-                            self.approx_commute_times[destination] = match.commute_time_minutes
-                            return True
-                        else:
-                            return False
-                else:
-                    return False
-        else:
-            return False
-
     @property
     def accumulated_points(self):
         """
@@ -237,3 +165,38 @@ class HomeScore(object):
         :return: (int) The score percent rounded to the nearest int
         """
         return round(self.percent_score())
+
+    def letter_grade(self):
+        if self.percent_score() > 97:
+            return "A+"
+        elif self.percent_score() > 93:
+            return "A"
+        elif self.percent_score() > 90:
+            return "A-"
+        elif self.percent_score() > 87:
+            return "B+"
+        elif self.percent_score() > 83:
+            return "B"
+        elif self.percent_score() > 80:
+            return "B-"
+        elif self.percent_score() > 77:
+            return "C+"
+        elif self.percent_score() > 73:
+            return "C"
+        elif self.percent_score() > 70:
+            return "C-"
+        elif self.percent_score() > 66:
+            return "D+"
+        elif self.percent_score() > 63:
+            return "D"
+        elif self.percent_score() > 60:
+            return "D-"
+        elif self.percent_score() > 57:
+            return "F+"
+        elif self.percent_score() > 54:
+            return "F"
+        elif self.percent_score() > 0:
+            return "F-"
+        else:
+            return "N/R"
+

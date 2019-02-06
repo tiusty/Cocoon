@@ -1,0 +1,15 @@
+{% load static %}
+<script>
+    window.react_mount = document.getElementById('reactWrapper');
+    window.component = '{{component}}';
+    {% if user.is_authenticated %}
+            window.isUser = true;
+        {% else %}
+            window.isUser = false;
+    {% endif %}
+    {% if user.is_verified %}
+        window.isVerified = true;
+    {% else %}
+        window.isVerified = false;
+    {% endif %}
+</script>

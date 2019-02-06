@@ -1,14 +1,10 @@
-# Import Python Modules
-import json
-
 # Import Django modules
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
-from django.urls import reverse
-from django.forms import inlineformset_factory
+from django.db import transaction
+from django.contrib.auth import login
+from django.views.generic import TemplateView, DetailView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -17,413 +13,410 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import UserProfile
 
 # Import Survey algorithm modules
-from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
-from cocoon.survey.models import RentingSurveyModel, RentingDestinationsModel
-from cocoon.survey.forms import RentSurveyForm, BrokerRentSurveyForm, BrokerRentSurveyFormMini, \
-    RentingDestinationsForm, RentSurveyFormMini
+from .cocoon_algorithm.rent_algorithm import RentAlgorithm
+from .models import RentingSurveyModel
+from .forms import RentSurveyForm, RentSurveyFormEdit, TenantFormSet, TenantFormSetJustNames
+from .survey_helpers.save_polygons import save_polygons
+from .serializers import HomeScoreSerializer, RentSurveySerializer
+from .constants import NUMBER_OF_HOMES_RETURNED
+
+# Cocoon Modules
+from cocoon.userAuth.forms import ApartmentHunterSignupForm
+from cocoon.houseDatabase.models import HomeTypeModel
+
+# Rest Framework
+from rest_framework import viewsets, mixins
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 
-@login_required
-def renting_survey(request):
-    # Create the two forms,
-    # RentSurveyForm contains everything except for destinations
+class RentingSurveyTemplate(TemplateView):
+    """
+    Template to load the react for the rent survey page
+    """
 
-    # DestinationFrom contains the destination
-    # The reason why this is split is because the destination form can be made into a form factory
-    # So that multiple destinations can be entered, it is kinda working but I removed the ability to do
-    # Multiple DestinationsModel on the frontend
-    number_of_formsets = 4
-    number_of_destinations = 1
-    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=number_of_formsets,
-                                               form=RentingDestinationsForm, can_delete=False)
-    destination_form_set = DestinationFormSet()
+    template_name = "survey/rentForm.html"
 
-    # Retrieve the current profile or return a 404
-    current_profile = get_object_or_404(UserProfile, user=request.user)
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['component'] = RentingSurveyTemplate.__name__
+        return data
 
-    if current_profile.user.is_broker:
-        form_type = BrokerRentSurveyForm
-    else:
-        form_type = RentSurveyForm
 
-    form = form_type()
+@method_decorator(login_required, name='dispatch')
+class RentingResultTemplate(DetailView):
+    """
+    Detail view to load the react for the rent result page
 
-    context = {'error_message': [], 'number_of_formsets': number_of_formsets}
+    The reason why the detail view is used is to cause a 404 if the user
+        tries to load a survey that doesn't exist or they don't own
+    """
 
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = form_type(request.POST)
+    template_name = "survey/rentResult.html"
+    model = RentingSurveyModel
+    slug_field = 'url'
+    slug_url_kwarg = 'survey_url'
 
-        # check whether it is valid
+    def get_queryset(self):
+        """
+        The survey must be associated with the currently logged in user
+        """
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['component'] = RentingResultTemplate.__name__
+        return data
+
+
+class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin,
+                        mixins.CreateModelMixin, viewsets.GenericViewSet):
+
+    serializer_class = RentSurveySerializer
+
+    def get_serializer_context(self):
+        """
+        Gets the context data for the serializer so that broker accounts get the information regarding
+            the home
+        """
+        return {'user': self.request.user}
+
+    def get_permissions(self):
+        """
+        Dynamically get permissions because we only allow the user to not be authenticated on the
+            create method
+        """
+        if self.action == 'create':
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieves a survey based on either the id or the survey url
+        :param request:
+        :param args:
+        :param kwargs:
+            type: 'by_url' -> The survey is retrieved by using the survey url
+                   other -> Anything else will default the request to retrieve the survey via id
+            pk: Stores either the survey url or the survey depending on the type
+        :return: A serailzed response with the survey that was retrieved
+        """
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Determine the method for getting the survey
+        retrieve_type = self.request.query_params.get('type', None)
+
+        # Retrieve the survey id/url
+        pk = kwargs.pop('pk', None)
+
+        if retrieve_type == 'by_url':
+            # Retrieve the associated survey with the request
+            survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, url=pk)
+        else:
+            survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
+
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Retrieves all the data from the frontend
+        Then the data is parsed to each of the sections
+        If all the forms are valid, they are saved and the redirct url is returned
+        Otherwise the form errors are returned
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
+        data = self.request.data['data']
+
+        # Parse data to correct format
+        survey_data = None
+        tenant_data = None
+        user_data = None
+
+        # Save data if it exists
+        if 'generalInfo' in data:
+            survey_data = data['generalInfo']
+            # Since the home type is set automatically. This is a check to make sure it is set.
+            # if it isn't then it is set to apartment
+            if 'home_type' not in survey_data or len(survey_data['home_type']) <= 0:
+                survey_data['home_type'] = [HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.APARTMENT)[0].id]
+        if 'amenitiesInfo' in data:
+            survey_data.update(data['amenitiesInfo'])
+        if 'tenantInfo' in data:
+            tenant_data = data['tenantInfo']
+        if 'detailsInfo' in data:
+            user_data = data['detailsInfo']
+
+        form = RentSurveyForm(survey_data)
+
+        tenants = None
+        user_form = None
+
         if form.is_valid():
-            number_of_destinations = int(request.POST['number_destinations_filled_out'])
 
-            # process the data in form.cleaned_data as required
-            rent_survey = form.save(commit=False)
-            # Need to retrieve the current userProfile to link the survey to
+            tenants = TenantFormSet(tenant_data)
 
-            # Add the current user to the survey
-            rent_survey.user_profile = current_profile
+            does_user_signup = False
+            sign_up_form_valid = True
 
-            # Create the form destination set
-            request_post = request.POST.copy()
-            for x in range (number_of_destinations, number_of_formsets):
-                for field in request.POST:
-                    if 'rentingdestinationsmodel_set-' + str(x) in field:
-                        del request_post[field]
+            if not self.request.user.is_authenticated():
+                does_user_signup = True
+                user_form = ApartmentHunterSignupForm(user_data)
+                sign_up_form_valid = user_form.is_valid()
 
-            destination_form_set = DestinationFormSet(request_post, instance=rent_survey)
+            # Makes sure that the tenant form and the signup form are valid before saving
+            if tenants.is_valid() and sign_up_form_valid:
 
-            if destination_form_set.is_valid():
+                user = self.request.user
 
-                # Only if all the forms validate will we save it to the database
-                rent_survey.save()
-                form.save_m2m()
-                destination_form_set.save()
+                # If the user is signing up then save that form and return the user to log them in
+                if does_user_signup:
+                    user = user_form.save(request=self.request)
+                    login(self.request, user)
 
-                # redirect to survey result on success:
-                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_url": rent_survey.url}))
+                # Save the rent survey
+                with transaction.atomic():
+                    form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
-            else:
-                context['error_message'] = "The destination set did not validate"
-                context['error_message'] = destination_form_set.errors
-        else:
-            # If the destination form is not valid, also do a quick test of the survey field to
-            # Inform the user if the survey is also invalid
-            context['error_message'].append('The survey did not validate')
+                    # Now the form can be saved
+                    survey = form.save()
+                    survey.url = survey.generate_slug()
+                    survey.save()
 
-    context['form'] = form
-    context['form_destination'] = destination_form_set
-    context['number_of_destinations'] = number_of_destinations
-    return render(request, 'survey/rentingSurvey.html', context)
+                    # Save the polygons
+                    if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
+                        save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
+                # Now save the the tenants
+                tenants.instance = survey
+                tenants.save()
 
-def run_rent_algorithm(survey, context):
-    """
-    Runs the rent algorithm when the survey is being processed.
-    :param survey: (RentingSurveyModel): The survey that the user filled out
-    :param context: (dictionary): The context for the template
-    """
-
-    # Initialize the rent_algorithm class with empty data
-    rent_algorithm = RentAlgorithm()
-
-    """
-    STEP 1: Populate the rent_algorithm with all the information from the survey
-    """
-    rent_algorithm.populate_with_survey_information(survey)
-
-    """
-    STEP 2: Compute the approximate distance using zip codes from the possible homes and the desired destinations.
-    This also will store how long the commute will take which will be used later for Dynamic filtering/scoring
-    """
-    rent_algorithm.retrieve_all_approximate_commutes()
-
-    """
-    STEP 3: Remove homes that are too far away using approximate commutes
-    """
-    rent_algorithm.run_compute_approximate_commute_filter()
-
-    """
-    STEP 4: Generate scores based on hybrid questions
-    """
-    rent_algorithm.run_compute_commute_score_approximate()
-    rent_algorithm.run_compute_price_score()
-    rent_algorithm.run_compute_weighted_score_exterior_amenities(survey.parking_spot)
-    """
-    STEP 5: Now sort all the homes from best homes to worst home
-    """
-    rent_algorithm.run_sort_home_by_score()
-
-    """
-    STEP 6: Compute the exact commute time/distance for best homes
-    """
-    rent_algorithm.retrieve_exact_commutes()
-
-    """
-    STEP 7: Score the top homes based on the exact commute time/distance
-    """
-    rent_algorithm.run_compute_commute_score_exact()
-
-    """
-    STEP 8: Reorder homes again now with the full data
-    """
-    # Now reorder all the homes with the new information
-    rent_algorithm.run_sort_home_by_score()
-
-    # Set template variables
-    context['commuters'] = rent_algorithm.destinations
-    context['houseList'] = rent_algorithm.homes[:50]
-
-
-# Assumes the survey_slug will be passed by the URL if not, then it grabs the most recent survey.
-# If it can't find the most recent survey it redirects back to the survey
-@login_required
-def survey_result_rent(request, survey_url=""):
-    """
-    Survey result rent is the heart of the website where the survey is grabbed and the housing list is created
-    Based on the results of the survey. This is specifically for the rent survey
-    :param request: (Http Request): The HTTP request object
-    :param survey_url: (string): This is the survey slug to determine which survey to load
-    :return: HttpResponse if everything goes well. It returns a lot of context variables like the housingList
-        etc. If something goes wrong then it may redirect back to the survey homePage
-
-    ToDo:
-    1. Set a limit on the number of homes that are used for commute times. I would say 50 max, then
-        only return the top 20-30 homes to the user
-    """
-    context = {
-        'error_message': [],
-    }
-
-    user_profile = get_object_or_404(UserProfile, user=request.user)
-
-    if user_profile.user.is_broker:
-        form_type = BrokerRentSurveyFormMini
-    else:
-        form_type = RentSurveyFormMini
-
-    # Tries to grab the survey. If the survey name was not passed in, then it grabs the most recent survey taken.
-    try:
-        survey = RentingSurveyModel.objects.filter(user_profile=user_profile).get(url=survey_url)
-    # If the survey ID, does not exist/is not for that user, then return the most recent survey
-    except RentingSurveyModel.DoesNotExist:
-        if RentingSurveyModel.objects.filter(user_profile=user_profile).exists():
-            survey = RentingSurveyModel.objects.filter(user_profile=user_profile)\
-                .order_by('created').first()
-            messages.add_message(request, messages.WARNING, 'Could not find Survey, loading most recent survey')
-            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                kwargs={"survey_url": survey.url}))
-        else:
-            messages.add_message(request, messages.ERROR, 'Could not find Survey')
-            return HttpResponseRedirect(reverse('homePage:index'))
-
-    # Populate form with stored data
-    form = form_type(instance=survey)
-    number_of_forms = survey.rentingdestinationsmodel_set.count()
-    DestinationFormSet = inlineformset_factory(RentingSurveyModel, RentingDestinationsModel, extra=0,
-                                               form=RentingDestinationsForm, can_delete=False)
-    destination_form_set = DestinationFormSet(instance=survey)
-
-    # If a POST message occurs (They submit the mini form) then process it
-    # If it fails then keep loading survey result and pass the error messages
-    if request.method == 'POST':
-        # If a POST occurs, update the form. In the case of an error, then the survey
-        # Should be populated by the POST data.
-        form = form_type(request.POST, instance=survey, user=request.user)
-        destination_form_set = DestinationFormSet(request.POST, instance=survey)
-        # If the survey is valid then redirect back to the page to reload the changes
-        # This will also update the house list
-        if form.is_valid():
-            if destination_form_set.is_valid():
-                form.save()
-                destination_form_set.save()
-                return HttpResponseRedirect(reverse('survey:rentSurveyResult',
-                                                    kwargs={"survey_url": survey.url}))
-            else:
-                context['error_message'].append("There are form errors in destinatino form")
-                context['error_message'].append(destination_form_set.errors)
-        else:
-            context['error_message'].append("There are form errors")
-            try:
                 survey = RentingSurveyModel.objects.get(id=survey.id)
-                # Think of better solution for problem
-            except RentingSurveyModel.DoesNotExist:
-                print("Something really went wrong")
-                messages.add_message(request, messages.ERROR, 'Could not find Survey')
-                return HttpResponseRedirect(reverse('survey:rentSurveyResult'))
 
-    # Now start executing the Algorithm
-    run_rent_algorithm(survey, context)
-    context['survey'] = survey
-    context['form'] = form
-    context['form_destination'] = destination_form_set
-    context['number_of_formsets'] = number_of_forms
-    context['number_of_destinations'] = number_of_forms
-    context['mini_form'] = True
-    return render(request, 'survey/surveyResultRent.html', context)
+                # Return that the result is True and the redirect url so the page knows
+                #   where to redirect to
+                return Response({'result': True, 'redirect_url': survey.url})
 
+        # If there were any errors then save the errors so they can be returned
+        form_errors = form.errors
+        user_form_errors = ""
+        tenants_errors = ""
 
-@login_required
-def visit_list(request):
-    context = {
-        'error_message': []
-    }
+        if tenants is not None:
+            tenants.is_valid()
+            tenants_errors = tenants.errors
 
-    return render(request, 'survey/visitList.html', context)
+        if user_form is not None:
+            user_form.is_valid()
+            user_form_errors = user_form.errors
 
+        # Return a result false if the form was not valid
+        return Response({
+            'result': False,
+            'survey_errors': form_errors,
+            'tenants_errors': tenants_errors,
+            'user_form_errors': user_form_errors
+        })
 
-#######################################################
-# Ajax Requests below
-#############################################################
+    def update(self, request, *args, **kwargs):
+        """
+        Updates a survey with one of the option listed by the kwargs['types']
 
-# This is used for ajax request to set house favorites
-@login_required
-def set_favorite(request):
-    """
-    Ajax request that sets a home as a favorite. This function just toggles the homes.
-    Therefore, if the home is requested, if it already existed in the database as a favorite
-    Then it removes it from the favorites. If it was not in the database as a favorite then it favorites it. The return
-    value is the current state of the house after toggling the home. It returns a 0 if the home is
-    not in the home and returns a 1 if the home is a favorite
-    :param request: The HTTP request
-    :return: An HTTP response which returns a JSON
-        0- house not in favorites
-        1- house in favorites
-        else:
-            - the error message
-    """
-    if request.method == 'POST':
-        # Only care if the user is authenticated
-        if request.user.is_authenticated():
-            # Get the id that is associated with the AJAX request
-            house_id = request.POST.get('fav')
-            # Retrieve the house associated with that id
+        :param request:
+        :param args:
+        :param kwargs:
+            Expects:
+                home_id: (int) -> The int of the home to toggle
+                type: (string) -> The type of update that is occurring
+                    One of:
+                        visit_toggle: A visit list home is being toggled
+                        favorite_toggle: A favorite home is being toggled
+                        survey_delete: A survey is being deleted
+                        survey_edit: Updates a survey with new data
+        :return:
+            Dependent on type:
+                survey_edit:
+                {
+                    result: (Boolean) -> True: The operation succeeded
+                                         False: The operation failed
+                        if True:
+                            survey: (RentSurveyModel) -> The updated survey
+                        if False:
+                            survey_errors: Errors associated with the survey
+                            tenants_errors: Errors assocaited with the tenant
+
+                }
+        """
+
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        # Retrieve the associated survey with the request
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+
+        # Case if a visit list home is being removed or added
+        if 'visit_toggle' in self.request.data['type']:
+
+            # If the home already exists in the visit list then remove it
             try:
-                house = RentDatabaseModel.objects.get(id=house_id)
-                try:
-                    user_profile = UserProfile.objects.get(user=request.user)
-                    # If the house is already in the database then remove it and return 0
-                    # Which means that it is no longer in the favorites
-                    if user_profile.favorites.filter(id=house_id).exists():
-                        user_profile.favorites.remove(house)
-                        return HttpResponse(json.dumps({"result": "0"}),
-                                            content_type="application/json",
-                                            )
-                    # If the  house is not in the Many to Many then add it and
-                    # return 1 which means it is currently in the favorites
-                    else:
-                        user_profile.favorites.add(house)
-                        return HttpResponse(json.dumps({"result": "1"}),
-                                            content_type="application/json",
-                                            )
-                except UserProfile.DoesNotExist:
-                    return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
-                                        content_type="application/json",
-                                        )
-            # Return an error is the house cannot be found
+                home = survey.visit_list.get(id=self.request.data['home_id'])
+                survey.visit_list.remove(home)
+
+            # if the home does not exist in the vist list then add it
             except RentDatabaseModel.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve house"}),
-                                    content_type="application/json",
-                                    )
-
-
-@login_required
-def delete_survey(request):
-    """
-    Deletes the given Survey passed by the User.
-    It only deletes the survey if the survey corresponds to the given user.
-    Always returns to the profile page of the renting survey
-    :param request: HTTP request object
-    :return:
-        0 if the survey was successfully deleted
-        error message if the survey was not successfully deleted
-    """
-    if request.method == "POST":
-        # Only care if the user is authenticated
-        if request.user.is_authenticated():
-            # Get the id that is associated with the AJAX request
-            survey_id = request.POST.get('survey')
-            try:
-                user_profile = UserProfile.objects.get(user=request.user)
                 try:
-                    survey_delete = user_profile.rentingsurveymodel_set.get(id=survey_id)
-                    survey_delete.delete()
-                    return HttpResponse(json.dumps({"result": "0"}),
-                                        content_type="application/json",
-                                        )
-
-                except RentingSurveyModel.DoesNotExist:
-                    return HttpResponse(json.dumps({"result": "Could not retrieve Survey"}),
-                                        content_type="application/json",
-                                        )
-            except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
-                                    content_type="application/json",
-                                    )
-        else:
-            return HttpResponse(json.dumps({"result": "User not authenticated"}),
-                                content_type="application/json",
-                                )
-    else:
-        return HttpResponse(json.dumps({"result": "Method Not POST"}),
-                            content_type="application/json",
-                            )
-
-
-@login_required
-def set_visit_house(request):
-    """
-    This ajax function adds a house to the users visit list
-    :param request: Http request
-    :return: 1 means the home has successfully added
-    """
-
-    if request.method == "POST":
-        # Only care if the user is authenticated
-        if request.user.is_authenticated():
-            # Get the id that is associated with the AJAX request
-            home_id = request.POST.get('visit_id')
-            try:
-                user_profile = UserProfile.objects.get(user=request.user)
-                try:
-                    home = RentDatabaseModel.objects.get(id=home_id)
-                    user_profile.visit_list.add(home)
-                    return HttpResponse(json.dumps({"result": "1",
-                                                    "homeId": home_id}),
-                                        content_type="application/json", )
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.visit_list.add(home)
                 except RentDatabaseModel.DoesNotExist:
-                    return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
-                                        content_type="application/json",
-                                        )
-            except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
-                                    content_type="application/json",
-                                    )
-        else:
-            return HttpResponse(json.dumps({"result": "User not authenticated"}),
-                                content_type="application/json",
-                                )
-    else:
-        return HttpResponse(json.dumps({"result": "Method Not POST"}),
-                            content_type="application/json",
-                            )
+                    pass
 
-
-@login_required
-def delete_visit_house(request):
-    """
-    This ajax function removes a house from the users visit list
-    :param request: Http request
-    :return: 0 means the home was successfully removed
-    """
-
-    if request.method == "POST":
-        # Only care if the user is authenticated
-        if request.user.is_authenticated():
-            # Get the id that is associated with the AJAX request
-            home_id = request.POST.get('visit_id')
+        # Case if a favorite home is being removed or added
+        elif 'favorite_toggle' in self.request.data['type']:
+            # If the home exists in the favorite list already then remove it
             try:
-                user_profile = UserProfile.objects.get(user=request.user)
+                home = survey.favorites.get(id=self.request.data['home_id'])
+                survey.favorites.remove(home)
+
+            # If the home does not exist in the favorite list then add it
+            except RentDatabaseModel.DoesNotExist:
                 try:
-                    home = RentDatabaseModel.objects.get(id=home_id)
-                    user_profile.visit_list.remove(home)
-                    return HttpResponse(json.dumps({"result": "0"}),
-                                        content_type="application/json", )
+                    home = RentDatabaseModel.objects.get(id=self.request.data['home_id'])
+                    survey.favorites.add(home)
                 except RentDatabaseModel.DoesNotExist:
-                    return HttpResponse(json.dumps({"result": "Could not retrieve Home"}),
-                                        content_type="application/json",
-                                        )
-            except UserProfile.DoesNotExist:
-                return HttpResponse(json.dumps({"result": "Could not retrieve User Profile"}),
-                                    content_type="application/json",
-                                    )
-        else:
-            return HttpResponse(json.dumps({"result": "User not authenticated"}),
-                                content_type="application/json",
-                                )
-    else:
-        return HttpResponse(json.dumps({"result": "Method Not POST"}),
-                            content_type="application/json",
-                            )
+                    pass
+
+        # Case if a survey is being deleted
+        elif 'survey_delete' in self.request.data['type']:
+            # Delete the current survey
+            survey.delete()
+
+            # Return a list of all the current surveys
+            return self.list(request, args, kwargs)
+
+        elif 'survey_edit' in self.request.data['type']:
+            data = self.request.data['data']
+
+            # Parse data to correct format
+            survey_data = None
+            tenant_data = None
+
+            # Save data if it exists
+            if 'generalInfo' in data:
+                survey_data = data['generalInfo']
+            if 'amenitiesInfo' in data:
+                survey_data.update(data['amenitiesInfo'])
+            if 'tenantInfo' in data:
+                tenant_data = data['tenantInfo']
+
+            form = RentSurveyFormEdit(survey_data, instance=survey)
+            tenants = None
+
+            if form.is_valid():
+                tenants = TenantFormSet(tenant_data, instance=survey)
+                if tenants.is_valid():
+
+                    with transaction.atomic():
+                        survey = form.save()
+
+                        # Save the polygons
+                        if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
+                            save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
+
+                        # Now save the the tenants
+                        tenants.save()
+
+                    serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
+                    return Response({'result': True, 'survey': serializer.data})
+
+            tenants_errors = ""
+            if tenants is not None:
+                tenants.is_valid()
+                tenants_errors = tenants.errors
+
+            return Response({
+                'result': False,
+                'survey_errors': form.errors,
+                'tenants_errors': tenants_errors,
+            })
+
+        # Returns the survey that was updated
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
+        return Response(serializer.data)
+
+
+class RentResultViewSet(viewsets.ViewSet):
+    """
+    This view set runs the survey algorithm. Given a survey that the user has
+        it computes the best homes
+    """
+
+    def retrieve(self, request, pk=None):
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, url=pk)
+
+        # Run the Rent Algorithm
+        rent_algorithm = RentAlgorithm()
+        rent_algorithm.run(survey)
+
+        # Save the response
+        data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]
+
+        # Serialize the response
+        serializer = HomeScoreSerializer(data, many=True, context={'user': user_profile.user})
+
+        # Return the result
+        return Response(serializer.data)
+
+
+class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
+
+    def update(self, request, *args, **kwargs):
+        """
+        This updates the tenants name for a given survey
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=request.user)
+
+        # Retrieve the survey id
+        pk = kwargs.pop('pk', None)
+
+        # Retrieve the associated survey with the request
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+
+        tenant_data = self.request.data['data']
+
+        tenants = TenantFormSetJustNames(tenant_data, instance=survey)
+
+        # Test if form is valid
+        if tenants.is_valid():
+
+            # Save tenants form
+            tenants.save()
+
+        # Retrieve the associated survey with the request
+        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
+        return Response(serializer.data)

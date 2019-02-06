@@ -4,7 +4,7 @@ from django.test import TestCase
 from cocoon.survey.cocoon_algorithm.weighted_scoring_algorithm import WeightScoringAlgorithm
 
 # Import global config parameters
-from config.settings.Global_Config import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
+from cocoon.survey.constants import HYBRID_WEIGHT_MAX, HYBRID_WEIGHT_MIN, HYBRID_QUESTION_WEIGHT
 
 
 class TestWeightedScoringAlgorithmFilter(TestCase):
@@ -35,16 +35,6 @@ class TestWeightedScoringAlgorithmFilter(TestCase):
 
         # Act
         result = weighted_algorithm.compute_weighted_question_filter(HYBRID_WEIGHT_MAX, False)
-
-        # Assert
-        self.assertFalse(result)
-
-    def test_compute_weighted_question_filter_hybrid_min_contains_item(self):
-        # Arrange
-        weighted_algorithm = WeightScoringAlgorithm()
-
-        # Act
-        result = weighted_algorithm.compute_weighted_question_filter(HYBRID_WEIGHT_MIN, True)
 
         # Assert
         self.assertFalse(result)
@@ -89,38 +79,14 @@ class TestWeightedScoringAlgorithmScoring(TestCase):
     def test_compute_weighted_question_score_positive_scale_factor_does_not_contain_item(self):
         # Arrange
         weighted_algorithm = WeightScoringAlgorithm()
-        user_scale_factor = 4
+        user_scale_factor = 3
         does_contain_item = False
 
         # Act
         result = weighted_algorithm.compute_weighted_question_score(user_scale_factor, does_contain_item)
 
         # Assert
-        self.assertEqual(-1 * user_scale_factor * HYBRID_QUESTION_WEIGHT, result)
-
-    def test_compute_weighted_question_score_negative_scale_factor_does_contain_item(self):
-        # Arrange
-        weighted_algorithm = WeightScoringAlgorithm()
-        user_scale_factor = -2
-        does_contain_item = True
-
-        # Act
-        result = weighted_algorithm.compute_weighted_question_score(user_scale_factor, does_contain_item)
-
-        # Assert
-        self.assertEqual(1 * user_scale_factor * HYBRID_QUESTION_WEIGHT, result)
-
-    def test_compute_weighted_question_score_negative_scale_factor_does_not_contain_item(self):
-        # Arrange
-        weighted_algorithm = WeightScoringAlgorithm()
-        user_scale_factor = -2
-        does_contain_item = False
-
-        # Act
-        result = weighted_algorithm.compute_weighted_question_score(user_scale_factor, does_contain_item)
-
-        # Assert
-        self.assertEqual(-1 * user_scale_factor * HYBRID_QUESTION_WEIGHT, result)
+        self.assertEqual(0, result)
 
     def test_compute_weighted_question_score_zero_scale_factor_does_contain_item(self):
         # Arrange

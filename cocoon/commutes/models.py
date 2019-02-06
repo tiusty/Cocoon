@@ -13,20 +13,28 @@ class CommuteType(models.Model):
     If another commute type gets added, it should get added to the COMMUTE_TYPES field
     """
 
+    WORK_FROM_HOME = 'wh'
+    DRIVING = 'dr'
+    TRANSIT = 'tr'
+    WALKING = 'wk'
+    BICYCLING = 'bk'
+
     COMMUTE_TYPES = (
-        ('Driving', 'Driving'),
-        ('Transit', 'Transit'),
-        ('Walking', 'Walking'),
-        ('Bicycling', 'Bicycling'),
+        (WORK_FROM_HOME, 'Work From Home'),
+        (DRIVING, 'Driving'),
+        (TRANSIT, 'Transit'),
+        (WALKING, 'Walking'),
+        (BICYCLING, 'Biking'),
     )
+
     commute_type = models.CharField(
         unique=True,
         choices=COMMUTE_TYPES,
-        max_length=200,
+        max_length=2,
     )
 
     def __str__(self):
-        return self.commute_type
+        return self.get_commute_type_display()
 
 
 class ZipCodeBase(models.Model):
@@ -78,7 +86,18 @@ class ZipCodeChild(models.Model):
         :return: (Boolean) -> True: The cache is still valid
                               False: The cache is no longer valid
         """
-        if timezone.now().date() > self.last_date_updated + timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE):
+        return self.zip_code_cache_valid_check(self.last_date_updated)
+
+    @staticmethod
+    def zip_code_cache_valid_check(last_date_updated):
+        """
+        This function tests whether or not the zip code should be recalculated.
+        The time is set by the value in constants.py.
+        :param: (Datetime) -> The date time to test to see if that time is still valid
+        :return: (Boolean) -> True: The cache is still valid
+                              False: The cache is no longer valid
+        """
+        if timezone.now().date() > last_date_updated + timezone.timedelta(days=ZIP_CODE_TIMEDELTA_VALUE):
             return False
         else:
             return True

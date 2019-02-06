@@ -1,0 +1,31 @@
+.agent-scheduler-wrapper {
+    padding: 15px;
+}
+
+.itinerary-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.single-itinerary {
+    border-bottom: 5px dotted blue;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.itinerary-section-wrapper {
+    font-family: 'Montserrat', sans-serif;
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 8px 0;
+    padding: 10px;
+}
+
+.claim-button {
+    margin: 0 auto;
+}

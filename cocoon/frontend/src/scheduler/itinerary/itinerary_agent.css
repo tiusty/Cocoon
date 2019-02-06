@@ -1,0 +1,46 @@
+.itinerary-section {
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 8px 0;
+}
+
+.itinerary-section-item {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 25px;
+    color: var(--grey);
+    font-weight: 300;
+    border-bottom: 1px solid var(--borderColor);
+}
+
+.first-item {
+    border-top-left-radius: var(--borderRadius);
+    border-top-right-radius: var(--borderRadius);
+    background-color: var(--teal);
+    color: white;
+    font-weight: 700;
+}
+
+.last-item {
+    border-bottom-left-radius: var(--borderRadius);
+    border-bottom-right-radius: var(--borderRadius);
+    border-bottom: none;
+}
+
+.item-left-text {
+    font-weight: 700;
+    float: left;
+}
+
+.item-right-text {
+    float: right;
+}
+
+.home-item {
+    color: var(--teal);
+}

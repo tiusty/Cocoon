@@ -1,0 +1,313 @@
+/* Parent Tile styling*/
+.tile {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    flex-wrap: wrap-reverse;
+    background: white;
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+    margin-bottom: 15px;
+}
+
+/* Styling associated with the scoring*/
+.tileScore {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    border-top: 1px solid var(--borderColor);
+}
+
+.scoreText {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 28px;
+    font-family: 'Lobster', cursive;
+    color: #efefef;
+}
+
+.home_add_default {
+    width: 50%;
+    text-align: center;
+    cursor: pointer;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 15px;
+}
+
+.home_add_default:nth-of-type(1) {
+    border-right: 1px solid var(--borderColor);
+}
+
+.home_added {
+    color: var(--red);
+}
+
+.home_add_default i {
+    padding-right: 5px;
+}
+
+.home_add_default i {
+    font-size: 19px;
+}
+
+.icon_heart {
+    font-size: 15px !important;
+}
+
+/* Styling associated with the home info */
+.homeInfo {
+    width: 65%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.homeInfo-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.homeInfo-group .homeBit:nth-of-type(1) {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.homeBit:last-of-type {
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.homeInfo-group .homeBit:last-of-type {
+    color: var(--black);
+    font-size: 14px;
+}
+
+.homeBit span {
+    font-size: 12px;
+}
+
+
+/* Image formatting */
+.thumbnailDiv {
+    width: 35%;
+    cursor: pointer;
+}
+
+.thumbnailImage {
+    width: 100%;
+    max-height: 125px;
+    border-radius: 10px 0 0 0;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Styling for percent */
+.homeInfo-percent {
+    position: absolute;
+    background: var(--teal);
+    top: 15px;
+    left: 15px;
+    font-size: 14px;
+    color: white;
+    font-weight: 800;
+    padding: 6px;
+    border-radius: 5px;
+    z-index: 999;
+}
+
+/*   STYLING FOR SQUARE TILE   */
+.tile_isLarge .thumbnailDiv {
+    width: 100%;
+    position: relative;
+}
+
+.tile_isLarge .thumbnailImage {
+    max-height: 200px;
+    min-height: 200px;
+    border-radius: 10px 10px 0 0;
+}
+
+.tile_isLarge .homeInfo {
+    width: 100%;
+}
+
+.tile_isLarge .homeInfo {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*    Styling for large tile   */
+.expanded-tile-container {
+    width: 100%;
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+    background: white;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.expanded-row-top {
+    width: 100%;
+    padding: 15px 15px 11px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #bfbfbf;
+}
+
+.expanded-row-top span {
+    display: flex;
+    cursor: pointer;
+}
+
+.expanded-row-top span i {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.expanded-close {
+    cursor: pointer;
+}
+
+.expanded-tile-text {
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+.expanded-info {
+    width: 100%;
+}
+
+.expanded-info p {
+    color: var(--grey);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.expanded-home-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 15px;
+    border-bottom: 1px solid var(--borderColor);
+}
+
+.expanded-home-info div {
+    display: flex;
+    flex-direction: column;
+}
+
+.expanded-home-info .price {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.expanded-home-info .price span {
+    font-size: 12px;
+}
+
+.expanded-home-info .number-rooms {
+    font-size: 14px;
+}
+
+.expanded-home-info .home-info-badge {
+    color: var(--teal);
+    border: 1px solid var(--teal);
+    font-weight: bold;
+    font-size: 11px;
+    padding: 5px 15px;
+    border-radius: 15px;
+}
+
+.expanded-remarks {
+    padding: 15px;
+}
+
+.expanded-remarks p {
+    text-align: left;
+}
+
+.expanded-points {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.expanded-points .point-wrapper h3,
+.expanded-points .point-wrapper p {
+    margin: 0;
+}
+
+.expanded-points .point-wrapper h3 {
+    font-size: 14px;
+    font-weight: 800;
+    padding-bottom: 10px;
+}
+
+.expanded-points .point-wrapper p {
+    display: flex;
+    align-items: center;
+    padding-bottom: 15px;
+}
+
+.expanded-points .point-wrapper i {
+    font-weight: bold;
+    font-size: 16px;
+    padding-right: 3px;
+}
+
+.home-tile-large-carousel-div {
+    width: 100%;
+    position: relative;
+}
+
+.home-tile-large-carousel-div .thumbnailDiv {
+    width: 100%;
+}
+
+.home-tile-large-carousel-div .thumbnailImage {
+    border-radius: 0;
+    min-height: 250px;
+}
+
+.carousel .slide img {
+    max-height: 400px;
+    object-fit: cover;
+}
+
+.broker_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.item-left-text {
+    font-weight: 700;
+    float: left;
+}
+
+.item-right-text {
+    float: right;
+}
+
+
+.broker_info-section-item {
+    display: inline-block;
+    width: 100%;
+    padding: 10px 15px;
+    color: var(--grey);
+    font-weight: 300;
+    border-top: 1px solid var(--borderColor);
+}

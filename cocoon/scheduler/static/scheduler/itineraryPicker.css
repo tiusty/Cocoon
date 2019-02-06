@@ -1,0 +1,19 @@
+.itineraries-buckets {
+    display: block;
+    flex-direction: row;
+    width: 100%;
+}
+
+.itinerary-bucket {
+    display: inline-block;
+}
+
+.my-claimed-container {
+    width: 48%;
+    float: left;
+}
+
+.my-scheduled-container {
+    width: 48%;
+    float: right;
+}

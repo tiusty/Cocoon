@@ -1,0 +1,14 @@
+{
+  "vars": {},
+  "css": [
+    "grid.less",
+    "forms.less",
+    "glyphicons.less",
+    "alerts.less",
+    "wells.less",
+    "close.less"
+  ],
+  "js": [
+    "alert.js"
+  ]
+}

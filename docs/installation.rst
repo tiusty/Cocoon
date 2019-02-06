@@ -49,12 +49,33 @@ Setting up Software
         
 5. Copy over secrets file
 
-* Not really used in locally development but still needed
-
         ::
 
                 cd ~/work/Cocoon/config/settings
-                cp secret.json.template secret.json
+                cp secrets.json.template secrets.json
+                
+        Now go to the google drive and open the secrets.json file in development/security Files/.
+        There copy over the dev secret keys. The prod keys are not needed for local development
+        so don't copy those over
+        
+6. Copy/create necessary files:
+
+        Form google drive in the development/security Files/ folder:
+        
+        Copy:
+        1) docusign/docusign-development/docusign_private_key_demo.txt
+                to the cocoon/config/keys directory
+        Create:
+        1) From the root of the django project:
+        
+                ::
+                        
+                        cd config/keys
+                        touch docusign_private_key_prod.txt
+                        
+        Note: You do not need the acutal docusign_private_key_prod in development unless you want to test using the producation docusign information
+                
+         
 
 Creating the Postgres Database
 ------------------------------
@@ -121,25 +142,18 @@ Setting up the necessary Models
         python manage.py createsuperuser # Creates a super user
         #   Follow steps and create the super user
 
-* Go to the admin site
-    * probably: http://127.0.0.1:8000/adminBostoncocoon/
-
 * There are models you need to create:
-    * Commute Types:
-        * Click on Commute Types, then add Commute Types
-        * Make sure to create at least one, i.e driving, but you can create all if you want
-    * Home Type Models:
-        * Click on Home Type Models, then add Home Type Model
-        * Create at least apartment, but you can create all 4 if you want
-    * MLSManagementModel:
-        * Click on MLSManagementModel, then click add
-        * Just need to click save
-    * YGLManagementModel:
-        * Click on YGLManagementModel, then click add
-        * Just need to click save
-    * HomeProviderModel:
-       * Click on the HomeProviderModel:
-       * Add all the choices and save them
+
+    ::
+
+        Commute Types:
+            * python manage.py commutes_creation
+
+        Home Type Models
+            * python manage.py houseDatabase_creation
+
+        Hunter Template Models
+            * python manage.py signature_creation
 
 Adding Homes to the database
 -----------------------------

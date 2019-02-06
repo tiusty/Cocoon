@@ -1,19 +1,20 @@
 # Import commutes models
-from cocoon.commutes.models import ZipCodeBase, ZipCodeChild
+from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 
 # Constant value imports
 from cocoon.commutes.constants import GoogleCommuteNaming, CommuteAccuracy
 
 # Import DistanceWrapper
-from cocoon.commutes.distance_matrix.distance_wrapper import Distance_Matrix_Exception
-from cocoon.commutes.distance_matrix import compute_approximates
+from .distance_wrapper import Distance_Matrix_Exception
+from .commute_retriever import retrieve_exact_commute
+from .home_commute import HomeCommute
 
 # Load the logger
 import logging
 logger = logging.getLogger(__name__)
 
 
-def update_commutes_cache(homes, destinations, accuracy=CommuteAccuracy.DEFAULT):
+def update_commutes_cache_rent_algorithm(homes, destinations, accuracy=CommuteAccuracy.DEFAULT):
     """
     This function updates the commute database for caching reasons. Therefore, this is the interface between
         the survey and the commutes to update any saved commute information
@@ -24,16 +25,42 @@ def update_commutes_cache(homes, destinations, accuracy=CommuteAccuracy.DEFAULT)
 
     # Since each destination can have a commute type, loop through all the destinations
     for destination in destinations:
-        if destination.commute_type.commute_type == GoogleCommuteNaming.DRIVING:
-            Driving(homes, destination, accuracy=accuracy).run()
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.TRANSIT:
-            Transit(homes, destination, accuracy=accuracy).run()
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.BICYCLING:
-            Bicycling(homes, destination, accuracy=accuracy).run()
-        elif destination.commute_type.commute_type == GoogleCommuteNaming.WALKING:
-            Walking(homes, destination, accuracy=accuracy).run()
-        else:
-            logger.error("Unknown commute_type: {0}".format(destination.commute_type))
+        if destination.commute_type.commute_type == CommuteType.DRIVING:
+            Driving(HomeCommute.home_scores_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
+                    accuracy=accuracy).run()
+        elif destination.commute_type.commute_type == CommuteType.TRANSIT:
+            Transit(HomeCommute.home_scores_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
+                    accuracy=accuracy).run()
+        elif destination.commute_type.commute_type == CommuteType.BICYCLING:
+            Bicycling(HomeCommute.home_scores_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
+                      accuracy=accuracy).run()
+        elif destination.commute_type.commute_type == CommuteType.WALKING:
+            Walking(HomeCommute.home_scores_to_home_commute(homes), HomeCommute.destination_to_home_commute(destination),
+                    accuracy=accuracy).run()
+
+
+def update_commutes_cache_client_scheduler(homes, destination, accuracy=CommuteAccuracy.DEFAULT,
+                                           commute_type=CommuteType.DRIVING):
+    """
+    Updates the caching for when the client scheduler is being used
+    :param homes: (list(rentDatabase models) -> The homes that are having distance calculated
+    :param destination: (rentDatabase model) -> The home which all other homes are being computed against
+    :param accuracy: (CommuteAccurary) -> The accuracy type used for the caching
+    :param commute_type: (CommuteType) -> THe commute type for the approximation updating
+    """
+
+    if commute_type == CommuteType.DRIVING:
+        Driving(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
+                accuracy=accuracy).run()
+    elif commute_type == CommuteType.TRANSIT:
+        Transit(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
+                accuracy=accuracy).run()
+    elif commute_type == CommuteType.BICYCLING:
+        Bicycling(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
+                  accuracy=accuracy).run()
+    elif commute_type == CommuteType.WALKING:
+        Walking(HomeCommute.rentdatabases_to_home_commute(homes), HomeCommute.rentdatabase_to_home_commute(destination),
+                accuracy=accuracy).run()
 
 
 class CommuteCalculator(object):
@@ -44,8 +71,8 @@ class CommuteCalculator(object):
     def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
         """
         Constructor for the base class
-        :param homes: (list(home_score)) -> All the homes that the user can live at
-        :param destination: (DestinationModel) -> The current destination that is being computed
+        :param homes: (list(HomeCommute)) -> All the homes that the user can live at
+        :param destination: (HomeCommute) -> The current destination that is being computed
         :param accuracy: (CommuteAccuracy) -> The accuracy type desired
         """
         self.homes = homes
@@ -58,18 +85,19 @@ class Driving(CommuteCalculator):
     This class updates the database to make sure it contains all the combinations necessary for storing
         the approximate zip codes
     """
+    GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.DRIVING
+
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
 
     def check_all_combinations(self):
         """
         This function checks every combination possible given multiple homes for a destination.
-        If a pair doesn't exist, it will add the pair to a list and then at the end compute the
-        approximation for the missing pairs
+        Pairs that don't exist are passed to the generate_approximation_pair to create the pair in the database
         """
         failed_home_dict = dict()
-        failed_list = []
-        for home_score in self.homes:
-            if not self.does_pair_exist(home_score.home):
-                failed_list.append((home_score.home.zip_code, home_score.home.state))
+        failed_list = self.find_missing_pairs(self.homes)
 
         # Add to the dictionary of failed homes
         failed_home_dict[(self.destination.zip_code, self.destination.state)] = failed_list
@@ -77,41 +105,108 @@ class Driving(CommuteCalculator):
         # 2: Use approx handler to compute the failed home distances and update db
         for destination_zip, origin_list in failed_home_dict.items():
             try:
-                compute_approximates.approximate_commute_handler(origin_list, destination_zip,
-                                                                 self.destination.commute_type)
+                self.generate_approximation_pair(origin_list, destination_zip)
             except Distance_Matrix_Exception as e:
                 logger.warning("Caught: {0}".format(e.__class__.__name__))
 
-    def does_pair_exist(self, home):
+    def find_missing_pairs(self, homes):
         """
-        This function given a pair of locations, checks to see if the combination exists in the cache already.
-        If it does, then the cache doesn't need to be added, if it doesn't, then it returns false.
-        It also does a check to see how old the pair is, and if it is too old, then it will return false.
-        :param home: (homeScore) -> The home that is being computed
+        Given a list of homes, it determines if a zip_code pair exists between each home and destination.
+            If not then it adds the pair to the failed list so the pair can be generated
+        :param homes: (list[homeScore]) -> Homes that are being checked for zip-code pairs
+        :return: (list[(string, string)] Returns a set of (zip_code, state) tuples of pairs that don't exist
+            in the cache
         """
-        parent_zip_code_dictionary = ZipCodeBase.objects.filter(zip_code__exact=home.zip_code)
-        if parent_zip_code_dictionary.exists():
-            for parent in parent_zip_code_dictionary:
-                zip_code_dictionary = ZipCodeChild.objects.filter(
-                    base_zip_code_id=parent).filter(zip_code__exact=self.destination.zip_code) \
-                    .filter(commute_type=self.destination.commute_type)
-                if zip_code_dictionary.exists():
-                    for match in zip_code_dictionary:
-                        if match.zip_code_cache_still_valid():
-                            return True
-                        else:
-                            return False
+        # The reason a set is used is because this prevents adding duplicate entries because
+        #   adding an entry that already exists does nothing
+        failed_list = set()
+        try:
+            dest_zip = ZipCodeBase.objects.filter(zip_code__exact=self.destination.zip_code)
+
+            # Generates a queryset of all the child zip_codes that exist for this destination
+            child_zips = ZipCodeChild.objects.filter(base_zip_code=dest_zip). \
+                filter(commute_type=self.COMMUTE_TYPE). \
+                values_list('zip_code', 'last_date_updated')
+
+            # Dictionary Compression to retrieve the values from the QuerySet
+            child_zip_codes = {zip_code: last_update for zip_code, last_update in child_zips}
+
+            # For every home, see if the home zip_code matches one of the zip_codes in the child_zip codes
+            #   If not then add it to the failed_list
+            for home in homes:
+
+                # Determines if the home exists in the dictionary on child_zip_codes
+                result = home.zip_code in child_zip_codes
+
+                # If there is not pair or the pair is out of date then mark the pair as failed
+                #   so it gets regenerated
+                if not result or not ZipCodeChild.zip_code_cache_valid_check(child_zip_codes[home.zip_code]):
+                    failed_list.add((home.zip_code, home.state))
+
+        # If the ZipCodeBase doesn't exist then none of the children exist so add them all to the
+        #   failed list
+        except ZipCodeBase.DoesNotExist:
+            for home in homes:
+                failed_list.add((home.zip_code, home.state))
+
+        return failed_list
+
+    def generate_approximation_pair(self, origins_zips_states, destination_zip_state):
+        """
+        Generates the distance between two zip codes and adds it to the database (and deletes the old value
+            if it is present)
+
+        Note: There are two commutes names, the database commute name and the google distance matrix api commute name
+        :param: origin_zips_states, list(tuple(string, string)) a list of tuples strings
+        with zip code and state
+        :param: destination_zip_state, tuple(string, string), a tuple of zip code and state as strings
+
+        Example Input:
+            origins = [("02123", "MA"), ("02012", Maine), ("12345", NY)]
+            destination = ("20344", California)
+            commute_type = "driving"
+        """
+
+        # map (zip, state) tuples list to a list of "state+zip" strings
+        results = retrieve_exact_commute(list(map(lambda x: x[1] + "+" + x[0], origins_zips_states)),
+                                         [destination_zip_state[1] + "+" + destination_zip_state[0]],
+                                         self.COMMUTE_TYPE)
+
+        if results:
+            # iterates both lists simultaneously
+            for origin, result in zip(origins_zips_states, results):
+                if ZipCodeBase.objects.filter(zip_code=destination_zip_state[0]).exists():
+                    zip_code_dictionary = ZipCodeBase.objects.get(zip_code=destination_zip_state[0])
+                    zip_dest = zip_code_dictionary.zipcodechild_set.filter(
+                        zip_code=origin[0],
+                        commute_type=self.COMMUTE_TYPE)
+
+                    # If the zip code doesn't exist or is not valid then compute the approximate distance
+                    #   If the zip code was not valid then delete it first before recomputing it
+                    if not zip_dest.exists() or not zip_dest.first().zip_code_cache_still_valid():
+                        if zip_dest.exists():
+                            zip_dest.delete()
+                        zip_code_dictionary.zipcodechild_set.create(
+                            zip_code=origin[0],
+                            commute_type=self.COMMUTE_TYPE,
+                            commute_distance_meters=result[0][1],
+                            commute_time_seconds=result[0][0],
+                        )
                 else:
-                    return False
-        else:
-            return False
+                    ZipCodeBase.objects.create(zip_code=destination_zip_state[0]) \
+                        .zipcodechild_set.create(
+                        zip_code=origin[0],
+                        commute_type=self.COMMUTE_TYPE,
+                        commute_distance_meters=result[0][1],
+                        commute_time_seconds=result[0][0],
+                    )
 
     def run_exact_commute_cache(self):
         pass
 
     def run(self):
         """
-        The generic run method that each chlid class should have. Starts the execution of the class
+        The generic run method that each child class should have. Starts the execution of the class
         """
         if self.accuracy == CommuteAccuracy.EXACT:
             """
@@ -132,7 +227,11 @@ class Transit(Driving):
     Currently Transit uses the same method as driving for caching. Therefore, just inherit
     all of the driving functionality. Later on the caching mechanism should be changed for transit
     """
-    pass
+    GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.TRANSIT
+
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
 
 
 class Bicycling(CommuteCalculator):
@@ -140,6 +239,12 @@ class Bicycling(CommuteCalculator):
     Currently the approximation for biking is done via the lat, long distance and therefore,
         do not have to be saved.
     """
+    GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.BICYCLING
+
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.BICYCLING)[0]
+
     def run(self):
         pass
 
@@ -149,6 +254,11 @@ class Walking(CommuteCalculator):
     Currently the approximation for walking is done via the lat, long distance and therefore,
         do not have to be saved.
     """
+    GOOGLE_COMMUTE_TYPE = GoogleCommuteNaming.WALKING
+
+    def __init__(self, homes, destination, accuracy=CommuteAccuracy.DEFAULT):
+        super().__init__(homes, destination, accuracy=accuracy)
+        self.COMMUTE_TYPE = CommuteType.objects.get_or_create(commute_type=CommuteType.WALKING)[0]
 
     def run(self):
         pass

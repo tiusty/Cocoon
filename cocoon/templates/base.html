@@ -1,67 +1,108 @@
 {% load static %}
+{% load intercom %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>{% block title %} Cocoon {% endblock %}</title>
+    <!-- JQuery CDN -->
+    <script
+            src="https://code.jquery.com/jquery-2.2.4.js"
+            integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+            crossorigin="anonymous"></script>
+    <!-- Font Styles -->
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
+
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>{% block title %} Current Page {% endblock %}</title>
+    <meta name="theme-color" content="#A13718" />
+    <link rel="stylesheet" href="{% static 'bootstrap-3.4.0-custom/css/bootstrap.css' %}">
+    <link href="{% static 'cocoon/main/css/base.css' %}" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
+{% block head %}
 
-    {% if not user.is_authenticated %}
-
-        <link rel="stylesheet" href="{% static 'homePage/not_logged.css' %}">
-
-    {% endif %}
-
-    {% block head %}{% endblock %}
+{% endblock %}
 </head>
 <body>
 
-<div id="siteWrapper" class="{% block container_type %}container{% endblock %}">
-    {% block nav_bar %}
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid nav-container">
-                <div class="navbar-header">
-                    <a href="{% url 'homePage:index' %}"><img class="nav-logo" src="{% static 'homePage/cocoon_logo_white.png' %}"></a>
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                            aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="{% url 'homePage:index' %}">Cocoon</a>
-                </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        {% if user.is_authenticated %}
-                            <li class="login-block dropdown">
-                                <a href="#" class="welcome-text dropdown-toggle link" data-toggle="dropdown" role="button"
-                                   aria-haspopup="true"
-                                   aria-expanded="false">{{ user.email }} <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li class="dropdown-header">Account</li>
-                                    <li class="dropdown-header"><a href="{% url 'userAuth:user_profile' %}">User
-                                        Profile</a></li>
-                                    <li class="dropdown-header"><a href="{% url 'userAuth:logoutPage' %}">Logout</a></li>
-                            </ul>
-                        </li>
-                    {% else %}
-                            <li><a class="register-link" href="{% url 'userAuth:signup' %}"><button class="btn-primary btn login-button signup-button">Sign Up</button></a></li>
-                            <li><a class="register-link" href="{% url 'userAuth:loginPage' %}"><button class="btn-primary btn login-button signup-button signup-button-right">Login</button></a></li>
-                    {% endif %}
-                </ul>
-                <ul class="nav navbar-nav">
-                    {% if user.is_authenticated %}
-                        {% block nav-mysurvies %}<li><a class="link" href="{% url 'userAuth:user_surveys' %}">My Surveys</a></li>{% endblock %}
-                        {% block nav-visitlist %}<li><a class="link" href="{% url 'survey:visitList' %}">Favorites</a></li>{% endblock %}
-                        {% block nav-contact %}<li><a class="link" id="rightmost-nav-item" href="{% url 'homePage:about' %}">About Us</a></li>{% endblock %}
-                    {% endif %}
-                </ul>
+{% block nav_bar %}
+    <nav>
+        <div class="logo">
+            <a href="{% url 'homePage:index' %}">
+                <img src="{% static 'homePage/cocoon-logo_beta.png' %}" alt="">
+            </a>
+        </div>
 
-                </div><!--/.nav-collapse -->
-            </div><!--/.container-fluid -->
-        </nav>
+        <div class="nav-links_desktop">
+
+            {% comment %}Unauthorized Links{% endcomment %}
+            {% if not user.is_authenticated %}
+
+                <div>
+                    <a href="{% url 'userAuth:loginPage' %}">Login</a>
+                    <span>/</span>
+                    <a href="{% url 'userAuth:hunter_signup' %}" class="redOrange">Sign Up</a>
+                </div>
+
+            {% else %}
+                {% comment %}Authorized Links{% endcomment %}
+                <div>
+                    <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
+                    <span>/</span>
+                    <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
+                    <span>/</span>
+                    {% if user.is_broker or user.is_admin %}
+                        <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>
+                        <span>/</span>
+                        <a href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a>
+                        <span>/</span>
+                    {% endif %}
+                    <div id="dropdown">
+                        <button>{{ user.email }} <i class="material-icons">arrow_drop_down</i></button>
+                        <div class="dropdown-content">
+                            <a href="{% url 'userAuth:user_profile' %}">Profile</a>
+                            <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {% comment %}Mobile Nav{% endcomment %}
+        <div class="nav-links_mobile">
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+    </nav>
+    <div class="mobile-links">
+        {% if not user.is_authenticated %}
+            <a href="{% url 'userAuth:loginPage' %}">Login</a>
+            <a href="{% url 'userAuth:hunter_signup' %}">Sign Up</a>
+        {% else %}
+            <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
+            <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
+            {% if user.is_broker or user.is_admin%}
+                <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>
+                <a href="{% url 'scheduler:agentSchedulerMarketplace' %}">Marketplace</a>
+            {% endif %}
+            <a href="{% url 'userAuth:user_profile' %}">Profile</a>
+            <a href="{% url 'userAuth:logoutPage' %}">Logout</a>
+        {% endif %}
+    </div>
+    {% comment %}END OF HEADER & NAV MENUS{% endcomment %}
+{% endblock nav_bar %}
+
+<div id="siteWrapper" class="{% block container_type %}container{% endblock %}">
         {% for message in messages %}
             <div class="alert {{ message.tags }} alert-dismissible message_timeout" role="alert" style="text-align: center; margin-bottom: 0">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -70,7 +111,6 @@
                 {{ message }}
             </div>
         {% endfor %}
-    {% endblock nav_bar %}
 
     <div id="siteWrapper">
 
@@ -80,16 +120,18 @@
 
 </div>
 {% block endScripts %}
-    <script src="{% static 'cocoon/js/base.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static 'bootstrap-3.4.0-custom/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'cocoon/main/js/base.js' %}"></script>
+    <script src="{% static 'cocoon/main/js/navbar.js' %}"></script>
 {% endblock %}
-
 {% block footer %}
-
-    <footer class="footer">
-       Copyright Cocoon 2018. All rights reserved.
+    <footer>
+        <div class="container">
+            <p>All rights reserved. Cocoon © 2019</p>
+        </div>
     </footer>
-
 {% endblock %}
-
+{% intercom_tag %}
 </body>
 </html>

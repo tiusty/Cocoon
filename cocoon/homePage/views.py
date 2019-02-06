@@ -1,30 +1,12 @@
-from django.shortcuts import render
-from cocoon.homePage.forms import SurveyType
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+# Django Modules
+from django.views.generic import TemplateView
 
 
-def index(request):
-    form = SurveyType()
-    context = {
-        'error_message': [],
-    }
-    if request.method == "POST":
-        form = SurveyType(request.POST)
-        if form.is_valid():
-            survey_type = form.cleaned_data['survey_type']
-            if survey_type == "rent":
-                return HttpResponseRedirect(reverse('survey:rentingSurvey'))
-            elif survey_type == "buy":
-                return HttpResponseRedirect(reverse('survey:buyingSurvey'))
-            else:
-                context['error_message'].append("Could not parse radio type")
-        else:
-            context['error_message'].append("Form not valid, please try again")
+class LandingPage(TemplateView):
 
-    context['form'] = form
-    return render(request, 'homePage/index.html', context)
+    template_name = "homePage/landingPage.html"
 
 
-def about(request):
-    return render(request, 'homePage/aboutUs.html')
+class AboutUs(TemplateView):
+
+    template_name = "homePage/aboutUs.html"

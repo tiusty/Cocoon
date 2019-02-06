@@ -1,4 +1,4 @@
-{% extends "bootstrapJQuery.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% block title %}User Surveys{% endblock %}
 
@@ -117,7 +117,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% with survey.rentingdestinationsmodel_set.all as destAddresses %}
+                                                {% with survey.tenants.all as destAddresses %}
                                                     {% for destAddress in destAddresses %}
                                                         <tr>
                                                             <td>
@@ -169,7 +169,7 @@
                         // On Success always redirect back to the rent survey page
                         // Because that is where the ajax request took place
                         console.log("Success!");
-                        window.location = "{% url 'userAuth:user_surveys' %}";
+                        window.location = "{% url 'userAuth:surveys' %}";
                     }
                     // Need to handle error! Create a div that is meant for errors
                     else {
@@ -186,5 +186,5 @@
     </script>
     <!-- Custom Javascript -->
     {% comment %}This script enables ajax request by sending the appropriate authentication elements{% endcomment %}
-    <script src="{% static 'Unicorn/global_functions/javascript/getCookie.js' %}"></script>
+    <script src="{% static 'cocoon/main/ajax/getCookie.js' %}"></script>
 {% endblock %}

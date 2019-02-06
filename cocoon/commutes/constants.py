@@ -1,4 +1,5 @@
 from enum import Enum
+from datetime import time
 
 # Controls how many days until the zip codes need to be refreshed
 ZIP_CODE_TIMEDELTA_VALUE = 60
@@ -6,10 +7,10 @@ ZIP_CODE_TIMEDELTA_VALUE = 60
 
 # Google Distance Matrix Api naming convention
 class GoogleCommuteNaming:
-    DRIVING = "Driving"
-    TRANSIT = "Transit"
-    BICYCLING = "Bicycling"
-    WALKING = "Walking"
+    DRIVING = "driving"
+    TRANSIT = "transit"
+    BICYCLING = "bicycling"
+    WALKING = "walking"
     DEFAULT = DRIVING
 
 
@@ -20,3 +21,13 @@ class CommuteAccuracy(Enum):
     DEFAULT = EXACT
 
 
+# The times that the with traffic and without traffic is computed with
+
+# Since the commutes are computed from the work to the home, this correspondes to the afternoon commute.
+#   Therefore, for accurate commute info, the departure time should be in the afternoon and not the morning
+COMMUTE_TIME_WITH_TRAFFIC = time(17, 0)
+COMMUTE_TIME_WITHOUT_TRAFFIC = time(3, 30)
+
+# Traffic model
+TRAFFIC_MODEL_PESSIMISTIC = "pessimistic"
+TRAFFIC_MODEL_BEST_GUESS = "best_guess"

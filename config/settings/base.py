@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import json
 from django.contrib.messages import constants as messages
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +40,11 @@ INSTALLED_APPS = [
     'cocoon.houseDatabase',
     'cocoon.commutes',
     'storages',
+    'cocoon.scheduler',
+    'cocoon.signature',
+    'cocoon.frontend',
+    'rest_framework',
+    'django_intercom',
 ]
 
 MIDDLEWARE = [
@@ -63,8 +70,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'cocoon.userAuth.context_processors.userAuth_processors.add_favorite_homes_processor',
-                'cocoon.userAuth.context_processors.userAuth_processors.add_visit_home_list_processor',
                 'cocoon.userAuth.context_processors.userAuth_processors.determine_user_type_processor',
             ],
         },
@@ -218,6 +223,7 @@ LOGGING = {
         'django.security.DisallowedHost': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
+            'propagate': False,
         },
 
         # Catch all logger
@@ -305,3 +311,35 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
+# Location for secret
+SECRET_FILE_PATH = os.path.join(BASE_DIR, 'settings/secrets.json')
+
+
+# Function for loading variables from secret file
+def get_secret(setting):
+    with open(SECRET_FILE_PATH) as f:
+        secrets = json.loads(f.read())
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = 'Set the {0} environment variable'.format(setting)
+        raise ImproperlyConfigured(error_msg)
+
+
+# Intercom configuration for user data
+INTERCOM_USER_DATA_CLASS = 'config.settings.intercom.intercom_user_data.IntercomUserData'
+
+# Intercom configuration for custom data
+INTERCOM_CUSTOM_DATA_CLASSES = [
+    'config.settings.intercom.intercom_user_data.IntercomCustomData',
+]
+
+INTERCOM_SECURE_KEY = get_secret('INTERCOM_SECRET_CODE')
+

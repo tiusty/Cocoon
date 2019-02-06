@@ -1,4 +1,4 @@
-{% extends "bootstrapJQuery.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% block title %}Register{% endblock title %}
 
@@ -47,6 +47,9 @@ Leaving empty nav_bar block to prevent the nav bar from showing up
                 </div>
                 {% csrf_token %}
                 {{ form.as_p }}
+            <br>
+                <p>By registering for an account you accept our <a href="{% url 'userAuth:terms_of_use' %}">terms and conditions</a></p>
+            <br>
                 <div class="form-group">
                     <button class="btn btn-large btn-primary btn-block" value="Register" type="submit">Register!</button>
                 </div>

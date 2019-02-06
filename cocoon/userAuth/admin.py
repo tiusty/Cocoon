@@ -17,9 +17,9 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_admin', 'is_hunter', 'is_broker',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name',)}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number',)}),
         ('Joined', {'fields': ('joined',)}),
-        ('Permissions', {'fields': ('is_active', 'is_admin', 'is_hunter', 'is_broker')}),
+        ('Permissions', {'fields': ('is_active', 'is_admin', 'is_hunter', 'is_broker', 'is_verified',)}),
     )
     # add_fields sets is not a standard ModelAdmin Attribute. UserAdmin
     # overrides get_fieldsset to use this attirbute when creating a user.
@@ -35,7 +35,6 @@ class UserAdmin(BaseUserAdmin):
 
 
 class ProfileInline(admin.StackedInline):
-    raw_id_fields = ("favorites", "visit_list",)
     model = UserProfile
     can_delete = False
     verbose_name_plural = 'Profile'

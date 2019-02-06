@@ -2,8 +2,16 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.db import transaction
 from .models import MyUser, UserProfile
 from django import forms
+from cocoon.signature.models import HunterDocManagerModel
+import re
 
 from .constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
+from .helpers.send_verification_email import send_verification_email
+
+
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 
 class LoginUserForm(AuthenticationForm):
@@ -92,9 +100,37 @@ class BaseRegisterForm(UserCreationForm):
         )
     )
 
+    phone_number = forms.CharField(
+        required=False,
+        label="Phone number",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Please use format: ###-###-####',
+                'pattern': '\d{3}[\-]\d{3}[\-]\d{4}',
+            }
+        )
+    )
+
+    def is_valid(self):
+        valid = super(BaseRegisterForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        current_form = self.cleaned_data.copy()
+
+        # makes sure that the phone number is formatted properly
+        if current_form['phone_number']:
+            pattern = re.compile("^(\d{3}[\-]\d{3}[\-]\d{4})$")
+            if not pattern.match(current_form['phone_number']):
+                valid = False
+
+        return valid
+
     class Meta:
         model = MyUser
-        fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'phone_number',]
 
 
 class ApartmentHunterSignupForm(BaseRegisterForm):
@@ -126,13 +162,19 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
 
     class Meta:
         model = MyUser
-        fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'phone_number', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_hunter = True
+        user.is_verified = False
         user.save()
+
+        domain = kwargs.pop('request', None)
+        send_verification_email(domain, user)
+
+        HunterDocManagerModel.objects.get_or_create(user=user)
         return user
 
 
@@ -168,10 +210,16 @@ class BrokerSignupForm(BaseRegisterForm):
         fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
 
     @transaction.atomic
-    def save(self):
+    def save(self, **kwargs):
         user = super().save(commit=False)
         user.is_broker = True
+        user.is_verified = False
         user.save()
+
+        domain = kwargs.pop('request', None)
+        send_verification_email(domain, user)
+
+        HunterDocManagerModel.objects.get_or_create(user=user)
         return user
 
 
