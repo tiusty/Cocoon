@@ -384,6 +384,7 @@ class RentResultViewSet(viewsets.ViewSet):
             user_email=user_profile.user.email,
             user_full_name=user_profile.user.full_name,
             number_of_tenants=survey.number_of_tenants,
+            survey_id=survey.id,
         )
 
         for home in rent_algorithm.homes:

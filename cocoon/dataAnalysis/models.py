@@ -27,9 +27,10 @@ class SurveyResultsIteration(models.Model):
     user_email = models.CharField(default="", max_length=200)
     user_full_name = models.CharField(default="", max_length=200)
     number_of_tenants = models.IntegerField(default=-1)
+    survey_id = models.IntegerField(default=-1)
 
     def __str__(self):
-        return self.user_email
+        return "{0}-{1}".format(self.user_email, self.survey_id)
 
 
 class HomeTracker(models.Model):
