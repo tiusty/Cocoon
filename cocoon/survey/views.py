@@ -23,6 +23,7 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 from cocoon.houseDatabase.models import HomeTypeModel
+from cocoon.dataAnalysis.models import Trackers
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -376,6 +377,19 @@ class RentResultViewSet(viewsets.ViewSet):
         # Run the Rent Algorithm
         rent_algorithm = RentAlgorithm()
         rent_algorithm.run(survey)
+
+        # Store data for tracking data
+        survey_results_tracker = Trackers.get_survey_results_tracker()
+        iteration = survey_results_tracker.iterations.create(
+            user_email=user_profile.user.email,
+            user_full_name=user_profile.user.full_name,
+            number_of_tenants=survey.number_of_tenants,
+        )
+
+        for home in rent_algorithm.homes:
+            iteration.homes.create(
+                score=home.percent_match,
+            )
 
         # Save the response
         data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]
