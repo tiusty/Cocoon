@@ -48,8 +48,8 @@ export default class GeneralForm extends Component {
         valid = valid && this.handleNameValidation();
         // valid = valid && this.handleHomeTypeValidation();
         valid = valid && this.handlePriceValidation();
-        // valid = valid && this.handleDatePickerValidation();
         valid = valid && this.handleUrgencyValidation();
+        valid = valid && this.handleDatePickerValidation();
         valid = valid && this.handleBedroomValidation();
         return valid
     };
@@ -120,7 +120,7 @@ export default class GeneralForm extends Component {
 
     handleDatePickerValidation() {
         let valid = true;
-        if (!this.props.generalInfo.is_move_asap) {
+        if (this.props.generalInfo.move_weight !== 3) {
             if (this.props.generalInfo.earliest_move_in === undefined ||
             this.props.generalInfo.latest_move_in === undefined) {
                 document.querySelector('#date_error').style.display = 'block';
@@ -301,31 +301,6 @@ export default class GeneralForm extends Component {
         );
     }
 
-    renderDatePickingQuestion() {
-        if (!this.props.generalInfo.is_move_asap) {
-            return (
-                <div className="survey-question">
-                    <h2>When are you wanting to <span>move in</span>?</h2>
-                    <span className="col-md-12 survey-error-message" id="date_error"></span>
-                    <div className="col-md-6 date-wrapper">
-                        <DayPickerInput
-                            placeholder={'Earliest'}
-                            onDayChange={this.props.handleEarliestClick}
-                            value={this.props.generalInfo.earliest_move_in} onChange={() => {}} />
-                    </div>
-                    <div className="col-md-6 date-wrapper">
-                        <DayPickerInput
-                            placeholder={'Latest'}
-                            onDayChange={this.props.handleLatestClick}
-                            value={this.props.generalInfo.latest_move_in} onChange={() => {}} />
-                    </div>
-                </div>
-            );
-        } else {
-            return null
-        }
-    }
-
     renderUrgencyQuestion() {
         return(
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
@@ -349,6 +324,31 @@ export default class GeneralForm extends Component {
                 </label>
             </div>
         );
+    }
+
+    renderDatePickingQuestion() {
+        if (this.props.generalInfo.move_weight !== 3) {
+            return (
+                <div className="survey-question">
+                    <h2>When are you wanting to <span>move in</span>?</h2>
+                    <span className="col-md-12 survey-error-message" id="date_error"></span>
+                    <div className="col-md-6 date-wrapper">
+                        <DayPickerInput
+                            placeholder={'Earliest'}
+                            onDayChange={this.props.handleEarliestClick}
+                            value={this.props.generalInfo.earliest_move_in} onChange={() => {}} />
+                    </div>
+                    <div className="col-md-6 date-wrapper">
+                        <DayPickerInput
+                            placeholder={'Latest'}
+                            onDayChange={this.props.handleLatestClick}
+                            value={this.props.generalInfo.latest_move_in} onChange={() => {}} />
+                    </div>
+                </div>
+            );
+        } else {
+            return null
+        }
     }
 
     renderBedroomQuestion() {
@@ -454,9 +454,9 @@ export default class GeneralForm extends Component {
                 {/*{this.renderHomeTypeQuestion()}*/}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
-                {/*{this.renderDatePickingQuestion()}*/}
                 {this.renderFilterZones()}
                 {this.renderUrgencyQuestion()}
+                {this.renderDatePickingQuestion()}
                 {this.renderBedroomQuestion()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
