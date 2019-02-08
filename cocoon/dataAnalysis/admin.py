@@ -1,11 +1,16 @@
+# Import Django Modules
 from django.contrib import admin
 from django.db.models import Avg, Max, Min
 
+# Import app modules
 from .models import SurveyResultsIteration, HomeTracker
+
+# Import Third Party Modules
 from import_export import resources
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ExportMixin
 from import_export.fields import Field
 
+# Import Cocoon Modules
 from cocoon.survey.constants import NUMBER_OF_HOMES_RETURNED
 
 
@@ -92,7 +97,7 @@ class HomeTrackerInLIne(admin.TabularInline):
     extra = 0
 
 
-class SurveyResultsIterationAdmin(ImportExportModelAdmin):
+class SurveyResultsIterationAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = SurveyResultIterationResource
     inlines = [HomeTrackerInLIne]
 
