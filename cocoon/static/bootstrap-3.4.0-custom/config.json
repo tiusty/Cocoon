@@ -5,7 +5,10 @@
     "forms.less",
     "glyphicons.less",
     "alerts.less",
-    "wells.less"
+    "wells.less",
+    "close.less"
   ],
-  "js": []
+  "js": [
+    "alert.js"
+  ]
 }

@@ -518,32 +518,34 @@ export default class MySurveys extends Component {
             );
         } else {
             return (
-                <div className="row">
-                    <div className="col-md-8">
-                        <div className="surveys-div">
-                            <h2 className="surveys-title">My Surveys</h2>
-                            {this.renderMySurveysMessages()}
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-md-8">
+                            <div className="surveys-div">
+                                <h2 className="surveys-title">My Surveys</h2>
+                                {this.renderMySurveysMessages()}
+                            </div>
+                            <div className="surveys-main">
+                                {this.renderSurveysBlock()}
+                            </div>
                         </div>
-                        <div className="surveys-main">
-                            {this.renderSurveysBlock()}
+                        <div className="col-md-4">
+                            <TourSummary
+                                loaded={this.state.loaded}
+                                visit_list={this.state.visit_list}
+                                survey_id={this.state.survey_clicked_id}
+                                is_pre_tour_signed={this.state.is_pre_tour_signed}
+                                pre_tour_forms_created={this.state.pre_tour_forms_created}
+                                last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
+                                itinerary_scheduled={this.state.itinerary_scheduled}
+                                refreshing_document_status={this.state.refreshing_document_status}
+                                onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
+                                onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
+                                onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                                onHandleVisitListClicked={this.handleVisitClick}
+                                onLoadingClick={this.setLoadingClick}
+                            />
                         </div>
-                    </div>
-                    <div className="col-md-4">
-                        <TourSummary
-                            loaded={this.state.loaded}
-                            visit_list={this.state.visit_list}
-                            survey_id={this.state.survey_clicked_id}
-                            is_pre_tour_signed={this.state.is_pre_tour_signed}
-                            pre_tour_forms_created={this.state.pre_tour_forms_created}
-                            last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
-                            itinerary_scheduled={this.state.itinerary_scheduled}
-                            refreshing_document_status={this.state.refreshing_document_status}
-                            onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
-                            onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
-                            onHandleOnClickResendDocument={this.handleOnClickResendDocument}
-                            onHandleVisitListClicked={this.handleVisitClick}
-                            onLoadingClick={this.setLoadingClick}
-                        />
                     </div>
                 </div>
             );

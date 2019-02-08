@@ -14,6 +14,11 @@ body {
     color: var(--black);
 }
 
+a, a:hover, a:focus {
+    text-decoration: none;
+    color: initial;
+}
+
 /* Header styling */
 h1, .h1, h2, .h2, h3, .h3 {
     margin-top: 20px;
@@ -94,7 +99,7 @@ nav #dropdown {
     flex-direction: column;
     background: white;
     padding: 16px;
-    min-width: 129px;
+    width: 100%;
     border-radius: 5px;
     text-align: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -165,7 +170,6 @@ nav .nav-links_mobile .hamburger-menu.mobile-links_open span:nth-of-type(2) {
 }
 
 .mobile-links.mobile-links_open {
-    padding: 30px 0px;
     display: flex;
     flex-direction: column;
     background: #692613;
@@ -180,11 +184,11 @@ nav .nav-links_mobile .hamburger-menu.mobile-links_open span:nth-of-type(2) {
 
 .mobile-links a {
     text-decoration: none;
-    font-size: 20px;
-    margin-bottom: 30px;
+    font-size: 16px;
     font-weight: 700;
     color: #ffffff;
-    padding-left: 15px;
+    padding: 15px;
+    border-bottom: 2px solid rgba(255, 255, 255, .2);
 }
 
 .mobile-links a:last-of-type {

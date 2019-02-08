@@ -144,6 +144,36 @@ export default class HomeTileLarge extends Component {
         }
     };
 
+    renderBrokerInfo = (home) => {
+        /**
+         * Renders all broker information
+         * @type {Array}
+         */
+
+        // Creates a list of all broker information that exist
+        let broker_info = [];
+        for (var key in home.broker_info) {
+            broker_info.push(key)
+        }
+
+        // If there is at least broker info then render it
+        // Since the names have a _ instead of a space, when rendering the name
+        //  replace all _ with spaces
+        if (broker_info.length > 0) {
+            return (
+                <div className="broker_info">
+                    <h3>Broker Info</h3>
+                    {broker_info.map(item => (
+                        <div key={item} className="broker_info-section-item">
+                            <span className="item-left-text">{item.replace(/_/g, ' ')}</span>
+                            <span className="item-right-text">{home.broker_info[item]}</span>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+    };
+
     renderAmenities = () => {
         /**
          * Renders all the amenities information associated with the home
@@ -308,6 +338,7 @@ renderPercentMatch = (home) => {
                             </div>
 
                             {this.renderAmenities()}
+                            {this.renderBrokerInfo(home)}
                         </div>
                         {this.renderScore(home)}
                     </div>
