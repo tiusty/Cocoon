@@ -30,7 +30,7 @@ class HouseAdmin(admin.ModelAdmin):
         ),
     ]
 
-    list_display = ('street_address', 'price', 'home_type', 'currently_available', 'last_updated', 'num_bedrooms',
+    list_display = ('street_address', 'price', 'home_type', 'currently_available', 'date_available', 'last_updated', 'num_bedrooms',
                     'latitude', 'longitude',)
     list_filter = ['home_type', 'listing_provider',]
     search_fields = ['street_address']
