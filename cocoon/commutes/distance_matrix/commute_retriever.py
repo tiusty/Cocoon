@@ -89,6 +89,7 @@ def retrieve_approximate_commute(homes, destination, commute_type):
     try:
         # Retrieve the destination zip_code object if it exists
         destination_zip = ZipCodeBase.objects.get(zip_code=destination.zip_code)
+        print(destination_zip)
 
         # Retrieve all the child zip_codes for the destination commute_type
         child_zips = ZipCodeChild.objects.filter(base_zip_code=destination_zip). \
