@@ -42,9 +42,44 @@ class HomeInformationForm(ModelForm):
         min_value=0
     )
 
+    earliest_move_in = forms.DateTimeField(
+        required=False,
+    )
+
+    latest_move_in = forms.DateTimeField(
+        required=False
+    )
+
+    def is_valid(self):
+        valid = super().is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        if 'move_weight' in current_form:
+
+            # only when the commute type is not work from home are these fields needed
+            if current_form['move_weight'] != 3:
+
+                if current_form['earliest_move_in'] is None:
+                    self.add_error('earliest_move_in', "If move weight is not Move asap, earliest move in required")
+                    valid = False
+
+                if current_form['latest_move_in'] is None:
+                    self.add_error('latest_move_in', "If move weight is not Move asap, latest move in required")
+                    valid = False
+
+        return valid
+
     class Meta:
         model = HomeInformationModel
-        fields = ('num_bedrooms', 'home_type', 'polygon_filter_type', 'move_weight')
+        fields = ('num_bedrooms', 'home_type', 'polygon_filter_type', 'move_weight', 'earliest_move_in',
+                  'latest_move_in')
 
 
 class PriceInformationForm(ModelForm):

@@ -189,7 +189,18 @@ export default class RentForm extends Component {
 
         /**          General info data               **/
         // Add the general state to the data
-        data['generalInfo'] = this.state.generalInfo;
+        //  Do a deep copy so the manipulation of the data later doesn't affect the original state
+        data['generalInfo'] = JSON.parse(JSON.stringify(this.state.generalInfo));
+
+        // Make sure the earliest_move_in is in the correct format for django forms
+        if (this.state.generalInfo.earliest_move_in) {
+            data['generalInfo'].earliest_move_in = this.state.generalInfo.earliest_move_in.format('YYYY-MM-DD HH:mm')
+        }
+
+        // Make sure the latest_move_in is in the right format for django to add to the form
+        if (this.state.generalInfo.latest_move_in) {
+            data['generalInfo'].latest_move_in = this.state.generalInfo.latest_move_in.format('YYYY-MM-DD HH:mm')
+        }
 
         /**             Amenities data                     **/
         // Add amenities
