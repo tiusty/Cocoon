@@ -2,6 +2,7 @@
 import React from 'react';
 import { Component } from 'react';
 import axios from 'axios'
+import moment from 'moment';
 
 // Import Cocoon Components
 import Progress from '../progress/index';
@@ -407,13 +408,13 @@ export default class RentForm extends Component {
 
     handleEarliestClick = (day, {selected}) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['earliest_move_in'] = selected ? null : day;
+        generalInfo['earliest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 
     handleLatestClick = (day, { selected }) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['latest_move_in'] = selected ? null : day;
+        generalInfo['latest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 

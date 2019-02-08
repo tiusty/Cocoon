@@ -336,13 +336,25 @@ export default class GeneralForm extends Component {
                         <DayPickerInput
                             placeholder={'Earliest'}
                             onDayChange={this.props.handleEarliestClick}
-                            value={this.props.generalInfo.earliest_move_in} onChange={() => {}} />
+                            value=
+                                {this.props.generalInfo.earliest_move_in  === undefined ?
+                                    null
+                                    :
+                                    this.props.generalInfo.earliest_move_in.format('MMMM Do YYYY')
+                                }
+                            onChange={() => {}} />
                     </div>
                     <div className="col-md-6 date-wrapper">
                         <DayPickerInput
                             placeholder={'Latest'}
                             onDayChange={this.props.handleLatestClick}
-                            value={this.props.generalInfo.latest_move_in} onChange={() => {}} />
+                            value =
+                                {this.props.generalInfo.latest_move_in  === undefined ?
+                                null
+                                :
+                                this.props.generalInfo.latest_move_in.format('MMMM Do YYYY')
+                            }
+                            onChange={() => {}} />
                     </div>
                 </div>
             );
