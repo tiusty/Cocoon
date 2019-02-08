@@ -11,7 +11,7 @@ from cocoon.commutes.models import CommuteType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS
-from .constants import HYBRID_WEIGHT_CHOICES, WEIGHT_QUESTION_MAX
+from .constants import WEIGHT_QUESTION_MAX, MOVE_WEIGHT_MAX
 from django.forms.models import inlineformset_factory
 
 # import constants
@@ -64,7 +64,7 @@ class HomeInformationForm(ModelForm):
         if 'move_weight' in current_form:
 
             # only when the commute type is not work from home are these fields needed
-            if current_form['move_weight'] != 3:
+            if current_form['move_weight'] != MOVE_WEIGHT_MAX:
 
                 if current_form['earliest_move_in'] is None:
                     self.add_error('earliest_move_in', "If move weight is not Move asap, earliest move in required")

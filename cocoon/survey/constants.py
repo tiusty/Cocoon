@@ -19,15 +19,8 @@ WEIGHT_QUESTION_MAX = 6
 HYBRID_WEIGHT_MAX = 3
 HYBRID_WEIGHT_MIN = 0
 
-HYBRID_WEIGHT_CHOICES = (
-    (3, "Must have"),
-    (2, "Really want"),
-    (1, "Prefer to have"),
-    (0, "I don't care"),
-    (-1, "Prefer not to have"),
-    (-2, "Really don't want"),
-    (-3, "Don't want"),
-)
+# Move Weight values
+MOVE_WEIGHT_MAX = 3
 
 # Commute range
 MAX_COMMUTE_TIME = 180
