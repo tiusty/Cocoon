@@ -125,9 +125,10 @@ class CocoonAlgorithm(object):
         if user_survey.move_weight == MOVE_WEIGHT_MAX:
             house_query = house_query.filter(currently_available=True)
         else:
-            house_query = house_query.filter(
-                date_available__range=(
-                    user_survey.earliest_move_in - timedelta(days=7),
-                    user_survey.latest_move_in + timedelta(days=2)))
+            if user_survey.earliest_move_in is not None and user_survey.latest_move_in is not None:
+                house_query = house_query.filter(
+                    date_available__range=(
+                        user_survey.earliest_move_in - timedelta(days=7),
+                        user_survey.latest_move_in + timedelta(days=2)))
 
         return house_query

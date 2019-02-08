@@ -34,8 +34,6 @@ class TestHomeInformationForm(TestCase):
     def tests_home_information_form_valid(self):
         # Arrange
         form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
             'num_bedrooms': self.num_bedrooms,
             'max_bathrooms': self.max_num_bathrooms,
             'min_bathrooms': self.min_num_bathrooms,
@@ -47,6 +45,7 @@ class TestHomeInformationForm(TestCase):
 
         # Act
         result = home_information_form.is_valid()
+        print(home_information_form.errors)
 
         # Assert
         self.assertTrue(result)
