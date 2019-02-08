@@ -6,6 +6,8 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
+from cocoon.survey.constants import NUMBER_OF_HOMES_RETURNED
+
 
 class SurveyResultIterationResource(resources.ModelResource):
     id = Field(attribute='id', column_name='Iteration Id')
@@ -13,10 +15,18 @@ class SurveyResultIterationResource(resources.ModelResource):
     survey_id = Field(attribute='survey_id', column_name='Survey Id')
     user_full_name = Field(attribute='user_full_name', column_name='User Full Name')
     avg_home_score = Field(column_name='Avg Home Score')
+    avg_home_score_returned = Field(column_name='Avg Home Score Returned to User')
     standard_deviation_homes = Field(column_name="Standard Deviation Of Homes")
+    standard_deviation_homes_returned = Field(column_name='Standard Deviation of returned homes')
     max_score_home = Field(column_name='Max score for a home')
+    max_score_home_returned = Field(column_name='Max Score returned to user')
     min_score_home = Field(column_name='Min Score for a home')
+    min_score_home_returned = Field(column_name='Min Score returned to user')
     num_homes = Field(column_name='Number of Homes')
+
+    @staticmethod
+    def dehydrate_avg_home_score_returned(iteration):
+        return iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Avg('score'))['score__avg']
 
     @staticmethod
     def dehydrate_max_score_home(iteration):
@@ -27,7 +37,30 @@ class SurveyResultIterationResource(resources.ModelResource):
         return iteration.homes.all().aggregate(Min('score'))['score__min']
 
     @staticmethod
+    def dehydrate_max_score_home_returned(iteration):
+        return iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Max('score'))['score__max']
+
+    @staticmethod
+    def dehydrate_min_score_home_returned(iteration):
+        return iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Min('score'))['score__min']
+
+    @staticmethod
     def dehydrate_standard_deviation_homes(iteration):
+        scores = []
+        for home in iteration.homes.all():
+            scores.append(home.score)
+        avg = iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Avg('score'))['score__avg']
+
+        score_normalized = []
+        for score in scores:
+            score_normalized.append((score - avg) ** 2)
+        variance = 0
+        if len(score_normalized) > 0:
+            variance = sum(score_normalized)/len(score_normalized)
+        return variance ** .5
+
+    @staticmethod
+    def dehydrate_standard_deviation_homes_returned(iteration):
         scores = []
         for home in iteration.homes.all():
             scores.append(home.score)
