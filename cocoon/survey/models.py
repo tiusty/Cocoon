@@ -62,8 +62,8 @@ class HomeInformationModel(models.Model):
     home_type = models.ManyToManyField(HomeTypeModel)
     polygon_filter_type = models.IntegerField(default=0)
     move_weight = models.IntegerField(default=0)
-    earliest_move_in = models.DateField(default=timezone.now)
-    latest_move_in = models.DateField(default=timezone.now)
+    earliest_move_in = models.DateField(blank=True, null=True)
+    latest_move_in = models.DateField(blank=True, null=True)
 
     @property
     def home_types(self):

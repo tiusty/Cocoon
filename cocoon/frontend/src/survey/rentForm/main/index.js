@@ -124,6 +124,20 @@ export default class RentForm extends Component {
                 //  retrieve it and store it directly in the tenant dictionary
                 tenants[i].commute_type = tenants[i].commute_type.id
             }
+
+            // Set the earliest and latest move in fields to moments
+            if (survey.generalInfo.earliest_move_in) {
+                survey.generalInfo.earliest_move_in = moment(survey.generalInfo.earliest_move_in)
+            } else {
+                survey.generalInfo.earliest_move_in = undefined
+            }
+
+            if (survey.generalInfo.latest_move_in) {
+                survey.generalInfo.latest_move_in = moment(survey.generalInfo.latest_move_in)
+            } else {
+                survey.generalInfo.latest_move_in = undefined
+            }
+
             this.setState({
                 amenitiesInfo: survey.amenitiesInfo,
                 generalInfo: survey.generalInfo,

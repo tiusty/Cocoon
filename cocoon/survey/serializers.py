@@ -94,6 +94,8 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
             'polygon_filter_type': obj.polygon_filter_type,
             'move_weight': obj.move_weight,
             'polygons': polygons,
+            'earliest_move_in': obj.earliest_move_in,
+            'latest_move_in': obj.latest_move_in,
         }
 
     @staticmethod
