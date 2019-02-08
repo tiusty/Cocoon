@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'cocoon.dataAnalysis',
     'rest_framework',
     'django_intercom',
+    'import_export',
 ]
 
 MIDDLEWARE = [
