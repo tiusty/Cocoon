@@ -208,31 +208,46 @@ class MlspinRequester(object):
                 num_of_value_errors += 1
                 continue
 
-            if RentDatabaseModel.objects.filter(listing_provider=new_listing.listing_provider) \
-                    .filter(listing_number=new_listing.listing_number):
-                # If the apartment already exists on MLSpin, verify that the address is the same, if it is then continue
-                #   otherwise throw an error (just for testing purposes to see if it happens). If we decide this is a
-                #   non-issue, we can take this out
-                existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
-                if existing_apartment.full_address == new_listing.full_address \
-                        and existing_apartment.apartment_number == new_listing.apartment_number:
+            # Determines if the home already exists as a MLSPIN house
+            if RentDatabaseModel.objects \
+                    .filter(listing_provider=new_listing.listing_provider) \
+                    .filter(street_address=new_listing.street_address) \
+                    .filter(city=new_listing.city) \
+                    .filter(state=new_listing.state) \
+                    .filter(zip_code=new_listing.zip_code) \
+                    .filter(apartment_number=new_listing.apartment_number) \
+                    .exists():
 
-                    # The lat and long is the only thing that is not computed for each new_listing since it costs money
-                    #   Therefore assume the old lat and long values are correct (Should not change)
-                    new_listing.latitude = existing_apartment.latitude
-                    new_listing.longitude = existing_apartment.longitude
+                # Retrieve the home that the home matches
+                existing_apartment = RentDatabaseModel.objects.get(
+                    street_address=new_listing.street_address,
+                    city=new_listing.city,
+                    state=new_listing.state,
+                    zip_code=new_listing.zip_code,
+                    apartment_number=new_listing.apartment_number
+                )
 
-                    # Since the apartments are the same
-                    #   Update the existing apartment with the fields stored in the new listing
-                    existing_apartment.update(new_listing)
-                    existing_apartment.save()
-                    print("[ UPDATED ] {0}".format(existing_apartment.full_address))
-                    num_updated_homes += 1
-                else:
-                    print("[ FAILED UPDATE ] {0}".format(new_listing.full_address))
-                    num_failed_to_update += 1
-            elif RentDatabaseModel.objects.filter(street_address=new_listing.street_address) \
-                    .filter(apartment_number=new_listing.apartment_number):
+                # The lat and long is the only thing that is not computed for each new_listing since it costs money
+                #   Therefore assume the old lat and long values are correct (Should not change)
+                new_listing.latitude = existing_apartment.latitude
+                new_listing.longitude = existing_apartment.longitude
+
+                # Since the apartments are the same
+                #   Update the existing apartment with the fields stored in the new listing
+                existing_apartment.update(new_listing)
+                existing_apartment.save()
+                print("[ UPDATED ] {0}".format(existing_apartment.full_address))
+                num_updated_homes += 1
+
+            # Tests if the home exists within another provider
+            #   If so mark it as a duplicate and don't add it
+            elif RentDatabaseModel.objects \
+                    .filter(street_address=new_listing.street_address) \
+                    .filter(city=new_listing.city) \
+                    .filter(state=new_listing.state) \
+                    .filter(zip_code=new_listing.zip_code) \
+                    .filter(apartment_number=new_listing.apartment_number) \
+                    .exists():
                 print("[ DUPLICATE ] {0}".format(new_listing.full_address))
                 num_of_duplicates += 1
             else:

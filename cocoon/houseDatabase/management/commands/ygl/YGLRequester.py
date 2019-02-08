@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import IntegrityError
 
 # Cocoon modules
-from cocoon.houseDatabase.constants import YGL_URL
+from cocoon.houseDatabase.constants import YGL_URL, CURRENTLY_AVAILABLE_DELTA_DAYS
 from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.houseDatabase.models import HomeProviderModel, HomeTypeModel
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
@@ -15,7 +15,7 @@ import sys
 import urllib.request
 import urllib.error
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, timedelta
 from pytz import timezone as pytimezone
 
 # Load the logger
@@ -64,7 +64,6 @@ class YGLRequester(object):
         num_houses = 0
         num_of_duplicates = 0
         num_of_value_errors = 0
-        num_failed_to_update = 0
         num_integrity_error = 0
         num_updated_homes = 0
         num_added_homes = 0
@@ -102,11 +101,14 @@ class YGLRequester(object):
                         new_listing.num_bathrooms = round(float(element.text))
                     elif element.tag == 'AvailableDate':
                         date_available = datetime.strptime(element.text, '%m/%d/%Y')
+                        new_listing.date_available = date_available
                         # Need to compare non-naive timezone date to non-naive.
                         # This way the dates are comparable
                         date_available = pytimezone('US/Eastern').localize(date_available)
-                        if timezone.now() > date_available:
+                        if timezone.now() > date_available - timedelta(days=CURRENTLY_AVAILABLE_DELTA_DAYS):
                             new_listing.currently_available = True
+                        else:
+                            new_listing.currently_available = False
                     elif element.tag == 'Parking':
                         if element.text == 'Included':
                             new_listing.parking_spot = True
@@ -147,7 +149,7 @@ class YGLRequester(object):
                         new_listing.gym = word_scraper.word_finder(["gym"]) or word_scraper.word_finder(
                             ["fitness", "center"])
                         new_listing.storage = word_scraper.word_finder(["storage"])
-
+                        new_listing.remarks = element.text
 
                 except ValueError:
                     print("[ VALUE ERROR ] Could not add home")
@@ -160,29 +162,40 @@ class YGLRequester(object):
             new_listing.street_address = normalize_street_address("{0} {1}".format(street_number, street_name))
 
             # Determines if the home already exists as a YGL house
-            if RentDatabaseModel.objects.filter(listing_provider=new_listing.listing_provider) \
-                    .filter(listing_number=new_listing.listing_number).exists():
-                existing_apartment = RentDatabaseModel.objects.get(listing_number=new_listing.listing_number)
+            if RentDatabaseModel.objects\
+                    .filter(listing_provider=new_listing.listing_provider) \
+                    .filter(street_address=new_listing.street_address)\
+                    .filter(city=new_listing.city) \
+                    .filter(state=new_listing.state)\
+                    .filter(zip_code=new_listing.zip_code)\
+                    .filter(apartment_number=new_listing.apartment_number)\
+                    .exists():
 
-                # If it does, then make sure the street addresses line up before updating the home
-                if existing_apartment.full_address == new_listing.full_address \
-                        and existing_apartment.apartment_number == new_listing.apartment_number:
-                    # Since the apartments are the same, just update the values in the existing apartment
-                    existing_apartment.update(new_listing)
-                    existing_apartment.save()
-                    print("[ UPDATED ] {0}".format(existing_apartment.full_address))
-                    num_updated_homes += 1
+                # Retrieve the home that the home matches
+                existing_apartment = RentDatabaseModel.objects.get(
+                    street_address=new_listing.street_address,
+                    city=new_listing.city,
+                    state=new_listing.state,
+                    zip_code=new_listing.zip_code,
+                    apartment_number=new_listing.apartment_number
+                )
 
-                # If the street addresses don't line up, then mark it as an error
-                else:
-                    num_failed_to_update += 1
-                    print("[ FAILED UPDATE ] {0}".format(existing_apartment.full_address))
+                existing_apartment.update(new_listing)
+                existing_apartment.save()
+                num_updated_homes += 1
+                print("[ UPDATED ] {0}".format(existing_apartment.full_address))
 
-            # If the home isn't an YGL house, then check to see if it could exist in another provider
-            elif RentDatabaseModel.objects.filter(street_address=new_listing.street_address) \
-                    .filter(apartment_number=new_listing.apartment_number):
-                print("[ DUPLICATE ] " + new_listing.full_address)
+            # Tests if the home exists within another provider
+            #   If so mark it as a duplicate and don't add it
+            elif RentDatabaseModel.objects\
+                    .filter(street_address=new_listing.street_address) \
+                    .filter(city=new_listing.city) \
+                    .filter(state=new_listing.state) \
+                    .filter(zip_code=new_listing.zip_code)\
+                    .filter(apartment_number=new_listing.apartment_number)\
+                    .exists():
                 num_of_duplicates += 1
+                print("[ DUPLICATE ] " + new_listing.full_address)
             else:
                 try:
                     new_listing.save()
@@ -204,5 +217,4 @@ class YGLRequester(object):
                     "Update timestamp: {0}\n".format(self.update_timestamp.date()) +
                     "Number of duplicates: {0}\n".format(num_of_duplicates) +
                     "Number of value errors: {0}\n".format(num_of_value_errors) +
-                    "Number of failed updated houses: {0}\n".format(num_failed_to_update) +
                     "Number of integrity error is: {0}\n".format(num_integrity_error))

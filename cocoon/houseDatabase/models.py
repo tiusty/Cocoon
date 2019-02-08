@@ -211,6 +211,7 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
     price = models.IntegerField(default=-1)
     home_type = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
     currently_available = models.BooleanField(default=False)
+    date_available = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.full_address
@@ -225,6 +226,7 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
         self.price = update_model.price
         self.home_type = update_model.home_type
         self.currently_available = update_model.currently_available
+        self.date_available = update_model.date_available
 
     @property
     def price_string(self):
