@@ -9,8 +9,7 @@
 {% endblock %}
 
 {% block button %}
-    <a href="http://
-       {{ domain }}{% url 'userAuth:activateAccount' uidb64=uid token=token %}"
+    <a href="http://{{ domain }}{% url 'userAuth:activateAccount' uidb64=uid token=token %}"
        style="background:#a13718;color:#ffffff;font-family:Montserrat, sans-serif;font-size:15px;font-weight:bold;line-height:120%;Margin:0;text-decoration:none;text-transform:none;"
        target="_blank">Verify Email</a>
 {% endblock %}
