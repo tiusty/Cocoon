@@ -359,7 +359,6 @@ img {
 }
 
 #onboarding #close-slider {
-  font-size: 2em;
   font-weight: 700;
   cursor: pointer;
   background: #b9b9b9;
@@ -370,10 +369,11 @@ img {
   padding: 5px;
   width: 20px;
   height: 20px;
-  line-height: .8em;
   text-align: center;
   color: white;
   z-index: 999999;
+  font-size: 16px;
+  line-height: 10px;
 }
 
 #onboarding .container {
