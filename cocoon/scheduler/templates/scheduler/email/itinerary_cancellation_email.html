@@ -1,8 +1,24 @@
-<div class="email-container">
-    Hey {{ agent_name }},
-    Your tour with {{ user }} for {{ start_time }} has been cancelled.
+{% extends "base_email.html" %}
 
-    You still have the tour claimed, so please head back to
-    http://{{ domain }}{% url 'scheduler:myTours' %} to
+{% block headline %}
+    Your tour has been cancelled.
+{% endblock %}
+
+{% block greeting %}
+    Hey {{ agent_name }}!
+{% endblock %}
+
+{% block content %}
+    Your tour with {{ user }} for {{ start_time }} has been cancelled.
+    <br><br>
+    You still have the tour claimed, so please click the link below to
     select a different available time.
-</div>
+{% endblock %}
+
+{% block button %}
+    <a href="http://{{ domain }}{% url 'scheduler:myTours' %}"
+       style="background:#a13718;color:#ffffff;font-family:Montserrat, sans-serif;font-size:15px;font-weight:bold;line-height:120%;Margin:0;text-decoration:none;text-transform:none;"
+       target="_blank">Select New Time</a>
+{% endblock %}
+
+{% block smallText %}{% endblock %}

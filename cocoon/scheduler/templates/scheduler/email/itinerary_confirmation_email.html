@@ -1,14 +1,27 @@
-<div class="email-container">
-    Hey {{ user }},
-    Your itinerary has been confirmed for {{ start_time }}.
+{% extends "base_email.html" %}
 
+{% block headline %}
+    Your itinerary has been set!
+{% endblock %}
+
+{% block greeting %}
+    Hey {{ user }}!
+{% endblock %}
+
+{% block content %}
+    Your itinerary has been confirmed for {{ start_time }}.
+    <br><br>
     Your tours will be given by {{ agent_name }}. You can direct
     any questions to {{ agent_email }}. You will be visiting the
     following locations:
-
+    <br><br>
     <ul>
         {% for home in homes.all %}
             <li>{{ home }}</li>
         {% endfor %}
     </ul>
-</div>
+{% endblock %}
+
+{% block button %}{% endblock %}
+
+{% block smallText %}{% endblock %}
