@@ -114,7 +114,7 @@ class HouseNearbyAmenitiesForm(ModelForm):
 
     laundry_nearby_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -137,7 +137,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     laundry_in_building_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -152,7 +152,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     patio_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -162,7 +162,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     pool_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -172,7 +172,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     gym_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -182,7 +182,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     storage_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -203,7 +203,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     laundry_in_unit_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -213,7 +213,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     furnished_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -244,7 +244,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     cat_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -254,7 +254,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     hardwood_floors_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -264,7 +264,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     AC_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -274,7 +274,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     dishwasher_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
