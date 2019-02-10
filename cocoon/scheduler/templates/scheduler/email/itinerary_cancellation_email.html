@@ -16,9 +16,13 @@
 {% endblock %}
 
 {% block button %}
-    <a href="http://{{ domain }}{% url 'scheduler:myTours' %}"
-       style="background:#a13718;color:#ffffff;font-family:Montserrat, sans-serif;font-size:15px;font-weight:bold;line-height:120%;Margin:0;text-decoration:none;text-transform:none;"
-       target="_blank">Select New Time</a>
+    <td align="center" bgcolor="#a13718" role="presentation"
+        style="border:none;border-radius:10px;cursor:auto;padding:15px 25px;background:#a13718;"
+        valign="middle">
+        <a href="http://{{ domain }}{% url 'scheduler:myTours' %}"
+           style="background:#a13718;color:#ffffff;font-family:Montserrat, sans-serif;font-size:15px;font-weight:bold;line-height:120%;Margin:0;text-decoration:none;text-transform:none;"
+           target="_blank">Select New Time</a>
+    </td>
 {% endblock %}
 
 {% block smallText %}{% endblock %}
