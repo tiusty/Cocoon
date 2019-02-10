@@ -11,7 +11,7 @@ from cocoon.commutes.models import CommuteType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS
-from .constants import WEIGHT_QUESTION_MAX, MOVE_WEIGHT_MAX
+from .constants import WEIGHT_QUESTION_MAX, MOVE_WEIGHT_MAX, HYBRID_WEIGHT_MAX
 from django.forms.models import inlineformset_factory
 
 # import constants

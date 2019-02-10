@@ -3,12 +3,9 @@ from django.test import TestCase
 from django.utils import timezone
 
 # Import Survey Models and forms
-from cocoon.survey.forms import RentSurveyForm, HomeInformationForm, CommuteInformationForm, PriceInformationForm, \
-    ExteriorAmenitiesForm, InteriorAmenitiesForm, HouseNearbyAmenitiesForm, RentSurveyFormEdit
-from cocoon.survey.models import RentingSurveyModel
+from cocoon.survey.forms import HomeInformationForm, CommuteInformationForm
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
-from cocoon.userAuth.models import MyUser
 from ..constants import MOVE_WEIGHT_MAX
 
 
