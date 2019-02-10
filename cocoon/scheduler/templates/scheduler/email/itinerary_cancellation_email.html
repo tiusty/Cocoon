@@ -1,4 +1,4 @@
-{% extends "base_email.html" %}
+{% extends "base_email_button.html" %}
 
 {% block headline %}
     Your tour has been cancelled.
@@ -15,14 +15,8 @@
     select a different available time.
 {% endblock %}
 
-{% block button %}
-    <td align="center" bgcolor="#a13718" role="presentation"
-        style="border:none;border-radius:10px;cursor:auto;padding:15px 25px;background:#a13718;"
-        valign="middle">
-        <a href="http://{{ domain }}{% url 'scheduler:myTours' %}"
-           style="background:#a13718;color:#ffffff;font-family:Montserrat, sans-serif;font-size:15px;font-weight:bold;line-height:120%;Margin:0;text-decoration:none;text-transform:none;"
-           target="_blank">Select New Time</a>
-    </td>
-{% endblock %}
+{% block buttonLink %}http://{{ domain }}{% url 'scheduler:myTours' %}{% endblock %}
+
+{% block buttonText %}Select New Time{% endblock %}
 
 {% block smallText %}{% endblock %}
