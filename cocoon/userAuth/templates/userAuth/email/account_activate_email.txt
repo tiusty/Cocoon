@@ -1,0 +1,6 @@
+{% autoescape off %}
+Hi {{ user.full_name }},
+Thanks for signing up. In order to start using your Cocoon account, we’ll need to verify your email. Please click on the link to confirm your registration.
+
+http://{{ domain }}{% url 'userAuth:activateAccount' uidb64=uid token=token %}
+{% endautoescape %}
