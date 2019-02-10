@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     'cocoon.scheduler',
     'cocoon.signature',
     'cocoon.frontend',
+    'cocoon.dataAnalysis',
     'rest_framework',
     'django_intercom',
+    'import_export',
 ]
 
 MIDDLEWARE = [
