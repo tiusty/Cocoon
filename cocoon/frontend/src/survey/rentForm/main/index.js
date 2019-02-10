@@ -593,7 +593,11 @@ export default class RentForm extends Component {
                 }
 
                 //Other
-                tenants[i].income = this.state.tenants[index].income || null;
+                if (!("income" in this.state.tenants[index])) {
+                    tenants[i].income = null;
+                } else {
+                    tenants[i].income = this.state.tenants[index].income;
+                }
                 tenants[i].credit_score = this.state.tenants[index].credit_score || null;
 
             }
