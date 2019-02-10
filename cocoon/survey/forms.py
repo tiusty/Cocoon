@@ -38,7 +38,7 @@ class HomeInformationForm(ModelForm):
 
     move_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=MOVE_WEIGHT_MAX,
         min_value=0
     )
 

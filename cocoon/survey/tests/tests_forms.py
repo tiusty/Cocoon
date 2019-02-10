@@ -9,37 +9,28 @@ from cocoon.survey.models import RentingSurveyModel
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.commutes.models import CommuteType
 from cocoon.userAuth.models import MyUser
+from ..constants import MOVE_WEIGHT_MAX
 
 
 class TestHomeInformationForm(TestCase):
 
     def setUp(self):
-
         # Create home type objects
         HomeTypeModel.objects.create(home_type="Apartment")
-        HomeTypeModel.objects.create(home_type="Condo")
-        HomeTypeModel.objects.create(home_type="Town House")
-        HomeTypeModel.objects.create(home_type="House")
 
-        # Home Information form fields
-        self.move_in_date_start = timezone.now()
-        self.move_in_date_end = timezone.now()
-        self.num_bedrooms = 1
-        self.max_num_bathrooms = 0
-        self.min_num_bathrooms = 0
-        self.polygon_filter_type = 0
-        self.home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
-        self.wants_laundry_nearby = True
-
-    def tests_home_information_form_valid(self):
+    def tests_home_information_form_valid_not_max_weight(self):
+        """
+        Tests valid form with requiring earliest_move_in and latest move in
+        """
+        home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
         # Arrange
         form_data = {
-            'num_bedrooms': self.num_bedrooms,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': self.min_num_bathrooms,
-            'home_type': self.home_type,
-            'wants_laundry_nearby': self.wants_laundry_nearby,
-            'polygon_filter_type': self.polygon_filter_type,
+            'num_bedrooms': 0,
+            'home_type': home_type,
+            'polygon_filter_type': 1,
+            'move_weight': 0,
+            'latest_move_in': timezone.now(),
+            'earliest_move_in': timezone.now(),
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -49,27 +40,38 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertTrue(result)
 
-    def tests_home_information_form_not_valid(self):
+    def tests_home_information_form_valid_max_weight(self):
+        """
+        Tests valid form with requiring earliest_move_in and latest move in
+        """
+        home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
         # Arrange
-        form_data = {}
-
+        form_data = {
+            'num_bedrooms': 0,
+            'home_type': home_type,
+            'polygon_filter_type': 1,
+            'move_weight': MOVE_WEIGHT_MAX,
+        }
         home_information_form = HomeInformationForm(data=form_data)
 
         # Act
         result = home_information_form.is_valid()
 
         # Assert
-        self.assertFalse(result)
+        self.assertTrue(result)
 
-    def tests_home_information_form_num_bedrooms_less_than_one(self):
+    def tests_home_information_form_missing_earliest_move_in_not_max_weight(self):
+        """
+        Tests that if the move_weight is not max, then the earliest move in is required
+        """
+        home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
         # Arrange
         form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms': -1,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': self.min_num_bathrooms,
-            'home_type': self.home_type
+            'num_bedrooms': 0,
+            'home_type': home_type,
+            'polygon_filter_type': 1,
+            'move_weight': MOVE_WEIGHT_MAX-1,
+            'earliest_move_in': timezone.now(),
         }
         home_information_form = HomeInformationForm(data=form_data)
 
@@ -79,14 +81,18 @@ class TestHomeInformationForm(TestCase):
         # Assert
         self.assertFalse(result)
 
-    def tests_home_information_form_home_type_missing(self):
+    def tests_home_information_form_missing_latest_move_in_not_max_weight(self):
+        """
+        Tests that if the move_weight is not max, then the latest move in is required
+        """
+        home_type = [HomeTypeModel.objects.get(home_type="Apartment")]
         # Arrange
         form_data = {
-            'move_in_date_start_survey': self.move_in_date_start,
-            'move_in_date_end_survey': self.move_in_date_end,
-            'num_bedrooms': self.num_bedrooms,
-            'max_bathrooms': self.max_num_bathrooms,
-            'min_bathrooms': -1,
+            'num_bedrooms': 0,
+            'home_type': home_type,
+            'polygon_filter_type': 1,
+            'move_weight': MOVE_WEIGHT_MAX-1,
+            'latest_move_in': timezone.now(),
         }
         home_information_form = HomeInformationForm(data=form_data)
 
