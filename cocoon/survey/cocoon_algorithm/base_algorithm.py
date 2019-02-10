@@ -4,7 +4,7 @@ from django.db.models import F
 
 # Import houseDatabase modules
 from cocoon.houseDatabase.models import RentDatabaseModel
-from cocoon.survey.constants import MOVE_WEIGHT_MAX
+from cocoon.survey.constants import MOVE_WEIGHT_MAX, DAYS_AFTER_MOVE_IN_ADDED, DAYS_BEFORE_MOVE_IN_ADDED
 
 # Import HomeScore class
 from cocoon.survey.home_data.home_score import HomeScore
@@ -128,7 +128,7 @@ class CocoonAlgorithm(object):
             if user_survey.earliest_move_in is not None and user_survey.latest_move_in is not None:
                 house_query = house_query.filter(
                     date_available__range=(
-                        user_survey.earliest_move_in - timedelta(days=7),
-                        user_survey.latest_move_in + timedelta(days=2)))
+                        user_survey.earliest_move_in - timedelta(days=DAYS_BEFORE_MOVE_IN_ADDED),
+                        user_survey.latest_move_in + timedelta(days=DAYS_AFTER_MOVE_IN_ADDED)))
 
         return house_query
