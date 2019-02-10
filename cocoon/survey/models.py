@@ -210,14 +210,14 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
 
 
 class TenantPersonalInformationModel(models.Model):
-    first_name = models.CharField(max_length=200, blank=True, default="")
-    last_name = models.CharField(max_length=200, blank=True, default="")
-    occupation = models.CharField(max_length=200, blank=True, default="")
-    other_occupation_reason = models.CharField(max_length=200, blank=True, default="")
-    unemployed_follow_up = models.CharField(max_length=200, blank=True, default="")
-    income = models.IntegerField(blank=True, null=True)
-    credit_score = models.CharField(max_length=200, blank=True, default="")
-    new_job = models.CharField(max_length=200, blank=True, default="")
+    first_name = models.CharField(max_length=200, default="")
+    last_name = models.CharField(max_length=200, default="")
+    occupation = models.CharField(max_length=200, default="")
+    other_occupation_reason = models.CharField(max_length=200, default="")
+    unemployed_follow_up = models.CharField(max_length=200, default="")
+    income = models.IntegerField(default=-1)
+    credit_score = models.CharField(max_length=200, default="")
+    new_job = models.CharField(max_length=200, default="")
 
     class Meta:
         abstract = True
