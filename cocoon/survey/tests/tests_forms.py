@@ -45,7 +45,6 @@ class TestHomeInformationForm(TestCase):
 
         # Act
         result = home_information_form.is_valid()
-        print(home_information_form.errors)
 
         # Assert
         self.assertTrue(result)
