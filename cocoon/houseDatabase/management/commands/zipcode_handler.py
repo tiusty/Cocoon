@@ -55,16 +55,19 @@ class Command(BaseCommand):
 
 
             list_zip_codes = []
+            list_zip_codes_distinct = []
 
             with open(BASE_DIR + "/commands/zip_codes_MA.txt", "r") as f:
                 for line in f:
                     line = line.split()
                     list_zip_codes.append(str(line[0]))
 
+                list_zip_codes_distinct = list(set(list_zip_codes))
+
             units = "imerial"
             client_google = client.Client(gmaps_api_key)
 
-            self.commute_approximations(units, client_google, list_zip_codes, commute_type)
+            self.commute_approximations(units, client_google, list_zip_codes_distinct, commute_type)
 
 
     def commute_approximations(self, units, client, list_zip_codes, commute_type):
