@@ -3,15 +3,12 @@ import os
 
 # import googlemaps API
 from click._compat import raw_input
-from googlemaps import distance_matrix, client
-
-# import API key from settings
-from config.settings.Global_Config import gmaps_api_key
 
 # Retrieve Constants
-from cocoon.commutes.constants import GoogleCommuteNaming
+from cocoon.commutes.models import CommuteType
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class ZipcodeBaseline(object):
@@ -28,22 +25,21 @@ class ZipcodeBaseline(object):
 
         list_zip_codes = []
 
-        with open(BASE_DIR + "/ZipcodeBaseline/zip_codes_MA.txt", "r") as f:
+        with open(BASE_DIR + "/zip_codes_MA.txt", "r") as f:
             for line in f:
                 line = line.split()
-                list_zip_codes.append(str(line[0]))
+                # We are assuming that all the zipcodes are in MA
+                list_zip_codes.append((str(line[0]), 'MA'))
 
         # Makes sures that all the zip-codes are distinct
         list_zip_codes_distinct = list(set(list_zip_codes))
 
-        client_google = client.Client(gmaps_api_key)
+        self.commute_approximations(list_zip_codes_distinct, commute_type)
 
-        self.commute_approximations(client_google, list_zip_codes_distinct, commute_type)
-
-    def commute_approximations(self, client, list_zip_codes, commute_type):
+    def commute_approximations(self, list_zip_codes, commute_type):
         """
-        :param client: google maps client
         :param list_zip_codes: list of zip codes in the Boston area
+        :param commute_type: (string) -> The commute type of the baseline that is being created
         :return:
 
         Function calls the Google Maps Distance Matrix API for every possible combination of Boston zip codes.
@@ -55,26 +51,27 @@ class ZipcodeBaseline(object):
         commute_type_google = ""
 
         if commute_type == "driving":
-            commute_type_google = GoogleCommuteNaming.DRIVING
+            commute_type_google = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
         elif commute_type == "transit":
-            commute_type_google = GoogleCommuteNaming.TRANSIT
+            commute_type_google = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
 
-        filename_out = BASE_DIR + "/commands/baselines/zipcode_baseline_" + commute_type + ".txt"
+        filename_out = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type + ".txt"
 
         with open(filename_out, "w") as f:
-            for i in list_zip_codes:
-                for j in list_zip_codes:
-                    response_json = distance_matrix.distance_matrix(client,
-                                                                [i],
-                                                                [j],
-                                                                mode=commute_type_google,
-                                                                units="imperial")
+            for base_zip in list_zip_codes:
 
-                    json_commute["approximations"].append({
-                        "origin":i,
-                        "desination":j,
-                        "duration":response_json.get("rows")[0].get("elements")[0].get("duration").get("value"),
-                        "distance":response_json.get("rows")[0].get("elements")[0].get("distance").get("value")
-                    })
+                    # map (zip, state) tuples list to a list of "state+zip" strings
+                    results = retrieve_exact_commute(list(map(lambda x: x[1] + "+" + x[0], list_zip_codes)),
+                                                     [base_zip[1] + "+" + base_zip[0]],
+                                                     commute_type_google)
+                    counter = 0
+                    for commute in results:
+                        json_commute["approximations"].append({
+                            "origin": base_zip,
+                            "desination": list_zip_codes[counter],
+                            "duration": results[counter][0][0],
+                            "distance": results[counter][0][1]
+                        })
+                        counter+=1
 
             f.write(json.dumps(json_commute,ensure_ascii=False))
