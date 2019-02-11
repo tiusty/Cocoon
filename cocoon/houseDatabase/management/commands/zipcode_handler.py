@@ -1,6 +1,8 @@
 import json
+import os
 
 # import googlemaps API
+from click._compat import raw_input
 from googlemaps import distance_matrix, client
 
 # import API key from settings
@@ -38,12 +40,14 @@ class Command(BaseCommand):
         Function to run the command. list_zip_codes is all possible zip codes in Boston. The handler
         calls the commute_approximation function, which writes the JSON file "approximations.txt"
         """
+        verify = raw_input("Please don't run this script unless you are directed to, please type 'yes' to confirm: ")
+        if verify.lower() != "yes" and verify.lower() != "y":
+            exit()
+
         if options['create_baseline']:
             commute_type = "driving"
             if options['commute_type'] and (options['commute_type'].lower() == "driving" or \
-                                            options['commute_type'].lower() == "transit") or \
-                                            options['commute_type'].lower() == "bicycling" or \
-                                            options['commute_type'].lower() == "walking":
+                                            options['commute_type'].lower() == "transit"):
 
                 commute_type = options['commute_type'].lower()
 
@@ -74,12 +78,9 @@ class Command(BaseCommand):
             commute_type_google = GoogleCommuteNaming.DRIVING
         elif commute_type == "transit":
             commute_type_google = GoogleCommuteNaming.TRANSIT
-        elif commute_type == "bicycling":
-            commute_type_google = GoogleCommuteNaming.BICYCLING
-        elif commute_type == "walking":
-            commute_type_google = GoogleCommuteNaming.WALKING
 
-        filename_out = "zipcode_baseline_" + commute_type + ".txt"
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        filename_out = BASE_DIR + "/commands/baselines/zipcode_baseline_" + commute_type + ".txt"
 
         with open(filename_out, "w") as f:
             for i in list_zip_codes:
