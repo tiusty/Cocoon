@@ -92,6 +92,8 @@ export default class HomeTiles extends Component {
                         canVisit={this.props.canVisit}
                         canFavorite={this.props.canFavorite}
                         displayPercent={this.displayPercent}
+                        onMarket={home.on_market}
+                        displayOnMarket={true}
                     />
                 )
             );
@@ -109,6 +111,7 @@ export default class HomeTiles extends Component {
                     canVisit={this.props.canVisit}
                     canFavorite={this.props.canFavorite}
                     displayPercent={this.displayPercent}
+                    onMarket={home.on_market}
                 />
             );
         }

@@ -197,7 +197,7 @@ export default class HomeTileLarge extends Component {
 
             // Toggles whether the home text depending on favorite status
         let favorite_style;
-        if (!this.props.canVisit) {
+        if (!this.props.canVisit || !this.props.onMarket) {
             favorite_style = {
                 width: '100%',
                 borderRight: 'none'
@@ -256,7 +256,7 @@ export default class HomeTileLarge extends Component {
         return (
             <div className="tileScore">
                 {this.props.canFavorite ? heart_span : null}
-                {this.props.canVisit ? visit_span : null}
+                {this.props.canVisit && this.props.onMarket ? visit_span : null}
             </div>
         );
     }

@@ -97,11 +97,31 @@
     font-size: 12px;
 }
 
+/* Out of market Styles */
+.off-market-wrapper {
+    background: rgba(0, 0, 0, 0.5);
+    top: 0;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--borderRadius) 0 0 0;
+}
+
+.off-market-wrapper img {
+    width: 100%;
+    height: auto;
+    max-width: 50px;
+}
 
 /* Image formatting */
 .thumbnailDiv {
     width: 35%;
     cursor: pointer;
+    position: relative;
 }
 
 .thumbnailImage {

@@ -126,7 +126,7 @@ export default class ResultsPage extends Component {
                 this.setState({
                     homeList: response.data,
                     isLoading: false
-                });
+                },() => console.log(this.state.homeList));
             })
     };
 
