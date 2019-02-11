@@ -181,91 +181,178 @@ class TestLaundryWeightingQuestion(TestCase):
         self.assertEqual(home.total_possible_points, 0)
         self.assertFalse(home.eliminated)
 
-    def test_wants_in_unit_not_need_home_has_in_unit(self):
+    def test_wants_in_unit_not_need(self):
         """
-        Tests that if the user wants in unit and the apartment has in unit then it is
-            scored properly
-        """
-        # Arrange
-        # Make sure it is not a need
-        in_unit_weight = HYBRID_WEIGHT_MAX - 1
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=False,
-                                    wants_laundry_in_unit=True,
-                                    laundry_in_unit_weight=in_unit_weight)
-        weighted_algorithm = WeightScoringAlgorithm()
-
-        home = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=False)
-
-        # Act
-        weighted_algorithm.handle_laundry_weight_question(survey, home)
-
-        # Assert
-        self.assertEqual(home.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home.home.laundry_in_unit))
-        self.assertEqual(home.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertFalse(home.eliminated)
-
-    def test_wants_in_unit_not_need_home_not_have_in_unit_has_in_building(self):
-        """
-        Tests that if the user wants in unit but the home only has in building,
-            then the accumulated points is zero.
+        Tests that if the user needs in building, then if the home has either in unit or in building
+            then it is scored properly
         """
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX - 1
+        in_building_weight = 0
         survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=False,
                                     wants_laundry_in_unit=True,
-                                    laundry_in_unit_weight=in_unit_weight)
+                                    laundry_in_unit_weight=in_unit_weight,
+                                    laundry_in_building_weight=in_building_weight,
+                                    )
         weighted_algorithm = WeightScoringAlgorithm()
 
-        home = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=True)
+        # Create homes
+        home = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=False)
+        home1 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=False)
+        home2 = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=True)
+        home3 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=True)
 
         # Act
         weighted_algorithm.handle_laundry_weight_question(survey, home)
+        weighted_algorithm.handle_laundry_weight_question(survey, home1)
+        weighted_algorithm.handle_laundry_weight_question(survey, home2)
+        weighted_algorithm.handle_laundry_weight_question(survey, home3)
 
         # Assert
         self.assertEqual(home.accumulated_points, 0)
         self.assertEqual(home.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
         self.assertFalse(home.eliminated)
 
-    def test_wants_in_unit_need_home_has_in_unit(self):
+        self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home1.home.laundry_in_unit))
+        self.assertEqual(home1.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home1.eliminated)
+
+        self.assertEqual(home2.accumulated_points, 0)
+        self.assertEqual(home2.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home2.eliminated)
+
+        self.assertEqual(home3.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home3.home.laundry_in_unit))
+        self.assertEqual(home3.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home3.eliminated)
+
+    def test_wants_in_unit_need(self):
         """
-        Tests that if a user needs apartment in-unit then if it is has in-unit then it
-            gets scored and still is not eliminated
-        """
-        # Arrange
-        in_unit_weight = HYBRID_WEIGHT_MAX
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=False,
-                                    wants_laundry_in_unit=True,
-                                    laundry_in_unit_weight=in_unit_weight)
-        weighted_algorithm = WeightScoringAlgorithm()
-
-        home = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=False)
-
-        # Act
-        weighted_algorithm.handle_laundry_weight_question(survey, home)
-
-        # Assert
-        self.assertEqual(home.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home.home.laundry_in_unit))
-        self.assertEqual(home.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertFalse(home.eliminated)
-
-    def test_wants_in_unit_need_home_has_in_building(self):
-        """
-        Tests that if a user needs in unit and it doesn't have it, then the
-            home gets eliminated
+        Tests that if the user needs in building, then if the home has either in unit or in building
+            then it is scored properly
         """
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX
+        in_building_weight = 0
         survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=False,
                                     wants_laundry_in_unit=True,
-                                    laundry_in_unit_weight=in_unit_weight)
+                                    laundry_in_unit_weight=in_unit_weight,
+                                    laundry_in_building_weight=in_building_weight,
+                                    )
         weighted_algorithm = WeightScoringAlgorithm()
 
-        home = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=True)
+        # Create homes
+        home = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=False)
+        home1 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=False)
+        home2 = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=True)
+        home3 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=True)
 
         # Act
         weighted_algorithm.handle_laundry_weight_question(survey, home)
+        weighted_algorithm.handle_laundry_weight_question(survey, home1)
+        weighted_algorithm.handle_laundry_weight_question(survey, home2)
+        weighted_algorithm.handle_laundry_weight_question(survey, home3)
 
         # Assert
         self.assertEqual(home.accumulated_points, 0)
         self.assertEqual(home.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
         self.assertTrue(home.eliminated)
+
+        self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home1.home.laundry_in_unit))
+        self.assertEqual(home1.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home1.eliminated)
+
+        self.assertEqual(home2.accumulated_points, 0)
+        self.assertEqual(home2.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertTrue(home2.eliminated)
+
+        self.assertEqual(home3.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home3.home.laundry_in_unit))
+        self.assertEqual(home3.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home3.eliminated)
+
+    def test_wants_in_building_not_need(self):
+        """
+        Tests that if the user needs in building, then if the home has either in unit or in building
+            then it is scored properly
+        """
+        # Arrange
+        in_unit_weight = 0
+        in_building_weight = HYBRID_WEIGHT_MAX - 1
+        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+                                    wants_laundry_in_unit=False,
+                                    laundry_in_unit_weight=in_unit_weight,
+                                    laundry_in_building_weight=in_building_weight,
+                                    )
+        weighted_algorithm = WeightScoringAlgorithm()
+
+        # Create homes
+        home = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=False)
+        home1 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=False)
+        home2 = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=True)
+        home3 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=True)
+
+        # Act
+        weighted_algorithm.handle_laundry_weight_question(survey, home)
+        weighted_algorithm.handle_laundry_weight_question(survey, home1)
+        weighted_algorithm.handle_laundry_weight_question(survey, home2)
+        weighted_algorithm.handle_laundry_weight_question(survey, home3)
+
+        # Assert
+        self.assertEqual(home.accumulated_points, 0)
+        self.assertEqual(home.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home.eliminated)
+
+        self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home1.home.laundry_in_unit))
+        self.assertEqual(home1.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home1.eliminated)
+
+        self.assertEqual(home2.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home2.home.laundry_in_building))
+        self.assertEqual(home2.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home2.eliminated)
+
+        self.assertEqual(home3.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home3.home.laundry_in_unit))
+        self.assertEqual(home3.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home3.eliminated)
+
+    def test_wants_in_building_need(self):
+        """
+        Tests that if the user needs in building, then if the home has either in unit or in building
+            then it is not eliminated and scored properly
+        """
+        # Arrange
+        in_unit_weight = 0
+        in_building_weight = HYBRID_WEIGHT_MAX
+        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+                                    wants_laundry_in_unit=False,
+                                    laundry_in_unit_weight=in_unit_weight,
+                                    laundry_in_building_weight=in_building_weight,
+                                    )
+        weighted_algorithm = WeightScoringAlgorithm()
+
+        # Create homes
+        home = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=False)
+        home1 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=False)
+        home2 = self.create_home(self.home_type, laundry_in_unit=False, laundry_in_building=True)
+        home3 = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=True)
+
+        # Act
+        weighted_algorithm.handle_laundry_weight_question(survey, home)
+        weighted_algorithm.handle_laundry_weight_question(survey, home1)
+        weighted_algorithm.handle_laundry_weight_question(survey, home2)
+        weighted_algorithm.handle_laundry_weight_question(survey, home3)
+
+        # Assert
+        self.assertEqual(home.accumulated_points, 0)
+        self.assertEqual(home.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertTrue(home.eliminated)
+
+        self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home1.home.laundry_in_unit))
+        self.assertEqual(home1.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home1.eliminated)
+
+        self.assertEqual(home2.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home2.home.laundry_in_building))
+        self.assertEqual(home2.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home2.eliminated)
+
+        self.assertEqual(home3.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home3.home.laundry_in_unit))
+        self.assertEqual(home3.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
+        self.assertFalse(home3.eliminated)
