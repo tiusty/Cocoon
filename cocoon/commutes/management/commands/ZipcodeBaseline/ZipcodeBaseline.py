@@ -55,7 +55,7 @@ class ZipcodeBaseline(object):
         elif commute_type == "transit":
             commute_type_google = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
 
-        filename_out = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type + ".txt"
+        filename_out = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type + ".json"
 
         with open(filename_out, "w") as f:
             for base_zip in list_zip_codes:
