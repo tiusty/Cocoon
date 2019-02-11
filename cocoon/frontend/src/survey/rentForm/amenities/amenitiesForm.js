@@ -21,13 +21,6 @@ export default class AmenitiesForm extends Component {
                            }}/>
                     <div>In-building <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label survey-checkbox">
-                    <input type="checkbox" name="wants_laundry_nearby" value="true"
-                           checked={this.props.amenitiesInfo.wants_laundry_nearby === true}
-                           onChange={() => {
-                           }}/>
-                    <div>Nearby laundromat <i className="material-icons">check</i></div>
-                </label>
             </div>
         );
     }
@@ -487,7 +480,6 @@ export default class AmenitiesForm extends Component {
                 {this.renderLaundryQuestion()}
                 {this.renderLaundryInUnitFollowUp()}
                 {this.renderLaundryInBuldingFollowUp()}
-                {this.renderLaundryNearbyFollowUp()}
                 {this.renderAmenitiesQuestions()}
                 {this.renderParkingFollowUp()}
                 {this.renderFurnishedFollowUp()}

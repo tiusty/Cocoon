@@ -247,7 +247,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         for home_score in self.homes:
             self.run_compute_weighted_score_interior_amenities(survey, home_score)
             self.run_compute_weighted_score_exterior_amenities(survey, home_score)
-            self.run_compute_weighted_score_nearby_amenities(survey, home_score)
             self.handle_laundry_weight_question(survey, home_score)
 
     def run_compute_weighted_score_interior_amenities(self, survey, home_score):
@@ -279,15 +278,6 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             self.handle_weighted_question(survey.gym_weight, home_score, home_score.home.gym)
         if survey.wants_storage:
             self.handle_weighted_question(survey.storage_weight, home_score, home_score.home.storage)
-
-    def run_compute_weighted_score_nearby_amenities(self, survey, home_score):
-        """
-        Runs the interior amenities scoring
-        :param survey: (RentingSurvey Model) -> The survey the user took
-        :param home_score: (HomeScore) -> The home that is currently being calaculated
-        """
-        if survey.wants_laundry_nearby:
-            self.handle_weighted_question(survey.laundry_nearby_weight, home_score, home_score.home.laundromat_nearby)
 
     def run_sort_home_by_score(self):
         """
