@@ -13,6 +13,8 @@ from django.core.management.base import BaseCommand
 # Retrieve Constants
 from cocoon.commutes.constants import GoogleCommuteNaming
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 class Command(BaseCommand):
 
     def add_arguments(self, parser):
@@ -52,7 +54,13 @@ class Command(BaseCommand):
                 commute_type = options['commute_type'].lower()
 
 
-            list_zip_codes = ["02108", "02109", "02110", "02111", "02113", "02114"]
+            list_zip_codes = []
+
+            with open(BASE_DIR + "/commands/zip_codes_MA.txt", "r") as f:
+                for line in f:
+                    line = line.split()
+                    list_zip_codes.append(str(line[0]))
+
             units = "imerial"
             client_google = client.Client(gmaps_api_key)
 
@@ -79,7 +87,6 @@ class Command(BaseCommand):
         elif commute_type == "transit":
             commute_type_google = GoogleCommuteNaming.TRANSIT
 
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         filename_out = BASE_DIR + "/commands/baselines/zipcode_baseline_" + commute_type + ".txt"
 
         with open(filename_out, "w") as f:
