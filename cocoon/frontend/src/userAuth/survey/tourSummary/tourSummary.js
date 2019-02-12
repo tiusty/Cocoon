@@ -75,6 +75,22 @@ export default class TourSummary extends Component {
         }
     }
 
+    handleOffMarketHomes = () => {
+        let { visit_list } = this.props;
+        console.log(visit_list)
+        let error_count = 0;
+        for (let i = 0; i < visit_list.length; i++) {
+            if (visit_list[i].on_market === false) {
+                error_count += 1;
+            }
+        }
+        if (error_count > 0) {
+            return <p style={{color: 'var(--red)'}}>`${error_count} of your homes are taken. Please remove from your visit list.`</p>
+        } else {
+            return null;
+        }
+    }
+
     renderPage() {
         if (!this.props.loaded) {
             return <p className="tour-summary-text">Loading</p>
@@ -134,6 +150,7 @@ export default class TourSummary extends Component {
                     <p className="tour-summary-text">When you are done adding homes that you want to tour, click schedule!</p>
                     <p className="tour-summary-text">Remember you can only have one tour scheduled at a time</p>
                     <p className="tour-summary-text">Estimated duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}</p>
+                    {this.handleOffMarketHomes()}
                     <form method="post" style={{marginTop: '10px'}}>
                         <CSRFToken/>
                         <button name="submit-button"
