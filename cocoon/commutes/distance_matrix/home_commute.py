@@ -45,12 +45,3 @@ class HomeCommute(object):
         :return: (HomeCommute) -> The homes in the correct format
         """
         return HomeCommute(home.zip_code, home.state)
-
-    @staticmethod
-    def zipcode_list_to_home_commute(zipcodes):
-
-        zipcodes_list = []
-        for zipcode in zipcodes:
-            zipcodes_list.append(HomeCommute(zipcode, 'MA'))
-        return zipcodes_list
-
