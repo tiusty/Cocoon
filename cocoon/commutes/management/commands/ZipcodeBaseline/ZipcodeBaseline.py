@@ -1,6 +1,8 @@
 import json
 import os
 
+from ....models import ZipCodeChild, ZipCodeBase
+
 # import googlemaps API
 from click._compat import raw_input
 
@@ -68,10 +70,35 @@ class ZipcodeBaseline(object):
                     for commute in results:
                         json_commute["approximations"].append({
                             "origin": base_zip,
-                            "desination": list_zip_codes[counter],
+                            "destination": list_zip_codes[counter],
                             "duration": results[counter][0][0],
                             "distance": results[counter][0][1]
                         })
                         counter+=1
 
             f.write(json.dumps(json_commute,ensure_ascii=False))
+
+    def update_zipcode_database(self):
+
+        filename_driving = BASE_DIR + "/baselines/zipcode_baseline_driving.json"
+        filename_transit = BASE_DIR + "/baselines/zipcode_baseline_transit.json"
+
+        with open(filename_driving, "r") as f:
+            data = json.load(f)
+
+            for item in data["approximations"]:
+                print(item)
+
+                origin = item.get('origin')[0]
+                destination = item.get('destination')[0]
+                print(origin)
+                print(destination)
+                '''
+                destination_zip = ZipCodeBase.objects.get(zip_code=origin)
+                child_zips = ZipCodeChild.objects.filter(zip_code=destination, \
+                    base_zip_code=destination_zip). \
+                    filter(commute_type=CommuteType.DRIVING). \
+                    values_list('zip_code', 'commute_time_seconds')
+                '''
+
+                

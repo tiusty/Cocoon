@@ -36,6 +36,6 @@ class Command(BaseCommand):
                 commute_type = options['commute_type'].lower()
 
                 ZipcodeBaseline().create_baseline(commute_type)
-
+                ZipcodeBaseline().update_zipcode_database()
 
 
