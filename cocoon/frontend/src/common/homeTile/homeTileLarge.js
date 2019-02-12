@@ -197,7 +197,7 @@ export default class HomeTileLarge extends Component {
 
             // Toggles whether the home text depending on favorite status
         let favorite_style;
-        if (!this.props.canVisit || !this.props.onMarket) {
+        if (!this.props.canVisit) {
             favorite_style = {
                 width: '100%',
                 borderRight: 'none'
@@ -236,7 +236,7 @@ export default class HomeTileLarge extends Component {
         let visit_class = 'home_add_default';
         if (this.props.visit) {
             visit_icon = "playlist_add_check";
-            visit_text = "Added to Visit List";
+            visit_text = "Remove From Visit List";
             visit_class += " home_added";
         } else {
             visit_icon = "playlist_add";
@@ -256,7 +256,7 @@ export default class HomeTileLarge extends Component {
         return (
             <div className="tileScore">
                 {this.props.canFavorite ? heart_span : null}
-                {this.props.canVisit && this.props.onMarket ? visit_span : null}
+                {this.props.canVisit ? visit_span : null}
             </div>
         );
     }
