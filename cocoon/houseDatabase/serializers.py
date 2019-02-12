@@ -157,4 +157,4 @@ class RentDatabaseSerializerBroker(serializers.HyperlinkedModelSerializer):
         model = RentDatabaseModel
         fields = ('id', 'price', 'home_type', 'images', 'remarks', 'num_bedrooms', 'num_bathrooms',
                   'interior_amenities', 'exterior_amenities', 'nearby_amenities', 'broker_info',
-                  'latitude', 'longitude')
+                  'latitude', 'longitude', 'on_market')
