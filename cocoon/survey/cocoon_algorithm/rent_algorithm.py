@@ -256,13 +256,13 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param home_score: (HomeScore) -> The home that is currently being calaculated
         """
         if survey.wants_furnished:
-            self.handle_weighted_question(survey.furnished_weight, home_score, home_score.home.furnished)
+            self.handle_weighted_question('home_furnished', survey.furnished_weight, home_score, home_score.home.furnished)
         if survey.wants_hardwood_floors:
-            self.handle_weighted_question(survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
+            self.handle_weighted_question('hardwood_floors', survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
         if survey.wants_AC:
-            self.handle_weighted_question(survey.AC_weight, home_score, home_score.home.air_conditioning)
+            self.handle_weighted_question('air_conditioning', survey.AC_weight, home_score, home_score.home.air_conditioning)
         if survey.wants_dishwasher:
-            self.handle_weighted_question(survey.dishwasher_weight, home_score, home_score.home.dishwasher)
+            self.handle_weighted_question('dishwasher', survey.dishwasher_weight, home_score, home_score.home.dishwasher)
 
     def run_compute_weighted_score_exterior_amenities(self, survey, home_score):
         """
@@ -271,13 +271,13 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param home_score: (HomeScore) -> The home that is currently being calaculated
         """
         if survey.wants_patio:
-            self.handle_weighted_question(survey.patio_weight, home_score, home_score.home.patio_balcony)
+            self.handle_weighted_question('patio_balcony', survey.patio_weight, home_score, home_score.home.patio_balcony)
         if survey.wants_pool:
-            self.handle_weighted_question(survey.pool_weight, home_score, home_score.home.pool)
+            self.handle_weighted_question('pool', survey.pool_weight, home_score, home_score.home.pool)
         if survey.wants_gym:
-            self.handle_weighted_question(survey.gym_weight, home_score, home_score.home.gym)
+            self.handle_weighted_question('gym', survey.gym_weight, home_score, home_score.home.gym)
         if survey.wants_storage:
-            self.handle_weighted_question(survey.storage_weight, home_score, home_score.home.storage)
+            self.handle_weighted_question('storage', survey.storage_weight, home_score, home_score.home.storage)
 
     def run_sort_home_by_score(self):
         """

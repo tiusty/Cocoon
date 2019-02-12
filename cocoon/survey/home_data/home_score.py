@@ -1,3 +1,6 @@
+from cocoon.houseDatabase.serializers import RentDatabaseSerializer
+
+
 class HomeScore(object):
     # noinspection SpellCheckingInspection
     """
@@ -23,6 +26,7 @@ class HomeScore(object):
         self._approx_commute_times_minutes = {}
         self._exact_commute_times_minutes = {}
         self._eliminated = False
+        self.missing_amenities = []
 
     @property
     def percent_match(self):
@@ -55,10 +59,13 @@ class HomeScore(object):
         """
         self._eliminated = is_eliminated
 
-    def eliminate_home(self):
+    def eliminate_home(self, missing_amenity=None):
         """
         Eliminates the homes
         """
+        if missing_amenity is not None:
+            if missing_amenity not in self.missing_amenities:
+                self.missing_amenities.append(missing_amenity)
         self.eliminated = True
 
     @property
