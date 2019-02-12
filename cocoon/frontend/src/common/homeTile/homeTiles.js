@@ -111,6 +111,7 @@ export default class HomeTiles extends Component {
                     canVisit={this.props.canVisit}
                     canFavorite={this.props.canFavorite}
                     displayPercent={this.displayPercent}
+                    displayOnMarket={true}
                     onMarket={home.on_market}
                 />
             );
