@@ -4,13 +4,11 @@ from django.utils import timezone
 # Import Python Modules
 import json
 import os
-from click._compat import raw_input
 
 
 # Import Cocoon Modules
-from cocoon.commutes.models import ZipCodeChild, ZipCodeBase
+from cocoon.commutes.models import ZipCodeBase
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
-
 
 
 class ZipcodeBaseline(object):
@@ -39,7 +37,7 @@ class ZipcodeBaseline(object):
 
         # This function should not be run unless indicated.
         #   this prevent a user running the function by accident
-        verify = raw_input("Please don't run this script unless you are directed to, type 'confirm-running' to run: ")
+        verify = input("Please don't run this script unless you are directed to, type 'confirm-running' to run: ")
         if verify != "confirm-running":
             exit()
 
