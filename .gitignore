@@ -34,6 +34,8 @@ cocoon/scheduler/migrations/*
 !cocoon/scheduler/migrations/__init__.py
 cocoon/signature/migrations/*
 !cocoon/signature/migrations/__init__.py
+cocoon/dataAnalysis/migrations/*
+!cocoon/dataAnalysis/migrations/__init__.py
 
 # Visual Studio Code Settings #
 .vscode/
