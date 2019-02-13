@@ -4,14 +4,16 @@ from django.utils import timezone
 # Import Python Modules
 import json
 import os
-
-# Load the logger
-import logging
-logger = logging.getLogger(__name__)
+import random
+from datetime import timedelta
 
 # Import Cocoon Modules
 from cocoon.commutes.models import ZipCodeBase
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
+
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ZipcodeBaseline(object):
@@ -19,8 +21,8 @@ class ZipcodeBaseline(object):
     ZIPCODE_LIST_FILENAME = "{0}/zip_codes_MA.txt".format(BASE_DIR)
     JSON_DURATION_KEY_NAME = "duration_seconds"
     JSON_DISTANCE_KEY_NAME = "distance_meters"
-    DISTANACE_DELTA = 300
-    DURATION_DELTA = 60
+    DISTANACE_DELTA_METERS = 30
+    DURATION_DELTA_SECONDS = 60
 
     def get_baseline_filename(self, commute_type):
         """
@@ -124,6 +126,7 @@ class ZipcodeBaseline(object):
                             commute_distance_meters=data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME],
                             commute_time_seconds=data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME],
                             commute_type=commute_type,
+                            last_date_updated=timezone.now() - timedelta(days=random.randint(0, 20))
                         )
 
     @staticmethod
@@ -196,13 +199,13 @@ class ZipcodeBaseline(object):
                 for child_zipcode in stored_zipcode_combinations[base_zipcode]:
                     if self.check_key(data, base_zipcode, child_zipcode):
                         stored_duration = int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
-                        load_duration = int(data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
+                        baseline_duration = int(data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
 
-                        stored_distance= int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
-                        load_distance = int(data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
+                        stored_distance = int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
+                        baseline_distance = int(data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
 
-                        if abs(stored_duration - load_duration) > self.DURATION_DELTA:
+                        if abs(stored_duration - baseline_duration) > self.DURATION_DELTA_SECONDS:
                             logger.error("DURATION ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: "+ child_zipcode)
 
-                        if abs(stored_distance - load_distance) > self.DISTANACE_DELTA:
+                        if abs(stored_distance - baseline_distance) > self.DISTANACE_DELTA_METERS:
                             logger.error("DISTANCE ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
