@@ -414,7 +414,9 @@ class TenantPersonalInformationForm(ModelForm):
         required=False,
     )
 
-    income = forms.CharField(
+    income = forms.IntegerField(
+        max_value=1000000000,
+        min_value=0,
         required=False,
     )
 

@@ -544,7 +544,13 @@ export default class RentForm extends Component {
         for (let i=0; i<this.state.tenants.length; i++) {
             if (tenants[id].index === i) {
                 if(type === 'number') {
-                    tenants[id][nameStripped] = parseInt(value)
+                    if (value) {
+                        if (!isNaN(value)) {
+                            tenants[id][nameStripped] = parseInt(value)
+                        }
+                    } else {
+                        tenants[id][nameStripped] = null
+                    }
                 } else if (type === 'boolean') {
                     tenants[id][nameStripped] = (value === 'true');
                 } else {

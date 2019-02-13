@@ -232,6 +232,12 @@ export default class TenantsForm extends Component {
                 }
             }
             valid = false
+        } else if (this.props.tenants[id].income > 1000000000) {
+            if (show_errors) {
+                document.querySelector(`#tenants-${id}-income-error`).style.display = 'block';
+                document.querySelector(`#tenants-${id}-income-error`).innerText = `Income must be less than 1,000,000,000 for ${this.props.tenants[id].first_name}.`;
+            }
+            valid = false
         } else if (this.props.tenants[id].income) {
             let selection = document.querySelector(`#tenants-${id}-income-error`);
             if (selection) {
