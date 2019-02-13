@@ -67,13 +67,9 @@ class ZipcodeBaseline(object):
     @staticmethod
     def generate_zipcode_combinations(list_zip_codes, commute_type):
         """
-        :param list_zip_codes: list of zip codes in the Boston area
+        :param list_zip_codes: (list) -> list of zip codes to compute
         :param commute_type: (string) -> The commute type of the baseline that is being created
-        :return:
-
-        Function calls the Google Maps Distance Matrix API for every possible combination of Boston zip codes.
-        The response object is then parsed for distance and duration in m, s respectively. This data is then used
-        to create a dictionary, which is ultimately written to approximations.txt as a json object.
+        :return: (dict) -> Returns a dictionary of the base zipcodes with their corresponding child zipcodes
         """
         # Create all the combinations
         zipcode_combinations = {}
@@ -96,12 +92,10 @@ class ZipcodeBaseline(object):
 
     def load_zipcode_combinations(self, commute_type):
         """
-        :param
-        :param
-        :return:
+        Using information from the currently stored zipcodes in the database, and using
+            the zipcode information from the baseline, load zipcode combinations that don't exist
 
-        Looks into ZipCodeBase database and creates all possible combinations and allows sends errors if approximations
-        don't match baselines
+        :param commute_type: (CommuteType Model) -> The commute type being used
         """
 
         stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)

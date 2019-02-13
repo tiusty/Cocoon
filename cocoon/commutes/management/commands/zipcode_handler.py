@@ -41,14 +41,15 @@ class Command(BaseCommand):
         if options['create_baseline']:
                 ZipcodeBaseline().create_baseline(commute_type)
 
-        if options['load_baseline']:
+        elif options['load_baseline']:
                 ZipcodeBaseline().load_zipcode_combinations(commute_type)
 
-    def parse_input_commute_type(self, commute_type_input):
+    @staticmethod
+    def parse_input_commute_type(commute_type_input):
         """
         Parses input commute type variable to determine which commute type is being run
             If the type is unknown then quit
-        :param commute_type_input:
+        :param commute_type_input: (string) -> the commute type input the user entered
         :return:
         """
         commute_type = None
