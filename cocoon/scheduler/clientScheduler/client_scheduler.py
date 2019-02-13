@@ -28,26 +28,35 @@ class ClientScheduler(clientSchedulerAlgorithm):
         :return: (list): homes_matrix a nxn matrix of distances found using the DistanceWrapper() to indicate the distances betweeen any two homes
         """
 
+        # Matrix that contains every home and the duration it takes to get to every other home in the list
         homes_matrix = []
 
-        for home_one in homes_list:
+        # Loop through every home in the list
+        #   And create a list of the times between this home and the other homes
+        for home in homes_list:
+            home_distances = []
 
-            home_one_distances = []
+            # Only let them do driving
             commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
+
+            # Depending on the accuracy either get the exact commute or the approximate
             if self.commute_accuracy == CommuteAccuracy.EXACT:
-                result_distance_wrapper = retrieve_exact_commute_client_scheduler(homes_list, [home_one], commute_type)
+                result_distance_wrapper = retrieve_exact_commute_client_scheduler(homes_list, [home], commute_type)
                 for commute in result_distance_wrapper:
                     time_seconds = commute[0][0]
                     distance_meters = commute[0][1]
                     if time_seconds is not None and distance_meters is not None:
-                        home_one_distances.append(time_seconds)
+                        home_distances.append(time_seconds)
             else:
-                update_commutes_cache_client_scheduler(homes_list, home_one, accuracy=CommuteAccuracy.APPROXIMATE,
+                update_commutes_cache_client_scheduler(homes_list,
+                                                       home,
+                                                       accuracy=CommuteAccuracy.APPROXIMATE,
                                                        commute_type=CommuteType.DRIVING)
-                home_one_distances = retrieve_approximate_commute_client_scheduler(homes_list, home_one,
-                                                                                   commute_type=CommuteType.DRIVING)
+                home_distances = retrieve_approximate_commute_client_scheduler(homes_list,
+                                                                               home,
+                                                                               commute_type=CommuteType.DRIVING)
 
-            homes_matrix.append(home_one_distances)
+            homes_matrix.append(home_distances)
 
         return homes_matrix
 
