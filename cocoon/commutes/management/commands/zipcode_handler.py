@@ -15,6 +15,13 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            '--update_baseline',
+            action='store_true',
+            dest='update_baseline',
+            help='Updates baseline for zipcode destinations',
+        )
+
+        parser.add_argument(
             '--commute_type',
             type=str,
             help='Specify a commute type',
@@ -36,6 +43,12 @@ class Command(BaseCommand):
                 commute_type = options['commute_type'].lower()
 
                 ZipcodeBaseline().create_baseline(commute_type)
-                ZipcodeBaseline().update_zipcode_database()
 
+        if options['update_baseline']:
+            if options['commute_type'] and (options['commute_type'].lower() == "driving" or
+                                            options['commute_type'].lower() == "transit"):
+
+                commute_type = options['commute_type'].lower()
+
+                ZipcodeBaseline().update_zipcode_database(commute_type)
 

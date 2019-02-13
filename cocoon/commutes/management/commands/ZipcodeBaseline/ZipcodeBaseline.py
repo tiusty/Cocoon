@@ -81,7 +81,7 @@ class ZipcodeBaseline(object):
 
             f.write(json.dumps(json_commute,ensure_ascii=False))
 
-    def update_zipcode_database(self):
+    def update_zipcode_database(self, commute_type):
         """
         :param
         :param
@@ -90,45 +90,53 @@ class ZipcodeBaseline(object):
         Looks into ZipCodeBase database and creates all possible combinations and allows sends errors if approximations
         don't match baselines
         """
-        filename_driving = BASE_DIR + "/baselines/zipcode_baseline_driving.json"
-        filename_transit = BASE_DIR + "/baselines/zipcode_baseline_transit.json"
+        filename = BASE_DIR + "/baselines/zipcode_baseline_"+commute_type+".json"
 
-        with open(filename_driving, "r") as f:
+        unique_zipcodes = []
+
+        commute_type_google = ""
+
+        if commute_type == "driving":
+            commute_type_google = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
+        elif commute_type == "transit":
+            commute_type_google = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
+
+        with open(filename, "r") as f:
             data = json.load(f)
-
+            origin_zipcodes = []
             for item in data["approximations"]:
+                origin_zipcodes.append(item.get('origin')[0])
 
-                origin = item.get('origin')[0]
-                destination = item.get('destination')[0]
-                commute_time = item.get('duration')
-                distance = item.get('distance')
-                commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
 
-                if ZipCodeBase.objects.filter(zip_code=origin).count() > 0:
-                    destination_zip = ZipCodeBase.objects.get(zip_code=origin)
-                    child_zips = ZipCodeChild.objects.filter(zip_code=destination, \
-                        base_zip_code=destination_zip). \
-                        filter(commute_type=commute_type). \
-                        values_list('zip_code', 'commute_time_seconds')
+            unique_zipcodes = list(set(origin_zipcodes))
 
-                    if not child_zips:
+            for item in unique_zipcodes:
+                destination_zip = ZipCodeBase.objects.get(zip_code=item)
 
-                        ZipCodeChild.objects.create(
-                            zip_code=destination,
-                            base_zip_code=destination_zip,
-                            commute_time_seconds=commute_time,
-                            commute_distance_meters=distance,
-                            last_date_updated=timezone.now() - timedelta(days=random.randint(0,13)),
-                            commute_type=commute_type,
-                        )
-                else:
-                    ZipCodeBase.objects.create(zip_code=origin)
+                # Retrieve all the child zip_codes for the destination commute_type
+                child_zips = ZipCodeChild.objects.filter(base_zip_code=destination_zip). \
+                    filter(commute_type=commute_type_google). \
+                    values_list('zip_code', 'commute_time_seconds')
 
-                    ZipCodeChild.objects.create(
-                        zip_code=destination,
-                        base_zip_code=ZipCodeBase.objects.get(zip_code=origin),
-                        commute_time_seconds=commute_time,
-                        commute_distance_meters=distance,
-                        last_date_updated=timezone.now() - timedelta(days=random.randint(0, 13)),
-                        commute_type=commute_type,
-                    )
+                # Dictionary Compression to retrieve the values from the QuerySet
+                child_zip_codes = {zip_code: commute_time_seconds for zip_code, commute_time_seconds in child_zips}
+
+                for k,v in child_zip_codes.items():
+                    for zipcode_baseline in data["approximations"]:
+                        origin_zipcode_baseline = zipcode_baseline.get('origin')[0]
+                        destination_zipcode_baseline = zipcode_baseline.get('destination')[0]
+
+                        if k == destination_zipcode_baseline and item == origin_zipcode_baseline:
+                            if v != zipcode_baseline.get('duration'):
+                                print("MISS MATCH VALUE")
+                        else:
+                            new_base = ZipCodeBase.objects.get(zip_code=origin_zipcode_baseline)
+                            ZipCodeChild.objects.create(zip_code=destination_zipcode_baseline,
+                                base_zip_code=new_base,
+                                commute_time_seconds=zipcode_baseline.get('duration'),
+                                commute_distance_meters=zipcode_baseline.get('distance'),
+                                last_date_updated=timezone.now() - timedelta(days=random.randint(0,13)),
+                                commute_type=commute_type_google
+                            )
+
+
