@@ -1,22 +1,20 @@
-import json
-import os
-from datetime import timedelta
-import random
+# Import Django modules
 from django.utils import timezone
 
-from ....models import ZipCodeChild, ZipCodeBase
-
-# import googlemaps API
+# Import Python Modules
+import json
+import os
 from click._compat import raw_input
 
-# Retrieve Constants
-from cocoon.commutes.models import CommuteType
+
+# Import Cocoon Modules
+from cocoon.commutes.models import ZipCodeChild, ZipCodeBase
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class ZipcodeBaseline(object):
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     JSON_DURATION_KEY_NAME = "duration_seconds"
     JSON_DISTANCE_KEY_NAME = "distance_meters"
 
@@ -48,7 +46,7 @@ class ZipcodeBaseline(object):
         # Read in all the zipcodes to compute
         # Data stored in a set to prevent duplicates
         list_zip_codes = set()
-        with open(BASE_DIR + "/zip_codes_MA.txt", "r") as f:
+        with open(self.BASE_DIR + "/zip_codes_MA.txt", "r") as f:
             for line in f:
                 line = line.split()
                 list_zip_codes.add(str(line[0]))
@@ -60,7 +58,7 @@ class ZipcodeBaseline(object):
         zipcode_combinations = self.generate_zipcode_combinations(list_zip_codes, commute_type)
 
         # Now write the result to the file
-        filename = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
+        filename = self.BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
         with open(filename, "w") as f:
             f.write(json.dumps(zipcode_combinations))
 
@@ -100,7 +98,7 @@ class ZipcodeBaseline(object):
 
         stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
 
-        filename = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
+        filename = self.BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
         with open(filename, "r") as f:
             data = json.load(f)
             for base_zipcode in data:

@@ -12,14 +12,14 @@ class Command(BaseCommand):
             '--create_baseline',
             action='store_true',
             dest='create_baseline',
-            help='Creates baseline for zipcode destinations',
+            help='Creates zipcode baseline file',
         )
 
         parser.add_argument(
-            '--update_baseline',
+            '--load_baseline',
             action='store_true',
-            dest='update_baseline',
-            help='Updates baseline for zipcode destinations',
+            dest='load_baseline',
+            help='Loads zipocodes from baseline file into the database',
         )
 
         parser.add_argument(
