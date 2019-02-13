@@ -28,20 +28,27 @@ class ZipcodeBaseline(object):
         if verify.lower() != "yes":
             exit()
 
-        list_zip_codes = []
-
+        # Read in all the zipcodes to compute
+        list_zip_codes = set()
         with open(BASE_DIR + "/zip_codes_MA.txt", "r") as f:
             for line in f:
                 line = line.split()
                 # We are assuming that all the zipcodes are in MA
-                list_zip_codes.append(str(line[0]))
+                list_zip_codes.add(str(line[0]))
 
-        # Makes sures that all the zip-codes are distinct
-        list_zip_codes_distinct = list(set(list_zip_codes))
+        # Turn the set into a list
+        list_zip_codes = list(list_zip_codes)
 
-        self.commute_approximations(list_zip_codes_distinct, commute_type)
+        # Retrieve all the zipcode combinations computed from google
+        zipcode_combinations = self.generate_zipcode_combinations(list_zip_codes, commute_type)
 
-    def commute_approximations(self, list_zip_codes, commute_type):
+        # Now write the result to the file
+        filename = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
+        with open(filename, "w") as f:
+            f.write(json.dumps(zipcode_combinations))
+
+    @staticmethod
+    def generate_zipcode_combinations(list_zip_codes, commute_type):
         """
         :param list_zip_codes: list of zip codes in the Boston area
         :param commute_type: (string) -> The commute type of the baseline that is being created
@@ -68,11 +75,8 @@ class ZipcodeBaseline(object):
                         "distance": results[commute][0][1]
                     }
                 zipcode_combinations[base_zip] = child_zipcodes
+        return zipcode_combinations
 
-        # Now write the result to the file
-        filename = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
-        with open(filename, "w") as f:
-            f.write(json.dumps(zipcode_combinations))
 
     def update_zipcode_database(self, commute_type):
         """
