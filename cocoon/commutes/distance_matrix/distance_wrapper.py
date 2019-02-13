@@ -101,6 +101,8 @@ class DistanceWrapper:
 
                 if origin_distance_list:
                     distance_list.append(origin_distance_list)
+                else:
+                    distance_list.append([(None, None)])
         else:
             self.handle_exception(response_status)
 
@@ -198,8 +200,8 @@ class DistanceWrapper:
             # only computes for the first destination_number destinations
 
             response_json = distance_matrix.distance_matrix(self.client,
-                                                            origin_list[:origin_number],
-                                                            destinations[:destination_number],
+                                                            [i.return_commute() for i in origin_list[:origin_number]],
+                                                            [i.return_commute() for i in destinations[:destination_number]],
                                                             units=self.units,
                                                             mode=mode,
                                                             departure_time=departure_time,

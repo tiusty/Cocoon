@@ -9,7 +9,7 @@ from datetime import timedelta
 
 # Import Cocoon Modules
 from cocoon.commutes.models import ZipCodeBase
-from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute_zipcode_baseline
 
 # Load the logger
 import logging
@@ -53,9 +53,9 @@ class ZipcodeBaseline(object):
 
         # This function should not be run unless indicated.
         #   this prevent a user running the function by accident
-        verify = input("Please don't run this script unless you are directed to, type 'confirm-running' to run: ")
-        if verify != "confirm-running":
-            exit()
+        # verify = input("Please don't run this script unless you are directed to, type 'confirm-running' to run: ")
+        # if verify != "confirm-running":
+        #     exit()
 
         # Read in all the zipcodes to compute
         # Data stored in a set to prevent duplicates
@@ -88,17 +88,18 @@ class ZipcodeBaseline(object):
         for base_zip in list_zip_codes:
 
                 # Retrieve the combination from Google
-                results = retrieve_exact_commute(list_zip_codes,
-                                                 base_zip,
-                                                 mode=commute_type)
+                results = retrieve_exact_commute_zipcode_baseline(list_zip_codes,
+                                                                  [base_zip],
+                                                                  commute_type)
 
                 # Store the results in python
                 child_zipcodes = {}
                 for commute in range(len(results)):
-                    child_zipcodes[list_zip_codes[commute]] = {
-                        ZipcodeBaseline.JSON_DURATION_KEY_NAME: results[commute][0][0],
-                        ZipcodeBaseline.JSON_DISTANCE_KEY_NAME: results[commute][0][1]
-                    }
+                    if results[commute][0][0] is not None or results[commute][0][1] is not None:
+                        child_zipcodes[list_zip_codes[commute]] = {
+                            ZipcodeBaseline.JSON_DURATION_KEY_NAME: results[commute][0][0],
+                            ZipcodeBaseline.JSON_DISTANCE_KEY_NAME: results[commute][0][1]
+                        }
                 zipcode_combinations[base_zip] = child_zipcodes
         return zipcode_combinations
 

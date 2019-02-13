@@ -1,8 +1,32 @@
 class HomeCommute(object):
 
-    def __init__(self, zip_code, state):
+    def __init__(self, zip_code, state='', address='', city='', valid=True):
         self.zip_code = zip_code
         self.state = state
+        self.address = address
+        self.city = city
+        self.valid = valid
+
+    def return_commute(self):
+        if self.address and self.city and self.state:
+            return self.return_full_address()
+        else:
+            return self.return_zip_code()
+
+    def return_zip_code(self):
+        if self.valid:
+            return self.zip_code
+        else:
+            return ''
+
+    def return_full_address(self):
+        if self.valid and self.address and self.city and self.state and self.zip_code:
+            return "{0}, {1}, {2}, {3}".format(self.address, self.city, self.state, self.zip_code)
+        elif self.valid and self.address and self.city and self.state:
+            return "{0}, {1}, {2}".format(self.address, self.city, self.state)
+        else:
+            return ''
+
 
     @staticmethod
     def home_scores_to_home_commute(homes):
@@ -13,7 +37,7 @@ class HomeCommute(object):
         """
         home_cache = []
         for home in homes:
-            home_cache.append(HomeCommute(home.home.zip_code, home.home.state))
+            home_cache.append(HomeCommute(home.home.zip_code, state=home.home.state))
         return home_cache
 
     @staticmethod
@@ -23,7 +47,7 @@ class HomeCommute(object):
         :param destination: (destinationModel) -> The destination to convert
         :return: (HomeCommute) -> The destination in the home cache format
         """
-        return HomeCommute(destination.zip_code, destination.state)
+        return HomeCommute(destination.zip_code, state=destination.state)
 
     @staticmethod
     def rentdatabases_to_home_commute(homes):
@@ -34,7 +58,7 @@ class HomeCommute(object):
         """
         home_cache = []
         for home in homes:
-            home_cache.append(HomeCommute(home.zip_code, home.state))
+            home_cache.append(HomeCommute(home.zip_code, state=home.state))
         return home_cache
 
     @staticmethod
@@ -44,5 +68,11 @@ class HomeCommute(object):
         :param home: (RentDatabase model) -> The homes to convert
         :return: (HomeCommute) -> The homes in the correct format
         """
-        return HomeCommute(home.zip_code, home.state)
+        return HomeCommute(home.zip_code, state=home.state)
 
+    @staticmethod
+    def zipcodes_to_home_commute(zipcode_list):
+        zipcodes = []
+        for zipcode in zipcode_list:
+            zipcodes.append(HomeCommute(zipcode))
+        return zipcodes

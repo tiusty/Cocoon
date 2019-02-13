@@ -10,6 +10,13 @@ from .home_commute import HomeCommute
 from cocoon.commutes.constants import GoogleCommuteNaming
 
 
+def retrieve_exact_commute_zipcode_baseline(origins, destinations, commute_type, with_traffic=False):
+    return retrieve_exact_commute(HomeCommute.zipcodes_to_home_commute(origins),
+                                  HomeCommute.zipcodes_to_home_commute(destinations),
+                                  mode=commute_type,
+                                  with_traffic=with_traffic)
+
+
 def retrieve_exact_commute_client_scheduler(homes, destination, commute_type, with_traffic=False):
     """
     Exact commute retriever for the client scheduler. Puts the arguments in the correct formation
@@ -19,11 +26,17 @@ def retrieve_exact_commute_client_scheduler(homes, destination, commute_type, wi
     :return: (list(tuple(time, distance)) -> returns the time as seconds and the distance as meters. Also each index has
         all possible combinations given by google, i.e if there are different routes
     """
-    home_addresses = []
-    for home in homes:
-        home_addresses.append(home.full_address)
+    return retrieve_exact_commute(HomeCommute.rentdatabases_to_home_commute(homes),
+                                  HomeCommute.rentdatabase_to_home_commute(destination),
+                                  mode=commute_type,
+                                  with_traffic=with_traffic)
 
-    return retrieve_exact_commute(destination.full_address, home_addresses, commute_type, with_traffic=with_traffic)
+
+def retrieve_exact_commute_rent_algorithm(homes, destinations, commute_type, with_traffic=False):
+    return retrieve_exact_commute(HomeCommute.rentdatabases_to_home_commute(homes),
+                                  HomeCommute.rentdatabases_to_home_commute(destinations),
+                                  mode=commute_type,
+                                  with_traffic=with_traffic)
 
 
 def retrieve_approximate_commute_client_scheduler(homes, destination, commute_type):

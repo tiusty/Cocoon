@@ -168,38 +168,39 @@ class Driving(CommuteCalculator):
         """
 
         # map (zip, state) tuples list to a list of "state+zip" strings
-        results = retrieve_exact_commute(list(map(lambda x: x[1] + "+" + x[0], origins_zips_states)),
-                                         [destination_zip_state[1] + "+" + destination_zip_state[0]],
+        results = retrieve_exact_commute(list(map(lambda x: HomeCommute(x[0], state=x[1]), origins_zips_states)),
+                                         [HomeCommute(destination_zip_state[0], state=destination_zip_state[1])],
                                          self.COMMUTE_TYPE)
 
         if results:
             # iterates both lists simultaneously
             for origin, result in zip(origins_zips_states, results):
-                if ZipCodeBase.objects.filter(zip_code=destination_zip_state[0]).exists():
-                    zip_code_dictionary = ZipCodeBase.objects.get(zip_code=destination_zip_state[0])
-                    zip_dest = zip_code_dictionary.zipcodechild_set.filter(
-                        zip_code=origin[0],
-                        commute_type=self.COMMUTE_TYPE)
+                if result is not None:
+                    if ZipCodeBase.objects.filter(zip_code=destination_zip_state[0]).exists():
+                        zip_code_dictionary = ZipCodeBase.objects.get(zip_code=destination_zip_state[0])
+                        zip_dest = zip_code_dictionary.zipcodechild_set.filter(
+                            zip_code=origin[0],
+                            commute_type=self.COMMUTE_TYPE)
 
-                    # If the zip code doesn't exist or is not valid then compute the approximate distance
-                    #   If the zip code was not valid then delete it first before recomputing it
-                    if not zip_dest.exists() or not zip_dest.first().zip_code_cache_still_valid():
-                        if zip_dest.exists():
-                            zip_dest.delete()
-                        zip_code_dictionary.zipcodechild_set.create(
+                        # If the zip code doesn't exist or is not valid then compute the approximate distance
+                        #   If the zip code was not valid then delete it first before recomputing it
+                        if not zip_dest.exists() or not zip_dest.first().zip_code_cache_still_valid():
+                            if zip_dest.exists():
+                                zip_dest.delete()
+                            zip_code_dictionary.zipcodechild_set.create(
+                                zip_code=origin[0],
+                                commute_type=self.COMMUTE_TYPE,
+                                commute_distance_meters=result[0][1],
+                                commute_time_seconds=result[0][0],
+                            )
+                    else:
+                        ZipCodeBase.objects.create(zip_code=destination_zip_state[0]) \
+                            .zipcodechild_set.create(
                             zip_code=origin[0],
                             commute_type=self.COMMUTE_TYPE,
                             commute_distance_meters=result[0][1],
                             commute_time_seconds=result[0][0],
                         )
-                else:
-                    ZipCodeBase.objects.create(zip_code=destination_zip_state[0]) \
-                        .zipcodechild_set.create(
-                        zip_code=origin[0],
-                        commute_type=self.COMMUTE_TYPE,
-                        commute_distance_meters=result[0][1],
-                        commute_time_seconds=result[0][0],
-                    )
 
     def run_exact_commute_cache(self):
         pass
