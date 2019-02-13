@@ -59,7 +59,7 @@ class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
         """
         return {
             'pool': obj.pool,
-            'patio/balcony': obj.patio_balcony,
+            'patio_balcony': obj.patio_balcony,
             'gym': obj.gym,
             'laundry_in_building': obj.laundry_in_building,
             'storage': obj.storage,
@@ -134,7 +134,7 @@ class RentDatabaseSerializerBroker(serializers.HyperlinkedModelSerializer):
         """
         return {
             'pool': obj.pool,
-            'patio/balcony': obj.patio_balcony,
+            'patio_balcony': obj.patio_balcony,
             'gym': obj.gym,
             'laundry_in_building': obj.laundry_in_building,
             'storage': obj.storage,

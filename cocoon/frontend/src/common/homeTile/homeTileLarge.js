@@ -27,7 +27,8 @@ export default class HomeTileLarge extends Component {
     static defaultProps = {
         canFavorite: true,
         canVisit: false,
-        displayPercent: false
+        displayPercent: false,
+        missing_amenities: [],
     };
 
     renderInterior = (home) => {
@@ -38,9 +39,12 @@ export default class HomeTileLarge extends Component {
 
         // Creates a list of all the interior amenities that exist
         let interior_amenities = [];
+        let interior_amenities_missing = [];
         for (var key in home.interior_amenities) {
             if (home.interior_amenities[key]) {
                 interior_amenities.push(key)
+            } else if (this.props.missing_amenities.some(item => key === item)){
+                interior_amenities_missing.push(key)
             }
         }
 
@@ -53,6 +57,9 @@ export default class HomeTileLarge extends Component {
                     <h3>Interior Amenities</h3>
                     {interior_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
+                    {interior_amenities_missing.map(item => (
+                        <p key={item}><i className="material-icons">clear</i> {item.replace(/_/g,' ')}</p>
                     ))}
                 </div>
             );
@@ -76,9 +83,12 @@ export default class HomeTileLarge extends Component {
 
         // Creates a list of all the exterior amenities that exist
         let exterior_amenities = [];
+        let exterior_amenities_missing = [];
         for (var key in home.exterior_amenities) {
             if (home.exterior_amenities[key]) {
                 exterior_amenities.push(key)
+            } else if (this.props.missing_amenities.some(item => key === item)) {
+                exterior_amenities_missing.push(key)
             }
         }
 
@@ -91,6 +101,9 @@ export default class HomeTileLarge extends Component {
                     <h3>Exterior Amenities</h3>
                     {exterior_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
+                    {exterior_amenities_missing.map(item => (
+                        <p key={item}><i className="material-icons">clear</i> {item.replace(/_/g,' ')}</p>
                     ))}
                 </div>
             );

@@ -265,6 +265,7 @@ export default class ResultsPage extends Component {
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
                     displayPercent={true}
                     percent_match={home.percent_match}
+                    missing_amenities={home.missing_amenities}
                 />
             </div>
         );
