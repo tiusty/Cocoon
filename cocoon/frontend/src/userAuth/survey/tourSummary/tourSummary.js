@@ -18,7 +18,13 @@ export default class TourSummary extends Component {
         // State for the tour duration
         refresh_duration: true,
         duration: undefined,
+        has_off_market: false,
+        homes_off_market: 0
     };
+
+    componentDidMount() {
+        this.checkIfOffMarket();
+    }
 
     componentDidUpdate(prevProps) {
 
@@ -45,6 +51,7 @@ export default class TourSummary extends Component {
                         },
                     )
             }
+            this.checkIfOffMarket();
         }
     }
 
@@ -68,16 +75,15 @@ export default class TourSummary extends Component {
     };
 
     determineScheduleButtonStatus() {
-        if (this.props.visit_list <= 0) {
+        if (this.props.visit_list <= 0 || this.state.has_off_market === true) {
             return true
         } else {
             return false
         }
     }
 
-    handleOffMarketHomes = () => {
+    checkIfOffMarket = () => {
         let { visit_list } = this.props;
-        console.log(visit_list)
         let error_count = 0;
         for (let i = 0; i < visit_list.length; i++) {
             if (visit_list[i].on_market === false) {
@@ -85,7 +91,21 @@ export default class TourSummary extends Component {
             }
         }
         if (error_count > 0) {
-            return <p style={{color: 'var(--red)'}}>`${error_count} of your homes are taken. Please remove from your visit list.`</p>
+            this.setState({
+                has_off_market: true,
+                homes_off_market: error_count
+            })
+        } else {
+            this.setState({
+                has_off_market: false,
+                homes_off_market: 0
+            })
+        }
+    }
+
+    handleOffMarketHomes = () => {
+        if (this.state.has_off_market === true) {
+            return <p style={{color: 'var(--red)', fontWeight: 'bold', fontSize: 12, paddingTop: 9}}>ERROR: {this.state.homes_off_market} of your homes are sold. Please remove from your visit list.</p>
         } else {
             return null;
         }
@@ -150,7 +170,6 @@ export default class TourSummary extends Component {
                     <p className="tour-summary-text">When you are done adding homes that you want to tour, click schedule!</p>
                     <p className="tour-summary-text">Remember you can only have one tour scheduled at a time</p>
                     <p className="tour-summary-text">Estimated duration: {this.state.refresh_duration ? 'Loading' : Math.round(this.state.duration/60) + ' mins'}</p>
-                    {this.handleOffMarketHomes()}
                     <form method="post" style={{marginTop: '10px'}}>
                         <CSRFToken/>
                         <button name="submit-button"
@@ -160,6 +179,7 @@ export default class TourSummary extends Component {
                                 type="submit">Schedule!
                         </button>
                     </form>
+                    {this.handleOffMarketHomes()}
                     <h2 className="tour-summary-semi-bold">Visit List</h2>
                     {this.renderVisitList()}
                 </>

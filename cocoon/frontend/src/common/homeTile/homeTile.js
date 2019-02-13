@@ -56,7 +56,7 @@ class HomeTile extends Component {
 
         // Toggles the button text/color based on favorite status
         let favorite_style;
-        if (!this.props.canVisit) {
+        if (!this.props.canVisit || (!this.props.onMarket && !this.props.visit)) {
             favorite_style = {
                 width: '100%',
                 borderRight: 'none'
@@ -115,7 +115,7 @@ class HomeTile extends Component {
         return (
             <div className="tileScore">
                 {this.props.canFavorite ? heart_span : null}
-                {this.props.canVisit ? visit_span : null}
+                {(this.props.canVisit && this.props.onMarket) || (this.props.visit && !this.props.onMarket) ? visit_span : null}
             </div>
         );
 
