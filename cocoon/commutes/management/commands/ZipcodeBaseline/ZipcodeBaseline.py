@@ -16,11 +16,19 @@ from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_com
 
 class ZipcodeBaseline(object):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    ZIPCODE_LIST_FILENAME = "{0}/zip_codes_MA.txt".format(BASE_DIR)
     JSON_DURATION_KEY_NAME = "duration_seconds"
     JSON_DISTANCE_KEY_NAME = "distance_meters"
     DISTANACE_DELTA = 300
     DURATION_DELTA = 60
 
+    def get_baseline_filename(self, commute_type):
+        """
+        Returns the file name based on the commute type
+        :param commute_type: (CommuteType Model) -> The commute type associated with the baseline
+        :return:
+        """
+        return self.BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
 
     def create_baseline(self, commute_type):
         """
@@ -50,7 +58,7 @@ class ZipcodeBaseline(object):
         # Read in all the zipcodes to compute
         # Data stored in a set to prevent duplicates
         list_zip_codes = set()
-        with open(self.BASE_DIR + "/zip_codes_MA.txt", "r") as f:
+        with open(self.ZIPCODE_LIST_FILENAME, "r") as f:
             for line in f:
                 line = line.split()
                 list_zip_codes.add(str(line[0]))
@@ -62,7 +70,7 @@ class ZipcodeBaseline(object):
         zipcode_combinations = self.generate_zipcode_combinations(list_zip_codes, commute_type)
 
         # Now write the result to the file
-        filename = self.BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
+        filename = self.get_baseline_filename(commute_type)
         with open(filename, "w") as f:
             f.write(json.dumps(zipcode_combinations))
 
@@ -102,7 +110,7 @@ class ZipcodeBaseline(object):
 
         stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
 
-        filename = self.BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
+        filename = self.get_baseline_filename(commute_type)
         with open(filename, "r") as f:
             data = json.load(f)
             for base_zipcode in data:
@@ -181,19 +189,20 @@ class ZipcodeBaseline(object):
 
         stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
 
-        filename = self.BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
+        filename = self.get_baseline_filename(commute_type)
         with open(filename, "r") as f:
             data = json.load(f)
-            for base_zipcode in data:
-                for child_zipcode in data[base_zipcode]:
-                    stored_duration = int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
-                    load_duration = int(data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
+            for base_zipcode in stored_zipcode_combinations:
+                for child_zipcode in stored_zipcode_combinations[base_zipcode]:
+                    if self.check_key(data, base_zipcode, child_zipcode):
+                        stored_duration = int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
+                        load_duration = int(data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
 
-                    stored_distance= int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
-                    load_distance = int(data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
+                        stored_distance= int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
+                        load_distance = int(data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
 
-                    if abs(stored_duration - load_duration) > self.DURATION_DELTA:
-                        logger.error("DURATION ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: "+ child_zipcode)
+                        if abs(stored_duration - load_duration) > self.DURATION_DELTA:
+                            logger.error("DURATION ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: "+ child_zipcode)
 
-                    if abs(stored_distance - load_distance) > self.DISTANACE_DELTA:
-                        logger.error("DISTANCE ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
+                        if abs(stored_distance - load_distance) > self.DISTANACE_DELTA:
+                            logger.error("DISTANCE ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)

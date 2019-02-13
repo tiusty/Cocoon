@@ -11,26 +11,23 @@ class Command(BaseCommand):
         parser.add_argument(
             '--create_baseline',
             action='store_true',
-            dest='create_baseline',
             help='Creates zipcode baseline file',
         )
 
         parser.add_argument(
             '--load_baseline',
             action='store_true',
-            dest='load_baseline',
             help='Loads zipocodes from baseline file into the database',
         )
 
         parser.add_argument(
             '--compare_baseline',
             action='store_true',
-            dest='compare_baseline',
             help='Compares zipcodes from baseline file to the database',
         )
 
         parser.add_argument(
-            '--commute_type_input',
+            '--commute_type',
             type=str,
             help='Specify a commute type. One of:"driving", "transit"',
         )
@@ -44,7 +41,7 @@ class Command(BaseCommand):
         Function to run the command. list_zip_codes is all possible zip codes in Boston. The handler
         calls the commute_approximation function, which writes the JSON file "approximations.txt"
         """
-        commute_type = self.parse_input_commute_type(options['commute_type_input'])
+        commute_type = self.parse_input_commute_type(options['commute_type'])
         if options['create_baseline']:
                 ZipcodeBaseline().create_baseline(commute_type)
 
