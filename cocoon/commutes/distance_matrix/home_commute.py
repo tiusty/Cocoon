@@ -1,32 +1,27 @@
 class HomeCommute(object):
 
-    def __init__(self, zip_code='', state='', address='', city='', valid=True):
+    def __init__(self, zip_code='', state='', address='', city=''):
         self.zip_code = zip_code
         self.state = state
         self.address = address
         self.city = city
-        self.valid = valid
 
     def return_commute(self):
-        if self.address and self.city and self.state:
-            return self.return_full_address()
-        else:
-            return self.return_zip_code()
+        """
+        Determines the return type of the home commute depending on the arguments.
 
-    def return_zip_code(self):
-        if self.valid:
+        Preferable is using all the values and then different combinations are used
+            depending on data available
+        :return: (String) -> The formatted output for the distance matrix api
+        """
+        if self.address and self.city and self.state and self.zip_code:
+            return "{0}, {1}, {2}, {3}".format(self.address, self.city, self.state, self.zip_code)
+        elif self.address and self.city and self.state:
+            return "{0}, {1}, {2}".format(self.address, self.city, self.state)
+        elif self.zip_code:
             return self.zip_code
         else:
             return ''
-
-    def return_full_address(self):
-        if self.valid and self.address and self.city and self.state and self.zip_code:
-            return "{0}, {1}, {2}, {3}".format(self.address, self.city, self.state, self.zip_code)
-        elif self.valid and self.address and self.city and self.state:
-            return "{0}, {1}, {2}".format(self.address, self.city, self.state)
-        else:
-            return ''
-
 
     @staticmethod
     def home_scores_to_home_commute(homes):
