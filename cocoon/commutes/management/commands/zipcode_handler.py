@@ -42,7 +42,7 @@ class Command(BaseCommand):
                 ZipcodeBaseline().create_baseline(commute_type)
 
         if options['update_baseline']:
-                ZipcodeBaseline().update_zipcode_database(commute_type)
+                ZipcodeBaseline().load_zipcode_combinations(commute_type)
 
     def parse_input_commute_type(self, commute_type_input):
         commute_type = None

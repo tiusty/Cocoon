@@ -17,6 +17,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class ZipcodeBaseline(object):
+    JSON_DURATION_KEY_NAME = "duration_seconds"
+    JSON_DISTANCE_KEY_NAME = "distance_meters"
 
     def create_baseline(self, commute_type):
         """
@@ -71,14 +73,13 @@ class ZipcodeBaseline(object):
                 child_zipcodes = {}
                 for commute in range(len(results)):
                     child_zipcodes[list_zip_codes[commute]] = {
-                        "duration": results[commute][0][0],
-                        "distance": results[commute][0][1]
+                        ZipcodeBaseline.JSON_DURATION_KEY_NAME: results[commute][0][0],
+                        ZipcodeBaseline.JSON_DISTANCE_KEY_NAME: results[commute][0][1]
                     }
                 zipcode_combinations[base_zip] = child_zipcodes
         return zipcode_combinations
 
-
-    def update_zipcode_database(self, commute_type):
+    def load_zipcode_combinations(self, commute_type):
         """
         :param
         :param
@@ -87,28 +88,23 @@ class ZipcodeBaseline(object):
         Looks into ZipCodeBase database and creates all possible combinations and allows sends errors if approximations
         don't match baselines
         """
-        filename = BASE_DIR + "/baselines/zipcode_baseline_"+commute_type+".json"
 
-        unique_zipcodes = []
+        stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
 
-        commute_type_google = ""
-
-        if commute_type == "driving":
-            commute_type_google = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
-        elif commute_type == "transit":
-            commute_type_google = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
-
-        self.pull_stored_zipcode_data(commute_type_google)
-
+        filename = BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
         with open(filename, "r") as f:
             data = json.load(f)
+            for base_zipcode in data:
+                for child_zipcode in data[base_zipcode]:
+                    if not self.check_key(stored_zipcode_combinations, base_zipcode, child_zipcode):
+                        zip_code_base = ZipCodeBase.objects.get_or_create(zip_code=base_zipcode)[0]
+                        zip_code_base.zipcodechild_set.create(
+                            zip_code=child_zipcode,
+                            commute_distance_meters=data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME],
+                            commute_time_seconds=data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME],
+                        )
 
-            origin_zipcodes = []
-            for item in data["approximations"]:
-                origin_zipcodes.append(item.get('origin')[0])
-
-
-            unique_zipcodes = list(set(origin_zipcodes))
+            print(data)
 
         #     for item in unique_zipcodes:
         #         destination_zip = ZipCodeBase.objects.get(zip_code=item)
@@ -148,11 +144,18 @@ class ZipcodeBaseline(object):
 
             # Dictionary Compression to retrieve the values from the QuerySet
             child_zip_codes = {zip_code: {
-                'duration': commute_time_seconds,
-                'distance': commute_distance_meters,
+                 ZipcodeBaseline.JSON_DURATION_KEY_NAME: commute_time_seconds,
+                 ZipcodeBaseline.JSON_DISTANCE_KEY_NAME: commute_distance_meters,
             }
                 for zip_code, commute_time_seconds, commute_distance_meters
                 in child_zips}
 
             base_zipcodes[zipcode_base.zip_code] = child_zip_codes
         return base_zipcodes
+
+    @staticmethod
+    def check_key(data, base_key, child_key):
+        if base_key in data:
+            if child_key in data[base_key]:
+                return True
+        return False
