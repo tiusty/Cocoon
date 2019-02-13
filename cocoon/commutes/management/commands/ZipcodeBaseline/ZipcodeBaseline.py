@@ -5,9 +5,12 @@ from django.utils import timezone
 import json
 import os
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
 
 # Import Cocoon Modules
-from cocoon.commutes.models import ZipCodeBase
+from cocoon.commutes.models import ZipCodeBase, ZipCodeChild
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
 
@@ -163,3 +166,40 @@ class ZipcodeBaseline(object):
             if child_key in data[base_key]:
                 return True
         return False
+
+    def compare_baseline(self, commute_type):
+        """
+        Using information from the currently stored zipcodes in the database, and using
+            the zipcode information from the baseline, compare zipcode combinations to between database and
+            baseline file
+
+        :param commute_type: (CommuteType Model) -> The commute type being used
+        """
+
+        stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
+
+        filename = self.BASE_DIR + "/baselines/zipcode_baseline_" + commute_type.get_commute_type_display() + ".json"
+        with open(filename, "r") as f:
+            data = json.load(f)
+            for base_zipcode in data:
+                for child_zipcode in data[base_zipcode]:
+                    if self.check_key(stored_zipcode_combinations, base_zipcode, child_zipcode):
+
+                        zip_code_base = ZipCodeBase.objects.get(zip_code=base_zipcode)
+
+                        child_zips = ZipCodeChild.objects.filter(base_zip_code=zip_code_base,
+                                                                 zip_code=child_zipcode). \
+                            filter(commute_type=commute_type). \
+                            values_list('commute_time_seconds', 'commute_distance_meters')
+
+                        for commute_time_seconds, commute_distance_meters in child_zips:
+
+                            if commute_time_seconds != data.get(base_zipcode).get(child_zipcode)['duration_seconds']:
+
+                                logger.error("COMMUTE TIME DIFFERENCE BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
+
+                            if commute_distance_meters != data.get(base_zipcode).get(child_zipcode)['distance_meters']:
+
+                                logger.error("COMMUTE DISTANCE DIFFERENCE BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
+
+

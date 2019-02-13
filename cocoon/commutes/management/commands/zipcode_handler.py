@@ -23,6 +23,13 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            '--compare_baseline',
+            action='store_true',
+            dest='compare_baseline',
+            help='Compares zipcodes from baseline file to the database',
+        )
+
+        parser.add_argument(
             '--commute_type_input',
             type=str,
             help='Specify a commute type. One of:"driving", "transit"',
@@ -43,6 +50,9 @@ class Command(BaseCommand):
 
         elif options['load_baseline']:
                 ZipcodeBaseline().load_zipcode_combinations(commute_type)
+
+        elif options['compare_baseline']:
+            ZipcodeBaseline().compare_baseline(commute_type)
 
     @staticmethod
     def parse_input_commute_type(commute_type_input):
