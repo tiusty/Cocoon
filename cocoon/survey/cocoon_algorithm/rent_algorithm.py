@@ -209,15 +209,16 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         for destination in self.tenants:
             try:
                 results = retrieve_exact_commute_rent_algorithm(self.homes[:NUMBER_OF_EXACT_COMMUTES_COMPUTED],
-                                                                [destination],
+                                                                destination,
                                                                 destination.commute_type,
                                                                 with_traffic=destination.traffic_option)
 
-                # iterates over min of number to be computed and length of results in case lens don't match
-                for i in range(min(NUMBER_OF_EXACT_COMMUTES_COMPUTED, len(results))):
-                    # update exact commute time with in minutes
-                    if results[i] is not None:
-                        self.homes[i].exact_commute_times[destination] = int(results[i][0][0] / 60)
+                # Store the results to the homes
+                for i in range(len(results)):
+                    duration_seconds = results[i][0][0]
+                    distance_meters = results[i][0][1]
+                    if duration_seconds is not None and distance_meters is not None:
+                        self.homes[i].exact_commute_times[destination] = int(duration_seconds / 60)
 
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)

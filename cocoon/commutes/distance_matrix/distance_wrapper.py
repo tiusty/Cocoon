@@ -156,7 +156,7 @@ class DistanceWrapper:
 
         return traffic_model
 
-    def get_durations_and_distances(self, origins, destinations, mode=GoogleCommuteNaming.DRIVING, with_traffic=False):
+    def get_durations_and_distances(self, origins, destinations_input, mode=GoogleCommuteNaming.DRIVING, with_traffic=False):
         """
         NOTE: THIS SHOULD NOT BE CALLED DIRECTLY
 
@@ -185,6 +185,12 @@ class DistanceWrapper:
 
         distance_matrix_list = []
         origin_list = origins
+
+        # Make sure the destinations is a list
+        if isinstance(destinations_input, (list,)):
+            destinations = destinations_input
+        else:
+            destinations = [destinations_input]
 
         # maximizes 100 elements while retaining 25 origin/dest limit
         destination_number = int(min(25, len(destinations)))

@@ -168,8 +168,8 @@ class Driving(CommuteCalculator):
         """
 
         # map (zip, state) tuples list to a list of "state+zip" strings
-        results = retrieve_exact_commute(list(map(lambda x: HomeCommute(x[0], state=x[1]), origins_zips_states)),
-                                         [HomeCommute(destination_zip_state[0], state=destination_zip_state[1])],
+        results = retrieve_exact_commute(list(map(lambda x: HomeCommute(zip_code=x[0], state=x[1]), origins_zips_states)),
+                                         [HomeCommute(zip_code=destination_zip_state[0], state=destination_zip_state[1])],
                                          self.COMMUTE_TYPE)
 
         if results:

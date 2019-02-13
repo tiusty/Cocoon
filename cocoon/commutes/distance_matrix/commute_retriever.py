@@ -33,8 +33,8 @@ def retrieve_exact_commute_client_scheduler(homes, destination, commute_type, wi
 
 
 def retrieve_exact_commute_rent_algorithm(homes, destinations, commute_type, with_traffic=False):
-    return retrieve_exact_commute(HomeCommute.rentdatabases_to_home_commute(homes),
-                                  HomeCommute.rentdatabases_to_home_commute(destinations),
+    return retrieve_exact_commute(HomeCommute.home_scores_to_home_commute(homes),
+                                  HomeCommute.destination_to_home_commute(destinations),
                                   mode=commute_type,
                                   with_traffic=with_traffic)
 
