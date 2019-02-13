@@ -196,6 +196,9 @@ class ZipcodeBaseline(object):
         filename = self.get_baseline_filename(commute_type)
         with open(filename, "r") as f:
             data = json.load(f)
+
+            # Loops through all the combinations in the database and compares it with the values
+            #   in the baseline if it exists
             for base_zipcode in stored_zipcode_combinations:
                 for child_zipcode in stored_zipcode_combinations[base_zipcode]:
                     if self.check_key(data, base_zipcode, child_zipcode):
@@ -205,8 +208,13 @@ class ZipcodeBaseline(object):
                         stored_distance = int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
                         baseline_distance = int(data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
 
+                        # Log an error if any of the distances are a mismatch
                         if abs(stored_duration - baseline_duration) > self.DURATION_DELTA_SECONDS:
-                            logger.error("DURATION ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: "+ child_zipcode)
+                            logger.error("Duration mismatch: Base: {0}, Child: {1}, Duration in Database {2}, "
+                                         "Duration in baseline {3}"
+                                         .format(base_zipcode, child_zipcode, stored_duration, baseline_duration))
 
                         if abs(stored_distance - baseline_distance) > self.DISTANACE_DELTA_METERS:
-                            logger.error("DISTANCE ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
+                            logger.error("Duration mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
+                                         " Distance in baseline {3}"
+                                         .format(base_zipcode, child_zipcode, stored_distance, baseline_distance))
