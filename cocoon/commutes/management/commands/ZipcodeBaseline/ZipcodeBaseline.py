@@ -22,20 +22,35 @@ class ZipcodeBaseline(object):
 
     def create_baseline(self, commute_type):
         """
-        :param commute_type: (string) -> The commute type that the baseline is being made for
+        Generates a baseline for the zipcodes stored in the zip_codes_ files. The zipcodes distances
+            and durations are computed using google information and then stored into a file
 
-        Function to run the command. list_zip_codes is all possible zip codes in Boston
+        :param commute_type: (CommuteType model) -> The commute type that the baseline is being made for
+
+        The format of the file follows below for each parent and child zipcode
+            {
+                'parent zipcode':
+                   {
+                        'child_zipcode' :
+                        {
+                            commute data for the child zipcode
+                        }
+                   }
+            }
         """
-        verify = raw_input("Please don't run this script unless you are directed to, please type 'yes' to confirm: ")
-        if verify.lower() != "yes":
+
+        # This function should not be run unless indicated.
+        #   this prevent a user running the function by accident
+        verify = raw_input("Please don't run this script unless you are directed to, type 'confirm-running' to run: ")
+        if verify != "confirm-running":
             exit()
 
         # Read in all the zipcodes to compute
+        # Data stored in a set to prevent duplicates
         list_zip_codes = set()
         with open(BASE_DIR + "/zip_codes_MA.txt", "r") as f:
             for line in f:
                 line = line.split()
-                # We are assuming that all the zipcodes are in MA
                 list_zip_codes.add(str(line[0]))
 
         # Turn the set into a list
@@ -60,7 +75,7 @@ class ZipcodeBaseline(object):
         The response object is then parsed for distance and duration in m, s respectively. This data is then used
         to create a dictionary, which is ultimately written to approximations.txt as a json object.
         """
-        # Create all the combinations locally in python
+        # Create all the combinations
         zipcode_combinations = {}
         for base_zip in list_zip_codes:
 
@@ -96,46 +111,36 @@ class ZipcodeBaseline(object):
             data = json.load(f)
             for base_zipcode in data:
                 for child_zipcode in data[base_zipcode]:
+                    # Check to see if the combination exists in the database
+                    #   if not then create the pair using the data from the file
                     if not self.check_key(stored_zipcode_combinations, base_zipcode, child_zipcode):
                         zip_code_base = ZipCodeBase.objects.get_or_create(zip_code=base_zipcode)[0]
                         zip_code_base.zipcodechild_set.create(
                             zip_code=child_zipcode,
                             commute_distance_meters=data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME],
                             commute_time_seconds=data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME],
+                            commute_type=commute_type,
                         )
 
-            print(data)
+    @staticmethod
+    def pull_stored_zipcode_data(commute_type):
+        """
+        Pulls the zipcode data from the database and stores them in a python
+            dictionary
+        :param commute_type: (CommuteType Model) -> The commute type the user indicated
+        :return: (dict(dict()) -> The dictionary of dictionaries of the data stored in the backend
 
-        #     for item in unique_zipcodes:
-        #         destination_zip = ZipCodeBase.objects.get(zip_code=item)
-        #
-        #         # Retrieve all the child zip_codes for the destination commute_type
-        #         child_zips = ZipCodeChild.objects.filter(base_zip_code=destination_zip). \
-        #             filter(commute_type=commute_type_google). \
-        #             values_list('zip_code', 'commute_time_seconds')
-        #
-        #         # Dictionary Compression to retrieve the values from the QuerySet
-        #         child_zip_codes = {zip_code: commute_time_seconds for zip_code, commute_time_seconds in child_zips}
-        #
-        #         for k,v in child_zip_codes.items():
-        #             for zipcode_baseline in data["approximations"]:
-        #                 origin_zipcode_baseline = zipcode_baseline.get('origin')[0]
-        #                 destination_zipcode_baseline = zipcode_baseline.get('destination')[0]
-        #
-        #                 if k == destination_zipcode_baseline and item == origin_zipcode_baseline:
-        #                     if v != zipcode_baseline.get('duration'):
-        #                         print("MISS MATCH VALUE")
-        #                 else:
-        #                     new_base = ZipCodeBase.objects.get(zip_code=origin_zipcode_baseline)
-        #                     ZipCodeChild.objects.create(zip_code=destination_zipcode_baseline,
-        #                         base_zip_code=new_base,
-        #                         commute_time_seconds=zipcode_baseline.get('duration'),
-        #                         commute_distance_meters=zipcode_baseline.get('distance'),
-        #                         last_date_updated=timezone.now() - timedelta(days=random.randint(0,13)),
-        #                         commute_type=commute_type_google
-        #                     )
-
-    def pull_stored_zipcode_data(self, commute_type):
+        The format follows below for each parent and child zipcode
+            {
+                'parent zipcode':
+                   {
+                        'child_zipcode' :
+                        {
+                            commute data for the child zipcode
+                        }
+                   }
+            }
+        """
         base_zipcodes = {}
         for zipcode_base in ZipCodeBase.objects.all():
             # Retrieve all the child zip_codes for the destination commute_type
@@ -155,6 +160,15 @@ class ZipcodeBaseline(object):
 
     @staticmethod
     def check_key(data, base_key, child_key):
+        """
+        Checks if the keys exists within the base dictionary and the child dictionary
+        :param data: (Dictionary) -> The data that the key is being checked in
+        :param base_key: (string) -> The parent key of the dictionary
+        :param child_key: (string) -> The child key of the dictionary
+        :return: (Boolean) -> True: The keys exist within the data, note: Both must exist
+                              False: -> Either one or both of the keys do not exist within the data
+        """
+
         if base_key in data:
             if child_key in data[base_key]:
                 return True

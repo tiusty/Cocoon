@@ -25,7 +25,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--commute_type_input',
             type=str,
-            help='Specify a commute type',
+            help='Specify a commute type. One of:"driving", "transit"',
         )
 
     def handle(self, *args, **options):
@@ -41,14 +41,20 @@ class Command(BaseCommand):
         if options['create_baseline']:
                 ZipcodeBaseline().create_baseline(commute_type)
 
-        if options['update_baseline']:
+        if options['load_baseline']:
                 ZipcodeBaseline().load_zipcode_combinations(commute_type)
 
     def parse_input_commute_type(self, commute_type_input):
+        """
+        Parses input commute type variable to determine which commute type is being run
+            If the type is unknown then quit
+        :param commute_type_input:
+        :return:
+        """
         commute_type = None
-        if commute_type_input == "driving":
+        if commute_type_input.lower() == "driving":
             commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
-        elif commute_type_input == "transit":
+        elif commute_type_input.lower() == "transit":
             commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.TRANSIT)[0]
         else:
             print("Unknown Commute type")
