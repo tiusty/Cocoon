@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Import Cocoon Modules
-from cocoon.commutes.models import ZipCodeBase, ZipCodeChild
+from cocoon.commutes.models import ZipCodeBase
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
 
 
@@ -18,6 +18,9 @@ class ZipcodeBaseline(object):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     JSON_DURATION_KEY_NAME = "duration_seconds"
     JSON_DISTANCE_KEY_NAME = "distance_meters"
+    DISTANACE_DELTA = 300
+    DURATION_DELTA = 60
+
 
     def create_baseline(self, commute_type):
         """
@@ -183,23 +186,14 @@ class ZipcodeBaseline(object):
             data = json.load(f)
             for base_zipcode in data:
                 for child_zipcode in data[base_zipcode]:
-                    if self.check_key(stored_zipcode_combinations, base_zipcode, child_zipcode):
+                    stored_duration = int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
+                    load_duration = int(data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME])
 
-                        zip_code_base = ZipCodeBase.objects.get(zip_code=base_zipcode)
+                    stored_distance= int(stored_zipcode_combinations[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
+                    load_distance = int(data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME])
 
-                        child_zips = ZipCodeChild.objects.filter(base_zip_code=zip_code_base,
-                                                                 zip_code=child_zipcode). \
-                            filter(commute_type=commute_type). \
-                            values_list('commute_time_seconds', 'commute_distance_meters')
+                    if abs(stored_duration - load_duration) > self.DURATION_DELTA:
+                        logger.error("DURATION ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: "+ child_zipcode)
 
-                        for commute_time_seconds, commute_distance_meters in child_zips:
-
-                            if commute_time_seconds != data.get(base_zipcode).get(child_zipcode)['duration_seconds']:
-
-                                logger.error("COMMUTE TIME DIFFERENCE BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
-
-                            if commute_distance_meters != data.get(base_zipcode).get(child_zipcode)['distance_meters']:
-
-                                logger.error("COMMUTE DISTANCE DIFFERENCE BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
-
-
+                    if abs(stored_distance - load_distance) > self.DISTANACE_DELTA:
+                        logger.error("DISTANCE ERROR BASE ZIPCODE: " + base_zipcode + " CHILD ZIPCODE: " + child_zipcode)
