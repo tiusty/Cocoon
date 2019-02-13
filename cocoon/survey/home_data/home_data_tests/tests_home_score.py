@@ -45,21 +45,6 @@ class TestScoringMethods(TestCase):
         # Assert
         self.assertEqual((accumulated_points/total_possible_points) * 100, home_score.percent_score())
 
-    def test_percent_score_positive_eliminated(self):
-        # Arrange
-        home_score = HomeScore()
-        self.home = self.create_home(self.home_type)
-        accumulated_points = 20
-        total_possible_points = 30
-
-        # Act
-        home_score._accumulated_points = accumulated_points
-        home_score._total_possible_points = total_possible_points
-        home_score.eliminate_home()
-
-        # Assert
-        self.assertEqual(-1, home_score.percent_score())
-
     def test_percent_score_accumulated_points_negative(self):
         # Arrange
         home_score = HomeScore()
@@ -132,7 +117,7 @@ class TestScoringMethods(TestCase):
         # Assert
         self.assertEqual(0, home_score.percent_score())
 
-    def test_percent_score_accumulated_points_zero_eliminated(self):
+    def test_percent_score_accumulated_points_zero_equals_zero(self):
         # Arrange
         home_score = HomeScore()
         self.home = self.create_home(self.home_type)
@@ -145,7 +130,7 @@ class TestScoringMethods(TestCase):
         home_score.eliminate_home()
 
         # Assert
-        self.assertEqual(-1, home_score.percent_score())
+        self.assertEqual(0, home_score.percent_score())
 
     def test_percent_score_total_possible_points_zero(self):
         # Arrange
@@ -160,21 +145,6 @@ class TestScoringMethods(TestCase):
 
         # Assert
         self.assertEqual(0, home_score.percent_score())
-
-    def test_percent_score_total_possible_points_zero_eliminated(self):
-        # Arrange
-        home_score = HomeScore()
-        self.home = self.create_home(self.home_type)
-        accumulated_points = 30
-        total_possible_points = 0
-
-        # Act
-        home_score._accumulated_points = accumulated_points
-        home_score._total_possible_points = total_possible_points
-        home_score.eliminate_home()
-
-        # Assert
-        self.assertEqual(-1, home_score.percent_score())
 
     def test_eliminate_home(self):
         # Arrange // not really following methodology
