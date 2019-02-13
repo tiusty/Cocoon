@@ -27,7 +27,7 @@ def retrieve_exact_commute_client_scheduler(homes, destination, commute_type, wi
         all possible combinations given by google, i.e if there are different routes
     """
     return retrieve_exact_commute(HomeCommute.rentdatabases_to_home_commute(homes),
-                                  HomeCommute.rentdatabase_to_home_commute(destination),
+                                  HomeCommute.rentdatabases_to_home_commute(destination),
                                   mode=commute_type,
                                   with_traffic=with_traffic)
 

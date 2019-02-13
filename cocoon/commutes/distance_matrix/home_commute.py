@@ -37,7 +37,7 @@ class HomeCommute(object):
         """
         home_cache = []
         for home in homes:
-            home_cache.append(HomeCommute(home.home.zip_code, state=home.home.state))
+            home_cache.append(HomeCommute(home.home.zip_code, state=home.home.state, address=home.home.street_address, city=home.home.city))
         return home_cache
 
     @staticmethod
@@ -47,7 +47,7 @@ class HomeCommute(object):
         :param destination: (destinationModel) -> The destination to convert
         :return: (HomeCommute) -> The destination in the home cache format
         """
-        return HomeCommute(destination.zip_code, state=destination.state)
+        return HomeCommute(destination.zip_code, state=destination.state, address=destination.street_address, city=destination.city)
 
     @staticmethod
     def rentdatabases_to_home_commute(homes):
@@ -58,7 +58,7 @@ class HomeCommute(object):
         """
         home_cache = []
         for home in homes:
-            home_cache.append(HomeCommute(home.zip_code, state=home.state))
+            home_cache.append(HomeCommute(home.zip_code, state=home.state, address=home.street_address, city=home.city))
         return home_cache
 
     @staticmethod
@@ -68,7 +68,7 @@ class HomeCommute(object):
         :param home: (RentDatabase model) -> The homes to convert
         :return: (HomeCommute) -> The homes in the correct format
         """
-        return HomeCommute(home.zip_code, state=home.state)
+        return HomeCommute(home.zip_code, state=home.state, address=home.street_address, city=home.city)
 
     @staticmethod
     def zipcodes_to_home_commute(zipcode_list):

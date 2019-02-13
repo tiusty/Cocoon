@@ -35,10 +35,12 @@ class ClientScheduler(clientSchedulerAlgorithm):
             home_one_distances = []
             commute_type = CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0]
             if self.commute_accuracy == CommuteAccuracy.EXACT:
-                result_distance_wrapper = retrieve_exact_commute_client_scheduler(homes_list, home_one, commute_type)
-                for source, time in result_distance_wrapper[0]:
-                    if source is not None and time is not None:
-                        home_one_distances.append(time)
+                result_distance_wrapper = retrieve_exact_commute_client_scheduler(homes_list, [home_one], commute_type)
+                for commute in result_distance_wrapper:
+                    time_seconds = commute[0][0]
+                    distance_meters = commute[0][1]
+                    if time_seconds is not None and distance_meters is not None:
+                        home_one_distances.append(time_seconds)
             else:
                 update_commutes_cache_client_scheduler(homes_list, home_one, accuracy=CommuteAccuracy.APPROXIMATE,
                                                        commute_type=CommuteType.DRIVING)
