@@ -126,7 +126,8 @@ class ZipcodeBaseline(object):
                             commute_distance_meters=data[base_zipcode][child_zipcode][self.JSON_DISTANCE_KEY_NAME],
                             commute_time_seconds=data[base_zipcode][child_zipcode][self.JSON_DURATION_KEY_NAME],
                             commute_type=commute_type,
-                            last_date_updated=timezone.now() - timedelta(days=random.randint(0, 20))
+                            # Spread out the last_date_updated so they don't all fall on the same day
+                            last_date_updated=timezone.now() - timedelta(days=random.randint(0, 14))
                         )
 
     @staticmethod
