@@ -175,7 +175,9 @@ class Driving(CommuteCalculator):
         if results:
             # iterates both lists simultaneously
             for origin, result in zip(origins_zips_states, results):
-                if result is not None:
+                duration_seconds = result[0][0]
+                distance_meters = result[0][1]
+                if duration_seconds is not None and distance_meters is not None:
                     if ZipCodeBase.objects.filter(zip_code=destination_zip_state[0]).exists():
                         zip_code_dictionary = ZipCodeBase.objects.get(zip_code=destination_zip_state[0])
                         zip_dest = zip_code_dictionary.zipcodechild_set.filter(
@@ -190,16 +192,16 @@ class Driving(CommuteCalculator):
                             zip_code_dictionary.zipcodechild_set.create(
                                 zip_code=origin[0],
                                 commute_type=self.COMMUTE_TYPE,
-                                commute_distance_meters=result[0][1],
-                                commute_time_seconds=result[0][0],
+                                commute_distance_meters=distance_meters,
+                                commute_time_seconds=duration_seconds,
                             )
                     else:
                         ZipCodeBase.objects.create(zip_code=destination_zip_state[0]) \
                             .zipcodechild_set.create(
                             zip_code=origin[0],
                             commute_type=self.COMMUTE_TYPE,
-                            commute_distance_meters=result[0][1],
-                            commute_time_seconds=result[0][0],
+                            commute_distance_meters=distance_meters,
+                            commute_time_seconds=duration_seconds,
                         )
 
     def run_exact_commute_cache(self):
