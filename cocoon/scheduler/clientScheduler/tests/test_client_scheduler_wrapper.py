@@ -1,11 +1,12 @@
 from django.test import TestCase
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 from unittest.mock import patch
+from cocoon.commutes.constants import CommuteAccuracy
 
 class TestClientScheduler(TestCase):
 
     def setUp(self):
-        self.clientScheduler = ClientScheduler()
+        self.clientScheduler = ClientScheduler(accuracy=CommuteAccuracy.EXACT)
 
     @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
     def test_build_home_matrix_empty(self, mock_commute):
@@ -27,7 +28,7 @@ class TestClientScheduler(TestCase):
         :return:
         '''
         homes_list = ["home1", "home2", "home3"]
-        mock_commute.return_value = [[(0,0),(1,0), (2,0)]]
+        mock_commute.return_value = [[(0,0)],[(0,0)], [(0,2)]]
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 0, 0], [0, 0, 0], [0, 0, 0]])
 
@@ -44,7 +45,7 @@ class TestClientScheduler(TestCase):
         '''
 
         homes_list = ["home1", "home2", "home3"]
-        mock_commute.side_effect = [ [[(0, 0), (0, 1), (0, 2)]], [[(1, 1), (1, 0), (1, 3)]], [[(2, 2), (2, 3), (2, 0)]]]
+        mock_commute.side_effect = [[(0, 0)], [(1, 0)], [(2, 0)]], [[(1, 1)], [(0, 1)], [(3, 1)]], [[(2, 2)], [(3, 2)], [(0, 2)]]
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 1, 2], [1, 0, 3], [2, 3, 0]])
 
@@ -61,24 +62,7 @@ class TestClientScheduler(TestCase):
         '''
 
         homes_list = ["home1", "home2", "home3"]
-        mock_commute.side_effect = [[[(0, 0), (0, 5), (0, 5)]], [[(1, 5), (1, 0), (1, 5)]], [[(2, 5), (2, 5), (2, 0)]]]
-        homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
-        self.assertEqual(homes_matrix, [[0, 5, 5], [5, 0, 5], [5, 5, 0]])
-
-    @patch('cocoon.scheduler.clientScheduler.client_scheduler.retrieve_exact_commute_client_scheduler')
-    def test_build_home_matrix_same_distances(self, mock_commute):
-        '''
-        Test Case: homes 0,1,2
-        0->1 : 5
-        0->2 : 5
-        1->2 : 5
-
-        :param mock_commute:
-        :return:
-        '''
-
-        homes_list = ["home1", "home2", "home3"]
-        mock_commute.side_effect = [[[(0, 0), (0, 5), (0, 5)]], [[(1, 5), (1, 0), (1, 5)]], [[(2, 5), (2, 5), (2, 0)]]]
+        mock_commute.side_effect = [[(0, 0)], [(5, 0)], [(5, 0)]], [[(5, 1)], [(0, 1)], [(5, 1)]], [[(5, 2)], [(5, 2)], [(0, 2)]]
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 5, 5], [5, 0, 5], [5, 5, 0]])
 
@@ -95,7 +79,8 @@ class TestClientScheduler(TestCase):
         '''
 
         homes_list = ["home1", "home2", "home3"]
-        mock_commute.side_effect = [[[(0, 0), (0, 10), (0, 8)]], [[(1, 10), (1, 0), (1, 4)]], [[(2, 8), (2, 4), (2, 0)]]]
+
+        mock_commute.side_effect = [[(0, 0)], [(10, 0)], [(8, 0)]], [[(10, 0)], [(0, 1)], [(4, 1)]], [[(8, 2)], [(4, 2)], [(0, 2)]]
         homes_matrix = self.clientScheduler.build_homes_matrix(homes_list)
         self.assertEqual(homes_matrix, [[0, 10, 8], [10, 0, 4], [8, 4, 0]])
 
