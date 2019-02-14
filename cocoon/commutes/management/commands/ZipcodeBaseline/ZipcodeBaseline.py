@@ -53,9 +53,9 @@ class ZipcodeBaseline(object):
 
         # This function should not be run unless indicated.
         #   this prevent a user running the function by accident
-        # verify = input("Please don't run this script unless you are directed to, type 'confirm-running' to run: ")
-        # if verify != "confirm-running":
-        #     exit()
+        verify = input("Please don't run this script unless you are directed to, type 'confirm-running' to run: ")
+        if verify != "confirm-running":
+            exit()
 
         # Read in all the zipcodes to compute
         # Data stored in a set to prevent duplicates
