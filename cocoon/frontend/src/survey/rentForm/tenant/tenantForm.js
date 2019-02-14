@@ -440,7 +440,7 @@ export default class TenantForm extends Component {
                     <small id="priceHelp" className="form-text text-muted">Left dot is your desired commute, the right dot is the max commute you are willing to have
                     </small>
                     <InputRange
-                        draggableTrack
+                        draggableTrack={false}
                         maxValue={180}
                         minValue={0}
                         step={5}
