@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import '../styles/variables.css';
 import './homeTile.css';
 import PlaceHolder from './homelist-empty.jpg';
+import OffMarket from './sold.svg';
 
 class HomeTile extends Component {
     /**
@@ -43,7 +44,8 @@ class HomeTile extends Component {
         canVisit: false,
         isLarge: false,
         displayPercent: false,
-        percent_match: null
+        percent_match: null,
+        displayOnMarket: false
     }
 
     renderScore(home) {
@@ -54,7 +56,7 @@ class HomeTile extends Component {
 
         // Toggles the button text/color based on favorite status
         let favorite_style;
-        if (!this.props.canVisit) {
+        if (!this.props.canVisit || (!this.props.onMarket && !this.props.visit)) {
             favorite_style = {
                 width: '100%',
                 borderRight: 'none'
@@ -93,7 +95,7 @@ class HomeTile extends Component {
         let visit_class = 'home_add_default';
         if (this.props.visit) {
             visit_icon = "playlist_add_check";
-            visit_text = "Added to Visit List";
+            visit_text = "Remove From Visit List";
             visit_class += " home_added";
         } else {
             visit_icon = "playlist_add";
@@ -113,7 +115,7 @@ class HomeTile extends Component {
         return (
             <div className="tileScore">
                 {this.props.canFavorite ? heart_span : null}
-                {this.props.canVisit ? visit_span : null}
+                {(this.props.canVisit && this.props.onMarket) || (this.props.visit && !this.props.onMarket) ? visit_span : null}
             </div>
         );
 
@@ -158,11 +160,21 @@ class HomeTile extends Component {
                 percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
             }
 
+            let off_market_section = null;
+            if (this.props.displayOnMarket && !this.props.onMarket) {
+                off_market_section = (
+                    <div className="off-market-wrapper">
+                        <img src={OffMarket} alt="home is off the market"/>
+                    </div>
+                );
+            }
+
             // renders placeholder image if home has no images
             if (home.images.length === 0) {
                 return (
                     <div onClick={() => this.props.onHomeClick(this.props.id)} className={div_classes}>
                         {percent_match}
+                        {off_market_section}
                         <img src={PlaceHolder} alt="place holder image" className={image_classes} />
                     </div>
                 );
@@ -173,6 +185,7 @@ class HomeTile extends Component {
                         { home.images.slice(0,1).map(image =>
                             <div onClick={() => this.props.onHomeClick(this.props.id)} key={image.id} className={div_classes}>
                                 {percent_match}
+                                {off_market_section}
                                 <img className={image_classes} src={image.image} alt='Home image'/>
                             </div>
                         )}

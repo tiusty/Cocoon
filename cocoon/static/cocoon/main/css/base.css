@@ -19,6 +19,17 @@ a, a:hover, a:focus {
     color: initial;
 }
 
+button:disabled,
+button[disabled],
+input[type=submit]:disabled,
+button:disabled:hover,
+button[disabled]:hover,
+input[type=submit]:disabled:hover {
+    background: rgba(38, 166, 154, 0.4) !important;;
+    cursor: not-allowed;
+    border: none;
+}
+
 /* Header styling */
 h1, .h1, h2, .h2, h3, .h3 {
     margin-top: 20px;
@@ -378,6 +389,7 @@ footer {
 }
 
 footer p {
-    font-size: 1.1em;
+    font-size: 11px;
     color: white;
+    margin: 0;
 }
