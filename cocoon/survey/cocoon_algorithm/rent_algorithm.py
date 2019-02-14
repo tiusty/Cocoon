@@ -242,52 +242,40 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         All the homes are updated with the new score
         :param survey: (RentingSurvey Model) -> The survey the user took
         """
-        self.run_compute_weighted_score_interior_amenities(survey)
-        self.run_compute_weighted_score_exterior_amenities(survey)
-        self.run_compute_weighted_score_nearby_amenities(survey)
+        for home_score in self.homes:
+            self.run_compute_weighted_score_interior_amenities(survey, home_score)
+            self.run_compute_weighted_score_exterior_amenities(survey, home_score)
+            self.handle_laundry_weight_question(survey, home_score)
 
-    def run_compute_weighted_score_interior_amenities(self, survey):
+    def run_compute_weighted_score_interior_amenities(self, survey, home_score):
         """
         Runs the interior amenities scoring
         :param survey: (RentingSurvey Model) -> The survey the user took
+        :param home_score: (HomeScore) -> The home that is currently being calaculated
         """
-        for home_score in self.homes:
-            if survey.wants_laundry_in_unit:
-                self.handle_weighted_question_score(survey.laundry_in_unit_weight, home_score, home_score.home.laundry_in_unit)
-            if survey.wants_furnished:
-                self.handle_weighted_question_score(survey.furnished_weight, home_score, home_score.home.furnished)
-            if survey.wants_hardwood_floors:
-                self.handle_weighted_question_score(survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
-            if survey.wants_AC:
-                self.handle_weighted_question_score(survey.AC_weight, home_score, home_score.home.air_conditioning)
-            if survey.wants_dishwasher:
-                self.handle_weighted_question_score(survey.dishwasher_weight, home_score, home_score.home.dishwasher)
+        if survey.wants_furnished:
+            self.handle_weighted_question(survey.furnished_weight, home_score, home_score.home.furnished)
+        if survey.wants_hardwood_floors:
+            self.handle_weighted_question(survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
+        if survey.wants_AC:
+            self.handle_weighted_question(survey.AC_weight, home_score, home_score.home.air_conditioning)
+        if survey.wants_dishwasher:
+            self.handle_weighted_question(survey.dishwasher_weight, home_score, home_score.home.dishwasher)
 
-    def run_compute_weighted_score_exterior_amenities(self, survey):
+    def run_compute_weighted_score_exterior_amenities(self, survey, home_score):
         """
         Runs the exterior amenities scoring.
         :param survey: (RentingSurvey Model) -> The survey the user took
+        :param home_score: (HomeScore) -> The home that is currently being calaculated
         """
-        for home_score in self.homes:
-            if survey.wants_laundry_in_building:
-                self.handle_weighted_question_score(survey.laundry_in_building_weight, home_score, home_score.home.laundry_in_building)
-            if survey.wants_patio:
-                self.handle_weighted_question_score(survey.patio_weight, home_score, home_score.home.patio_balcony)
-            if survey.wants_pool:
-                self.handle_weighted_question_score(survey.pool_weight, home_score, home_score.home.pool)
-            if survey.wants_gym:
-                self.handle_weighted_question_score(survey.gym_weight, home_score, home_score.home.gym)
-            if survey.wants_storage:
-                self.handle_weighted_question_score(survey.storage_weight, home_score, home_score.home.storage)
-
-    def run_compute_weighted_score_nearby_amenities(self, survey):
-        """
-        Runs the interior amenities scoring
-        :param survey: (RentingSurvey Model) -> The survey the user took
-        """
-        for home_score in self.homes:
-            if survey.wants_laundry_nearby:
-                self.handle_weighted_question_score(survey.laundry_nearby_weight, home_score, home_score.home.laundromat_nearby)
+        if survey.wants_patio:
+            self.handle_weighted_question(survey.patio_weight, home_score, home_score.home.patio_balcony)
+        if survey.wants_pool:
+            self.handle_weighted_question(survey.pool_weight, home_score, home_score.home.pool)
+        if survey.wants_gym:
+            self.handle_weighted_question(survey.gym_weight, home_score, home_score.home.gym)
+        if survey.wants_storage:
+            self.handle_weighted_question(survey.storage_weight, home_score, home_score.home.storage)
 
     def run_sort_home_by_score(self):
         """
