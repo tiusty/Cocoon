@@ -3,16 +3,21 @@ import { Component } from 'react';
 
 import houseIcon from './found-apt.png';
 
+
+// import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input/basic-input'
+
 export default class DetailsForm extends Component {
     state = {
         errorMessages: {
             email_error: 'You must enter a valid email address.',
-            phone_error: 'Enter a valid phone number. ex. 555-555-5555',
+            phone_error: 'Enter a valid phone number. ex. (555) 555-5555',
             password_error_number: 'The password must contain at least 1 number',
             password_error_length: 'Password must be at least 8 characters.',
             password_error_match: 'Passwords must match.',
             creation_key_error: 'You must enter a creation key.'
-        }
+        },
+        phone_number: '',
     }
 
     componentDidUpdate = (prevProps) => {
@@ -137,6 +142,15 @@ export default class DetailsForm extends Component {
         }
     }
 
+    handleUpdatePhoneNumber = (phone_number) => {
+        /**
+         * Upadates the phone_number in the state
+         */
+        this.setState({
+            phone_number
+        })
+    }
+
     render(){
         return (
             <>
@@ -153,6 +167,8 @@ export default class DetailsForm extends Component {
                         handlePrevStep={this.props.handlePrevStep}
                         handleSubmit={this.handleSubmit}
                         loading={this.props.loading}
+                        phone_number={this.state.phone_number}
+                        onUpdatePhoneNumber={this.handleUpdatePhoneNumber}
                     /> :
                     <CurrentUser
                         onSubmit={this.props.onSubmit}
@@ -175,7 +191,15 @@ const NewUser = (props) => (
             <input className="col-md-12 survey-input" type="email" name="email" placeholder="Email address" maxLength={30} onBlur={(e) => {props.validateEmail(e) && props.handleInputChange(e, 'string')} } required/>
 
             <span className="col-md-12 survey-error-message" id="phone_error"></span>
-            <input className="col-md-12 survey-input" type="tel" name="phone_number" placeholder="Phone Number" onBlur={(e) => { props.validatePhone(e) && props.handleInputChange(e, 'string')} } required/>
+            <PhoneInput
+                country="US"
+                className="col-md-12 survey-input"
+                placeholder="Enter phone number"
+                value={props.phone_number }
+                onChange={
+                    phone => props.onUpdatePhoneNumber(phone)
+                }
+            />
 
             <span className="col-md-12 survey-error-message" id="password_error"></span>
             <input className="col-md-12 survey-input" type="password" name="password1" placeholder="Password" required onChange={props.validatePassword} onBlur={(e) => {props.validatePassword && props.handleInputChange(e, 'string')} } />
