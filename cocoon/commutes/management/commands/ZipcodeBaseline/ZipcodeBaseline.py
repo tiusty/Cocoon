@@ -21,8 +21,8 @@ class ZipcodeBaseline(object):
     ZIPCODE_LIST_FILENAME = "{0}/zip_codes_MA.txt".format(BASE_DIR)
     JSON_DURATION_KEY_NAME = "duration_seconds"
     JSON_DISTANCE_KEY_NAME = "distance_meters"
-    DISTANACE_DELTA_METERS = 30
-    DURATION_DELTA_SECONDS = 60
+    DISTANACE_DELTA_METERS = 100
+    DURATION_DELTA_SECONDS = 180
 
     def get_baseline_filename(self, commute_type):
         """
