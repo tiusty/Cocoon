@@ -218,7 +218,7 @@ class ZipcodeBaseline(object):
                                          .format(base_zipcode, child_zipcode, stored_duration, baseline_duration))
 
                         if abs(stored_distance - baseline_distance) > self.DISTANACE_DELTA_METERS:
-                            errors.append("Duration mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
+                            errors.append("Distance mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
                                          " Distance in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_distance, baseline_distance))
                         number_of_combinations_checked += 1
