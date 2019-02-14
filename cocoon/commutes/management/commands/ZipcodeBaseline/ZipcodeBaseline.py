@@ -195,6 +195,8 @@ class ZipcodeBaseline(object):
         stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
         errors = []
         number_of_combinations_checked = 0
+        largest_time_delta = 0
+        largest_distance_delta = 0
 
         filename = self.get_baseline_filename(commute_type)
         with open(filename, "r") as f:
@@ -213,11 +215,15 @@ class ZipcodeBaseline(object):
 
                         # Log an error if any of the distances are a mismatch
                         if abs(stored_duration - baseline_duration) > self.DURATION_DELTA_SECONDS:
+                            if abs(stored_duration - baseline_duration) > largest_time_delta:
+                                largest_time_delta = abs(stored_duration - baseline_duration)
                             errors.append("Duration mismatch: Base: {0}, Child: {1}, Duration in Database {2}, "
                                          "Duration in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_duration, baseline_duration))
 
                         if abs(stored_distance - baseline_distance) > self.DISTANACE_DELTA_METERS:
+                            if abs(stored_distance - baseline_distance) > largest_distance_delta:
+                                largest_distance_delta = abs(stored_distance - baseline_distance)
                             errors.append("Distance mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
                                          " Distance in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_distance, baseline_distance))
@@ -225,6 +231,8 @@ class ZipcodeBaseline(object):
 
         error_string = "\nNumber of combinations checked: {0}\n".format(number_of_combinations_checked)
         error_string += "Number of mismatches: {0}\n".format(len(errors))
+        error_string += "Largest Time Delta: {0}\n".format(largest_time_delta)
+        error_string += "Largest Distance Delta: {0}\n".format(largest_distance_delta)
         for error in errors:
             error_string += "{0}\n".format(error)
         logger.error(error_string)
