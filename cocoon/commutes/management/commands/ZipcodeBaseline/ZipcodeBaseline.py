@@ -194,6 +194,7 @@ class ZipcodeBaseline(object):
 
         stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
         errors = []
+        number_of_combinations_checked = 0
 
         filename = self.get_baseline_filename(commute_type)
         with open(filename, "r") as f:
@@ -220,8 +221,10 @@ class ZipcodeBaseline(object):
                             errors.append("Duration mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
                                          " Distance in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_distance, baseline_distance))
+                        number_of_combinations_checked += 1
 
-        error_string = "\nNumber of mismatches: {0}\n".format(len(errors))
+        error_string = "\nNumber of combinations checked: {0}\n".format(number_of_combinations_checked)
+        error_string += "Number of mismatches: {0}\n".format(len(errors))
         for error in errors:
             error_string += "{0}\n".format(error)
         logger.error(error_string)
