@@ -106,8 +106,8 @@ class BaseRegisterForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Please use format: ###-###-####',
-                'pattern': '\d{3}[\-]\d{3}[\-]\d{4}',
+                'placeholder': 'Please use format: ##########',
+                'pattern': '\d{10}',
             }
         )
     )
