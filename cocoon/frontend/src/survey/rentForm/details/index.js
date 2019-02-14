@@ -3,8 +3,6 @@ import { Component } from 'react';
 
 import houseIcon from './found-apt.png';
 
-
-// import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input/basic-input'
 
 export default class DetailsForm extends Component {
