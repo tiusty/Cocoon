@@ -21,7 +21,7 @@ class ZipcodeBaseline(object):
     ZIPCODE_LIST_FILENAME = "{0}/zip_codes_MA.txt".format(BASE_DIR)
     JSON_DURATION_KEY_NAME = "duration_seconds"
     JSON_DISTANCE_KEY_NAME = "distance_meters"
-    DISTANACE_DELTA_METERS = 100
+    DISTANCE_DELTA_METERS = 500
     DURATION_DELTA_SECONDS = 180
 
     def get_baseline_filename(self, commute_type):
@@ -221,7 +221,7 @@ class ZipcodeBaseline(object):
                                          "Duration in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_duration, baseline_duration))
 
-                        if abs(stored_distance - baseline_distance) > self.DISTANACE_DELTA_METERS:
+                        if abs(stored_distance - baseline_distance) > self.DISTANCE_DELTA_METERS:
                             if abs(stored_distance - baseline_distance) > largest_distance_delta:
                                 largest_distance_delta = abs(stored_distance - baseline_distance)
                             errors.append("Distance mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
