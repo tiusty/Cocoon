@@ -25,7 +25,7 @@ input[type=submit]:disabled,
 button:disabled:hover,
 button[disabled]:hover,
 input[type=submit]:disabled:hover {
-    background: var(--grey) !important;
+    background: rgba(38, 166, 154, 0.4) !important;;
     cursor: not-allowed;
     border: none;
 }
