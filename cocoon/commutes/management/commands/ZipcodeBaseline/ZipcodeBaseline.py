@@ -221,7 +221,7 @@ class ZipcodeBaseline(object):
                                          " Distance in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_distance, baseline_distance))
 
-        error_string = ""
+        error_string = "\nNumber of mismatches: {0}\n".format(len(errors))
         for error in errors:
-            error_string += "\n{0}".format(error)
+            error_string += "{0}\n".format(error)
         logger.error(error_string)
