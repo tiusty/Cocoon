@@ -224,6 +224,7 @@ export default class ResultsPage extends Component {
                             onFavoriteClick={() => this.handleFavoriteClick(home.home)}
                             onMouseLeave={() => this.removeHoverId(home.home.id)}
                             onMouseEnter={() => this.setHoverId(home.home.id)}
+                            missing_amenities={home.missing_amenities}
                         />))}
                 </div>
             </>

@@ -115,7 +115,7 @@
 /* Styling for percent */
 .homeInfo-percent {
     position: absolute;
-    background: var(--teal);
+    background: rgba(0, 0, 0, 0.5);
     top: 15px;
     left: 15px;
     font-size: 14px;
@@ -124,6 +124,35 @@
     padding: 6px;
     border-radius: 5px;
     z-index: 999;
+}
+
+/* Styling for missing amenities */
+.homeInfo-missing_amenities {
+    position: absolute;
+    top: 18px;
+    right: 15px;
+    font-size: 11px;
+    color: white;
+    font-weight: 800;
+    padding: 6px;
+    border-radius: 5px;
+    z-index: 999;
+    display: flex;
+    background: var(--teal); /* 0 Missing */
+    /*background: var(--redOrange); 1 Missing */
+    /*background: #5760ff; 2+ Missing */
+}
+
+.homeInfo-missing_amenities i {
+    font-size: 14px;
+}
+
+.missing_amenities_text {
+    display: none;
+}
+
+.homeInfo-missing_amenities:hover .missing_amenities_text {
+    display: inline-block;
 }
 
 /*   STYLING FOR SQUARE TILE   */
@@ -286,11 +315,14 @@
     object-fit: cover;
 }
 
+.carousel .control-arrow, .carousel.carousel-slider .control-arrow {
+    opacity: 1 !important;
+}
+
 .broker_info {
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 
 .item-left-text {

@@ -43,7 +43,8 @@ class HomeTile extends Component {
         canVisit: false,
         isLarge: false,
         displayPercent: false,
-        percent_match: null
+        percent_match: null,
+        missing_amenities: [],
     }
 
     renderScore(home) {
@@ -158,11 +159,30 @@ class HomeTile extends Component {
                 percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
             }
 
+            // Sets background color of badge and renders the # of missing amenities
+            let missing_amenities = null;
+            let missing_number = this.props.missing_amenities.length;
+
+            let missing_style = 'var(--teal)';
+            if (missing_number > 0) {
+                missing_style = 'var(--redOrange)';
+            } else if (missing_number > 1) {
+                missing_style = '#5760ff';
+            }
+
+            let missing_text = 'Missing Amenities!';
+            if (missing_number === 1) {
+                missing_text = "Missing Amenity!";
+            }
+
+            missing_amenities = <span className="homeInfo-missing_amenities" style={{background: missing_style}}><i className="material-icons">notifications</i> <span className="missing_amenities_text">{missing_number} {missing_text}</span></span>;
+
             // renders placeholder image if home has no images
             if (home.images.length === 0) {
                 return (
                     <div onClick={() => this.props.onHomeClick(this.props.id)} className={div_classes}>
                         {percent_match}
+                        {missing_amenities}
                         <img src={PlaceHolder} alt="place holder image" className={image_classes} />
                     </div>
                 );
@@ -173,6 +193,7 @@ class HomeTile extends Component {
                         { home.images.slice(0,1).map(image =>
                             <div onClick={() => this.props.onHomeClick(this.props.id)} key={image.id} className={div_classes}>
                                 {percent_match}
+                                {missing_amenities}
                                 <img className={image_classes} src={image.image} alt='Home image'/>
                             </div>
                         )}
