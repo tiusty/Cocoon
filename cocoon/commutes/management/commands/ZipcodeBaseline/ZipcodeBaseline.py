@@ -193,6 +193,7 @@ class ZipcodeBaseline(object):
         """
 
         stored_zipcode_combinations = self.pull_stored_zipcode_data(commute_type)
+        errors = []
 
         filename = self.get_baseline_filename(commute_type)
         with open(filename, "r") as f:
@@ -211,11 +212,16 @@ class ZipcodeBaseline(object):
 
                         # Log an error if any of the distances are a mismatch
                         if abs(stored_duration - baseline_duration) > self.DURATION_DELTA_SECONDS:
-                            logger.error("Duration mismatch: Base: {0}, Child: {1}, Duration in Database {2}, "
+                            errors.append("Duration mismatch: Base: {0}, Child: {1}, Duration in Database {2}, "
                                          "Duration in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_duration, baseline_duration))
 
                         if abs(stored_distance - baseline_distance) > self.DISTANACE_DELTA_METERS:
-                            logger.error("Duration mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
+                            errors.append("Duration mismatch: Base: {0}, Child: {1}, Distance in Database {2},"
                                          " Distance in baseline {3}"
                                          .format(base_zipcode, child_zipcode, stored_distance, baseline_distance))
+
+        error_string = ""
+        for error in errors:
+            error_string += "\n{0}".format(error)
+        logger.error(error_string)
