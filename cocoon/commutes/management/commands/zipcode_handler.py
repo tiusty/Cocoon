@@ -1,5 +1,7 @@
+# Django Modules
 from django.core.management.base import BaseCommand
 
+# Cocoon Modules
 from .ZipcodeBaseline.ZipcodeBaseline import ZipcodeBaseline
 from cocoon.commutes.models import CommuteType
 
