@@ -10,7 +10,7 @@ class HomeTypeModel(models.Model):
     This generates the multiple select field in the survey
     If another home gets added it needs to be added here in the HOME_TYPE
     """
-    APARTMENT = "Ap"
+    APARTMENT = "ap"
     SINGLE_FAMILY = "sf"
     CONDO = "cn"
     OTHER = "ot"
