@@ -91,7 +91,7 @@ export default class TenantForm extends Component {
                 <div className="survey-question" onChange={(e) => {
                     this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index);
                 }}>
-                    <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
+                    <h2>{this.props.index === 0 ? 'Is' : 'Are'} <span>{name}</span> working, studying, or other?
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-occupation-error`}></span>
