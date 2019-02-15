@@ -225,6 +225,7 @@ export default class ResultsPage extends Component {
                             onMouseLeave={() => this.removeHoverId(home.home.id)}
                             onMouseEnter={() => this.setHoverId(home.home.id)}
                             missing_amenities={home.missing_amenities}
+                            show_missing_amenities={true}
                         />))}
                 </div>
             </>
@@ -269,6 +270,7 @@ export default class ResultsPage extends Component {
                     displayPercent={true}
                     percent_match={home.percent_match}
                     missing_amenities={home.missing_amenities}
+                    show_missing_amenities={true}
                 />
             </div>
         );

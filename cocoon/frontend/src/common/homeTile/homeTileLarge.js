@@ -31,6 +31,7 @@ export default class HomeTileLarge extends Component {
         canVisit: false,
         displayPercent: false,
         missing_amenities: [],
+        show_missing_amenities: false,
         displayOnMarket: false
     };
 
@@ -277,7 +278,7 @@ export default class HomeTileLarge extends Component {
         );
     }
 
-renderPercentMatch = (home) => {
+    renderPercentMatch = (home) => {
         /**
          * Returns the percent match info if it is desired
          * @type {null}
@@ -293,7 +294,7 @@ renderPercentMatch = (home) => {
     }
 
     renderImages = () => {
-        let { home } = this.props;
+        let {home} = this.props;
 
         let off_market_section = null;
         if (this.props.displayOnMarket && !this.props.onMarket) {
@@ -336,25 +337,30 @@ renderPercentMatch = (home) => {
     }
 
     renderMissingAmenitiesBadge = () => {
-        // Sets background color of badge and renders the # of missing amenities
-        let missing_amenities = null;
-        let missing_number = this.props.missing_amenities.length;
+        if (this.props.show_missing_amenities) {
+            // Sets background color of badge and renders the # of missing amenities
+            let missing_amenities = null;
+            let missing_number = this.props.missing_amenities.length;
 
-        let missing_style = 'var(--teal)';
-        if (missing_number > 0) {
-            missing_style = 'var(--redOrange)';
-        } else if (missing_number > 1) {
-            missing_style = '#5760ff';
-        }
-        let missing_text = 'Missing Amenities!';
-        if (missing_number === 1) {
-            missing_text = "Missing Amenity! We still think you'll like it!";
-        } else if (missing_number > 1) {
-            missing_text = "Missing Amenities! We still think you'll like it!";
+            let missing_style = 'var(--teal)';
+            if (missing_number > 0) {
+                missing_style = 'var(--redOrange)';
+            } else if (missing_number > 1) {
+                missing_style = '#5760ff';
+            }
+            let missing_text = 'Missing Amenities!';
+            if (missing_number === 1) {
+                missing_text = "Missing Amenity! We still think you'll like it!";
+            } else if (missing_number > 1) {
+                missing_text = "Missing Amenities! We still think you'll like it!";
+            }
+
+            missing_amenities = <span className="homeInfo-missing_amenities" style={{background: missing_style}}><i className="material-icons">notifications</i> <span className="missing_amenities_text">{missing_number} {missing_text}</span></span>;
+            return missing_amenities;
+        } else {
+            return null
         }
 
-        missing_amenities = <span className="homeInfo-missing_amenities" style={{background: missing_style}}><i className="material-icons">notifications</i> <span className="missing_amenities_text">{missing_number} {missing_text}</span></span>;
-        return missing_amenities;
     }
 
     render() {

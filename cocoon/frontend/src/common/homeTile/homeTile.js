@@ -46,6 +46,7 @@ class HomeTile extends Component {
         displayPercent: false,
         percent_match: null,
         missing_amenities: [],
+        show_missing_amenities: false,
         displayOnMarket: false
     }
 
@@ -161,23 +162,25 @@ class HomeTile extends Component {
                 percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
             }
 
-            // Sets background color of badge and renders the # of missing amenities
             let missing_amenities = null;
-            let missing_number = this.props.missing_amenities.length;
+            if (this.props.show_missing_amenities) {
+                // Sets background color of badge and renders the # of missing amenities
+                let missing_number = this.props.missing_amenities.length;
 
-            let missing_style = 'var(--teal)';
-            if (missing_number > 0) {
-                missing_style = 'var(--redOrange)';
-            } else if (missing_number > 1) {
-                missing_style = '#5760ff';
+                let missing_style = 'var(--teal)';
+                if (missing_number > 0) {
+                    missing_style = 'var(--redOrange)';
+                } else if (missing_number > 1) {
+                    missing_style = '#5760ff';
+                }
+
+                let missing_text = 'Missing Amenities!';
+                if (missing_number === 1) {
+                    missing_text = "Missing Amenity!";
+                }
+
+                missing_amenities = <span className="homeInfo-missing_amenities" style={{background: missing_style}}><i className="material-icons">notifications</i> <span className="missing_amenities_text">{missing_number} {missing_text}</span></span>;
             }
-
-            let missing_text = 'Missing Amenities!';
-            if (missing_number === 1) {
-                missing_text = "Missing Amenity!";
-            }
-
-            missing_amenities = <span className="homeInfo-missing_amenities" style={{background: missing_style}}><i className="material-icons">notifications</i> <span className="missing_amenities_text">{missing_number} {missing_text}</span></span>;
 
             let off_market_section = null;
             if (this.props.displayOnMarket && !this.props.onMarket) {
