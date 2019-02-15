@@ -14,6 +14,12 @@ class HomeImageSerializer(serializers.HyperlinkedModelSerializer):
 
 class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
 
+    home_type = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_home_type(obj):
+        return obj.get_home_type_display()
+
     class Meta:
         model = HomeTypeModel
         fields = ('id', 'home_type')

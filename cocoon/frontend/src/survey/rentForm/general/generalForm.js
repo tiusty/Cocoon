@@ -38,8 +38,8 @@ export default class GeneralForm extends Component {
         axios.get(houseDatabase_endpoints['home_types'])
             .then(res => {
                 const home_type_options = res.data;
-                // this.setState({ home_type_options });
-                this.props.setHomeType(home_type_options)
+                this.setState({ home_type_options });
+                // this.props.setHomeType(home_type_options)
             });
     };
 
@@ -463,7 +463,7 @@ export default class GeneralForm extends Component {
             <>
                 {!this.props.is_editing ? this.renderNumberOfPeopleQuestion() : null}
                 {this.renderNameQuestion()}
-                {/*{this.renderHomeTypeQuestion()}*/}
+                {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
                 {this.renderFilterZones()}

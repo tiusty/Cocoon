@@ -144,11 +144,14 @@ class RetsRequester(object):
                 new_listing.home_type = HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.OTHER)[0]
 
             if home['Date_Available']:
-                self.num_available_in_future += 1
                 date_available = datetime.strptime(home['Date_Available'], '%Y-%m-%dT%H:%M:%S')
+                new_listing.date_available = date_available
                 date_available = pytimezone('US/Eastern').localize(date_available)
                 if timezone.now() > date_available - timedelta(days=CURRENTLY_AVAILABLE_DELTA_DAYS):
                     new_listing.currently_available = True
+                else:
+                    self.num_available_in_future += 1
+
             else:
                 new_listing.currently_available = True
 
