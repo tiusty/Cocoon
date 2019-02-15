@@ -6,7 +6,7 @@ from django.utils import timezone
 from cocoon.houseDatabase.management.commands.pull_mlspin_images import MlspinRequesterImage
 from cocoon.houseDatabase.management.commands.ygl.YGLRequester import YGLRequester
 from cocoon.houseDatabase.management.commands.ygl.YGLRequesterImages import YGLRequesterImage
-from cocoon.houseDatabase.management.commands.rets.RetsRequester import MLSRetsRequester
+from cocoon.houseDatabase.management.commands.mls_rets.MLSRetsRequester import MLSRetsRequester
 
 
 class Command(BaseCommand):

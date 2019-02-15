@@ -1,15 +1,16 @@
-from rets import Session
+# Django Imports
 from django.utils import timezone
 from django.db import IntegrityError
 
-
-from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel, HomeTypeModel
-from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
-
-from cocoon.houseDatabase.constants import CURRENTLY_AVAILABLE_DELTA_DAYS
-
+# Python Imports
+from rets import Session
 from datetime import datetime, timedelta
 from pytz import timezone as pytimezone
+
+# Cocoon Imports
+from cocoon.houseDatabase.models import RentDatabaseModel, HomeProviderModel, HomeTypeModel
+from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
+from cocoon.houseDatabase.constants import CURRENTLY_AVAILABLE_DELTA_DAYS
 
 # Load the logger
 import logging

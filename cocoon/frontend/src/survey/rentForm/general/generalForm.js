@@ -39,7 +39,6 @@ export default class GeneralForm extends Component {
             .then(res => {
                 const home_type_options = res.data;
                 this.setState({ home_type_options });
-                // this.props.setHomeType(home_type_options)
             });
     };
 
