@@ -51,7 +51,7 @@ export default class HomeTileLarge extends Component {
         // If there is at least one amenity then render it
         // Since the names have a _ instead of a space, when rendering the name
         //  replace all _ with spaces
-        if (interior_amenities.length > 0) {
+        if (interior_amenities.length > 0 || interior_amenities_missing.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Interior Amenities</h3>
@@ -95,7 +95,7 @@ export default class HomeTileLarge extends Component {
         // If there is at least one amenity then render it
         // Since the names have a _ instead of a space, when rendering the name
         //  replace all _ with spaces
-        if (exterior_amenities.length > 0) {
+        if (exterior_amenities.length > 0 || exterior_amenities_missing.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Exterior Amenities</h3>
