@@ -35,35 +35,6 @@ class TestApartmentHunterSignupForm(TestCase):
         # Assert
         self.assertTrue(form.is_valid())
 
-    def test_form_wrong_key(self):
-        """
-        Tests thta given the wrong key the form doesn't validate
-        """
-        # Arrange
-        first_name = 'Alex'
-        last_name = 'Agudelo'
-        username = 'email@text.com'
-        password1 = 'sometestPassword'
-        password2 = 'sometestPassword'
-        creation_key = 'some_random_key'
-
-        # Create form data
-        form_data = {
-            'first_name': first_name,
-            'last_name': last_name,
-            'email': username,
-            'password1': password1,
-            'password2': password2,
-            'creation_key': creation_key
-        }
-
-        # Act
-        form = ApartmentHunterSignupForm(data=form_data)
-
-        # Assert
-        self.assertFalse(form.is_valid())
-        self.assertEqual({'creation_key': ['Creation Key invaild']}, form.errors)
-
     def test_form_not_matching_passwords(self):
         """
         Tests that given non-matching passwords, the form will not validate
