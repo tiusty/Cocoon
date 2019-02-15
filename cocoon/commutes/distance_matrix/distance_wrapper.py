@@ -167,20 +167,18 @@ class DistanceWrapper:
         Segments requests to the distance matrix API to include a maximum of 25 origins and returns
         the consolidated results.
 
-        :param origins: list of origins in a distance matrix accepted format
-        :param destinations: the destination in a distance matrix accepted format
-        :param mode: (string) -> Must be the mode using the google distance defined mode i.e from the
+        :param origins: (list(HomeCommute)) -> List of origins as a HomeCommute
+        :param destinations_input: (HomeCommute or list(HomeCommute) -> The destination or destinations for the commute
+        :param mode: (GoogleCommuteNaming) -> Must be the mode using the google distance defined mode i.e from the
             GoogleCommuteNaming class
         :returns a list of lists of tuples containing the duration and distance between the origins and the
         destination(s). Each inner list corresponds to an origin and each of its tuples corresponds to a pairing
         between that origin and one of its destinations.
         :raises DistanceMatrixException on invalid request
 
-        Example Input:
-            origins: ["02052", "02124", "02482"]
-            origins: ["2 Snow Hill Lane, Medfield MA"]
-            destinations: ["Boston, MA"]
-            destinations: ["23412", "159 Brattle Street, Arlington MA"]
+        Example Output:
+        ('12323', '232323')
+        (duration_in_seconds, distance_in_meters)
         """
 
         distance_matrix_list = []
