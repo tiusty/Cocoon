@@ -45,7 +45,7 @@ export default class GeneralForm extends Component {
     handleValidation = () => {
         let valid = true;
         valid = valid && this.handleNameValidation();
-        // valid = valid && this.handleHomeTypeValidation();
+        valid = valid && this.handleHomeTypeValidation();
         valid = valid && this.handlePriceValidation();
         valid = valid && this.handleUrgencyValidation();
         valid = valid && this.handleDatePickerValidation();
