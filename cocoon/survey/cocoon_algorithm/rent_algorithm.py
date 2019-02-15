@@ -326,4 +326,4 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         STEP 8: Reorder homes again now with the full data
         """
         # Now reorder all the homes with the new information
-        self.insertion_sort(self.homes)
+        self.run_sort_home_by_score()
