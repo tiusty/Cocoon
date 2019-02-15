@@ -407,7 +407,7 @@ export default class GeneralForm extends Component {
             return (
                 <>
                     <small className="form-text text-muted">
-                        Please click on the map to add dots to construct your area
+                        Please click and drag to move map. Click to add points. Add as many points per shape. Add as many shapes as you want.
                     </small>
                     <MyMapComponent
                         onCompletePolygon={this.props.onCompletePolygon}
