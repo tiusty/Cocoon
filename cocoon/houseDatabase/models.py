@@ -11,8 +11,14 @@ class HomeTypeModel(models.Model):
     If another home gets added it needs to be added here in the HOME_TYPE
     """
     APARTMENT = "Apartment"
+    SINGLE_FAMILY = "sf"
+    CONDO = "cn"
+    OTHER = "ot"
     HOME_TYPE = (
         (APARTMENT, 'Apartment'),
+        (SINGLE_FAMILY, 'Single Family'),
+        (CONDO, 'Condo'),
+        (OTHER, 'Other'),
     )
     home_type = models.CharField(
         unique=True,
@@ -28,9 +34,11 @@ class HomeProviderModel(models.Model):
     """
     Class stores all the different providers that are used
     """
+    MLSPIN = "MLSPIN"
+    YGL = "YGL"
     PROVIDER_TYPES = (
-        ('MLSPIN', 'MLSPIN'),
-        ('YGL', 'YGL'),
+        (MLSPIN, 'MLSPIN'),
+        (YGL, 'YGL'),
     )
 
     provider = models.CharField(
