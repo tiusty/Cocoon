@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 # Import Cocoon Modules
-from cocoon.userAuth.constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
+from cocoon.userAuth.constants import BROKER_CREATION_KEY
 from cocoon.userAuth.forms import ApartmentHunterSignupForm, BrokerSignupForm
 
 
@@ -17,7 +17,6 @@ class TestApartmentHunterSignupForm(TestCase):
         username = 'email@text.com'
         password1 = 'sometestPassword'
         password2 = 'sometestPassword'
-        creation_key = HUNTER_CREATION_KEY
 
         # Create form data
         form_data = {
@@ -26,7 +25,6 @@ class TestApartmentHunterSignupForm(TestCase):
             'email': username,
             'password1': password1,
             'password2': password2,
-            'creation_key': creation_key
         }
 
         # Act
@@ -46,7 +44,6 @@ class TestApartmentHunterSignupForm(TestCase):
         username = 'email@text.com'
         password1 = 'sometestPassword'
         password2 = 'sometestPassword1'
-        creation_key = HUNTER_CREATION_KEY
 
         # Create form data
         form_data = {
@@ -55,7 +52,6 @@ class TestApartmentHunterSignupForm(TestCase):
             'email': username,
             'password1': password1,
             'password2': password2,
-            'creation_key': creation_key
         }
 
         # Act
@@ -75,7 +71,6 @@ class TestApartmentHunterSignupForm(TestCase):
         username = 'email'
         password1 = 'sometestPassword'
         password2 = 'sometestPassword'
-        creation_key = HUNTER_CREATION_KEY
 
         # Create form data
         form_data = {
@@ -84,7 +79,6 @@ class TestApartmentHunterSignupForm(TestCase):
             'email': username,
             'password1': password1,
             'password2': password2,
-            'creation_key': creation_key
         }
 
         # Act
