@@ -34,8 +34,6 @@ class HomeScore(object):
         Generates the percent match
         :return: (int): The percent fit the home is, 100 being perfect, 0 being the worst
         """
-        # if self.eliminated:
-        #     return -1
         if self.accumulated_points < 0 or self.total_possible_points < 0:
             return -1
         elif self.total_possible_points != 0:
