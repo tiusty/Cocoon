@@ -32,7 +32,7 @@ export default class RentForm extends Component {
                 number_of_tenants: 1,
                 home_type: [],
                 move_weight: 0,
-                num_bedrooms: undefined,
+                num_bedrooms: [],
                 polygon_filter_type: 0,
                 polygons: [],
                 desired_price: 1000,
@@ -286,6 +286,7 @@ export default class RentForm extends Component {
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
                         is_editing={this.props.is_editing}
                         setHomeType={this.setHomeType}
+                        handleNumberOfRooms={this.handleNumberOfRooms}
                 />;
             case 2:
                 return <TenantsForm
@@ -424,6 +425,15 @@ export default class RentForm extends Component {
             }
         })
     };
+
+    handleNumberOfRooms = (data) => {
+        this.setState({
+            generalInfo: {
+                ...this.state.generalInfo,
+                num_bedrooms: data
+            }
+        })
+    }
 
     handleEarliestClick = (day, {selected}) => {
         let generalInfo = this.state.generalInfo;

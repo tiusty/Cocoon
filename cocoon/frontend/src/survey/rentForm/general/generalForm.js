@@ -26,8 +26,7 @@ export default class GeneralForm extends Component {
             price_error_range: 'The price must be between $0 and $4000',
             price_error_weight: 'You must choose how much you care about the price.',
             date_error: 'You must select an earliest and latest move in date.',
-            num_bedrooms_error_undefined: 'You must choose the number of bedrooms you need.',
-            num_bedrooms_error_amount: 'The number of bedrooms cannot be below 0.'
+            num_bedrooms_error_undefined: 'You must choose the number of bedrooms you need.'
         }
     };
 
@@ -143,23 +142,15 @@ export default class GeneralForm extends Component {
 
     handleBedroomValidation() {
         let valid = true;
-        if (this.props.generalInfo.num_bedrooms === undefined){
+        if (this.props.generalInfo.num_bedrooms.length === 0){
             document.querySelector('#number_of_rooms_error').style.display = 'block';
             document.querySelector('#number_of_rooms_error').innerText = this.state.errorMessages.num_bedrooms_error_undefined;
             document.querySelector('input[name=num_bedrooms]').parentNode.scrollIntoView(true);
             alert(this.state.errorMessages.num_bedrooms_error_undefined);
             valid = false
-        } else {
-            if (this.props.generalInfo.num_bedrooms < 0) {
-                document.querySelector('#number_of_rooms_error').style.display = 'block';
-                document.querySelector('#number_of_rooms_error').innerText = this.state.errorMessages.num_bedrooms_error_amount;
-                document.querySelector('input[name=num_bedrooms]').parentNode.scrollIntoView(true)
-                alert(this.state.errorMessages.num_bedrooms_error_amount);
-                valid = false
-            }
         }
         if(valid) { document.querySelector('#number_of_rooms_error').style.display = 'none'; }
-        return valid
+        return valid;
     }
 
     renderNumberOfPeopleQuestion() {
@@ -353,27 +344,43 @@ export default class GeneralForm extends Component {
 
     renderBedroomQuestion() {
         return(
-            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
+            <div className="survey-question" onChange={this.setRoomChoices}>
                 <h2>How many <span>bedrooms</span> do you need?</h2>
                 <span className="col-md-12 survey-error-message" id="number_of_rooms_error"></span>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="0" checked={this.props.generalInfo.num_bedrooms === 0} onChange={() => {}} />
-                    <div>Studio</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="0" checked={this.props.generalInfo.num_bedrooms.some(i => i === 0)} onChange={() => {}} />
+                    <div>Studio <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="1" checked={this.props.generalInfo.num_bedrooms === 1} onChange={() => {}} />
-                    <div>1 bed</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="1" checked={this.props.generalInfo.num_bedrooms.some(i => i === 1)} onChange={() => {}} />
+                    <div>1 bed <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="2" checked={this.props.generalInfo.num_bedrooms === 2} onChange={() => {}} />
-                    <div>2 beds</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="2" checked={this.props.generalInfo.num_bedrooms.some(i => i === 2)} onChange={() => {}} />
+                    <div>2 beds <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="3" checked={this.props.generalInfo.num_bedrooms === 3} onChange={() => {}} />
-                    <div>3 beds</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="3" checked={this.props.generalInfo.num_bedrooms.some(i => i === 3)} onChange={() => {}} />
+                    <div>3 beds <i className="material-icons">check</i></div>
                 </label>
             </div>
         );
+    }
+
+    setRoomChoices = (e) => {
+        const value = parseInt(e.target.value);
+        let room_choice = this.props.generalInfo.num_bedrooms;
+        if (e.target.checked) {
+            room_choice.push(value);
+            this.props.handleNumberOfRooms(room_choice);
+        } else {
+            for (let i = 0; i < room_choice.length; i++) {
+                if (room_choice[i] === value) {
+                    room_choice.splice(i, 1);
+                    this.props.handleNumberOfRooms(room_choice);
+                }
+            }
+        }
     }
 
     handleNextButtonAction(e) {
