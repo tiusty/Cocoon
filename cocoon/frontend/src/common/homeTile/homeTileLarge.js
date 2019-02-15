@@ -6,6 +6,8 @@ import {Component} from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 import PlaceHolder from "./homelist-empty.jpg";
+import OffMarket from './sold.svg';
+
 
 export default class HomeTileLarge extends Component {
     /**
@@ -27,7 +29,10 @@ export default class HomeTileLarge extends Component {
     static defaultProps = {
         canFavorite: true,
         canVisit: false,
-        displayPercent: false
+        displayPercent: false,
+        missing_amenities: [],
+        show_missing_amenities: false,
+        displayOnMarket: false
     };
 
     renderInterior = (home) => {
@@ -38,21 +43,27 @@ export default class HomeTileLarge extends Component {
 
         // Creates a list of all the interior amenities that exist
         let interior_amenities = [];
+        let interior_amenities_missing = [];
         for (var key in home.interior_amenities) {
             if (home.interior_amenities[key]) {
                 interior_amenities.push(key)
+            } else if (this.props.missing_amenities.some(item => key === item)){
+                interior_amenities_missing.push(key)
             }
         }
 
         // If there is at least one amenity then render it
         // Since the names have a _ instead of a space, when rendering the name
         //  replace all _ with spaces
-        if (interior_amenities.length > 0) {
+        if (interior_amenities.length > 0 || interior_amenities_missing.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Interior Amenities</h3>
                     {interior_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
+                    {interior_amenities_missing.map(item => (
+                        <p key={item}><i className="material-icons">clear</i> {item.replace(/_/g,' ')}</p>
                     ))}
                 </div>
             );
@@ -76,21 +87,27 @@ export default class HomeTileLarge extends Component {
 
         // Creates a list of all the exterior amenities that exist
         let exterior_amenities = [];
+        let exterior_amenities_missing = [];
         for (var key in home.exterior_amenities) {
             if (home.exterior_amenities[key]) {
                 exterior_amenities.push(key)
+            } else if (this.props.missing_amenities.some(item => key === item)) {
+                exterior_amenities_missing.push(key)
             }
         }
 
         // If there is at least one amenity then render it
         // Since the names have a _ instead of a space, when rendering the name
         //  replace all _ with spaces
-        if (exterior_amenities.length > 0) {
+        if (exterior_amenities.length > 0 || exterior_amenities_missing.length > 0) {
             return (
                 <div className="point-wrapper">
                     <h3>Exterior Amenities</h3>
                     {exterior_amenities.map(item => (
                         <p key={item}><i className="material-icons">check</i> {item.replace(/_/g,' ')}</p>
+                    ))}
+                    {exterior_amenities_missing.map(item => (
+                        <p key={item}><i className="material-icons">clear</i> {item.replace(/_/g,' ')}</p>
                     ))}
                 </div>
             );
@@ -195,9 +212,9 @@ export default class HomeTileLarge extends Component {
          * @type {string} THe home that is being rendered
          */
 
-            // Toggles whether the home text depending on favorite status
+        // Toggles the home text depending on favorite status
         let favorite_style;
-        if (!this.props.canVisit) {
+        if (!this.props.canVisit || (!this.props.onMarket && !this.props.visit)) {
             favorite_style = {
                 width: '100%',
                 borderRight: 'none'
@@ -236,7 +253,7 @@ export default class HomeTileLarge extends Component {
         let visit_class = 'home_add_default';
         if (this.props.visit) {
             visit_icon = "playlist_add_check";
-            visit_text = "Added to Visit List";
+            visit_text = "Remove From Visit List";
             visit_class += " home_added";
         } else {
             visit_icon = "playlist_add";
@@ -256,12 +273,12 @@ export default class HomeTileLarge extends Component {
         return (
             <div className="tileScore">
                 {this.props.canFavorite ? heart_span : null}
-                {this.props.canVisit ? visit_span : null}
+                {(this.props.canVisit && this.props.onMarket) || (this.props.visit && !this.props.onMarket) ? visit_span : null}
             </div>
         );
     }
 
-renderPercentMatch = (home) => {
+    renderPercentMatch = (home) => {
         /**
          * Returns the percent match info if it is desired
          * @type {null}
@@ -277,31 +294,73 @@ renderPercentMatch = (home) => {
     }
 
     renderImages = () => {
-        let { home } = this.props;
+        let {home} = this.props;
+
+        let off_market_section = null;
+        if (this.props.displayOnMarket && !this.props.onMarket) {
+            off_market_section = (
+                <div className="off-market-wrapper">
+                    <img src={OffMarket} alt="home is off the market"/>
+                    <p>Sorry, this home has been rented.</p>
+                </div>
+            );
+        }
+
         // renders placeholder image if home has no images
         if (home.images.length === 0) {
             return (
                 <div className="thumbnailDiv">
+                    {off_market_section}
                     <img src={PlaceHolder} alt="place holder image" className="thumbnailImage" />
                 </div>
             );
         } else {
             // renders carousel
             return (
-                <Carousel
-                    dynamicHeight={false}
-                    infiniteLoop={true}
-                    showThumbs={false}
-                    showStatus={false}
-                >
-                    {home.images.map(image =>
+                <>
+                    {off_market_section}
+                    <Carousel
+                        dynamicHeight={false}
+                        infiniteLoop={true}
+                        showThumbs={false}
+                        showStatus={false}
+                    >
+                        {home.images.map(image =>
                             <div key={image.id}>
                                 <img src={image.image} alt="house image"/>
                             </div>
-                    )}
-                </Carousel>
+                        )}
+                    </Carousel>
+                </>
             );
         }
+    }
+
+    renderMissingAmenitiesBadge = () => {
+        if (this.props.show_missing_amenities) {
+            // Sets background color of badge and renders the # of missing amenities
+            let missing_amenities = null;
+            let missing_number = this.props.missing_amenities.length;
+
+            let missing_style = 'var(--teal)';
+            if (missing_number > 3) {
+                missing_style = '#ff0110';
+            } else if (missing_number > 0) {
+                missing_style = 'var(--redOrange)';
+            }
+            let missing_text = 'Missing Amenities!';
+            if (missing_number === 1) {
+                missing_text = "Missing Amenity! We still think you'll like it!";
+            } else if (missing_number > 1) {
+                missing_text = "Missing Amenities! We still think you'll like it!";
+            }
+
+            missing_amenities = <span className="homeInfo-missing_amenities" style={{background: missing_style}}><i className="material-icons">notifications</i> <span className="missing_amenities_text">{missing_number} {missing_text}</span></span>;
+            return missing_amenities;
+        } else {
+            return null
+        }
+
     }
 
     render() {
@@ -320,6 +379,7 @@ renderPercentMatch = (home) => {
                     <div className="expanded-info">
                         <div className="home-tile-large-carousel-div">
                             {this.renderPercentMatch(home)}
+                            {this.renderMissingAmenitiesBadge()}
                             {this.renderImages(home)}
                         </div>
 

@@ -18,7 +18,13 @@ export default class TourSummary extends Component {
         // State for the tour duration
         refresh_duration: true,
         duration: undefined,
+        has_off_market: false,
+        homes_off_market: 0
     };
+
+    componentDidMount() {
+        this.checkIfOffMarket();
+    }
 
     componentDidUpdate(prevProps) {
 
@@ -45,6 +51,7 @@ export default class TourSummary extends Component {
                         },
                     )
             }
+            this.checkIfOffMarket();
         }
     }
 
@@ -68,10 +75,39 @@ export default class TourSummary extends Component {
     };
 
     determineScheduleButtonStatus() {
-        if (this.props.visit_list <= 0) {
+        if (this.props.visit_list <= 0 || this.state.has_off_market === true) {
             return true
         } else {
             return false
+        }
+    }
+
+    checkIfOffMarket = () => {
+        let { visit_list } = this.props;
+        let error_count = 0;
+        for (let i = 0; i < visit_list.length; i++) {
+            if (visit_list[i].on_market === false) {
+                error_count += 1;
+            }
+        }
+        if (error_count > 0) {
+            this.setState({
+                has_off_market: true,
+                homes_off_market: error_count
+            })
+        } else {
+            this.setState({
+                has_off_market: false,
+                homes_off_market: 0
+            })
+        }
+    }
+
+    handleOffMarketHomes = () => {
+        if (this.state.has_off_market === true) {
+            return <p style={{color: 'var(--red)', fontWeight: 'bold', fontSize: 12, paddingTop: 9}}>ERROR: {this.state.homes_off_market} of your homes are sold. Please remove from your visit list.</p>
+        } else {
+            return null;
         }
     }
 
@@ -143,6 +179,7 @@ export default class TourSummary extends Component {
                                 type="submit">Schedule!
                         </button>
                     </form>
+                    {this.handleOffMarketHomes()}
                     <h2 className="tour-summary-semi-bold">Visit List</h2>
                     {this.renderVisitList()}
                 </>

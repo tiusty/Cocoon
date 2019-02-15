@@ -240,6 +240,19 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
     def price_string(self):
         return "$" + str(self.price)
 
+    def on_market(self):
+        """
+        Returns whether or not the home is on market
+        :return: (boolean) -> True: The home is currently on the market
+                              False: The home is not on the market
+        """
+        # As long as the date of when the feed was updated matches the data
+        # that the home was last updated, then the home is on market
+        if self.listing_provider.last_updated_feed != self.last_updated:
+            return False
+        else:
+            return True
+
 
 def house_directory_path(instance, filename):
     return 'houseDatabase/{0}/{1}'.format(instance.house.id, filename)

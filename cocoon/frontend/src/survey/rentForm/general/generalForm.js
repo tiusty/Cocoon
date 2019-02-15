@@ -257,7 +257,7 @@ export default class GeneralForm extends Component {
                 </small>
                 <span className="col-md-12 survey-error-message" id="price_error"></span>
                 <InputRange
-                    draggableTrack
+                    draggableTrack={false}
                     maxValue={this.getMaxPrice(this.props.number_of_tenants)}
                     minValue={0}
                     step={50}

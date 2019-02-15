@@ -546,7 +546,13 @@ export default class RentForm extends Component {
         for (let i=0; i<this.state.tenants.length; i++) {
             if (tenants[id].index === i) {
                 if(type === 'number') {
-                    tenants[id][nameStripped] = parseInt(value)
+                    if (value) {
+                        if (!isNaN(value)) {
+                            tenants[id][nameStripped] = parseInt(value)
+                        }
+                    } else {
+                        tenants[id][nameStripped] = null
+                    }
                 } else if (type === 'boolean') {
                     tenants[id][nameStripped] = (value === 'true');
                 } else {
@@ -595,7 +601,11 @@ export default class RentForm extends Component {
                 }
 
                 //Other
-                tenants[i].income = this.state.tenants[index].income || null;
+                if (!("income" in this.state.tenants[index])) {
+                    tenants[i].income = null;
+                } else {
+                    tenants[i].income = this.state.tenants[index].income;
+                }
                 tenants[i].credit_score = this.state.tenants[index].credit_score || null;
 
             }
