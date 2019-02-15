@@ -13,7 +13,6 @@ export default class DetailsForm extends Component {
             password_error_number: 'The password must contain at least 1 number',
             password_error_length: 'Password must be at least 8 characters.',
             password_error_match: 'Passwords must match.',
-            creation_key_error: 'You must enter a creation key.'
         },
         phone_number: '',
     }
@@ -39,17 +38,12 @@ export default class DetailsForm extends Component {
             } else if (!errors.user_form_errors.password2) {
                 document.querySelector('#password_error').style.display = 'none';
             }
-            if (errors.user_form_errors.creation_key) {
-                document.querySelector('#creation_key_error').style.display = 'block';
-                document.querySelector('#creation_key_error').innerText = errors.user_form_errors.creation_key[0];
-                valid = false;
-            } else if (errors.user_form_errors.creation_key) { document.querySelector('#creation_key_error').style.display = 'none'; }
         }
         return valid;
     }
 
     handleValidation = () => {
-        return this.validateEmail() && this.validatePhone() && this.validatePassword() && this.validatePasswordMatch() && this.validateCreationKey();
+        return this.validateEmail() && this.validatePhone() && this.validatePassword() && this.validatePasswordMatch();
     }
 
     validateEmail = () => {
@@ -98,17 +92,6 @@ export default class DetailsForm extends Component {
         } else if (password === confirmPassword) { document.querySelector('#password_match_error').style.display = 'none'; }
         return true;
     }
-
-    validateCreationKey = () => {
-        const creationKey = document.querySelector('input[name=creation_key').value;
-        if (creationKey === '') {
-            document.querySelector('#creation_key_error').style.display = 'block';
-            document.querySelector('#creation_key_error').innerText = this.state.errorMessages.creation_key_error;
-            return false;
-        } else if (creationKey) { document.querySelector('#creation_key_error').style.display = 'none'; }
-        return true;
-    }
-
 
     handleInputChange = (e, type) => {
         const { name, value } = e.target;
@@ -161,7 +144,6 @@ export default class DetailsForm extends Component {
                         handleInputChange={this.handleInputChange}
                         validatePassword={this.validatePassword}
                         validatePasswordMatch={this.validatePasswordMatch}
-                        validateCreationKey={this.validateCreationKey}
                         handlePrevStep={this.props.handlePrevStep}
                         handleSubmit={this.handleSubmit}
                         loading={this.props.loading}
@@ -203,9 +185,6 @@ const NewUser = (props) => (
             <input className="col-md-12 survey-input" type="password" name="password1" placeholder="Password" required onChange={props.validatePassword} onBlur={(e) => {props.validatePassword && props.handleInputChange(e, 'string')} } />
             <span className="col-md-12 survey-error-message" id="password_match_error"></span>
             <input className="col-md-12 survey-input" type="password" name="password2" placeholder="Confirm Your Password" required onChange={props.validatePasswordMatch} onBlur={(e) => {props.validatePasswordMatch && props.handleInputChange(e, 'string')} } />
-
-            <span className="col-md-12 survey-error-message" id="creation_key_error"></span>
-            <input className="col-md-12 survey-input" type="text" name="creation_key" placeholder="Enter Your Key" required onBlur={(e) => props.handleInputChange(e, 'string')} />
         </div>
         <div className="row survey-btn-wrapper">
             <div className="col-sm-6 col-xs-12">

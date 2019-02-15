@@ -137,31 +137,6 @@ class BaseRegisterForm(UserCreationForm):
 
 class ApartmentHunterSignupForm(BaseRegisterForm):
 
-    creation_key = forms.CharField(
-        required=True,
-        label="Please enter the key",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'key',
-            }
-        )
-    )
-
-    def is_valid(self):
-        valid = super(ApartmentHunterSignupForm, self).is_valid()
-
-        if not valid:
-            return valid
-
-        current_form = self.cleaned_data.copy()
-
-        if current_form['creation_key'] != HUNTER_CREATION_KEY:
-            self.add_error('creation_key', "Creation Key invaild")
-            valid = False
-
-        return valid
-
     class Meta:
         model = MyUser
         fields = ['email', 'first_name', 'last_name', 'phone_number', 'password1', 'password2']
