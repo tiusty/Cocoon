@@ -254,7 +254,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param home_score: (HomeScore) -> The home that is currently being calaculated
         """
         if survey.wants_furnished:
-            self.handle_weighted_question('home_furnished', survey.furnished_weight, home_score, home_score.home.furnished)
+            self.handle_weighted_question('furnished', survey.furnished_weight, home_score, home_score.home.furnished)
         if survey.wants_hardwood_floors:
             self.handle_weighted_question('hardwood_floors', survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
         if survey.wants_AC:
@@ -326,4 +326,4 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         STEP 8: Reorder homes again now with the full data
         """
         # Now reorder all the homes with the new information
-        self.run_sort_based_on_num_missing_amenities(self.homes)
+        self.insertion_sort(self.homes)

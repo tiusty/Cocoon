@@ -168,10 +168,10 @@ class HomeTile extends Component {
                 let missing_number = this.props.missing_amenities.length;
 
                 let missing_style = 'var(--teal)';
-                if (missing_number > 0) {
-                    missing_style = 'var(--redOrange)';
-                } else if (missing_number > 1) {
-                    missing_style = '#5760ff';
+                if (missing_number > 2) {
+                    missing_style = '#ff0110';
+                } else if (missing_number > 0) {
+                    missing_style = '#ff9a00';
                 }
 
                 let missing_text = 'Missing Amenities!';
