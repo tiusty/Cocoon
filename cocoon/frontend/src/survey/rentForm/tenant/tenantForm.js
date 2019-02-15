@@ -599,20 +599,32 @@ export default class TenantForm extends Component {
         );
     }
 
+    renderCollapseSection = (name) => {
+        if (this.props.number_of_tenants > 1) {
+            return (
+                <>
+                    <div className={this.handleTenantPanelClasses()} onClick={this.handleTenantPanelClick}>
+                        <div className="tenant-panel-left">
+                            <i className={this.handleTenantIconClasses()}>
+                                {this.handleTenantPanelIcon()}
+                            </i>
+                            <span>{name}'s Info</span>
+                        </div>
+                        <span><i className="material-icons">{this.state.is_active ? 'remove' : 'add'}</i></span>
+                    </div>
+                </>
+            )
+        } else {
+            return null;
+        }
+    }
+
     render() {
         const name = this.props.tenant.first_name;
         const tenant_identifier = this.props.tenant.tenant_identifier;
         return (
             <>
-                <div className={this.handleTenantPanelClasses()} onClick={this.handleTenantPanelClick}>
-                    <div className="tenant-panel-left">
-                        <i className={this.handleTenantIconClasses()}>
-                            {this.handleTenantPanelIcon()}
-                        </i>
-                        <span>{name}'s Info</span>
-                    </div>
-                    <span><i className="material-icons">{this.state.is_active ? 'remove' : 'add'}</i></span>
-                </div>
+                {this.renderCollapseSection(name)}
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
                      onChange={() => this.props.onHandleValidation(this.props.index, false)}>
                     {this.renderOccupation(name)}

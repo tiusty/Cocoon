@@ -303,6 +303,7 @@ export default class TenantsForm extends Component {
                         onTenantCommute={this.props.onTenantCommute}
                         onAddressChange={this.props.onAddressChange}
                         onAddressSelected={this.props.onAddressSelected}
+                        number_of_tenants={this.props.number_of_tenants}
                     />
                 )}
                 <div className="row survey-btn-wrapper">

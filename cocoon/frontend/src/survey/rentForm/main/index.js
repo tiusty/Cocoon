@@ -343,7 +343,7 @@ export default class RentForm extends Component {
         if (this.state.step >= this.state.maxStep) {
             this.setState({
                maxStep: this.state.step
-            }, () => console.log(this.state.maxStep));
+            });
         }
     }
 
