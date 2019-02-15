@@ -14,7 +14,7 @@ from cocoon.commutes.models import ZipCodeBase, ZipCodeChild, CommuteType
 # Import DistanceWrapper
 from cocoon.commutes.distance_matrix.distance_wrapper import Distance_Matrix_Exception
 from cocoon.commutes.distance_matrix import commute_cache_updater
-from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute
+from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute_rent_algorithm
 
 # Import Constants from commute module
 from cocoon.commutes.constants import CommuteAccuracy
@@ -208,19 +208,17 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         for destination in self.tenants:
             try:
-                # map list of HomeScore objects to full addresses
-                origin_addresses = list(map(lambda house: house.home.full_address,
-                                        self.homes[:NUMBER_OF_EXACT_COMMUTES_COMPUTED]))
+                results = retrieve_exact_commute_rent_algorithm(self.homes[:NUMBER_OF_EXACT_COMMUTES_COMPUTED],
+                                                                destination,
+                                                                destination.commute_type,
+                                                                with_traffic=destination.traffic_option)
 
-                destination_address = destination.full_address
-                results = retrieve_exact_commute(origin_addresses, [destination_address],
-                                                 destination.commute_type,
-                                                 with_traffic=destination.traffic_option)
-
-                # iterates over min of number to be computed and length of results in case lens don't match
-                for i in range(min(NUMBER_OF_EXACT_COMMUTES_COMPUTED, len(results))):
-                    # update exact commute time with in minutes
-                    self.homes[i].exact_commute_times[destination] = int(results[i][0][0] / 60)
+                # Store the results to the homes
+                for i in range(len(results)):
+                    duration_seconds = results[i][0][0]
+                    distance_meters = results[i][0][1]
+                    if duration_seconds is not None and distance_meters is not None:
+                        self.homes[i].exact_commute_times[destination] = int(duration_seconds / 60)
 
             except Distance_Matrix_Exception as e:
                 print("Caught: " + e.__class__.__name__)
