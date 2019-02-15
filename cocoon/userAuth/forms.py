@@ -5,7 +5,7 @@ from django import forms
 from cocoon.signature.models import HunterDocManagerModel
 import re
 
-from .constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
+from .constants import BROKER_CREATION_KEY
 from .helpers.send_verification_email import send_verification_email
 
 
