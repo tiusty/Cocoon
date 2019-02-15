@@ -219,11 +219,11 @@ export default class GeneralForm extends Component {
                 <h2>What <span>{this.props.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
                 <span className="col-md-12 survey-error-message" id="name_of_tenants_error"></span>
                 <input className="col-md-12 survey-input" type="text" name="tenant_name"
-                       placeholder="First and Last Name" autoCapitalize={'words'} data-tenantkey={0}
+                       placeholder="My First and Last Name" autoCapitalize={'words'} data-tenantkey={0}
                        value={this.setNameOnField(0)} onChange={this.props.onHandleTenantName}/>
                 {this.props.number_of_tenants > 1 && Array.from(Array(this.props.number_of_tenants - 1)).map((t, i) => {
                     return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)}
-                                  autoCapitalize={'words'} data-tenantkey={i + 1} placeholder="First and Last Name"
+                                  autoCapitalize={'words'} data-tenantkey={i + 1} placeholder="Roommate's First and Last Name"
                                   value={this.setNameOnField(i+1)} onChange={this.props.onHandleTenantName}
                                   key={i}/>
                 })}
