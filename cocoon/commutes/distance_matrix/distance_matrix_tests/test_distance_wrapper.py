@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 from ..distance_wrapper import Request_Denied_Exception, Invalid_Request_Exception, \
     Over_Query_Limit_Exception, Max_Elements_Exceeded_Exception, Unknown_Error_Exception, Zero_Results_Exception, \
     distance_matrix, DistanceWrapper
-from ...constants import GoogleCommuteNaming, COMMUTE_TIME_WITHOUT_TRAFFIC, COMMUTE_TIME_WITH_TRAFFIC, \
-    TRAFFIC_MODEL_BEST_GUESS, TRAFFIC_MODEL_PESSIMISTIC
+from ...constants import GoogleCommuteNaming, TRAFFIC_MODEL_BEST_GUESS, TRAFFIC_MODEL_PESSIMISTIC
+from ..home_commute import HomeCommute
 
 
 class TestDistanceWrapper(TestCase):
@@ -93,8 +93,13 @@ class TestDistanceWrapper(TestCase):
         Tests inputting one origin and one destination
         """
         # Arrange
-        destination = ["2 Snow Hill Lane, Medfield MA"]
-        origin = ["1 Dewing Path, Wellesley MA"]
+        destination = [
+            HomeCommute(address="2 Snow Hill Lane", city="Medfield", state="MA")
+        ]
+        origin = [
+            HomeCommute(address="1 Dewing Path", city="Wellesley", state="MA")
+        ]
+
         # Setting distance matrix output so it doesn't use api calls.
         # If google api response changes, the return value needs to change
         distance_matrix.distance_matrix = MagicMock(return_value={'origin_addresses': ['2 Snow Hill Ln, Medfield, MA 02052, USA'], 'status': 'OK', 'rows': [{'elements': [{'status': 'OK', 'duration': {'text': '15 mins', 'value': 879}, 'distance': {'text': '6.7 mi', 'value': 10747}}]}], 'destination_addresses': ['1 Dewing Path, Wellesley, MA 02482, USA']}
@@ -109,8 +114,13 @@ class TestDistanceWrapper(TestCase):
         Tests inputting two origins and one destination
         """
         # Arrange
-        origins = ["2 Snow Hill Lane, Medfield MA", "1 Dewing Path, Welleslsey MA"]
-        destinations = ["350 Prospect Street, Belmont MA"]
+        origins = [
+            HomeCommute(address="2 Snow Hill Lane", city="Medfield", state="MA"),
+            HomeCommute(address='1 Dewing Path', city="Wellesley", state="MA")
+        ]
+        destinations = [
+            HomeCommute(address="350 Prospect Street", city="Belmont", state="MA")
+        ]
         # Setting distance matrix output so it doesn't use api calls.
         # If google api response changes, the return value needs to change
         distance_matrix.distance_matrix = MagicMock(return_value={'destination_addresses': ['350 Prospect St, Belmont, MA 02478, USA'], 'status': 'OK', 'rows': [{'elements': [{'status': 'OK', 'duration': {'text': '33 mins', 'value': 1966}, 'distance': {'text': '24.4 mi', 'value': 39311}}]}, {'elements': [{'status': 'OK', 'duration': {'text': '25 mins', 'value': 1479}, 'distance': {'text': '16.3 mi', 'value': 26184}}]}], 'origin_addresses': ['2 Snow Hill Ln, Medfield, MA 02052, USA', '1 Dewing Path, Wellesley, MA 02482, USA']})
@@ -141,8 +151,14 @@ class TestDistanceWrapper(TestCase):
         Tests inputting 2 origins and 2 destinations.
         """
         # Arrange
-        origins = ["350 Prospect Street, Belmont MA", "159 Brattle Street, Arlington MA"]
-        destinations = ["2 Snow Hill Lane, Medfield MA", "1 Dewing Path, Welleslsey MA"]
+        origins = [
+            HomeCommute(address="350 Prospect Street", city="Belmont", state="MA"),
+            HomeCommute(address="159 Brattle Street", city="Arlington", state="MA")
+        ]
+        destinations = [
+            HomeCommute(address="2 Snow Hill Lane", city="Medfield", state="MA"),
+            HomeCommute(address="1 Dewing Path", city="Wellesley", state="MA")
+        ]
         distance_matrix.distance_matrix = MagicMock(return_value={'origin_addresses': ['2 Snow Hill Ln, Medfield, MA 02052, USA', '1 Dewing Path, Wellesley, MA 02482, USA'], 'destination_addresses': ['350 Prospect St, Belmont, MA 02478, USA', '159 Brattle St, Arlington, MA 02474, USA'], 'rows': [{'elements': [{'distance': {'text': '24.4 mi', 'value': 39311}, 'duration': {'text': '33 mins', 'value': 1966}, 'status': 'OK'}, {'distance': {'text': '26.0 mi', 'value': 41838}, 'duration': {'text': '39 mins', 'value': 2336}, 'status': 'OK'}]}, {'elements': [{'distance': {'text': '16.3 mi', 'value': 26184}, 'duration': {'text': '25 mins', 'value': 1479}, 'status': 'OK'}, {'distance': {'text': '17.8 mi', 'value': 28711}, 'duration': {'text': '31 mins', 'value': 1849}, 'status': 'OK'}]}], 'status': 'OK'})
 
         # Act
@@ -184,8 +200,11 @@ class TestDistanceWrapper(TestCase):
         # Arrange
         origins = []
         for i in range(50):
-            origins.append("2 Snow Hill Lane, Medfield MA")
-        destinations = ["350 Prospect Street, Belmont MA", "159 Brattle Street, Arlington MA"]
+            origins.append(HomeCommute(address="2 Snow Hill Lane", city='Medfield', state='MA'))
+        destinations = [
+            HomeCommute(address='350 Prospect Street', city='Belmont', state='MA'),
+            HomeCommute(address='159 Brattle Street', city='Arlington', state='MA')
+        ]
         distance_matrix.distance_matrix = MagicMock(return_value={'status': 'OK', 'origin_addresses': ['2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA', '2 Snow Hill Ln, Medfield, MA 02052, USA'], 'rows': [{'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}, {'elements': [{'duration': {'value': 1966, 'text': '33 mins'}, 'status': 'OK', 'distance': {'value': 39311, 'text': '24.4 mi'}}, {'duration': {'value': 2336, 'text': '39 mins'}, 'status': 'OK', 'distance': {'value': 41838, 'text': '26.0 mi'}}]}], 'destination_addresses': ['350 Prospect St, Belmont, MA 02478, USA', '159 Brattle St, Arlington, MA 02474, USA']})
 
         # Act

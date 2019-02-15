@@ -10,20 +10,54 @@ from .home_commute import HomeCommute
 from cocoon.commutes.constants import GoogleCommuteNaming
 
 
+def retrieve_exact_commute_zipcode_baseline(origins, destinations, commute_type, with_traffic=False):
+    """
+    Exact commute retriever for a list of zipcodes. This is used in the baseline generation
+    :param origins: (list(string)) -> The zipcode origins
+    :param destinations: (list(string)) -> The zipcode origins
+    :param commute_type: (CommuteType Model) -> The commute type associated with the request
+    :param with_traffic: (Boolean) -> Determines if traffic is being used
+    :return: (list(tuples)) (duration, distance) -> Returns a list of duration and distance
+            if a combination could not be computed then None is returned in the tuple i.e (None, None)
+            Therefore the order of the items is preserved
+    """
+    return retrieve_exact_commute(HomeCommute.zipcodes_to_home_commute(origins),
+                                  HomeCommute.zipcodes_to_home_commute(destinations),
+                                  mode=commute_type,
+                                  with_traffic=with_traffic)
+
+
 def retrieve_exact_commute_client_scheduler(homes, destination, commute_type, with_traffic=False):
     """
     Exact commute retriever for the client scheduler. Puts the arguments in the correct formation
     :param homes: (list(RentDatabase models)) -> The rent database models used for computation
     :param destination: (RentDatabase Model) -> The destination which other homes compute against
     :param commute_type: (CommuteType) -> The type of commute for the commute
-    :return: (list(tuple(time, distance)) -> returns the time as seconds and the distance as meters. Also each index has
-        all possible combinations given by google, i.e if there are different routes
+    :return: (list(tuples)) (duration, distance) -> Returns a list of duration and distance
+            if a combination could not be computed then None is returned in the tuple i.e (None, None)
+            Therefore the order of the items is preserved
     """
-    home_addresses = []
-    for home in homes:
-        home_addresses.append(home.full_address)
+    return retrieve_exact_commute(HomeCommute.rentdatabases_to_home_commute(homes),
+                                  HomeCommute.rentdatabases_to_home_commute(destination),
+                                  mode=commute_type,
+                                  with_traffic=with_traffic)
 
-    return retrieve_exact_commute(destination.full_address, home_addresses, commute_type, with_traffic=with_traffic)
+
+def retrieve_exact_commute_rent_algorithm(homes, destinations, commute_type, with_traffic=False):
+    """
+    Exact commute retrieve for the rent algorithm. Puts arguments into the correct format
+    :param homes: (list(HomeScores)) -> The homes to be calculated with
+    :param destinations: (Destination Model) -> The destination that the user desires
+    :param commute_type: (CommuteType Model) -> The commute types the user wants
+    :param with_traffic: (Boolean) -> Determines if traffic info should be used
+    :return: (list(tuples)) (duration, distance) -> Returns a list of duration and distance
+            if a combination could not be computed then None is returned in the tuple i.e (None, None)
+            Therefore the order of the items is preserved
+    """
+    return retrieve_exact_commute(HomeCommute.home_scores_to_home_commute(homes),
+                                  HomeCommute.destination_to_home_commute(destinations),
+                                  mode=commute_type,
+                                  with_traffic=with_traffic)
 
 
 def retrieve_approximate_commute_client_scheduler(homes, destination, commute_type):
@@ -48,11 +82,12 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, with
 
     If the mode type is not recognized then an empty list is returned
     :param with_traffic: (boolean) -> Determines if the user wants the traffic commuted with traffic or not
-    :param origins: (list(string)) -> List of values that is accepted by the distance matrix
-    :param destinations: (list(destination)) -> list of values that is accepted by the distance matrix
+    :param origins: (list(HomeCommute)) -> List of values that is accepted by the distance matrix
+    :param destinations: (list(HomeCommute)) -> list of values that is accepted by the distance matrix
     :param mode: (CommuteType Model) -> The commute type that is stored in the commute type format
-    :return: (list(tuple)) -> A list of tuples containing the duration and distance between each destination
-        and the origin. If the commute type is not recognized then an empty list is returned
+    :return: (list(tuples)) (duration, distance) -> Returns a list of duration and distance
+            if a combination could not be computed then None is returned in the tuple i.e (None, None)
+            Therefore the order of the items is preserved
     """
     wrapper = DistanceWrapper()
 
@@ -64,7 +99,6 @@ def retrieve_exact_commute(origins, destinations, mode=CommuteType.DRIVING, with
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.BICYCLING, with_traffic=with_traffic)
     elif mode.commute_type == CommuteType.WALKING:
         return wrapper.get_durations_and_distances(origins, destinations, mode=GoogleCommuteNaming.WALKING, with_traffic=with_traffic)
-
     else:
         return []
 

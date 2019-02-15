@@ -6,6 +6,8 @@ import {Component} from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 import PlaceHolder from "./homelist-empty.jpg";
+import OffMarket from './sold.svg';
+
 
 export default class HomeTileLarge extends Component {
     /**
@@ -29,6 +31,7 @@ export default class HomeTileLarge extends Component {
         canVisit: false,
         displayPercent: false,
         missing_amenities: [],
+        displayOnMarket: false
     };
 
     renderInterior = (home) => {
@@ -208,9 +211,9 @@ export default class HomeTileLarge extends Component {
          * @type {string} THe home that is being rendered
          */
 
-            // Toggles whether the home text depending on favorite status
+        // Toggles the home text depending on favorite status
         let favorite_style;
-        if (!this.props.canVisit) {
+        if (!this.props.canVisit || (!this.props.onMarket && !this.props.visit)) {
             favorite_style = {
                 width: '100%',
                 borderRight: 'none'
@@ -249,7 +252,7 @@ export default class HomeTileLarge extends Component {
         let visit_class = 'home_add_default';
         if (this.props.visit) {
             visit_icon = "playlist_add_check";
-            visit_text = "Added to Visit List";
+            visit_text = "Remove From Visit List";
             visit_class += " home_added";
         } else {
             visit_icon = "playlist_add";
@@ -269,7 +272,7 @@ export default class HomeTileLarge extends Component {
         return (
             <div className="tileScore">
                 {this.props.canFavorite ? heart_span : null}
-                {this.props.canVisit ? visit_span : null}
+                {(this.props.canVisit && this.props.onMarket) || (this.props.visit && !this.props.onMarket) ? visit_span : null}
             </div>
         );
     }
@@ -291,28 +294,43 @@ renderPercentMatch = (home) => {
 
     renderImages = () => {
         let { home } = this.props;
+
+        let off_market_section = null;
+        if (this.props.displayOnMarket && !this.props.onMarket) {
+            off_market_section = (
+                <div className="off-market-wrapper">
+                    <img src={OffMarket} alt="home is off the market"/>
+                    <p>Sorry, this home has been rented.</p>
+                </div>
+            );
+        }
+
         // renders placeholder image if home has no images
         if (home.images.length === 0) {
             return (
                 <div className="thumbnailDiv">
+                    {off_market_section}
                     <img src={PlaceHolder} alt="place holder image" className="thumbnailImage" />
                 </div>
             );
         } else {
             // renders carousel
             return (
-                <Carousel
-                    dynamicHeight={false}
-                    infiniteLoop={true}
-                    showThumbs={false}
-                    showStatus={false}
-                >
-                    {home.images.map(image =>
+                <>
+                    {off_market_section}
+                    <Carousel
+                        dynamicHeight={false}
+                        infiniteLoop={true}
+                        showThumbs={false}
+                        showStatus={false}
+                    >
+                        {home.images.map(image =>
                             <div key={image.id}>
                                 <img src={image.image} alt="house image"/>
                             </div>
-                    )}
-                </Carousel>
+                        )}
+                    </Carousel>
+                </>
             );
         }
     }

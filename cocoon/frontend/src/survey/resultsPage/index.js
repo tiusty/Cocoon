@@ -236,12 +236,14 @@ export default class ResultsPage extends Component {
          * On the click of a homeTile or map marker, this sets the clicked_home id
          * to the target id to be used to render the large home tile.
         **/
-        this.saveScrollPosition();
-        this.setState({
-            clicked_home: id,
-            viewing_home: true
-        });
-        document.querySelector('.results-wrapper').scrollTop = 0;
+        if (!this.state.isEditing) {
+            this.saveScrollPosition();
+            this.setState({
+                clicked_home: id,
+                viewing_home: true
+            });
+            document.querySelector('.results-wrapper').scrollTop = 0;
+        }
     };
 
     handleCloseHomeTileLarge = () => {

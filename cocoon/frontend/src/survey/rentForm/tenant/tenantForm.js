@@ -440,7 +440,7 @@ export default class TenantForm extends Component {
                     <small id="priceHelp" className="form-text text-muted">Left dot is your desired commute, the right dot is the max commute you are willing to have
                     </small>
                     <InputRange
-                        draggableTrack
+                        draggableTrack={false}
                         maxValue={180}
                         minValue={0}
                         step={5}
@@ -516,9 +516,14 @@ export default class TenantForm extends Component {
                 </h2>
                 <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-income-error`}></span>
-                <input className="col-md-12 survey-input" type="number" name={`${this.props.tenant.tenant_identifier}-income`}
-                       placeholder="Yearly salary" step="1000"
-                       value={this.props.tenant.income || ''} onChange={(e) => {
+                <input className="col-md-12 survey-input" name={`${this.props.tenant.tenant_identifier}-income`}
+                       placeholder="Yearly salary"
+                       value=
+                           {
+                               this.props.tenant.income != null ?
+                                   this.props.tenant.income :
+                                   ''
+                           } onChange={(e) => {
                     this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
                 }}/>
             </div>

@@ -106,8 +106,8 @@ class BaseRegisterForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Please use format: ###-###-####',
-                'pattern': '\d{3}[\-]\d{3}[\-]\d{4}',
+                'placeholder': 'Please use format: ##########',
+                'pattern': '\d{10}',
             }
         )
     )
@@ -123,8 +123,10 @@ class BaseRegisterForm(UserCreationForm):
         # makes sure that the phone number is formatted properly
         if current_form['phone_number']:
             pattern = re.compile("^(\d{3}[\-]\d{3}[\-]\d{4})$")
-            if not pattern.match(current_form['phone_number']):
+            pattern1 = re.compile("^\d{10}")
+            if not pattern.match(current_form['phone_number']) and not pattern1.match(current_form['phone_number']):
                 valid = False
+                self.add_error('phone_number', "Phone number not in valid format")
 
         return valid
 
