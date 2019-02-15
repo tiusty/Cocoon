@@ -29,6 +29,8 @@ class Command(BaseCommand):
         """
         Pulls all the homes for all the providers
         """
+        print('This script is deprecated')
+        exit(1)
         num_homes = -1
         if options['num_homes']:
             num_homes = options['num_homes']

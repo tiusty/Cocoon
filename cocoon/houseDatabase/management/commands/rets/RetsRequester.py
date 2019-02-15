@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class RetsRequester(object):
+class MLSRetsRequester(object):
 
     QUERY_LIMIT = 3000
 
