@@ -45,6 +45,8 @@ class HomeTile extends Component {
         isLarge: false,
         displayPercent: false,
         percent_match: null,
+        missing_amenities: [],
+        show_missing_amenities: false,
         displayOnMarket: false
     }
 
@@ -160,6 +162,26 @@ class HomeTile extends Component {
                 percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
             }
 
+            let missing_amenities = null;
+            if (this.props.show_missing_amenities) {
+                // Sets background color of badge and renders the # of missing amenities
+                let missing_number = this.props.missing_amenities.length;
+
+                let missing_style = 'var(--teal)';
+                if (missing_number > 2) {
+                    missing_style = '#ff0110';
+                } else if (missing_number > 0) {
+                    missing_style = '#ff9a00';
+                }
+
+                let missing_text = 'Missing Amenities!';
+                if (missing_number === 1) {
+                    missing_text = "Missing Amenity!";
+                }
+
+                missing_amenities = <span className="homeInfo-missing_amenities" style={{background: missing_style}}><i className="material-icons">notifications</i> <span className="missing_amenities_text">{missing_number} {missing_text}</span></span>;
+            }
+
             let off_market_section = null;
             if (this.props.displayOnMarket && !this.props.onMarket) {
                 off_market_section = (
@@ -174,6 +196,7 @@ class HomeTile extends Component {
                 return (
                     <div onClick={() => this.props.onHomeClick(this.props.id)} className={div_classes}>
                         {percent_match}
+                        {missing_amenities}
                         {off_market_section}
                         <img src={PlaceHolder} alt="place holder image" className={image_classes} />
                     </div>
@@ -185,6 +208,7 @@ class HomeTile extends Component {
                         { home.images.slice(0,1).map(image =>
                             <div onClick={() => this.props.onHomeClick(this.props.id)} key={image.id} className={div_classes}>
                                 {percent_match}
+                                {missing_amenities}
                                 {off_market_section}
                                 <img className={image_classes} src={image.image} alt='Home image'/>
                             </div>

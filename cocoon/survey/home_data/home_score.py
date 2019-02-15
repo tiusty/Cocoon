@@ -1,3 +1,6 @@
+from cocoon.houseDatabase.serializers import RentDatabaseSerializer
+
+
 class HomeScore(object):
     # noinspection SpellCheckingInspection
     """
@@ -23,6 +26,7 @@ class HomeScore(object):
         self._approx_commute_times_minutes = {}
         self._exact_commute_times_minutes = {}
         self._eliminated = False
+        self.missing_amenities = []
 
     @property
     def percent_match(self):
@@ -30,9 +34,7 @@ class HomeScore(object):
         Generates the percent match
         :return: (int): The percent fit the home is, 100 being perfect, 0 being the worst
         """
-        if self.eliminated:
-            return -1
-        elif self.accumulated_points < 0 or self.total_possible_points < 0:
+        if self.accumulated_points < 0 or self.total_possible_points < 0:
             return -1
         elif self.total_possible_points != 0:
             return (self.accumulated_points / self.total_possible_points) * 100
@@ -55,10 +57,13 @@ class HomeScore(object):
         """
         self._eliminated = is_eliminated
 
-    def eliminate_home(self):
+    def eliminate_home(self, missing_amenity=None):
         """
         Eliminates the homes
         """
+        if missing_amenity is not None:
+            if missing_amenity not in self.missing_amenities:
+                self.missing_amenities.append(missing_amenity)
         self.eliminated = True
 
     @property
@@ -150,9 +155,9 @@ class HomeScore(object):
         Generates the score percentage
         :return: (int): The percent fit the home is, 100 being perfect, 0 being the worst
         """
-        if self.eliminated:
-            return -1
-        elif self.accumulated_points < 0 or self.total_possible_points < 0:
+        # if self.eliminated:
+        #     return -1
+        if self.accumulated_points < 0 or self.total_possible_points < 0:
             return -1
         elif self.total_possible_points != 0:
             return (self.accumulated_points / self.total_possible_points) * 100
