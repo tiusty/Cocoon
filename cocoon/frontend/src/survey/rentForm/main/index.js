@@ -23,6 +23,7 @@ export default class RentForm extends Component {
         super(props);
         this.state = {
             step: 1,
+            maxStep: 1,
             loading: false,
             isEditing: false,
 
@@ -128,6 +129,11 @@ export default class RentForm extends Component {
                 generalInfo: survey.generalInfo,
                 tenants,
                 isEditing: true,
+            })
+        }
+        if (this.state.isEditing === true) {
+            this.setState({
+                maxStep: 4
             })
         }
     }
@@ -318,7 +324,7 @@ export default class RentForm extends Component {
         e.preventDefault();
         this.setState({
             step: this.state.step + 1
-        });
+        }, () => this.handleMaxStep());
         document.body.scrollTop = document.documentElement.scrollTop = 0;
     };
 
@@ -332,6 +338,20 @@ export default class RentForm extends Component {
         });
         document.body.scrollTop = document.documentElement.scrollTop = 0;
     };
+
+     handleMaxStep = () => {
+        if (this.state.step >= this.state.maxStep) {
+            this.setState({
+               maxStep: this.state.step
+            }, () => console.log(this.state.maxStep));
+        }
+    }
+
+    goToStep = (step) => {
+         this.setState({
+            step: step
+        });
+    }
 
     handleAmenitiesInputChange = (e, type) => {
         /**
@@ -672,7 +692,7 @@ export default class RentForm extends Component {
     render() {
         return (
             <div className="survey-wrapper">
-                <Progress step={this.state.step}/>
+                <Progress step={this.state.step} maxStep={this.state.maxStep} goToStep={this.goToStep} />
                 <div className="form-wrapper">
                     {this.renderForm(this.state.step)}
                 </div>
