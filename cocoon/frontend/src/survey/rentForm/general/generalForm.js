@@ -226,7 +226,7 @@ export default class GeneralForm extends Component {
         if(this.state.home_type_options) {
             return (
                 <div className="survey-question" onChange={this.validateHomeType}>
-                    <h2>What <span>kind of home</span> do you want?</h2>
+                    <h2>What <span>kind of home</span> do you want? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                     <span className="col-md-12 survey-error-message" id="home_type_error"></span>
                     {this.state.home_type_options.map((o, index) => (
                         <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.props.setHomeTypes(e, index, o.id)}>
@@ -345,7 +345,7 @@ export default class GeneralForm extends Component {
     renderBedroomQuestion() {
         return(
             <div className="survey-question" onChange={this.setRoomChoices}>
-                <h2>How many <span>bedrooms</span> do you need?</h2>
+                <h2>How many <span>bedrooms</span> do you need? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                 <span className="col-md-12 survey-error-message" id="number_of_rooms_error"></span>
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="num_bedrooms" value="0" checked={this.props.generalInfo.num_bedrooms.some(i => i === 0)} onChange={() => {}} />

@@ -352,7 +352,7 @@ export default class TenantForm extends Component {
             <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-transit-follow-up-question`} onChange={(e) => {
                 this.setTransitType(e);
             }}>
-                <h2>What form of <span>transit</span>?</h2>
+                <h2>What form of <span>transit</span>? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                 <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-transit_options_error`}></span>
                 <label className="col-md-6 survey-label survey-checkbox">
