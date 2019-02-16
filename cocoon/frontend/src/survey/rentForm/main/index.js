@@ -131,11 +131,6 @@ export default class RentForm extends Component {
                 isEditing: true,
             })
         }
-        if (this.state.isEditing === true) {
-            this.setState({
-                maxStep: 4
-            })
-        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -146,6 +141,14 @@ export default class RentForm extends Component {
         // If the number of tenants changes then update the total number of forms to equal that
         if (this.state.generalInfo.number_of_tenants !== prevState.generalInfo.number_of_tenants) {
             this.setState({'tenants-TOTAL_FORMS': this.state.generalInfo.number_of_tenants})
+        }
+
+        if (this.state.isEditing !== prevState.isEditing) {
+            if (this.state.isEditing) {
+                this.setState({
+                    maxStep: 4
+                })
+            }
         }
     };
 
