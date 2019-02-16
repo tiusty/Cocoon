@@ -394,6 +394,7 @@ export default class HomeTileLarge extends Component {
                             </div>
 
                             <div className="expanded-remarks">
+                                <span className="expanded-date_available"><i className="material-icons">access_time</i> Date Available: {this.props.date_available}</span>
                                 <p>{home.remarks}</p>
                             </div>
 
