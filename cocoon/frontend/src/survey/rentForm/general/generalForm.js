@@ -674,9 +674,7 @@ const MyMapComponent = compose(
         loadingElement: <div style={{height: `100%`}}/>,
         containerElement: <div style={{height: `400px`}}/>,
         mapElement: <div style={{height: `100%`}}/>,
-        googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing,places",
     }),
-    withScriptjs,
     withGoogleMap
 )(props => (
     <GoogleMap

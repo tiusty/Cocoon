@@ -91,7 +91,7 @@ export default class TenantForm extends Component {
                 <div className="survey-question" onChange={(e) => {
                     this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index);
                 }}>
-                    <h2>{this.props.index === 0 ? 'Is' : 'Are'} <span>{name}</span> working, studying, or other?
+                    <h2>{this.props.index !== 0 ? 'Is' : 'Are'} <span>{name}</span> working, studying, or other?
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-occupation-error`}></span>
@@ -235,7 +235,7 @@ export default class TenantForm extends Component {
             );
         } else {
             return (
-                <h2>How does {name} <span>commute</span>?</h2>
+                <h2>How {this.props.index === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
             );
         }
     };
@@ -282,6 +282,9 @@ export default class TenantForm extends Component {
 
     renderAddressInput = () => {
         if (this.props.tenant.commute_type !== this.getCommuteId('Work From Home')) {
+            setTimeout(() => {
+                this.disableAutocomplete();
+            }, 0);
             return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-other-occupation-question`}>
                     <h2>What's the <span>street address</span>?</h2>
@@ -433,7 +436,7 @@ export default class TenantForm extends Component {
                      onBlur={(e) => {
                          this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
                      }}>
-                    <h2>How <span>long of a commute</span> does {name} want?
+                    <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {name} want?
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-desired_commute-error`}></span>
@@ -620,7 +623,7 @@ export default class TenantForm extends Component {
     }
 
     render() {
-        const name = this.props.tenant.first_name;
+        const name = this.props.index === 0 ? 'you' : this.props.tenant.first_name;
         const tenant_identifier = this.props.tenant.tenant_identifier;
         return (
             <>
