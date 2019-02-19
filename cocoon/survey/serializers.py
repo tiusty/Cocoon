@@ -146,6 +146,7 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
 class HomeScoreSerializer(serializers.Serializer):
     home = serializers.SerializerMethodField()
     percent_match = serializers.IntegerField()
+    missing_amenities = serializers.ListField()
 
     def get_home(self, obj):
         """
