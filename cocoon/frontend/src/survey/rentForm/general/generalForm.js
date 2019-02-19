@@ -327,7 +327,7 @@ export default class GeneralForm extends Component {
                             onDayChange={this.props.handleEarliestClick}
                             value=
                                 {this.props.generalInfo.earliest_move_in  === undefined ?
-                                    null
+                                    ""
                                     :
                                     this.props.generalInfo.earliest_move_in.format('MMMM Do YYYY')
                                 }
@@ -339,7 +339,7 @@ export default class GeneralForm extends Component {
                             onDayChange={this.props.handleLatestClick}
                             value =
                                 {this.props.generalInfo.latest_move_in  === undefined ?
-                                null
+                                ""
                                 :
                                 this.props.generalInfo.latest_move_in.format('MMMM Do YYYY')
                             }
