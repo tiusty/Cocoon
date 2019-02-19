@@ -291,20 +291,24 @@ export default class TenantForm extends Component {
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-commute_address-error`}></span>
                     <span className="col-md-12 survey-error-message" style={{color: `var(--grey)`, display: 'block'}}>Please be sure to choose a location from the dropdown list.</span>
-                    <Autocomplete
-                        className="col-md-12 survey-input survey-address-input"
-                        style={{backgroundImage: `url(${this.props.tenant.address_valid ? validImage : invalidImage})`}}
-                        autoComplete="off"
-                        onPlaceSelected={(place) => {
-                            this.props.onAddressSelected(this.props.index, place)
-                        }}
-                        types={['address']}
-                        name={`${this.props.tenant.tenant_identifier}-commute_address`}
-                        placeholder={'Street Address'}
-                        value={this.props.tenant.full_address}
-                        onChange={value => this.props.onAddressChange(this.props.index, value.target.value)
-                        }
-                    />
+                    {this.props.googleApiLoaded ?
+                        <Autocomplete
+                            className="col-md-12 survey-input survey-address-input"
+                            style={{backgroundImage: `url(${this.props.tenant.address_valid ? validImage : invalidImage})`}}
+                            autoComplete="off"
+                            onPlaceSelected={(place) => {
+                                this.props.onAddressSelected(this.props.index, place)
+                            }}
+                            types={['address']}
+                            name={`${this.props.tenant.tenant_identifier}-commute_address`}
+                            placeholder={'Street Address'}
+                            value={this.props.tenant.full_address}
+                            onChange={value => this.props.onAddressChange(this.props.index, value.target.value)
+                            }
+                        />
+                        :
+                        null
+                    }
                 </div>
             );
         } else {
