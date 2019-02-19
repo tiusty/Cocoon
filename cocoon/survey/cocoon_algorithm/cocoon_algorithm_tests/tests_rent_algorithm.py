@@ -791,60 +791,6 @@ class TestRentAlgorithmJustSortHomeByScore(TestCase):
         self.assertEqual(self.home1, rent_algorithm.homes[0])
         self.assertEqual(self.home2, rent_algorithm.homes[2])
 
-    def test_run_sort_home_by_score_homes_equal_different_total_possible_points(self):
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        self.home = self.create_home(self.home_type)
-        self.home1 = self.create_home(self.home_type)
-        self.home2 = self.create_home(self.home_type)
-        # Home 0
-        rent_algorithm.homes = self.home
-        rent_algorithm.homes[0].accumulated_points = 60
-        rent_algorithm.homes[0].total_possible_points = 120
-        # Home 1
-        rent_algorithm.homes = self.home1
-        rent_algorithm.homes[1].accumulated_points = 120
-        rent_algorithm.homes[1].total_possible_points = 240
-        # Home 2
-        rent_algorithm.homes = self.home2
-        rent_algorithm.homes[2].accumulated_points = 240
-        rent_algorithm.homes[2].total_possible_points = 480
-
-        # Act
-        rent_algorithm.run_sort_home_by_score()
-
-        # Assert
-        self.assertEqual(self.home, rent_algorithm.homes[2])
-        self.assertEqual(self.home1, rent_algorithm.homes[1])
-        self.assertEqual(self.home2, rent_algorithm.homes[0])
-
-    def test_run_sort_home_by_score_some_negative(self):
-        # Arrange
-        rent_algorithm = RentAlgorithm()
-        self.home = self.create_home(self.home_type)
-        self.home1 = self.create_home(self.home_type)
-        self.home2 = self.create_home(self.home_type)
-        # Home 0
-        rent_algorithm.homes = self.home
-        rent_algorithm.homes[0].accumulated_points = 60
-        rent_algorithm.homes[0].total_possible_points = 120
-        # Home 1
-        rent_algorithm.homes = self.home1
-        rent_algorithm.homes[1].accumulated_points = -120
-        rent_algorithm.homes[1].total_possible_points = 240
-        # Home 2
-        rent_algorithm.homes = self.home2
-        rent_algorithm.homes[2].accumulated_points = -240
-        rent_algorithm.homes[2].total_possible_points = 480
-
-        # Act
-        rent_algorithm.run_sort_home_by_score()
-
-        # Assert
-        self.assertEqual(self.home, rent_algorithm.homes[0])
-        self.assertEqual(self.home1, rent_algorithm.homes[2])
-        self.assertEqual(self.home2, rent_algorithm.homes[1])
-
 
 class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
