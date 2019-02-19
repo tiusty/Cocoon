@@ -99,7 +99,6 @@ class HomeTrackerInLIne(admin.TabularInline):
 
 class SurveyResultsIterationAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = SurveyResultIterationResource
-    inlines = [HomeTrackerInLIne]
 
 
 admin.site.register(SurveyResultsIteration, SurveyResultsIterationAdmin)

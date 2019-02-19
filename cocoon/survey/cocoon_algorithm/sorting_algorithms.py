@@ -28,6 +28,16 @@ class SortingAlgorithms(object):
         return scored_homes
 
     @staticmethod
+    def python_sort(scored_homes):
+        """
+        Uses the built in python sort and makes sure that the sorting is based on the percent score
+        :param scored_homes: (List(HomeScore)): All the HomeScore objects for that survey
+        :return: (List(HomeScore)): List of HomeScore classes ordered from left to right based off score
+        """
+        sorted_values = sorted(scored_homes,  reverse=True, key=lambda x: x.percent_score())
+        return sorted_values
+
+    @staticmethod
     def run_sort_based_on_num_missing_amenities(scored_homes):
         """
         Runs insertion sort on each range of homes. Therefore homes with all the amenities are always first,

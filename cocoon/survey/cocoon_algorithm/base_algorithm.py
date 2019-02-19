@@ -115,7 +115,6 @@ class CocoonAlgorithm(object):
         :return: (RentDataBaseModel Queryset): All the homes that fit the static filter
         """
         # Query the database
-        print('hi')
         house_query = RentDatabaseModel.objects\
             .filter(last_updated=F('listing_provider__last_updated_feed')) \
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
