@@ -202,6 +202,7 @@ export default class ResultsPage extends Component {
         /**
          *  Renders the list of home tiles
         **/
+        console.log(this.state.homeList)
         return (
             <>
                 <div className="results-info">
@@ -226,6 +227,7 @@ export default class ResultsPage extends Component {
                             onMouseEnter={() => this.setHoverId(home.home.id)}
                             missing_amenities={home.missing_amenities}
                             show_missing_amenities={true}
+                            date_available={home.home.date_available}
                         />))}
                 </div>
             </>
@@ -271,6 +273,7 @@ export default class ResultsPage extends Component {
                     percent_match={home.percent_match}
                     missing_amenities={home.missing_amenities}
                     show_missing_amenities={true}
+                    date_available={home.home.date_available}
                 />
             </div>
         );

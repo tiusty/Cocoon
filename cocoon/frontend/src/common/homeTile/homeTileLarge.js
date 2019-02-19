@@ -343,11 +343,12 @@ export default class HomeTileLarge extends Component {
             let missing_number = this.props.missing_amenities.length;
 
             let missing_style = 'var(--teal)';
-            if (missing_number > 3) {
+            if (missing_number > 2) {
                 missing_style = '#ff0110';
             } else if (missing_number > 0) {
-                missing_style = 'var(--redOrange)';
+                missing_style = '#ff9a00';
             }
+
             let missing_text = 'Missing Amenities!';
             if (missing_number === 1) {
                 missing_text = "Missing Amenity! We still think you'll like it!";
@@ -394,6 +395,7 @@ export default class HomeTileLarge extends Component {
                             </div>
 
                             <div className="expanded-remarks">
+                                <span className="expanded-date_available"><i className="material-icons">access_time</i> Date Available: {this.props.date_available}</span>
                                 <p>{home.remarks}</p>
                             </div>
 

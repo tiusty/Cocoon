@@ -14,6 +14,12 @@ class HomeImageSerializer(serializers.HyperlinkedModelSerializer):
 
 class HomeTypeSerializer(serializers.HyperlinkedModelSerializer):
 
+    home_type = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_home_type(obj):
+        return obj.get_home_type_display()
+
     class Meta:
         model = HomeTypeModel
         fields = ('id', 'home_type')
@@ -82,7 +88,7 @@ class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
         model = RentDatabaseModel
         fields = ('id', 'price', 'home_type', 'images', 'remarks', 'num_bedrooms', 'num_bathrooms',
                   'interior_amenities', 'exterior_amenities', 'nearby_amenities',
-                  'latitude', 'longitude', 'on_market')
+                  'latitude', 'longitude', 'on_market', 'date_available')
 
 
 class RentDatabaseSerializerBroker(RentDatabaseSerializer):

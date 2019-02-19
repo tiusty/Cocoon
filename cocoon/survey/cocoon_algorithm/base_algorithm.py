@@ -1,9 +1,10 @@
 # Import Python Modules
-from django.utils import timezone
+from datetime import timedelta
 from django.db.models import F
 
 # Import houseDatabase modules
 from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.survey.constants import MOVE_WEIGHT_MAX, DAYS_AFTER_MOVE_IN_ADDED, DAYS_BEFORE_MOVE_IN_ADDED
 
 # Import HomeScore class
 from cocoon.survey.home_data.home_score import HomeScore
@@ -118,8 +119,17 @@ class CocoonAlgorithm(object):
         house_query = RentDatabaseModel.objects\
             .filter(last_updated=F('listing_provider__last_updated_feed')) \
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
-            .filter(currently_available=True) \
             .filter(num_bedrooms__in=user_survey.num_bedrooms) \
             .filter(home_type__in=user_survey.home_type.all())\
+
+        # Depending on the user move weight, determine how the static filter works
+        if user_survey.move_weight == MOVE_WEIGHT_MAX:
+            house_query = house_query.filter(currently_available=True)
+        else:
+            if user_survey.earliest_move_in is not None and user_survey.latest_move_in is not None:
+                house_query = house_query.filter(
+                    date_available__range=(
+                        user_survey.earliest_move_in - timedelta(days=DAYS_BEFORE_MOVE_IN_ADDED),
+                        user_survey.latest_move_in + timedelta(days=DAYS_AFTER_MOVE_IN_ADDED)))
 
         return house_query

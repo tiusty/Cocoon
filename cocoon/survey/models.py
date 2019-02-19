@@ -1,7 +1,6 @@
 # Import Django modules
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.postgres.fields import ArrayField
 
 # Import cocoon models
 from cocoon.userAuth.models import UserProfile
@@ -62,6 +61,8 @@ class HomeInformationModel(models.Model):
     home_type = models.ManyToManyField(HomeTypeModel)
     polygon_filter_type = models.IntegerField(default=0)
     move_weight = models.IntegerField(default=0)
+    earliest_move_in = models.DateField(blank=True, null=True)
+    latest_move_in = models.DateField(blank=True, null=True)
 
     @property
     def num_bedrooms(self):

@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 # Cocoon Modules
-from cocoon.houseDatabase.management.commands.mlspin.MlspinRequester import MlspinRequester
+from cocoon.houseDatabase.management.commands.mls_rets.MLSRetsRequester import MLSRetsRequester
 from cocoon.houseDatabase.management.commands.mlspin.MlspinRequesterImages import MlspinRequesterImage
 
 
@@ -16,44 +16,32 @@ class Command(BaseCommand):
     help = 'Ingests IDX feed into database'
 
     def add_arguments(self, parser):
-        # Argument allows a specified number of homes to be pulled,
-        #   If not specified then all homes are pulled.
-        parser.add_argument(
-            '--num_homes',
-            action='store',
-            dest='num_homes',
-            help='Number of homes to pull, leave blank for all',
-            type=int)
+        # add args here
+        return
 
     def handle(self, *args, **options):
         """
         Pulls all the homes for all the providers
         """
-        print('This script is deprecated')
-        exit(1)
-        num_homes = -1
-        if options['num_homes']:
-            num_homes = options['num_homes']
 
         update_timestamp = timezone.now()
 
         # Pull the homes
-        self.pull_mlspin_homes(update_timestamp, num_homes)
+        self.pull_mlspin_rets_homes(update_timestamp)
 
         # Pull the images
-        self.pull_mlspin_images(update_timestamp)
+        self.pull_mls_images(update_timestamp)
 
     @staticmethod
-    def pull_mlspin_homes(timestamp, num_homes):
+    def pull_mlspin_rets_homes(timestamp):
         """
-        Pulls the homes from MLSpin
+        Pulls the homes from YGL
         """
-        # Pull the MLS homes
-        mlspin_request = MlspinRequester(timestamp, num_homes=num_homes)
-        mlspin_request.parse_idx_feed()
+        rets_requester = MLSRetsRequester(timestamp)
+        rets_requester.run()
 
     @staticmethod
-    def pull_mlspin_images(timestamp):
+    def pull_mls_images(timestamp):
         """
         Pulls images for MLSpin homes
         """

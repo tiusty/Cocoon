@@ -16,6 +16,7 @@ from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 from cocoon.survey.home_data.home_score import HomeScore
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.userAuth.models import MyUser, UserProfile
+from cocoon.survey.constants import MOVE_WEIGHT_MAX
 
 from cocoon.survey.constants import AVERAGE_BICYCLING_SPEED, AVERAGE_WALKING_SPEED
 
@@ -892,7 +893,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
 
     @staticmethod
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2):
+                      num_bedrooms=2, move_weight=0):
         return RentingSurveyModel.objects.create(
             user_profile=user_profile,
             max_price=max_price,
@@ -900,6 +901,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
             max_bathrooms=max_bathroom,
             min_bathrooms=min_bathroom,
             num_bedrooms=num_bedrooms,
+            move_weight=move_weight,
         )
 
     @staticmethod
@@ -989,7 +991,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                       num_bathrooms=self.num_bathrooms_min,
                                       num_bedrooms=self.num_bedrooms_min)
         # Create the survey
-        survey = self.create_survey(self.user.userProfile, max_price=3000)
+        survey = self.create_survey(self.user.userProfile, max_price=3000, move_weight=MOVE_WEIGHT_MAX)
         survey.home_type.set([self.home_type, self.home_type1])
 
         # Act
