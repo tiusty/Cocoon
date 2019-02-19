@@ -892,19 +892,6 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
         ))
 
     @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2, move_weight=0):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-            move_weight=move_weight,
-        )
-
-    @staticmethod
     def create_destination(survey, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
                            zip_code="02476", commute_type=None,
                            commute_weight=0, max_commute=60, desired_commute=0):
@@ -951,7 +938,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                       num_bathrooms=self.num_bathrooms_min,
                                       num_bedrooms=self.num_bedrooms_min)
         # Create the survey
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         survey.home_type.set([self.home_type, self.home_type1])
 
         # Act
@@ -991,7 +978,7 @@ class TestRentAlgorithmPopulateSurveyDestinationsAndPossibleHomes(TestCase):
                                       num_bathrooms=self.num_bathrooms_min,
                                       num_bedrooms=self.num_bedrooms_min)
         # Create the survey
-        survey = self.create_survey(self.user.userProfile, max_price=3000, move_weight=MOVE_WEIGHT_MAX)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, max_price=3000, move_weight=MOVE_WEIGHT_MAX)
         survey.home_type.set([self.home_type, self.home_type1])
 
         # Act
@@ -1010,18 +997,6 @@ class TestRetrieveApproximateCommutes(TestCase):
         self.user = MyUser.objects.create(email="test@email.com")
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
-
-    @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-        )
 
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
@@ -1058,7 +1033,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         """
         # Arrange
         commute_type_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type_driving)
 
@@ -1090,7 +1065,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         """
         # Arrange
         commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type_walking)
 
@@ -1126,7 +1101,7 @@ class TestRetrieveApproximateCommutes(TestCase):
         commute_type_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         commute_type_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
         commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type)
         home1 = self.create_home(self.home_type)
         home2 = self.create_home(self.home_type)
@@ -1170,18 +1145,6 @@ class TestApproxCommute(TestCase):
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         HomeProviderModel.objects.create(provider="MLSPIN")
-
-    @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-        )
 
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
@@ -1233,7 +1196,7 @@ class TestApproxCommute(TestCase):
     def test_populate_approx_commute_times_driving(self):
         # Arrange
         home = self.create_home(self.home_type)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         destination = self.create_destination(survey, self.commute_type)
 
         rent_algorithm = RentAlgorithm()
@@ -1252,7 +1215,7 @@ class TestApproxCommute(TestCase):
     def test_populate_approx_commute_times_transit(self):
         # Arrange
         home = self.create_home(self.home_type)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         commute_type_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
         destination = self.create_destination(survey, commute_type_transit)
 
@@ -1272,7 +1235,7 @@ class TestApproxCommute(TestCase):
     def test_populate_approx_commute_times_bicycling(self):
         # Arrange
         home = self.create_home(self.home_type)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         destination = self.create_destination(survey, commute_type_bicycling)
         latlng = (5, 10)
@@ -1293,7 +1256,7 @@ class TestApproxCommute(TestCase):
     def test_populate_approx_commute_times_walking(self):
         # Arrange
         home = self.create_home(self.home_type)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         destination = self.create_destination(survey, commute_type_walking)
         latlng = (5, 10)
@@ -1316,7 +1279,7 @@ class TestApproxCommute(TestCase):
         Tests that if the zip_combo exists then it will extract it from the zip-code database and use the values
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
         zip_code = '02476'
         home = self.create_home(self.home_type, zip_code=zip_code)
@@ -1347,7 +1310,7 @@ class TestApproxCommute(TestCase):
             and the home will not be added to the list of commute times
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
         zip_code = '02476'
         home = self.create_home(self.home_type)
@@ -1371,7 +1334,7 @@ class TestApproxCommute(TestCase):
             the commute is not added to the approx_commute_times
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         destination = self.create_destination(survey, self.commute_type, street_address="100 Main Street")
         zip_code = '02476'
         home = self.create_home(self.home_type)
@@ -1389,7 +1352,7 @@ class TestApproxCommute(TestCase):
         Tests that the lat_lng approximation for for bicycling
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
         commute_type_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         destination = self.create_destination(survey, commute_type_bicycling)
@@ -1407,7 +1370,7 @@ class TestApproxCommute(TestCase):
         Tests that the lat lng approximation works for walking
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
         commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         destination = self.create_destination(survey, commute_type_walking)
@@ -1425,7 +1388,7 @@ class TestApproxCommute(TestCase):
         Tests that the lat lng approximation works for walking with multiple homes
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type, latitude=42.399305, longitude=-71.135242)
         home1 = self.create_home(self.home_type, latitude=42.36, longitude=-71.2)
         commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
@@ -1442,7 +1405,7 @@ class TestApproxCommute(TestCase):
 
     def test_lat_lng_approximation_average_speed_zero(self):
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home = self.create_home(self.home_type, latitude=42.408021, longitude=-71.163222)
         commute_type_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         destination = self.create_destination(survey, commute_type_walking)
@@ -1464,18 +1427,6 @@ class TestRetrieveExactCommutes(TestCase):
         self.commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
-
-    @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-        )
 
     @staticmethod
     def create_destination(survey, commute_type, street_address="12 Stony Brook Rd", city="Arlington", state="MA",
@@ -1511,7 +1462,7 @@ class TestRetrieveExactCommutes(TestCase):
     @skip("Renable when mocked")
     def test_retrieve_exact_commute_simple_case(self):
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         destination = self.create_destination(survey, self.commute_type, street_address="159 Brattle Street",
                                               city="Arlington", state="MA", zip_code="02474")
 
@@ -1532,7 +1483,7 @@ class TestRetrieveExactCommutes(TestCase):
     @skip('Calls api')
     def test_retrieve_exact_commute_zero_origin(self):
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         destination = self.create_destination(survey, self.commute_type, street_address="159 Brattle Street",
                                               city="Arlington", state="MA", zip_code="02474")
         rent_algorithm = RentAlgorithm()
@@ -1548,7 +1499,7 @@ class TestRetrieveExactCommutes(TestCase):
     @skip('calls api')
     def test_retrieve_exact_commute_no_destinations(self):
         # Arrange
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         house = self.create_home(self.home_type, zip_code="02052", city="Medfield", state="MA",
                                  street_address="2 Snow Hill Lane")
         rent_algorithm = RentAlgorithm()

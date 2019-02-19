@@ -1,6 +1,7 @@
 # Import Django modules
 from django.db import models
 from django.utils.text import slugify
+from django.utils import timezone
 
 # Import cocoon models
 from cocoon.userAuth.models import UserProfile
@@ -253,6 +254,35 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
                     survey_name = "{0}{1} {2}, ".format(survey_name, tenant.first_name, tenant.last_name[0])
                 counter += 1
             return survey_name
+
+    @staticmethod
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
+                      num_bedrooms=None, earliest_move_in=None, latest_move_in=None, move_weight=0,
+                      wants_laundry_in_building=False, wants_laundry_in_unit=False, laundry_in_building_weight=0,
+                      laundry_in_unit_weight=0):
+        if num_bedrooms is None:
+            num_bedrooms = [2]
+        if earliest_move_in is None:
+            earliest_move_in = timezone.now()
+        if latest_move_in is None:
+            latest_move_in = timezone.now()
+
+        return RentingSurveyModel.objects.create(
+            user_profile=user_profile,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
+            earliest_move_in=earliest_move_in,
+            latest_move_in=latest_move_in,
+            move_weight=move_weight,
+            wants_laundry_in_building=wants_laundry_in_building,
+            wants_laundry_in_unit=wants_laundry_in_unit,
+            laundry_in_unit_weight=laundry_in_unit_weight,
+            laundry_in_building_weight=laundry_in_building_weight,
+
+        )
 
     def __str__(self):
         user_short_name = self.user_profile.user.get_short_name()
