@@ -343,11 +343,12 @@ export default class HomeTileLarge extends Component {
             let missing_number = this.props.missing_amenities.length;
 
             let missing_style = 'var(--teal)';
-            if (missing_number > 3) {
+            if (missing_number > 2) {
                 missing_style = '#ff0110';
             } else if (missing_number > 0) {
-                missing_style = 'var(--redOrange)';
+                missing_style = '#ff9a00';
             }
+
             let missing_text = 'Missing Amenities!';
             if (missing_number === 1) {
                 missing_text = "Missing Amenity! We still think you'll like it!";
