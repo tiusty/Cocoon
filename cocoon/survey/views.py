@@ -195,6 +195,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     # Now the form can be saved
                     survey = form.save()
                     survey.url = survey.generate_slug()
+                    if 'num_bedrooms' in survey_data:
+                        survey.num_bedrooms = survey_data['num_bedrooms']
                     survey.save()
 
                     # Save the polygons

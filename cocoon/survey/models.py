@@ -56,7 +56,7 @@ class HomeInformationModel(models.Model):
     """
     Contains basic information about a home
     """
-    num_bedrooms_bit_masked = models.IntegerField(default=-1)
+    num_bedrooms_bit_masked = models.IntegerField(default=0)
     max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
     min_bathrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeTypeModel)
@@ -80,6 +80,7 @@ class HomeInformationModel(models.Model):
         still_converting = True
         bedroom_mask = self.num_bedrooms_bit_masked
         bits_set = []
+        # Convert the decimal into binary as a list
         while still_converting:
             if bedroom_mask == 0 or bedroom_mask == 1:
                 still_converting = False
@@ -89,6 +90,7 @@ class HomeInformationModel(models.Model):
 
         bedrooms_set = []
         counter = 0
+        # See which bits were set. If it is a 1, then that number of bedrooms is desired
         for value in bits_set:
             if value == 1:
                 bedrooms_set.append(counter)
