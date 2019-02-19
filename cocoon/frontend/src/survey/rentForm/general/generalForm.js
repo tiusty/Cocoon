@@ -10,7 +10,6 @@ import {
   withGoogleMap,
   GoogleMap,
     Polygon,
-    withScriptjs,
 } from "react-google-maps";
 import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
 
@@ -416,10 +415,14 @@ export default class GeneralForm extends Component {
                     <small className="form-text text-muted">
                         Please click and drag to move map. Click to add points. Add as many points per shape. Add as many shapes as you want.
                     </small>
-                    <MyMapComponent
-                        onCompletePolygon={this.props.onCompletePolygon}
-                        polygons={this.props.generalInfo.polygons}
-                    />
+                    {this.props.googleApiLoaded ?
+                        <MyMapComponent
+                            onCompletePolygon={this.props.onCompletePolygon}
+                            polygons={this.props.generalInfo.polygons}
+                        />
+                        :
+                        null
+                    }
                     <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete all areas</button>
                 </>
             );

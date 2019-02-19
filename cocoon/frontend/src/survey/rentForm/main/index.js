@@ -27,6 +27,7 @@ export default class RentForm extends Component {
             maxStep: 1,
             loading: false,
             isEditing: false,
+            googleApiLoaded: false,
 
             // General Form Fields
             generalInfo: {
@@ -144,6 +145,25 @@ export default class RentForm extends Component {
                 generalInfo: survey.generalInfo,
                 tenants,
                 isEditing: true,
+            })
+        }
+
+        // This interval checks every .3 seconds to see if the google api loaded.
+        this.interval = setInterval(() => this.checkGoogleApi(), 300);
+    }
+
+    checkGoogleApi() {
+        /**
+         * Function checks to see if the google api is loaded. This should be called on an interval.
+         *  When it is, then the state is set to true and the interval is stopped
+         */
+        if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
+            // Since the key is now loaded, then stop the interval
+            clearInterval(this.interval);
+
+            // Mark that the api is now loaded
+            this.setState({
+                googleApiLoaded: true,
             })
         }
     }
@@ -315,6 +335,7 @@ export default class RentForm extends Component {
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
                         is_editing={this.props.is_editing}
                         handleNumberOfRooms={this.handleNumberOfRooms}
+                        googleApiLoaded={this.state.googleApiLoaded}
                 />;
             case 2:
                 return <TenantsForm
@@ -327,6 +348,7 @@ export default class RentForm extends Component {
                         onTenantCommute={this.handleTenantCommute}
                         onAddressChange={this.handleAddressChange}
                         onAddressSelected={this.handleAddressSelected}
+                        googleApiLoaded={this.state.googleApiLoaded}
                 />;
             case 3:
                 return <AmenitiesForm
