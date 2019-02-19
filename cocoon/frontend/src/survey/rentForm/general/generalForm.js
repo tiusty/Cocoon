@@ -38,18 +38,17 @@ export default class GeneralForm extends Component {
         axios.get(houseDatabase_endpoints['home_types'])
             .then(res => {
                 const home_type_options = res.data;
-                // this.setState({ home_type_options });
-                this.props.setHomeType(home_type_options)
+                this.setState({ home_type_options });
             });
     };
 
     handleValidation = () => {
         let valid = true;
         valid = valid && this.handleNameValidation();
-        // valid = valid && this.handleHomeTypeValidation();
+        valid = valid && this.handleHomeTypeValidation();
         valid = valid && this.handlePriceValidation();
-        // valid = valid && this.handleDatePickerValidation();
         valid = valid && this.handleUrgencyValidation();
+        valid = valid && this.handleDatePickerValidation();
         valid = valid && this.handleBedroomValidation();
         return valid
     };
@@ -120,7 +119,7 @@ export default class GeneralForm extends Component {
 
     handleDatePickerValidation() {
         let valid = true;
-        if (!this.props.generalInfo.is_move_asap) {
+        if (this.props.generalInfo.move_weight !== 3) {
             if (this.props.generalInfo.earliest_move_in === undefined ||
             this.props.generalInfo.latest_move_in === undefined) {
                 document.querySelector('#date_error').style.display = 'block';
@@ -301,31 +300,6 @@ export default class GeneralForm extends Component {
         );
     }
 
-    renderDatePickingQuestion() {
-        if (!this.props.generalInfo.is_move_asap) {
-            return (
-                <div className="survey-question">
-                    <h2>When are you wanting to <span>move in</span>?</h2>
-                    <span className="col-md-12 survey-error-message" id="date_error"></span>
-                    <div className="col-md-6 date-wrapper">
-                        <DayPickerInput
-                            placeholder={'Earliest'}
-                            onDayChange={this.props.handleEarliestClick}
-                            value={this.props.generalInfo.earliest_move_in} onChange={() => {}} />
-                    </div>
-                    <div className="col-md-6 date-wrapper">
-                        <DayPickerInput
-                            placeholder={'Latest'}
-                            onDayChange={this.props.handleLatestClick}
-                            value={this.props.generalInfo.latest_move_in} onChange={() => {}} />
-                    </div>
-                </div>
-            );
-        } else {
-            return null
-        }
-    }
-
     renderUrgencyQuestion() {
         return(
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
@@ -349,6 +323,43 @@ export default class GeneralForm extends Component {
                 </label>
             </div>
         );
+    }
+
+    renderDatePickingQuestion() {
+        if (this.props.generalInfo.move_weight !== 3) {
+            return (
+                <div className="survey-question">
+                    <h2>When are you wanting to <span>move in</span>?</h2>
+                    <span className="col-md-12 survey-error-message" id="date_error"></span>
+                    <div className="col-md-6 date-wrapper">
+                        <DayPickerInput
+                            placeholder={'Earliest'}
+                            onDayChange={this.props.handleEarliestClick}
+                            value=
+                                {this.props.generalInfo.earliest_move_in  === undefined ?
+                                    null
+                                    :
+                                    this.props.generalInfo.earliest_move_in.format('MMMM Do YYYY')
+                                }
+                            onChange={() => {}} />
+                    </div>
+                    <div className="col-md-6 date-wrapper">
+                        <DayPickerInput
+                            placeholder={'Latest'}
+                            onDayChange={this.props.handleLatestClick}
+                            value =
+                                {this.props.generalInfo.latest_move_in  === undefined ?
+                                null
+                                :
+                                this.props.generalInfo.latest_move_in.format('MMMM Do YYYY')
+                            }
+                            onChange={() => {}} />
+                    </div>
+                </div>
+            );
+        } else {
+            return null
+        }
     }
 
     renderBedroomQuestion() {
@@ -396,7 +407,7 @@ export default class GeneralForm extends Component {
             return (
                 <>
                     <small className="form-text text-muted">
-                        Please click on the map to add dots to construct your area
+                        Please click and drag to move map. Click to add points. Add as many points per shape. Add as many shapes as you want.
                     </small>
                     <MyMapComponent
                         onCompletePolygon={this.props.onCompletePolygon}
@@ -451,12 +462,12 @@ export default class GeneralForm extends Component {
             <>
                 {!this.props.is_editing ? this.renderNumberOfPeopleQuestion() : null}
                 {this.renderNameQuestion()}
-                {/*{this.renderHomeTypeQuestion()}*/}
+                {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
-                {/*{this.renderDatePickingQuestion()}*/}
                 {this.renderFilterZones()}
                 {this.renderUrgencyQuestion()}
+                {this.renderDatePickingQuestion()}
                 {this.renderBedroomQuestion()}
 
                 <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >

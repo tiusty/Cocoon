@@ -150,10 +150,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         # Save data if it exists
         if 'generalInfo' in data:
             survey_data = data['generalInfo']
-            # Since the home type is set automatically. This is a check to make sure it is set.
-            # if it isn't then it is set to apartment
-            if 'home_type' not in survey_data or len(survey_data['home_type']) <= 0:
-                survey_data['home_type'] = [HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.APARTMENT)[0].id]
         if 'amenitiesInfo' in data:
             survey_data.update(data['amenitiesInfo'])
         if 'tenantInfo' in data:

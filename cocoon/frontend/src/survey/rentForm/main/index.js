@@ -2,6 +2,7 @@
 import React from 'react';
 import { Component } from 'react';
 import axios from 'axios'
+import moment from 'moment';
 
 // Import Cocoon Components
 import Progress from '../progress/index';
@@ -123,6 +124,20 @@ export default class RentForm extends Component {
                 //  retrieve it and store it directly in the tenant dictionary
                 tenants[i].commute_type = tenants[i].commute_type.id
             }
+
+            // Set the earliest and latest move in fields to moments
+            if (survey.generalInfo.earliest_move_in) {
+                survey.generalInfo.earliest_move_in = moment(survey.generalInfo.earliest_move_in)
+            } else {
+                survey.generalInfo.earliest_move_in = undefined
+            }
+
+            if (survey.generalInfo.latest_move_in) {
+                survey.generalInfo.latest_move_in = moment(survey.generalInfo.latest_move_in)
+            } else {
+                survey.generalInfo.latest_move_in = undefined
+            }
+
             this.setState({
                 amenitiesInfo: survey.amenitiesInfo,
                 generalInfo: survey.generalInfo,
@@ -188,7 +203,18 @@ export default class RentForm extends Component {
 
         /**          General info data               **/
         // Add the general state to the data
-        data['generalInfo'] = this.state.generalInfo;
+        //  Do a deep copy so the manipulation of the data later doesn't affect the original state
+        data['generalInfo'] = JSON.parse(JSON.stringify(this.state.generalInfo));
+
+        // Make sure the earliest_move_in is in the correct format for django forms
+        if (this.state.generalInfo.earliest_move_in) {
+            data['generalInfo'].earliest_move_in = this.state.generalInfo.earliest_move_in.format('YYYY-MM-DD HH:mm')
+        }
+
+        // Make sure the latest_move_in is in the right format for django to add to the form
+        if (this.state.generalInfo.latest_move_in) {
+            data['generalInfo'].latest_move_in = this.state.generalInfo.latest_move_in.format('YYYY-MM-DD HH:mm')
+        }
 
         /**             Amenities data                     **/
         // Add amenities
@@ -279,7 +305,6 @@ export default class RentForm extends Component {
                         onCompletePolygon={this.handleCompletePolygon}
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
                         is_editing={this.props.is_editing}
-                        setHomeType={this.setHomeType}
                 />;
             case 2:
                 return <TenantsForm
@@ -359,29 +384,6 @@ export default class RentForm extends Component {
         })
     };
 
-    setHomeType = (home_types) => {
-        /**
-         * This function is used as a workaround since we only have one home type right now
-         *
-         * Therefore when the component mounts, it automatically sets the home type to apartment
-         */
-        let home_type_id = undefined;
-        home_types.map(type => {
-            if (type.home_type === 'Apartment') {
-                home_type_id = type.id
-            }
-        });
-
-        if (home_type_id !== undefined) {
-            this.setState({
-                generalInfo: {
-                    ...this.state.generalInfo,
-                    home_type: [home_type_id],
-                }
-            })
-        }
-    };
-
     handleGeneralInputChange = (e, type) => {
         /**
          * Handles input that goes into the general form
@@ -407,13 +409,13 @@ export default class RentForm extends Component {
 
     handleEarliestClick = (day, {selected}) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['earliest_move_in'] = selected ? null : day;
+        generalInfo['earliest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 
     handleLatestClick = (day, { selected }) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['latest_move_in'] = selected ? null : day;
+        generalInfo['latest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 

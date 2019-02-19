@@ -3,3 +3,6 @@ MLSpin_URL = "https://idx.mlspin.com/idx.asp?user=2KBz9tMntTFtBTNR7rdjyYtLeY2zNt
 
 # URL to pull the YGL feed
 YGL_URL = "http://www.yougotlistings.com/feed?id=x7mUFr8AChVbyEoJ3ZPTuBH6zNediXsftM1kW5n2&code=0Prz"
+
+# Number of days that are currently considered currently available
+CURRENTLY_AVAILABLE_DELTA_DAYS = 10
