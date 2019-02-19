@@ -2,8 +2,7 @@
 from django.test import TestCase
 
 # Import Survey Models and forms
-from cocoon.survey.models import RentingSurveyModel, HomeInformationModel
-from cocoon.userAuth.models import MyUser
+from cocoon.survey.models import HomeInformationModel
 
 
 class TestHomeInformationModel(TestCase):
@@ -54,6 +53,29 @@ class TestHomeInformationModel(TestCase):
     def test_num_bedrooms_setter(self):
         # Arrange
         survey = HomeInformationModel()
+
+        # Act
+        survey.num_bedrooms = [0]
+        self.assertEqual(1, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [1]
+        self.assertEqual(2, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [2]
+        self.assertEqual(4, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [3]
+        self.assertEqual(8, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [4]
+        self.assertEqual(16, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [1, 3]
+        self.assertEqual(10, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [2, 4]
+        self.assertEqual(20, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [0, 1, 2]
+        self.assertEqual(7, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [0, 2, 4]
+        self.assertEqual(21, survey.num_bedrooms_bit_masked)
+        survey.num_bedrooms = [0, 1, 2, 3, 4]
+        self.assertEqual(31, survey.num_bedrooms_bit_masked)
+
 
 
 
