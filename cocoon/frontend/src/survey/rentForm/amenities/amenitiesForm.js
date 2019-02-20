@@ -6,7 +6,7 @@ export default class AmenitiesForm extends Component {
     renderLaundryQuestion() {
         return(
             <div className="survey-question" onChange={(e) => this.props.onInputChange(e, 'boolean')}>
-                <h2>How do you like <span>your laundry</span>?</h2>
+                <h2>How do you like <span>your laundry</span>? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="wants_laundry_in_unit" value="true"
                            checked={this.props.amenitiesInfo.wants_laundry_in_unit === true}
@@ -100,7 +100,7 @@ export default class AmenitiesForm extends Component {
     renderAmenitiesQuestions() {
         return (
             <div className="survey-question">
-                <h2>Which of the following <span>amenities</span> do you want?</h2>
+                <h2>Which of the following <span>amenities</span> do you want? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="wants_parking" value="wantsParking"
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_parking}/>

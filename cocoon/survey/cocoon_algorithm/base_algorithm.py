@@ -118,7 +118,7 @@ class CocoonAlgorithm(object):
         house_query = RentDatabaseModel.objects\
             .filter(last_updated=F('listing_provider__last_updated_feed')) \
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
-            .filter(num_bedrooms=user_survey.num_bedrooms) \
+            .filter(num_bedrooms__in=user_survey.num_bedrooms) \
             .filter(home_type__in=user_survey.home_type.all())\
 
         # Depending on the user move weight, determine how the static filter works

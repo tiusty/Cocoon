@@ -382,6 +382,11 @@
 
 .carousel .control-arrow, .carousel.carousel-slider .control-arrow {
     opacity: 1 !important;
+    background: rgba(0, 0, 0, 0.25) !important;
+}
+
+.carousel.carousel-slider .control-arrow:hover {
+    background: rgba(0, 0, 0, 0.5) !important;
 }
 
 .broker_info {

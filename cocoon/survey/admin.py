@@ -21,13 +21,13 @@ class PolygonInLine(admin.TabularInline):
 
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
-    readonly_fields = ("created", 'id', 'url', 'survey_name')
+    readonly_fields = ("created", 'id', 'url', 'survey_name', 'num_bedrooms')
     raw_id_fields = ("favorites", "visit_list")
     # noinspection SpellCheckingInspection
     fieldsets = (
         (None, {'fields': ('survey_name', 'user_profile')}),
         ('Survey', {'fields': ('home_type', 'desired_price', 'max_price', 'price_weight', 'min_bathrooms',
-                               'max_bathrooms', 'move_weight', 'earliest_move_in', 'latest_move_in')}),
+                               'max_bathrooms', 'move_weight', 'num_bedrooms', 'earliest_move_in', 'latest_move_in',)}),
         ('Nearby Amenities', {'fields': ('wants_laundry_nearby', 'laundry_nearby_weight',)}),
         ('Exterior Amenities', {'fields': ('wants_parking', 'wants_laundry_in_building', 'laundry_in_building_weight',
                                            'wants_patio',

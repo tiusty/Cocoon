@@ -10,7 +10,6 @@ import {
   withGoogleMap,
   GoogleMap,
     Polygon,
-    withScriptjs,
 } from "react-google-maps";
 import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
 
@@ -26,8 +25,7 @@ export default class GeneralForm extends Component {
             price_error_range: 'The price must be between $0 and $4000',
             price_error_weight: 'You must choose how much you care about the price.',
             date_error: 'You must select an earliest and latest move in date.',
-            num_bedrooms_error_undefined: 'You must choose the number of bedrooms you need.',
-            num_bedrooms_error_amount: 'The number of bedrooms cannot be below 0.'
+            num_bedrooms_error_undefined: 'You must choose the number of bedrooms you need.'
         }
     };
 
@@ -142,23 +140,15 @@ export default class GeneralForm extends Component {
 
     handleBedroomValidation() {
         let valid = true;
-        if (this.props.generalInfo.num_bedrooms === undefined){
+        if (this.props.generalInfo.num_bedrooms.length === 0){
             document.querySelector('#number_of_rooms_error').style.display = 'block';
             document.querySelector('#number_of_rooms_error').innerText = this.state.errorMessages.num_bedrooms_error_undefined;
             document.querySelector('input[name=num_bedrooms]').parentNode.scrollIntoView(true);
             alert(this.state.errorMessages.num_bedrooms_error_undefined);
             valid = false
-        } else {
-            if (this.props.generalInfo.num_bedrooms < 0) {
-                document.querySelector('#number_of_rooms_error').style.display = 'block';
-                document.querySelector('#number_of_rooms_error').innerText = this.state.errorMessages.num_bedrooms_error_amount;
-                document.querySelector('input[name=num_bedrooms]').parentNode.scrollIntoView(true)
-                alert(this.state.errorMessages.num_bedrooms_error_amount);
-                valid = false
-            }
         }
         if(valid) { document.querySelector('#number_of_rooms_error').style.display = 'none'; }
-        return valid
+        return valid;
     }
 
     renderNumberOfPeopleQuestion() {
@@ -218,11 +208,11 @@ export default class GeneralForm extends Component {
                 <h2>What <span>{this.props.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
                 <span className="col-md-12 survey-error-message" id="name_of_tenants_error"></span>
                 <input className="col-md-12 survey-input" type="text" name="tenant_name"
-                       placeholder="First and Last Name" autoCapitalize={'words'} data-tenantkey={0}
+                       placeholder="My First and Last Name" autoCapitalize={'words'} data-tenantkey={0}
                        value={this.setNameOnField(0)} onChange={this.props.onHandleTenantName}/>
                 {this.props.number_of_tenants > 1 && Array.from(Array(this.props.number_of_tenants - 1)).map((t, i) => {
                     return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)}
-                                  autoCapitalize={'words'} data-tenantkey={i + 1} placeholder="First and Last Name"
+                                  autoCapitalize={'words'} data-tenantkey={i + 1} placeholder="Roommate's First and Last Name"
                                   value={this.setNameOnField(i+1)} onChange={this.props.onHandleTenantName}
                                   key={i}/>
                 })}
@@ -234,7 +224,7 @@ export default class GeneralForm extends Component {
         if(this.state.home_type_options) {
             return (
                 <div className="survey-question" onChange={this.validateHomeType}>
-                    <h2>What <span>kind of home</span> do you want?</h2>
+                    <h2>What <span>kind of home</span> do you want? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                     <span className="col-md-12 survey-error-message" id="home_type_error"></span>
                     {this.state.home_type_options.map((o, index) => (
                         <label className="col-md-6 survey-label survey-checkbox" key={index} onChange={(e) => this.props.setHomeTypes(e, index, o.id)}>
@@ -337,7 +327,7 @@ export default class GeneralForm extends Component {
                             onDayChange={this.props.handleEarliestClick}
                             value=
                                 {this.props.generalInfo.earliest_move_in  === undefined ?
-                                    null
+                                    ""
                                     :
                                     this.props.generalInfo.earliest_move_in.format('MMMM Do YYYY')
                                 }
@@ -349,7 +339,7 @@ export default class GeneralForm extends Component {
                             onDayChange={this.props.handleLatestClick}
                             value =
                                 {this.props.generalInfo.latest_move_in  === undefined ?
-                                null
+                                ""
                                 :
                                 this.props.generalInfo.latest_move_in.format('MMMM Do YYYY')
                             }
@@ -364,27 +354,43 @@ export default class GeneralForm extends Component {
 
     renderBedroomQuestion() {
         return(
-            <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How many <span>bedrooms</span> do you need?</h2>
+            <div className="survey-question" onChange={this.setRoomChoices}>
+                <h2>How many <span>bedrooms</span> do you need? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                 <span className="col-md-12 survey-error-message" id="number_of_rooms_error"></span>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="0" checked={this.props.generalInfo.num_bedrooms === 0} onChange={() => {}} />
-                    <div>Studio</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="0" checked={this.props.generalInfo.num_bedrooms.some(i => i === 0)} onChange={() => {}} />
+                    <div>Studio <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="1" checked={this.props.generalInfo.num_bedrooms === 1} onChange={() => {}} />
-                    <div>1 bed</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="1" checked={this.props.generalInfo.num_bedrooms.some(i => i === 1)} onChange={() => {}} />
+                    <div>1 bed <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="2" checked={this.props.generalInfo.num_bedrooms === 2} onChange={() => {}} />
-                    <div>2 beds</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="2" checked={this.props.generalInfo.num_bedrooms.some(i => i === 2)} onChange={() => {}} />
+                    <div>2 beds <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label">
-                    <input type="radio" name="num_bedrooms" value="3" checked={this.props.generalInfo.num_bedrooms === 3} onChange={() => {}} />
-                    <div>3 beds</div>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="3" checked={this.props.generalInfo.num_bedrooms.some(i => i === 3)} onChange={() => {}} />
+                    <div>3 beds <i className="material-icons">check</i></div>
                 </label>
             </div>
         );
+    }
+
+    setRoomChoices = (e) => {
+        const value = parseInt(e.target.value);
+        let room_choice = this.props.generalInfo.num_bedrooms;
+        if (e.target.checked) {
+            room_choice.push(value);
+            this.props.handleNumberOfRooms(room_choice);
+        } else {
+            for (let i = 0; i < room_choice.length; i++) {
+                if (room_choice[i] === value) {
+                    room_choice.splice(i, 1);
+                    this.props.handleNumberOfRooms(room_choice);
+                }
+            }
+        }
     }
 
     handleNextButtonAction(e) {
@@ -409,10 +415,14 @@ export default class GeneralForm extends Component {
                     <small className="form-text text-muted">
                         Please click and drag to move map. Click to add points. Add as many points per shape. Add as many shapes as you want.
                     </small>
-                    <MyMapComponent
-                        onCompletePolygon={this.props.onCompletePolygon}
-                        polygons={this.props.generalInfo.polygons}
-                    />
+                    {this.props.googleApiLoaded ?
+                        <MyMapComponent
+                            onCompletePolygon={this.props.onCompletePolygon}
+                            polygons={this.props.generalInfo.polygons}
+                        />
+                        :
+                        null
+                    }
                     <button className="survey-btn filter-delete-button" onClick={this.props.onDeleteAllPolygons}>Delete all areas</button>
                 </>
             );
@@ -470,9 +480,11 @@ export default class GeneralForm extends Component {
                 {this.renderDatePickingQuestion()}
                 {this.renderBedroomQuestion()}
 
-                <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
-                    Next
-                </button>
+                <div className="row survey-btn-wrapper">
+                    <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
+                        Next
+                    </button>
+                </div>
             </>
         );
     }
@@ -678,9 +690,7 @@ const MyMapComponent = compose(
         loadingElement: <div style={{height: `100%`}}/>,
         containerElement: <div style={{height: `400px`}}/>,
         mapElement: <div style={{height: `100%`}}/>,
-        googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCayNcf_pxLj5vaOje1oXYEMIQ6H53Jzho&v=3.exp&libraries=geometry,drawing,places",
     }),
-    withScriptjs,
     withGoogleMap
 )(props => (
     <GoogleMap

@@ -282,7 +282,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         Sorts the homes by score. Will sort the homes list and return the homes reordered from left to right,
         best home to worst
         """
-        self.homes = self.insertion_sort(self.homes)
+        self.homes = self.python_sort(self.homes)
 
     def run(self, survey):
         """

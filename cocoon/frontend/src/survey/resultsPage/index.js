@@ -29,6 +29,7 @@ export default class ResultsPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            googleApiLoaded: false,
             homeList: undefined,
             survey_name: undefined,
             survey: undefined,
@@ -47,10 +48,28 @@ export default class ResultsPage extends Component {
     }
 
     componentDidMount = () => {
+        // This interval checks every .3 seconds to see if the google api loaded.
+        this.interval = setInterval(() => this.checkGoogleApi(), 300);
         this.setPageHeight();
         if (this.props.is_verified) {
             this.getSurvey();
             this.getResults();
+        }
+    };
+
+    checkGoogleApi() {
+        /**
+         * Function checks to see if the google api is loaded. This should be called on an interval.
+         *  When it is, then the state is set to true and the interval is stopped
+         */
+        if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
+            // Since the key is now loaded, then stop the interval
+            clearInterval(this.interval);
+
+            // Mark that the api is now loaded
+            this.setState({
+                googleApiLoaded: true,
+            })
         }
     }
 
@@ -95,7 +114,6 @@ export default class ResultsPage extends Component {
                     const geocoder = new google.maps.Geocoder();
                     geocoder.geocode( { 'address': address }, (results, status) => {
                         if (status === google.maps.GeocoderStatus.OK) {
-                            console.log(results);
                             coords.lat = results[0].geometry.location.lat();
                             coords.lng = results[0].geometry.location.lng();
                             coords.name = name;
@@ -202,7 +220,6 @@ export default class ResultsPage extends Component {
         /**
          *  Renders the list of home tiles
         **/
-        console.log(this.state.homeList)
         return (
             <>
                 <div className="results-info">
@@ -407,7 +424,14 @@ export default class ResultsPage extends Component {
                         {this.renderMainComponent()}
                     </div>
                     <div className="map-wrapper">
-                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} commutes={this.state.commutes} /> : null}
+                        {this.state.homeList !== undefined && this.state.googleApiLoaded ?
+                            <Map homes={this.state.homeList}
+                                 handleHomeClick={this.handleHomeClick}
+                                 hover_id={this.state.hover_id}
+                                 setHoverId={this.setHoverId}
+                                 removeHoverId={this.removeHoverId}
+                                 commutes={this.state.commutes} />
+                            : null}
                     </div>
                 </div>
             );

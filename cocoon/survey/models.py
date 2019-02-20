@@ -56,7 +56,7 @@ class HomeInformationModel(models.Model):
     """
     Contains basic information about a home
     """
-    num_bedrooms = models.IntegerField(default=0)
+    num_bedrooms_bit_masked = models.IntegerField(default=0)
     max_bathrooms = models.IntegerField(default=MAX_NUM_BATHROOMS)
     min_bathrooms = models.IntegerField(default=0)
     home_type = models.ManyToManyField(HomeTypeModel)
@@ -64,6 +64,58 @@ class HomeInformationModel(models.Model):
     move_weight = models.IntegerField(default=0)
     earliest_move_in = models.DateField(blank=True, null=True)
     latest_move_in = models.DateField(blank=True, null=True)
+
+    @property
+    def num_bedrooms(self):
+        """
+        The num_bedrooms_bit_masked variable sets the bit corresponding to the number of
+            rooms needed. The num of rooms needed is the index of the number
+
+            i.e if the user wants 1 and 3 rooms then the value would be 101 in decimal
+                if the user wants 2 + 3 + 4 rooms then the value would be 11100 in decimal
+
+            Therefore this function takes the bit mask of bedrooms and converts it into a python
+                list of all the number of bedrooms desired
+                i.e turns 11100 -> [2, 3, 4]
+        :return: (list(ints)) -> The list of ints for the rooms numbers the user wants
+        """
+        still_converting = True
+        bedroom_mask = self.num_bedrooms_bit_masked
+        bits_set = []
+        # Convert the decimal into binary as a list
+        while still_converting:
+            if bedroom_mask == 0 or bedroom_mask == 1:
+                still_converting = False
+            reminder = bedroom_mask % 2
+            bedroom_mask = ((bedroom_mask - reminder)/2)
+            bits_set.append(reminder)
+
+        bedrooms_set = []
+        counter = 0
+        # See which bits were set. If it is a 1, then that number of bedrooms is desired
+        for value in bits_set:
+            if value == 1:
+                bedrooms_set.append(counter)
+            counter += 1
+
+        return bedrooms_set
+
+    @num_bedrooms.setter
+    def num_bedrooms(self, num_bedrooms_list):
+        """
+        Since the num_bedrooms_bit_masked is stored as described above, this
+            converts the list of bedrooms the user wants into the value that corresponds
+            to the desired room numbers. Since the indicator of the room numbers is setting
+            that bit to 1, the value is created by adding together the powers of two of
+            the values of room number the user wants
+        :param num_bedrooms_list: (list(ints)) -> The room numbers the user wants
+        """
+        binary_mask = 0
+        # A set is used to make sure there isn't duplicates
+        for num in set(num_bedrooms_list):
+            binary_mask += 2 ** num
+        self.num_bedrooms_bit_masked = binary_mask
+
 
     @property
     def home_types(self):
@@ -202,6 +254,35 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
                     survey_name = "{0}{1} {2}, ".format(survey_name, tenant.first_name, tenant.last_name[0])
                 counter += 1
             return survey_name
+
+    @staticmethod
+    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
+                      num_bedrooms=None, earliest_move_in=None, latest_move_in=None, move_weight=0,
+                      wants_laundry_in_building=False, wants_laundry_in_unit=False, laundry_in_building_weight=0,
+                      laundry_in_unit_weight=0):
+        if num_bedrooms is None:
+            num_bedrooms = [2]
+        if earliest_move_in is None:
+            earliest_move_in = timezone.now()
+        if latest_move_in is None:
+            latest_move_in = timezone.now()
+
+        return RentingSurveyModel.objects.create(
+            user_profile=user_profile,
+            max_price=max_price,
+            desired_price=desired_price,
+            max_bathrooms=max_bathroom,
+            min_bathrooms=min_bathroom,
+            num_bedrooms=num_bedrooms,
+            earliest_move_in=earliest_move_in,
+            latest_move_in=latest_move_in,
+            move_weight=move_weight,
+            wants_laundry_in_building=wants_laundry_in_building,
+            wants_laundry_in_unit=wants_laundry_in_unit,
+            laundry_in_unit_weight=laundry_in_unit_weight,
+            laundry_in_building_weight=laundry_in_building_weight,
+
+        )
 
     def __str__(self):
         user_short_name = self.user_profile.user.get_short_name()
