@@ -113,7 +113,6 @@ export default class HomeTiles extends Component {
                     displayPercent={this.displayPercent}
                     displayOnMarket={true}
                     onMarket={home.on_market}
-                    date_available={home.home.date_available}
                 />
             );
         }
