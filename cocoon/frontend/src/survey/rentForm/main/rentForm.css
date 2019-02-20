@@ -8,6 +8,7 @@
 .survey-wrapper .form-wrapper {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .survey-headline {
@@ -71,6 +72,11 @@
 .survey-btn-wrapper {
     display: flex;
     align-items: baseline;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 15px 0px;
+    z-index: 99;
 }
 
 .survey-question .survey-label input {

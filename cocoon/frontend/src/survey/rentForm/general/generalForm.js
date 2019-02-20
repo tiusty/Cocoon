@@ -480,9 +480,11 @@ export default class GeneralForm extends Component {
                 {this.renderDatePickingQuestion()}
                 {this.renderBedroomQuestion()}
 
-                <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
-                    Next
-                </button>
+                <div className="row survey-btn-wrapper">
+                    <button className="col-md-12 survey-btn" onClick={(e) => this.handleNextButtonAction(e)} >
+                        Next
+                    </button>
+                </div>
             </>
         );
     }
