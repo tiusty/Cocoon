@@ -19,12 +19,6 @@ from cocoon.survey.constants import MAX_TENANTS_FOR_ONE_SURVEY
 
 
 class HomeInformationForm(ModelForm):
-    # num_bedrooms = forms.(
-    #     required=False,
-    #     max_value=MAX_NUM_BEDROOMS,
-    #     min_value=0,
-    # )
-
     home_type = forms.ModelMultipleChoiceField(
         required=True,
         queryset=HomeTypeModel.objects.all()

@@ -101,26 +101,26 @@ export default class AmenitiesForm extends Component {
         return (
             <div className="survey-question">
                 <h2>Which of the following <span>amenities</span> do you want? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
-                <label className="col-md-6 survey-label survey-checkbox">
-                    <input type="checkbox" name="wants_parking" value="wantsParking"
-                           onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_parking}/>
-                    <div>Parking spot <i className="material-icons">check</i></div>
-                </label>
+                {/*<label className="col-md-6 survey-label survey-checkbox">*/}
+                    {/*<input type="checkbox" name="wants_parking" value="wantsParking"*/}
+                           {/*onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_parking}/>*/}
+                    {/*<div>Parking spot <i className="material-icons">check</i></div>*/}
+                {/*</label>*/}
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="wants_furnished" value="wantsFurnished"
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_furnished}/>
                     <div>Furnished <i className="material-icons">check</i></div>
                 </label>
-                <label className="col-md-6 survey-label survey-checkbox">
-                    <input type="checkbox" name="wants_dogs" value="wantsDogs" onChange={(e) => this.props.onInputChange(e, 'boolean')}
-                           checked={this.props.amenitiesInfo.wants_dogs}/>
-                    <div>Dogs welcome <i className="material-icons">check</i></div>
-                </label>
-                <label className="col-md-6 survey-label survey-checkbox">
-                    <input type="checkbox" name="wants_cats" value="wantsCats" onChange={(e) => this.props.onInputChange(e, 'boolean')}
-                           checked={this.props.amenitiesInfo.wants_cats}/>
-                    <div>Cats welcome <i className="material-icons">check</i></div>
-                </label>
+                {/*<label className="col-md-6 survey-label survey-checkbox">*/}
+                    {/*<input type="checkbox" name="wants_dogs" value="wantsDogs" onChange={(e) => this.props.onInputChange(e, 'boolean')}*/}
+                           {/*checked={this.props.amenitiesInfo.wants_dogs}/>*/}
+                    {/*<div>Dogs welcome <i className="material-icons">check</i></div>*/}
+                {/*</label>*/}
+                {/*<label className="col-md-6 survey-label survey-checkbox">*/}
+                    {/*<input type="checkbox" name="wants_cats" value="wantsCats" onChange={(e) => this.props.onInputChange(e, 'boolean')}*/}
+                           {/*checked={this.props.amenitiesInfo.wants_cats}/>*/}
+                    {/*<div>Cats welcome <i className="material-icons">check</i></div>*/}
+                {/*</label>*/}
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="wants_hardwood_floors" value="wantsHardwood"
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_hardwood_floors}/>
