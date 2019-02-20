@@ -185,7 +185,7 @@ class HomeTile extends Component {
             // Styles the date available section
             let date = null;
             if (this.props.isLarge) {
-                date = <span className="homeInfo-date_available" title={'Date Available: ' + this.props.date_available}><i className="material-icons">access_time</i> {this.props.date_available}</span>
+                date = <span className="homeInfo-date_available" title={'Date Available: ' + home.date_available}><i className="material-icons">access_time</i> {home.date_available}</span>
             }
 
             let off_market_section = null;
