@@ -309,7 +309,7 @@ export default class ResultsPage extends Component {
         if (!this.state.isEditing) {
             return 'Edit Survey';
         } else {
-            return 'Cancel Survey';
+            return 'Cancel Changes';
         }
     };
 

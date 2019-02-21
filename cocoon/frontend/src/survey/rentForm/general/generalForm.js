@@ -373,6 +373,14 @@ export default class GeneralForm extends Component {
                     <input type="checkbox" name="num_bedrooms" value="3" checked={this.props.generalInfo.num_bedrooms.some(i => i === 3)} onChange={() => {}} />
                     <div>3 beds <i className="material-icons">check</i></div>
                 </label>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="4" checked={this.props.generalInfo.num_bedrooms.some(i => i === 4)} onChange={() => {}} />
+                    <div>4 beds <i className="material-icons">check</i></div>
+                </label>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="num_bedrooms" value="5" checked={this.props.generalInfo.num_bedrooms.some(i => i === 5)} onChange={() => {}} />
+                    <div>5 beds <i className="material-icons">check</i></div>
+                </label>
             </div>
         );
     }
