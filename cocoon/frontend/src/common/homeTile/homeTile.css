@@ -413,3 +413,43 @@
     font-weight: 300;
     border-top: 1px solid var(--borderColor);
 }
+
+.map-marker_green,
+.map-marker_green::before {
+    background: #008000;
+}
+
+.map-marker_light-green,
+.map-marker_light-green::before {
+    background: #CDDC39;
+}
+
+.map-marker_teal,
+.map-marker_teal::before {
+    background: #39b0a6;
+}
+
+.map-marker_yellow,
+.map-marker_yellow::before {
+    background: #FFC107;
+}
+
+.map-marker_orange,
+.map-marker_orange::before {
+    background: #FF6D00;
+}
+
+.map-marker_red,
+.map-marker_red::before {
+    background: #DD2C00;
+}
+
+.map-marker_dark-blue,
+.map-marker_dark-blue::before {
+    background: #264653;
+}
+
+.map-marker_hover,
+.map-marker_hover::before {
+    z-index: 10000;
+}

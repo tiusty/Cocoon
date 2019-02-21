@@ -158,8 +158,21 @@ class HomeTile extends Component {
 
             // Sets percent_match to render on top of image
             let percent_match = null;
+            let marker_class = 'homeInfo-percent';
+            let score = this.props.percent_match;
+            if (score > 84) {
+                marker_class = marker_class + ' map-marker_green';
+            } else if (score > 69) {
+                marker_class = marker_class + ' map-marker_light-green';
+            } else if (score > 49) {
+                marker_class = marker_class + ' map-marker_yellow';
+            } else if (score > 29) {
+                marker_class = marker_class + ' map-marker_orange';
+            } else {
+                marker_class = marker_class + ' map-marker_red';
+            }
             if (this.props.isLarge && this.props.displayPercent && this.props.percent_match) {
-                percent_match = <span className="homeInfo-percent">{this.props.percent_match}</span>
+                percent_match = <span className={marker_class}>{this.props.percent_match}</span>
             }
 
             let missing_amenities = null;
