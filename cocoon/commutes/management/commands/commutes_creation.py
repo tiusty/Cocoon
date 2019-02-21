@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 
 # Cocoon Modules
 from ...models import CommuteType
+from .ZipcodeBaseline.ZipcodeBaseline import ZipcodeBaseline
 
 
 class Command(BaseCommand):
@@ -23,6 +24,7 @@ class Command(BaseCommand):
 
         # Create the commute types if they don't exist
         self.create_commute_type_objects()
+        self.load_zipcodes_into_database()
 
     @staticmethod
     def create_commute_type_objects():
@@ -31,3 +33,9 @@ class Command(BaseCommand):
         """
         for commute_type in CommuteType.COMMUTE_TYPES:
             CommuteType.objects.get_or_create(commute_type=commute_type[0])
+
+    @staticmethod
+    def load_zipcodes_into_database():
+        # For now we only support driving, later we can add transit
+        ZipcodeBaseline().load_zipcode_combinations(CommuteType.objects.get_or_create(commute_type=CommuteType.DRIVING)[0])
+

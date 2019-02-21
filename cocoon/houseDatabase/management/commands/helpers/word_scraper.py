@@ -113,3 +113,10 @@ class WordScraper:
 
         return False
 
+    def look_for_ac(self):
+        if (self.word_finder(["air", "conditioning"])) \
+                or self.word_finder(["ac"]) \
+                or self.word_finder(["a", "/", "c"]):
+            return True
+        return False
+

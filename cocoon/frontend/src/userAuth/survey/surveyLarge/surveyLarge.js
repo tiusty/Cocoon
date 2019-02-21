@@ -233,6 +233,24 @@ export default class SurveyLarge extends Component {
             );
     };
 
+    displayNumBedrooms() {
+        /**
+         * Displays the number of bedrooms the user wants
+         * turns the list into a comma seperated string
+         */
+        let num_bedrooms = this.state.num_bedrooms;
+        let num_bedrooms_string = "";
+        for(let i=0; i<num_bedrooms.length; i++) {
+            if(i === 0) {
+                num_bedrooms_string = num_bedrooms[i]
+            } else {
+                num_bedrooms_string = num_bedrooms_string + ", " + num_bedrooms[i];
+            }
+        }
+        return num_bedrooms_string;
+
+    }
+
     render() {
         return (
             <div className="survey-large-div">
@@ -248,7 +266,7 @@ export default class SurveyLarge extends Component {
                                 <div className="survey-large-snapshot-section">
                                     <h2 className="survey-large-title">Survey Snapshot</h2>
                                     <p className="survey-large-text">Desired price: ${this.state.desired_price}</p>
-                                    <p className="survey-large-text">Number of bedrooms: {this.state.num_bedrooms}</p>
+                                    <p className="survey-large-text">Number of bedrooms: {this.displayNumBedrooms()}</p>
                                 </div>
                                 <TenantEdit
                                     tenants={this.state.tenants}

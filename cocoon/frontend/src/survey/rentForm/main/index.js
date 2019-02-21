@@ -2,6 +2,7 @@
 import React from 'react';
 import { Component } from 'react';
 import axios from 'axios'
+import moment from 'moment';
 
 // Import Cocoon Components
 import Progress from '../progress/index';
@@ -25,13 +26,14 @@ export default class RentForm extends Component {
             step: 1,
             loading: false,
             isEditing: false,
+            googleApiLoaded: false,
 
             // General Form Fields
             generalInfo: {
                 number_of_tenants: 1,
                 home_type: [],
                 move_weight: 0,
-                num_bedrooms: undefined,
+                num_bedrooms: [],
                 polygon_filter_type: 0,
                 polygons: [],
                 desired_price: 1000,
@@ -123,11 +125,44 @@ export default class RentForm extends Component {
                 //  retrieve it and store it directly in the tenant dictionary
                 tenants[i].commute_type = tenants[i].commute_type.id
             }
+
+            // Set the earliest and latest move in fields to moments
+            if (survey.generalInfo.earliest_move_in) {
+                survey.generalInfo.earliest_move_in = moment(survey.generalInfo.earliest_move_in)
+            } else {
+                survey.generalInfo.earliest_move_in = undefined
+            }
+
+            if (survey.generalInfo.latest_move_in) {
+                survey.generalInfo.latest_move_in = moment(survey.generalInfo.latest_move_in)
+            } else {
+                survey.generalInfo.latest_move_in = undefined
+            }
+
             this.setState({
                 amenitiesInfo: survey.amenitiesInfo,
                 generalInfo: survey.generalInfo,
                 tenants,
                 isEditing: true,
+            })
+        }
+
+        // This interval checks every .3 seconds to see if the google api loaded.
+        this.interval = setInterval(() => this.checkGoogleApi(), 300);
+    }
+
+    checkGoogleApi() {
+        /**
+         * Function checks to see if the google api is loaded. This should be called on an interval.
+         *  When it is, then the state is set to true and the interval is stopped
+         */
+        if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
+            // Since the key is now loaded, then stop the interval
+            clearInterval(this.interval);
+
+            // Mark that the api is now loaded
+            this.setState({
+                googleApiLoaded: true,
             })
         }
     }
@@ -141,6 +176,7 @@ export default class RentForm extends Component {
         if (this.state.generalInfo.number_of_tenants !== prevState.generalInfo.number_of_tenants) {
             this.setState({'tenants-TOTAL_FORMS': this.state.generalInfo.number_of_tenants})
         }
+
     };
 
     handleSubmit = (e, detailsData) => {
@@ -188,7 +224,18 @@ export default class RentForm extends Component {
 
         /**          General info data               **/
         // Add the general state to the data
-        data['generalInfo'] = this.state.generalInfo;
+        //  Do a deep copy so the manipulation of the data later doesn't affect the original state
+        data['generalInfo'] = JSON.parse(JSON.stringify(this.state.generalInfo));
+
+        // Make sure the earliest_move_in is in the correct format for django forms
+        if (this.state.generalInfo.earliest_move_in) {
+            data['generalInfo'].earliest_move_in = this.state.generalInfo.earliest_move_in.format('YYYY-MM-DD HH:mm')
+        }
+
+        // Make sure the latest_move_in is in the right format for django to add to the form
+        if (this.state.generalInfo.latest_move_in) {
+            data['generalInfo'].latest_move_in = this.state.generalInfo.latest_move_in.format('YYYY-MM-DD HH:mm')
+        }
 
         /**             Amenities data                     **/
         // Add amenities
@@ -279,7 +326,8 @@ export default class RentForm extends Component {
                         onCompletePolygon={this.handleCompletePolygon}
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
                         is_editing={this.props.is_editing}
-                        setHomeType={this.setHomeType}
+                        handleNumberOfRooms={this.handleNumberOfRooms}
+                        googleApiLoaded={this.state.googleApiLoaded}
                 />;
             case 2:
                 return <TenantsForm
@@ -292,6 +340,7 @@ export default class RentForm extends Component {
                         onTenantCommute={this.handleTenantCommute}
                         onAddressChange={this.handleAddressChange}
                         onAddressSelected={this.handleAddressSelected}
+                        googleApiLoaded={this.state.googleApiLoaded}
                 />;
             case 3:
                 return <AmenitiesForm
@@ -359,29 +408,6 @@ export default class RentForm extends Component {
         })
     };
 
-    setHomeType = (home_types) => {
-        /**
-         * This function is used as a workaround since we only have one home type right now
-         *
-         * Therefore when the component mounts, it automatically sets the home type to apartment
-         */
-        let home_type_id = undefined;
-        home_types.map(type => {
-            if (type.home_type === 'Apartment') {
-                home_type_id = type.id
-            }
-        });
-
-        if (home_type_id !== undefined) {
-            this.setState({
-                generalInfo: {
-                    ...this.state.generalInfo,
-                    home_type: [home_type_id],
-                }
-            })
-        }
-    };
-
     handleGeneralInputChange = (e, type) => {
         /**
          * Handles input that goes into the general form
@@ -405,15 +431,24 @@ export default class RentForm extends Component {
         })
     };
 
+    handleNumberOfRooms = (data) => {
+        this.setState({
+            generalInfo: {
+                ...this.state.generalInfo,
+                num_bedrooms: data
+            }
+        })
+    }
+
     handleEarliestClick = (day, {selected}) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['earliest_move_in'] = selected ? null : day;
+        generalInfo['earliest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 
     handleLatestClick = (day, { selected }) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['latest_move_in'] = selected ? null : day;
+        generalInfo['latest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 
@@ -544,7 +579,13 @@ export default class RentForm extends Component {
         for (let i=0; i<this.state.tenants.length; i++) {
             if (tenants[id].index === i) {
                 if(type === 'number') {
-                    tenants[id][nameStripped] = parseInt(value)
+                    if (value) {
+                        if (!isNaN(value)) {
+                            tenants[id][nameStripped] = parseInt(value)
+                        }
+                    } else {
+                        tenants[id][nameStripped] = null
+                    }
                 } else if (type === 'boolean') {
                     tenants[id][nameStripped] = (value === 'true');
                 } else {
@@ -593,7 +634,11 @@ export default class RentForm extends Component {
                 }
 
                 //Other
-                tenants[i].income = this.state.tenants[index].income || null;
+                if (!("income" in this.state.tenants[index])) {
+                    tenants[i].income = null;
+                } else {
+                    tenants[i].income = this.state.tenants[index].income;
+                }
                 tenants[i].credit_score = this.state.tenants[index].credit_score || null;
 
             }
@@ -662,7 +707,7 @@ export default class RentForm extends Component {
     render() {
         return (
             <div className="survey-wrapper">
-                <Progress step={this.state.step}/>
+                <Progress step={this.state.step} />
                 <div className="form-wrapper">
                     {this.renderForm(this.state.step)}
                 </div>

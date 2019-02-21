@@ -23,6 +23,7 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 from cocoon.houseDatabase.models import HomeTypeModel
+from cocoon.dataAnalysis.models import Trackers
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -149,10 +150,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         # Save data if it exists
         if 'generalInfo' in data:
             survey_data = data['generalInfo']
-            # Since the home type is set automatically. This is a check to make sure it is set.
-            # if it isn't then it is set to apartment
-            if 'home_type' not in survey_data or len(survey_data['home_type']) <= 0:
-                survey_data['home_type'] = [HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.APARTMENT)[0].id]
         if 'amenitiesInfo' in data:
             survey_data.update(data['amenitiesInfo'])
         if 'tenantInfo' in data:
@@ -194,6 +191,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     # Now the form can be saved
                     survey = form.save()
                     survey.url = survey.generate_slug()
+                    if 'num_bedrooms' in survey_data:
+                        survey.num_bedrooms = survey_data['num_bedrooms']
                     survey.save()
 
                     # Save the polygons
@@ -332,6 +331,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                 if tenants.is_valid():
 
                     with transaction.atomic():
+                        if 'num_bedrooms' in survey_data:
+                            survey.num_bedrooms = survey_data['num_bedrooms']
                         survey = form.save()
 
                         # Save the polygons
@@ -376,6 +377,20 @@ class RentResultViewSet(viewsets.ViewSet):
         # Run the Rent Algorithm
         rent_algorithm = RentAlgorithm()
         rent_algorithm.run(survey)
+
+        # Store data for tracking data
+        survey_results_tracker = Trackers.get_survey_results_tracker()
+        iteration = survey_results_tracker.iterations.create(
+            user_email=user_profile.user.email,
+            user_full_name=user_profile.user.full_name,
+            number_of_tenants=survey.number_of_tenants,
+            survey_id=survey.id,
+        )
+
+        for home in rent_algorithm.homes:
+            iteration.homes.create(
+                score=home.percent_match,
+            )
 
         # Save the response
         data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]

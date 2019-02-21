@@ -18,36 +18,6 @@ from ...constants import GoogleCommuteNaming
 from cocoon.houseDatabase.models import RentDatabaseModel, HomeTypeModel, HomeProviderModel
 
 
-class TestRetrieveExactCommuteClientScheduler(TestCase):
-
-    @patch('cocoon.commutes.distance_matrix.commute_retriever.retrieve_exact_commute')
-    def test_converting_formats(self, mock_os):
-        """
-        Tests that given the right outputs, the retrieve exact commutes is called with the right arguments
-        """
-        # Arrange
-        home_type = HomeTypeModel.objects.create(home_type='House')
-        list_provider = HomeProviderModel.objects.get_or_create(provider='ygl')[0]
-
-        home = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
-                                                street_address='40 Thorndike', city='Arlington',
-                                                zip_code='02476', state='MA')
-        home1 = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
-                                                 street_address='12 Stony', city='Arlington',
-                                                 zip_code='02474', state='MA')
-        destination = RentDatabaseModel.objects.create(home_type=home_type, listing_provider=list_provider,
-                                                       street_address='36 Brook Side', city='Arlington',
-                                                       zip_code='02474', state='MA')
-        homes = [home, home1]
-
-        # Act
-        retrieve_exact_commute_client_scheduler(homes, destination, CommuteType.DRIVING)
-
-        # Assert
-        mock_os.assert_called_once_with(destination.full_address, [home.full_address, home1.full_address],
-                                        CommuteType.DRIVING, with_traffic=False)
-
-
 class TestRetrieveApproximateCommuteClientScheduler(TestCase):
 
     # Cannot call because we must use, assert_called_with() and the arguments are impossible to prediect

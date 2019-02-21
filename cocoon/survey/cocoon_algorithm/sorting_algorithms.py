@@ -26,3 +26,35 @@ class SortingAlgorithms(object):
             scored_homes[position] = current_value
 
         return scored_homes
+
+    @staticmethod
+    def python_sort(scored_homes):
+        """
+        Uses the built in python sort and makes sure that the sorting is based on the percent score
+        :param scored_homes: (List(HomeScore)): All the HomeScore objects for that survey
+        :return: (List(HomeScore)): List of HomeScore classes ordered from left to right based off score
+        """
+        sorted_values = sorted(scored_homes,  reverse=True, key=lambda x: x.percent_score())
+        return sorted_values
+
+    @staticmethod
+    def run_sort_based_on_num_missing_amenities(scored_homes):
+        """
+        Runs insertion sort on each range of homes. Therefore homes with all the amenities are always first,
+            then homes with decreasing number of amenities are shown.
+        :param scored_homes: (List(HomeScore)): All the HomeScore objects for that survey
+        :return: (List(HomeScore)): List of HomeScore classes ordered from left to right based off score
+        """
+
+        # First determine what the largest number of missing amenities are
+        home_list = []
+        largest_missing_num = 0
+        for home in scored_homes:
+            if len(home.missing_amenities) > largest_missing_num:
+                largest_missing_num = len(home.missing_amenities)
+
+        # Then split homes by number of amenities missing and sort each sub list
+        #   Then homes that are missing less amenities go to the front of the list
+        for num_missing in range(0, largest_missing_num+1):
+            list_range = list(filter(lambda x: len(x.missing_amenities) == num_missing, scored_homes))
+            home_list += SortingAlgorithms.insertion_sort(list_range)

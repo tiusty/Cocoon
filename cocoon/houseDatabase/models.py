@@ -10,9 +10,15 @@ class HomeTypeModel(models.Model):
     This generates the multiple select field in the survey
     If another home gets added it needs to be added here in the HOME_TYPE
     """
-    APARTMENT = "Apartment"
+    APARTMENT = "ap"
+    SINGLE_FAMILY = "sf"
+    CONDO = "cn"
+    OTHER = "ot"
     HOME_TYPE = (
         (APARTMENT, 'Apartment'),
+        (SINGLE_FAMILY, 'Single Family'),
+        (CONDO, 'Condo'),
+        (OTHER, 'Other'),
     )
     home_type = models.CharField(
         unique=True,
@@ -28,9 +34,11 @@ class HomeProviderModel(models.Model):
     """
     Class stores all the different providers that are used
     """
+    MLSPIN = "MLSPIN"
+    YGL = "YGL"
     PROVIDER_TYPES = (
-        ('MLSPIN', 'MLSPIN'),
-        ('YGL', 'YGL'),
+        (MLSPIN, 'MLSPIN'),
+        (YGL, 'YGL'),
     )
 
     provider = models.CharField(
@@ -211,6 +219,7 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
     price = models.IntegerField(default=-1)
     home_type = models.ForeignKey('HomeTypeModel', on_delete=models.PROTECT)
     currently_available = models.BooleanField(default=False)
+    date_available = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.full_address
@@ -225,10 +234,24 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
         self.price = update_model.price
         self.home_type = update_model.home_type
         self.currently_available = update_model.currently_available
+        self.date_available = update_model.date_available
 
     @property
     def price_string(self):
         return "$" + str(self.price)
+
+    def on_market(self):
+        """
+        Returns whether or not the home is on market
+        :return: (boolean) -> True: The home is currently on the market
+                              False: The home is not on the market
+        """
+        # As long as the date of when the feed was updated matches the data
+        # that the home was last updated, then the home is on market
+        if self.listing_provider.last_updated_feed != self.last_updated:
+            return False
+        else:
+            return True
 
 
 def house_directory_path(instance, filename):

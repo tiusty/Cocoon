@@ -11,7 +11,7 @@ from cocoon.commutes.models import CommuteType
 
 # Python global configurations
 from config.settings.Global_Config import MAX_TEXT_INPUT_LENGTH, MAX_NUM_BEDROOMS
-from .constants import HYBRID_WEIGHT_CHOICES, WEIGHT_QUESTION_MAX
+from .constants import WEIGHT_QUESTION_MAX, MOVE_WEIGHT_MAX, HYBRID_WEIGHT_MAX
 from django.forms.models import inlineformset_factory
 
 # import constants
@@ -19,12 +19,6 @@ from cocoon.survey.constants import MAX_TENANTS_FOR_ONE_SURVEY
 
 
 class HomeInformationForm(ModelForm):
-    num_bedrooms = forms.IntegerField(
-        required=False,
-        max_value=MAX_NUM_BEDROOMS,
-        min_value=0,
-    )
-
     home_type = forms.ModelMultipleChoiceField(
         required=True,
         queryset=HomeTypeModel.objects.all()
@@ -38,13 +32,48 @@ class HomeInformationForm(ModelForm):
 
     move_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=MOVE_WEIGHT_MAX,
         min_value=0
     )
 
+    earliest_move_in = forms.DateTimeField(
+        required=False,
+    )
+
+    latest_move_in = forms.DateTimeField(
+        required=False
+    )
+
+    def is_valid(self):
+        valid = super().is_valid()
+
+        if not valid:
+            return valid
+
+        # Need to make a copy because otherwise when an error is added, that field
+        # is removed from the cleaned_data, then any subsequent checks of that field
+        # will cause a key error
+        current_form = self.cleaned_data.copy()
+
+        if 'move_weight' in current_form:
+
+            # only when the commute type is not work from home are these fields needed
+            if current_form['move_weight'] != MOVE_WEIGHT_MAX:
+
+                if current_form['earliest_move_in'] is None:
+                    self.add_error('earliest_move_in', "If move weight is not Move asap, earliest move in required")
+                    valid = False
+
+                if current_form['latest_move_in'] is None:
+                    self.add_error('latest_move_in', "If move weight is not Move asap, latest move in required")
+                    valid = False
+
+        return valid
+
     class Meta:
         model = HomeInformationModel
-        fields = ('num_bedrooms', 'home_type', 'polygon_filter_type', 'move_weight')
+        fields = ('home_type', 'polygon_filter_type', 'move_weight', 'earliest_move_in',
+                  'latest_move_in')
 
 
 class PriceInformationForm(ModelForm):
@@ -79,7 +108,7 @@ class HouseNearbyAmenitiesForm(ModelForm):
 
     laundry_nearby_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -102,7 +131,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     laundry_in_building_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -117,7 +146,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     patio_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -127,7 +156,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     pool_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -137,7 +166,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     gym_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -147,7 +176,7 @@ class ExteriorAmenitiesForm(ModelForm):
 
     storage_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -168,7 +197,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     laundry_in_unit_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -178,7 +207,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     furnished_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -209,7 +238,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     cat_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -219,7 +248,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     hardwood_floors_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -229,7 +258,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     AC_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -239,7 +268,7 @@ class InteriorAmenitiesForm(ModelForm):
 
     dishwasher_weight = forms.IntegerField(
         required=False,
-        max_value=WEIGHT_QUESTION_MAX,
+        max_value=HYBRID_WEIGHT_MAX,
         min_value=0,
     )
 
@@ -414,7 +443,9 @@ class TenantPersonalInformationForm(ModelForm):
         required=False,
     )
 
-    income = forms.CharField(
+    income = forms.IntegerField(
+        max_value=1000000000,
+        min_value=0,
         required=False,
     )
 

@@ -43,12 +43,61 @@ class WeightScoringAlgorithm(object):
     def handle_weighted_question_score(self, user_scale_factor, home, does_home_contain_item):
         """
         Handles the weighted question score based on a scale factor and the home
-        :param user_scale_factor:
+        :param user_scale_factor: (int) -> the user weight for that amenity
         :param home: (HomeScore) -> The home that is being judged
         :param does_home_contain_item: (Boolean): Boolean of whether or not the home as the item
-        :return:
         """
-        if not (self.compute_weighted_question_filter(user_scale_factor, does_home_contain_item)):
-            home.eliminate_home()
         home.accumulated_points = self.compute_weighted_question_score(user_scale_factor, does_home_contain_item)
         home.total_possible_points = abs(user_scale_factor) * self.hybrid_question_weight
+
+    def handle_weighted_question(self, amenity_name, user_scale_factor, home, does_home_contain_item):
+        """
+        Handles weighted question scoring and filtering.
+        Handles the weighted question score based on a scale factor and the home
+        :param user_scale_factor: (int) -> the user weight for that amenity
+        :param home: (HomeScore) -> The home that is being judged
+        :param does_home_contain_item: (Boolean): Boolean of whether or not the home as the item
+        """
+        if not (self.compute_weighted_question_filter(user_scale_factor, does_home_contain_item)):
+            home.eliminate_home(amenity_name)
+        self.handle_weighted_question_score(user_scale_factor, home, does_home_contain_item)
+
+    def handle_laundry_weight_question(self, survey, home_score):
+        """
+        Handles laundry weighting since it is a special case
+
+        Basically:
+            If the user wants in-unit then score based on in-unit
+            If the user wants in-building then score homes with in-building normally but also score any apartment
+                with in-unit laundry with the in-building scoring. This is assuming any person that wants in building
+                laundry will also be good with in-unit. aka in-unit is the strictest case.
+        :param survey: (RentingSurveyModel) -> The survey the user took
+        :param home_score: (HomeScore) -> The home that is being evaluated
+        """
+
+        # Case if the user wants both laundry in-unit and in building
+        if survey.wants_laundry_in_unit and survey.wants_laundry_in_building:
+
+            # If the laundry is in-unit then just score the home based on having it in-unit
+            if home_score.home.laundry_in_unit:
+                self.handle_weighted_question('laundry_in_unit', survey.laundry_in_unit_weight, home_score, home_score.home.laundry_in_unit)
+            # If the home doesn't have it in-unit then score it for in-unit (going to be zero),
+            #   then score it for having it in building
+            else:
+                self.handle_weighted_question('laundry_in_unit', survey.laundry_in_unit_weight, home_score, home_score.home.laundry_in_unit)
+                self.handle_weighted_question('laundry_in_building', survey.laundry_in_building_weight, home_score, home_score.home.laundry_in_building)
+
+        # If the user just wants in-unit then score normally
+        elif survey.wants_laundry_in_unit:
+            self.handle_weighted_question('laundry_in_unit', survey.laundry_in_unit_weight, home_score, home_score.home.laundry_in_unit)
+        # If the user wants just in building then treat homes with in-unit has having the
+        #   laundry in building (since it is "better")
+        elif survey.wants_laundry_in_building:
+            # If the home has in-unit laundry then score using the in-building weighting on the home
+            #   though it is based off the fact that it has it in-unit
+            if home_score.home.laundry_in_unit:
+                self.handle_weighted_question('laundry_in_unit', survey.laundry_in_building_weight, home_score, home_score.home.laundry_in_unit)
+            else:
+                self.handle_weighted_question('laundry_in_building', survey.laundry_in_building_weight, home_score, home_score.home.laundry_in_building)
+
+

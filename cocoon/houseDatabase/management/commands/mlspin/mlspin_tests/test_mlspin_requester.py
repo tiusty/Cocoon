@@ -22,10 +22,10 @@ class TestPullMlspin(TestCase):
     def setUp(self):
 
         # Create the manager
-        HomeProviderModel.objects.create(provider="MLSPIN")
+        HomeProviderModel.objects.create(provider=HomeProviderModel.MLSPIN)
 
         # Set up the apartment home type
-        self.home_type = HomeTypeModel.objects.create(home_type="Apartment")
+        self.home_type = HomeTypeModel.objects.create(home_type=HomeTypeModel.APARTMENT)
         with open(os.path.join(os.path.dirname(__file__), "test_idx_feed.txt"), "r") as fp:
             self.idx_data = fp.readlines()
         # self.idx_data = (idx_file.read().decode("iso-8859-1"))

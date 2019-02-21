@@ -1,6 +1,22 @@
-{% autoescape off %}
-Hi {{ user.full_name }},
-Please click on the link to confirm your registration,
+{% extends "base_email_button.html" %}
 
-http://{{ domain }}{% url 'userAuth:activateAccount' uidb64=uid token=token %}
-{% endautoescape %}
+{% block headline %}
+    Verify your email address
+{% endblock %}
+
+{% block greeting %}
+    Hi {{ user.full_name }}!
+{% endblock %}
+
+{% block content %}
+    Thanks for signing up. In order to start using your Cocoon account, we’ll need to verify your email.
+{% endblock %}
+
+{% block buttonLink %}http://{{ domain }}{% url 'userAuth:activateAccount' uidb64=uid token=token %}{% endblock %}
+
+{% block buttonText %}Verify Email{% endblock %}
+
+{% block smallText %}
+    If you did not sign up for this account you can ignore this email and the
+    account will be deleted.
+{% endblock %}

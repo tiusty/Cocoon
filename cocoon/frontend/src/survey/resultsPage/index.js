@@ -29,6 +29,7 @@ export default class ResultsPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            googleApiLoaded: false,
             homeList: undefined,
             survey_name: undefined,
             survey: undefined,
@@ -47,10 +48,28 @@ export default class ResultsPage extends Component {
     }
 
     componentDidMount = () => {
+        // This interval checks every .3 seconds to see if the google api loaded.
+        this.interval = setInterval(() => this.checkGoogleApi(), 300);
         this.setPageHeight();
         if (this.props.is_verified) {
             this.getSurvey();
             this.getResults();
+        }
+    };
+
+    checkGoogleApi() {
+        /**
+         * Function checks to see if the google api is loaded. This should be called on an interval.
+         *  When it is, then the state is set to true and the interval is stopped
+         */
+        if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
+            // Since the key is now loaded, then stop the interval
+            clearInterval(this.interval);
+
+            // Mark that the api is now loaded
+            this.setState({
+                googleApiLoaded: true,
+            })
         }
     }
 
@@ -95,7 +114,6 @@ export default class ResultsPage extends Component {
                     const geocoder = new google.maps.Geocoder();
                     geocoder.geocode( { 'address': address }, (results, status) => {
                         if (status === google.maps.GeocoderStatus.OK) {
-                            console.log(results);
                             coords.lat = results[0].geometry.location.lat();
                             coords.lng = results[0].geometry.location.lng();
                             coords.name = name;
@@ -224,6 +242,8 @@ export default class ResultsPage extends Component {
                             onFavoriteClick={() => this.handleFavoriteClick(home.home)}
                             onMouseLeave={() => this.removeHoverId(home.home.id)}
                             onMouseEnter={() => this.setHoverId(home.home.id)}
+                            missing_amenities={home.missing_amenities}
+                            show_missing_amenities={true}
                         />))}
                 </div>
             </>
@@ -235,12 +255,14 @@ export default class ResultsPage extends Component {
          * On the click of a homeTile or map marker, this sets the clicked_home id
          * to the target id to be used to render the large home tile.
         **/
-        this.saveScrollPosition();
-        this.setState({
-            clicked_home: id,
-            viewing_home: true
-        });
-        document.querySelector('.results-wrapper').scrollTop = 0;
+        if (!this.state.isEditing) {
+            this.saveScrollPosition();
+            this.setState({
+                clicked_home: id,
+                viewing_home: true
+            });
+            document.querySelector('.results-wrapper').scrollTop = 0;
+        }
     };
 
     handleCloseHomeTileLarge = () => {
@@ -265,6 +287,8 @@ export default class ResultsPage extends Component {
                     onCloseHomeTileLarge={this.handleCloseHomeTileLarge}
                     displayPercent={true}
                     percent_match={home.percent_match}
+                    missing_amenities={home.missing_amenities}
+                    show_missing_amenities={true}
                 />
             </div>
         );
@@ -285,7 +309,7 @@ export default class ResultsPage extends Component {
         if (!this.state.isEditing) {
             return 'Edit Survey';
         } else {
-            return 'Cancel Survey';
+            return 'Cancel Changes';
         }
     };
 
@@ -398,7 +422,14 @@ export default class ResultsPage extends Component {
                         {this.renderMainComponent()}
                     </div>
                     <div className="map-wrapper">
-                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} commutes={this.state.commutes} /> : null}
+                        {this.state.homeList !== undefined && this.state.googleApiLoaded ?
+                            <Map homes={this.state.homeList}
+                                 handleHomeClick={this.handleHomeClick}
+                                 hover_id={this.state.hover_id}
+                                 setHoverId={this.setHoverId}
+                                 removeHoverId={this.removeHoverId}
+                                 commutes={this.state.commutes} />
+                            : null}
                     </div>
                 </div>
             );

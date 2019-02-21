@@ -33,18 +33,6 @@ class TestUpdateCommutesCache(TestCase):
         HomeProviderModel.objects.create(provider="MLSPIN")
 
     @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-        )
-
-    @staticmethod
     def create_home(home_type, price=1500,
                     currently_available=True, num_bedrooms=2, num_bathrooms=2, zip_code="02476", state="MA"):
         return HomeScore(RentDatabaseModel.objects.create(
@@ -78,7 +66,7 @@ class TestUpdateCommutesCache(TestCase):
         """
         # Arrange
         commute_type = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
         accuracy = CommuteAccuracy.EXACT
@@ -103,7 +91,7 @@ class TestUpdateCommutesCache(TestCase):
         """
         # Arrange
         commute_type = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
         accuracy = CommuteAccuracy.EXACT
@@ -128,7 +116,7 @@ class TestUpdateCommutesCache(TestCase):
         """
         # Arrange
         commute_type = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
         accuracy = CommuteAccuracy.EXACT
@@ -153,7 +141,7 @@ class TestUpdateCommutesCache(TestCase):
         """
         # Arrange
         commute_type = CommuteType.objects.create(commute_type=CommuteType.WALKING)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_type)
         accuracy = CommuteAccuracy.EXACT
@@ -182,7 +170,7 @@ class TestUpdateCommutesCache(TestCase):
         commute_transit = CommuteType.objects.create(commute_type=CommuteType.TRANSIT)
         commute_walking = CommuteType.objects.create(commute_type=CommuteType.WALKING)
         commute_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
-        survey = self.create_survey(self.user.userProfile)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile)
         home_score = self.create_home(self.home_type)
         destination = self.create_destination(survey, commute_type=commute_driving)
         destination1 = self.create_destination(survey, commute_type=commute_walking)
@@ -213,18 +201,6 @@ class TestDriveCommuteCalculator(TestCase):
         self.commute_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.commute_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         HomeProviderModel.objects.create(provider="MLSPIN")
-
-    @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-        )
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -454,18 +430,6 @@ class TestTransitCommuteCalculator(TestCase):
         self.commute_driving = CommuteType.objects.create(commute_type=CommuteType.DRIVING)
         self.commute_bicycling = CommuteType.objects.create(commute_type=CommuteType.BICYCLING)
         HomeProviderModel.objects.create(provider="MLSPIN")
-
-    @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-        )
 
     @staticmethod
     def create_home(home_type, price=1500,

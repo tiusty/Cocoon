@@ -91,7 +91,7 @@ export default class TenantForm extends Component {
                 <div className="survey-question" onChange={(e) => {
                     this.props.onInputChange(e, 'string', this.props.tenant.tenant_identifier, this.props.index);
                 }}>
-                    <h2>{this.props.index === 0 ? 'Are' : 'Is'} <span>{name}</span> working, studying, or other?
+                    <h2>{this.props.index !== 0 ? 'Is' : 'Are'} <span>{name}</span> working, studying, or other?
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-occupation-error`}></span>
@@ -235,7 +235,7 @@ export default class TenantForm extends Component {
             );
         } else {
             return (
-                <h2>How does {name} <span>commute</span>?</h2>
+                <h2>How {this.props.index === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
             );
         }
     };
@@ -282,26 +282,33 @@ export default class TenantForm extends Component {
 
     renderAddressInput = () => {
         if (this.props.tenant.commute_type !== this.getCommuteId('Work From Home')) {
+            setTimeout(() => {
+                this.disableAutocomplete();
+            }, 0);
             return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-other-occupation-question`}>
                     <h2>What's the <span>street address</span>?</h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-commute_address-error`}></span>
                     <span className="col-md-12 survey-error-message" style={{color: `var(--grey)`, display: 'block'}}>Please be sure to choose a location from the dropdown list.</span>
-                    <Autocomplete
-                        className="col-md-12 survey-input survey-address-input"
-                        style={{backgroundImage: `url(${this.props.tenant.address_valid ? validImage : invalidImage})`}}
-                        autoComplete="off"
-                        onPlaceSelected={(place) => {
-                            this.props.onAddressSelected(this.props.index, place)
-                        }}
-                        types={['address']}
-                        name={`${this.props.tenant.tenant_identifier}-commute_address`}
-                        placeholder={'Street Address'}
-                        value={this.props.tenant.full_address}
-                        onChange={value => this.props.onAddressChange(this.props.index, value.target.value)
-                        }
-                    />
+                    {this.props.googleApiLoaded ?
+                        <Autocomplete
+                            className="col-md-12 survey-input survey-address-input"
+                            style={{backgroundImage: `url(${this.props.tenant.address_valid ? validImage : invalidImage})`}}
+                            autoComplete="off"
+                            onPlaceSelected={(place) => {
+                                this.props.onAddressSelected(this.props.index, place)
+                            }}
+                            types={['address']}
+                            name={`${this.props.tenant.tenant_identifier}-commute_address`}
+                            placeholder={'Street Address'}
+                            value={this.props.tenant.full_address}
+                            onChange={value => this.props.onAddressChange(this.props.index, value.target.value)
+                            }
+                        />
+                        :
+                        null
+                    }
                 </div>
             );
         } else {
@@ -352,7 +359,7 @@ export default class TenantForm extends Component {
             <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-transit-follow-up-question`} onChange={(e) => {
                 this.setTransitType(e);
             }}>
-                <h2>What form of <span>transit</span>?</h2>
+                <h2>What form of <span>transit</span>? <span className="checkbox-helper-text">(Select all that apply)</span></h2>
                 <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-transit_options_error`}></span>
                 <label className="col-md-6 survey-label survey-checkbox">
@@ -433,14 +440,14 @@ export default class TenantForm extends Component {
                      onBlur={(e) => {
                          this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
                      }}>
-                    <h2>How <span>long of a commute</span> does {name} want?
+                    <h2>How <span>long of a commute</span> {this.props.index === 0 ? 'do' : 'does'} {name} want?
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-desired_commute-error`}></span>
                     <small id="priceHelp" className="form-text text-muted">Left dot is your desired commute, the right dot is the max commute you are willing to have
                     </small>
                     <InputRange
-                        draggableTrack
+                        draggableTrack={false}
                         maxValue={180}
                         minValue={0}
                         step={5}
@@ -516,9 +523,14 @@ export default class TenantForm extends Component {
                 </h2>
                 <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-income-error`}></span>
-                <input className="col-md-12 survey-input" type="number" name={`${this.props.tenant.tenant_identifier}-income`}
-                       placeholder="Yearly salary" step="1000"
-                       value={this.props.tenant.income || ''} onChange={(e) => {
+                <input className="col-md-12 survey-input" name={`${this.props.tenant.tenant_identifier}-income`}
+                       placeholder="Yearly salary"
+                       value=
+                           {
+                               this.props.tenant.income != null ?
+                                   this.props.tenant.income :
+                                   ''
+                           } onChange={(e) => {
                     this.props.onInputChange(e, 'number', this.props.tenant.tenant_identifier, this.props.index);
                 }}/>
             </div>
@@ -594,20 +606,32 @@ export default class TenantForm extends Component {
         );
     }
 
+    renderCollapseSection = (name) => {
+        if (this.props.number_of_tenants > 1) {
+            return (
+                <>
+                    <div className={this.handleTenantPanelClasses()} onClick={this.handleTenantPanelClick}>
+                        <div className="tenant-panel-left">
+                            <i className={this.handleTenantIconClasses()}>
+                                {this.handleTenantPanelIcon()}
+                            </i>
+                            <span>{name}'s Info</span>
+                        </div>
+                        <span><i className="material-icons">{this.state.is_active ? 'remove' : 'add'}</i></span>
+                    </div>
+                </>
+            )
+        } else {
+            return null;
+        }
+    }
+
     render() {
-        const name = this.props.tenant.first_name;
+        const name = this.props.index === 0 ? 'you' : this.props.tenant.first_name;
         const tenant_identifier = this.props.tenant.tenant_identifier;
         return (
             <>
-                <div className={this.handleTenantPanelClasses()} onClick={this.handleTenantPanelClick}>
-                    <div className="tenant-panel-left">
-                        <i className={this.handleTenantIconClasses()}>
-                            {this.handleTenantPanelIcon()}
-                        </i>
-                        <span>{name}'s Info</span>
-                    </div>
-                    <span><i className="material-icons">{this.state.is_active ? 'remove' : 'add'}</i></span>
-                </div>
+                {this.renderCollapseSection(name)}
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
                      onChange={() => this.props.onHandleValidation(this.props.index, false)}>
                     {this.renderOccupation(name)}

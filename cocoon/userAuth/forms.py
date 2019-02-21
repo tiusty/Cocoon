@@ -5,7 +5,7 @@ from django import forms
 from cocoon.signature.models import HunterDocManagerModel
 import re
 
-from .constants import HUNTER_CREATION_KEY, BROKER_CREATION_KEY
+from .constants import BROKER_CREATION_KEY
 from .helpers.send_verification_email import send_verification_email
 
 
@@ -106,8 +106,8 @@ class BaseRegisterForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Please use format: ###-###-####',
-                'pattern': '\d{3}[\-]\d{3}[\-]\d{4}',
+                'placeholder': 'Please use format: ##########',
+                'pattern': '\d{10}',
             }
         )
     )
@@ -123,8 +123,10 @@ class BaseRegisterForm(UserCreationForm):
         # makes sure that the phone number is formatted properly
         if current_form['phone_number']:
             pattern = re.compile("^(\d{3}[\-]\d{3}[\-]\d{4})$")
-            if not pattern.match(current_form['phone_number']):
+            pattern1 = re.compile("^\d{10}")
+            if not pattern.match(current_form['phone_number']) and not pattern1.match(current_form['phone_number']):
                 valid = False
+                self.add_error('phone_number', "Phone number not in valid format")
 
         return valid
 
@@ -134,31 +136,6 @@ class BaseRegisterForm(UserCreationForm):
 
 
 class ApartmentHunterSignupForm(BaseRegisterForm):
-
-    creation_key = forms.CharField(
-        required=True,
-        label="Please enter the key",
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'key',
-            }
-        )
-    )
-
-    def is_valid(self):
-        valid = super(ApartmentHunterSignupForm, self).is_valid()
-
-        if not valid:
-            return valid
-
-        current_form = self.cleaned_data.copy()
-
-        if current_form['creation_key'] != HUNTER_CREATION_KEY:
-            self.add_error('creation_key', "Creation Key invaild")
-            valid = False
-
-        return valid
 
     class Meta:
         model = MyUser
