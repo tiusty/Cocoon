@@ -27,6 +27,14 @@ import dateutil
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
+@method_decorator(login_required, name='dispatch')
+class ItineraryFileView(TemplateView):
+    """
+    Loads the template for an individual itinerary
+    """
+    template_name = 'scheduler/itineraryFile.html'
+
+
 
 @method_decorator(login_required, name='dispatch')
 class ClientSchedulerView(TemplateView):

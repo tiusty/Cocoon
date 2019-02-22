@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^agentSchedulerPortal/', views.AgentSchedulerPortalView.as_view(), name="agentSchedulerPortal"),
     url(r'^agentSchedulerMarketplace/', views.AgentSchedulerMarketplaceView.as_view(), name="agentSchedulerMarketplace"),
     url(r'^clientScheduler', views.ClientSchedulerView.as_view(), name="clientScheduler"),
+    url(r'^itineraryPage/(?P<slug>\s+)/$', views.ItineraryFileView.as_view(), name="itineraryFile"),
 
     # AJAX requests below
     url(r'^unscheduleItinerary/$', views.unschedule_itinerary, name="unscheduleItinerary"),
