@@ -3,7 +3,10 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
+from django.utils.text import slugify
 from cocoon.houseDatabase.models import RentDatabaseModel
+# Import third party libraries
+import hashlib
 
 
 class MyUserManager(BaseUserManager):
@@ -97,11 +100,30 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+
 # Defines the Manager for the custom User model
-
-
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
+    url = models.SlugField(max_length=100, default="")
+
+    def generate_slug(self):
+        # Create the unique string that will be hashed
+        # Multiple things are added so people can't reverse hash the id
+        hashable_string = "{0}{1}{2}".format(self.user.phone_number[:2], self.user.id, self.user.joined,)
+
+        # Create the md5 object
+        m = hashlib.md5()
+
+        # Add the string to the hash function
+        m.update(hashable_string.encode('utf-8'))
+
+        # Now return the has has the url
+        return slugify(m.hexdigest())
+
+    def save(self, *args, **kwargs):
+        if not self.url:
+            self.url = self.generate_slug()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.user.get_short_name()
