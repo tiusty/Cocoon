@@ -160,7 +160,7 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         if current_form['agent_referral']:
             if not UserProfile.objects.filter(url=current_form['agent_referral'], user__is_broker=True).exists():
                 valid = False
-                self.add_error('agent_referral', "Agent does not exist")
+                self.add_error('agent_referral', "Agent URL not valid, please contact your agent to verify your URL")
             elif UserProfile.objects.filter(url=current_form['agent_referral']).count() != 1:
                 valid = False
                 self.add_error('agent_referral', "More than one agent exists, please contact support for help via "
