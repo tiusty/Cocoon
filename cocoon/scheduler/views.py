@@ -106,7 +106,7 @@ class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
             return ItineraryModel.objects.filter(client=user_profile.user)
 
 
-@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_broker or u.is_admin), name='dispatch')
 class ItineraryClientViewSet(viewsets.ModelViewSet):
     """
     Used on the client scheduler page to retrieve the itineraries for the current user
@@ -136,7 +136,7 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
         # Retrieve the associated itinerary with the request
         itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
 
-        # Case if an agent is trying to schedule an itinerary they already claimed
+        # Save all the available start times the client indicated
         if 'start_times' in self.request.data['type']:
             start_times = self.request.data['start_times']
 
@@ -147,6 +147,11 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
                     dt = dateutil.parser.parse(start_time['date'])
                     dt = dt.replace(second=0, microsecond=0)
                     itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
+
+            # Automatically set the agent assigned to the itinerary if the agent has a referred agent
+            if user_profile.referred_agent is not None:
+                itinerary.agent = user_profile.referred_agent
+                itinerary.save()
 
         # Retrieve the object again to get the updated fields
         itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
