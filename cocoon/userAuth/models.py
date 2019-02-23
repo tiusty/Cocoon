@@ -105,7 +105,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 class UserProfile(models.Model):
     user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE)
     url = models.SlugField(unique=True, max_length=100)
-    referred_agent = models.ForeignKey(MyUser, related_name='referred_clients', null=True)
+    referred_agent = models.ForeignKey(MyUser, related_name='referred_clients', null=True, blank=True)
 
     def generate_slug(self):
         # Create the unique string that will be hashed
