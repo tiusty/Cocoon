@@ -158,9 +158,14 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
 
         # makes sure that the phone number is formatted properly
         if current_form['agent_referral']:
-            if not UserProfile.objects.filter(url=current_form['agent_referral']).exists():
+            if not UserProfile.objects.filter(url=current_form['agent_referral'], user__is_broker=True).exists():
                 valid = False
                 self.add_error('agent_referral', "Agent does not exist")
+            elif UserProfile.objects.filter(url=current_form['agent_referral']).count() != 1:
+                valid = False
+                self.add_error('agent_referral', "More than one agent exists, please contact support for help via "
+                                                 "intercom in the bottom right")
+                logger.error("More than one agent returned for agent referral: {0}".format(current_form['agent_referral']))
         return valid
 
     class Meta:
@@ -173,6 +178,13 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         user.is_hunter = True
         user.is_verified = False
         user.save()
+
+        if 'agent_referral' in self.cleaned_data:
+            try:
+                user.userProfile.referred_agent = UserProfile.objects.get(url=self.cleaned_data['agent_referral']).user
+                user.userProfile.save()
+            except UserProfile.MultipleObjectsReturned:
+                logger.error("Error in agent sign up form, multiple agents returned: {0}".format(self.cleaned_data['agent_referral']))
 
         domain = kwargs.pop('request', None)
         send_verification_email(domain, user)

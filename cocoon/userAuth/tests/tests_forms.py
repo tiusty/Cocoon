@@ -236,6 +236,36 @@ class TTestApartmentHunterSignupForm(TestCase):
         # Assert
         self.assertTrue(form.is_valid())
 
+    def tests_form_not_valid_agent_referral_if_the_url_is_not_for_a_broker_account(self):
+        """
+        Tests that if the user puts down a user account url that is not a broker,
+            then it does not validate
+        """
+        # Arrange
+        # set agent to is_broker=False to make not a broker account
+        agent = MyUser.objects.create(is_broker=False)
+        first_name = 'Alex'
+        last_name = 'Agudelo'
+        username = 'email@text.com'
+        password1 = 'sometestPassword'
+        password2 = 'sometestPassword'
+
+        # Create form data
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': username,
+            'password1': password1,
+            'password2': password2,
+            'agent_referral': agent.userProfile.url,
+        }
+
+        # Act
+        form = ApartmentHunterSignupForm(data=form_data)
+
+        # Assert
+        self.assertFalse(form.is_valid())
+
     def tests_form_not_valid_agent_referral(self):
         """
         Tests if the agent referral is filled out with a url that is not associated with
@@ -292,3 +322,75 @@ class TTestApartmentHunterSignupForm(TestCase):
 
         # Assert
         self.assertFalse(form.is_valid())
+
+    def tests_form_set_agent_referral(self):
+        """
+        Tests that if the agent referral is filled out correctly then the account is saved
+            with that agent referral
+        """
+        # Arrange
+        agent = MyUser.objects.create(is_broker=True)
+        first_name = 'Alex'
+        last_name = 'Agudelo'
+        username = 'email@text.com'
+        password1 = 'sometestPassword'
+        password2 = 'sometestPassword'
+
+        # Create form data
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': username,
+            'password1': password1,
+            'password2': password2,
+            'agent_referral': agent.userProfile.url,
+        }
+
+        # Act
+        form = ApartmentHunterSignupForm(data=form_data)
+        form.save()
+
+        # Assert
+        if form.is_valid():
+            form.save()
+
+            # Assert
+            client = MyUser.objects.get(first_name=first_name)
+            self.assertEqual(client.userProfile.referred_agent.id, agent.id)
+        else:
+            self.assertFalse(True, "Form failed to validate")
+
+    def tests_form_do_not_set_agent_referral(self):
+        """
+        Tests that if the agent referral is not set, then the client account is saved
+            with an agent referral
+        """
+        # Arrange
+        agent = MyUser.objects.create(is_broker=True)
+        first_name = 'Alex'
+        last_name = 'Agudelo'
+        username = 'email@text.com'
+        password1 = 'sometestPassword'
+        password2 = 'sometestPassword'
+
+        # Create form data
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': username,
+            'password1': password1,
+            'password2': password2,
+        }
+
+        # Act
+        form = ApartmentHunterSignupForm(data=form_data)
+
+        # Assert
+        if form.is_valid():
+            form.save()
+
+            # Assert
+            client = MyUser.objects.get(first_name=first_name)
+            self.assertEqual(client.userProfile.referred_agent, None)
+        else:
+            self.assertFalse(True, "Form failed to validate")
