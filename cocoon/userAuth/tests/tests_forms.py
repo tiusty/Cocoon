@@ -3,6 +3,7 @@ from django.test import TestCase
 # Import Cocoon Modules
 from cocoon.userAuth.constants import BROKER_CREATION_KEY
 from cocoon.userAuth.forms import ApartmentHunterSignupForm, BrokerSignupForm
+from ..models import MyUser
 
 
 class TestApartmentHunterSignupForm(TestCase):
@@ -206,3 +207,88 @@ class TTestApartmentHunterSignupForm(TestCase):
         # Assert
         self.assertFalse(form.is_valid())
         self.assertEqual({'email': ['Enter a valid email address.']}, form.errors)
+
+    def tests_form_valid_agent_referral(self):
+        """
+        Tests that if the agent referral is filled out with an agents url then the form is valid
+        """
+        # Arrange
+        agent = MyUser.objects.create(is_broker=True)
+        first_name = 'Alex'
+        last_name = 'Agudelo'
+        username = 'email@text.com'
+        password1 = 'sometestPassword'
+        password2 = 'sometestPassword'
+
+        # Create form data
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': username,
+            'password1': password1,
+            'password2': password2,
+            'agent_referral': agent.userProfile.url,
+        }
+
+        # Act
+        form = ApartmentHunterSignupForm(data=form_data)
+
+        # Assert
+        self.assertTrue(form.is_valid())
+
+    def tests_form_not_valid_agent_referral(self):
+        """
+        Tests if the agent referral is filled out with a url that is not associated with
+            an agent then it isn't valid
+        """
+        # Arrange
+        agent = MyUser.objects.create(is_broker=True)
+        first_name = 'Alex'
+        last_name = 'Agudelo'
+        username = 'email@text.com'
+        password1 = 'sometestPassword'
+        password2 = 'sometestPassword'
+
+        # Create form data
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': username,
+            'password1': password1,
+            'password2': password2,
+            'agent_referral': agent.userProfile.url + '12',
+        }
+
+        # Act
+        form = ApartmentHunterSignupForm(data=form_data)
+
+        # Assert
+        self.assertFalse(form.is_valid())
+
+    def tests_form_agent_referral_no_agents(self):
+        """
+        Tests that if there are no agents that exist and the user puts an agent referal then
+            it will fail to be valid
+        """
+        # Arrange
+        first_name = 'Alex'
+        last_name = 'Agudelo'
+        username = 'email@text.com'
+        password1 = 'sometestPassword'
+        password2 = 'sometestPassword'
+
+        # Create form data
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': username,
+            'password1': password1,
+            'password2': password2,
+            'agent_referral': '23',
+        }
+
+        # Act
+        form = ApartmentHunterSignupForm(data=form_data)
+
+        # Assert
+        self.assertFalse(form.is_valid())

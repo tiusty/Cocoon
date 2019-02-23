@@ -137,6 +137,32 @@ class BaseRegisterForm(UserCreationForm):
 
 class ApartmentHunterSignupForm(BaseRegisterForm):
 
+    agent_referral = forms.CharField(
+        required=False,
+        label="Agent Referral",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Agent url',
+            }
+        )
+    )
+
+    def is_valid(self):
+        valid = super(BaseRegisterForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        current_form = self.cleaned_data.copy()
+
+        # makes sure that the phone number is formatted properly
+        if current_form['agent_referral']:
+            if not UserProfile.objects.filter(url=current_form['agent_referral']).exists():
+                valid = False
+                self.add_error('agent_referral', "Agent does not exist")
+        return valid
+
     class Meta:
         model = MyUser
         fields = ['email', 'first_name', 'last_name', 'phone_number', 'password1', 'password2']
