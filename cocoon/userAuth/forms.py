@@ -179,12 +179,14 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         user.is_verified = False
         user.save()
 
-        if 'agent_referral' in self.cleaned_data:
+        if self.cleaned_data['agent_referral']:
             try:
                 user.userProfile.referred_agent = UserProfile.objects.get(url=self.cleaned_data['agent_referral']).user
                 user.userProfile.save()
             except UserProfile.MultipleObjectsReturned:
                 logger.error("Error in agent sign up form, multiple agents returned: {0}".format(self.cleaned_data['agent_referral']))
+            except UserProfile.DoesNotExist:
+                pass
 
         domain = kwargs.pop('request', None)
         send_verification_email(domain, user)
