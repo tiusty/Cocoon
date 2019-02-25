@@ -1,83 +1,50 @@
-.surveys-div {
+.tour-setup-container {
+    width: 95%;
+    margin: 0 auto;
+    max-width: 1920px;
+    padding-top: 15px;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+
+.tour-setup-sidebar {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+}
+
+.tour-setup-container h3 {
+    color: var(--darkBlue);
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+.tour-setup-container .helper-text {
+    color: var(--grey);
+}
+
+.tour-cta {
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
     padding: 15px;
 }
 
-.surveys-title {
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: bold;
-    line-height: normal;
-    font-size: 24px;
-
-    color: #000000;
+.tour-cta span {
+    display: flex;
+    align-items: center;
+    color: var(--teal);
+    cursor: pointer;
 }
 
-.surveys-title-text {
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: normal;
-    line-height: normal;
+.tour-cta span i {
     font-size: 14px;
-
-    color: #000000;
-}
-
-.surveys-title-text-semi-bold {
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    font-size: 14px;
-
-    color: #000000;
-}
-
-.surveys-main {
+    background: rgba(57, 177, 167,  .15);
+    color: var(--teal);
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-content: stretch;
-    align-items: baseline;
-}
-
-.my-surveys-none-div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    text-align: center;
-    padding: 15px;
-}
-
-.survey-small {
-    padding: 10px;
-    width: 350px;
-    flex-grow: 1;
-}
-
-.survey-large {
-    width: 100%;
-}
-
-.tour-summary {
-    margin-top: 15px;
-    border: 1px solid rgba(156, 156, 156, 0.7);
-    box-sizing: border-box;
-    border-radius: 10px;
-
-    display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 15px;
-}
-
-.react-confirm-alert-overlay {
-    z-index: 99999;
+    border-radius: 50%;
+    padding: 7px;
+    margin-right: 3px;
 }

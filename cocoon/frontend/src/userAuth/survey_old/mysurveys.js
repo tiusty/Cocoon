@@ -1,15 +1,19 @@
 // Import React Components
-import React from 'react';
+import React from 'react'
 import {Component} from 'react';
-import axios from 'axios';
+import axios from 'axios'
+import LoadingScreen from 'react-loading-screen';
 
 // Import Cocoon Components
+import SurveySmall from "./surveySmall/surveySmall";
+import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
+import TourSummary from "./tourSummary/tourSummary";
 
-import Preloader from '../../common/preloader';
-import TourSetupCTA from './tourSetupCTA';
+// Import icons
+import surveyIcon from './survey_icon.png';
 
 // Import styling
 import './mysurveys.css'
@@ -37,8 +41,7 @@ export default class MySurveys extends Component {
         loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
-        // loaded: false,
-        loaded: true,
+        loaded: false,
 
         // Itinerary information
         itinerary_scheduled: false,
@@ -399,6 +402,59 @@ export default class MySurveys extends Component {
     };
 
 
+    renderSurveysBlock() {
+        // If there are no surveys then render a take survey page
+        if (this.state.surveys.length <= 0) {
+            return (
+                <div className="my-surveys-none-div">
+                    <h2>You have no surveys!</h2>
+                    <p>Please click below to take a survey so we can find you your perfect home!</p>
+                    <a href={survey_endpoints['rentingSurvey']} className="btn btn-success"
+                       onClick={this.setLoadingClick}>Take Survey</a>
+                </div>
+            );
+        // If no survey is selected then render the small tiles
+        } else if (this.state.survey_clicked_id === undefined) {
+            return (
+                <>
+                    {this.state.surveys.map(survey =>
+                        <div key={survey.id} className="survey-small">
+                            <SurveySmall
+                                key={survey.id}
+                                id={survey.id}
+                                survey_name={survey.survey_name}
+                                url={survey.url}
+                                favorites={survey.favorites}
+                                visit_list={survey.visit_list}
+                                onLoadingClicked={this.setLoadingClick}
+                                onClickSurvey={this.handleClickSurvey}
+                            />
+                        </div>
+                    )}
+                </>
+            );
+        }
+        // If a survey is clicked then render the large survey
+        else {
+            let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
+            return (
+                <div className="survey-large">
+                    <SurveyLarge
+                        id={survey.id}
+                        visit_list={this.state.visit_list}
+                        favorites={this.state.favorites}
+                        onDelete={this.handleDelete}
+                        onLargeSurveyClose={this.handleLargeSurveyClose}
+                        onLoadingClicked={this.setLoadingClick}
+                        onHandleVisitListClicked={this.handleVisitClick}
+                        onHandleFavoriteListClicked={this.handleFavoriteClick}
+                    />
+                </div>
+            );
+
+        }
+    }
+
     setLoadingClick = () => {
         /**
          * Sets loading_clicked to true
@@ -449,15 +505,47 @@ export default class MySurveys extends Component {
     render() {
         if (this.state.loading_clicked || !this.state.loaded) {
             return (
-                <div style={{width: '100%', height: '80vh'}}>
-                    <Preloader color='var(--teal)'/>
-                </div>
+                <LoadingScreen
+                    loading={true}
+                    bgColor='#f1f1f1'
+                    spinnerColor='#9ee5f8'
+                    textColor='#676767'
+                    logoSrc={surveyIcon}
+                    text='Please wait: Loading...'
+                >
+                    <div>Loadable content</div>
+                </LoadingScreen>
             );
         } else {
             return (
-                <div className="tour-setup-container">
-                    <div className="tour-setup-sidebar">
-                        <TourSetupCTA />
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-md-8">
+                            <div className="surveys-div">
+                                <h2 className="surveys-title">My Surveys</h2>
+                                {this.renderMySurveysMessages()}
+                            </div>
+                            <div className="surveys-main">
+                                {this.renderSurveysBlock()}
+                            </div>
+                        </div>
+                        <div className="col-md-4">
+                            <TourSummary
+                                loaded={this.state.loaded}
+                                visit_list={this.state.visit_list}
+                                survey_id={this.state.survey_clicked_id}
+                                is_pre_tour_signed={this.state.is_pre_tour_signed}
+                                pre_tour_forms_created={this.state.pre_tour_forms_created}
+                                last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
+                                itinerary_scheduled={this.state.itinerary_scheduled}
+                                refreshing_document_status={this.state.refreshing_document_status}
+                                onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
+                                onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
+                                onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                                onHandleVisitListClicked={this.handleVisitClick}
+                                onLoadingClick={this.setLoadingClick}
+                            />
+                        </div>
                     </div>
                 </div>
             );

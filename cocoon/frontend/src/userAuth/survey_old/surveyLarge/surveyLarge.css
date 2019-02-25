@@ -1,0 +1,96 @@
+.survey-large-home {
+    width: 100%;
+}
+
+.survey-large-div {
+    background: #FFFFFF;
+    border: 1px solid #DFDFDF;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.survey-large-close-div {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding-top: 5px;
+    padding-right: 15px;
+}
+
+.survey-large-close-icon {
+    font-size: 40px;
+    cursor:pointer;
+}
+
+.survey-large-div-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+
+}
+
+.survey-large-title {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    font-size: 24px;
+
+    color: #000000;
+}
+
+.survey-large-text {
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    font-size: 18px;
+
+    color: #000000;
+
+}
+
+.survey-large-survey-div {
+    width: 100%;
+}
+
+.survey-large-homes-outer,
+.survey-large-snapshot-outer {
+    padding: 15px;
+
+}
+
+.survey-large-homes,
+.survey-large-snapshot {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    background: #FFFFFF;
+    border: 1px solid #DFDFDF;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.survey-large-homes-section,
+.survey-large-snapshot-section {
+    padding: 15px;
+    width: 100%;
+}
+
+.tenant-input {
+    text-align: center;
+    padding: 15px;
+    color: var(--grey);
+    border: 1px solid var(--borderColor);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+}
