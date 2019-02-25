@@ -346,3 +346,17 @@ INTERCOM_CUSTOM_DATA_CLASSES = [
 
 INTERCOM_SECURE_KEY = get_secret('INTERCOM_SECRET_CODE')
 
+# Celery settings
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BEAT_SCHEDULE = {
+    'add-every-30-seconds': {
+        'task': 'cocoon.survey.tasks.add',
+        'schedule': 10.0,
+        'args': (16, 16)
+    },
+}
+CELERY_TIMEZONE = 'UTC'
