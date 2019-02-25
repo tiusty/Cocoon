@@ -13,6 +13,7 @@ from config.settings.Global_Config import MAX_NUM_BATHROOMS
 
 # Import third party libraries
 import hashlib
+from datetime import timedelta
 
 # Import app constants
 from .constants import MIN_PRICE_DELTA
@@ -47,6 +48,30 @@ class InitialSurveyModel(models.Model):
 
         # Now return the has has the url
         return slugify(m.hexdigest())
+
+    class Meta:
+        abstract = True
+
+
+class SurveyUpdateInformation(models.Model):
+    """
+    Stores information about rerunning the survey and updating the user about changes
+    """
+    last_updated = models.DateField(default=timezone.now)
+    update_frequency = models.IntegerField(default=4)
+    wants_update = models.BooleanField(default=False)
+    score_threshold = models.IntegerField(default=50)
+    num_home_threshold = models.IntegerField(default=3)
+
+    def ready_to_update_user(self):
+        """
+        Determines if the survey is ready to be updated based on the last time the user was
+            updated and the frequency they put
+        """
+        if self.last_updated + timedelta(days=self.update_frequency) <= timezone.now().date():
+            return True
+        else:
+            return False
 
     class Meta:
         abstract = True
@@ -223,7 +248,7 @@ class ExteriorAmenitiesModel(models.Model):
 
 
 class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNearbyAmenitiesModel,
-                         PriceInformationModel, HomeInformationModel, InitialSurveyModel):
+                         PriceInformationModel, HomeInformationModel, SurveyUpdateInformation, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
     The user may take multiple surveys and it is linked to their User Profile
@@ -299,12 +324,12 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
 class TenantPersonalInformationModel(models.Model):
     first_name = models.CharField(max_length=200, default="")
     last_name = models.CharField(max_length=200, default="")
-    occupation = models.CharField(max_length=200, default="")
-    other_occupation_reason = models.CharField(max_length=200, default="")
-    unemployed_follow_up = models.CharField(max_length=200, default="")
+    occupation = models.CharField(max_length=200, default="", blank=True)
+    other_occupation_reason = models.CharField(max_length=200, default="", blank=True)
+    unemployed_follow_up = models.CharField(max_length=200, default="", blank=True)
     income = models.IntegerField(default=-1)
-    credit_score = models.CharField(max_length=200, default="")
-    new_job = models.CharField(max_length=200, default="")
+    credit_score = models.CharField(max_length=200, default="", blank=True)
+    new_job = models.CharField(max_length=200, default="", blank=True)
 
     class Meta:
         abstract = True

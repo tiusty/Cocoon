@@ -14,6 +14,7 @@ import os
 import json
 from django.contrib.messages import constants as messages
 from django.core.exceptions import ImproperlyConfigured
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -353,14 +354,16 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
-    # 'add-every-30-seconds': {
-    #     'task': 'cocoon.survey.tasks.add',
-    #     'schedule': 10.0,
-    #     'args': (16, 16)
-    # },
+    # Send emails to clients about survey updates at 5:30 every night
+    'notify-user-survey-updates': {
+        'task': 'cocoon.survey.tasks.notify_user_survey_updates',
+        'schedule': crontab(hour=5, minute=30),
+        'args': (),
+    },
+    # Updates our database at 5am every night
     'update-homes-every-night': {
         'task': 'cocoon.houseDatabase.tasks.pull_all_homes_images',
-        'schedule': 300.0,
+        'schedule': crontab(hour=5, minute=0),
         'args': (),
     }
 }
