@@ -34,8 +34,12 @@ def notify_user_survey_updates():
 
                 # If there is then email the client!
                 if homes_over_threshold:
-                    print('yes!')
+                    email_user()
                 else:
                     print('no...not yet')
+
+
+def email_user():
+    pass
 
 
