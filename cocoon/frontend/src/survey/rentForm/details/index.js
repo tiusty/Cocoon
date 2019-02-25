@@ -199,7 +199,7 @@ const NewUser = (props) => (
             />
 
             <span className="col-md-12 survey-error-message" id="agent_referral_error"></span>
-            <input className="col-md-12 survey-input" type="text" name="agent_referral" placeholder="Agent Referral Url" onBlur={(e) => {props.handleInputChange(e, 'string')} } />
+            <input className="col-md-12 survey-input" type="text" name="agent_referral" placeholder="Agent Referral - Optional" onBlur={(e) => {props.handleInputChange(e, 'string')} } />
 
             <span className="col-md-12 survey-error-message" id="password_error"></span>
             <input className="col-md-12 survey-input" type="password" name="password1" placeholder="Password" required onChange={props.validatePassword} onBlur={(e) => {props.validatePassword && props.handleInputChange(e, 'string')} } />

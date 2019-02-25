@@ -143,7 +143,7 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': 'Agent url',
+                'placeholder': 'Agent Referral - Optional',
             }
         )
     )
