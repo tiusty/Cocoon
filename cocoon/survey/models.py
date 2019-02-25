@@ -240,7 +240,10 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
         """
         num_of_tenants = self.tenants.count()
         if num_of_tenants is 1:
-            return "Just Me"
+            if self.user_profile.user.is_broker:
+                return "{0} {1}".format(self.tenants.first().first_name, self.tenants.first().last_name[0])
+            else:
+                return "Just Me"
         else:
             counter = 1
             survey_name = ""
@@ -249,7 +252,10 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
                 if counter == num_of_tenants - 1:
                     survey_name = "{0}{1} {2} ".format(survey_name, tenant.first_name, tenant.last_name[0])
                 elif counter == num_of_tenants:
-                    survey_name = "{0}and I".format(survey_name)
+                    if self.user_profile.user.is_broker:
+                        survey_name = "{0}and {1} {2}".format(survey_name, tenant.first_name, tenant.last_name[0])
+                    else:
+                        survey_name = "{0}and I".format(survey_name)
                 elif counter != num_of_tenants:
                     survey_name = "{0}{1} {2}, ".format(survey_name, tenant.first_name, tenant.last_name[0])
                 counter += 1

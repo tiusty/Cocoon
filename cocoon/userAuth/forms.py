@@ -137,6 +137,37 @@ class BaseRegisterForm(UserCreationForm):
 
 class ApartmentHunterSignupForm(BaseRegisterForm):
 
+    agent_referral = forms.CharField(
+        required=False,
+        label="Agent Referral",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Agent url',
+            }
+        )
+    )
+
+    def is_valid(self):
+        valid = super(BaseRegisterForm, self).is_valid()
+
+        if not valid:
+            return valid
+
+        current_form = self.cleaned_data.copy()
+
+        # makes sure that the phone number is formatted properly
+        if current_form['agent_referral']:
+            if not UserProfile.objects.filter(url=current_form['agent_referral'], user__is_broker=True).exists():
+                valid = False
+                self.add_error('agent_referral', "Agent URL not valid, please contact your agent to verify your URL")
+            elif UserProfile.objects.filter(url=current_form['agent_referral']).count() != 1:
+                valid = False
+                self.add_error('agent_referral', "More than one agent exists, please contact support for help via "
+                                                 "intercom in the bottom right")
+                logger.error("More than one agent returned for agent referral: {0}".format(current_form['agent_referral']))
+        return valid
+
     class Meta:
         model = MyUser
         fields = ['email', 'first_name', 'last_name', 'phone_number', 'password1', 'password2']
@@ -147,6 +178,15 @@ class ApartmentHunterSignupForm(BaseRegisterForm):
         user.is_hunter = True
         user.is_verified = False
         user.save()
+
+        if self.cleaned_data['agent_referral']:
+            try:
+                user.userProfile.referred_agent = UserProfile.objects.get(url=self.cleaned_data['agent_referral']).user
+                user.userProfile.save()
+            except UserProfile.MultipleObjectsReturned:
+                logger.error("Error in agent sign up form, multiple agents returned: {0}".format(self.cleaned_data['agent_referral']))
+            except UserProfile.DoesNotExist:
+                pass
 
         domain = kwargs.pop('request', None)
         send_verification_email(domain, user)

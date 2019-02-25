@@ -180,12 +180,12 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                 user = self.request.user
 
                 # If the user is signing up then save that form and return the user to log them in
-                if does_user_signup:
-                    user = user_form.save(request=self.request)
-                    login(self.request, user)
-
-                # Save the rent survey
                 with transaction.atomic():
+                    if does_user_signup:
+                        user = user_form.save(request=self.request)
+                        login(self.request, user)
+
+                    # Save the rent survey
                     form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
                     # Now the form can be saved
