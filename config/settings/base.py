@@ -353,10 +353,15 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
-    'add-every-30-seconds': {
-        'task': 'cocoon.survey.tasks.add',
-        'schedule': 10.0,
-        'args': (16, 16)
-    },
+    # 'add-every-30-seconds': {
+    #     'task': 'cocoon.survey.tasks.add',
+    #     'schedule': 10.0,
+    #     'args': (16, 16)
+    # },
+    'update-homes-every-night': {
+        'task': 'cocoon.houseDatabase.tasks.pull_all_homes_images',
+        'schedule': 300.0,
+        'args': (),
+    }
 }
 CELERY_TIMEZONE = 'UTC'
