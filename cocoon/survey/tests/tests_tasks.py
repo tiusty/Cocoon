@@ -4,8 +4,11 @@ from django.test import TestCase
 # Import mock
 from unittest.mock import patch, call
 
+# Import App modules
 from ..models import RentingSurveyModel
 from ..tasks import notify_user_survey_updates
+
+# Import Cocoon Modules
 from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.userAuth.models import MyUser
 from cocoon.survey.home_data.home_score import HomeScore
