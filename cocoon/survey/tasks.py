@@ -46,21 +46,21 @@ def notify_user_survey_updates():
 
 
 def email_user(survey):
-    mail_subject = 'We found homes that match your Requirments!'
+    mail_subject = 'We found homes that match your Requirements!'
     text_message = render_to_string(
-        'userAuth/email/account_activate_email.txt', {
+        'survey/emails/survey_notification.html', {
             'user': survey.user_profile.user,
-            'num_homes': survey.num_home_treshold,
+            'num_homes': survey.num_home_threshold,
             'score_threshold': survey.score_threshold,
-            'survey_url': survey.url,
+            'surveyUrl': survey.url,
         }
     )
     html_message = render_to_string(
-        'userAuth/email/account_activate_email.html', {
+        'survey/emails/survey_notification.html', {
             'user': survey.user_profile.user,
-            'num_homes': survey.num_home_treshold,
+            'num_homes': survey.num_home_threshold,
             'score_threshold': survey.score_threshold,
-            'survey_url': survey.url,
+            'surveyUrl': survey.url,
         }
     )
     from_email = 'devteam@bostoncocoon.com'

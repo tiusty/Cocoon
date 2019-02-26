@@ -14,13 +14,13 @@
 {% endblock %}
 
 {% block buttonLink %}
-    {{ default_domain }}{% url 'survey:rentSurveyResult' survey_url=survey_url %}
+    {{ default_domain }}{% url 'survey:rentSurveyResult' survey_url=surveyUrl %}
 {% endblock %}
 
 {% block buttonText %}
     Load Survey
 {% endblock %}
 
-{% block %}
+{% block smallText %}
     If you want to turn of notifications please view your surveys at: {% url 'userAuth:surveys' %}
 {% endblock %}
