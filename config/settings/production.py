@@ -5,7 +5,7 @@ DEBUG = False
 USING_PRODUCTION = True
 
 # Default Domain URL for the this setting
-DEFAULT_DOMAIN = "https://bostoncocoon.com/"
+DEFAULT_DOMAIN = "https://bostoncocoon.com"
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True

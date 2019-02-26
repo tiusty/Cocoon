@@ -5,17 +5,15 @@
 {% endblock %}
 
 {% block greeting %}
-    hi {{ user.full_name }}
+    Hi {{ user.full_name }}!
 {% endblock %}
 
 {% block content %}
-    Thank you for signing up for survey notifications. We are glad to have found {{ num_homes }} homes
+    Thank you for signing up for survey notifications :). We are glad to have found {{ num_homes }} homes
         that meet your threshold of {{ score_threshold }}.
 {% endblock %}
 
-{% block buttonLink %}
-    {{ default_domain }}{% url 'survey:rentSurveyResult' survey_url=surveyUrl %}
-{% endblock %}
+{% block buttonLink %}{{ domain }}{% url 'survey:rentSurveyResult' survey_url=surveyUrl %}{% endblock %}
 
 {% block buttonText %}
     Load Survey

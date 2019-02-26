@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 from django.utils import timezone
+from django.conf import settings
 from celery import shared_task
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
@@ -46,6 +47,12 @@ def notify_user_survey_updates():
 
 
 def email_user(survey):
+
+    if hasattr(settings, 'DEFAULT_DOMAIN'):
+        domain = settings.DEFAULT_DOMAIN
+    else:
+        domain = "https://bostoncocoon.com/"
+
     mail_subject = 'We found homes that match your Requirements!'
     text_message = render_to_string(
         'survey/emails/survey_notification.html', {
@@ -53,6 +60,7 @@ def email_user(survey):
             'num_homes': survey.num_home_threshold,
             'score_threshold': survey.score_threshold,
             'surveyUrl': survey.url,
+            'domain': domain,
         }
     )
     html_message = render_to_string(
@@ -61,6 +69,7 @@ def email_user(survey):
             'num_homes': survey.num_home_threshold,
             'score_threshold': survey.score_threshold,
             'surveyUrl': survey.url,
+            'domain': domain,
         }
     )
     from_email = 'devteam@bostoncocoon.com'

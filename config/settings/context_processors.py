@@ -13,6 +13,8 @@ def settings_context(request):
     # Whenever the request is not present then we need to determine the
     #   domain via the context processor
     if hasattr(settings, 'DEFAULT_DOMAIN'):
-        context['default_domain'] = settings.DEFAULT_DOMAIN
+        context['DEFAULT_DOMAIN'] = settings.DEFAULT_DOMAIN
     else:
-        context['default_domain'] = "https://bostoncocoon.com/"
+        context['DEFAULT_DOMAIN'] = "https://bostoncocoon.com/"
+
+    return context
