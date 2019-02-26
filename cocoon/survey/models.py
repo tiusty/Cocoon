@@ -58,7 +58,7 @@ class SurveyUpdateInformation(models.Model):
     Stores information about rerunning the survey and updating the user about changes
     """
     last_updated = models.DateField(default=timezone.now)
-    update_frequency = models.IntegerField(default=4)
+    update_frequency = models.IntegerField(default=2)
     wants_update = models.BooleanField(default=False)
     score_threshold = models.IntegerField(default=50)
     num_home_threshold = models.IntegerField(default=3)
