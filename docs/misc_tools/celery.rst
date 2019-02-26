@@ -9,7 +9,7 @@ Development
 -------------
 
 In development to start the celery broker and beat run:
-Note: Make sure to be at the cocoon project root
+Note: Make sure to be at the cocoon project root and have the virtual environment loaded
 
     ::
 
