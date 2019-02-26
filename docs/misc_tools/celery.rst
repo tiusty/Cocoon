@@ -58,6 +58,11 @@ To Install:
         sudo systemctl start celeryd
 
 If changes are made to the code, to update the celery make sure
+
+Reloads the celeryd settings
+sudo systemctl daemon-reload
+
+Reloads the tasks
 sudo systemctl restart celeryd
 
 is run to load new changes
