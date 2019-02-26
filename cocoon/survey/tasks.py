@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 
 # Import Python Modules
-from celery import shared_task, task
+from celery import shared_task
 
 # Import App Modules
 from .models import RentingSurveyModel
@@ -92,7 +92,7 @@ def email_user(survey):
     email.send()
 
 
-@task(name="compute_survey_result_iteration_task")
+@shared_task
 def compute_survey_result_iteration_task(survey_id, user_profile_id, home_scores):
     """
     Given a list of scores for the homes, populates the data regarding the survey iteration
