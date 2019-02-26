@@ -36,14 +36,16 @@ def notify_user_survey_updates():
                 # Determine if there is enough homes over the score threshold determined
                 #   by the client
                 homes_over_threshold = True
-                for home in rent_algorithm.homes[:survey.num_home_threshold]:
-                    if home.percent_match < survey.score_threshold:
-                        homes_over_threshold = False
-                        break
 
-                # If there is then email the client!
-                if homes_over_threshold:
-                    email_user(survey)
+                if len(rent_algorithm.homes) >= survey.num_home_threshold:
+                    for home in rent_algorithm.homes[:survey.num_home_threshold]:
+                        if home.percent_match < survey.score_threshold:
+                            homes_over_threshold = False
+                            break
+
+                    # If there is then email the client!
+                    if homes_over_threshold:
+                        email_user(survey)
 
 
 def email_user(survey):
