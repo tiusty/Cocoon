@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Restart celery server
+sudo systemctl restart celeryd
+
+# Restart Apache server
+sudo service apache2 restart

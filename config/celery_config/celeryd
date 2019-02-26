@@ -11,9 +11,6 @@ CELERY_BIN="~/.virtualenvs/Cocoon/bin/celery"
 # comment out this line if you don't use an app
 CELERY_APP="config"
 
-# Where to chdir at start.
-CELERYD_CHDIR="/home/alex/work/Cocoon"
-
 # How to call manage.py
 CELERYD_MULTI="multi"
 
