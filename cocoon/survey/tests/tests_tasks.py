@@ -212,6 +212,40 @@ class TestNofityUserSurveyUpdates(TestCase):
 
         )
 
+    @patch('cocoon.survey.tasks.RentAlgorithm')
+    @patch('cocoon.survey.tasks.email_user')
+    def test_if_not_enough_homes_then_email_is_not_sent(self, mock_os, mock_alog):
+        """
+        Tests that if there are not enough homes in the list then the email is not sent
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        home_type = HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.APARTMENT)[0]
+        survey = RentingSurveyModel.create_survey(user.userProfile,
+                                                  home_type=home_type,
+                                                  wants_update=True,
+                                                  update_frequency=0,
+                                                  score_threshold=100,
+                                                  num_home_threshold=3)
+
+        # Create homes that will return from the algorithm
+        home = HomeScore()
+        home.accumulated_points = 100
+        home.total_possible_points = 100
+
+        home1 = HomeScore()
+        home1.accumulated_points = 50
+        home1.total_possible_points = 100
+
+        mc = mock_alog.return_value
+        mc.homes = [home, home1]
+
+        # Act
+        notify_user_survey_updates()
+
+        # Assert
+        mock_os.assert_not_called()
+
 
 
 
