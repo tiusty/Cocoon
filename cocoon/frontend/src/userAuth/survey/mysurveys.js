@@ -12,6 +12,7 @@ import Preloader from '../../common/preloader';
 import TourSetupCTA from './tourSetupCTA';
 import SurveyPicker from './surveyPicker';
 import TourChecklist from './tourChecklist';
+import TourSetupContent from './tourSetupMainContent';
 
 // Import styling
 import './mysurveys.css'
@@ -51,6 +52,8 @@ export default class MySurveys extends Component {
         // Stores the survey_endpoint needed for this Component
         survey_endpoint: survey_endpoints['rentSurvey'],
         signature_endpoint: signature_endpoints['hunterDocManager'],
+
+        activeResultsUrl: undefined
     };
 
     parseData(data) {
@@ -316,8 +319,19 @@ export default class MySurveys extends Component {
          *
          * After the survey id is set, it will retrieve the visit list for that survey
          */
-        this.setState({survey_clicked_id: id}, () => this.retrieveHomes());
+        this.setState({survey_clicked_id: id}, () => {
+            this.retrieveHomes();
+            this.setActiveResultsUrl();
+        });
     };
+
+    setActiveResultsUrl = () => {
+        let activeSurvey = this.state.surveys.find(s => s.id === this.state.survey_clicked_id);
+        let url = survey_endpoints['rentSurveyResult'] + activeSurvey.url;
+        this.setState({
+            activeResultsUrl: url
+        })
+    }
 
     handleLargeSurveyClose = () => {
         /**
@@ -447,14 +461,26 @@ export default class MySurveys extends Component {
                         />
                         <TourChecklist
                             surveys={this.state.surveys}
+                            pre_tour_forms_created={this.state.pre_tour_forms_created}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}
                             survey_clicked_id={this.state.survey_clicked_id}
                             visit_list={this.state.visit_list}
                             favorites={this.state.favorites}
                             itinerary_scheduled={this.state.itinerary_scheduled}
+                            activeResultsUrl={this.state.activeResultsUrl}
+                            onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
+                            onHandleOnClickResendDocument={this.handleOnClickResendDocument}
                         />
                     </div>
-                    <div className="tour-box tour-setup-main">content</div>
+                    <div className="tour-box tour-setup-main">
+                        <TourSetupContent
+                            surveys={this.state.surveys}
+                            activeResultsUrl={this.state.activeResultsUrl}
+                            favorites={this.state.favorites}
+                            survey_clicked_id={this.state.survey_clicked_id}
+                            visit_list={this.state.visit_list}
+                        />
+                    </div>
                 </div>
             );
         }
