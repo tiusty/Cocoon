@@ -10,9 +10,12 @@ import survey_endpoints from "../../endpoints/survey_endpoints";
 
 import Preloader from '../../common/preloader';
 import TourSetupCTA from './tourSetupCTA';
+import SurveyPicker from './surveyPicker';
+import TourChecklist from './tourChecklist';
 
 // Import styling
 import './mysurveys.css'
+import TourSummary from "../survey_old/mysurveys";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -107,7 +110,9 @@ export default class MySurveys extends Component {
         axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState({surveys: this.parseData(response.data)})
+                this.setState({
+                    surveys: this.parseData(response.data)
+                }, () => this.loadMostRecentSurvey());
             });
 
         /**
@@ -300,6 +305,11 @@ export default class MySurveys extends Component {
         }
     }
 
+    loadMostRecentSurvey = () => {
+        const recentSurveyId = this.state.surveys[0].id;
+        this.handleClickSurvey(recentSurveyId);
+    }
+
     handleClickSurvey = (id) => {
         /**
          * Handles click on the expand button for a survey
@@ -406,46 +416,6 @@ export default class MySurveys extends Component {
         this.setState({loading_clicked: true})
     };
 
-    renderMySurveysMessages() {
-        if (!this.state.loaded) {
-            return <p className='surveys-title-text'>Loading</p>
-        } else if (!this.state.is_pre_tour_signed) {
-            return (
-                <>
-                    <p className="surveys-title-text-semi-bold">Here you can load and view your past surveys for your
-                        different roommate groups!</p>
-                    <p className="surveys-title-text">When you are ready please follow the steps in the Tour Summary
-                        column to sign your documents so you can schedule a tour!</p>
-                </>
-            );
-        } else if (!this.state.itinerary_scheduled && this.state.survey_clicked_id === undefined) {
-            return (
-                <>
-                    <p className="surveys-title-text-semi-bold">Lets schedule a tour for you so you can find your
-                        perfect home!</p>
-                    <p className='surveys-title-text'>Please expand a survey to add homes to the tour. Remember you can only
-                    schedule one tour at a time, therefore you cannot schedule a tour for two different roommate groups at once</p>
-                </>
-            );
-        } else if (!this.state.itinerary_scheduled && this.state.survey_clicked_id !== undefined) {
-            return (
-                <>
-                    <p className="surveys-title-text-semi-bold">Please add homes to your tour!</p>
-                    <p className='surveys-title-text'>Add homes to your tour by clicking add to Visit List. You can also
-                    view more info about the home by clicking on it. If you want to add more homes to your favorites list you can click load survey
-                    to load your survey</p>
-                </>
-            );
-        } else if (this.state.itinerary_scheduled) {
-            return (
-                <>
-                    <p className="surveys-title-text-semi-bold">You already have a tour scheduled!</p>
-                    <p className='surveys-title-text'>You can view more information about your tour in the tour summary column</p>
-                </>
-            );
-        }
-    }
-
     render() {
         if (this.state.loading_clicked || !this.state.loaded) {
             return (
@@ -457,8 +427,34 @@ export default class MySurveys extends Component {
             return (
                 <div className="tour-setup-container">
                     <div className="tour-setup-sidebar">
-                        <TourSetupCTA />
+                        <TourSetupCTA
+                            survey_id={this.state.survey_clicked_id}
+                            visit_list={this.state.visit_list}
+                            loaded={this.state.loaded}
+                            pre_tour_forms_created={this.state.pre_tour_forms_created}
+                            is_pre_tour_signed={this.state.is_pre_tour_signed}
+                            itinerary_scheduled={this.state.itinerary_scheduled}
+                            last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
+                            refreshing_document_status={this.state.refreshing_document_status}
+                            onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
+                            onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
+                            onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                        />
+                        <SurveyPicker
+                            survey_id={this.state.survey_clicked_id}
+                            surveys={this.state.surveys}
+                            handleClickSurvey={this.handleClickSurvey}
+                        />
+                        <TourChecklist
+                            surveys={this.state.surveys}
+                            is_pre_tour_signed={this.state.is_pre_tour_signed}
+                            survey_clicked_id={this.state.survey_clicked_id}
+                            visit_list={this.state.visit_list}
+                            favorites={this.state.favorites}
+                            itinerary_scheduled={this.state.itinerary_scheduled}
+                        />
                     </div>
+                    <div className="tour-box tour-setup-main">content</div>
                 </div>
             );
         }
