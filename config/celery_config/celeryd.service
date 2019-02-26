@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=forking
-User=alex
-Group=alex
+User=ubuntu
+Group=ubuntu
 EnvironmentFile=/etc/default/celeryd
 WorkingDirectory=/home/ubuntu/work/Cocoon
 ExecStart=/bin/sh -c '${CELERY_BIN} multi start ${CELERYD_NODES} \

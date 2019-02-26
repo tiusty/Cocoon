@@ -36,6 +36,10 @@ The virtualenv is installed at the correct spot
 To Install:
 
     ::
+        # Celery should have already been instead via the requirments file
+
+        # Install RabbitMQ as broker
+        sudo apt-get install rabbitmq-server
 
         sudo ln -s ~/work/Cocoon/config/celery_config/celeryd.service  /etc/systemd/system/celeryd.service
         sudo ln -s ~/work/Cocoon/config/celery_config/celeryd  /etc/default/celeryd
