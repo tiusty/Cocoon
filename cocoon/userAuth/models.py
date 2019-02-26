@@ -103,7 +103,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 # Defines the Manager for the custom User model
 class UserProfile(models.Model):
-    user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE)
+    user = models.OneToOneField(MyUser, related_name="userProfile", on_delete=models.CASCADE, default='none')
     url = models.SlugField(unique=True, max_length=100)
     referred_agent = models.ForeignKey(MyUser, related_name='referred_clients', null=True, blank=True, on_delete=models.SET_NULL)
 
