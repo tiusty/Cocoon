@@ -68,6 +68,7 @@ Leaving empty nav_bar block to prevent the nav bar from showing up
                 </label>
             </div>
         </div>
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
         <div class="form-group">
             <button class="btn btn-lg btn-primary btn-block" value="login" type="submit">Sign in</button>
         </div>
