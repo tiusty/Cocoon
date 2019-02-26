@@ -15,10 +15,8 @@ CELERY_APP="config"
 CELERYD_MULTI="multi"
 
 # Extra command-line arguments to the worker
-CELERYD_OPTS="--time-limit=300 --concurrency=8"
+CELERYD_OPTS="--time-limit=3000 --concurrency=8 -B"
 # Where to chdir at start.
-CELERYBEAT_CHDIR="~/work/Cocoon"
-#CELERYBEAT_OPTS="--schedule=~/work/Cocoon/celerybeat-schedule"
 
 # - %n will be replaced with the first part of the nodename.
 # - %I will be replaced with the current child process index
