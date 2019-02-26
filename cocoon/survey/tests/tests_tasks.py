@@ -36,19 +36,17 @@ class TestNofityUserSurveyUpdates(TestCase):
                                                   num_bedrooms=[num_bedrooms],
                                                   home_type=home_type,
                                                   wants_update=True,
+                                                  price_weight=3,
                                                   update_frequency=0,
                                                   move_weight=3,
                                                   score_threshold=100,
                                                   num_home_threshold=1)
 
         # Act
-        for home in RentDatabaseModel.objects.all():
-            print(home)
-        qs = RentDatabaseModel.objects.all()
         notify_user_survey_updates()
 
         # Assert
-        mock_os.assert_called_once()
+        mock_os.assert_called_once_with()
 
 
 

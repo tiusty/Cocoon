@@ -4,6 +4,14 @@ from celery import shared_task
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.survey.cocoon_algorithm.rent_algorithm import RentAlgorithm
 
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
+
 @shared_task
 def notify_user_survey_updates():
     """
@@ -34,12 +42,33 @@ def notify_user_survey_updates():
 
                 # If there is then email the client!
                 if homes_over_threshold:
-                    email_user()
-                else:
-                    print('no...not yet')
+                    email_user(survey)
 
 
-def email_user():
-    pass
+def email_user(survey):
+    mail_subject = 'We found homes that match your Requirments!'
+    text_message = render_to_string(
+        'userAuth/email/account_activate_email.txt', {
+            'user': survey.user_profile.user,
+            'num_homes': survey.num_home_treshold,
+            'score_threshold': survey.score_threshold,
+            'survey_url': survey.url,
+        }
+    )
+    html_message = render_to_string(
+        'userAuth/email/account_activate_email.html', {
+            'user': survey.user_profile.user,
+            'num_homes': survey.num_home_treshold,
+            'score_threshold': survey.score_threshold,
+            'survey_url': survey.url,
+        }
+    )
+    from_email = 'devteam@bostoncocoon.com'
+    to_email = survey.user_profile.user.email
+    email = EmailMultiAlternatives(mail_subject, text_message, from_email, to=[to_email])
+    email.attach_alternative(html_message, "text/html")
+
+    # Send the email to the user
+    email.send()
 
 

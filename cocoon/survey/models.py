@@ -291,7 +291,7 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
                       num_bedrooms=None, earliest_move_in=None, latest_move_in=None, move_weight=0,
                       wants_laundry_in_building=False, wants_laundry_in_unit=False, laundry_in_building_weight=0,
                       laundry_in_unit_weight=0, home_type=None, score_threshold=50, update_frequency=1,
-                      wants_update=False, num_home_threshold=3):
+                      wants_update=False, num_home_threshold=3, price_weight=0):
         if num_bedrooms is None:
             num_bedrooms = [2]
         if earliest_move_in is None:
@@ -319,7 +319,7 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
             num_home_threshold=num_home_threshold,
             score_threshold=score_threshold,
             update_frequency=update_frequency,
-
+            price_weight=price_weight,
         )
         # Add the home type
         survey.home_type.add(home_type)

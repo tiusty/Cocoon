@@ -1,0 +1,26 @@
+{% extends "base_email_button.html" %}
+
+{% block headline %}
+    We found homes for you!
+{% endblock %}
+
+{% block greeting %}
+    hi {{ user.full_name }}
+{% endblock %}
+
+{% block content %}
+    Thank you for signing up for survey notifications. We are glad to have found {{ num_homes }} homes
+        that meet your threshold of {{ score_threshold }}.
+{% endblock %}
+
+{% block buttonLink %}
+    {{ default_domain }}{% url 'survey:rentSurveyResult' survey_url=survey_url %}
+{% endblock %}
+
+{% block buttonText %}
+    Load Survey
+{% endblock %}
+
+{% block %}
+    If you want to turn of notifications please view your surveys at: {% url 'userAuth:surveys' %}
+{% endblock %}
