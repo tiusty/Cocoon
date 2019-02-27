@@ -9,8 +9,11 @@
 {% endblock %}
 
 {% block content %}
-    Thank you for signing up for survey notifications :). We are glad to have found {{ num_homes }} homes
-        that meet your threshold of {{ score_threshold }}.
+    Thank you for signing up for survey notifications :). We are glad to have found <b>{{ num_homes }}</b> homes
+        that meet your threshold of <b>{{ score_threshold }}</b>!
+    <br>
+    <br>
+    Click Load Survey below to view them.
 {% endblock %}
 
 {% block buttonLink %}{{ domain }}{% url 'survey:rentSurveyResult' survey_url=surveyUrl %}{% endblock %}
