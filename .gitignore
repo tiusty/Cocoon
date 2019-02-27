@@ -1,6 +1,7 @@
 # Compiled Source #
 *.pyc
 *.swp
+celerybeat-schedule
 
 # IntelliJ Idea workspace configuration #
 .idea/

@@ -39,6 +39,11 @@ Install python libraries
   cp secrets.json.tempate secrets.json
  
 * Now modify the values inside to the correct values. These can be found on google drive in development/security files/secrets.json
+
+
+Celeary
+---------
+Follow instructions from the Production section of the misc_tools/celery document
  
  
 HTTPS
