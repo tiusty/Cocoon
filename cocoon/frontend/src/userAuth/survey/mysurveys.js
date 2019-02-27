@@ -16,7 +16,6 @@ import TourSetupContent from './tourSetupMainContent';
 
 // Import styling
 import './mysurveys.css'
-import TourSummary from "../survey_old/mysurveys";
 
 // For handling Post request with CSRF protection
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -41,18 +40,19 @@ export default class MySurveys extends Component {
         // Stores the ids of all the surveys associated with the user
         surveys: [],
         loaded: false,
-        // loaded: true,
 
         // Itinerary information
         itinerary_scheduled: false,
 
-        // Stores information regarding the state of signing documents
 
         // Stores the survey_endpoint needed for this Component
         survey_endpoint: survey_endpoints['rentSurvey'],
         signature_endpoint: signature_endpoints['hunterDocManager'],
 
-        activeResultsUrl: undefined
+        activeResultsUrl: undefined,
+        viewing_snapshot: false,
+        clicked_home: undefined,
+        viewing_home: false,
     };
 
     parseData(data) {
@@ -319,6 +319,7 @@ export default class MySurveys extends Component {
          * After the survey id is set, it will retrieve the visit list for that survey
          */
         this.setState({survey_clicked_id: id}, () => {
+            this.handleCloseHomeTileLarge();
             this.retrieveHomes();
             this.setActiveResults();
         });
@@ -334,23 +335,19 @@ export default class MySurveys extends Component {
         })
     }
 
-    handleLargeSurveyClose = () => {
-        /**
-         * Handles closing the large survey.
-         *
-         * Since information can be modified on the large tile, when the user closes
-         * it then the data on the page needs to be updated. Also, the clicked survey value
-         * should go back to undefined so the small survey tiles load again
-         */
-        this.setState({survey_clicked_id: undefined, visit_list: [], favorites: [],});
+    handleHomeClick = (id) => {
+        this.setState({
+            clicked_home: id,
+            viewing_home: true
+        })
+    }
 
-        // See if any of the data changed
-        axios.get(this.state.survey_endpoint)
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({surveys: this.parseData(response.data)})
-            });
-    };
+    handleCloseHomeTileLarge = () => {
+        this.setState({
+            clicked_home: undefined,
+            viewing_home: false
+        })
+    }
 
     handleVisitClick = (home, e) => {
         /**
@@ -382,7 +379,6 @@ export default class MySurveys extends Component {
                 })
             );
     };
-
 
     handleFavoriteClick = (home) => {
         /**
@@ -423,8 +419,37 @@ export default class MySurveys extends Component {
             )
     };
 
+    handleSnapshotClick = () => {
+        this.setState({
+            viewing_snapshot: !this.state.viewing_snapshot
+        })
+    }
+
+    deleteSurvey = (id) => {
+        let endpoint = this.state.survey_endpoint + id + "/";
+
+        // Passes the survey id and the put type to the backend
+        axios.put(endpoint,
+            {
+                survey_id: id,
+                type: 'survey_delete',
+            })
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    surveys: this.parseData(response.data),
+                    activeResultsUrl: undefined,
+                    viewing_snapshot: false,
+                    clicked_home: undefined,
+                    viewing_home: false,
+                }, () => {
+                    this.loadMostRecentSurvey();
+                })
+            });
+    };
+
     render() {
-        if (this.state.loading_clicked || !this.state.loaded) {
+        if (!this.state.loaded) {
             return (
                 <div style={{width: '100%', height: '80vh'}}>
                     <Preloader color='var(--teal)'/>
@@ -474,6 +499,13 @@ export default class MySurveys extends Component {
                             visit_list={this.state.visit_list}
                             handleVisitClick={this.handleVisitClick}
                             handleFavoriteClick={this.handleFavoriteClick}
+                            handleHomeClick={this.handleHomeClick}
+                            handleCloseHomeTileLarge={this.handleCloseHomeTileLarge}
+                            clicked_home={this.state.clicked_home}
+                            viewing_home={this.state.viewing_home}
+                            viewing_snapshot={this.state.viewing_snapshot}
+                            handleSnapshotClick={this.handleSnapshotClick}
+                            deleteSurvey={this.deleteSurvey}
                         />
                     </div>
                 </div>
