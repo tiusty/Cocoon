@@ -83,12 +83,15 @@ class YGLRequesterImage(object):
                             except urllib.error.HTTPError:
                                 self.num_HTTP_errors += 1
                                 print('HTTPError occurred')
+                                continue
                             except urllib.error.URLError:
                                 self.num_url_errors += 1
                                 print('URLError occurred')
+                                continue
                             except ValueError:
                                 self.num_value_errors += 1
                                 print('value error')
+                                continue
 
                         print("[ ADDED PHOTOS ] " + house.full_address)
                     else:

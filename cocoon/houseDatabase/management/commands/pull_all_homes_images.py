@@ -41,7 +41,7 @@ class Command(BaseCommand):
         Pulls images for MLSpin homes
         """
         requester_mlspin_images = MlspinRequesterImage(timestamp)
-        requester_mlspin_images.add_images()
+        requester_mlspin_images.run()
 
     @staticmethod
     def pull_ygl_homes(timestamp):
@@ -57,7 +57,7 @@ class Command(BaseCommand):
         Pulls images for ygl homes
         """
         requester_ygl_images = YGLRequesterImage(timestamp)
-        requester_ygl_images.add_images()
+        requester_ygl_images.run()
 
     @staticmethod
     def pull_mls_rets_homes(timestamp):
