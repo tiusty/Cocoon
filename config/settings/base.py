@@ -362,11 +362,5 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(hour=10, minute=30),
         'args': (),
     },
-    # Updates our database at 5am every night
-    'update-homes-every-night': {
-        'task': 'cocoon.houseDatabase.tasks.pull_all_homes_images',
-        'schedule': crontab(hour=10, minute=0),
-        'args': (),
-    }
 }
 CELERY_TIMEZONE = 'UTC'
