@@ -33,6 +33,7 @@ class YGLRequesterImage(object):
         self.update_timestamp = timestamp
         self.num_url_errors = 0
         self.num_HTTP_errors = 0
+        self.num_value_errors = 0
 
         if not ygl_file:
             ygl_data = self.YGL_FEED_FILE_NAME
@@ -85,6 +86,9 @@ class YGLRequesterImage(object):
                             except urllib.error.URLError:
                                 self.num_url_errors += 1
                                 print('URLError occurred')
+                            except ValueError:
+                                self.num_value_errors += 1
+                                print('value error')
 
                         print("[ ADDED PHOTOS ] " + house.full_address)
                     else:
@@ -93,4 +97,5 @@ class YGLRequesterImage(object):
     def print_results(self):
         logger.info("\n YGL Images done uploading.\n" +
                     "Number of HTTP Errors {0}\n".format(self.num_HTTP_errors) +
-                    "Number of URL Errors: {0}\n".format(self.num_url_errors))
+                    "Number of URL Errors: {0}\n".format(self.num_url_errors) +
+                    "Number of Value Errors: {0}\n".format(self.num_value_errors))
