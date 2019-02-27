@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 # Import House Database modules
 from cocoon.houseDatabase.models import RentDatabaseModel
+import cocoon.houseDatabase.maps_requester as geolocator
 
 # Import User Auth modules
 from cocoon.userAuth.models import UserProfile
@@ -22,8 +23,8 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
-from cocoon.houseDatabase.models import HomeTypeModel
 from cocoon.dataAnalysis.models import Trackers
+from config.settings.Global_Config import gmaps_api_key
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -199,9 +200,27 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
                         save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
-                # Now save the the tenants
-                tenants.instance = survey
-                tenants.save()
+                    # Now save the the tenants
+                    tenants.instance = survey
+                    tenants.save()
+
+                    # For any tenants if they changed their destination then geocode it
+                    for tenant in tenants:
+                        if 'street_address' in tenant.changed_data \
+                                or 'city' in tenant.changed_data \
+                                or 'zip_code' in tenant.changed_data:
+                            tenant_instance = tenant.instance
+                            # If it is a new home then get the lat and long of the home.
+                            latlng = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(tenant.instance.full_address)
+                            if latlng == -1:
+                                continue
+                            else:
+                                lat = latlng[0]
+                                lng = latlng[1]
+
+                            tenant_instance.latitude = lat
+                            tenant_instance.longitude = lng
+                            tenant_instance.save()
 
                 survey = RentingSurveyModel.objects.get(id=survey.id)
 
@@ -341,6 +360,24 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
                         # Now save the the tenants
                         tenants.save()
+
+                        # For any tenants if they changed their destination then geocode it
+                        for tenant in tenants:
+                            if 'street_address' in tenant.changed_data \
+                                    or 'city' in tenant.changed_data \
+                                    or 'zip_code' in tenant.changed_data:
+                                tenant_instance = tenant.instance
+                                # If it is a new home then get the lat and long of the home.
+                                latlng = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(tenant.instance.full_address)
+                                if latlng == -1:
+                                    continue
+                                else:
+                                    lat = latlng[0]
+                                    lng = latlng[1]
+
+                                tenant_instance.latitude = lat
+                                tenant_instance.longitude = lng
+                                tenant_instance.save()
 
                     serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
                     return Response({'result': True, 'survey': serializer.data})
