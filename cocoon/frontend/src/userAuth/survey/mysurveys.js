@@ -38,11 +38,10 @@ export default class MySurveys extends Component {
         visit_list: [],
         favorites: [],
 
-        loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
-        // loaded: false,
-        loaded: true,
+        loaded: false,
+        // loaded: true,
 
         // Itinerary information
         itinerary_scheduled: false,
@@ -153,7 +152,7 @@ export default class MySurveys extends Component {
             .catch(error => console.log('BAD', error))
             .then(response => {
                 this.setState({
-                    loaded: true,
+                    // loaded: true,
                     is_pre_tour_signed: response.data.is_pre_tour_signed,
                     pre_tour_forms_created: response.data.pre_tour_forms_created,
                 })
@@ -321,15 +320,17 @@ export default class MySurveys extends Component {
          */
         this.setState({survey_clicked_id: id}, () => {
             this.retrieveHomes();
-            this.setActiveResultsUrl();
+            this.setActiveResults();
         });
     };
 
-    setActiveResultsUrl = () => {
+    setActiveResults = () => {
         let activeSurvey = this.state.surveys.find(s => s.id === this.state.survey_clicked_id);
         let url = survey_endpoints['rentSurveyResult'] + activeSurvey.url;
         this.setState({
-            activeResultsUrl: url
+            activeResultsUrl: url,
+            activeSurvey: activeSurvey,
+            loaded: true
         })
     }
 
@@ -361,7 +362,7 @@ export default class MySurveys extends Component {
          */
 
         // Prevents the onclick on the tile from triggering
-        e.stopPropagation();
+        // e.stopPropagation();
 
         // The survey id is passed to the put request to update the state of that particular survey
         let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id + "/";
@@ -422,14 +423,6 @@ export default class MySurveys extends Component {
             )
     };
 
-
-    setLoadingClick = () => {
-        /**
-         * Sets loading_clicked to true
-         */
-        this.setState({loading_clicked: true})
-    };
-
     render() {
         if (this.state.loading_clicked || !this.state.loaded) {
             return (
@@ -474,11 +467,13 @@ export default class MySurveys extends Component {
                     </div>
                     <div className="tour-box tour-setup-main">
                         <TourSetupContent
-                            surveys={this.state.surveys}
                             activeResultsUrl={this.state.activeResultsUrl}
+                            activeSurvey={this.state.activeSurvey}
                             favorites={this.state.favorites}
                             survey_clicked_id={this.state.survey_clicked_id}
                             visit_list={this.state.visit_list}
+                            handleVisitClick={this.handleVisitClick}
+                            handleFavoriteClick={this.handleFavoriteClick}
                         />
                     </div>
                 </div>

@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import NoFavImg from '../no-homes.svg';
+import './mainTourContent.css';
+import HomeList from './homeList';
 
 export default class TourSetupContent extends Component {
 
@@ -7,24 +9,22 @@ export default class TourSetupContent extends Component {
         super(props);
         this.state = {
             viewing_snapshot: false,
-            active_survey: undefined
+            clicked_home: undefined,
+            viewing_home: false
         }
     }
 
-    componentDidMount() {
-        this.setActiveSurvey();
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.survey_clicked_id !== prevProps.survey_clicked_id) {
-            this.setActiveSurvey();
-        }
-    }
-
-    setActiveSurvey = () => {
-        let active_survey = this.props.surveys.find(s => s.id = this.props.survey_clicked_id);
+    handleHomeClick = (id) => {
         this.setState({
-            active_survey: active_survey
+            clicked_home: id,
+            viewing_home: true
+        })
+    }
+
+    handleCloseHomeTileLarge = () => {
+        this.setState({
+            clicked_home: undefined,
+            viewing_home: false
         })
     }
 
@@ -41,14 +41,22 @@ export default class TourSetupContent extends Component {
             if (this.state.viewing_snapshot === false) {
                 return (
                     <>
-                        <ContentTopBar active_survey={this.state.active_survey} />
-                        {/*<HomeList />*/}
+                        <ContentTopBar activeSurvey={this.props.activeSurvey} />
+                        <HomeList
+                            activeSurvey={this.props.activeSurvey}
+                            visit_list={this.props.visit_list}
+                            favorites={this.props.favorites}
+                            handleHomeClick={this.handleHomeClick}
+                            handleCloseHomeTileLarge={this.handleCloseHomeTileLarge}
+                            handleVisitClick={this.props.handleVisitClick}
+                            handleFavoriteClick={this.props.handleFavoriteClick}
+                        />
                     </>
                 );
             } else if (this.state.viewing_snapshot === true) {
                 return (
                    <>
-                       <ContentTopBar active_survey={this.state.active_survey} />
+                       <ContentTopBar activeSurvey={this.props.activeSurvey} />
                         {/*<SurveySnapShot />*/}
                    </>
                 );
@@ -68,7 +76,7 @@ export default class TourSetupContent extends Component {
 const ContentTopBar = (props) => (
     <div className="content-top-bar">
         <div className="content-tour-info">
-            <h3>{props.active_survey.survey_name} <span className="helper-text">({props.active_survey.favorites.length} Favorites)</span> | Estimated Tour Duration: 20 min.</h3>
+            <h3>{props.activeSurvey.survey_name} <span className="helper-text">({props.activeSurvey.favorites.length} Favorites)</span> | Estimated Tour Duration: 20 min.</h3>
         </div>
         <div className="snapshot-button">
             <h3>Survey Snapshot <i className="material-icons">expand_more</i></h3>
