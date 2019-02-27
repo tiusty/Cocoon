@@ -57,18 +57,20 @@ export default class Map extends Component {
                 mapMarkers.push(newMarker);
             })
         }
-        if (this.props.commutes.length) {
-            this.props.commutes.map(commute => {
-                let newMarker = (
-                    <CommuteMarker
-                        lat={commute.lat}
-                        lng={commute.lng}
-                        name={commute.name}
-                        key={commute.name}
-                    />
-                );
-                mapMarkers.push(newMarker);
-            })
+        if (this.props.survey) {
+            if (this.props.survey.tenants) {
+                this.props.survey.tenants.map(t => {
+                    let newMarker = (
+                        <CommuteMarker
+                            lat={t.latitude}
+                            lng={t.longitude}
+                            name={t.first_name}
+                            key={t.first_name}
+                        />
+                    );
+                    mapMarkers.push(newMarker);
+                })
+            }
         }
         return mapMarkers;
     };
