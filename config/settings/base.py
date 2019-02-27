@@ -356,7 +356,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
     # Remember celery runs on UTC time, so need to subtract 5 hours for Eastern Standard Time
 
-    # Send emails to clients about survey updates at 5:30 every night
+    # Send emails to clients about survey updates at 5:30am every morning
     'notify-user-survey-updates': {
         'task': 'cocoon.survey.tasks.notify_user_survey_updates',
         'schedule': crontab(hour=10, minute=30),
