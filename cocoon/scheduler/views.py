@@ -14,6 +14,7 @@ from .serializers import ItinerarySerializer
 # Cocoon Modules
 from cocoon.userAuth.models import UserProfile
 from cocoon.survey.models import RentingSurveyModel
+from cocoon.scheduler.models import ItineraryModel
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 from cocoon.commutes.constants import CommuteAccuracy
 
@@ -27,14 +28,26 @@ import dateutil
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
-@method_decorator(login_required, name='dispatch')
+
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
 class ItineraryFileView(TemplateView):
     """
     Loads the template for an individual itinerary
     """
     template_name = 'scheduler/itineraryFile.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        survey_slug = kwargs.get('survey_slug')
+        if not ItineraryModel.objects.get(url_slug=survey_slug):
+            raise Http404
+        return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(TemplateView, self).get_context_data(**kwargs)
+        context.update({
+            'name': 'Sean Rayment',
+        })
+        return context
 
 @method_decorator(login_required, name='dispatch')
 class ClientSchedulerView(TemplateView):
