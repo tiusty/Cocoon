@@ -37,9 +37,30 @@ export default class SurveySnapshot extends Component {
             })
     }
 
+    capitalize = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     handleAmenities = () => {
-        console.log(this.state.amenitiesInfo)
-        // separate amentities based on want, need...
+        let wantedItems = Object.keys(this.state.amenitiesInfo).reduce((item, key) => {
+            (this.state.amenitiesInfo[key] > 0 && typeof this.state.amenitiesInfo[key] !== 'boolean') && (item[key] = this.state.amenitiesInfo[key]);
+            return item;
+        }, {});
+        let wantedItemsArr = Object.keys(wantedItems);
+        if (!wantedItems.length) {
+            return <div className="no-wanted-amenities">No Amenities Selected!</div>
+        } else {
+            return Object.keys(wantedItems).map((keyName, keyIndex) => {
+                let text = wantedItemsArr[keyIndex].split('_weight');
+                if (wantedItems[keyName] === 1) {
+                    return <div className="home-badge home-badge_default">{this.capitalize(text[0]).replace(/_/g,' ')}</div>
+                } else if (wantedItems[keyName] === 2) {
+                    return <div className="home-badge home-badge_mid"><i className="material-icons">done</i> {this.capitalize(text[0]).replace(/_/g,' ')}</div>
+                } else {
+                    return <div className="home-badge home-badge_high"><i className="material-icons">done_all</i> {this.capitalize(text[0]).replace(/_/g,' ')}</div>
+                }
+            })
+        }
     }
 
     updateTenantInfo = (e, type) => {
@@ -132,9 +153,11 @@ export default class SurveySnapshot extends Component {
                     })}
                 </div>
 
-                {/*MAKE BADGES INTO COMMON COMPONENT*/}
                 <div className="snapshot-amenities">
                     <h2>Amenities</h2>
+                    <div className="badge-wrapper">
+                        {this.handleAmenities()}
+                    </div>
                 </div>
 
                 <SurveySubscribe />
