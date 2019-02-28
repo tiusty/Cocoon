@@ -65,7 +65,7 @@ export default class Map extends Component {
                             lat={t.latitude}
                             lng={t.longitude}
                             name={t.first_name}
-                            key={t.first_name}
+                            key={t.id}
                         />
                     );
                     mapMarkers.push(newMarker);
