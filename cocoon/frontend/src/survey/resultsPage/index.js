@@ -95,35 +95,10 @@ export default class ResultsPage extends Component {
             .then(response => {
                 this.setState({
                     survey: response.data,
-                    tenants: response.data.tenants,
                     favorites: response.data.favorites,
-                    commutes: this.getCommuteCoords(response.data.tenants)
                 });
             })
 
-    };
-
-    getCommuteCoords = (tenants) => {
-        let commutes = [];
-        if (tenants) {
-            tenants.forEach(t => {
-                if (t.street_address) {
-                    let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
-                    let name = `${t.first_name}`;
-                    let coords = {};
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode( { 'address': address }, (results, status) => {
-                        if (status === google.maps.GeocoderStatus.OK) {
-                            coords.lat = results[0].geometry.location.lat();
-                            coords.lng = results[0].geometry.location.lng();
-                            coords.name = name;
-                            commutes.push(coords);
-                        }
-                    });
-                }
-            })
-        }
-        return commutes;
     };
 
     getResults = () => {
@@ -428,7 +403,7 @@ export default class ResultsPage extends Component {
                                  hover_id={this.state.hover_id}
                                  setHoverId={this.setHoverId}
                                  removeHoverId={this.removeHoverId}
-                                 commutes={this.state.commutes} />
+                                 survey={this.state.survey} />
                             : null}
                     </div>
                 </div>
