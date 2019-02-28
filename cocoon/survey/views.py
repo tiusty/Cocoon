@@ -6,12 +6,6 @@ from django.views.generic import TemplateView, DetailView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
-# Import House Database modules
-from cocoon.houseDatabase.models import RentDatabaseModel
-
-# Import User Auth modules
-from cocoon.userAuth.models import UserProfile
-
 # Import Survey algorithm modules
 from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
@@ -22,8 +16,8 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
-from cocoon.houseDatabase.models import HomeTypeModel
-from cocoon.dataAnalysis.models import Trackers
+from cocoon.userAuth.models import UserProfile
+from cocoon.houseDatabase.models import RentDatabaseModel
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -200,9 +194,9 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
                         save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
-                # Now save the the tenants
-                tenants.instance = survey
-                tenants.save()
+                    # Now save the the tenants
+                    tenants.instance = survey
+                    tenants.save()
 
                 survey = RentingSurveyModel.objects.get(id=survey.id)
 

@@ -350,6 +350,8 @@ class DestinationsModel(models.Model):
     city = models.CharField(max_length=200, default="", blank=True)
     state = models.CharField(max_length=200, default="", blank=True)
     zip_code = models.CharField(max_length=200, default="", blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
 
     @property
     def full_address(self):
