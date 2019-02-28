@@ -37,9 +37,8 @@ class ItineraryFileView(TemplateView):
     template_name = 'scheduler/itineraryFile.html'
 
     def dispatch(self, request, *args, **kwargs):
-        survey_slug = kwargs.get('survey_slug')
-        if not ItineraryModel.objects.get(url_slug=survey_slug):
-            raise Http404
+        itinerary_slug = kwargs.get('itinerary_slug')
+        _ = get_object_or_404(ItineraryModel, url_slug=itinerary_slug)
         return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -48,6 +47,7 @@ class ItineraryFileView(TemplateView):
             'name': 'Sean Rayment',
         })
         return context
+
 
 @method_decorator(login_required, name='dispatch')
 class ClientSchedulerView(TemplateView):

@@ -40,16 +40,10 @@ class ItineraryModel(models.Model):
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
     finished = models.BooleanField(default=False)
-    url_slug = models.SlugField(max_length=100, default=None)
+    url_slug = models.SlugField(max_length=100, unique=True, default='not-set')
 
     def __str__(self):
         return "{0} Itinerary".format(self.client.full_name)
-
-    def save(self, *args, **kwargs):
-        # set the slug if it is 'not-set' to avoid breaking links
-        if self.url_slug is None:
-            self.url_slug = self.generate_slug()
-        return super(ItineraryModel, self).save(*args, **kwargs)
 
     def generate_slug(self):
         """
@@ -58,10 +52,10 @@ class ItineraryModel(models.Model):
         :return: (string) -> The generated slug
         """
 
-        hashable_string = "{0}{1}{2}".format(self.client.id, self.id, self.created)
+        hashable_string = "{0}".format(self.id)
         md5 = hashlib.md5()
         md5.update(hashable_string.encode('utf-8'))
-
+        print("GENERATING URL")
         return slugify(md5.hexdigest())
 
 
