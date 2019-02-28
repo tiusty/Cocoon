@@ -13,8 +13,10 @@ from config.settings.Global_Config import gmaps_api_key
 @receiver(pre_save, sender=TenantModel)
 def tenant_model_save(instance, *args, **kwargs):
     """
-    This function is used to test if address of the tenant changed. If it did,
-        then the address should be geocoded and stored
+    This function runs pre-save of the new model.
+
+    Specifically it is used now to check if the address of the tenant destination has changed.
+        If it has then geocode the new address and store it in the tenant model
     """
     try:
         obj = TenantModel.objects.get(pk=instance.pk)
