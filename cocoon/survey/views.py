@@ -6,13 +6,6 @@ from django.views.generic import TemplateView, DetailView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
-# Import House Database modules
-from cocoon.houseDatabase.models import RentDatabaseModel
-import cocoon.houseDatabase.maps_requester as geolocator
-
-# Import User Auth modules
-from cocoon.userAuth.models import UserProfile
-
 # Import Survey algorithm modules
 from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
@@ -23,8 +16,8 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
-from cocoon.dataAnalysis.models import Trackers
-from config.settings.Global_Config import gmaps_api_key
+from cocoon.userAuth.models import UserProfile
+from cocoon.houseDatabase.models import RentDatabaseModel
 
 # Rest Framework
 from rest_framework import viewsets, mixins
