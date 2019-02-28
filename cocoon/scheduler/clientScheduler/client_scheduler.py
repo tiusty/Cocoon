@@ -130,7 +130,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
             for home in homes_list:
                 itinerary_model.homes.add(home)
 
-            itinerary_model.url_slug = itinerary_model.generate_slug()
             itinerary_model.save()
             return True
         return False

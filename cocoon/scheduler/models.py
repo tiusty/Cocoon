@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 
 # Import cocoon models
-from django.utils.text import slugify
 
 from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
@@ -40,24 +39,10 @@ class ItineraryModel(models.Model):
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
     finished = models.BooleanField(default=False)
-    url_slug = models.SlugField(max_length=100, unique=True, default='not-set')
+    url_slug = models.SlugField(max_length=100, unique=True)
 
     def __str__(self):
         return "{0} Itinerary".format(self.client.full_name)
-
-    def generate_slug(self):
-        """
-        Generates a unique slug for the itinerary to avoid
-        exposing the id to an end-user
-        :return: (string) -> The generated slug
-        """
-
-        hashable_string = "{0}".format(self.id)
-        md5 = hashlib.md5()
-        md5.update(hashable_string.encode('utf-8'))
-        print("GENERATING URL")
-        return slugify(md5.hexdigest())
-
 
     @property
     def hash(self):
