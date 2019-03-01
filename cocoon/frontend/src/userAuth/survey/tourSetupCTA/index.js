@@ -38,7 +38,7 @@ export default class TourSetupCTA extends Component {
     }
 
     determineScheduleButtonStatus() {
-        if (this.props.visit_list <= 0 || this.state.has_off_market === true) {
+        if (this.props.visit_list.length <= 0 || this.props.visit_list.length > 5 || this.state.has_off_market === true) {
             return true;
         } else {
             return false;
@@ -46,8 +46,10 @@ export default class TourSetupCTA extends Component {
     }
 
     handleErrorMessage = () => {
-        if (this.props.visit_list <= 0) {
+        if (this.props.visit_list.length <= 0) {
             return <span className="tour-error">You must have at least one home in your visit list.</span>
+        } else if (this.props.visit_list.length > 5) {
+            return <span className="tour-error">Sorry, you can't schedule more than 5 homes for a tour.</span>
         } else if (this.state.has_off_market === true) {
             return  <span className="tour-error">There are homes in your visit list that are sold. Remove those to schedule your tour.</span>
         } else {

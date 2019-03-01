@@ -30,12 +30,12 @@ export default class TourChecklist extends  Component {
                 checklistActiveItem: 3
             })
         }
-        if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed) {
+        if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed && (this.props.visit_list.length > 0 && this.props.visit_list.length <= 5)) {
             this.setState({
                 checklistActiveItem: 4
             })
         }
-        if (this.props.pre_tour_forms_created > 0 && this.props.is_pre_tour_signed && this.props.favorites.length > 0 && this.props.visit_list.length > 0) {
+        if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed && this.props.favorites.length > 0 && (this.props.visit_list.length > 0 && this.props.visit_list.length <= 5) && this.props.itinerary_scheduled) {
             this.setState({
                 checklistActiveItem: 5
             })

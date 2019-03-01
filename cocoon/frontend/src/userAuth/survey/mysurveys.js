@@ -53,6 +53,8 @@ export default class MySurveys extends Component {
         viewing_snapshot: false,
         clicked_home: undefined,
         viewing_home: false,
+        survey_url_param: null,
+        key_param: null
     };
 
     parseData(data) {
@@ -106,6 +108,12 @@ export default class MySurveys extends Component {
     }
 
     componentDidMount() {
+
+        /**
+         *  Checks the URL for any parameters to determine which survey to load
+         */
+        this.checkUrl();
+
         /**
          *  Retrieves all the surveys associated with the user
          */
@@ -114,7 +122,7 @@ export default class MySurveys extends Component {
             .then(response => {
                 this.setState({
                     surveys: this.parseData(response.data)
-                }, () => this.loadMostRecentSurvey());
+                }, () => this.sortSurveys());
             });
 
         /**
@@ -307,9 +315,53 @@ export default class MySurveys extends Component {
         }
     }
 
-    loadMostRecentSurvey = () => {
-        const recentSurveyId = this.state.surveys[0].id;
-        this.handleClickSurvey(recentSurveyId);
+    checkUrl = () => {
+        const urlString = window.location.href;
+        const url = new URL(urlString);
+        if (url.searchParams.get('survey_url')) {
+            this.setState({
+                survey_url_param: url.searchParams.get('survey_url'),
+            })
+        }
+        if (url.searchParams.get('key') === 'snapshot') {
+            this.setState({
+                key_param: 'snapshot'
+            })
+        }
+    }
+
+    sortSurveys = () => {
+        /*
+         *  Sorts surveys by descending order then determines which to load
+        */
+        let surveyCopy = [...this.state.surveys];
+        surveyCopy.sort((a, b) => b.id - a.id);
+        this.setState({
+            surveys: surveyCopy
+        }, () => {
+            this.loadSurvey();
+        })
+    }
+
+    loadSurvey = () => {
+        /*
+        * Looks for a param: survey_url to determine which to load
+        * Looks for a param: key=snapshot to determine if to load snapshot view
+        * If neither exists, loads the most recent survey
+        */
+        let id;
+        if (this.state.survey_url_param) {
+            let survey_match = this.state.surveys.find(survey => survey.url === this.state.survey_url_param);
+            id = survey_match.id
+        } else {
+            id =  this.state.surveys[0].id
+        }
+
+        if (this.state.key_param === 'snapshot') {
+            this.handleSnapshotClick();
+        }
+
+        this.handleClickSurvey(id);
     }
 
     handleClickSurvey = (id) => {
@@ -443,7 +495,7 @@ export default class MySurveys extends Component {
                     clicked_home: undefined,
                     viewing_home: false,
                 }, () => {
-                    this.loadMostRecentSurvey();
+                    this.loadSurvey();
                 })
             });
     };
@@ -506,6 +558,7 @@ export default class MySurveys extends Component {
                             viewing_snapshot={this.state.viewing_snapshot}
                             handleSnapshotClick={this.handleSnapshotClick}
                             deleteSurvey={this.deleteSurvey}
+                            key_param={this.state.key_param}
                         />
                     </div>
                 </div>
