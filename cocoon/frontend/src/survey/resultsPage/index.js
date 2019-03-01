@@ -200,7 +200,7 @@ export default class ResultsPage extends Component {
             <>
                 <div className="results-info">
                     <h2>Time to pick your favorites!</h2>
-                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>schedule tour</span> above to continue.</p>
+                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>Tour Setup</span> above to continue.</p>
                     <SurveySubscribe id={this.state.survey.id} />
                 </div>
                 <div className="results">
@@ -364,10 +364,14 @@ export default class ResultsPage extends Component {
     renderScheduleButton = () => {
         if (this.state.favorites.length > 0) {
             return (
+<<<<<<< HEAD
                 <a href={`${userAuth_endpoints['surveys']}?survey_url=${this.state.survey_name}`}>Schedule Tour</a>
+=======
+                <a href={userAuth_endpoints['surveys']}>Tour Setup</a>
+>>>>>>> origin/develop
             );
         } else {
-            return <span className="disabled-button">Schedule Tour</span>
+            return <span className="disabled-button">Tour Setup</span>
         }
     }
 
