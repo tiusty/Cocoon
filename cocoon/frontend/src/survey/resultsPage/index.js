@@ -364,11 +364,7 @@ export default class ResultsPage extends Component {
     renderScheduleButton = () => {
         if (this.state.favorites.length > 0) {
             return (
-<<<<<<< HEAD
-                <a href={`${userAuth_endpoints['surveys']}?survey_url=${this.state.survey_name}`}>Schedule Tour</a>
-=======
-                <a href={userAuth_endpoints['surveys']}>Tour Setup</a>
->>>>>>> origin/develop
+                <a href={`${userAuth_endpoints['surveys']}?survey_url=${this.state.survey_name}`}>Tour Setup</a>
             );
         } else {
             return <span className="disabled-button">Tour Setup</span>

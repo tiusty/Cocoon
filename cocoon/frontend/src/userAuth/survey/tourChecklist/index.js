@@ -20,27 +20,32 @@ export default class TourChecklist extends  Component {
     }
 
     handleChecklistNumber = () => {
-        if (this.props.surveys.length > 0) {
+        if (this.props.itinerary_scheduled) {
             this.setState({
-                checklistActiveItem: 2
+                checklistActiveItem: 6
             })
         }
-        if (this.props.favorites.length > 0) {
-            this.setState({
-                checklistActiveItem: 3
-            })
-        }
-        if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed && (this.props.visit_list.length > 0 && this.props.visit_list.length <= 5)) {
-            this.setState({
-                checklistActiveItem: 4
-            })
-        }
-        if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed && this.props.favorites.length > 0 && (this.props.visit_list.length > 0 && this.props.visit_list.length <= 5) && this.props.itinerary_scheduled) {
+        else if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed && this.props.favorites.length > 0 && this.props.visit_list.length > 0) {
             this.setState({
                 checklistActiveItem: 5
             })
         }
-    }
+        else if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed) {
+            this.setState({
+                checklistActiveItem: 4
+            })
+        }
+        else if (this.props.favorites.length > 0) {
+            this.setState({
+                checklistActiveItem: 3
+            })
+        }
+        else if (this.props.surveys.length > 0) {
+            this.setState({
+                checklistActiveItem: 2
+            })
+        }
+    };
 
     renderSurveyCheck = () => {
         let checkListClass = 'checklist-item';
@@ -109,13 +114,15 @@ export default class TourChecklist extends  Component {
     renderScheduleCheck = () => {
         let checkListClass = 'checklist-item';
         let checkListIcon = 'check_box_outline_blank';
-        if (this.state.checklistActiveItem >= 5) {
+        if (this.state.checklistActiveItem === 5) {
+            checkListClass += ' checklist-item_active';
+        }else if (this.state.checklistActiveItem > 5) {
             checkListClass += ' checklist-item_checked';
             checkListIcon = 'check_box';
         }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Schedule a tour of your visit list.</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Schedule your tour by clicking Schedule Tour above.</p>
             </div>
         );
     }
