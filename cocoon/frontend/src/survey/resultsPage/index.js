@@ -199,7 +199,7 @@ export default class ResultsPage extends Component {
             <>
                 <div className="results-info">
                     <h2>Time to pick your favorites!</h2>
-                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>schedule tour</span> above to continue.</p>
+                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>Tour Setup</span> above to continue.</p>
                 </div>
                 <div className="results">
                     {this.state.homeList && this.state.homeList.map(home => (
@@ -362,10 +362,10 @@ export default class ResultsPage extends Component {
     renderScheduleButton = () => {
         if (this.state.favorites.length > 0) {
             return (
-                <a href={userAuth_endpoints['surveys']}>Schedule Tour</a>
+                <a href={userAuth_endpoints['surveys']}>Tour Setup</a>
             );
         } else {
-            return <span className="disabled-button">Schedule Tour</span>
+            return <span className="disabled-button">Tour Setup</span>
         }
     }
 
