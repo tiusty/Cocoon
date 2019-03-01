@@ -14,6 +14,7 @@ import os
 import json
 from django.contrib.messages import constants as messages
 from django.core.exceptions import ImproperlyConfigured
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -346,3 +347,20 @@ INTERCOM_CUSTOM_DATA_CLASSES = [
 
 INTERCOM_SECURE_KEY = get_secret('INTERCOM_SECRET_CODE')
 
+# Celery settings
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BEAT_SCHEDULE = {
+    # Remember celery runs on UTC time, so need to subtract 5 hours for Eastern Standard Time
+
+    # Send emails to clients about survey updates at 5:30am every morning
+    'notify-user-survey-updates': {
+        'task': 'cocoon.survey.tasks.notify_user_survey_updates',
+        'schedule': crontab(hour=10, minute=30),
+        'args': (),
+    },
+}
+CELERY_TIMEZONE = 'UTC'
