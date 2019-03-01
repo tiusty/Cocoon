@@ -24,3 +24,8 @@
     width: 70px;
     margin: 0 6px;
 }
+
+/* Style for results page */
+.results-info .subscribe-checkbox {
+    justify-content: center;
+}

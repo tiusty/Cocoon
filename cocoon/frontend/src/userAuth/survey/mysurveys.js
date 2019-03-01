@@ -370,7 +370,10 @@ export default class MySurveys extends Component {
          *
          * After the survey id is set, it will retrieve the visit list for that survey
          */
-        this.setState({survey_clicked_id: id}, () => {
+        this.setState({
+            survey_clicked_id: id,
+            viewing_snapshot: false
+        }, () => {
             this.handleCloseHomeTileLarge();
             this.retrieveHomes();
             this.setActiveResults();
@@ -513,6 +516,7 @@ export default class MySurveys extends Component {
                     <div className="tour-setup-sidebar">
                         <TourSetupCTA
                             survey_id={this.state.survey_clicked_id}
+                            activeSurvey={this.state.activeSurvey}
                             visit_list={this.state.visit_list}
                             loaded={this.state.loaded}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}

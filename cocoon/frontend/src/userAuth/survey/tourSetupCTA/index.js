@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
+import { createPortal } from 'react-dom';
+import moment from 'moment';
 import CSRFToken from '../../../common/csrftoken';
-import scheduler_endpoints from '../../../endpoints/survey_endpoints';
+import scheduler_endpoints from '../../../endpoints/scheduler_endpoints';
+
+import CocoonModal from '../../../common/cocoonModal';
+import axios from "axios";
 
 export default class TourSetupCTA extends Component {
 
@@ -8,12 +13,19 @@ export default class TourSetupCTA extends Component {
         super(props);
         this.state = {
             has_off_market: false,
-            homes_off_market: 0
+            homes_off_market: 0,
+            isScheduling: false
         }
     }
 
-    componentDidMount = () => {
+    componentDidMount() {
         this.checkIfOffMarket();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.visit_list !== prevProps.visit_list) {
+            this.checkIfOffMarket();
+        }
     }
 
     checkIfOffMarket = () => {
@@ -45,6 +57,32 @@ export default class TourSetupCTA extends Component {
         }
     }
 
+    toggleScheduling = () => {
+        this.setState({
+            isScheduling: !this.state.isScheduling
+        })
+    }
+
+    scheduleTour = () => {
+        // posts the schedule to backend
+    }
+
+    loadModal = () => {
+        if (this.state.isScheduling && !this.determineScheduleButtonStatus()) {
+            return createPortal(
+                <CocoonModal
+                    headline={'Congrats on scheduling a tour! We just want to let you know of a few things:'}
+                    subHeadline={`By scheduling this tour you recognize that you will not be able to schedule another tour until this one is complete. You will need to find blocks of time that will allow for the full duration of the tour. If you believe you will not be free for the full duration of the tour then please remove homes until the tour duration is at a satisfactory level. We look forward to being on the tour with you and hope you find yours with us!`}
+                    closeModalText={'Cancel'}
+                    confirmOnClick={this.scheduleTour}
+                    closeModalOnClick={this.toggleScheduling}
+                />, document.querySelector('body')
+            );
+        } else {
+            return null;
+        }
+    }
+
     handleErrorMessage = () => {
         if (this.props.visit_list.length <= 0) {
             return <span className="tour-error">You must have at least one home in your visit list.</span>
@@ -52,6 +90,8 @@ export default class TourSetupCTA extends Component {
             return <span className="tour-error">Sorry, you can't schedule more than 5 homes for a tour.</span>
         } else if (this.state.has_off_market === true) {
             return  <span className="tour-error">There are homes in your visit list that are sold. Remove those to schedule your tour.</span>
+        } else if (this.props.last_resend_request_pre_tour !== undefined && !this.props.is_pre_tour_signed && this.props.pre_tour_forms_created && !this.props.itinerary_scheduled) {
+            return <span className="tour-error">You can't resend the documents until {moment(this.props.last_resend_request_pre_tour).add({minutes: 16}).format("H:mm A")}</span>
         } else {
             return null;
         }
@@ -65,7 +105,7 @@ export default class TourSetupCTA extends Component {
                     <>
                         <h3>Pre-Tour Documents</h3>
                         <button onClick={this.props.onHandleOnClickCreateDocument}>
-                            <i className="material-icons">send</i> Send My Documents
+                            <i className="material-icons">send</i> {this.props.refreshing_document_status === false ? 'Send My Documents' : 'Sending...'}
                         </button>
                     </>
                 );
@@ -73,24 +113,33 @@ export default class TourSetupCTA extends Component {
                 return (
                     <>
                         <h3>Pre-Tour Documents</h3>
-                        <span onClick={this.props.onHandleOnClickRefreshDocument}>
-                            <i style={{fontSize: 15}} className="material-icons">refresh</i> Refresh Status <span onClick={this.props.onHandleOnClickResendDocument} className="helper-link"> (Resend Email)</span>
+                        <span>
+                            <span onClick={this.props.onHandleOnClickRefreshDocument}>
+                                <i style={{fontSize: 15}} className="material-icons">refresh</i> {this.props.refreshing_document_status === false ? 'Refresh Status' : 'Loading...'}</span>
+                                <span onClick={this.props.onHandleOnClickResendDocument} className="helper-link">
+                                    {this.props.refreshing_document_status === false ? '(Resend Email)' : '(Loading...)'}
+                                </span>
                         </span>
                     </>
                 );
             } else if (this.props.is_pre_tour_signed && this.props.pre_tour_forms_created && !this.props.itinerary_scheduled) {
+                let style;
+                if (this.determineScheduleButtonStatus()) {
+                    style = {
+                        opacity: .3
+                    }
+                } else {
+                    style = {
+                        opacity: 1
+                    }
+                }
                 return (
                     <>
                         <h3>Tour Summary <span className="helper-text">({this.props.visit_list.length} homes in Visit List)</span></h3>
-                        <form method="post">
-                            <CSRFToken />
-                            <button
-                                value={this.props.survey_id}
-                                disabled={this.determineScheduleButtonStatus()}
-                                type="submit">
-                                <i style={{fontSize: 15}} className="material-icons">schedule</i> Schedule Tour
-                            </button>
-                        </form>
+                        <span onClick={this.toggleScheduling} style={style}>
+                            <i style={{fontSize: 15}} className="material-icons">schedule</i> Schedule Tour
+                        </span>
+                        {this.loadModal()}
                         {this.handleErrorMessage()}
                     </>
                 );

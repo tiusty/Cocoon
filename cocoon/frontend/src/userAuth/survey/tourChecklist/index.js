@@ -53,7 +53,7 @@ export default class TourChecklist extends  Component {
         }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Take a<a href={survey_endpoints['rentingSurvey']}> Survey</a></p>
+                <i className="material-icons">{checkListIcon}</i> <p> Take a Survey</p>
             </div>
         );
     }
@@ -69,7 +69,7 @@ export default class TourChecklist extends  Component {
         }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Review your <a href={this.props.activeResultsUrl}>results</a> to pick some favorites.</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Review your results to pick some favorites.</p>
             </div>
         );
     }
@@ -83,15 +83,9 @@ export default class TourChecklist extends  Component {
             checkListClass += ' checklist-item_checked';
             checkListIcon = 'check_box';
         }
-        let clickFunction = undefined;
-        if (!this.props.pre_tour_forms_created) {
-            clickFunction = this.props.onHandleOnClickCreateDocument;
-        } else {
-            clickFunction = this.props.onHandleOnClickResendDocument;
-        }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Sign the pre-tour <span onClick={clickFunction}>documents</span>.</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Sign the pre-tour documents.</p>
             </div>
         );
     }
@@ -126,6 +120,16 @@ export default class TourChecklist extends  Component {
         );
     }
 
+    renderItineraryCheck = () => {
+        let checkListClass = 'checklist-item';
+        let checkListIcon = 'check_box_outline_blank';
+        return (
+            <div className={checkListClass}>
+                <i className="material-icons">{checkListIcon}</i> <p> Stay updated with your tour on the itinerary page.</p>
+            </div>
+        );
+    }
+
     render() {
         return (
             <div className="tour-box tour-checklist">
@@ -138,6 +142,7 @@ export default class TourChecklist extends  Component {
                     {this.renderDocCheck()}
                     {this.renderVisitsCheck()}
                     {this.renderScheduleCheck()}
+                    {this.renderItineraryCheck()}
                 </div>
             </div>
         );

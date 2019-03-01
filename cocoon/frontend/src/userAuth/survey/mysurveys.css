@@ -61,6 +61,7 @@
 
 .tour-cta span,
 .tour-cta button,
+.tour-cta a,
 .tour-top-bar a {
     display: flex;
     align-items: center;
@@ -184,4 +185,11 @@
 .checklist-item_active p,
 .checklist-item_active i {
     color: var(--darkBlue);
+}
+
+@media screen and (max-width: 728px) {
+    .tour-setup-container {
+        display: flex;
+        flex-direction: column;
+    }
 }

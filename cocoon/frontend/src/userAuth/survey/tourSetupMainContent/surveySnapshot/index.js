@@ -14,7 +14,8 @@ export default class SurveySnapshot extends Component {
             num_bedrooms: undefined,
             tenants: [],
             updatedTenants: [],
-            url: ''
+            url: '',
+            subscribedClick: false
         }
     }
 
@@ -117,6 +118,20 @@ export default class SurveySnapshot extends Component {
             );
     }
 
+    determineButtonStatus = () => {
+        if (this.state.updatedTenants.length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    handleSubscribeClick = () => {
+        this.setState({
+            subscribedClick: !this.state.subscribedClick
+        })
+    }
+
     render() {
         return (
             <div className="snapshot-wrapper">
@@ -151,6 +166,14 @@ export default class SurveySnapshot extends Component {
                             </div>
                         );
                     })}
+
+                    <div className="snapshot-buttons">
+                        <button
+                            disabled={this.determineButtonStatus()}
+                            onClick={() => this.saveSnapshot(this.state.updatedTenants)}>
+                            Save Tenants
+                        </button>
+                    </div>
                 </div>
 
                 <div className="snapshot-amenities">
@@ -160,10 +183,11 @@ export default class SurveySnapshot extends Component {
                     </div>
                 </div>
 
-                <SurveySubscribe />
 
                 <div className="snapshot-buttons">
-                    <button onClick={() => this.saveSnapshot(this.state.updatedTenants)}>Save</button>
+
+                    <SurveySubscribe id={this.props.activeSurvey.id} />
+
                     <p>Don't want this survey anymore? <span onClick={() => this.props.deleteSurvey(this.props.activeSurvey.id)}>Delete Survey</span></p>
                 </div>
 
