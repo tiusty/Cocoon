@@ -38,16 +38,20 @@ class ItineraryFileView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         itinerary_slug = kwargs.get('itinerary_slug')
-        _ = get_object_or_404(ItineraryModel, url_slug=itinerary_slug)
+        self.itinerary = get_object_or_404(ItineraryModel, url_slug=itinerary_slug)
         return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(TemplateView, self).get_context_data(**kwargs)
-
-        # TODO Retreive relevant fields here
-
         context.update({
-            'name': 'Sean Rayment',
+            'client': self.itinerary.client,
+            'itinerary_claimed': False if self.itinerary.agent is None else True,
+            'agent': self.itinerary.agent,
+            'tour_duration': datetime.timedelta(self.itinerary.tour_duration_seconds_rounded),
+            'is_scheduled': False if self.itinerary.selected_start_time is None else True,
+            'start_time': self.itinerary.selected_start_time,
+            'homes': self.itinerary.homes,
+            'is_finished': self.itinerary.finished,
         })
         return context
 
