@@ -240,6 +240,7 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
     def price_string(self):
         return "$" + str(self.price)
 
+    @property
     def on_market(self):
         """
         Returns whether or not the home is on market

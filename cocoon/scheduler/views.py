@@ -14,6 +14,7 @@ from .serializers import ItinerarySerializer
 # Cocoon Modules
 from cocoon.userAuth.models import UserProfile
 from cocoon.survey.models import RentingSurveyModel
+from cocoon.scheduler.models import ItineraryModel
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 from cocoon.commutes.constants import CommuteAccuracy
 
@@ -26,6 +27,46 @@ import dateutil
 # Rest Framework
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
+
+
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+class ItineraryFileView(TemplateView):
+    """
+    Loads the template for an individual itinerary
+    """
+    template_name = 'scheduler/itineraryFile.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        itinerary_slug = kwargs.get('itinerary_slug')
+        self.itinerary = get_object_or_404(ItineraryModel, url=itinerary_slug)
+        return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplateView, self).get_context_data(**kwargs)
+
+        m, _ = divmod(self.itinerary.tour_duration_seconds_rounded, 60)
+        h, m = divmod(m, 60)
+        friendly_duration = "{0}h {1}m".format(h, m)
+
+        destinations = []
+        if self.itinerary.survey:
+            tenants = self.itinerary.survey.tenants
+            for t in tenants.all():
+                destinations.append(t.full_address)
+
+        context.update({
+            'client': self.itinerary.client,
+            'survey': self.itinerary.survey,
+            'destinations': destinations,
+            'itinerary_claimed': False if self.itinerary.agent is None else True,
+            'agent': self.itinerary.agent,
+            'tour_duration': friendly_duration,
+            'is_scheduled': False if self.itinerary.selected_start_time is None else True,
+            'start_time': self.itinerary.selected_start_time,
+            'homes': self.itinerary.homes.all(),
+            'is_finished': self.itinerary.finished,
+        })
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -157,7 +198,7 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
-        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
+        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
         if result:
             return Response({
                 'result': True,
