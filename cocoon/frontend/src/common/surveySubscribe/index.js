@@ -22,7 +22,7 @@ export default class SurveySubscribe extends Component {
         /**
          * Function retrieves the survey_subscribe information
          */
-        let endpoint = survey_endpoints['rentSurvey'] + this.props.activeSurvey.id;
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.survey_id;
         axios.get(endpoint,
             {
                 params: {
