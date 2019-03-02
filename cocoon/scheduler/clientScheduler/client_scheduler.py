@@ -101,7 +101,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         return tuple_list_edges
 
-    def save_itinerary(self, homes_list, user):
+    def save_itinerary(self, homes_list, user, survey):
         """
 
         :param: (list) homes_list: The matrix calculated using DistanceWrapper() with distances between every pair
@@ -118,9 +118,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
             # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
             # Add 20 minutes to each home
-
-            # TODO: Store these values on the db
-
             s = b""
             for item in interpreted_route:
                 line = "{0} {1}\n".format(item[0].full_address, item[1]/60 + 20).encode('utf-8')
@@ -130,6 +127,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
             for home in homes_list:
                 itinerary_model.homes.add(home)
 
+            itinerary_model.survey = survey
             itinerary_model.save()
             return True
         return False

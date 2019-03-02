@@ -3,6 +3,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>{% block title %}{{ name }}'s Itinerary | Cocoon{% endblock %}</title>
+  <title>{% block title %}Cocoon | {{ client.first_name }}'s Itinerary{% endblock %}</title>
+  <body>
+
+    <table class="client-information-table">
+      <tr>
+        <td>
+          <span class="left header">Client Name</span>
+          <span class="right">{{ client.full_name }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="left header">Phone Number</span>
+          <span class="right">{{ client.phone_number }}</span>
+        </td>
+      </tr>
+      <tr>
+        <span class="left header">Email Address</span>
+        <span class="right">{{ client.email }}</span>
+      </tr>
+      <tr>
+        <td>
+          <span class="left header">Tour Duration</span>
+          <span class="right">{{ tour_duration }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="left header">No. of Tenants</span>
+          <span class="right">{{ survey.number_of_tenants }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="left header">Minimum Bedrooms</span>
+          <span class="right">{{ survey.min_bedrooms }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="left header">Bathroom Range</span>
+          <span class="right">{{ survey.min_bathrooms }} - {{ survey.max_bathrooms }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="left header">Price Range</span>
+          <span class="right">{{ survey.price_range }}</span>
+        </td>
+      </tr>
+    </table>
+
+  </body>
 </head>
 </html>

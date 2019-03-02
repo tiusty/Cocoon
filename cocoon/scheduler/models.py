@@ -10,6 +10,7 @@ from django.contrib.sites.shortcuts import get_current_site
 
 from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.survey.models import RentingSurveyModel
 
 # Import third party libraries
 import hashlib
@@ -34,6 +35,7 @@ class ItineraryModel(models.Model):
     """
     client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
     itinerary = models.FileField(blank=True, upload_to=itinerary_directory_path)
+    survey = models.OneToOneField(RentingSurveyModel, related_name='itinerary', on_delete=models.SET_NULL, null=True)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)

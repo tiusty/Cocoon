@@ -54,14 +54,15 @@ class VisitList(ListView):
     def post(self, request):
         # Run the client scheduler algorithm
         user_prof = get_object_or_404(UserProfile, user=request.user)
-        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_prof)
+        survey_id = self.request.POST['submit-button']
+        survey = get_object_or_404(RentingSurveyModel, id=survey_id, user_profile=user_prof)
         homes_list = []
         for home in survey.visit_list.all():
             homes_list.append(home)
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
-        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
+        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
         if result:
             messages.info(request, "Itinerary created")
             return HttpResponseRedirect(reverse('scheduler:clientScheduler'))
