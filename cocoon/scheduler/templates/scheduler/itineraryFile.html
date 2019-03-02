@@ -274,6 +274,7 @@
         if (extraClientInformationVisibile) {
             $('.extra-client-info').addClass('hidden');
             $('#expand-client-info-button').text('more');
+            $(window).scrollTop(0);
         } else {
             $('.extra-client-info').removeClass('hidden');
             $('#expand-client-info-button').text('hide');
