@@ -90,7 +90,12 @@ def loginPage(request):
             if user is not None:
                 login(request, user)
                 # redirect to success page
-                return HttpResponseRedirect(reverse('homePage:index'))
+                next_value = request.POST.get('next')
+                if next_value:
+                    reverse_url = next_value
+                else:
+                    reverse_url = reverse('homePage:index')
+                return HttpResponseRedirect(reverse_url)
             else:
                 # return invalid user
                 context['error_message'].append('Unable to login in with Email/Password combo')

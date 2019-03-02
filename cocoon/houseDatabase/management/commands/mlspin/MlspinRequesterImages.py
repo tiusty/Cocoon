@@ -9,6 +9,10 @@ import os
 # Import from houseDatabase app
 from cocoon.houseDatabase.models import RentDatabaseModel, HousePhotos, HomeProviderModel
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
 
 class MlspinRequesterImage(object):
     """
@@ -28,6 +32,16 @@ class MlspinRequesterImage(object):
         #   last updated today
         self.homes = RentDatabaseModel.objects.filter(last_updated=last_update) \
             .filter(listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"))
+
+        self.num_error_perm = 0
+        self.num_TimeoutError = 0
+        self.num_ConnectionRefusedError = 0
+        self.num_ConnectionAbortedError = 0
+        self.num_ConnectionError = 0
+
+    def run(self):
+        self.add_images()
+        self.print_results()
 
     def add_images(self):
         # For each home see how many photos are stored
@@ -81,12 +95,26 @@ class MlspinRequesterImage(object):
                             # If a permission error occurs then skip to the next image
                             #   This usually occurs if the image doesn't exist for some reason
                             except error_perm:
+                                self.num_error_perm += 1
                                 print("Error_perm happened" + str(file))
                                 continue
                             # Timeout sometimes occurs, so instead of quiting,
                             #   just skip that image
                             except TimeoutError:
+                                self.num_TimeoutError += 1
                                 print("File Timeout" + str(file))
+                                continue
+                            except ConnectionRefusedError:
+                                self.num_ConnectionRefusedError += 1
+                                print("connection refused error")
+                                continue
+                            except ConnectionAbortedError:
+                                self.num_ConnectionAbortedError += 1
+                                print('Connection Aborted Error')
+                                continue
+                            except ConnectionError:
+                                self.num_ConnectionError += 1
+                                print('Connection Error')
                                 continue
                             new_photos = HousePhotos(house=home)
                             new_photos.image.save(os.path.basename(file), ImageFile(lf))
@@ -98,3 +126,10 @@ class MlspinRequesterImage(object):
 
             else:
                 print("Listing number is not valid")
+
+    def print_results(self):
+        logger.info("\n MLS Images done uploading.\n" +
+                    "Number of Error perm: {0}\n".format(self.num_error_perm) +
+                    "Number of ConnectionError: {0}\n".format(self.num_ConnectionError) +
+                    "Number of ConnectionRefusedError: {0}\n".format(self.num_ConnectionRefusedError) +
+                    "Number of ConnectionAbortedError: {0}\n".format(self.num_ConnectionAbortedError))

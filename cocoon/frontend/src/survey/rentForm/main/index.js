@@ -26,13 +26,14 @@ export default class RentForm extends Component {
             step: 1,
             loading: false,
             isEditing: false,
+            googleApiLoaded: false,
 
             // General Form Fields
             generalInfo: {
                 number_of_tenants: 1,
                 home_type: [],
                 move_weight: 0,
-                num_bedrooms: undefined,
+                num_bedrooms: [],
                 polygon_filter_type: 0,
                 polygons: [],
                 desired_price: 1000,
@@ -145,6 +146,25 @@ export default class RentForm extends Component {
                 isEditing: true,
             })
         }
+
+        // This interval checks every .3 seconds to see if the google api loaded.
+        this.interval = setInterval(() => this.checkGoogleApi(), 300);
+    }
+
+    checkGoogleApi() {
+        /**
+         * Function checks to see if the google api is loaded. This should be called on an interval.
+         *  When it is, then the state is set to true and the interval is stopped
+         */
+        if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
+            // Since the key is now loaded, then stop the interval
+            clearInterval(this.interval);
+
+            // Mark that the api is now loaded
+            this.setState({
+                googleApiLoaded: true,
+            })
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -156,6 +176,7 @@ export default class RentForm extends Component {
         if (this.state.generalInfo.number_of_tenants !== prevState.generalInfo.number_of_tenants) {
             this.setState({'tenants-TOTAL_FORMS': this.state.generalInfo.number_of_tenants})
         }
+
     };
 
     handleSubmit = (e, detailsData) => {
@@ -305,6 +326,8 @@ export default class RentForm extends Component {
                         onCompletePolygon={this.handleCompletePolygon}
                         onDeleteAllPolygons={this.handleDeleteAllPolygons}
                         is_editing={this.props.is_editing}
+                        handleNumberOfRooms={this.handleNumberOfRooms}
+                        googleApiLoaded={this.state.googleApiLoaded}
                 />;
             case 2:
                 return <TenantsForm
@@ -317,6 +340,7 @@ export default class RentForm extends Component {
                         onTenantCommute={this.handleTenantCommute}
                         onAddressChange={this.handleAddressChange}
                         onAddressSelected={this.handleAddressSelected}
+                        googleApiLoaded={this.state.googleApiLoaded}
                 />;
             case 3:
                 return <AmenitiesForm
@@ -406,6 +430,15 @@ export default class RentForm extends Component {
             }
         })
     };
+
+    handleNumberOfRooms = (data) => {
+        this.setState({
+            generalInfo: {
+                ...this.state.generalInfo,
+                num_bedrooms: data
+            }
+        })
+    }
 
     handleEarliestClick = (day, {selected}) => {
         let generalInfo = this.state.generalInfo;
@@ -674,7 +707,7 @@ export default class RentForm extends Component {
     render() {
         return (
             <div className="survey-wrapper">
-                <Progress step={this.state.step}/>
+                <Progress step={this.state.step} />
                 <div className="form-wrapper">
                     {this.renderForm(this.state.step)}
                 </div>

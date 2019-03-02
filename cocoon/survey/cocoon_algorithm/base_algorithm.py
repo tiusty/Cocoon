@@ -115,11 +115,11 @@ class CocoonAlgorithm(object):
         :return: (RentDataBaseModel Queryset): All the homes that fit the static filter
         """
         # Query the database
-        house_query = RentDatabaseModel.objects\
+        house_query = RentDatabaseModel.objects \
             .filter(last_updated=F('listing_provider__last_updated_feed')) \
             .filter(price__range=(user_survey.min_price, user_survey.max_price)) \
-            .filter(num_bedrooms=user_survey.num_bedrooms) \
-            .filter(home_type__in=user_survey.home_type.all())\
+            .filter(num_bedrooms__in=user_survey.num_bedrooms) \
+            .filter(home_type__in=user_survey.home_type.all())
 
         # Depending on the user move weight, determine how the static filter works
         if user_survey.move_weight == MOVE_WEIGHT_MAX:

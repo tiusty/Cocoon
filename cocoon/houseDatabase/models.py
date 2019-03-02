@@ -254,6 +254,26 @@ class RentDatabaseModel(HouseManagementModel, HouseExteriorAmenitiesModel, House
         else:
             return True
 
+    @staticmethod
+    def create_house_database(home_type=None, listing_provider=None, currently_available=False,
+                              price=1500, num_bedrooms=2, street_address="12 test Rd", city='SomeCity',
+                              zip_code='02222', state='MA'):
+        if home_type is None:
+            home_type = HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.APARTMENT)[0]
+        if listing_provider is None:
+            listing_provider = HomeProviderModel.objects.get_or_create(provider=HomeProviderModel.MLSPIN)[0]
+        return RentDatabaseModel.objects.create(
+            home_type=home_type,
+            listing_provider=listing_provider,
+            currently_available=currently_available,
+            price=price,
+            num_bedrooms=num_bedrooms,
+            street_address=street_address,
+            city=city,
+            zip_code=zip_code,
+            state=state,
+        )
+
 
 def house_directory_path(instance, filename):
     return 'houseDatabase/{0}/{1}'.format(instance.house.id, filename)

@@ -34,4 +34,4 @@ class Command(BaseCommand):
         Pulls images for ygl homes
         """
         requester_ygl_images = YGLRequesterImage(timestamp)
-        requester_ygl_images.add_images()
+        requester_ygl_images.run()

@@ -34,4 +34,4 @@ class Command(BaseCommand):
         Pulls images for MLSpin homes
         """
         requester_mlspin_images = MlspinRequesterImage(timestamp)
-        requester_mlspin_images.add_images()
+        requester_mlspin_images.run()

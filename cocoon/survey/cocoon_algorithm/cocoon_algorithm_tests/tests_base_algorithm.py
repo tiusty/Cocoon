@@ -16,22 +16,6 @@ from cocoon.survey.constants import DAYS_AFTER_MOVE_IN_ADDED, DAYS_BEFORE_MOVE_I
 class TestAddingHomes(TestCase):
 
     @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2, earliest_move_in=timezone.now(), latest_move_in=timezone.now(),
-                      move_weight=0):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-            earliest_move_in=earliest_move_in,
-            latest_move_in=latest_move_in,
-            move_weight=move_weight,
-        )
-
-    @staticmethod
     def create_home(home_type, listing_provider, price=1500,
                     currently_available=True, num_bedrooms=2,
                     num_bathrooms=2, zip_code="02476", state="MA",
@@ -61,7 +45,7 @@ class TestAddingHomes(TestCase):
         home_type = HomeTypeModel.objects.create(home_type='House')
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
-        survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_bedrooms=[2], max_price=3000)
         survey.home_type.add(home_type)
 
         # Create homes
@@ -86,7 +70,7 @@ class TestAddingHomes(TestCase):
         home_type = HomeTypeModel.objects.create(home_type='House')
         mls_provider = HomeProviderModel.objects.create(provider="MLSPIN")
         ygl_provider = HomeProviderModel.objects.create(provider="YGL")
-        survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000)
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_bedrooms=[2], max_price=3000)
         survey.home_type.add(home_type)
 
         current_time = timezone.now()
@@ -123,7 +107,7 @@ class TestAddingHomes(TestCase):
         date_available1 = timezone.now() + timedelta(days=8)
         date_available2 = timezone.now() + timedelta(days=5)
 
-        survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000,
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_bedrooms=[2], max_price=3000,
                                     earliest_move_in=move_in_start_date, latest_move_in=move_in_end_date)
         survey.home_type.add(home_type)
 
@@ -156,7 +140,7 @@ class TestAddingHomes(TestCase):
         date_available1 = timezone.now() + timedelta(days=8)
         date_available2 = timezone.now() - timedelta(days=1 + DAYS_BEFORE_MOVE_IN_ADDED)
 
-        survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000,
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_bedrooms=[2], max_price=3000,
                                     earliest_move_in=move_in_start, latest_move_in=move_in_end,
                                     move_weight=MOVE_WEIGHT_MAX-1)
         survey.home_type.add(home_type)
@@ -193,7 +177,7 @@ class TestAddingHomes(TestCase):
         date_available1 = timezone.now() + timedelta(days=8)
         date_available2 = timezone.now() - timedelta(days=DAYS_BEFORE_MOVE_IN_ADDED)
 
-        survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000,
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_bedrooms=[2], max_price=3000,
                                     earliest_move_in=move_in_start, latest_move_in=move_in_end,
                                     move_weight=MOVE_WEIGHT_MAX-1)
         survey.home_type.add(home_type)
@@ -229,7 +213,7 @@ class TestAddingHomes(TestCase):
         date_available1 = timezone.now() + timedelta(days=8)
         date_available2 = timezone.now() - timedelta(days=1 + DAYS_BEFORE_MOVE_IN_ADDED)
 
-        survey = self.create_survey(user.userProfile, num_bedrooms=2, max_price=3000,
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_bedrooms=[2], max_price=3000,
                                     earliest_move_in=move_in_start, latest_move_in=move_in_end,
                                     move_weight=MOVE_WEIGHT_MAX)
         survey.home_type.add(home_type)

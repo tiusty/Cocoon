@@ -29,6 +29,7 @@ export default class ResultsPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            googleApiLoaded: false,
             homeList: undefined,
             survey_name: undefined,
             survey: undefined,
@@ -47,10 +48,28 @@ export default class ResultsPage extends Component {
     }
 
     componentDidMount = () => {
+        // This interval checks every .3 seconds to see if the google api loaded.
+        this.interval = setInterval(() => this.checkGoogleApi(), 300);
         this.setPageHeight();
         if (this.props.is_verified) {
             this.getSurvey();
             this.getResults();
+        }
+    };
+
+    checkGoogleApi() {
+        /**
+         * Function checks to see if the google api is loaded. This should be called on an interval.
+         *  When it is, then the state is set to true and the interval is stopped
+         */
+        if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
+            // Since the key is now loaded, then stop the interval
+            clearInterval(this.interval);
+
+            // Mark that the api is now loaded
+            this.setState({
+                googleApiLoaded: true,
+            })
         }
     }
 
@@ -76,36 +95,10 @@ export default class ResultsPage extends Component {
             .then(response => {
                 this.setState({
                     survey: response.data,
-                    tenants: response.data.tenants,
                     favorites: response.data.favorites,
-                    commutes: this.getCommuteCoords(response.data.tenants)
                 });
             })
 
-    };
-
-    getCommuteCoords = (tenants) => {
-        let commutes = [];
-        if (tenants) {
-            tenants.forEach(t => {
-                if (t.street_address) {
-                    let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
-                    let name = `${t.first_name}`;
-                    let coords = {};
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode( { 'address': address }, (results, status) => {
-                        if (status === google.maps.GeocoderStatus.OK) {
-                            console.log(results);
-                            coords.lat = results[0].geometry.location.lat();
-                            coords.lng = results[0].geometry.location.lng();
-                            coords.name = name;
-                            commutes.push(coords);
-                        }
-                    });
-                }
-            })
-        }
-        return commutes;
     };
 
     getResults = () => {
@@ -202,12 +195,11 @@ export default class ResultsPage extends Component {
         /**
          *  Renders the list of home tiles
         **/
-        console.log(this.state.homeList)
         return (
             <>
                 <div className="results-info">
                     <h2>Time to pick your favorites!</h2>
-                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>schedule tour</span> above to continue.</p>
+                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>Tour Setup</span> above to continue.</p>
                 </div>
                 <div className="results">
                     {this.state.homeList && this.state.homeList.map(home => (
@@ -227,7 +219,6 @@ export default class ResultsPage extends Component {
                             onMouseEnter={() => this.setHoverId(home.home.id)}
                             missing_amenities={home.missing_amenities}
                             show_missing_amenities={true}
-                            date_available={home.home.date_available}
                         />))}
                 </div>
             </>
@@ -273,7 +264,6 @@ export default class ResultsPage extends Component {
                     percent_match={home.percent_match}
                     missing_amenities={home.missing_amenities}
                     show_missing_amenities={true}
-                    date_available={home.home.date_available}
                 />
             </div>
         );
@@ -294,7 +284,7 @@ export default class ResultsPage extends Component {
         if (!this.state.isEditing) {
             return 'Edit Survey';
         } else {
-            return 'Cancel Survey';
+            return 'Cancel Changes';
         }
     };
 
@@ -372,10 +362,10 @@ export default class ResultsPage extends Component {
     renderScheduleButton = () => {
         if (this.state.favorites.length > 0) {
             return (
-                <a href={userAuth_endpoints['surveys']}>Schedule Tour</a>
+                <a href={userAuth_endpoints['surveys']}>Tour Setup</a>
             );
         } else {
-            return <span className="disabled-button">Schedule Tour</span>
+            return <span className="disabled-button">Tour Setup</span>
         }
     }
 
@@ -407,7 +397,14 @@ export default class ResultsPage extends Component {
                         {this.renderMainComponent()}
                     </div>
                     <div className="map-wrapper">
-                        {this.state.homeList !== undefined ? <Map homes={this.state.homeList} handleHomeClick={this.handleHomeClick} hover_id={this.state.hover_id} setHoverId={this.setHoverId} removeHoverId={this.removeHoverId} commutes={this.state.commutes} /> : null}
+                        {this.state.homeList !== undefined && this.state.googleApiLoaded ?
+                            <Map homes={this.state.homeList}
+                                 handleHomeClick={this.handleHomeClick}
+                                 hover_id={this.state.hover_id}
+                                 setHoverId={this.setHoverId}
+                                 removeHoverId={this.removeHoverId}
+                                 survey={this.state.survey} />
+                            : null}
                     </div>
                 </div>
             );

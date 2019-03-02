@@ -125,22 +125,6 @@ class TestLaundryWeightingQuestion(TestCase):
         self.home_type = HomeTypeModel.objects.create(home_type='House')
         HomeProviderModel.objects.create(provider="MLSPIN")
 
-    @staticmethod
-    def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
-                      num_bedrooms=2, wants_laundry_in_building=False, wants_laundry_in_unit=False,
-                      laundry_in_building_weight=0, laundry_in_unit_weight=0):
-        return RentingSurveyModel.objects.create(
-            user_profile=user_profile,
-            max_price=max_price,
-            desired_price=desired_price,
-            max_bathrooms=max_bathroom,
-            min_bathrooms=min_bathroom,
-            num_bedrooms=num_bedrooms,
-            wants_laundry_in_building=wants_laundry_in_building,
-            wants_laundry_in_unit=wants_laundry_in_unit,
-            laundry_in_unit_weight=laundry_in_unit_weight,
-            laundry_in_building_weight=laundry_in_building_weight,
-        )
 
     @staticmethod
     def create_home(home_type, price=1500,
@@ -168,7 +152,7 @@ class TestLaundryWeightingQuestion(TestCase):
             even if the home has it, it doesn't affect the score
         """
         # Arrange
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=False, wants_laundry_in_unit=False)
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=False, wants_laundry_in_unit=False)
         weighted_algorithm = WeightScoringAlgorithm()
 
         home = self.create_home(self.home_type, laundry_in_unit=True, laundry_in_building=True)
@@ -189,7 +173,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX - 1
         in_building_weight = 0
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=False,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=False,
                                     wants_laundry_in_unit=True,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
@@ -233,7 +217,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX
         in_building_weight = 0
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=False,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=False,
                                     wants_laundry_in_unit=True,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
@@ -277,7 +261,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = 0
         in_building_weight = HYBRID_WEIGHT_MAX - 1
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=True,
                                     wants_laundry_in_unit=False,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
@@ -321,7 +305,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = 0
         in_building_weight = HYBRID_WEIGHT_MAX
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=True,
                                     wants_laundry_in_unit=False,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
@@ -364,7 +348,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX - 2
         in_building_weight = HYBRID_WEIGHT_MAX - 1
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=True,
                                     wants_laundry_in_unit=True,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
@@ -410,7 +394,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX - 2
         in_building_weight = HYBRID_WEIGHT_MAX
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=True,
                                     wants_laundry_in_unit=True,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
@@ -456,7 +440,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX
         in_building_weight = HYBRID_WEIGHT_MAX - 1
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=True,
                                     wants_laundry_in_unit=True,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
@@ -501,7 +485,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Arrange
         in_unit_weight = HYBRID_WEIGHT_MAX
         in_building_weight = HYBRID_WEIGHT_MAX - 1
-        survey = self.create_survey(self.user.userProfile, wants_laundry_in_building=True,
+        survey = RentingSurveyModel.create_survey(self.user.userProfile, wants_laundry_in_building=True,
                                     wants_laundry_in_unit=True,
                                     laundry_in_unit_weight=in_unit_weight,
                                     laundry_in_building_weight=in_building_weight,
