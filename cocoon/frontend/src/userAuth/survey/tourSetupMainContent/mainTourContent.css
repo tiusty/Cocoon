@@ -216,6 +216,11 @@
     transition: all .2s ease;
 }
 
+#delete-survey-btn span {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 #delete-survey-btn_confirm {
     padding-top: 15px;
     text-align: center;

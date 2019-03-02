@@ -150,13 +150,9 @@ export default class SurveySnapshot extends Component {
                     </div>
                 </div>
 
+                <SurveySubscribe id={this.props.activeSurvey.id} />
 
-                <div className="snapshot-buttons">
-
-                    <SurveySubscribe id={this.props.activeSurvey.id} />
-
-                    {this.renderCancelButton()}
-                </div>
+                {this.renderCancelButton()}
 
             </div>
         );
@@ -235,37 +231,39 @@ class TenantEdit extends Component {
         if (tenants.length > 0) {
             return (
                 <>
-                    <h2>Tenants <span>(Please change the names if they're not correct)</span></h2>
-                    {tenants.length && tenants.sort((a, b) => a.id - b.id).map((tenant, index) => {
-                        return (
-                            <div key={index} className="tenant-form">
-                                <span className="tenant-name">Roommate #{index + 1}</span>
-                                <div className="tenant-inputs">
-                                    <input type="text"
-                                           value={tenant.first_name}
-                                           onChange={(e) => this.updateTenantInfo(e, 'first')}
-                                           name={'roomate_name_' + index}
-                                           autoCapitalize={'words'}
-                                           data-tenantkey={index}
-                                    />
-                                    <input type="text"
-                                           value={tenant.last_name}
-                                           onChange={(e) => this.updateTenantInfo(e, 'last')}
-                                           name={'roomate_name_' + index}
-                                           autoCapitalize={'words'}
-                                           data-tenantkey={index}
-                                    />
+                    <div className="snapshot-tenants">
+                        <h2>Tenants <span>(Please change the names if they're not correct)</span></h2>
+                        {tenants.length && tenants.sort((a, b) => a.id - b.id).map((tenant, index) => {
+                            return (
+                                <div key={index} className="tenant-form">
+                                    <span className="tenant-name">Roommate #{index + 1}</span>
+                                    <div className="tenant-inputs">
+                                        <input type="text"
+                                               value={tenant.first_name}
+                                               onChange={(e) => this.updateTenantInfo(e, 'first')}
+                                               name={'roomate_name_' + index}
+                                               autoCapitalize={'words'}
+                                               data-tenantkey={index}
+                                        />
+                                        <input type="text"
+                                               value={tenant.last_name}
+                                               onChange={(e) => this.updateTenantInfo(e, 'last')}
+                                               name={'roomate_name_' + index}
+                                               autoCapitalize={'words'}
+                                               data-tenantkey={index}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
 
-                    <div className="snapshot-buttons">
-                        <button
-                            disabled={this.handleDisableSubmit()}
-                            onClick={() => this.props.saveSnapshot(this.state.curr_tenants)}>
-                            Save Tenant's Names
-                        </button>
+                        <div className="snapshot-buttons">
+                            <button
+                                disabled={this.handleDisableSubmit()}
+                                onClick={() => this.props.saveSnapshot(this.state.curr_tenants)}>
+                                Save Tenant's Names
+                            </button>
+                        </div>
                     </div>
                 </>
             )
