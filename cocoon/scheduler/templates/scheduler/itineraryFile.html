@@ -90,20 +90,66 @@
         </tr>
 
         {# Rows below are hidden by default#}
-
         <tr class="extra-client-info hidden">
           <td>
-            <span class="left header">Laundry in unit</span>
+            <span class="left header">Wants hardwood floors</span>
+            <span class="right glyphicon {% condition survey.wants_hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Wants AC</span>
+            <span class="right glyphicon {% condition survey.wants_AC "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Wants dishwasher</span>
+            <span class="right glyphicon {% condition survey.wants_dishwasher "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Laundry in building</span>
             <span class="right glyphicon {% condition survey.wants_laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
           </td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>This is hidden, too</td>
+          <td>
+            <span class="left header">Laundry in unit</span>
+            <span class="right glyphicon {% condition survey.wants_laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>This is also hidden</td>
+          <td>
+            <span class="left header">Wants dogs</span>
+            <span class="right glyphicon {% condition survey.wants_dogs "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
         </tr>
-
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Number of dogs</span>
+            <span class="right">{{ survey.number_of_dogs }}</span>
+          </td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Service dogs</span>
+            <span class="right glyphicon {% condition survey.service_dogs "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Breed of dogs</span>
+            <span class="right">{{ survey.breed_of_dogs|try_string:"-" }}</span>
+          </td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Wants cats</span>
+            <span class="right glyphicon {% condition survey.wants_cats "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
+        </tr>
       </tbody>
     </table>
     <span type="button" id="expand-client-info-button" class="expand-button" onclick="showMoreDetails()">more</span>
