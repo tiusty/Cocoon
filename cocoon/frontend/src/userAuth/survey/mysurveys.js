@@ -334,14 +334,20 @@ export default class MySurveys extends Component {
         /*
          *  Sorts surveys by descending order then determines which to load
         */
-        let surveyCopy = [...this.state.surveys];
-        surveyCopy.sort((a, b) => b.id - a.id);
-        this.setState({
-            surveys: surveyCopy
-        }, () => {
-            this.loadSurvey();
-        })
-    }
+        if (this.state.surveys.length !== 0) {
+            let surveyCopy = [...this.state.surveys];
+            surveyCopy.sort((a, b) => b.id - a.id);
+            this.setState({
+                surveys: surveyCopy
+            }, () => {
+                this.loadSurvey();
+            })
+        } else {
+            this.setState({
+                loaded: true
+            })
+        }
+    };
 
     loadSurvey = () => {
         /*
@@ -503,7 +509,7 @@ export default class MySurveys extends Component {
                     clicked_home: undefined,
                     viewing_home: false,
                 }, () => {
-                    this.loadSurvey();
+                    this.sortSurveys();
                 })
             });
     };
