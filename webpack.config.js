@@ -1,8 +1,8 @@
 module.exports = {
     // Entry point for webpack. Add new components here
     entry: {
-        survey: './cocoon/frontend/src/survey',
-        // userAuth: './cocoon/frontend/src/userAuth',
+        // survey: './cocoon/frontend/src/survey',
+        userAuth: './cocoon/frontend/src/userAuth',
         // scheduler: './cocoon/frontend/src/scheduler',
         // signature: './cocoon/frontend/src/signature',
     },

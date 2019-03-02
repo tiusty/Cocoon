@@ -136,14 +136,26 @@ class HomeTile extends Component {
             bit_classes += "homeBit-hover";
         }
 
-        let bedInfo = home.num_bedrooms > 1 ? 'beds' : 'bed';
-        let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
+        let bedInfo;
+        let bathInfo;
+
+        if (home.num_bedrooms > 1) {
+            bedInfo = `${home.num_bedrooms} beds`;
+        } else {
+            bedInfo = 'Studio';
+        }
+
+        if (home.num_bathrooms > 1) {
+            bathInfo = `${home.num_bathrooms} baths`;
+        } else {
+            bathInfo = '0.5 baths'
+        }
 
         return (
             <div onClick={() => this.props.onHomeClick(this.props.id)} className="homeInfo">
                 <div className="homeInfo-group">
                     <span className={bit_classes}>${home.price} <span className="homeInfo-month">/ month</span></span>
-                    <span className={bit_classes}>{`${home.num_bedrooms} ${bedInfo} • ${home.num_bathrooms} ${bathInfo}` }</span>
+                    <span className={bit_classes}>{`${bedInfo} • ${bathInfo}`}</span>
                 </div>
                 <span className={bit_classes}>{home.home_type.home_type}</span>
             </div>

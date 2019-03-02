@@ -169,6 +169,7 @@ img {
 #steps .container h2 {
   padding: 45px 0px;
   text-align: center;
+  color: var(--darkBlue);
 }
 
 .steps-wrapper {
@@ -219,6 +220,7 @@ img {
 
 .step-box .step-text h2 {
   text-align: left;
+  color: var(--darkBlue);
 }
 
 .step-box .step-text p {
