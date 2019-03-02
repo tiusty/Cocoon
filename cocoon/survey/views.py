@@ -364,10 +364,16 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
             # Update the information with regards to the survey subscribe
             with transaction.atomic():
-                survey.num_home_threshold = data.num_home_threshold
-                survey.wants_update = data.wants_update
-                survey.score_threshold = data.score_threshold
-                survey.save()
+                try:
+                    if not data['num_home_threshold'] == "":
+                        survey.num_home_threshold = data['num_home_threshold']
+                    if not data['wants_update'] == "":
+                        survey.wants_update = data['wants_update']
+                    if not data['score_threshold']:
+                        survey.score_threshold = data['score_threshold']
+                    survey.save()
+                except ValueError:
+                    pass
 
             # Return the new data saved by the survey
             serializer = SurveySubscribeSerializer(survey)
