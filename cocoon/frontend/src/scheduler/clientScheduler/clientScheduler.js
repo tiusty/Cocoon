@@ -310,7 +310,7 @@ class ClientScheduler extends Component {
                         <img src={SelectItineraryImg} alt=""/>
                         <h2>Please create an itinerary!</h2>
                         <p>Select the places you'd like to visit.</p>
-                        <a href={window.location.origin + userAuth_endpoints['surveys']}>Go to Tour Setup</a>
+                        <a href={window.location.origin + userAuth_endpoints['tourSetup']}>Go to Tour Setup</a>
                     </div>
                 );
             }

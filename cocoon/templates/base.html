@@ -53,7 +53,7 @@
             {% else %}
                 {% comment %}Authorized Links{% endcomment %}
                 <div>
-                    <a href="{% url 'userAuth:surveys' %}">Tour Setup</a>
+                    <a href="{% url 'userAuth:tour_setup' %}">Tour Setup</a>
                     <span>/</span>
                     <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
                     <span>/</span>
@@ -89,7 +89,7 @@
             <a href="{% url 'userAuth:loginPage' %}">Login</a>
             <a href="{% url 'userAuth:hunter_signup' %}">Sign Up</a>
         {% else %}
-            <a href="{% url 'userAuth:surveys' %}">My Surveys</a>
+            <a href="{% url 'userAuth:tour_setup' %}">Tour Setup</a>
             <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
             {% if user.is_broker or user.is_admin%}
                 <a href="{% url 'scheduler:agentSchedulerPortal' %}">Agent Portal</a>

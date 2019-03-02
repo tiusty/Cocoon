@@ -33,6 +33,17 @@ def index(request):
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
 
 
+@method_decorator(login_required, name='dispatch')
+class TourSetup(TemplateView):
+
+    template_name = 'userAuth/tour_setup.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(TourSetup, self).get_context_data(**kwargs)
+        data['component'] = 'Surveys'
+        return data
+
+
 def loginPage(request):
     form = LoginUserForm()
     context = {
@@ -264,16 +275,3 @@ def user_profile(request):
     context['userProfile'] = user_prof
     context['form'] = form
     return render(request, 'userAuth/user_profile.html', context)
-
-
-@login_required
-def user_surveys(request):
-    context = {
-        'error_message': [],
-    }
-
-    # Retrieve data relevant to user
-    profile = UserProfile.objects.get(user=request.user)
-    rent_surveys = RentingSurveyModel.objects.filter(user_profile=profile).order_by('-created')
-    context['surveys'] = rent_surveys
-    return render(request, 'userAuth/user_surveys.html', context)
