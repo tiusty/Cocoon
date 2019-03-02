@@ -1,19 +1,18 @@
 // Import React Components
-import React from 'react'
+import React from 'react';
 import {Component} from 'react';
-import axios from 'axios'
-import LoadingScreen from 'react-loading-screen';
+import axios from 'axios';
 
 // Import Cocoon Components
-import SurveySmall from "./surveySmall/surveySmall";
-import SurveyLarge from "./surveyLarge/surveyLarge"
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
-import TourSummary from "./tourSummary/tourSummary";
 
-// Import icons
-import surveyIcon from './survey_icon.png';
+import Preloader from '../../common/preloader';
+import TourSetupCTA from './tourSetupCTA';
+import SurveyPicker from './surveyPicker';
+import TourChecklist from './tourChecklist';
+import TourSetupContent from './tourSetupMainContent';
 
 // Import styling
 import './mysurveys.css'
@@ -38,7 +37,6 @@ export default class MySurveys extends Component {
         visit_list: [],
         favorites: [],
 
-        loading_clicked: false,
         // Stores the ids of all the surveys associated with the user
         surveys: [],
         loaded: false,
@@ -46,11 +44,17 @@ export default class MySurveys extends Component {
         // Itinerary information
         itinerary_scheduled: false,
 
-        // Stores information regarding the state of signing documents
 
         // Stores the survey_endpoint needed for this Component
         survey_endpoint: survey_endpoints['rentSurvey'],
         signature_endpoint: signature_endpoints['hunterDocManager'],
+
+        activeResultsUrl: undefined,
+        viewing_snapshot: false,
+        clicked_home: undefined,
+        viewing_home: false,
+        survey_url_param: null,
+        key_param: null
     };
 
     parseData(data) {
@@ -104,13 +108,21 @@ export default class MySurveys extends Component {
     }
 
     componentDidMount() {
+
+        /**
+         *  Checks the URL for any parameters to determine which survey to load
+         */
+        this.checkUrl();
+
         /**
          *  Retrieves all the surveys associated with the user
          */
         axios.get(this.state.survey_endpoint)
             .catch(error => console.log('Bad', error))
             .then(response => {
-                this.setState({surveys: this.parseData(response.data)})
+                this.setState({
+                    surveys: this.parseData(response.data)
+                }, () => this.sortSurveys());
             });
 
         /**
@@ -148,7 +160,7 @@ export default class MySurveys extends Component {
             .catch(error => console.log('BAD', error))
             .then(response => {
                 this.setState({
-                    loaded: true,
+                    // loaded: true,
                     is_pre_tour_signed: response.data.is_pre_tour_signed,
                     pre_tour_forms_created: response.data.pre_tour_forms_created,
                 })
@@ -303,32 +315,105 @@ export default class MySurveys extends Component {
         }
     }
 
+    checkUrl = () => {
+        const urlString = window.location.href;
+        const url = new URL(urlString);
+        if (url.searchParams.get('survey_url')) {
+            this.setState({
+                survey_url_param: url.searchParams.get('survey_url'),
+            })
+        }
+        if (url.searchParams.get('key') === 'snapshot') {
+            this.setState({
+                key_param: 'snapshot'
+            })
+        }
+    }
+
+    sortSurveys = () => {
+        /*
+         *  Sorts surveys by descending order then determines which to load
+        */
+        if (this.state.surveys.length !== 0) {
+            let surveyCopy = [...this.state.surveys];
+            surveyCopy.sort((a, b) => b.id - a.id);
+            this.setState({
+                surveys: surveyCopy
+            }, () => {
+                this.loadSurvey();
+            })
+        } else {
+            this.setState({
+                loaded: true
+            })
+        }
+    };
+
+    loadSurvey = () => {
+        /*
+        * Looks for a param: survey_url to determine which to load
+        * Looks for a param: key=snapshot to determine if to load snapshot view
+        * If neither exists, loads the most recent survey
+        */
+        let id;
+        if (this.state.survey_url_param) {
+            let survey_match = this.state.surveys.find(survey => survey.url === this.state.survey_url_param);
+            if (survey_match) {
+                id = survey_match.id
+            } else {
+                id = this.state.surveys[0].id
+            }
+        } else {
+            id =  this.state.surveys[0].id
+        }
+
+        this.handleClickSurvey(id);
+
+        if (this.state.key_param === 'snapshot') {
+            this.handleSnapshotClick();
+        }
+
+    }
+
     handleClickSurvey = (id) => {
         /**
          * Handles click on the expand button for a survey
          *
          * After the survey id is set, it will retrieve the visit list for that survey
          */
-        this.setState({survey_clicked_id: id}, () => this.retrieveHomes());
+        this.setState({
+            survey_clicked_id: id,
+            viewing_snapshot: false
+        }, () => {
+            this.handleCloseHomeTileLarge();
+            this.retrieveHomes();
+            this.setActiveResults();
+        });
     };
 
-    handleLargeSurveyClose = () => {
-        /**
-         * Handles closing the large survey.
-         *
-         * Since information can be modified on the large tile, when the user closes
-         * it then the data on the page needs to be updated. Also, the clicked survey value
-         * should go back to undefined so the small survey tiles load again
-         */
-        this.setState({survey_clicked_id: undefined, visit_list: [], favorites: [],});
+    setActiveResults = () => {
+        let activeSurvey = this.state.surveys.find(s => s.id === this.state.survey_clicked_id);
+        let url = survey_endpoints['rentSurveyResult'] + activeSurvey.url;
+        this.setState({
+            activeResultsUrl: url,
+            activeSurvey: activeSurvey,
+            loaded: true
+        })
+    }
 
-        // See if any of the data changed
-        axios.get(this.state.survey_endpoint)
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({surveys: this.parseData(response.data)})
-            });
-    };
+    handleHomeClick = (id) => {
+        this.setState({
+            clicked_home: id,
+            viewing_home: true
+        })
+    }
+
+    handleCloseHomeTileLarge = () => {
+        this.setState({
+            clicked_home: undefined,
+            viewing_home: false
+        })
+    }
 
     handleVisitClick = (home, e) => {
         /**
@@ -340,7 +425,7 @@ export default class MySurveys extends Component {
          */
 
         // Prevents the onclick on the tile from triggering
-        e.stopPropagation();
+        // e.stopPropagation();
 
         // The survey id is passed to the put request to update the state of that particular survey
         let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id + "/";
@@ -360,7 +445,6 @@ export default class MySurveys extends Component {
                 })
             );
     };
-
 
     handleFavoriteClick = (home) => {
         /**
@@ -401,154 +485,116 @@ export default class MySurveys extends Component {
             )
     };
 
-
-    renderSurveysBlock() {
-        // If there are no surveys then render a take survey page
-        if (this.state.surveys.length <= 0) {
-            return (
-                <div className="my-surveys-none-div">
-                    <h2>You have no surveys!</h2>
-                    <p>Please click below to take a survey so we can find you your perfect home!</p>
-                    <a href={survey_endpoints['rentingSurvey']} className="btn btn-success"
-                       onClick={this.setLoadingClick}>Take Survey</a>
-                </div>
-            );
-        // If no survey is selected then render the small tiles
-        } else if (this.state.survey_clicked_id === undefined) {
-            return (
-                <>
-                    {this.state.surveys.map(survey =>
-                        <div key={survey.id} className="survey-small">
-                            <SurveySmall
-                                key={survey.id}
-                                id={survey.id}
-                                survey_name={survey.survey_name}
-                                url={survey.url}
-                                favorites={survey.favorites}
-                                visit_list={survey.visit_list}
-                                onLoadingClicked={this.setLoadingClick}
-                                onClickSurvey={this.handleClickSurvey}
-                            />
-                        </div>
-                    )}
-                </>
-            );
-        }
-        // If a survey is clicked then render the large survey
-        else {
-            let survey = this.state.surveys.filter(s => s.id === this.state.survey_clicked_id)[0];
-            return (
-                <div className="survey-large">
-                    <SurveyLarge
-                        id={survey.id}
-                        visit_list={this.state.visit_list}
-                        favorites={this.state.favorites}
-                        onDelete={this.handleDelete}
-                        onLargeSurveyClose={this.handleLargeSurveyClose}
-                        onLoadingClicked={this.setLoadingClick}
-                        onHandleVisitListClicked={this.handleVisitClick}
-                        onHandleFavoriteListClicked={this.handleFavoriteClick}
-                    />
-                </div>
-            );
-
-        }
+    handleSnapshotClick = () => {
+        this.setState({
+            viewing_snapshot: !this.state.viewing_snapshot
+        })
     }
 
-    setLoadingClick = () => {
-        /**
-         * Sets loading_clicked to true
-         */
-        this.setState({loading_clicked: true})
+    deleteSurvey = (id) => {
+        let endpoint = this.state.survey_endpoint + id + "/";
+
+        // Passes the survey id and the put type to the backend
+        axios.put(endpoint,
+            {
+                survey_id: id,
+                type: 'survey_delete',
+            })
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    surveys: this.parseData(response.data),
+                    activeResultsUrl: undefined,
+                    viewing_snapshot: false,
+                    clicked_home: undefined,
+                    viewing_home: false,
+                }, () => {
+                    this.sortSurveys();
+                })
+            });
     };
 
-    renderMySurveysMessages() {
-        if (!this.state.loaded) {
-            return <p className='surveys-title-text'>Loading</p>
-        } else if (!this.state.is_pre_tour_signed) {
+    checkForSurvey = () => {
+        if (this.state.surveys.length === 0) {
             return (
-                <>
-                    <p className="surveys-title-text-semi-bold">Here you can load and view your past surveys for your
-                        different roommate groups!</p>
-                    <p className="surveys-title-text">When you are ready please follow the steps in the Tour Summary
-                        column to sign your documents so you can schedule a tour!</p>
-                </>
+                <div className="no-surveys-wrapper">
+                    <h1>You haven't taken a survey yet!</h1>
+                    <a href={survey_endpoints['rentingSurvey']}>Take one now</a>
+                </div>
             );
-        } else if (!this.state.itinerary_scheduled && this.state.survey_clicked_id === undefined) {
+        } else {
             return (
-                <>
-                    <p className="surveys-title-text-semi-bold">Lets schedule a tour for you so you can find your
-                        perfect home!</p>
-                    <p className='surveys-title-text'>Please expand a survey to add homes to the tour. Remember you can only
-                    schedule one tour at a time, therefore you cannot schedule a tour for two different roommate groups at once</p>
-                </>
-            );
-        } else if (!this.state.itinerary_scheduled && this.state.survey_clicked_id !== undefined) {
-            return (
-                <>
-                    <p className="surveys-title-text-semi-bold">Please add homes to your tour!</p>
-                    <p className='surveys-title-text'>Add homes to your tour by clicking add to Visit List. You can also
-                    view more info about the home by clicking on it. If you want to add more homes to your favorites list you can click load survey
-                    to load your survey</p>
-                </>
-            );
-        } else if (this.state.itinerary_scheduled) {
-            return (
-                <>
-                    <p className="surveys-title-text-semi-bold">You already have a tour scheduled!</p>
-                    <p className='surveys-title-text'>You can view more information about your tour in the tour summary column</p>
-                </>
+                <div className="tour-setup-container">
+                    <div className="tour-setup-sidebar">
+                        <TourSetupCTA
+                            survey_id={this.state.survey_clicked_id}
+                            activeSurvey={this.state.activeSurvey}
+                            visit_list={this.state.visit_list}
+                            loaded={this.state.loaded}
+                            pre_tour_forms_created={this.state.pre_tour_forms_created}
+                            is_pre_tour_signed={this.state.is_pre_tour_signed}
+                            itinerary_scheduled={this.state.itinerary_scheduled}
+                            last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
+                            refreshing_document_status={this.state.refreshing_document_status}
+                            onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
+                            onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
+                            onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                        />
+                        <SurveyPicker
+                            survey_id={this.state.survey_clicked_id}
+                            surveys={this.state.surveys}
+                            handleClickSurvey={this.handleClickSurvey}
+                        />
+                        <TourChecklist
+                            surveys={this.state.surveys}
+                            pre_tour_forms_created={this.state.pre_tour_forms_created}
+                            is_pre_tour_signed={this.state.is_pre_tour_signed}
+                            survey_clicked_id={this.state.survey_clicked_id}
+                            visit_list={this.state.visit_list}
+                            favorites={this.state.favorites}
+                            itinerary_scheduled={this.state.itinerary_scheduled}
+                            activeResultsUrl={this.state.activeResultsUrl}
+                            onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
+                            onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                        />
+                    </div>
+                    <div className="tour-box tour-setup-main">
+                        <TourSetupContent
+                            activeResultsUrl={this.state.activeResultsUrl}
+                            activeSurvey={this.state.activeSurvey}
+                            favorites={this.state.favorites}
+                            survey_clicked_id={this.state.survey_clicked_id}
+                            visit_list={this.state.visit_list}
+                            handleVisitClick={this.handleVisitClick}
+                            handleFavoriteClick={this.handleFavoriteClick}
+                            handleHomeClick={this.handleHomeClick}
+                            handleCloseHomeTileLarge={this.handleCloseHomeTileLarge}
+                            clicked_home={this.state.clicked_home}
+                            viewing_home={this.state.viewing_home}
+                            viewing_snapshot={this.state.viewing_snapshot}
+                            handleSnapshotClick={this.handleSnapshotClick}
+                            deleteSurvey={this.deleteSurvey}
+                            key_param={this.state.key_param}
+                        />
+                    </div>
+                </div>
             );
         }
     }
 
     render() {
-        if (this.state.loading_clicked || !this.state.loaded) {
+        if (!this.state.loaded) {
             return (
-                <LoadingScreen
-                    loading={true}
-                    bgColor='#f1f1f1'
-                    spinnerColor='#9ee5f8'
-                    textColor='#676767'
-                    logoSrc={surveyIcon}
-                    text='Please wait: Loading...'
-                >
-                    <div>Loadable content</div>
-                </LoadingScreen>
+                <div style={{width: '100%', height: '80vh'}}>
+                    <Preloader color='var(--teal)'/>
+                </div>
             );
         } else {
             return (
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-md-8">
-                            <div className="surveys-div">
-                                <h2 className="surveys-title">My Surveys</h2>
-                                {this.renderMySurveysMessages()}
-                            </div>
-                            <div className="surveys-main">
-                                {this.renderSurveysBlock()}
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <TourSummary
-                                loaded={this.state.loaded}
-                                visit_list={this.state.visit_list}
-                                survey_id={this.state.survey_clicked_id}
-                                is_pre_tour_signed={this.state.is_pre_tour_signed}
-                                pre_tour_forms_created={this.state.pre_tour_forms_created}
-                                last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
-                                itinerary_scheduled={this.state.itinerary_scheduled}
-                                refreshing_document_status={this.state.refreshing_document_status}
-                                onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
-                                onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
-                                onHandleOnClickResendDocument={this.handleOnClickResendDocument}
-                                onHandleVisitListClicked={this.handleVisitClick}
-                                onLoadingClick={this.setLoadingClick}
-                            />
-                        </div>
-                    </div>
-                </div>
-            );
+                <>
+                    {this.checkForSurvey()}
+                </>
+            )
         }
 
     }

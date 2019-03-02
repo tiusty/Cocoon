@@ -11,6 +11,10 @@
     margin-bottom: 15px;
 }
 
+.tile-border_active {
+    border: 1px solid var(--red);
+}
+
 /* Styling associated with the scoring*/
 .tileScore {
     width: 100%;

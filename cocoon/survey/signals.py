@@ -22,12 +22,13 @@ def tenant_model_save(instance, *args, **kwargs):
         obj = TenantModel.objects.get(pk=instance.pk)
     except TenantModel.DoesNotExist:
         # If it is a new home then get the lat and long of the home for that home
-        latlng = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(instance.full_address)
-        if not latlng == -1:
-            lat = latlng[0]
-            lng = latlng[1]
-            instance.latitude = lat
-            instance.longitude = lng
+        if instance.full_address:
+            latlng = geolocator.maps_requester(gmaps_api_key).get_lat_lon_from_address(instance.full_address)
+            if not latlng == -1:
+                lat = latlng[0]
+                lng = latlng[1]
+                instance.latitude = lat
+                instance.longitude = lng
     else:
         # If the home already exists then compare the old address values
         #   with the new one to determine if the address changed for the tenant
