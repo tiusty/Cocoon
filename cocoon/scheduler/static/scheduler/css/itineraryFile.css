@@ -1,13 +1,21 @@
 .client-information-table {
-    margin: 15px auto;
-    width: 80%;
+    margin: 8px auto;
+    width: 100%;
     max-width: 600px;
-
 }
 
 .client-information-table > tbody > tr > td > span > .mail-link {
     text-decoration: underline;
     color: var(--teal);
+}
+
+.client-information-table > thead {
+    text-align: center;
+    font-weight: bold;
+}
+
+.client-information-table > thead > tr > td {
+    padding: 8px;
 }
 
 .client-information-table > tbody > tr > td > span {
@@ -33,4 +41,40 @@
 
 .client-information-table > tbody > tr:nth-child(even) {
   background-color: #e6e6e6;
+}
+
+.client-information-table > tbody > tr > td > span.glyphicon-ok {
+    color: green;
+}
+
+.client-information-table > tbody > tr > td > span.glyphicon-remove {
+    color: red;
+}
+
+.expand-button {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    text-decoration: underline;
+    color: var(--teal);
+}
+
+.expand-button:hover {
+    cursor: pointer;
+}
+
+@media (max-width: 450px) {
+
+    .client-information-table {
+        margin: 0 auto;
+    }
+
+    .client-information-table > tbody > tr > td > span {
+        font-size: 16px;
+    }
+
+    .client-information-table > tbody > tr > td {
+        padding: 8px 4px;
+    }
 }

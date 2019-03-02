@@ -29,7 +29,14 @@
   <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
 </head>
 <body>
-    <table class="client-information-table">
+    <table class="client-information-table" id="client-information-table">
+      <thead>
+        <tr>
+          <td>
+            Client Information
+          </td>
+        </tr>
+      </thead>
       <tbody>
         <tr>
           <td>
@@ -41,7 +48,7 @@
           <td>
             <span class="left header">Phone Number</span>
             <span class="right">
-              {{ client.phone_numner|try_string:"-" }}
+              <a href="tel:{{ client.phone_number }}">{{ client.phone_numner|try_string:"-" }}</a>
             </span>
           </td>
         </tr>
@@ -81,8 +88,41 @@
             <span class="right">{{ survey.price_range|try_string:"not specified" }}</span>
           </td>
         </tr>
+
+        {# Rows below are hidden by default#}
+
+        <tr class="extra-client-info hidden">
+          <td>
+            <span class="left header">Laundry in unit</span>
+            <span class="right glyphicon {% condition survey.wants_laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
+          </td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>This is hidden, too</td>
+        </tr>
+        <tr class="extra-client-info hidden">
+          <td>This is also hidden</td>
+        </tr>
+
       </tbody>
     </table>
+    <span type="button" id="expand-client-info-button" class="expand-button" onclick="showMoreDetails()">more</span>
 
   </body>
+
+  <script>
+
+    var extraClientInformationVisibile = false;
+    function showMoreDetails() {
+        if (extraClientInformationVisibile) {
+            $('.extra-client-info').addClass('hidden');
+            $('#expand-client-info-button').text('more');
+        } else {
+            $('.extra-client-info').removeClass('hidden');
+            $('#expand-client-info-button').text('hide');
+        }
+        extraClientInformationVisibile = !extraClientInformationVisibile;
+    }
+
+  </script>
 </html>
