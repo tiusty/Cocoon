@@ -361,11 +361,12 @@ export default class MySurveys extends Component {
             id =  this.state.surveys[0].id
         }
 
+        this.handleClickSurvey(id);
+
         if (this.state.key_param === 'snapshot') {
             this.handleSnapshotClick();
         }
 
-        this.handleClickSurvey(id);
     }
 
     handleClickSurvey = (id) => {
