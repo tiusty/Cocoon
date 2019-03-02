@@ -38,7 +38,7 @@ class ItineraryFileView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         itinerary_slug = kwargs.get('itinerary_slug')
-        self.itinerary = get_object_or_404(ItineraryModel, url_slug=itinerary_slug)
+        self.itinerary = get_object_or_404(ItineraryModel, url=itinerary_slug)
         return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

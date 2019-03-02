@@ -28,7 +28,7 @@ class ItineraryAgent extends Component {
         tour_duration_seconds: null,
         start_times: [],
         refreshing: false,
-        url_slug: null,
+        url: null,
     };
 
     updateItinerary() {
@@ -46,7 +46,7 @@ class ItineraryAgent extends Component {
                     tour_duration_seconds: response.data.tour_duration_seconds_rounded,
                     start_times: response.data.start_times,
                     itinerary_file: response.data.itinerary,
-                    url_slug: response.data.url_slug,
+                    url: response.data.url,
                 });
                 this.setState({
                     refreshing: false,
@@ -346,7 +346,7 @@ class ItineraryAgent extends Component {
         return (
             <>
                 <div>
-                    <a class="open-file-link" target="_blank" href={scheduler_endpoints['itineraryPage'] + this.state.url_slug + "/"}>Open file</a>
+                    <a class="open-file-link" target="_blank" href={scheduler_endpoints['itineraryPage'] + this.state.url + "/"}>Open file</a>
                 </div>
                 {this.renderClientInfo()}
                 {this.renderTourHomes()}
