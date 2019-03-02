@@ -15,7 +15,8 @@ export default class SurveySnapshot extends Component {
             num_bedrooms: undefined,
             tenants: [],
             url: '',
-            subscribedClick: false
+            subscribedClick: false,
+            is_deleting: false,
         }
     }
 
@@ -106,6 +107,27 @@ export default class SurveySnapshot extends Component {
         })
     }
 
+    toggleIsDeleting = () => {
+        this.setState({
+            is_deleting: !this.state.is_deleting
+        })
+    };
+
+    renderCancelButton = () => {
+        if (!this.state.is_deleting) {
+            return (<p id="delete-survey-btn"> Don't want this survey anymore? <span onClick={this.toggleIsDeleting}> Delete Survey</span></p>)
+        } else {
+            return (
+                <p id="delete-survey-btn_confirm">
+                    Are you sure?
+                    <span onClick={() => this.props.deleteSurvey(this.props.activeSurvey.id)}>Yes</span>
+                    or
+                    <span onClick={this.toggleIsDeleting}>No</span>
+                </p>
+            );
+        }
+    };
+
     render() {
         return (
             <div className="snapshot-wrapper">
@@ -133,7 +155,7 @@ export default class SurveySnapshot extends Component {
 
                     <SurveySubscribe id={this.props.activeSurvey.id} />
 
-                    <p>Don't want this survey anymore? <span onClick={() => this.props.deleteSurvey(this.props.activeSurvey.id)}>Delete Survey</span></p>
+                    {this.renderCancelButton()}
                 </div>
 
             </div>
