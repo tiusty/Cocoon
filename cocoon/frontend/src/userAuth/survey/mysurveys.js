@@ -352,7 +352,11 @@ export default class MySurveys extends Component {
         let id;
         if (this.state.survey_url_param) {
             let survey_match = this.state.surveys.find(survey => survey.url === this.state.survey_url_param);
-            id = survey_match.id
+            if (survey_match) {
+                id = survey_match.id
+            } else {
+                id = this.state.surveys[0].id
+            }
         } else {
             id =  this.state.surveys[0].id
         }
