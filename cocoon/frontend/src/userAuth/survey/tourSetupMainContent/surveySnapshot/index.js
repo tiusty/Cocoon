@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import survey_endpoints from '../../../../endpoints/survey_endpoints';
 import PropTypes from 'prop-types';
 
 import SurveySubscribe from '../../../../common/surveySubscribe';
+import survey_endpoints from '../../../../endpoints/survey_endpoints';
 
 export default class SurveySnapshot extends Component {
 

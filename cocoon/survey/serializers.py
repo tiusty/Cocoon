@@ -163,3 +163,10 @@ class HomeScoreSerializer(serializers.Serializer):
                 return RentDatabaseSerializerBroker(obj.home, read_only=True).data
 
         return RentDatabaseSerializer(obj.home, read_only=True).data
+
+
+class SurveySubscribeSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = RentingSurveyModel
+        fields = ('wants_update', 'score_threshold', 'num_home_threshold',)
