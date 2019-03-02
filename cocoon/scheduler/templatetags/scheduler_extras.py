@@ -18,3 +18,9 @@ def condition(value, truthy, falsey):
     if value:
         return truthy
     return falsey
+
+
+@register.simple_tag(name="replace")
+def replace(value, find, replace):
+    new_str = str(value).replace(find, replace)
+    return new_str
