@@ -508,11 +508,12 @@ export default class MySurveys extends Component {
             });
     };
 
-    render() {
-        if (!this.state.loaded) {
+    checkForSurvey = () => {
+        if (this.state.surveys.length === 0) {
             return (
-                <div style={{width: '100%', height: '80vh'}}>
-                    <Preloader color='var(--teal)'/>
+                <div className="no-surveys-wrapper">
+                    <h1>You haven't taken a survey yet!</h1>
+                    <a href={survey_endpoints['rentingSurvey']}>Take one now</a>
                 </div>
             );
         } else {
@@ -572,6 +573,22 @@ export default class MySurveys extends Component {
                     </div>
                 </div>
             );
+        }
+    }
+
+    render() {
+        if (!this.state.loaded) {
+            return (
+                <div style={{width: '100%', height: '80vh'}}>
+                    <Preloader color='var(--teal)'/>
+                </div>
+            );
+        } else {
+            return (
+                <>
+                    {this.checkForSurvey()}
+                </>
+            )
         }
 
     }

@@ -187,6 +187,28 @@
     color: var(--darkBlue);
 }
 
+.no-surveys-wrapper {
+    width: 100%;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    text-align: center;
+}
+
+.no-surveys-wrapper h1 {
+    color: var(--darkBlue);
+}
+
+.no-surveys-wrapper a {
+    color: var(--teal);
+    text-decoration: underline;
+    font-weight: 700;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 728px) {
     .tour-setup-container {
         display: flex;
