@@ -136,7 +136,7 @@ export default class TourChecklist extends  Component {
         }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Stay updated with your tour on the <a href={scheduler_endpoints['clientScheduler']}>My itinerary</a> page.</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Stay updated with your tour status on the <a href={scheduler_endpoints['clientScheduler']}>My Itinerary</a> page.</p>
 
             </div>
         );
