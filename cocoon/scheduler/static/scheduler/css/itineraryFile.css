@@ -14,6 +14,19 @@ table {
     max-width: 700px;
 }
 
+.home-list-container.horizontal {
+    display: flex;
+    flex-direction: row;
+    overflow: scroll;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.home-list-container.horizontal > table {
+    min-width: 600px;
+    margin: 40px 40px;
+}
+
 .home-table-count {
     background: var(--teal);
     font-size: 24px;
@@ -39,6 +52,43 @@ table {
     text-decoration: underline;
     color: var(--grey);
 }
+
+.layout-buttons {
+    width: 250px;
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    background-color: white;
+}
+
+.layout-buttons > button {
+    display: inline-block;
+    font-size: 16px;
+    background-color: white; /* Green */
+    border: none;
+    color: var(--grey);
+    padding: 8px 16px;
+    text-decoration: none;
+    border: 1px solid var(--grey);
+    text-align: center;
+
+}
+
+.layout-buttons > button:hover {
+    background-color: var(--grey);
+    color: white;
+}
+
+.layout-buttons > button:nth-child(odd) {
+    border-radius: 8px 0px 0px 8px;
+}
+
+.layout-buttons > button:nth-child(even) {
+    border-radius: 0px 8px 8px 0px;
+    border-left: 0px;
+}
+
+
 
 table > thead > tr > th:nth-child(odd) {
     width: 24%;
@@ -127,7 +177,7 @@ table > tbody > tr > td.glyphicon-remove {
     }
 
     table {
-        margin: 0 auto;
+        margin: 10px auto;
         overflow-x: scroll;
     }
 
@@ -135,6 +185,24 @@ table > tbody > tr > td.glyphicon-remove {
         font-size: 16px;
         padding: 10px 6px;
         overflow-x: scroll;
+    }
+
+    table > tbody > tr > td.listing-remarks {
+        font-size: 10px;
+    }
+
+    .home-table-count {
+        background: none;
+        font-size: 16px;
+        position: relative;
+        top: 0px;
+        left: 0px;
+        opacity: 1;
+        display: inline;
+        width: inherit;
+        height: inherit;
+        text-align: left;
+        border-radius: 0px;
     }
 
 }

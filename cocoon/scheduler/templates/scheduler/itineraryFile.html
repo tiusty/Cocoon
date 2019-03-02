@@ -149,6 +149,13 @@
     </table>
     <span type="button" id="expand-client-info-button" class="expand-button" onclick="showMoreDetails()">more</span>
 
+    <div class="layout-buttons" role="group" aria-label="...">
+      <button onclick="verticalLayout()" type="button" class="vertical-button">Vertical</button>
+      <button onclick="horizontalLayout()" type="button" class="horizontal-button">Horizontal</button>
+    </div>
+
+    <div class="home-list-container">
+
     {% for home in homes %}
 
       <table class="itinerary-home-table" id="itinerary-home-table-{{ forloop.counter }}">
@@ -194,14 +201,70 @@
           </tr>
           <tr>
             <td class="left header">Listing remarks</td>
-            <td class="right">{{ home.remarks }}</td>
+            <td class="right listing-remarks">{{ home.remarks }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Number of bathrooms</td>
+            <td class="right">{{ home.num_bathrooms }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Number of bedrooms</td>
+            <td class="right">{{ home.num_bedrooms }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Furnished</td>
+            <td class="right glyphicon {% condition home.furnished "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Hardwood floors</td>
+            <td class="right glyphicon {% condition home.hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">AC</td>
+            <td class="right glyphicon {% condition home.air_conditioning "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Allows dogs</td>
+            <td class="right glyphicon {% condition home.dogs_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Allows cats</td>
+            <td class="right glyphicon {% condition home.cats_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">In-unit laundry</td>
+            <td class="right glyphicon {% condition home.laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">In-building landury</td>
+            <td class="right glyphicon {% condition home.laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Parking spot</td>
+            <td class="right glyphicon {% condition home.parking_spot "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Pool</td>
+            <td class="right glyphicon {% condition home.pool "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Patio / Balcony</td>
+            <td class="right glyphicon {% condition home.patio_balcony "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Gym</td>
+            <td class="right glyphicon {% condition home.gym "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Storage</td>
+            <td class="right glyphicon {% condition home.storage "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
           </tr>
         </tbody>
       </table>
 
     {% endfor %}
 
-
+    </div>
   </body>
 
   <script>
@@ -216,6 +279,16 @@
             $('#expand-client-info-button').text('hide');
         }
         extraClientInformationVisibile = !extraClientInformationVisibile;
+    }
+
+    function verticalLayout() {
+        $(".home-list-container").addClass('vertical');
+        $(".home-list-container").removeClass('horizontal');
+    }
+
+    function horizontalLayout() {
+        $(".home-list-container").addClass('horizontal');
+        $(".home-list-container").removeClass('vertical');
     }
 
   </script>
