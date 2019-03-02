@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import survey_endpoints from '../../../endpoints/survey_endpoints';
+import scheduler_endpoints from "../../../endpoints/scheduler_endpoints";
 
 export default class TourChecklist extends  Component {
     constructor(props) {
@@ -130,9 +131,13 @@ export default class TourChecklist extends  Component {
     renderItineraryCheck = () => {
         let checkListClass = 'checklist-item';
         let checkListIcon = 'check_box_outline_blank';
+        if (this.state.checklistActiveItem === 6) {
+            checkListClass += ' checklist-item_active';
+        }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Stay updated with your tour on the itinerary page.</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Stay updated with your tour on the <a href={scheduler_endpoints['clientScheduler']}>My itinerary</a> page.</p>
+
             </div>
         );
     }

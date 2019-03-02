@@ -147,7 +147,7 @@
 }
 
 .checklist-item a {
-    display: contents;
+    /*display: contents;*/
 }
 
 .checklist-item i {
