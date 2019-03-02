@@ -118,7 +118,6 @@ export default class SurveySnapshot extends Component {
                 <TenantEdit
                     tenants={this.state.tenants}
                     saveSnapshot={this.saveSnapshot}
-
                 />
 
 
