@@ -32,7 +32,7 @@ export default class SurveySnapshot extends Component {
                     amenitiesInfo: response.data.amenitiesInfo,
                     desired_price: response.data.desired_price,
                     num_bedrooms: response.data.num_bedrooms,
-                    tenants: response.data.tenants,
+                    tenants: response.data.tenants.sort((a, b) => a.id - b.id),
                     url: response.data.url
                 }, () => this.handleAmenities())
             })
@@ -143,7 +143,7 @@ export default class SurveySnapshot extends Component {
 
                 <div className="snapshot-tenants">
                     <h2>Tenants <span>(Please change the names if they're not correct)</span></h2>
-                    {this.state.tenants.length && this.state.tenants.reverse().map((tenant, index) => {
+                    {this.state.tenants.length && this.state.tenants.sort((a, b) => a.id - b.id).map((tenant, index) => {
                         return (
                             <div key={index} className="tenant-form">
                                 <span className="tenant-name">Roommate #{index + 1}</span>
