@@ -207,7 +207,7 @@ class ItineraryAgent extends Component {
                 <div className="itinerary-section-item">
                     <span className="item-left-text">Itinerary File:</span>
                     <span className="item-right-text">{_.isUndefined(this.state.itinerary_file) ? "Loading" :
-                        <a href={this.state.itinerary_file}>Itinerary</a>
+                        <a class="open-file-link" target="_blank" href={scheduler_endpoints['itineraryPage'] + this.state.url + "/"}>Open file</a>
                     }</span>
                 </div>
                 <div className="itinerary-section-item last-item">
@@ -345,9 +345,6 @@ class ItineraryAgent extends Component {
     render() {
         return (
             <>
-                <div>
-                    <a class="open-file-link" target="_blank" href={scheduler_endpoints['itineraryPage'] + this.state.url + "/"}>Open file</a>
-                </div>
                 {this.renderClientInfo()}
                 {this.renderTourHomes()}
                 {this.renderSchedulingInformation()}

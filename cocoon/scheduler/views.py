@@ -48,10 +48,11 @@ class ItineraryFileView(TemplateView):
         h, m = divmod(m, 60)
         friendly_duration = "{0}h {1}m".format(h, m)
 
-        tenants = self.itinerary.survey.tenants
         destinations = []
-        for t in tenants.all():
-            destinations.append(t.full_address)
+        if self.itinerary.survey:
+            tenants = self.itinerary.survey.tenants
+            for t in tenants.all():
+                destinations.append(t.full_address)
 
         context.update({
             'client': self.itinerary.client,
