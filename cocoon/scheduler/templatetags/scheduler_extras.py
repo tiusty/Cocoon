@@ -22,5 +22,15 @@ def condition(value, truthy, falsey):
 
 @register.simple_tag(name="replace")
 def replace(value, find, replace):
-    new_str = str(value).replace(find, replace)
-    return new_str
+    return str(value).replace(find, replace)
+
+
+@register.filter(name="gmaps_from_address")
+def gmap_from_address(value):
+    return "https://maps.google.com/?daddr=" + value
+
+@register.filter(name="agent_to_link")
+@stringfilter
+def agent_to_link(value, provider):
+    if provider == "MLSPIN":
+        return "https://h3b.mlspin.com/tools/roster/agent.asp?aid={0}&nomenu=true".format(value)

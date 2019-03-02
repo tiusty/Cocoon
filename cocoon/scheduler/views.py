@@ -62,7 +62,7 @@ class ItineraryFileView(TemplateView):
             'tour_duration': friendly_duration,
             'is_scheduled': False if self.itinerary.selected_start_time is None else True,
             'start_time': self.itinerary.selected_start_time,
-            'homes': self.itinerary.homes,
+            'homes': self.itinerary.homes.all(),
             'is_finished': self.itinerary.finished,
         })
         return context

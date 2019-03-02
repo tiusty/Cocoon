@@ -1,53 +1,105 @@
-.client-information-table {
-    margin: 8px auto;
-    width: 100%;
-    max-width: 600px;
+.absolute-logo {
+    margin-top: 20px;
+    margin-left: 20px;
+    font-size: 36px;
+    font-family: 'Lobster', cursive;
+    color: var(--black);
 }
 
-.client-information-table > tbody > tr > td > span > .mail-link {
+/* Styling for the client information */
+
+table {
+    margin: 40px auto;
+    width: 100%;
+    max-width: 700px;
+}
+
+.home-table-count {
+    background: var(--teal);
+    font-size: 24px;
+    position: absolute;
+    top: -16px;
+    left: -16px;
+    opacity: .8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+.map-link, .mail-link, .listing-agent-link {
     text-decoration: underline;
     color: var(--teal);
 }
 
-.client-information-table > thead {
-    text-align: center;
+.map-link:visited, .mail-link:visited, listing-agent-link:visited {
+    text-decoration: underline;
+    color: var(--grey);
+}
+
+table > thead > tr > th:nth-child(odd) {
+    width: 24%;
+}
+
+table > thead > tr > th:nth-child(even) {
+    width: 62%;
+}
+
+table > tbody > tr > td:nth-child(odd) {
+    width: 24%;
+}
+
+table > tbody > tr > td:nth-child(even) {
+    width: 62%;
+}
+
+table > thead > tr > th {
+    font-size: 14px;
     font-weight: bold;
-}
-
-.client-information-table > thead > tr > td {
+    text-decoration: underline;
     padding: 8px;
+    text-align: left;
+    position: relative;
 }
 
-.client-information-table > tbody > tr > td > span {
-    width: 48%;
+table > tbody > tr > td {
+    font-size: 12px;
+    padding: 10px;
 }
 
-.client-information-table > tbody > tr > td > span.left {
+table > tbody > tr > td.left {
     font-weight: bold;
     float: left;
 }
 
-.client-information-table > tbody > tr > td > span.right {
+table > thead > tr > th.left {
+    float: left;
+}
+
+table > tbody > tr > td.right {
     float: right;
 }
 
-.client-information-table > tbody > tr > td {
-    padding: 4px 4px;
+table > thead > tr > th.right {
+    float: right;
 }
 
-.client-information-table > tbody > tr:nth-child(odd) {
-  background-color: #bfbfbf;
+table > tbody > tr:nth-child(odd) {
+  background-color: #e9e9e9;
 }
 
-.client-information-table > tbody > tr:nth-child(even) {
-  background-color: #e6e6e6;
+table > tbody > tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
-.client-information-table > tbody > tr > td > span.glyphicon-ok {
+table > tbody > tr > td.glyphicon-ok {
     color: green;
 }
 
-.client-information-table > tbody > tr > td > span.glyphicon-remove {
+table > tbody > tr > td.glyphicon-remove {
     color: red;
 }
 
@@ -58,23 +110,31 @@
     text-align: center;
     text-decoration: underline;
     color: var(--teal);
+    margin-bottom: 20px;
 }
 
 .expand-button:hover {
     cursor: pointer;
 }
 
+/* Styling for the home information */
+
+
 @media (max-width: 450px) {
 
-    .client-information-table {
+    table > tbody > tr {
+        overflow-x: scroll;
+    }
+
+    table {
         margin: 0 auto;
+        overflow-x: scroll;
     }
 
-    .client-information-table > tbody > tr > td > span {
+    table > tbody > tr > td {
         font-size: 16px;
+        padding: 10px 6px;
+        overflow-x: scroll;
     }
 
-    .client-information-table > tbody > tr > td {
-        padding: 8px 4px;
-    }
 }

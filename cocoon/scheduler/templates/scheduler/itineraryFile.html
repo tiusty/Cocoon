@@ -27,244 +27,180 @@
   <link rel="stylesheet" href="{% static 'bootstrap-3.4.0-custom/css/bootstrap.css' %}">
   <link href="{% static 'cocoon/main/css/base.css' %}" rel="stylesheet">
   <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+
 </head>
-<body>
+<p class="absolute-logo">Cocoon</p>
+  <body>
     <table class="client-information-table" id="client-information-table">
       <thead>
         <tr>
-          <td>
+          <th colspan="2">
             Client Information
-          </td>
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>
-            <span class="left header">Client Name</span>
-            <span class="right">{{ client.full_name|try_string:"-" }}</span>
+          <td class="left header">Client Name</td>
+          <td class="right">{{ client.full_name|try_string:"-" }}</td>
+        </tr>
+        <tr>
+          <td class="left header">Phone Number</td>
+          <td class="right">
+            <a href="tel:{{ client.phone_number }}">{{ client.phone_numner|try_string:"-" }}</a>
           </td>
         </tr>
         <tr>
-          <td>
-            <span class="left header">Phone Number</span>
-            <span class="right">
-              <a href="tel:{{ client.phone_number }}">{{ client.phone_numner|try_string:"-" }}</a>
-            </span>
-          </td>
+            <td class="left header">Email Address</td>
+            <td class="right"><a class="mail-link" href="mailto:{{ client.email }}">{{ client.email }}</a></td>
         </tr>
-        <tr>
-          <td>
-            <span class="left header">Email Address</span>
-            <span class="right"><a class="mail-link" href="mailto:{{ client.email }}">{{ client.email }}</a></span>
-          </td>
-        </tr>
-
         {% for d in destinations %}
-
           {% if d != "" %}
              <tr>
-            <td>
-              <span class="left header">Destination Address {{ forloop.counter }}</span>
-              <span class="right">{{ d|try_string:"-" }}</span>
-            </td>
+              <td class="left header">Destination Address {{ forloop.counter }}</td>
+              <td class="right">{{ d|try_string:"-" }}</td>
           </tr>
           {% endif %}
-
-
         {% endfor %}
-
-
         <tr>
-          <td>
-            <span class="left header">Occupation</span>
-            <span class="right">{{ survey.occupation|try_string:"-" }}</span>
-          </td>
+            <td class="left header">Tour Duration</td>
+            <td class="right">{{ tour_duration|try_string:"-" }}</td>
         </tr>
         <tr>
-          <td>
-            <span class="left header">Income</span>
-            <span class="right">{% replace survey.income "-1" "-" %}</span>
-          </td>
+            <td class="left header">No. of Tenants</td>
+            <td class="right">{{ survey.number_of_tenants|try_string:"not specified"}}</td>
         </tr>
         <tr>
-          <td>
-            <span class="left header">Credit Score</span>
-            <span class="right">{{ survey.credit_score|try_string:"-" }}</span>
-          </td>
+            <td class="left header">Minimum Bedrooms</td>
+            <td class="right">{{ survey.min_bedrooms|try_string:"not specified" }}</td>
         </tr>
         <tr>
-          <td>
-            <span class="left header">Tour Duration</span>
-            <span class="right">{{ tour_duration|try_string:"-" }}</span>
-          </td>
+            <td class="left header">Bathroom Range</td>
+            <td class="right">{{ survey.min_bathrooms }} - {{ survey.max_bathrooms }}</td>
         </tr>
         <tr>
-          <td>
-            <span class="left header">No. of Tenants</span>
-            <span class="right">{{ survey.number_of_tenants|try_string:"not specified"}}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <span class="left header">Minimum Bedrooms</span>
-            <span class="right">{{ survey.min_bedrooms|try_string:"not specified" }}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <span class="left header">Bathroom Range</span>
-            <span class="right">{{ survey.min_bathrooms }} - {{ survey.max_bathrooms }}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <span class="left header">Price Range</span>
-            <span class="right">{{ survey.price_range|try_string:"not specified" }}</span>
-          </td>
+            <td class="left header">Price Range</td>
+            <td class="right">{{ survey.price_range|try_string:"not specified" }}</td>
         </tr>
 
         {# Rows below are hidden by default#}
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants hardwood floors</span>
-            <span class="right glyphicon {% condition survey.wants_hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Hardwood floors</td>
+            <td class="right glyphicon {% condition survey.wants_hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants AC</span>
-            <span class="right glyphicon {% condition survey.wants_AC "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">AC</td>
+            <td class="right glyphicon {% condition survey.wants_AC "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants dishwasher</span>
-            <span class="right glyphicon {% condition survey.wants_dishwasher "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Dishwasher</td>
+            <td class="right glyphicon {% condition survey.wants_dishwasher "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Laundry in building</span>
-            <span class="right glyphicon {% condition survey.wants_laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Laundry in building</td>
+            <td class="right glyphicon {% condition survey.wants_laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Laundry in unit</span>
-            <span class="right glyphicon {% condition survey.wants_laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Laundry in unit</td>
+            <td class="right glyphicon {% condition survey.wants_laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants hardwood floors</span>
-            <span class="right glyphicon {% condition survey.wants_hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Parking</td>
+            <td class="right glyphicon {% condition survey.wants_parking "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants AC</span>
-            <span class="right glyphicon {% condition survey.wants_AC "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">No. parking spots</td>
+            <td class="right">{{ survey.number_of_cars }}</td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants dishwasher</span>
-            <span class="right glyphicon {% condition survey.wants_dishwasher "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Patio</td>
+            <td class="right glyphicon {% condition survey.wants_patio "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants hardwood floors</span>
-            <span class="right glyphicon {% condition survey.wants_hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Pool</td>
+            <td class="right glyphicon {% condition survey.wants_pool "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants AC</span>
-            <span class="right glyphicon {% condition survey.wants_AC "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Gym</td>
+            <td class="right glyphicon {% condition survey.wants_gym "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants dishwasher</span>
-            <span class="right glyphicon {% condition survey.wants_dishwasher "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Storage</td>
+            <td class="right glyphicon {% condition survey.wants_storage "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants hardwood floors</span>
-            <span class="right glyphicon {% condition survey.wants_hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Number of dogs</td>
+            <td class="right">{{ survey.number_of_dogs }}</td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants AC</span>
-            <span class="right glyphicon {% condition survey.wants_AC "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Service dogs</td>
+            <td class="right glyphicon {% condition survey.service_dogs "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants parking</span>
-            <span class="right glyphicon {% condition survey.wants_parking "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Breed of dogs</td>
+            <td class="right">{{ survey.breed_of_dogs|try_string:"-" }}</td>
         </tr>
         <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">No. parking spots</span>
-            <span class="right">{{ survey.number_of_cars }}</span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants Patio</span>
-            <span class="right glyphicon {% condition survey.wants_patio "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants Pool</span>
-            <span class="right glyphicon {% condition survey.wants_pool "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants gym</span>
-            <span class="right glyphicon {% condition survey.wants_gym "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants storage</span>
-            <span class="right glyphicon {% condition survey.wants_storage "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Number of dogs</span>
-            <span class="right">{{ survey.number_of_dogs }}</span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Service dogs</span>
-            <span class="right glyphicon {% condition survey.service_dogs "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Breed of dogs</span>
-            <span class="right">{{ survey.breed_of_dogs|try_string:"-" }}</span>
-          </td>
-        </tr>
-        <tr class="extra-client-info hidden">
-          <td>
-            <span class="left header">Wants cats</span>
-            <span class="right glyphicon {% condition survey.wants_cats "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></span>
-          </td>
+            <td class="left header">Cats</td>
+            <td class="right glyphicon {% condition survey.wants_cats "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
       </tbody>
     </table>
     <span type="button" id="expand-client-info-button" class="expand-button" onclick="showMoreDetails()">more</span>
+
+    {% for home in homes %}
+
+      <table class="itinerary-home-table" id="itinerary-home-table-{{ forloop.counter }}">
+        <thead>
+          <tr>
+            <th class="left header home-table-count-col"><span class="home-table-count">{{ forloop.counter }}</span></th>
+            <th class="right">
+              <a target="_blank" class="map-link" href="{{ home.full_address|gmaps_from_address }}">{{ home.full_address }}</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="left header">Price</td>
+            <td class="right">{% replace home.price "-1" "-" %}</td>
+          </tr>
+          <tr>
+            <td class="left header">Currently available</td>
+            <td class="right glyphicon {% condition home.on_market "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Listing provider</td>
+            <td class="right">{{ home.listing_provider.provider }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Date available</td>
+            <td class="right">{{ home.date_available }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Listing Agent</td>
+            <td class="right">
+              
+              {% if home.listing_provider.provider == 'MLSPIN' %}
+                <a class="listing-agent-link" target="_blank" href="{{ home.listing_agent|agent_to_link:home.listing_provider.provider }}">{{ home.listing_agent|try_string:"-" }}</a>
+              {% else %}
+                {{ home.listing_agent|try_string:"-" }}
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td class="left header">Listing No.</td>
+            <td class="right">{{ home.listing_number }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Listing remarks</td>
+            <td class="right">{{ home.remarks }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    {% endfor %}
+
 
   </body>
 
