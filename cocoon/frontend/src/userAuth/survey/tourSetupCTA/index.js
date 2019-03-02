@@ -26,6 +26,11 @@ export default class TourSetupCTA extends Component {
         if (this.props.visit_list !== prevProps.visit_list) {
             this.checkIfOffMarket();
         }
+        if (this.props.survey_id !== prevProps.survey_id) {
+            this.setState({
+                isScheduling: false,
+            })
+        }
     }
 
     checkIfOffMarket = () => {
@@ -65,6 +70,22 @@ export default class TourSetupCTA extends Component {
 
     scheduleTour = () => {
         // posts the schedule to backend
+        axios.post(scheduler_endpoints['itineraryClient'],
+            {
+                survey_id: this.props.survey_id,
+            })
+            .catch(error => {
+                console.log('BAD', error);
+            })
+            .then(response => {
+                    // On successful form submit then redirect to survey results page
+                    if (response.data.result) {
+                        window.location = scheduler_endpoints['clientScheduler'];
+                    } else {
+                        console.log('error')
+                    }
+                }
+            );
     }
 
     loadModal = () => {

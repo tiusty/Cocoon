@@ -125,6 +125,50 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return ItineraryModel.objects.filter(client=user_profile.user).filter(finished=False)
 
+    def create(self, request, *args, **kwargs):
+        """
+        Creates an itinerary for a client. The survey id associated with the itinerary is passed in
+            and the homes on that surveys visit list is added to the itinerary
+        :param request:
+        :param args:
+        :param kwargs:
+                Expects:
+                    survey_id: (int) -> The id of the survey associated with the itinerary
+        :return:
+            {
+                'results': (boolean) -> True: The itinerary was successfully created
+                                        False: The itinerary was not successfully created
+                'message': (string) -> A message related to the response
+            }
+        """
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey associated with the itinerary
+        if 'survey_id' in self.request.data:
+            survey_id = self.request.data['survey_id']
+            survey = get_object_or_404(RentingSurveyModel, id=survey_id, user_profile=user_profile)
+        else:
+            raise Http404
+
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        # Run client_scheduler algorithm
+        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
+        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
+        if result:
+            return Response({
+                'result': True,
+                'message': 'Itinerary created'
+            })
+        else:
+            return Response({
+                'result': False,
+                'message': 'Failed to created itinerary'
+            })
+
     def update(self, request, *args, **kwargs):
 
         # Retrieve the user profile
