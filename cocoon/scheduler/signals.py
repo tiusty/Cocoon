@@ -20,4 +20,5 @@ def itinerary_model_save(instance, *args, **kwargs):
 
     if instance.url is '':
         instance.url = instance.generate_slug()
+        instance.save()
 

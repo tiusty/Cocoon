@@ -198,7 +198,7 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
 
         # Run client_scheduler algorithm
         client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
-        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
+        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
         if result:
             return Response({
                 'result': True,

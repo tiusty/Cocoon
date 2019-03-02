@@ -22,58 +22,15 @@ from .models import UserProfile, MyUser
 from .helpers.send_verification_email import send_verification_email
 
 # Import Cocoon Modules
-from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
-from cocoon.commutes.constants import CommuteAccuracy
 from cocoon.survey.models import RentingSurveyModel
 
 # Rest Framework
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-# Rest Framework
-from rest_framework import viewsets, mixins
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
-
 
 def index(request):
     return HttpResponseRedirect(reverse('userAuth:loginPage'))
-
-
-@method_decorator(login_required, name='dispatch')
-class VisitList(ListView):
-
-    model = RentingSurveyModel
-    template_name = 'userAuth/surveys.html'
-    context_object_name = 'surveys'
-
-    def get_queryset(self):
-        user_prof = get_object_or_404(UserProfile, user=self.request.user)
-        return RentingSurveyModel.objects.filter(user_profile=user_prof)
-
-    def get_context_data(self, **kwargs):
-        data = super(VisitList, self).get_context_data(**kwargs)
-        data['component'] = 'Surveys'
-        return data
-
-    def post(self, request):
-        # Run the client scheduler algorithm
-        user_prof = get_object_or_404(UserProfile, user=request.user)
-        survey_id = self.request.POST['submit-button']
-        survey = get_object_or_404(RentingSurveyModel, id=survey_id, user_profile=user_prof)
-        homes_list = []
-        for home in survey.visit_list.all():
-            homes_list.append(home)
-
-        # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
-        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
-        if result:
-            messages.info(request, "Itinerary created")
-            return HttpResponseRedirect(reverse('scheduler:clientScheduler'))
-        else:
-            messages.warning(request, "Itinerary already exists")
-        return HttpResponseRedirect(reverse('userAuth:surveys'))
 
 
 def loginPage(request):
