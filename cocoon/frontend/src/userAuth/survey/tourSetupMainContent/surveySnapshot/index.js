@@ -171,7 +171,7 @@ export default class SurveySnapshot extends Component {
                         <button
                             disabled={this.determineButtonStatus()}
                             onClick={() => this.saveSnapshot(this.state.updatedTenants)}>
-                            Save Tenants
+                            Save Tenant's Names
                         </button>
                     </div>
                 </div>
