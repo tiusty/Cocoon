@@ -122,5 +122,5 @@ export default class SurveySubscribe extends Component {
 }
 
 SurveySubscribe.propTypes = {
-    id: PropTypes.number.isRequired
+    survey_id: PropTypes.number.isRequired
 }

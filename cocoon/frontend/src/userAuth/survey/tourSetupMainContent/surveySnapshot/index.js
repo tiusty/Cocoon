@@ -150,7 +150,9 @@ export default class SurveySnapshot extends Component {
                     </div>
                 </div>
 
-                <SurveySubscribe id={this.props.activeSurvey.id} />
+                <SurveySubscribe
+                    survey_id={this.props.activeSurvey.id}
+                />
 
                 {this.renderCancelButton()}
 
