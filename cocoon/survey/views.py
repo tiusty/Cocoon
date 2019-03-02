@@ -369,7 +369,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                         survey.num_home_threshold = data['num_home_threshold']
                     if not data['wants_update'] == "":
                         survey.wants_update = data['wants_update']
-                    if not data['score_threshold']:
+                    if not data['score_threshold'] == "":
                         survey.score_threshold = data['score_threshold']
                     survey.save()
                 except ValueError:
