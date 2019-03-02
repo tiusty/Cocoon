@@ -1,0 +1,36 @@
+.client-information-table {
+    margin: 15px auto;
+    width: 80%;
+    max-width: 600px;
+
+}
+
+.client-information-table > tbody > tr > td > span > .mail-link {
+    text-decoration: underline;
+    color: var(--teal);
+}
+
+.client-information-table > tbody > tr > td > span {
+    width: 48%;
+}
+
+.client-information-table > tbody > tr > td > span.left {
+    font-weight: bold;
+    float: left;
+}
+
+.client-information-table > tbody > tr > td > span.right {
+    float: right;
+}
+
+.client-information-table > tbody > tr > td {
+    padding: 4px 4px;
+}
+
+.client-information-table > tbody > tr:nth-child(odd) {
+  background-color: #bfbfbf;
+}
+
+.client-information-table > tbody > tr:nth-child(even) {
+  background-color: #e6e6e6;
+}

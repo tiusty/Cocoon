@@ -43,12 +43,17 @@ class ItineraryFileView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TemplateView, self).get_context_data(**kwargs)
+
+        m, _ = divmod(self.itinerary.tour_duration_seconds_rounded, 60)
+        h, m = divmod(m, 60)
+        friendly_duration = "{0}h {1}m".format(h, m)
+
         context.update({
             'client': self.itinerary.client,
             'survey': self.itinerary.survey,
             'itinerary_claimed': False if self.itinerary.agent is None else True,
             'agent': self.itinerary.agent,
-            'tour_duration': self.itinerary.tour_duration_seconds_rounded,
+            'tour_duration': friendly_duration,
             'is_scheduled': False if self.itinerary.selected_start_time is None else True,
             'start_time': self.itinerary.selected_start_time,
             'homes': self.itinerary.homes,
