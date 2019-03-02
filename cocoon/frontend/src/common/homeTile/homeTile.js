@@ -34,6 +34,8 @@ class HomeTile extends Component {
      *
      * this.props.displayPercent: (boolean) -> True: renders the percent_match on the home tile. [Should ONLY be true if isLarge is also true!]
      *                                         False: (DEFAULT): Does not render the percent_match
+     *
+     *  this.props.addBorder: (boolean) -> Determines if a border should be added to tile i.e. when a home is in the visit list
      */
     state = {
         hover: false,
@@ -47,7 +49,8 @@ class HomeTile extends Component {
         percent_match: null,
         missing_amenities: [],
         show_missing_amenities: false,
-        displayOnMarket: false
+        displayOnMarket: false,
+        addBorder: false
     }
 
     renderScore(home) {
@@ -248,6 +251,9 @@ class HomeTile extends Component {
         } else {
             tileClass = 'tile';
         }
+        if (this.props.addBorder) {
+            tileClass += ' tile-border_active';
+        }
         return tileClass;
     }
 
@@ -278,5 +284,6 @@ HomeTile.propTypes = {
     isLarge: PropTypes.bool,
     displayPercent: PropTypes.bool,
     percent_match: PropTypes.number,
+    addBorder: PropTypes.bool
 };
 

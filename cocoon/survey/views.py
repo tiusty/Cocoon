@@ -11,7 +11,7 @@ from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
 from .forms import RentSurveyForm, RentSurveyFormEdit, TenantFormSet, TenantFormSetJustNames
 from .survey_helpers.save_polygons import save_polygons
-from .serializers import HomeScoreSerializer, RentSurveySerializer
+from .serializers import HomeScoreSerializer, RentSurveySerializer, SurveySubscribeSerializer
 from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
@@ -102,14 +102,17 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         :param kwargs:
             type: 'by_url' -> The survey is retrieved by using the survey url
                    other -> Anything else will default the request to retrieve the survey via id
+            data_type: 'survey_subscribe' -> Returns the data just for the survey subscribe data
+                        other -> Returns the Survey Serialized data
             pk: Stores either the survey url or the survey depending on the type
-        :return: A serailzed response with the survey that was retrieved
+        :return: A serialized response with the survey that was retrieved
         """
         # Retrieve the user profile
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
         # Determine the method for getting the survey
         retrieve_type = self.request.query_params.get('type', None)
+        data_type = self.request.query_params.get('data_type', None)
 
         # Retrieve the survey id/url
         pk = kwargs.pop('pk', None)
@@ -120,8 +123,12 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         else:
             survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
 
-        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
-        return Response(serializer.data)
+        if data_type == 'survey_subscribe':
+            serializer = SurveySubscribeSerializer(survey)
+            return Response(serializer.data)
+        else:
+            serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
+            return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         """
@@ -240,6 +247,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                         favorite_toggle: A favorite home is being toggled
                         survey_delete: A survey is being deleted
                         survey_edit: Updates a survey with new data
+                        survey_subscribe: Update the survey subscribe data
+                data: (json) -> The data associated with the request
         :return:
             Dependent on type:
                 survey_edit:
@@ -350,6 +359,25 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                 'survey_errors': form.errors,
                 'tenants_errors': tenants_errors,
             })
+        elif 'survey_subscribe' in self.request.data['type']:
+            data = self.request.data['data']
+
+            # Update the information with regards to the survey subscribe
+            with transaction.atomic():
+                try:
+                    if not data['num_home_threshold'] == "":
+                        survey.num_home_threshold = data['num_home_threshold']
+                    if not data['wants_update'] == "":
+                        survey.wants_update = data['wants_update']
+                    if not data['score_threshold'] == "":
+                        survey.score_threshold = data['score_threshold']
+                    survey.save()
+                except ValueError:
+                    pass
+
+            # Return the new data saved by the survey
+            serializer = SurveySubscribeSerializer(survey)
+            return Response(serializer.data)
 
         # Returns the survey that was updated
         serializer = RentSurveySerializer(survey, context={'user': user_profile.user})

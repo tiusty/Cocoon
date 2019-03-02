@@ -14,6 +14,7 @@ import survey_endpoints from '../../endpoints/survey_endpoints';
 import userAuth_endpoints from '../../endpoints/userAuth_endpoints';
 
 import Preloader from '../../common/preloader';
+import SurveySubscribe from '../../common/surveySubscribe';
 import HomeTile from '../../common/homeTile/homeTile';
 import HomeTileLarge from '../../common/homeTile/homeTileLarge';
 import Map from './map/map';
@@ -200,6 +201,7 @@ export default class ResultsPage extends Component {
                 <div className="results-info">
                     <h2>Time to pick your favorites!</h2>
                     <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>Tour Setup</span> above to continue.</p>
+                    <SurveySubscribe survey_id={this.state.survey.id} />
                 </div>
                 <div className="results">
                     {this.state.homeList && this.state.homeList.map(home => (
@@ -362,7 +364,7 @@ export default class ResultsPage extends Component {
     renderScheduleButton = () => {
         if (this.state.favorites.length > 0) {
             return (
-                <a href={userAuth_endpoints['surveys']}>Tour Setup</a>
+                <a href={`${userAuth_endpoints['surveys']}?survey_url=${this.state.survey_name}`}>Tour Setup</a>
             );
         } else {
             return <span className="disabled-button">Tour Setup</span>
