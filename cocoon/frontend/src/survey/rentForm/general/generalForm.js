@@ -357,7 +357,7 @@ export default class GeneralForm extends Component {
         if (this.props.generalInfo.move_weight !== 3) {
             return (
                 <div className="survey-question">
-                    <h2>When are you wanting to <span>move in</span>?</h2>
+                    <h2>When do you want to <span>move in</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="date_error"></span>
                     <div className="col-md-6 date-wrapper">
                         <DayPickerInput

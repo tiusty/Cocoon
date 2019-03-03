@@ -231,13 +231,17 @@ export default class TenantForm extends Component {
     renderCommutePrompt = (name) => {
         if (this.props.tenant.occupation === 'other') {
             return (
-                <h2>Would {name} be using any <span>regular commute type</span>? ex. going into the city</h2>
+                <h2>Would {name} have any <span>regular commutes</span>? i.e going into the city</h2>
+            );
+        } else if (this.props.tenant.occupation === 'studying') {
+            return (
+                <h2>Would {name} have any <span>regular commutes</span>? i.e work/school</h2>
             );
         } else {
             return (
-                <h2>How {this.props.index === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
+                <h2>Would {name} have any <span>regular commutes</span>? i.e work</h2>
             );
-        }
+       }
     };
 
     renderCommuteTypeQuestion(name) {
@@ -257,7 +261,7 @@ export default class TenantForm extends Component {
                                            onChange={() => {
                                            }}/>
                                     <div>
-                                        {o.commute_type === 'Work From Home' && this.props.tenant.occupation === 'other' ? 'No' : o.commute_type}
+                                        {o.commute_type === 'Work From Home' ? 'No' : o.commute_type}
                                     </div>
                                 </label>
                             )
@@ -287,7 +291,7 @@ export default class TenantForm extends Component {
             }, 0);
             return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-other-occupation-question`}>
-                    <h2>What's the <span>street address</span>?</h2>
+                    <h2>What's the <span>street address</span> of the commute?</h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-commute_address-error`}></span>
                     {this.props.google_autocomplete_errors !== "" ?
