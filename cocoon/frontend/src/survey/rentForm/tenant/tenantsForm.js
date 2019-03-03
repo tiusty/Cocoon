@@ -309,12 +309,12 @@ export default class TenantsForm extends Component {
                     />
                 )}
                 <div className="row survey-btn-wrapper">
-                    <div className="col-sm-6 col-xs-12">
+                    <div className="col-xs-6">
                         <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}} >
                             Back
                         </button>
                     </div>
-                    <div className="col-sm-6 col-xs-12">
+                    <div className="col-xs-6">
                         <button className="col-sm-12 survey-btn" style={{margintop: '30px'}} onClick={(e) => this.handleButtonClick(e)} >
                             Next
                         </button>

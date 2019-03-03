@@ -227,12 +227,12 @@ const CurrentUser = (props) => (
         <h2><span>Awesome!</span> Check your best places out now.</h2>
         <img src={houseIcon} alt="Icon of a house"/>
         <div className="row survey-btn-wrapper">
-            <div className="col-sm-6 col-xs-12">
+            <div className="col-xs-6">
                 <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => { props.handlePrevStep(e)}}>
                     Back
                 </button>
             </div>
-            <div className="col-sm-6 col-xs-12">
+            <div className="col-xs-6">
                 <button className="col-sm-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
                     {props.loading ? 'Loading' : 'Check out my places'}
                 </button>
