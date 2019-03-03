@@ -20,7 +20,7 @@ export default class GeneralForm extends Component {
         home_type_options: [],
         errorMessages: {
             name_error_undefined: 'You must enter the names of the tenants.',
-            name_error_format: 'Enter first and last name separated by a space.',
+            name_error_format: 'Enter both the first and last name.',
             home_type_error: 'You must select at least one type of home.',
             price_error_range: 'The price must be between $0 and $4000',
             price_error_weight: 'You must choose how much you care about the price.',
@@ -57,7 +57,7 @@ export default class GeneralForm extends Component {
             valid = false
             document.querySelector('#name_of_tenants_error').style.display = 'block';
             document.querySelector('#name_of_tenants_error').innerText = this.state.errorMessages.name_error_undefined;
-            document.querySelector('input[name=tenant_name]').parentNode.scrollIntoView(true)
+            document.querySelector('#tenant_names').scrollIntoView(true)
             alert(this.state.errorMessages.name_error_undefined)
         } else {
             for(let i=0; i<this.props.number_of_tenants; i++) {
@@ -65,7 +65,7 @@ export default class GeneralForm extends Component {
                     valid = false
                     document.querySelector('#name_of_tenants_error').style.display = 'block';
                     document.querySelector('#name_of_tenants_error').innerText = this.state.errorMessages.name_error_format;
-                    document.querySelector('input[name=tenant_name]').parentNode.scrollIntoView(true)
+                    document.querySelector('#tenant_names').scrollIntoView(true)
                     alert(this.state.errorMessages.name_error_format)
                 }
             }
@@ -207,14 +207,49 @@ export default class GeneralForm extends Component {
             <div className="survey-question" id="tenant_names">
                 <h2>What <span>{this.props.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
                 <span className="col-md-12 survey-error-message" id="name_of_tenants_error"></span>
-                <input className="col-md-12 survey-input" type="text" name="tenant_name"
-                       placeholder="My First and Last Name" autoCapitalize={'words'} data-tenantkey={0}
-                       value={this.setNameOnField(0)} onChange={this.props.onHandleTenantName}/>
+                <div className="name-input-wrapper">
+                    <input type="text"
+                           className="col-md-6 survey-input"
+                           name="roommate_name_0"
+                           placeholder={'My First Name'}
+                           data-tenantkey={0}
+                           defaultValue={''}
+                           // value={this.props.tenants[0].first_name}
+                           onChange={(e) => this.props.onHandleTenantName(e, 'first')}
+                    />
+                    <input type="text"
+                           className="col-md-6 survey-input"
+                           name="roommate_name_0"
+                           placeholder={'My Last Name'}
+                           data-tenantkey={0}
+                           defaultValue={''}
+                           // value={this.props.tenants[0].last_name}
+                           onChange={(e) => this.props.onHandleTenantName(e, 'last')}
+                    />
+                </div>
                 {this.props.number_of_tenants > 1 && Array.from(Array(this.props.number_of_tenants - 1)).map((t, i) => {
-                    return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)}
-                                  autoCapitalize={'words'} data-tenantkey={i + 1} placeholder="Roommate's First and Last Name"
-                                  value={this.setNameOnField(i+1)} onChange={this.props.onHandleTenantName}
-                                  key={i}/>
+                    return (
+                        <div key={i} className="name-input-wrapper">
+                            <input type="text"
+                               className="col-md-6 survey-input"
+                               name={`roommate_name_${i + 1}`}
+                               placeholder={`Roommate #${i + 1} First Name`}
+                               data-tenantkey={i + 1}
+                               defaultValue={''}
+                               // value={this.props.tenants[i + 1].first_name}
+                               onChange={(e) => this.props.onHandleTenantName(e, 'first')}
+                            />
+                            <input type="text"
+                               className="col-md-6 survey-input"
+                               name={`roommate_name_${i + 1}`}
+                               placeholder={`Roommate #${i + 1} Last Name`}
+                               data-tenantkey={i + 1}
+                               defaultValue={''}
+                               // value={this.props.tenants[i + 1].last_name}
+                               onChange={(e) => this.props.onHandleTenantName(e, 'last')}
+                            />
+                        </div>
+                    );
                 })}
             </div>
         );
@@ -479,7 +514,7 @@ export default class GeneralForm extends Component {
         return (
             <>
                 {!this.props.is_editing ? this.renderNumberOfPeopleQuestion() : null}
-                {this.renderNameQuestion()}
+                {!this.props.is_editing ? this.renderNameQuestion() : null}
                 {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}

@@ -198,7 +198,7 @@ class TenantEdit extends Component {
          */
             // Retrieve which tenant and the new value for the tenant
         const { value } = e.target;
-        const name = value;
+        const name = value.trim();
         const index = e.target.dataset.tenantkey;
         let tenants = [...this.state.curr_tenants];
         // Determines which part of the name is being edited
