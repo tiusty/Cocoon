@@ -200,7 +200,7 @@ export default class ResultsPage extends Component {
             <>
                 <div className="results-info">
                     <h2>Time to pick your favorites!</h2>
-                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>Tour Setup</span> above to continue.</p>
+                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done selecting your favorites, click <span>Tour Setup</span> above to continue.</p>
                     <SurveySubscribe survey_id={this.state.survey.id} />
                 </div>
                 <div className="results">
@@ -395,6 +395,9 @@ export default class ResultsPage extends Component {
             return (
                 <div id="results-page">
                     <div className={this.setResultsWrapperClass()}>
+                        <div className="not-optimized">
+                            <p>Please use a laptop/desktop to use the map features of this page</p>
+                        </div>
                         {this.renderButtonRow()}
                         {this.renderMainComponent()}
                     </div>

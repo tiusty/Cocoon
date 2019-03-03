@@ -49,17 +49,17 @@ export default class SurveySnapshot extends Component {
             return item;
         }, {});
         let wantedItemsArr = Object.keys(wantedItems);
-        if (!wantedItems.length) {
+        if (Object.keys(wantedItems).length === 0) {
             return <div className="no-wanted-amenities">No Amenities Selected!</div>
         } else {
             return Object.keys(wantedItems).map((keyName, keyIndex) => {
                 let text = wantedItemsArr[keyIndex].split('_weight');
                 if (wantedItems[keyName] === 1) {
-                    return <div className="home-badge home-badge_default">{this.capitalize(text[0]).replace(/_/g,' ')}</div>
+                    return <div key={keyIndex} className="home-badge home-badge_default">{this.capitalize(text[0]).replace(/_/g,' ')}</div>
                 } else if (wantedItems[keyName] === 2) {
-                    return <div className="home-badge home-badge_mid"><i className="material-icons">done</i> {this.capitalize(text[0]).replace(/_/g,' ')}</div>
+                    return <div key={keyIndex} className="home-badge home-badge_mid"><i className="material-icons">done</i> {this.capitalize(text[0]).replace(/_/g,' ')}</div>
                 } else {
-                    return <div className="home-badge home-badge_high"><i className="material-icons">done_all</i> {this.capitalize(text[0]).replace(/_/g,' ')}</div>
+                    return <div key={keyIndex} className="home-badge home-badge_high"><i className="material-icons">done_all</i> {this.capitalize(text[0]).replace(/_/g,' ')}</div>
                 }
             })
         }
@@ -198,7 +198,7 @@ class TenantEdit extends Component {
          */
             // Retrieve which tenant and the new value for the tenant
         const { value } = e.target;
-        const name = value;
+        const name = value.trim();
         const index = e.target.dataset.tenantkey;
         let tenants = [...this.state.curr_tenants];
         // Determines which part of the name is being edited

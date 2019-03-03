@@ -134,7 +134,7 @@ export default class SurveySubscribe extends Component {
             <div className="subscribe-wrapper">
                     <div className="subscribe-checkbox" onClick={this.toggleSubscribe}>
                         <i className="material-icons">{this.renderCheckbox()}</i>
-                        I want to stay updated with this survey!
+                        Keep me updated on new postings that meet my criteria
                     </div>
                     {this.renderOptions()}
                 </div>

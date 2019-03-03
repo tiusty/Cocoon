@@ -279,6 +279,29 @@
     display: block;
 }
 
+.name-input-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.name-input-wrapper .survey-input {
+    width: 49.5%;
+}
+
+@media screen and (max-width: 628px) {
+    .name-input-wrapper {
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+    .name-input-wrapper:last-of-type {
+            margin-bottom: 0;
+    }
+    .name-input-wrapper .survey-input {
+        width: 100%;
+    }
+}
+
 @media screen and (max-width: 992px) {
     .survey-wrapper {
         width: 100%;

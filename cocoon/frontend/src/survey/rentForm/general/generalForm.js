@@ -20,7 +20,7 @@ export default class GeneralForm extends Component {
         home_type_options: [],
         errorMessages: {
             name_error_undefined: 'You must enter the names of the tenants.',
-            name_error_format: 'Enter first and last name separated by a space.',
+            name_error_format: 'Enter both the first and last name.',
             home_type_error: 'You must select at least one type of home.',
             price_error_range: 'The price must be between $0 and $4000',
             price_error_weight: 'You must choose how much you care about the price.',
@@ -57,20 +57,25 @@ export default class GeneralForm extends Component {
             valid = false
             document.querySelector('#name_of_tenants_error').style.display = 'block';
             document.querySelector('#name_of_tenants_error').innerText = this.state.errorMessages.name_error_undefined;
-            document.querySelector('input[name=tenant_name]').parentNode.scrollIntoView(true)
+            document.querySelector('#tenant_names').scrollIntoView(true)
             alert(this.state.errorMessages.name_error_undefined)
         } else {
             for(let i=0; i<this.props.number_of_tenants; i++) {
                 if(!this.props.tenants[i].first_name || !this.props.tenants[i].last_name) {
-                    valid = false
+                    valid = false;
                     document.querySelector('#name_of_tenants_error').style.display = 'block';
                     document.querySelector('#name_of_tenants_error').innerText = this.state.errorMessages.name_error_format;
-                    document.querySelector('input[name=tenant_name]').parentNode.scrollIntoView(true)
+                    document.querySelector('#tenant_names').scrollIntoView(true)
                     alert(this.state.errorMessages.name_error_format)
                 }
             }
         }
-        if(valid) { document.querySelector('#name_of_tenants_error').style.display = 'none'; }
+        if(valid) {
+            let selection = document.querySelector('#name_of_tenants_error');
+            if (selection) {
+                selection.style.display = 'none';
+            }
+        }
         return valid
     }
 
@@ -175,18 +180,18 @@ export default class GeneralForm extends Component {
         );
     }
 
-    setNameOnField(id) {
+    setNameOnField(id, field_name) {
         // Display the name if the tenant exists and either a first or last name exists
-        if(this.props.tenants.length > id && (this.props.tenants[id].first_name || this.props.tenants[id].last_name)) {
-            let first_name = '';
-            if(this.props.tenants[id].first_name) {
-                first_name = this.props.tenants[id].first_name
+        if(this.props.tenants.length > id) {
+            if(field_name === 'first' && this.props.tenants[id].first_name) {
+                return this.props.tenants[id].first_name;
             }
-            let last_name = '';
-            if(this.props.tenants[id].last_name) {
-                last_name = this.props.tenants[id].last_name
+
+            if(field_name === 'last' && this.props.tenants[id].last_name) {
+                return this.props.tenants[id].last_name;
             }
-            return first_name + ' ' + last_name
+
+            return ''
         } else {
             return ''
         }
@@ -207,14 +212,47 @@ export default class GeneralForm extends Component {
             <div className="survey-question" id="tenant_names">
                 <h2>What <span>{this.props.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
                 <span className="col-md-12 survey-error-message" id="name_of_tenants_error"></span>
-                <input className="col-md-12 survey-input" type="text" name="tenant_name"
-                       placeholder="My First and Last Name" autoCapitalize={'words'} data-tenantkey={0}
-                       value={this.setNameOnField(0)} onChange={this.props.onHandleTenantName}/>
+                <div className="name-input-wrapper">
+                    <input type="text"
+                           className="col-md-6 survey-input"
+                           name="roommate_name_0"
+                           placeholder={'My First Name'}
+                           data-tenantkey={0}
+                           defaultValue={''}
+                           value={this.setNameOnField(0, 'first')}
+                           onChange={(e) => this.props.onHandleTenantName(e, 'first')}
+                    />
+                    <input type="text"
+                           className="col-md-6 survey-input"
+                           name="roommate_name_0"
+                           placeholder={'My Last Name'}
+                           data-tenantkey={0}
+                           defaultValue={''}
+                           value={this.setNameOnField(0, 'last')}
+                           onChange={(e) => this.props.onHandleTenantName(e, 'last')}
+                    />
+                </div>
                 {this.props.number_of_tenants > 1 && Array.from(Array(this.props.number_of_tenants - 1)).map((t, i) => {
-                    return <input className="col-md-12 survey-input" type="text" name={'roommate_name_' + (i + 1)}
-                                  autoCapitalize={'words'} data-tenantkey={i + 1} placeholder="Roommate's First and Last Name"
-                                  value={this.setNameOnField(i+1)} onChange={this.props.onHandleTenantName}
-                                  key={i}/>
+                    return (
+                        <div key={i} className="name-input-wrapper">
+                            <input type="text"
+                               className="col-md-6 survey-input"
+                               name={`roommate_name_${i + 1}`}
+                               placeholder={`Roommate #${i + 1} First Name`}
+                               data-tenantkey={i + 1}
+                               value={this.setNameOnField(i+1, 'first')}
+                               onChange={(e) => this.props.onHandleTenantName(e, 'first')}
+                            />
+                            <input type="text"
+                               className="col-md-6 survey-input"
+                               name={`roommate_name_${i + 1}`}
+                               placeholder={`Roommate #${i + 1} Last Name`}
+                               data-tenantkey={i + 1}
+                               value={this.setNameOnField(i+1, 'last')}
+                               onChange={(e) => this.props.onHandleTenantName(e, 'last')}
+                            />
+                        </div>
+                    );
                 })}
             </div>
         );
@@ -242,7 +280,7 @@ export default class GeneralForm extends Component {
         return(
             <div className="survey-question">
                 <h2>How much rent do you <span>want to pay</span>?</h2>
-                <small id="priceHelp" className="form-text text-muted">Left dot is what you want to pay, the right one is the maximum price you are willing to spend
+                <small id="priceHelp" className="form-text text-muted">Please select your desired price with the left dot and the maximum price you are willing to pay with the right
                 </small>
                 <span className="col-md-12 survey-error-message" id="price_error"></span>
                 <InputRange
@@ -319,7 +357,7 @@ export default class GeneralForm extends Component {
         if (this.props.generalInfo.move_weight !== 3) {
             return (
                 <div className="survey-question">
-                    <h2>When are you wanting to <span>move in</span>?</h2>
+                    <h2>When do you want to <span>move in</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="date_error"></span>
                     <div className="col-md-6 date-wrapper">
                         <DayPickerInput
@@ -479,7 +517,7 @@ export default class GeneralForm extends Component {
         return (
             <>
                 {!this.props.is_editing ? this.renderNumberOfPeopleQuestion() : null}
-                {this.renderNameQuestion()}
+                {!this.props.is_editing ? this.renderNameQuestion() : null}
                 {this.renderHomeTypeQuestion()}
                 {this.renderPriceQuestion()}
                 {this.renderPriceWeightQuestion()}
