@@ -43,7 +43,7 @@ export default class TenantsForm extends Component {
         valid = this.handleOccupationValidation(index, show_errors) && valid;
         valid = this.handleOccupationFollowupValidation(index, show_errors) && valid;
         valid = this.handleCommuteTypeValidation(index, show_errors) && valid;
-        valid = this.handleFinancialValidation(index, show_errors) && valid;
+        // valid = this.handleFinancialValidation(index, show_errors) && valid;
 
         let tenants = [...this.props.tenants];
         for (let i=0; i<this.props.tenants.length; i++ ) {
@@ -305,6 +305,7 @@ export default class TenantsForm extends Component {
                         onAddressSelected={this.props.onAddressSelected}
                         number_of_tenants={this.props.number_of_tenants}
                         googleApiLoaded={this.props.googleApiLoaded}
+                        google_autocomplete_errors={this.props.google_autocomplete_errors}
                     />
                 )}
                 <div className="row survey-btn-wrapper">

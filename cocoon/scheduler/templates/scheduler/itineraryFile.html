@@ -73,12 +73,12 @@
         </tr>
         <tr>
             <td class="left header">Minimum Bedrooms</td>
-            <td class="right">{{ survey.min_bedrooms|try_string:"not specified" }}</td>
+            <td class="right">{{ survey.num_bedrooms|try_string:"not specified" }}</td>
         </tr>
-        <tr>
-            <td class="left header">Bathroom Range</td>
-            <td class="right">{{ survey.min_bathrooms }} - {{ survey.max_bathrooms }}</td>
-        </tr>
+{#        <tr>#}
+{#            <td class="left header">Bathroom Range</td>#}
+{#            <td class="right">{{ survey.min_bathrooms }} - {{ survey.max_bathrooms }}</td>#}
+{#        </tr>#}
         <tr>
             <td class="left header">Price Range</td>
             <td class="right">{{ survey.price_range|try_string:"not specified" }}</td>
@@ -105,14 +105,14 @@
             <td class="left header">Laundry in unit</td>
             <td class="right glyphicon {% condition survey.wants_laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">Parking</td>
-            <td class="right glyphicon {% condition survey.wants_parking "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
-        </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">No. parking spots</td>
-            <td class="right">{{ survey.number_of_cars }}</td>
-        </tr>
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Parking</td>#}
+{#            <td class="right glyphicon {% condition survey.wants_parking "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">No. parking spots</td>#}
+{#            <td class="right">{{ survey.number_of_cars }}</td>#}
+{#        </tr>#}
         <tr class="extra-client-info hidden">
             <td class="left header">Patio</td>
             <td class="right glyphicon {% condition survey.wants_patio "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
@@ -129,22 +129,22 @@
             <td class="left header">Storage</td>
             <td class="right glyphicon {% condition survey.wants_storage "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">Number of dogs</td>
-            <td class="right">{{ survey.number_of_dogs }}</td>
-        </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">Service dogs</td>
-            <td class="right glyphicon {% condition survey.service_dogs "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
-        </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">Breed of dogs</td>
-            <td class="right">{{ survey.breed_of_dogs|try_string:"-" }}</td>
-        </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">Cats</td>
-            <td class="right glyphicon {% condition survey.wants_cats "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
-        </tr>
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Number of dogs</td>#}
+{#            <td class="right">{{ survey.number_of_dogs }}</td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Service dogs</td>#}
+{#            <td class="right glyphicon {% condition survey.service_dogs "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Breed of dogs</td>#}
+{#            <td class="right">{{ survey.breed_of_dogs|try_string:"-" }}</td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Cats</td>#}
+{#            <td class="right glyphicon {% condition survey.wants_cats "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#        </tr>#}
       </tbody>
     </table>
     <span type="button" id="expand-client-info-button" class="expand-button" onclick="showMoreDetails()">more</span>
@@ -223,14 +223,14 @@
             <td class="left header">AC</td>
             <td class="right glyphicon {% condition home.air_conditioning "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
           </tr>
-          <tr>
-            <td class="left header">Allows dogs</td>
-            <td class="right glyphicon {% condition home.dogs_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
-          </tr>
-          <tr>
-            <td class="left header">Allows cats</td>
-            <td class="right glyphicon {% condition home.cats_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
-          </tr>
+{#          <tr>#}
+{#            <td class="left header">Allows dogs</td>#}
+{#            <td class="right glyphicon {% condition home.dogs_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#            <td class="left header">Allows cats</td>#}
+{#            <td class="right glyphicon {% condition home.cats_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#          </tr>#}
           <tr>
             <td class="left header">In-unit laundry</td>
             <td class="right glyphicon {% condition home.laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
@@ -239,10 +239,10 @@
             <td class="left header">In-building landury</td>
             <td class="right glyphicon {% condition home.laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
           </tr>
-          <tr>
-            <td class="left header">Parking spot</td>
-            <td class="right glyphicon {% condition home.parking_spot "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
-          </tr>
+{#          <tr>#}
+{#            <td class="left header">Parking spot</td>#}
+{#            <td class="right glyphicon {% condition home.parking_spot "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#          </tr>#}
           <tr>
             <td class="left header">Pool</td>
             <td class="right glyphicon {% condition home.pool "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>

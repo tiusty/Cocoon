@@ -254,6 +254,12 @@
     display: none;
     padding-bottom: 5px;
 }
+.survey-google-autocomplete-error-message {
+    color: var(--red);
+    font-size: 12px;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
 
 .form-details-box {
     padding: 30px;

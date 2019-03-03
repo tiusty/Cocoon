@@ -290,7 +290,13 @@ export default class TenantForm extends Component {
                     <h2>What's the <span>street address</span>?</h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-commute_address-error`}></span>
+                    {this.props.google_autocomplete_errors !== "" ?
+                        <span className="col-md-12 survey-google-autocomplete-error-message">{this.props.google_autocomplete_errors}</span>
+                    :
+                        null
+                    }
                     <span className="col-md-12 survey-error-message" style={{color: `var(--grey)`, display: 'block'}}>Please be sure to choose a location from the dropdown list.</span>
+                    <span className="col-md-12 survey-error-message" style={{color: `var(--grey)`, display: 'block'}}></span>
                     {this.props.googleApiLoaded ?
                         <Autocomplete
                             className="col-md-12 survey-input survey-address-input"
@@ -638,8 +644,8 @@ export default class TenantForm extends Component {
                     {this.renderCommuteTypeQuestion(name)}
                     {this.renderCommuteLengthQuestion(name)}
                     {this.renderCommuteWeightQuestion(name)}
-                    {this.renderIncomeQuestion(name)}
-                    {this.renderCreditScoreQuestion(name)}
+                    {/*{this.renderIncomeQuestion(name)}*/}
+                    {/*{this.renderCreditScoreQuestion(name)}*/}
                 </div>
             </>
         );
