@@ -385,6 +385,8 @@ export default class HomeTileLarge extends Component {
 
         if (home.num_bedrooms > 1) {
             bedInfo = `${home.num_bedrooms} beds`;
+        } else if (home.num_bedrooms === 1) {
+            bedInfo = `${home.num_bedrooms} bed`;
         } else {
             bedInfo = 'Studio';
         }
@@ -392,8 +394,9 @@ export default class HomeTileLarge extends Component {
         if (home.num_bathrooms > 1) {
             bathInfo = `${home.num_bathrooms} baths`;
         } else {
-            bathInfo = '0.5 baths'
+            bathInfo = `${home.num_bathrooms} bath`;
         }
+
         return (
             <>
                 <div className="expanded-tile-container">
