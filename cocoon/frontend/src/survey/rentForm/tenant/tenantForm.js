@@ -644,8 +644,8 @@ export default class TenantForm extends Component {
                     {this.renderCommuteTypeQuestion(name)}
                     {this.renderCommuteLengthQuestion(name)}
                     {this.renderCommuteWeightQuestion(name)}
-                    {this.renderIncomeQuestion(name)}
-                    {this.renderCreditScoreQuestion()}
+                    {/*{this.renderIncomeQuestion(name)}*/}
+                    {/*{this.renderCreditScoreQuestion()}*/}
                 </div>
             </>
         );

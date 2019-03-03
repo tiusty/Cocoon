@@ -337,7 +337,7 @@ class TenantPersonalInformationModel(models.Model):
     occupation = models.CharField(max_length=200, default="", blank=True)
     other_occupation_reason = models.CharField(max_length=200, default="", blank=True)
     unemployed_follow_up = models.CharField(max_length=200, default="", blank=True)
-    income = models.IntegerField(default=-1)
+    income = models.IntegerField(default=-1, blank=True)
     credit_score = models.CharField(max_length=200, default="", blank=True)
     new_job = models.CharField(max_length=200, default="", blank=True)
 

@@ -647,11 +647,11 @@ export default class RentForm extends Component {
 
                 //Other
                 if (!("income" in this.state.tenants[index])) {
-                    tenants[i].income = null;
+                    tenants[i].income = 0;
                 } else {
                     tenants[i].income = this.state.tenants[index].income;
                 }
-                tenants[i].credit_score = this.state.tenants[index].credit_score || null;
+                tenants[i].credit_score = this.state.tenants[index].credit_score || "not set";
 
             }
             this.setState({tenants});
