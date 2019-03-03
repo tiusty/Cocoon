@@ -62,7 +62,7 @@ export default class GeneralForm extends Component {
         } else {
             for(let i=0; i<this.props.number_of_tenants; i++) {
                 if(!this.props.tenants[i].first_name || !this.props.tenants[i].last_name) {
-                    valid = false
+                    valid = false;
                     document.querySelector('#name_of_tenants_error').style.display = 'block';
                     document.querySelector('#name_of_tenants_error').innerText = this.state.errorMessages.name_error_format;
                     document.querySelector('#tenant_names').scrollIntoView(true)
@@ -70,7 +70,12 @@ export default class GeneralForm extends Component {
                 }
             }
         }
-        if(valid) { document.querySelector('#name_of_tenants_error').style.display = 'none'; }
+        if(valid) {
+            let selection = document.querySelector('#name_of_tenants_error');
+            if (selection) {
+                selection.style.display = 'none';
+            }
+        }
         return valid
     }
 
@@ -175,18 +180,18 @@ export default class GeneralForm extends Component {
         );
     }
 
-    setNameOnField(id) {
+    setNameOnField(id, field_name) {
         // Display the name if the tenant exists and either a first or last name exists
-        if(this.props.tenants.length > id && (this.props.tenants[id].first_name || this.props.tenants[id].last_name)) {
-            let first_name = '';
-            if(this.props.tenants[id].first_name) {
-                first_name = this.props.tenants[id].first_name
+        if(this.props.tenants.length > id) {
+            if(field_name === 'first' && this.props.tenants[id].first_name) {
+                return this.props.tenants[id].first_name;
             }
-            let last_name = '';
-            if(this.props.tenants[id].last_name) {
-                last_name = this.props.tenants[id].last_name
+
+            if(field_name === 'last' && this.props.tenants[id].last_name) {
+                return this.props.tenants[id].last_name;
             }
-            return first_name + ' ' + last_name
+
+            return ''
         } else {
             return ''
         }
@@ -214,7 +219,7 @@ export default class GeneralForm extends Component {
                            placeholder={'My First Name'}
                            data-tenantkey={0}
                            defaultValue={''}
-                           // value={this.props.tenants[0].first_name}
+                           value={this.setNameOnField(0, 'first')}
                            onChange={(e) => this.props.onHandleTenantName(e, 'first')}
                     />
                     <input type="text"
@@ -223,7 +228,7 @@ export default class GeneralForm extends Component {
                            placeholder={'My Last Name'}
                            data-tenantkey={0}
                            defaultValue={''}
-                           // value={this.props.tenants[0].last_name}
+                           value={this.setNameOnField(0, 'last')}
                            onChange={(e) => this.props.onHandleTenantName(e, 'last')}
                     />
                 </div>
@@ -235,8 +240,7 @@ export default class GeneralForm extends Component {
                                name={`roommate_name_${i + 1}`}
                                placeholder={`Roommate #${i + 1} First Name`}
                                data-tenantkey={i + 1}
-                               defaultValue={''}
-                               // value={this.props.tenants[i + 1].first_name}
+                               value={this.setNameOnField(i+1, 'first')}
                                onChange={(e) => this.props.onHandleTenantName(e, 'first')}
                             />
                             <input type="text"
@@ -244,8 +248,7 @@ export default class GeneralForm extends Component {
                                name={`roommate_name_${i + 1}`}
                                placeholder={`Roommate #${i + 1} Last Name`}
                                data-tenantkey={i + 1}
-                               defaultValue={''}
-                               // value={this.props.tenants[i + 1].last_name}
+                               value={this.setNameOnField(i+1, 'last')}
                                onChange={(e) => this.props.onHandleTenantName(e, 'last')}
                             />
                         </div>

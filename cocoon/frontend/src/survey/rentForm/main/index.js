@@ -149,7 +149,6 @@ export default class RentForm extends Component {
 
         // This interval checks every .3 seconds to see if the google api loaded.
         this.interval = setInterval(() => this.checkGoogleApi(), 300);
-        this.setDefaultNames();
     }
 
     checkGoogleApi() {
@@ -176,10 +175,6 @@ export default class RentForm extends Component {
         // If the number of tenants changes then update the total number of forms to equal that
         if (this.state.generalInfo.number_of_tenants !== prevState.generalInfo.number_of_tenants) {
             this.setState({'tenants-TOTAL_FORMS': this.state.generalInfo.number_of_tenants})
-        }
-
-        if (this.state.generalInfo.number_of_tenants !== prevState.generalInfo.number_of_tenants) {
-            this.setDefaultNames();
         }
 
     };
@@ -490,21 +485,6 @@ export default class RentForm extends Component {
         tenants[i].max_commute = max;
         this.setState({tenants})
     };
-
-    setDefaultNames = () => {
-        let tenants = [...this.state.tenants];
-        for (let i = 0; i < this.state.generalInfo.number_of_tenants; i++) {
-            if (!tenants[i]) {
-                let newTenant = {};
-                newTenant.first_name = '';
-                newTenant.last_name = '';
-                tenants.push(newTenant);
-            }
-        }
-        this.setState({
-            tenants: tenants
-        })
-    }
 
     // Splits name inputs into first and last names
     handleTenantName = (e, type) => {
