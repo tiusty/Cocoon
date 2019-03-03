@@ -221,6 +221,14 @@ def activate_account(request, uidb64, token):
 
         # Return the message to inform the user of the status of the account
         messages.info(request, "Thank you for verifying your email")
+
+        # If the user has a survey already created then load that survey
+        surveys = RentingSurveyModel.objects.filter(user_profile=user.userProfile).all()
+        if surveys.count() > 0:
+            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                kwargs={
+                                                    'survey_url': surveys.first().url
+                                                }))
         return HttpResponseRedirect(reverse('homePage:index'))
 
     else:

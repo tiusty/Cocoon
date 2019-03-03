@@ -43,7 +43,7 @@ export default class TenantsForm extends Component {
         valid = this.handleOccupationValidation(index, show_errors) && valid;
         valid = this.handleOccupationFollowupValidation(index, show_errors) && valid;
         valid = this.handleCommuteTypeValidation(index, show_errors) && valid;
-        valid = this.handleFinancialValidation(index, show_errors) && valid;
+        // valid = this.handleFinancialValidation(index, show_errors) && valid;
 
         let tenants = [...this.props.tenants];
         for (let i=0; i<this.props.tenants.length; i++ ) {
@@ -305,15 +305,16 @@ export default class TenantsForm extends Component {
                         onAddressSelected={this.props.onAddressSelected}
                         number_of_tenants={this.props.number_of_tenants}
                         googleApiLoaded={this.props.googleApiLoaded}
+                        google_autocomplete_errors={this.props.google_autocomplete_errors}
                     />
                 )}
                 <div className="row survey-btn-wrapper">
-                    <div className="col-sm-6 col-xs-12">
+                    <div className="col-xs-6">
                         <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {this.props.handlePrevStep(e)}} >
                             Back
                         </button>
                     </div>
-                    <div className="col-sm-6 col-xs-12">
+                    <div className="col-xs-6">
                         <button className="col-sm-12 survey-btn" style={{margintop: '30px'}} onClick={(e) => this.handleButtonClick(e)} >
                             Next
                         </button>
