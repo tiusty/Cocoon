@@ -73,7 +73,7 @@
         </tr>
         <tr>
             <td class="left header">Minimum Bedrooms</td>
-            <td class="right">{{ survey.min_bedrooms|try_string:"not specified" }}</td>
+            <td class="right">{{ survey.num_bedrooms|try_string:"not specified" }}</td>
         </tr>
 {#        <tr>#}
 {#            <td class="left header">Bathroom Range</td>#}
@@ -105,14 +105,14 @@
             <td class="left header">Laundry in unit</td>
             <td class="right glyphicon {% condition survey.wants_laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
         </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">Parking</td>
-            <td class="right glyphicon {% condition survey.wants_parking "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
-        </tr>
-        <tr class="extra-client-info hidden">
-            <td class="left header">No. parking spots</td>
-            <td class="right">{{ survey.number_of_cars }}</td>
-        </tr>
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Parking</td>#}
+{#            <td class="right glyphicon {% condition survey.wants_parking "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">No. parking spots</td>#}
+{#            <td class="right">{{ survey.number_of_cars }}</td>#}
+{#        </tr>#}
         <tr class="extra-client-info hidden">
             <td class="left header">Patio</td>
             <td class="right glyphicon {% condition survey.wants_patio "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
