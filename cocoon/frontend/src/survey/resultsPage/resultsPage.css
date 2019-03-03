@@ -110,6 +110,19 @@
     padding: 15px;
 }
 
+.not-optimized {
+    display: none;
+    text-align: center;
+    padding: 15px 30px;
+    font-size: 11px;
+    background: #a1371812;
+    color: #a13718;
+}
+
+.not-optimized p {
+    margin: 0;
+}
+
 @media screen and (max-width: 1068px) {
     .results {
         grid-template-columns: 1fr;
@@ -122,6 +135,9 @@
     }
     .map-wrapper {
         display: none;
+    }
+    .not-optimized {
+        display: block;
     }
     .results-wrapper {
         overflow: inherit;

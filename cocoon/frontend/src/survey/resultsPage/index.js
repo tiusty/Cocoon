@@ -395,6 +395,9 @@ export default class ResultsPage extends Component {
             return (
                 <div id="results-page">
                     <div className={this.setResultsWrapperClass()}>
+                        <div className="not-optimized">
+                            <p>Please use a laptop/desktop to use the map features of this page</p>
+                        </div>
                         {this.renderButtonRow()}
                         {this.renderMainComponent()}
                     </div>
