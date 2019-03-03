@@ -631,7 +631,7 @@ export default class TenantForm extends Component {
         const tenant_identifier = this.props.tenant.tenant_identifier;
         return (
             <>
-                {this.renderCollapseSection(name)}
+                {this.renderCollapseSection(this.props.tenant.first_name)}
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
                      onChange={() => this.props.onHandleValidation(this.props.index, false)}>
                     {this.renderOccupation(name)}
@@ -639,7 +639,7 @@ export default class TenantForm extends Component {
                     {this.renderCommuteLengthQuestion(name)}
                     {this.renderCommuteWeightQuestion(name)}
                     {this.renderIncomeQuestion(name)}
-                    {this.renderCreditScoreQuestion()}
+                    {this.renderCreditScoreQuestion(name)}
                 </div>
             </>
         );

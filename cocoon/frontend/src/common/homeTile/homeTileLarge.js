@@ -380,8 +380,23 @@ export default class HomeTileLarge extends Component {
 
     render() {
         let { home } = this.props;
-        let bedInfo = home.num_bedrooms > 1 ? 'beds' : 'bed';
-        let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
+        let bedInfo;
+        let bathInfo;
+
+        if (home.num_bedrooms > 1) {
+            bedInfo = `${home.num_bedrooms} beds`;
+        } else if (home.num_bedrooms === 1) {
+            bedInfo = `${home.num_bedrooms} bed`;
+        } else {
+            bedInfo = 'Studio';
+        }
+
+        if (home.num_bathrooms > 1) {
+            bathInfo = `${home.num_bathrooms} baths`;
+        } else {
+            bathInfo = `${home.num_bathrooms} bath`;
+        }
+
         return (
             <>
                 <div className="expanded-tile-container">
@@ -403,7 +418,7 @@ export default class HomeTileLarge extends Component {
                             <div className="expanded-home-info">
                                 <div>
                                     <span className="price">${home.price} <span className="homeInfo-month">/ month</span></span>
-                                    <span className="number-rooms">{`${home.num_bedrooms} ${bedInfo} • ${home.num_bathrooms} ${bathInfo}` }</span>
+                                    <span className="number-rooms">{`${bedInfo} • ${bathInfo}` }</span>
                                 </div>
                                 <span className="home-info-badge">{home.home_type.home_type}</span>
                             </div>

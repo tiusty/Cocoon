@@ -2,6 +2,7 @@
     --red: #A13718;
     --redOrange: #FF7D57;
     --teal: #39B1A7;
+    --darkBlue: #3b4852;
     --tealOpacity: rgba(57, 177, 167, 0.04);
     --black: #282828;
     --grey: #888888;
@@ -76,7 +77,8 @@ nav #dropdown {
 
 nav a:hover,
 nav #dropdown:hover,
-nav #dropdown button:hover {
+nav #dropdown button:hover,
+nav a:focus {
     color: var(--redOrange);
 }
 
