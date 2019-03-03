@@ -49,7 +49,7 @@ export default class SurveySnapshot extends Component {
             return item;
         }, {});
         let wantedItemsArr = Object.keys(wantedItems);
-        if (wantedItems.length === 0) {
+        if (Object.keys(wantedItems).length === 0) {
             return <div className="no-wanted-amenities">No Amenities Selected!</div>
         } else {
             return Object.keys(wantedItems).map((keyName, keyIndex) => {
