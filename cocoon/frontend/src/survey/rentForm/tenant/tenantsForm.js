@@ -305,6 +305,7 @@ export default class TenantsForm extends Component {
                         onAddressSelected={this.props.onAddressSelected}
                         number_of_tenants={this.props.number_of_tenants}
                         googleApiLoaded={this.props.googleApiLoaded}
+                        google_autocomplete_errors={this.props.google_autocomplete_errors}
                     />
                 )}
                 <div className="row survey-btn-wrapper">
