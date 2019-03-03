@@ -15,6 +15,7 @@ const scheduler_endpoints = {
     'unscheduleItinerary': '/scheduler/unscheduleItinerary',
     'itineraryDuration': api_path + '/itineraryDuration/',
     'clientScheduler': '/scheduler/clientScheduler',
+    'itineraryPage': '/scheduler/itineraryPage/',
 };
 
 export default scheduler_endpoints;

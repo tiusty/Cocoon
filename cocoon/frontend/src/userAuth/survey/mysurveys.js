@@ -334,14 +334,20 @@ export default class MySurveys extends Component {
         /*
          *  Sorts surveys by descending order then determines which to load
         */
-        let surveyCopy = [...this.state.surveys];
-        surveyCopy.sort((a, b) => b.id - a.id);
-        this.setState({
-            surveys: surveyCopy
-        }, () => {
-            this.loadSurvey();
-        })
-    }
+        if (this.state.surveys.length !== 0) {
+            let surveyCopy = [...this.state.surveys];
+            surveyCopy.sort((a, b) => b.id - a.id);
+            this.setState({
+                surveys: surveyCopy
+            }, () => {
+                this.loadSurvey();
+            })
+        } else {
+            this.setState({
+                loaded: true
+            })
+        }
+    };
 
     loadSurvey = () => {
         /*
@@ -352,16 +358,21 @@ export default class MySurveys extends Component {
         let id;
         if (this.state.survey_url_param) {
             let survey_match = this.state.surveys.find(survey => survey.url === this.state.survey_url_param);
-            id = survey_match.id
+            if (survey_match) {
+                id = survey_match.id
+            } else {
+                id = this.state.surveys[0].id
+            }
         } else {
             id =  this.state.surveys[0].id
         }
+
+        this.handleClickSurvey(id);
 
         if (this.state.key_param === 'snapshot') {
             this.handleSnapshotClick();
         }
 
-        this.handleClickSurvey(id);
     }
 
     handleClickSurvey = (id) => {
@@ -498,16 +509,17 @@ export default class MySurveys extends Component {
                     clicked_home: undefined,
                     viewing_home: false,
                 }, () => {
-                    this.loadSurvey();
+                    this.sortSurveys();
                 })
             });
     };
 
-    render() {
-        if (!this.state.loaded) {
+    checkForSurvey = () => {
+        if (this.state.surveys.length === 0) {
             return (
-                <div style={{width: '100%', height: '80vh'}}>
-                    <Preloader color='var(--teal)'/>
+                <div className="no-surveys-wrapper">
+                    <h1>You haven't taken a survey yet!</h1>
+                    <a href={survey_endpoints['rentingSurvey']}>Take one now</a>
                 </div>
             );
         } else {
@@ -567,6 +579,22 @@ export default class MySurveys extends Component {
                     </div>
                 </div>
             );
+        }
+    }
+
+    render() {
+        if (!this.state.loaded) {
+            return (
+                <div style={{width: '100%', height: '80vh'}}>
+                    <Preloader color='var(--teal)'/>
+                </div>
+            );
+        } else {
+            return (
+                <>
+                    {this.checkForSurvey()}
+                </>
+            )
         }
 
     }

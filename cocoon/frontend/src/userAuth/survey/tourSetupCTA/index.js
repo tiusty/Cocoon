@@ -26,6 +26,11 @@ export default class TourSetupCTA extends Component {
         if (this.props.visit_list !== prevProps.visit_list) {
             this.checkIfOffMarket();
         }
+        if (this.props.survey_id !== prevProps.survey_id) {
+            this.setState({
+                isScheduling: false,
+            })
+        }
     }
 
     checkIfOffMarket = () => {
@@ -65,6 +70,25 @@ export default class TourSetupCTA extends Component {
 
     scheduleTour = () => {
         // posts the schedule to backend
+        this.setState({loading: true});
+        axios.post(scheduler_endpoints['itineraryClient'],
+            {
+                survey_id: this.props.survey_id,
+            })
+            .catch(error => {
+                console.log('BAD', error);
+                this.setState({loading: false})
+            })
+            .then(response => {
+                    // On successful form submit then redirect to survey results page
+                    if (response.data.result) {
+                        window.location = scheduler_endpoints['clientScheduler'];
+                    } else {
+                        console.log('error')
+                        this.setState({loading: false})
+                    }
+                }
+            );
     }
 
     loadModal = () => {
@@ -74,7 +98,8 @@ export default class TourSetupCTA extends Component {
                     headline={'Congrats on scheduling a tour! We just want to let you know of a few things:'}
                     subHeadline={`By scheduling this tour you recognize that you will not be able to schedule another tour until this one is complete. You will need to find blocks of time that will allow for the full duration of the tour. If you believe you will not be free for the full duration of the tour then please remove homes until the tour duration is at a satisfactory level. We look forward to being on the tour with you and hope you find yours with us!`}
                     closeModalText={'Cancel'}
-                    confirmOnClick={this.scheduleTour}
+                    confirmText={this.state.loading ? "Loading" : "Confirm"}
+                    confirmOnClick={this.state.loading ? null : this.scheduleTour}
                     closeModalOnClick={this.toggleScheduling}
                 />, document.querySelector('body')
             );

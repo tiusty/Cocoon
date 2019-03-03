@@ -36,6 +36,7 @@ export default class HomeList extends Component {
                             visit={this.props.visit_list.filter(v => v.id === home.id).length > 0}
                             favorite={this.props.favorites.filter(f => f.id === home.id).length > 0}
                             onMarket={home.on_market}
+                            displayOnMarket={true}
                             addBorder={this.props.visit_list.filter(v => v.id === home.id).length > 0}
                             onFavoriteClick={() => this.props.handleFavoriteClick(home)}
                             onVisitClick={(e) => this.props.handleVisitClick(home, e)}
@@ -58,6 +59,7 @@ export default class HomeList extends Component {
                     visit={this.props.visit_list.filter(v => v.id === home.id).length > 0}
                     favorite={this.props.favorites.filter(f => f.id === home.id).length > 0}
                     onMarket={home.on_market}
+                    displayOnMarket={true}
                     addBorder={this.props.visit_list.filter(v => v.id === home.id).length > 0}
                     onFavoriteClick={() => this.props.handleFavoriteClick(home)}
                     onVisitClick={(e) => this.props.handleVisitClick(home, e)}

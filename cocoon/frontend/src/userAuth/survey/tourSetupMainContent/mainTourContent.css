@@ -205,3 +205,42 @@
         width: 100%;
     }
 }
+
+#delete-survey-btn {
+    padding-top: 15px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    color: #bbbbbb;
+    font-family: 'Montserrat', sans-serif;
+    transition: all .2s ease;
+}
+
+#delete-survey-btn span {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#delete-survey-btn_confirm {
+    padding-top: 15px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 11px;
+    color: #bbbbbb;
+    font-family: 'Montserrat', sans-serif;
+    transition: all .2s ease;
+}
+
+#delete-survey-btn_confirm span {
+    padding: 0px 3px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+#delete-survey-btn_confirm span:nth-of-type(1):hover {
+    color: var(--red);
+}
+
+#delete-survey-btn_confirm span:nth-of-type(2):hover {
+    color: var(--teal);
+}

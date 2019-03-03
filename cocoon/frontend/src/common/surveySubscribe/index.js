@@ -1,17 +1,70 @@
 import React, { Component } from 'react';
 import './surveySubscribe.css';
 import PropTypes from "prop-types";
+import axios from 'axios';
+
+// Cocoon Modules
+import survey_endpoints from '../../endpoints/survey_endpoints';
 
 export default class SurveySubscribe extends Component {
 
     state = {
-        is_subscribed: false,
-        email_number_of_homes: 50,
-        email_score_of_homes: 70
+        wants_update: false,
+        num_home_threshold: 0,
+        score_threshold: 0
+    }
+
+    componentDidMount() {
+        this.getSurveyData()
+    }
+
+    getSurveyData = () => {
+        /**
+         * Function retrieves the survey_subscribe information
+         */
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.survey_id;
+        axios.get(endpoint,
+            {
+                params: {
+                    data_type: 'survey_subscribe',
+                }
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                this.setState({
+                    num_home_threshold: response.data.num_home_threshold,
+                    wants_update: response.data.wants_update,
+                    score_threshold: response.data.score_threshold,
+                })
+            })
+    }
+
+    updateSurveyData = () => {
+        /**
+         * Function updates the survey with the new survey subscribe information
+         */
+        let endpoint = survey_endpoints['rentSurvey'] + this.props.survey_id +'/';
+        axios.put(endpoint,
+            {
+                type: 'survey_subscribe',
+                data: {
+                    'num_home_threshold': this.state.num_home_threshold,
+                    'wants_update': this.state.wants_update,
+                    'score_threshold': this.state.score_threshold,
+                },
+            })
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                this.setState({
+                    num_home_threshold: response.data.num_home_threshold,
+                    wants_update: response.data.wants_update,
+                    score_threshold: response.data.score_threshold,
+                })
+            })
     }
 
     subscribe = () => {
-        if (this.state.is_subscribed) {
+        if (this.state.wants_update) {
             // subscribes to survey by this.props.survey_id
             console.log('subscribed!');
         } else {
@@ -21,15 +74,15 @@ export default class SurveySubscribe extends Component {
 
     toggleSubscribe = () => {
         this.setState({
-            is_subscribed: !this.state.is_subscribed
+            wants_update: !this.state.wants_update
         }, () => {
-            this.subscribe();
+            this.updateSurveyData();
         })
     }
 
     renderCheckbox = () => {
         let checkbox = 'check_box_outline_blank';
-        if (this.state.is_subscribed) {
+        if (this.state.wants_update) {
             checkbox = 'check_box';
         }
         return checkbox;
@@ -37,19 +90,40 @@ export default class SurveySubscribe extends Component {
 
     saveValue = (e) => {
         const { name, value } = e.target;
+        let field_value = 0;
+        if (name === 'score_threshold') {
+            if (value < 0) {
+                field_value = 0
+            } else if (value > 100) {
+                field_value = 100
+            } else {
+                field_value = value
+            }
+        } else if (name === 'num_home_threshold') {
+            if (value < 0) {
+                field_value = 0
+            } else if (value > 200) {
+                field_value = 200
+            } else {
+                field_value = value
+            }
+        } else {
+            field_value = value
+        }
+
         this.setState({
-            [name]: value
+            [name]: field_value
         })
     }
 
     renderOptions = () => {
-        if (this.state.is_subscribed) {
+        if (this.state.wants_update) {
             return (
                 <div className="subscribe-options">
                     Send me an email when
-                    <input type="number" value={this.state.email_number_of_homes} name="email_number_of_homes" onChange={this.saveValue} onBlur={this.subscribe} />
+                    <input type="number" value={this.state.num_home_threshold} name="num_home_threshold" onChange={this.saveValue} onBlur={this.updateSurveyData} />
                     homes have a score of at least
-                    <input type="number" value={this.state.email_score_of_homes} name="email_score_of_homes" onChange={this.saveValue} onBlur={this.subscribe} />
+                    <input type="number" value={this.state.score_threshold} name="score_threshold" onChange={this.saveValue} onBlur={this.updateSurveyData} />
                 </div>
             );
         }
@@ -69,5 +143,5 @@ export default class SurveySubscribe extends Component {
 }
 
 SurveySubscribe.propTypes = {
-    id: PropTypes.number.isRequired
+    survey_id: PropTypes.number.isRequired
 }

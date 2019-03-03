@@ -28,6 +28,7 @@ class ItineraryAgent extends Component {
         tour_duration_seconds: null,
         start_times: [],
         refreshing: false,
+        url: null,
     };
 
     updateItinerary() {
@@ -45,6 +46,7 @@ class ItineraryAgent extends Component {
                     tour_duration_seconds: response.data.tour_duration_seconds_rounded,
                     start_times: response.data.start_times,
                     itinerary_file: response.data.itinerary,
+                    url: response.data.url,
                 });
                 this.setState({
                     refreshing: false,
@@ -204,9 +206,9 @@ class ItineraryAgent extends Component {
                 </div>
                 <div className="itinerary-section-item">
                     <span className="item-left-text">Itinerary File:</span>
-                    <span className="item-right-text">{_.isUndefined(this.state.itinerary_file) ? "Loading" :
-                        <a href={this.state.itinerary_file}>Itinerary</a>
-                    }</span>
+                    <span className="item-right-text">
+                        <a className="open-file-link" target="_blank" href={scheduler_endpoints['itineraryPage'] + this.state.url + "/"}>Open file</a>
+                    </span>
                 </div>
                 <div className="itinerary-section-item last-item">
                     <span className="item-left-text">Duration:</span>

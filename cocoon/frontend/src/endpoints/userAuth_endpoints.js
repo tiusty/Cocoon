@@ -9,7 +9,7 @@ const api_path = app_name + '/api';
 
 const userAuth_endpoints = {
     // Template urls
-    'surveys': app_name + '/surveys/',
+    'tourSetup': app_name + '/tourSetup/',
 
     // Api urls
     'resendVerificationEmail': api_path + '/resendVerificationEmail/',

@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import survey_endpoints from '../../../../endpoints/survey_endpoints';
+import PropTypes from 'prop-types';
 
 import SurveySubscribe from '../../../../common/surveySubscribe';
+import survey_endpoints from '../../../../endpoints/survey_endpoints';
 
 export default class SurveySnapshot extends Component {
 
@@ -13,9 +14,9 @@ export default class SurveySnapshot extends Component {
             desired_price: 0,
             num_bedrooms: undefined,
             tenants: [],
-            updatedTenants: [],
             url: '',
-            subscribedClick: false
+            subscribedClick: false,
+            is_deleting: false,
         }
     }
 
@@ -32,7 +33,7 @@ export default class SurveySnapshot extends Component {
                     amenitiesInfo: response.data.amenitiesInfo,
                     desired_price: response.data.desired_price,
                     num_bedrooms: response.data.num_bedrooms,
-                    tenants: response.data.tenants,
+                    tenants: response.data.tenants.sort((a, b) => a.id - b.id),
                     url: response.data.url
                 }, () => this.handleAmenities())
             })
@@ -62,24 +63,6 @@ export default class SurveySnapshot extends Component {
                 }
             })
         }
-    }
-
-    updateTenantInfo = (e, type) => {
-        const { value, dataset } = e.target;
-        const name = value;
-        const index = dataset.tenantkey;
-        let tenants = [...this.state.tenants];
-
-        if (type === 'first') {
-            tenants[index].first_name = name;
-        } else {
-            tenants[index].last_name = name;
-        }
-
-        this.setState({
-            updatedTenants: tenants
-        });
-
     }
 
     saveSnapshot = (tenants) => {
@@ -118,19 +101,32 @@ export default class SurveySnapshot extends Component {
             );
     }
 
-    determineButtonStatus = () => {
-        if (this.state.updatedTenants.length === 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     handleSubscribeClick = () => {
         this.setState({
             subscribedClick: !this.state.subscribedClick
         })
     }
+
+    toggleIsDeleting = () => {
+        this.setState({
+            is_deleting: !this.state.is_deleting
+        })
+    };
+
+    renderCancelButton = () => {
+        if (!this.state.is_deleting) {
+            return (<p id="delete-survey-btn"> Don't want this survey anymore? <span onClick={this.toggleIsDeleting}> Delete Survey</span></p>)
+        } else {
+            return (
+                <p id="delete-survey-btn_confirm">
+                    Are you sure?
+                    <span onClick={() => this.props.deleteSurvey(this.props.activeSurvey.id)}>Yes</span>
+                    or
+                    <span onClick={this.toggleIsDeleting}>No</span>
+                </p>
+            );
+        }
+    };
 
     render() {
         return (
@@ -141,40 +137,11 @@ export default class SurveySnapshot extends Component {
                     <span>Desired Price: ${this.state.desired_price}</span> | <span>Number of Bedrooms: {this.state.num_bedrooms && this.state.num_bedrooms.join(', ')}</span>
                 </div>
 
-                <div className="snapshot-tenants">
-                    <h2>Tenants <span>(Please change the names if they're not correct)</span></h2>
-                    {this.state.tenants.length && this.state.tenants.reverse().map((tenant, index) => {
-                        return (
-                            <div key={index} className="tenant-form">
-                                <span className="tenant-name">Roommate #{index + 1}</span>
-                                <div className="tenant-inputs">
-                                    <input type="text"
-                                           value={tenant.first_name}
-                                           onChange={(e) => this.updateTenantInfo(e, 'first')}
-                                           name={'roomate_name_' + index}
-                                           autoCapitalize={'words'}
-                                           data-tenantkey={index}
-                                    />
-                                    <input type="text"
-                                           value={tenant.last_name}
-                                           onChange={(e) => this.updateTenantInfo(e, 'last')}
-                                           name={'roomate_name_' + index}
-                                           autoCapitalize={'words'}
-                                           data-tenantkey={index}
-                                    />
-                                </div>
-                            </div>
-                        );
-                    })}
+                <TenantEdit
+                    tenants={this.state.tenants}
+                    saveSnapshot={this.saveSnapshot}
+                />
 
-                    <div className="snapshot-buttons">
-                        <button
-                            disabled={this.determineButtonStatus()}
-                            onClick={() => this.saveSnapshot(this.state.updatedTenants)}>
-                            Save Tenants
-                        </button>
-                    </div>
-                </div>
 
                 <div className="snapshot-amenities">
                     <h2>Amenities</h2>
@@ -183,15 +150,132 @@ export default class SurveySnapshot extends Component {
                     </div>
                 </div>
 
+                <SurveySubscribe
+                    survey_id={this.props.activeSurvey.id}
+                />
 
-                <div className="snapshot-buttons">
-
-                    <SurveySubscribe id={this.props.activeSurvey.id} />
-
-                    <p>Don't want this survey anymore? <span onClick={() => this.props.deleteSurvey(this.props.activeSurvey.id)}>Delete Survey</span></p>
-                </div>
+                {this.renderCancelButton()}
 
             </div>
         );
     }
 }
+
+class TenantEdit extends Component {
+    /**
+     * Component handles displaying and updating the tenants names
+     *
+     * Props:
+     *     this.props.tenants: (list(Tenants)) -> The list of tenants corresponding to the survey
+     */
+    state = {
+        // Handles the current names of the tenants
+        // This is used to determine if the tenants names have been changed
+        curr_tenants: [],
+    };
+    componentDidUpdate(prevProps) {
+        /**
+         * Handles if the parent tenants variable changes values.
+         * If it does then update the curr_tenants value.
+         *
+         * This is most common when the user submits the new tenants names for saving
+         *  and so this updates the new names saved in the backend
+         */
+        if (prevProps.tenants !== this.props.tenants) {
+            // This does a deep copy because otherwise it is a memory reference and causes issues
+            let curr_tenants = JSON.parse(JSON.stringify(this.props.tenants));
+            this.setState({curr_tenants})
+        }
+    }
+    updateTenantInfo = (e, type) => {
+        /**
+         * Handles when the user changes one of the tenants names
+         *
+         * e: -> The event pointer
+         * type: (string) -> determines which part of the name is being edited.
+         *              'first' for first name
+         *              'last' for last name
+         */
+            // Retrieve which tenant and the new value for the tenant
+        const { value } = e.target;
+        const name = value;
+        const index = e.target.dataset.tenantkey;
+        let tenants = [...this.state.curr_tenants];
+        // Determines which part of the name is being edited
+        if (type === 'first') {
+            tenants[index].first_name = name
+        } else {
+            tenants[index].last_name = name
+        }
+        // Save the value to the state
+        this.setState({curr_tenants: tenants})
+    };
+    handleDisableSubmit() {
+        /**
+         * Determines if the tenants variables are the same. If anything was changed then
+         *  allow the user to save the data
+         *
+         * This assumes the tenants are in the correct order.
+         */
+        for (let i=0; i<this.state.curr_tenants.length; i++) {
+            if (this.state.curr_tenants[i].id !== this.props.tenants[i].id
+            || this.state.curr_tenants[i].first_name !== this.props.tenants[i].first_name
+            || this.state.curr_tenants[i].last_name !== this.props.tenants[i].last_name) {
+                return false
+            }
+        }
+        return true
+    }
+
+    render() {
+        // let tenants = this.props.tenants;
+        let tenants = this.state.curr_tenants;
+        if (tenants.length > 0) {
+            return (
+                <>
+                    <div className="snapshot-tenants">
+                        <h2>Tenants <span>(Please change the names if they're not correct)</span></h2>
+                        {tenants.length && tenants.sort((a, b) => a.id - b.id).map((tenant, index) => {
+                            return (
+                                <div key={index} className="tenant-form">
+                                    <span className="tenant-name">Roommate #{index + 1}</span>
+                                    <div className="tenant-inputs">
+                                        <input type="text"
+                                               value={tenant.first_name}
+                                               onChange={(e) => this.updateTenantInfo(e, 'first')}
+                                               name={'roomate_name_' + index}
+                                               autoCapitalize={'words'}
+                                               data-tenantkey={index}
+                                        />
+                                        <input type="text"
+                                               value={tenant.last_name}
+                                               onChange={(e) => this.updateTenantInfo(e, 'last')}
+                                               name={'roomate_name_' + index}
+                                               autoCapitalize={'words'}
+                                               data-tenantkey={index}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
+
+                        <div className="snapshot-buttons">
+                            <button
+                                disabled={this.handleDisableSubmit()}
+                                onClick={() => this.props.saveSnapshot(this.state.curr_tenants)}>
+                                Save Tenant's Names
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )
+        } else {
+            return <p>Loading</p>
+        }
+
+    }
+}
+
+TenantEdit.propTypes = {
+    tenants: PropTypes.array,
+};
