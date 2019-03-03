@@ -454,7 +454,7 @@ export default class TenantForm extends Component {
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-desired_commute-error`}></span>
-                    <small id="priceHelp" className="form-text text-muted">Left dot is your desired commute, the right dot is the max commute you are willing to have
+                    <small id="priceHelp" className="form-text text-muted">Please select your desired commute with the left dot and the maximum commute you are willing to have with the right
                     </small>
                     <InputRange
                         draggableTrack={false}

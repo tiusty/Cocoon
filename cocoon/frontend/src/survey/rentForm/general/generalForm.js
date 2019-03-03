@@ -280,7 +280,7 @@ export default class GeneralForm extends Component {
         return(
             <div className="survey-question">
                 <h2>How much rent do you <span>want to pay</span>?</h2>
-                <small id="priceHelp" className="form-text text-muted">Left dot is what you want to pay, the right one is the maximum price you are willing to spend
+                <small id="priceHelp" className="form-text text-muted">Please select your desired price with the left dot and the maximum price you are willing to pay with the right
                 </small>
                 <span className="col-md-12 survey-error-message" id="price_error"></span>
                 <InputRange
