@@ -231,15 +231,15 @@ export default class TenantForm extends Component {
     renderCommutePrompt = (name) => {
         if (this.props.tenant.occupation === 'other') {
             return (
-                <h2>Would {name} have any <span>regular commutes</span>? i.e going into the city</h2>
+                <h2>Would {name} have a <span>regular commute</span>? i.e going into the city</h2>
             );
         } else if (this.props.tenant.occupation === 'studying') {
             return (
-                <h2>Would {name} have any <span>regular commutes</span>? i.e work/school</h2>
+                <h2>Would {name} have a <span>regular commute</span>? i.e work/school</h2>
             );
         } else {
             return (
-                <h2>Would {name} have any <span>regular commutes</span>? i.e work</h2>
+                <h2>Would {name} have a <span>regular commute</span>? i.e work</h2>
             );
        }
     };
