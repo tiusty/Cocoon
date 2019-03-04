@@ -14,6 +14,7 @@ from .serializers import ItinerarySerializer
 # Cocoon Modules
 from cocoon.userAuth.models import UserProfile
 from cocoon.survey.models import RentingSurveyModel
+from cocoon.scheduler.models import ItineraryModel
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
 from cocoon.commutes.constants import CommuteAccuracy
 
@@ -26,6 +27,46 @@ import dateutil
 # Rest Framework
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
+
+
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+class ItineraryFileView(TemplateView):
+    """
+    Loads the template for an individual itinerary
+    """
+    template_name = 'scheduler/itineraryFile.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        itinerary_slug = kwargs.get('itinerary_slug')
+        self.itinerary = get_object_or_404(ItineraryModel, url=itinerary_slug)
+        return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplateView, self).get_context_data(**kwargs)
+
+        m, _ = divmod(self.itinerary.tour_duration_seconds_rounded, 60)
+        h, m = divmod(m, 60)
+        friendly_duration = "{0}h {1}m".format(h, m)
+
+        destinations = []
+        if self.itinerary.survey:
+            tenants = self.itinerary.survey.tenants
+            for t in tenants.all():
+                destinations.append(t.full_address)
+
+        context.update({
+            'client': self.itinerary.client,
+            'survey': self.itinerary.survey,
+            'destinations': destinations,
+            'itinerary_claimed': False if self.itinerary.agent is None else True,
+            'agent': self.itinerary.agent,
+            'tour_duration': friendly_duration,
+            'is_scheduled': False if self.itinerary.selected_start_time is None else True,
+            'start_time': self.itinerary.selected_start_time,
+            'homes': self.itinerary.homes.all(),
+            'is_finished': self.itinerary.finished,
+        })
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -106,7 +147,7 @@ class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
             return ItineraryModel.objects.filter(client=user_profile.user)
 
 
-@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_admin), name='dispatch')
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_broker or u.is_admin), name='dispatch')
 class ItineraryClientViewSet(viewsets.ModelViewSet):
     """
     Used on the client scheduler page to retrieve the itineraries for the current user
@@ -125,6 +166,50 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return ItineraryModel.objects.filter(client=user_profile.user).filter(finished=False)
 
+    def create(self, request, *args, **kwargs):
+        """
+        Creates an itinerary for a client. The survey id associated with the itinerary is passed in
+            and the homes on that surveys visit list is added to the itinerary
+        :param request:
+        :param args:
+        :param kwargs:
+                Expects:
+                    survey_id: (int) -> The id of the survey associated with the itinerary
+        :return:
+            {
+                'results': (boolean) -> True: The itinerary was successfully created
+                                        False: The itinerary was not successfully created
+                'message': (string) -> A message related to the response
+            }
+        """
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey associated with the itinerary
+        if 'survey_id' in self.request.data:
+            survey_id = self.request.data['survey_id']
+            survey = get_object_or_404(RentingSurveyModel, id=survey_id, user_profile=user_profile)
+        else:
+            raise Http404
+
+        homes_list = []
+        for home in survey.visit_list.all():
+            homes_list.append(home)
+
+        # Run client_scheduler algorithm
+        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
+        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
+        if result:
+            return Response({
+                'result': True,
+                'message': 'Itinerary created'
+            })
+        else:
+            return Response({
+                'result': False,
+                'message': 'Failed to created itinerary'
+            })
+
     def update(self, request, *args, **kwargs):
 
         # Retrieve the user profile
@@ -136,7 +221,7 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
         # Retrieve the associated itinerary with the request
         itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
 
-        # Case if an agent is trying to schedule an itinerary they already claimed
+        # Save all the available start times the client indicated
         if 'start_times' in self.request.data['type']:
             start_times = self.request.data['start_times']
 
@@ -147,6 +232,11 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
                     dt = dateutil.parser.parse(start_time['date'])
                     dt = dt.replace(second=0, microsecond=0)
                     itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
+
+            # Automatically set the agent assigned to the itinerary if the agent has a referred agent
+            if user_profile.referred_agent is not None:
+                itinerary.agent = user_profile.referred_agent
+                itinerary.save()
 
         # Retrieve the object again to get the updated fields
         itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
@@ -220,7 +310,6 @@ class ItineraryAgentViewSet(viewsets.ModelViewSet):
                 else:
                     result = False
                     reason = 'Start time is not valid given user preferences'
-                proposed_time.delete()
 
         # Case if the agent is trying to claim an itinerary from the market
         elif 'claim' in self.request.data['type']:

@@ -26,6 +26,10 @@
     padding: 5px;
 }
 
+.survey-question h2 {
+    color: var(--darkBlue);
+}
+
 .survey-question h2 span {
     font-weight: 800;
 }
@@ -43,7 +47,7 @@
     background: var(--teal);
     color: white;
     border: none;
-    padding: 25px;
+    padding: 16px 25px;
     border-radius: 10px;
     font-weight: 800;
     font-size: 16px;
@@ -51,7 +55,10 @@
 }
 
 .survey-btn_back {
-    background: var(--grey);
+    margin-top: 30px;
+    background: white;
+    border: 1px solid #39b1a7;
+    color: var(--teal);
 }
 
 .survey-btn-wrapper {
@@ -60,8 +67,15 @@
     position: sticky;
     bottom: 0;
     background: white;
-    padding: 15px 0px;
+    padding: 0px 0px 15px;
     z-index: 99;
+    width: 100%;
+    margin: auto;
+    padding-top: 0;
+}
+
+.survey-btn-wrapper .col-xs-6 {
+    padding: 0 4px;
 }
 
 .survey-question .survey-label input {
@@ -240,6 +254,12 @@
     display: none;
     padding-bottom: 5px;
 }
+.survey-google-autocomplete-error-message {
+    color: var(--red);
+    font-size: 12px;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
 
 .form-details-box {
     padding: 30px;
@@ -259,6 +279,29 @@
     display: block;
 }
 
+.name-input-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.name-input-wrapper .survey-input {
+    width: 49.5%;
+}
+
+@media screen and (max-width: 628px) {
+    .name-input-wrapper {
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+    .name-input-wrapper:last-of-type {
+            margin-bottom: 0;
+    }
+    .name-input-wrapper .survey-input {
+        width: 100%;
+    }
+}
+
 @media screen and (max-width: 992px) {
     .survey-wrapper {
         width: 100%;
@@ -275,9 +318,6 @@
     }
     .survey-question h2 {
         font-size: 20px;
-    }
-    .survey-btn-wrapper {
-        flex-direction: column-reverse;
     }
 }
 

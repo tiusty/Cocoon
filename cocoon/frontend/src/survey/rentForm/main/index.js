@@ -27,6 +27,7 @@ export default class RentForm extends Component {
             loading: false,
             isEditing: false,
             googleApiLoaded: false,
+            google_autocomplete_errors: "",
 
             // General Form Fields
             generalInfo: {
@@ -341,6 +342,7 @@ export default class RentForm extends Component {
                         onAddressChange={this.handleAddressChange}
                         onAddressSelected={this.handleAddressSelected}
                         googleApiLoaded={this.state.googleApiLoaded}
+                        google_autocomplete_errors={this.state.google_autocomplete_errors}
                 />;
             case 3:
                 return <AmenitiesForm
@@ -486,23 +488,21 @@ export default class RentForm extends Component {
         this.setState({tenants})
     };
 
-
     // Splits name inputs into first and last names
-    handleTenantName = (e) => {
-        const { value } = e.target;
-        const first_name = value.split(' ').slice(0, -1).join(' ');
-        const last_name = value.split(' ').slice(-1).join(' ');
-        const index = e.target.dataset.tenantkey;
+    handleTenantName = (e, type) => {
         let tenants = [...this.state.tenants];
+        const { value } = e.target;
+        const name = value.trim(); // remove spaces at start and end of line
+        const index = e.target.dataset.tenantkey;
 
         // Create a new tenant
         if (this.state.tenants.length <= index) {
             let new_tenant = {};
-            if(first_name){
-                new_tenant.first_name = first_name[0].toUpperCase() + first_name.substr(1);
+            if(type === 'first'){
+                new_tenant.first_name = name;
             }
-            if(last_name){
-                new_tenant.last_name = last_name[0].toUpperCase() + last_name.substr(1);
+            if(type === 'last'){
+                new_tenant.last_name = name;
             }
             new_tenant.index = parseInt(index);
             new_tenant.valid = false;
@@ -513,8 +513,11 @@ export default class RentForm extends Component {
         // If the tenant already exists then just update that tenant
         } else {
             tenants[index].index = parseInt(index);
-            tenants[index].first_name = first_name;
-            tenants[index].last_name = last_name;
+            if (type === 'first') {
+                tenants[index].first_name = name;
+            } else if (type === 'last') {
+                tenants[index].last_name = name;
+            }
         }
         this.setState({tenants});
     }
@@ -548,6 +551,13 @@ export default class RentForm extends Component {
         const state = place.address_components.filter(c => c.types[0] === 'administrative_area_level_1');
         const formatState = state[0].short_name;
         const zip_code = place.address_components.filter(c => c.types[0] === 'postal_code');
+        if (zip_code.length === 0) {
+            this.setState({
+                google_autocomplete_errors: "Google Address note valid: Make sure to put in a building location and not a street"
+            });
+            return
+        }
+
         const formatZip = zip_code[0].long_name;
 
         let tenants = [...this.state.tenants];
@@ -561,7 +571,10 @@ export default class RentForm extends Component {
                 tenants[index].address_valid = true;
             }
         }
-        this.setState({tenants})
+        this.setState({
+            tenants,
+            google_autocomplete_errors: false,
+        })
     }
 
 
@@ -635,11 +648,11 @@ export default class RentForm extends Component {
 
                 //Other
                 if (!("income" in this.state.tenants[index])) {
-                    tenants[i].income = null;
+                    tenants[i].income = 0;
                 } else {
                     tenants[i].income = this.state.tenants[index].income;
                 }
-                tenants[i].credit_score = this.state.tenants[index].credit_score || null;
+                tenants[i].credit_score = this.state.tenants[index].credit_score || "not set";
 
             }
             this.setState({tenants});

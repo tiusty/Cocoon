@@ -41,6 +41,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
 
         ('Created', {'fields': ('created', 'id', 'url')}),
         ('Homes', {'fields': ('favorites', 'visit_list', 'polygon_filter_type',)}),
+        ('Update Info', {'fields': ('last_updated', 'update_frequency', 'wants_update', 'score_threshold', 'num_home_threshold',)})
     )
     list_display = ('survey_name', 'user_profile',)
     list_filter = ['user_profile']

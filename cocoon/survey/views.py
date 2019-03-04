@@ -6,29 +6,24 @@ from django.views.generic import TemplateView, DetailView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
-# Import House Database modules
-from cocoon.houseDatabase.models import RentDatabaseModel
-
-# Import User Auth modules
-from cocoon.userAuth.models import UserProfile
-
 # Import Survey algorithm modules
 from .cocoon_algorithm.rent_algorithm import RentAlgorithm
 from .models import RentingSurveyModel
 from .forms import RentSurveyForm, RentSurveyFormEdit, TenantFormSet, TenantFormSetJustNames
 from .survey_helpers.save_polygons import save_polygons
-from .serializers import HomeScoreSerializer, RentSurveySerializer
+from .serializers import HomeScoreSerializer, RentSurveySerializer, SurveySubscribeSerializer
 from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
-from cocoon.houseDatabase.models import HomeTypeModel
-from cocoon.dataAnalysis.models import Trackers
+from cocoon.userAuth.models import UserProfile
+from cocoon.houseDatabase.models import RentDatabaseModel
 
 # Rest Framework
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from .tasks import compute_survey_result_iteration_task
 
 
 class RentingSurveyTemplate(TemplateView):
@@ -107,14 +102,17 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         :param kwargs:
             type: 'by_url' -> The survey is retrieved by using the survey url
                    other -> Anything else will default the request to retrieve the survey via id
+            data_type: 'survey_subscribe' -> Returns the data just for the survey subscribe data
+                        other -> Returns the Survey Serialized data
             pk: Stores either the survey url or the survey depending on the type
-        :return: A serailzed response with the survey that was retrieved
+        :return: A serialized response with the survey that was retrieved
         """
         # Retrieve the user profile
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
         # Determine the method for getting the survey
         retrieve_type = self.request.query_params.get('type', None)
+        data_type = self.request.query_params.get('data_type', None)
 
         # Retrieve the survey id/url
         pk = kwargs.pop('pk', None)
@@ -125,8 +123,12 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         else:
             survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
 
-        serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
-        return Response(serializer.data)
+        if data_type == 'survey_subscribe':
+            serializer = SurveySubscribeSerializer(survey)
+            return Response(serializer.data)
+        else:
+            serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
+            return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         """
@@ -180,12 +182,12 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                 user = self.request.user
 
                 # If the user is signing up then save that form and return the user to log them in
-                if does_user_signup:
-                    user = user_form.save(request=self.request)
-                    login(self.request, user)
-
-                # Save the rent survey
                 with transaction.atomic():
+                    if does_user_signup:
+                        user = user_form.save(request=self.request)
+                        login(self.request, user)
+
+                    # Save the rent survey
                     form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
                     # Now the form can be saved
@@ -199,9 +201,9 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                     if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
                         save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
-                # Now save the the tenants
-                tenants.instance = survey
-                tenants.save()
+                    # Now save the the tenants
+                    tenants.instance = survey
+                    tenants.save()
 
                 survey = RentingSurveyModel.objects.get(id=survey.id)
 
@@ -245,6 +247,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                         favorite_toggle: A favorite home is being toggled
                         survey_delete: A survey is being deleted
                         survey_edit: Updates a survey with new data
+                        survey_subscribe: Update the survey subscribe data
+                data: (json) -> The data associated with the request
         :return:
             Dependent on type:
                 survey_edit:
@@ -355,6 +359,25 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
                 'survey_errors': form.errors,
                 'tenants_errors': tenants_errors,
             })
+        elif 'survey_subscribe' in self.request.data['type']:
+            data = self.request.data['data']
+
+            # Update the information with regards to the survey subscribe
+            with transaction.atomic():
+                try:
+                    if not data['num_home_threshold'] == "":
+                        survey.num_home_threshold = data['num_home_threshold']
+                    if not data['wants_update'] == "":
+                        survey.wants_update = data['wants_update']
+                    if not data['score_threshold'] == "":
+                        survey.score_threshold = data['score_threshold']
+                    survey.save()
+                except ValueError:
+                    pass
+
+            # Return the new data saved by the survey
+            serializer = SurveySubscribeSerializer(survey)
+            return Response(serializer.data)
 
         # Returns the survey that was updated
         serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
@@ -378,19 +401,9 @@ class RentResultViewSet(viewsets.ViewSet):
         rent_algorithm = RentAlgorithm()
         rent_algorithm.run(survey)
 
-        # Store data for tracking data
-        survey_results_tracker = Trackers.get_survey_results_tracker()
-        iteration = survey_results_tracker.iterations.create(
-            user_email=user_profile.user.email,
-            user_full_name=user_profile.user.full_name,
-            number_of_tenants=survey.number_of_tenants,
-            survey_id=survey.id,
-        )
-
-        for home in rent_algorithm.homes:
-            iteration.homes.create(
-                score=home.percent_match,
-            )
+        # Asynchronously compute the survey results iteration
+        home_scores = [x.percent_score() for x in rent_algorithm.homes]
+        compute_survey_result_iteration_task.delay(survey.id, user_profile.id, home_scores)
 
         # Save the response
         data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]

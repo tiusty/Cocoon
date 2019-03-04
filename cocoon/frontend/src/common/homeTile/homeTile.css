@@ -11,6 +11,10 @@
     margin-bottom: 15px;
 }
 
+.tile-border_active {
+    border: 1px solid var(--red);
+}
+
 /* Styling associated with the scoring*/
 .tileScore {
     width: 100%;
@@ -373,6 +377,35 @@
 .home-tile-large-carousel-div .thumbnailImage {
     border-radius: 0;
     min-height: 250px;
+}
+
+.home-tile-amenities-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.home-tile-amenities-badge {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    margin: 2px;
+    background: #d7efed;
+    color: var(--teal);
+    border-radius: 24px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.home-tile-amenities-badge i {
+    font-size: 14px;
+    font-weight: bold;
+    padding-right: 3px;
+}
+
+.no-wanted-amenities {
+    color: var(--grey);
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .carousel .slide img {

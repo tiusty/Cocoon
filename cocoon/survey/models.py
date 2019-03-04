@@ -13,6 +13,7 @@ from config.settings.Global_Config import MAX_NUM_BATHROOMS
 
 # Import third party libraries
 import hashlib
+from datetime import timedelta
 
 # Import app constants
 from .constants import MIN_PRICE_DELTA
@@ -47,6 +48,30 @@ class InitialSurveyModel(models.Model):
 
         # Now return the has has the url
         return slugify(m.hexdigest())
+
+    class Meta:
+        abstract = True
+
+
+class SurveyUpdateInformation(models.Model):
+    """
+    Stores information about rerunning the survey and updating the user about changes
+    """
+    last_updated = models.DateField(default=timezone.now)
+    update_frequency = models.IntegerField(default=2)
+    wants_update = models.BooleanField(default=False)
+    score_threshold = models.IntegerField(default=50)
+    num_home_threshold = models.IntegerField(default=5)
+
+    def ready_to_update_user(self):
+        """
+        Determines if the survey is ready to be updated based on the last time the user was
+            updated and the frequency they put
+        """
+        if self.last_updated + timedelta(days=self.update_frequency) <= timezone.now().date():
+            return True
+        else:
+            return False
 
     class Meta:
         abstract = True
@@ -223,7 +248,7 @@ class ExteriorAmenitiesModel(models.Model):
 
 
 class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNearbyAmenitiesModel,
-                         PriceInformationModel, HomeInformationModel, InitialSurveyModel):
+                         PriceInformationModel, HomeInformationModel, SurveyUpdateInformation, InitialSurveyModel):
     """
     Renting Survey Model is the model for storing data from the renting survey model.
     The user may take multiple surveys and it is linked to their User Profile
@@ -240,7 +265,10 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
         """
         num_of_tenants = self.tenants.count()
         if num_of_tenants is 1:
-            return "Just Me"
+            if self.user_profile.user.is_broker:
+                return "{0} {1}".format(self.tenants.first().first_name, self.tenants.first().last_name[0])
+            else:
+                return "Just Me"
         else:
             counter = 1
             survey_name = ""
@@ -249,7 +277,10 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
                 if counter == num_of_tenants - 1:
                     survey_name = "{0}{1} {2} ".format(survey_name, tenant.first_name, tenant.last_name[0])
                 elif counter == num_of_tenants:
-                    survey_name = "{0}and I".format(survey_name)
+                    if self.user_profile.user.is_broker:
+                        survey_name = "{0}and {1} {2}".format(survey_name, tenant.first_name, tenant.last_name[0])
+                    else:
+                        survey_name = "{0}and I".format(survey_name)
                 elif counter != num_of_tenants:
                     survey_name = "{0}{1} {2}, ".format(survey_name, tenant.first_name, tenant.last_name[0])
                 counter += 1
@@ -259,15 +290,18 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
     def create_survey(user_profile, max_price=1500, desired_price=0, max_bathroom=2, min_bathroom=0,
                       num_bedrooms=None, earliest_move_in=None, latest_move_in=None, move_weight=0,
                       wants_laundry_in_building=False, wants_laundry_in_unit=False, laundry_in_building_weight=0,
-                      laundry_in_unit_weight=0):
+                      laundry_in_unit_weight=0, home_type=None, score_threshold=50, update_frequency=1,
+                      wants_update=False, num_home_threshold=3, price_weight=0):
         if num_bedrooms is None:
             num_bedrooms = [2]
         if earliest_move_in is None:
             earliest_move_in = timezone.now()
         if latest_move_in is None:
             latest_move_in = timezone.now()
+        if home_type is None:
+            home_type = HomeTypeModel.objects.get_or_create(home_type=HomeTypeModel.APARTMENT)[0]
 
-        return RentingSurveyModel.objects.create(
+        survey = RentingSurveyModel.objects.create(
             user_profile=user_profile,
             max_price=max_price,
             desired_price=desired_price,
@@ -281,8 +315,15 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
             wants_laundry_in_unit=wants_laundry_in_unit,
             laundry_in_unit_weight=laundry_in_unit_weight,
             laundry_in_building_weight=laundry_in_building_weight,
-
+            wants_update=wants_update,
+            num_home_threshold=num_home_threshold,
+            score_threshold=score_threshold,
+            update_frequency=update_frequency,
+            price_weight=price_weight,
         )
+        # Add the home type
+        survey.home_type.add(home_type)
+        return survey
 
     def __str__(self):
         user_short_name = self.user_profile.user.get_short_name()
@@ -293,12 +334,12 @@ class RentingSurveyModel(InteriorAmenitiesModel, ExteriorAmenitiesModel, HouseNe
 class TenantPersonalInformationModel(models.Model):
     first_name = models.CharField(max_length=200, default="")
     last_name = models.CharField(max_length=200, default="")
-    occupation = models.CharField(max_length=200, default="")
-    other_occupation_reason = models.CharField(max_length=200, default="")
-    unemployed_follow_up = models.CharField(max_length=200, default="")
-    income = models.IntegerField(default=-1)
-    credit_score = models.CharField(max_length=200, default="")
-    new_job = models.CharField(max_length=200, default="")
+    occupation = models.CharField(max_length=200, default="", blank=True)
+    other_occupation_reason = models.CharField(max_length=200, default="", blank=True)
+    unemployed_follow_up = models.CharField(max_length=200, default="", blank=True)
+    income = models.IntegerField(default=-1, blank=True)
+    credit_score = models.CharField(max_length=200, default="", blank=True)
+    new_job = models.CharField(max_length=200, default="", blank=True)
 
     class Meta:
         abstract = True
@@ -309,6 +350,8 @@ class DestinationsModel(models.Model):
     city = models.CharField(max_length=200, default="", blank=True)
     state = models.CharField(max_length=200, default="", blank=True)
     zip_code = models.CharField(max_length=200, default="", blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
 
     @property
     def full_address(self):

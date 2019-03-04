@@ -5,10 +5,13 @@ from django.utils import timezone
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
+from django.utils.text import slugify
 
 # Import cocoon models
+
 from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.survey.models import RentingSurveyModel
 
 # Import third party libraries
 import hashlib
@@ -32,12 +35,13 @@ class ItineraryModel(models.Model):
            self.homes (ManytoManyField) -> Stores the homes that are associated with this itinerary
     """
     client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
-    itinerary = models.FileField(blank=True, upload_to=itinerary_directory_path)
+    survey = models.OneToOneField(RentingSurveyModel, related_name='itinerary', on_delete=models.SET_NULL, null=True)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
     homes = models.ManyToManyField(RentDatabaseModel, blank=True)
     finished = models.BooleanField(default=False)
+    url = models.SlugField(max_length=100, unique=True)
 
     def __str__(self):
         return "{0} Itinerary".format(self.client.full_name)
@@ -90,6 +94,17 @@ class ItineraryModel(models.Model):
 
         # Returns the hash as hex
         return m.hexdigest()
+
+    def generate_slug(self):
+        # concatenate multiple strings to guard against reversing
+        hashable_string = "{0} {1} {2}".format(self.id, self.client.id, self.tour_duration_seconds)
+
+        # build the hash
+        md5 = hashlib.md5()
+        md5.update(hashable_string.encode('utf-8'))
+
+        return slugify(md5.hexdigest())
+
 
     @property
     def tour_duration_seconds_rounded(self):

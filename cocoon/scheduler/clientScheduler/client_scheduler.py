@@ -1,5 +1,6 @@
 # import django modules
 from django.core.files.base import ContentFile
+from django.db import transaction
 
 # App imports
 from ..clientScheduler.base_algorithm import clientSchedulerAlgorithm
@@ -101,7 +102,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         return tuple_list_edges
 
-    def save_itinerary(self, homes_list, user):
+    def save_itinerary(self, homes_list, user, survey):
         """
 
         :param: (list) homes_list: The matrix calculated using DistanceWrapper() with distances between every pair
@@ -112,22 +113,16 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
 
         if not ItineraryModel.retrieve_unfinished_itinerary(user).exists():
-            total_time_secs, interpreted_route = self.calculate_duration(homes_list)
-            itinerary_model = ItineraryModel(client=user)
-            itinerary_model.tour_duration_seconds = total_time_secs
+            with transaction.atomic():
+                total_time_secs, interpreted_route = self.calculate_duration(homes_list)
+                itinerary_model = ItineraryModel(client=user)
+                itinerary_model.tour_duration_seconds = total_time_secs
+                itinerary_model.survey = survey
+                itinerary_model.save()
 
-            # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
-            # Add 20 minutes to each home
-            s = b""
-            for item in interpreted_route:
-                line = "{0} {1}\n".format(item[0].full_address, item[1]/60 + 20).encode('utf-8')
-                s += line
-
-            itinerary_model.itinerary.save(name="itinerary", content=ContentFile(s))
-            for home in homes_list:
-                itinerary_model.homes.add(home)
-
-            itinerary_model.save()
+                # Add 20 minutes to each home
+                for home in homes_list:
+                    itinerary_model.homes.add(home)
             return True
         return False
 

@@ -80,6 +80,7 @@ class YGLRequesterImage(object):
                                     new_photos = HousePhotos(house=house)
                                     new_photos.image.save(os.path.basename(file_name), ImageFile(f))
                                     counter += 1
+                                urllib.request.urlcleanup()
                             except urllib.error.HTTPError:
                                 self.num_HTTP_errors += 1
                                 print('HTTPError occurred')

@@ -22,8 +22,6 @@ from .models import UserProfile, MyUser
 from .helpers.send_verification_email import send_verification_email
 
 # Import Cocoon Modules
-from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
-from cocoon.commutes.constants import CommuteAccuracy
 from cocoon.survey.models import RentingSurveyModel
 
 # Rest Framework
@@ -36,38 +34,14 @@ def index(request):
 
 
 @method_decorator(login_required, name='dispatch')
-class VisitList(ListView):
+class TourSetup(TemplateView):
 
-    model = RentingSurveyModel
-    template_name = 'userAuth/surveys.html'
-    context_object_name = 'surveys'
-
-    def get_queryset(self):
-        user_prof = get_object_or_404(UserProfile, user=self.request.user)
-        return RentingSurveyModel.objects.filter(user_profile=user_prof)
+    template_name = 'userAuth/tour_setup.html'
 
     def get_context_data(self, **kwargs):
-        data = super(VisitList, self).get_context_data(**kwargs)
+        data = super(TourSetup, self).get_context_data(**kwargs)
         data['component'] = 'Surveys'
         return data
-
-    def post(self, request):
-        # Run the client scheduler algorithm
-        user_prof = get_object_or_404(UserProfile, user=request.user)
-        survey = get_object_or_404(RentingSurveyModel, id=self.request.POST['submit-button'], user_profile=user_prof)
-        homes_list = []
-        for home in survey.visit_list.all():
-            homes_list.append(home)
-
-        # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
-        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user)
-        if result:
-            messages.info(request, "Itinerary created")
-            return HttpResponseRedirect(reverse('scheduler:clientScheduler'))
-        else:
-            messages.warning(request, "Itinerary already exists")
-        return HttpResponseRedirect(reverse('userAuth:surveys'))
 
 
 def loginPage(request):
@@ -89,7 +63,12 @@ def loginPage(request):
             if user is not None:
                 login(request, user)
                 # redirect to success page
-                return HttpResponseRedirect(reverse('homePage:index'))
+                next_value = request.POST.get('next')
+                if next_value:
+                    reverse_url = next_value
+                else:
+                    reverse_url = reverse('homePage:index')
+                return HttpResponseRedirect(reverse_url)
             else:
                 # return invalid user
                 context['error_message'].append('Unable to login in with Email/Password combo')
@@ -242,6 +221,14 @@ def activate_account(request, uidb64, token):
 
         # Return the message to inform the user of the status of the account
         messages.info(request, "Thank you for verifying your email")
+
+        # If the user has a survey already created then load that survey
+        surveys = RentingSurveyModel.objects.filter(user_profile=user.userProfile).all()
+        if surveys.count() > 0:
+            return HttpResponseRedirect(reverse('survey:rentSurveyResult',
+                                                kwargs={
+                                                    'survey_url': surveys.first().url
+                                                }))
         return HttpResponseRedirect(reverse('homePage:index'))
 
     else:
@@ -296,16 +283,3 @@ def user_profile(request):
     context['userProfile'] = user_prof
     context['form'] = form
     return render(request, 'userAuth/user_profile.html', context)
-
-
-@login_required
-def user_surveys(request):
-    context = {
-        'error_message': [],
-    }
-
-    # Retrieve data relevant to user
-    profile = UserProfile.objects.get(user=request.user)
-    rent_surveys = RentingSurveyModel.objects.filter(user_profile=profile).order_by('-created')
-    context['surveys'] = rent_surveys
-    return render(request, 'userAuth/user_surveys.html', context)

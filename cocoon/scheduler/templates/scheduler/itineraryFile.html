@@ -1,0 +1,296 @@
+{% load static %}
+{% load scheduler_extras %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}Cocoon | {{ client.first_name }}'s Itinerary{% endblock %}</title>
+  <link href="{% static 'scheduler/css/itineraryFile.css' %}" rel="stylesheet" type="text/css" media="screen, print">
+  <link href="{% static 'cocoon/main/css/base.css' %}" rel="stylesheet" type="text/css" media="screen, print">
+  <!-- JQuery CDN -->
+  <script
+          src="https://code.jquery.com/jquery-2.2.4.js"
+          integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+          crossorigin="anonymous"></script>
+  <!-- Font Styles -->
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Oswald" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:600,700,800" rel="stylesheet">
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#A13718" />
+  <link rel="stylesheet" href="{% static 'bootstrap-3.4.0-custom/css/bootstrap.css' %}">
+  <link href="{% static 'cocoon/main/css/base.css' %}" rel="stylesheet">
+  <link rel="shortcut icon" type="image/png" href="{% static 'homePage/cocoon_logo.png' %}"/>
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+
+</head>
+<p class="absolute-logo">Cocoon</p>
+  <body>
+    <table class="client-information-table" id="client-information-table">
+      <thead>
+        <tr>
+          <th colspan="2">
+            Client Information
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="left header">Client Name</td>
+          <td class="right">{{ client.full_name|try_string:"-" }}</td>
+        </tr>
+        <tr>
+          <td class="left header">Phone Number</td>
+          <td class="right">
+            <a href="tel:{{ client.phone_number }}">{{ client.phone_numner|try_string:"-" }}</a>
+          </td>
+        </tr>
+        <tr>
+            <td class="left header">Email Address</td>
+            <td class="right"><a class="mail-link" href="mailto:{{ client.email }}">{{ client.email }}</a></td>
+        </tr>
+        {% for d in destinations %}
+          {% if d != "" %}
+             <tr>
+              <td class="left header">Destination Address {{ forloop.counter }}</td>
+              <td class="right">{{ d|try_string:"-" }}</td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+        <tr>
+            <td class="left header">Tour Duration</td>
+            <td class="right">{{ tour_duration|try_string:"-" }}</td>
+        </tr>
+        <tr>
+            <td class="left header">No. of Tenants</td>
+            <td class="right">{{ survey.number_of_tenants|try_string:"not specified"}}</td>
+        </tr>
+        <tr>
+            <td class="left header">Minimum Bedrooms</td>
+            <td class="right">{{ survey.num_bedrooms|try_string:"not specified" }}</td>
+        </tr>
+{#        <tr>#}
+{#            <td class="left header">Bathroom Range</td>#}
+{#            <td class="right">{{ survey.min_bathrooms }} - {{ survey.max_bathrooms }}</td>#}
+{#        </tr>#}
+        <tr>
+            <td class="left header">Price Range</td>
+            <td class="right">{{ survey.price_range|try_string:"not specified" }}</td>
+        </tr>
+
+        {# Rows below are hidden by default#}
+        <tr class="extra-client-info hidden">
+            <td class="left header">Hardwood floors</td>
+            <td class="right glyphicon {% condition survey.wants_hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+        <tr class="extra-client-info hidden">
+            <td class="left header">AC</td>
+            <td class="right glyphicon {% condition survey.wants_AC "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+        <tr class="extra-client-info hidden">
+            <td class="left header">Dishwasher</td>
+            <td class="right glyphicon {% condition survey.wants_dishwasher "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+        <tr class="extra-client-info hidden">
+            <td class="left header">Laundry in building</td>
+            <td class="right glyphicon {% condition survey.wants_laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+        <tr class="extra-client-info hidden">
+            <td class="left header">Laundry in unit</td>
+            <td class="right glyphicon {% condition survey.wants_laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Parking</td>#}
+{#            <td class="right glyphicon {% condition survey.wants_parking "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">No. parking spots</td>#}
+{#            <td class="right">{{ survey.number_of_cars }}</td>#}
+{#        </tr>#}
+        <tr class="extra-client-info hidden">
+            <td class="left header">Patio</td>
+            <td class="right glyphicon {% condition survey.wants_patio "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+        <tr class="extra-client-info hidden">
+            <td class="left header">Pool</td>
+            <td class="right glyphicon {% condition survey.wants_pool "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+        <tr class="extra-client-info hidden">
+            <td class="left header">Gym</td>
+            <td class="right glyphicon {% condition survey.wants_gym "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+        <tr class="extra-client-info hidden">
+            <td class="left header">Storage</td>
+            <td class="right glyphicon {% condition survey.wants_storage "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+        </tr>
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Number of dogs</td>#}
+{#            <td class="right">{{ survey.number_of_dogs }}</td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Service dogs</td>#}
+{#            <td class="right glyphicon {% condition survey.service_dogs "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Breed of dogs</td>#}
+{#            <td class="right">{{ survey.breed_of_dogs|try_string:"-" }}</td>#}
+{#        </tr>#}
+{#        <tr class="extra-client-info hidden">#}
+{#            <td class="left header">Cats</td>#}
+{#            <td class="right glyphicon {% condition survey.wants_cats "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#        </tr>#}
+      </tbody>
+    </table>
+    <span type="button" id="expand-client-info-button" class="expand-button" onclick="showMoreDetails()">more</span>
+
+    <div class="layout-buttons" role="group" aria-label="...">
+      <button onclick="verticalLayout()" type="button" class="vertical-button">Vertical</button>
+      <button onclick="horizontalLayout()" type="button" class="horizontal-button">Horizontal</button>
+    </div>
+
+    <div class="home-list-container">
+
+    {% for home in homes %}
+
+      <table class="itinerary-home-table" id="itinerary-home-table-{{ forloop.counter }}">
+        <thead>
+          <tr>
+            <th class="left header home-table-count-col"><span class="home-table-count">{{ forloop.counter }}</span></th>
+            <th class="right">
+              <a target="_blank" class="map-link" href="{{ home.full_address|gmaps_from_address }}">{{ home.full_address }}</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="left header">Price</td>
+            <td class="right">{% replace home.price "-1" "-" %}</td>
+          </tr>
+          <tr>
+            <td class="left header">Currently available</td>
+            <td class="right glyphicon {% condition home.on_market "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Listing provider</td>
+            <td class="right">{{ home.listing_provider.provider }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Date available</td>
+            <td class="right">{{ home.date_available }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Listing Agent</td>
+            <td class="right">
+              
+              {% if home.listing_provider.provider == 'MLSPIN' %}
+                <a class="listing-agent-link" target="_blank" href="{{ home.listing_agent|agent_to_link:home.listing_provider.provider }}">{{ home.listing_agent|try_string:"-" }}</a>
+              {% else %}
+                {{ home.listing_agent|try_string:"-" }}
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td class="left header">Listing No.</td>
+            <td class="right">{{ home.listing_number }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Listing remarks</td>
+            <td class="right listing-remarks">{{ home.remarks }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Number of bathrooms</td>
+            <td class="right">{{ home.num_bathrooms }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Number of bedrooms</td>
+            <td class="right">{{ home.num_bedrooms }}</td>
+          </tr>
+          <tr>
+            <td class="left header">Furnished</td>
+            <td class="right glyphicon {% condition home.furnished "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Hardwood floors</td>
+            <td class="right glyphicon {% condition home.hardwood_floors "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">AC</td>
+            <td class="right glyphicon {% condition home.air_conditioning "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+{#          <tr>#}
+{#            <td class="left header">Allows dogs</td>#}
+{#            <td class="right glyphicon {% condition home.dogs_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#          </tr>#}
+{#          <tr>#}
+{#            <td class="left header">Allows cats</td>#}
+{#            <td class="right glyphicon {% condition home.cats_allowed "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#          </tr>#}
+          <tr>
+            <td class="left header">In-unit laundry</td>
+            <td class="right glyphicon {% condition home.laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">In-building landury</td>
+            <td class="right glyphicon {% condition home.laundry_in_building "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+{#          <tr>#}
+{#            <td class="left header">Parking spot</td>#}
+{#            <td class="right glyphicon {% condition home.parking_spot "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>#}
+{#          </tr>#}
+          <tr>
+            <td class="left header">Pool</td>
+            <td class="right glyphicon {% condition home.pool "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Patio / Balcony</td>
+            <td class="right glyphicon {% condition home.patio_balcony "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Gym</td>
+            <td class="right glyphicon {% condition home.gym "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+          <tr>
+            <td class="left header">Storage</td>
+            <td class="right glyphicon {% condition home.storage "glyphicon-ok" "glyphicon-remove" %}" aria-hidden="true"></td>
+          </tr>
+        </tbody>
+      </table>
+
+    {% endfor %}
+
+    </div>
+  </body>
+
+  <script>
+
+    var extraClientInformationVisibile = false;
+    function showMoreDetails() {
+        if (extraClientInformationVisibile) {
+            $('.extra-client-info').addClass('hidden');
+            $('#expand-client-info-button').text('more');
+            $(window).scrollTop(0);
+        } else {
+            $('.extra-client-info').removeClass('hidden');
+            $('#expand-client-info-button').text('hide');
+        }
+        extraClientInformationVisibile = !extraClientInformationVisibile;
+    }
+
+    function verticalLayout() {
+        $(".home-list-container").addClass('vertical');
+        $(".home-list-container").removeClass('horizontal');
+    }
+
+    function horizontalLayout() {
+        $(".home-list-container").addClass('horizontal');
+        $(".home-list-container").removeClass('vertical');
+    }
+
+  </script>
+</html>

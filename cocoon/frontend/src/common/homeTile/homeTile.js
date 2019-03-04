@@ -34,6 +34,8 @@ class HomeTile extends Component {
      *
      * this.props.displayPercent: (boolean) -> True: renders the percent_match on the home tile. [Should ONLY be true if isLarge is also true!]
      *                                         False: (DEFAULT): Does not render the percent_match
+     *
+     *  this.props.addBorder: (boolean) -> Determines if a border should be added to tile i.e. when a home is in the visit list
      */
     state = {
         hover: false,
@@ -47,7 +49,8 @@ class HomeTile extends Component {
         percent_match: null,
         missing_amenities: [],
         show_missing_amenities: false,
-        displayOnMarket: false
+        displayOnMarket: false,
+        addBorder: false
     }
 
     renderScore(home) {
@@ -133,14 +136,28 @@ class HomeTile extends Component {
             bit_classes += "homeBit-hover";
         }
 
-        let bedInfo = home.num_bedrooms > 1 ? 'beds' : 'bed';
-        let bathInfo = home.num_bathrooms > 1 ? 'baths' : 'bath';
+        let bedInfo;
+        let bathInfo;
+
+        if (home.num_bedrooms > 1) {
+            bedInfo = `${home.num_bedrooms} beds`;
+        } else if (home.num_bedrooms === 1) {
+            bedInfo = `${home.num_bedrooms} bed`;
+        } else {
+            bedInfo = 'Studio';
+        }
+
+        if (home.num_bathrooms > 1) {
+            bathInfo = `${home.num_bathrooms} baths`;
+        } else {
+            bathInfo = `${home.num_bathrooms} bath`;
+        }
 
         return (
             <div onClick={() => this.props.onHomeClick(this.props.id)} className="homeInfo">
                 <div className="homeInfo-group">
                     <span className={bit_classes}>${home.price} <span className="homeInfo-month">/ month</span></span>
-                    <span className={bit_classes}>{`${home.num_bedrooms} ${bedInfo} • ${home.num_bathrooms} ${bathInfo}` }</span>
+                    <span className={bit_classes}>{`${bedInfo} • ${bathInfo}`}</span>
                 </div>
                 <span className={bit_classes}>{home.home_type.home_type}</span>
             </div>
@@ -248,6 +265,9 @@ class HomeTile extends Component {
         } else {
             tileClass = 'tile';
         }
+        if (this.props.addBorder) {
+            tileClass += ' tile-border_active';
+        }
         return tileClass;
     }
 
@@ -278,5 +298,6 @@ HomeTile.propTypes = {
     isLarge: PropTypes.bool,
     displayPercent: PropTypes.bool,
     percent_match: PropTypes.number,
+    addBorder: PropTypes.bool
 };
 

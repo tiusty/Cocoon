@@ -231,13 +231,17 @@ export default class TenantForm extends Component {
     renderCommutePrompt = (name) => {
         if (this.props.tenant.occupation === 'other') {
             return (
-                <h2>Would {name} be using any <span>regular commute type</span>? ex. going into the city</h2>
+                <h2>Would {name} have a <span>regular commute</span>? i.e going into the city</h2>
+            );
+        } else if (this.props.tenant.occupation === 'studying') {
+            return (
+                <h2>Would {name} have a <span>regular commute</span>? i.e work/school</h2>
             );
         } else {
             return (
-                <h2>How {this.props.index === 0 ? 'do' : 'does'} {name} <span>commute</span>?</h2>
+                <h2>Would {name} have a <span>regular commute</span>? i.e work</h2>
             );
-        }
+       }
     };
 
     renderCommuteTypeQuestion(name) {
@@ -257,7 +261,7 @@ export default class TenantForm extends Component {
                                            onChange={() => {
                                            }}/>
                                     <div>
-                                        {o.commute_type === 'Work From Home' && this.props.tenant.occupation === 'other' ? 'No' : o.commute_type}
+                                        {o.commute_type === 'Work From Home' ? 'No' : o.commute_type}
                                     </div>
                                 </label>
                             )
@@ -287,10 +291,16 @@ export default class TenantForm extends Component {
             }, 0);
             return (
                 <div className="survey-question" id={`${this.props.tenant.tenant_identifier}-other-occupation-question`}>
-                    <h2>What's the <span>street address</span>?</h2>
+                    <h2>What's the <span>street address</span> of the commute?</h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-commute_address-error`}></span>
+                    {this.props.google_autocomplete_errors !== "" ?
+                        <span className="col-md-12 survey-google-autocomplete-error-message">{this.props.google_autocomplete_errors}</span>
+                    :
+                        null
+                    }
                     <span className="col-md-12 survey-error-message" style={{color: `var(--grey)`, display: 'block'}}>Please be sure to choose a location from the dropdown list.</span>
+                    <span className="col-md-12 survey-error-message" style={{color: `var(--grey)`, display: 'block'}}></span>
                     {this.props.googleApiLoaded ?
                         <Autocomplete
                             className="col-md-12 survey-input survey-address-input"
@@ -444,7 +454,7 @@ export default class TenantForm extends Component {
                     </h2>
                     <span className="col-md-12 survey-error-message"
                           id={`${this.props.tenant.tenant_identifier}-desired_commute-error`}></span>
-                    <small id="priceHelp" className="form-text text-muted">Left dot is your desired commute, the right dot is the max commute you are willing to have
+                    <small id="priceHelp" className="form-text text-muted">Please select your desired commute with the left dot and the maximum commute you are willing to have with the right
                     </small>
                     <InputRange
                         draggableTrack={false}
@@ -631,15 +641,15 @@ export default class TenantForm extends Component {
         const tenant_identifier = this.props.tenant.tenant_identifier;
         return (
             <>
-                {this.renderCollapseSection(name)}
+                {this.renderCollapseSection(this.props.tenant.first_name)}
                 <div id={`${tenant_identifier}-questions`} className={this.handleTenantQuestionClasses()}
                      onChange={() => this.props.onHandleValidation(this.props.index, false)}>
                     {this.renderOccupation(name)}
                     {this.renderCommuteTypeQuestion(name)}
                     {this.renderCommuteLengthQuestion(name)}
                     {this.renderCommuteWeightQuestion(name)}
-                    {this.renderIncomeQuestion(name)}
-                    {this.renderCreditScoreQuestion()}
+                    {/*{this.renderIncomeQuestion(name)}*/}
+                    {/*{this.renderCreditScoreQuestion(name)}*/}
                 </div>
             </>
         );

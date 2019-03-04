@@ -7,7 +7,9 @@
 
 :root {
     --red: #A13718;
+    --redOrange: #FF7D57;
     --teal: #39B1A7;
+    --darkBlue: #3b4852;
     --tealOpacity: rgba(57, 177, 167, 0.04);
     --black: #282828;
     --grey: #888888;

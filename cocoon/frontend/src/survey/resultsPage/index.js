@@ -14,6 +14,7 @@ import survey_endpoints from '../../endpoints/survey_endpoints';
 import userAuth_endpoints from '../../endpoints/userAuth_endpoints';
 
 import Preloader from '../../common/preloader';
+import SurveySubscribe from '../../common/surveySubscribe';
 import HomeTile from '../../common/homeTile/homeTile';
 import HomeTileLarge from '../../common/homeTile/homeTileLarge';
 import Map from './map/map';
@@ -95,35 +96,10 @@ export default class ResultsPage extends Component {
             .then(response => {
                 this.setState({
                     survey: response.data,
-                    tenants: response.data.tenants,
                     favorites: response.data.favorites,
-                    commutes: this.getCommuteCoords(response.data.tenants)
                 });
             })
 
-    };
-
-    getCommuteCoords = (tenants) => {
-        let commutes = [];
-        if (tenants) {
-            tenants.forEach(t => {
-                if (t.street_address) {
-                    let address = `${t.street_address} ${t.city} ${t.state} ${t.zip_code}`;
-                    let name = `${t.first_name}`;
-                    let coords = {};
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode( { 'address': address }, (results, status) => {
-                        if (status === google.maps.GeocoderStatus.OK) {
-                            coords.lat = results[0].geometry.location.lat();
-                            coords.lng = results[0].geometry.location.lng();
-                            coords.name = name;
-                            commutes.push(coords);
-                        }
-                    });
-                }
-            })
-        }
-        return commutes;
     };
 
     getResults = () => {
@@ -224,7 +200,8 @@ export default class ResultsPage extends Component {
             <>
                 <div className="results-info">
                     <h2>Time to pick your favorites!</h2>
-                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done favoriting, click <span>schedule tour</span> above to continue.</p>
+                    <p>We've scoured the market to pick your personalized short list of the best places, now it's your turn to pick your favorites. The higher the score the better the match! Once you're done selecting your favorites, click <span>Tour Setup</span> above to continue.</p>
+                    <SurveySubscribe survey_id={this.state.survey.id} />
                 </div>
                 <div className="results">
                     {this.state.homeList && this.state.homeList.map(home => (
@@ -387,10 +364,10 @@ export default class ResultsPage extends Component {
     renderScheduleButton = () => {
         if (this.state.favorites.length > 0) {
             return (
-                <a href={userAuth_endpoints['surveys']}>Schedule Tour</a>
+                <a href={`${userAuth_endpoints['tourSetup']}?survey_url=${this.state.survey_name}`}>Tour Setup</a>
             );
         } else {
-            return <span className="disabled-button">Schedule Tour</span>
+            return <span className="disabled-button">Tour Setup</span>
         }
     }
 
@@ -418,6 +395,9 @@ export default class ResultsPage extends Component {
             return (
                 <div id="results-page">
                     <div className={this.setResultsWrapperClass()}>
+                        <div className="not-optimized">
+                            <p>Please use a laptop/desktop to use the map features of this page</p>
+                        </div>
                         {this.renderButtonRow()}
                         {this.renderMainComponent()}
                     </div>
@@ -428,7 +408,7 @@ export default class ResultsPage extends Component {
                                  hover_id={this.state.hover_id}
                                  setHoverId={this.setHoverId}
                                  removeHoverId={this.removeHoverId}
-                                 commutes={this.state.commutes} />
+                                 survey={this.state.survey} />
                             : null}
                     </div>
                 </div>

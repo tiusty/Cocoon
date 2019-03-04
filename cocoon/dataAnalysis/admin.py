@@ -1,17 +1,13 @@
 # Import Django Modules
 from django.contrib import admin
-from django.db.models import Avg, Max, Min
 
 # Import app modules
-from .models import SurveyResultsIteration, HomeTracker
+from .models import SurveyResultsIteration
 
 # Import Third Party Modules
 from import_export import resources
 from import_export.admin import ExportMixin
 from import_export.fields import Field
-
-# Import Cocoon Modules
-from cocoon.survey.constants import NUMBER_OF_HOMES_RETURNED
 
 
 class SurveyResultIterationResource(resources.ModelResource):
@@ -19,82 +15,21 @@ class SurveyResultIterationResource(resources.ModelResource):
     user_email = Field(attribute='user_email', column_name='Users Email')
     survey_id = Field(attribute='survey_id', column_name='Survey Id')
     user_full_name = Field(attribute='user_full_name', column_name='User Full Name')
-    avg_home_score = Field(column_name='Avg Home Score')
-    avg_home_score_returned = Field(column_name='Avg Home Score Returned to User')
-    standard_deviation_homes = Field(column_name="Standard Deviation Of Homes")
-    standard_deviation_homes_returned = Field(column_name='Standard Deviation of returned homes')
-    max_score_home = Field(column_name='Max score for a home')
-    max_score_home_returned = Field(column_name='Max Score returned to user')
-    min_score_home = Field(column_name='Min Score for a home')
-    min_score_home_returned = Field(column_name='Min Score returned to user')
-    num_homes = Field(column_name='Number of Homes')
-
-    @staticmethod
-    def dehydrate_avg_home_score_returned(iteration):
-        return iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Avg('score'))['score__avg']
-
-    @staticmethod
-    def dehydrate_max_score_home(iteration):
-        return iteration.homes.all().aggregate(Max('score'))['score__max']
-
-    @staticmethod
-    def dehydrate_min_score_home(iteration):
-        return iteration.homes.all().aggregate(Min('score'))['score__min']
-
-    @staticmethod
-    def dehydrate_max_score_home_returned(iteration):
-        return iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Max('score'))['score__max']
-
-    @staticmethod
-    def dehydrate_min_score_home_returned(iteration):
-        return iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Min('score'))['score__min']
-
-    @staticmethod
-    def dehydrate_standard_deviation_homes(iteration):
-        scores = []
-        for home in iteration.homes.all():
-            scores.append(home.score)
-        avg = iteration.homes.all().order_by('-score')[:NUMBER_OF_HOMES_RETURNED].aggregate(Avg('score'))['score__avg']
-
-        score_normalized = []
-        for score in scores:
-            score_normalized.append((score - avg) ** 2)
-        variance = 0
-        if len(score_normalized) > 0:
-            variance = sum(score_normalized)/len(score_normalized)
-        return variance ** .5
-
-    @staticmethod
-    def dehydrate_standard_deviation_homes_returned(iteration):
-        scores = []
-        for home in iteration.homes.all():
-            scores.append(home.score)
-        avg = iteration.homes.all().aggregate(Avg('score'))['score__avg']
-
-        score_normalized = []
-        for score in scores:
-            score_normalized.append((score - avg) ** 2)
-        variance = 0
-        if len(score_normalized) > 0:
-            variance = sum(score_normalized)/len(score_normalized)
-        return variance ** .5
-
-    @staticmethod
-    def dehydrate_avg_home_score(iteration):
-        return iteration.homes.all().aggregate(Avg('score'))['score__avg']
-
-    @staticmethod
-    def dehydrate_num_homes(iteration):
-        return iteration.homes.all().count()
+    avg_home_score = Field(attribute='avg_home_score', column_name='Avg Home Score')
+    avg_home_score_returned = Field(attribute='avg_home_score_returned',column_name='Avg Home Score Returned to User')
+    standard_deviation_homes = Field(attribute='standard_deviation_homes', column_name="Standard Deviation Of Homes")
+    standard_deviation_homes_returned = Field(attribute='standard_deviation_homes_returned', column_name='Standard Deviation of returned homes')
+    max_score_home = Field(attribute='max_score_home', column_name='Max score for a home')
+    max_score_home_returned = Field(attribute='max_score_home_returned', column_name='Max Score returned to user')
+    min_score_home = Field(attribute='min_score_home', column_name='Min Score for a home')
+    min_score_home_returned = Field(attribute='min_score_home_returned', column_name='Min Score returned to user')
+    num_homes = Field(attribute='num_homes', column_name='Number of Homes')
 
     class Meta:
         model = SurveyResultsIteration
-        fields = ('id', 'user_email', 'user_full_name', 'survey_id')
-
-
-class HomeTrackerInLIne(admin.TabularInline):
-    model = HomeTracker
-    extra = 0
+        fields = ('id', 'user_email', 'user_full_name', 'survey_id', 'avg_home_score', 'avg_home_score_returned',
+                  'standard_deviation_homes', 'standard_deviation_homes_returned', 'max_score_home',
+                  'max_score_home_returned', 'min_score_home', 'min_score_home_returned', 'hum_homes')
 
 
 class SurveyResultsIterationAdmin(ExportMixin, admin.ModelAdmin):
