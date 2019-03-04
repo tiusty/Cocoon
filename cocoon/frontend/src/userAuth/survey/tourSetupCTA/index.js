@@ -162,7 +162,7 @@ export default class TourSetupCTA extends Component {
                     <>
                         <h3>Tour Summary <span className="helper-text">({this.props.visit_list.length} homes in Visit List)</span></h3>
                         <span onClick={this.toggleScheduling} style={style}>
-                            <i style={{fontSize: 15}} className="material-icons">schedule</i> Schedule Tour
+                            <i style={{fontSize: 15}} className="material-icons">schedule</i> Schedule Free Tour
                         </span>
                         {this.loadModal()}
                         {this.handleErrorMessage()}
