@@ -123,7 +123,7 @@ export default class TourChecklist extends  Component {
         }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Schedule your tour by clicking Schedule Tour above.</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Schedule your free tour with one of our trusted agents.</p>
             </div>
         );
     }
