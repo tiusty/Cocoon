@@ -261,6 +261,10 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             self.handle_weighted_question('air_conditioning', survey.AC_weight, home_score, home_score.home.air_conditioning)
         if survey.wants_dishwasher:
             self.handle_weighted_question('dishwasher', survey.dishwasher_weight, home_score, home_score.home.dishwasher)
+        if survey.wants_dogs:
+            self.handle_weighted_question('dogs_allowed', survey.dog_weight, home_score, home_score.home.dogs_allowed)
+        if survey.wants_cats:
+            self.handle_weighted_question('cats_allowed', survey.cat_weight, home_score, home_score.home.cats_allowed)
 
     def run_compute_weighted_score_exterior_amenities(self, survey, home_score):
         """
