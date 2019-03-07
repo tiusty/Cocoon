@@ -25,6 +25,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .tasks import compute_survey_result_iteration_task
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
 
 class RentingSurveyTemplate(TemplateView):
     """
@@ -223,6 +227,24 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         if user_form is not None:
             user_form.is_valid()
             user_form_errors = user_form.errors
+            logger.error("In Survey creation:\n"
+                         "User: {0} {1}.\n"
+                         "Had errors form errors:{2}\n"
+                         "tenant_erorrs: {3}\n"
+                         "user_form errors: {4}\n".format(user_form.data['first_name'],
+                                                          user_form.data['last_name'],
+                                                          form_errors,
+                                                          tenants_errors,
+                                                          user_form_errors))
+        else:
+            logger.error("In Survey Creation:\n"
+                         "User: {0} \n"
+                         "Had errors form errors:{1}\n"
+                         "tenant_erorrs: {2}\n"
+                         "user_form errors: {3}\n".format(self.request.user.full_name,
+                                                          form_errors,
+                                                          tenants_errors,
+                                                          user_form_errors))
 
         # Return a result false if the form was not valid
         return Response({
@@ -353,6 +375,13 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             if tenants is not None:
                 tenants.is_valid()
                 tenants_errors = tenants.errors
+
+            logger.error("In Survey edit:\n"
+                         "User: {0} \n"
+                         "Had errors form errors:{1}\n"
+                         "tenant_erorrs: {2}\n".format(self.request.user.full_name,
+                                                       form.errors,
+                                                       tenants_errors))
 
             return Response({
                 'result': False,
