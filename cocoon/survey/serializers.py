@@ -118,6 +118,7 @@ class RentSurveySerializer(serializers.HyperlinkedModelSerializer):
             'wants_furnished': obj.wants_furnished,
             'furnished_weight': obj.furnished_weight,
             'wants_dogs': obj.wants_dogs,
+            'dog_weight': obj.dog_weight,
             'number_of_dogs': obj.number_of_dogs,
             'service_dogs': obj.service_dogs,
             'dog_size': obj.dog_size,
