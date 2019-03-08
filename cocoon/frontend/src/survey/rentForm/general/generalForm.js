@@ -342,7 +342,7 @@ export default class GeneralForm extends Component {
     renderUrgencyQuestion() {
         return(
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How badly do you <span>need to move</span>?</h2>
+                <h2>How badly do you <span>need to find</span> an apartment?</h2>
                 <span className="col-md-12 survey-error-message" id="move_weight_error">You must select an option.</span>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="0" checked={this.props.generalInfo.move_weight === 0} onChange={() => {}} />
