@@ -141,8 +141,6 @@ class YGLRequester(object):
                                 or word_scraper.word_finder(["a", "/", "c"]):
                             new_listing.air_conditioning = True
 
-                        new_listing.cats_allowed = True
-
                         new_listing.laundry_in_building = word_scraper.look_for_laundry_in_unit()
 
                         if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot", "tub"]):
