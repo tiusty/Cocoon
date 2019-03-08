@@ -33,7 +33,7 @@ export default class RentForm extends Component {
             generalInfo: {
                 number_of_tenants: 1,
                 home_type: [],
-                move_weight: 0,
+                move_weight: undefined,
                 num_bedrooms: [],
                 polygon_filter_type: 0,
                 polygons: [],
