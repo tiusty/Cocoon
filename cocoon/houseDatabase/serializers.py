@@ -52,6 +52,8 @@ class RentDatabaseSerializer(serializers.HyperlinkedModelSerializer):
             'air_conditioning': obj.air_conditioning,
             'laundry_in_unit': obj.laundry_in_unit,
             'dishwasher': obj.dishwasher,
+            'dogs_allowed': obj.dogs_allowed,
+            'cats_allowed': obj.cats_allowed,
         }
 
     @staticmethod

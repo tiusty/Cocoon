@@ -111,16 +111,16 @@ export default class AmenitiesForm extends Component {
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_furnished}/>
                     <div>Furnished <i className="material-icons">check</i></div>
                 </label>
-                {/*<label className="col-md-6 survey-label survey-checkbox">*/}
-                    {/*<input type="checkbox" name="wants_dogs" value="wantsDogs" onChange={(e) => this.props.onInputChange(e, 'boolean')}*/}
-                           {/*checked={this.props.amenitiesInfo.wants_dogs}/>*/}
-                    {/*<div>Dogs welcome <i className="material-icons">check</i></div>*/}
-                {/*</label>*/}
-                {/*<label className="col-md-6 survey-label survey-checkbox">*/}
-                    {/*<input type="checkbox" name="wants_cats" value="wantsCats" onChange={(e) => this.props.onInputChange(e, 'boolean')}*/}
-                           {/*checked={this.props.amenitiesInfo.wants_cats}/>*/}
-                    {/*<div>Cats welcome <i className="material-icons">check</i></div>*/}
-                {/*</label>*/}
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="wants_dogs" value="wantsDogs" onChange={(e) => this.props.onInputChange(e, 'boolean')}
+                           checked={this.props.amenitiesInfo.wants_dogs}/>
+                    <div>Dogs welcome <i className="material-icons">check</i></div>
+                </label>
+                <label className="col-md-6 survey-label survey-checkbox">
+                    <input type="checkbox" name="wants_cats" value="wantsCats" onChange={(e) => this.props.onInputChange(e, 'boolean')}
+                           checked={this.props.amenitiesInfo.wants_cats}/>
+                    <div>Cats welcome <i className="material-icons">check</i></div>
+                </label>
                 <label className="col-md-6 survey-label survey-checkbox">
                     <input type="checkbox" name="wants_hardwood_floors" value="wantsHardwood"
                            onChange={(e) => this.props.onInputChange(e, 'boolean')} checked={this.props.amenitiesInfo.wants_hardwood_floors}/>
@@ -201,10 +201,35 @@ export default class AmenitiesForm extends Component {
         }
     }
 
-    renderDogFollowup() {
-        if(this.props.amenitiesInfo.wants_dogs) {
+    renderDogFollowUp() {
+        if (this.props.amenitiesInfo.wants_dogs) {
             return (
                 <>
+                    <div className="survey-question"
+                         onChange={(e) => {
+                             this.props.onInputChange(e, 'number');
+                         }}>
+                        <h2>How badly do you want <span>dogs</span>?</h2>
+                        <label className="col-md-4 survey-label">
+                            <input type="radio" name="dog_weight" value="1"
+                                   checked={this.props.amenitiesInfo.dog_weight === 1} onChange={() => {
+                            }}/>
+                            <div>Kinda want</div>
+                        </label>
+                        <label className="col-md-4 survey-label">
+                            <input type="radio" name="dog_weight" value="2"
+                                   checked={this.props.amenitiesInfo.dog_weight === 2} onChange={() => {
+                            }}/>
+                            <div>Really want</div>
+                        </label>
+                        <label className="col-md-4 survey-label">
+                            <input type="radio" name="dog_weight" value="3"
+                                   checked={this.props.amenitiesInfo.dog_weight === 3} onChange={() => {
+                            }}/>
+                            <div>Need it</div>
+                        </label>
+                    </div>
+
                     <div className="survey-question">
                         <h2>How many <span>dogs</span>?</h2>
                         <input className="col-md-12 survey-input" type="number" name="number_of_dogs"
@@ -483,7 +508,7 @@ export default class AmenitiesForm extends Component {
                 {this.renderAmenitiesQuestions()}
                 {this.renderParkingFollowUp()}
                 {this.renderFurnishedFollowUp()}
-                {this.renderDogFollowup()}
+                {this.renderDogFollowUp()}
                 {this.renderCatFollowUp()}
                 {this.renderHardwoodFloorFollowUp()}
                 {this.renderACFollowup()}
