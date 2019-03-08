@@ -354,7 +354,7 @@ export default class GeneralForm extends Component {
                 </label>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="2" checked={this.props.generalInfo.move_weight === 2} onChange={() => {}} />
-                    <div>Moving soon</div>
+                    <div>Looking to sign</div>
                 </label>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="3" checked={this.props.generalInfo.move_weight === 3} onChange={() => {}} />
