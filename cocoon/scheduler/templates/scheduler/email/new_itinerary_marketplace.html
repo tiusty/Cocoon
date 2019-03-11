@@ -1,7 +1,7 @@
 {% extends "base_email_button.html" %}
 
 {% block headline %}
-    New Itinerary!
+    A New Itinerary was created!
 {% endblock %}
 
 {% block greeting %}
@@ -9,8 +9,8 @@
 {% endblock %}
 
 {% block content %}
-    A new itinerary has been created and put into the marketplace, please click on the button
-        below to view it
+    A new itinerary has been created and put into the marketplace. Please click on the button
+        below to view it.
 {% endblock %}
 
 {% block buttonLink %}{{ domain }}{% url 'scheduler:agentSchedulerMarketplace' %}{% endblock %}

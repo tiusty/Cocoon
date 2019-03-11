@@ -10,7 +10,7 @@ from django.http import Http404
 # App Models
 from .models import ItineraryModel, TimeModel
 from .serializers import ItinerarySerializer
-from .helpers.send_emails import send_new_itinerary_email
+from .helpers.send_emails import send_new_itinerary_marketplace_email, send_new_itinerary_referred_email
 
 # Cocoon Modules
 from cocoon.userAuth.models import UserProfile, MyUser
@@ -239,11 +239,11 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
             if user_profile.referred_agent is not None:
                 itinerary.agent = user_profile.referred_agent
                 itinerary.save()
-                send_new_itinerary_email(itinerary.agent)
+                send_new_itinerary_referred_email(itinerary.agent)
             else:
                 # Send an email to all the agents to indicate that a new home is in the marketplace
                 for agent in MyUser.objects.all().filter(is_broker=True):
-                    send_new_itinerary_email(agent)
+                    send_new_itinerary_marketplace_email(agent)
 
         # Retrieve the object again to get the updated fields
         itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
