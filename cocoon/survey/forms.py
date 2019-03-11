@@ -392,7 +392,7 @@ class CommuteInformationForm(DestinationForm):
                     self.add_error('zip_code', "Zip Code Required")
                     valid = False
 
-                if not current_form['commute_weight']:
+                if 'commute_weight' not in current_form:
                     self.add_error('commute_weight', "Commute weight needed")
                     valid = False
 
