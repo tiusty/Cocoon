@@ -33,7 +33,7 @@ export default class RentForm extends Component {
             generalInfo: {
                 number_of_tenants: 1,
                 home_type: [],
-                move_weight: 0,
+                move_weight: undefined,
                 num_bedrooms: [],
                 polygon_filter_type: 0,
                 polygons: [],
@@ -57,6 +57,7 @@ export default class RentForm extends Component {
                 wants_furnished: false,
                 furnished_weight: 0,
                 wants_dogs: false,
+                dog_weight: 0,
                 number_of_dogs: 0,
                 service_dogs: false,
                 dog_size: '',

@@ -208,6 +208,7 @@ class InteriorAmenitiesModel(models.Model):
     wants_furnished = models.BooleanField(default=False)
     furnished_weight = models.IntegerField(default=0)
     wants_dogs = models.BooleanField(default=False)
+    dog_weight = models.IntegerField(default=0)
     number_of_dogs = models.IntegerField(default=0)
     service_dogs = models.BooleanField(default=False)
     dog_size = models.CharField(max_length=200, blank=True, default="")
