@@ -392,9 +392,12 @@ class CommuteInformationForm(DestinationForm):
                     self.add_error('zip_code', "Zip Code Required")
                     valid = False
 
-                if current_form['commute_weight'] < 0 or current_form['commute_weight'] > WEIGHT_QUESTION_MAX:
-                    self.add_error('commute_weight', "Commute weight out of range")
-                    valid = False
+                if 'commute_weight' in current_form:
+                    if current_form['commute_weight'] < 0 or current_form['commute_weight'] > WEIGHT_QUESTION_MAX:
+                        self.add_error('commute_weight', "Commute weight out of range")
+                        valid = False
+                else:
+                    self.add_error('commute_weight', "Commute weight needed")
 
                 if current_form['max_commute'] is not None:
                     if int(current_form['max_commute']) < 0:
