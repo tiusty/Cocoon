@@ -10,9 +10,10 @@ from django.http import Http404
 # App Models
 from .models import ItineraryModel, TimeModel
 from .serializers import ItinerarySerializer
+from .helpers.send_emails import send_new_itinerary_email
 
 # Cocoon Modules
-from cocoon.userAuth.models import UserProfile
+from cocoon.userAuth.models import UserProfile, MyUser
 from cocoon.survey.models import RentingSurveyModel
 from cocoon.scheduler.models import ItineraryModel
 from cocoon.scheduler.clientScheduler.client_scheduler import ClientScheduler
@@ -234,9 +235,15 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
                     itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
 
             # Automatically set the agent assigned to the itinerary if the agent has a referred agent
+            # Send an email to the appropriate people
             if user_profile.referred_agent is not None:
                 itinerary.agent = user_profile.referred_agent
                 itinerary.save()
+                send_new_itinerary_email(itinerary.agent)
+            else:
+                # Send an email to all the agents to indicate that a new home is in the marketplace
+                for agent in MyUser.objects.all().filter(is_broker=True):
+                    send_new_itinerary_email(agent)
 
         # Retrieve the object again to get the updated fields
         itinerary = get_object_or_404(ItineraryModel, pk=pk, client=user_profile.user)
