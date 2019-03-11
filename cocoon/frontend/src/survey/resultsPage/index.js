@@ -19,7 +19,7 @@ import HomeTile from '../../common/homeTile/homeTile';
 import HomeTileLarge from '../../common/homeTile/homeTileLarge';
 import Map from './map/map';
 import RentForm from '../../survey/rentForm/main';
-
+import PopUp from './popup';
 
 // Necessary XSRF headers for posting form
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -91,7 +91,7 @@ export default class ResultsPage extends Component {
         /**
          * Retrieves the Survey by passing the survey url
          */
-        axios.get(survey_endpoints['rentSurvey'] + this.getSurveyUrl(), {params: {type: 'by_url'}})
+        axios.get(survey_endpoints['rentSurvey'] + this.getSurveyUrl() + '/', {params: {type: 'by_url'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
@@ -114,7 +114,7 @@ export default class ResultsPage extends Component {
         /**
          * Retrieve the survey results
          */
-        axios.get(survey_endpoints['rentResult'] + this.getSurveyUrl())
+        axios.get(survey_endpoints['rentResult'] + this.getSurveyUrl() + '/', {params: {type: 'by_url'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
@@ -394,6 +394,7 @@ export default class ResultsPage extends Component {
         if (this.props.is_verified) {
             return (
                 <div id="results-page">
+                    <PopUp survey={this.state.survey} homeList={this.state.homeList} />
                     <div className={this.setResultsWrapperClass()}>
                         <div className="not-optimized">
                             <p>Please use a laptop/desktop to use the map features of this page</p>
