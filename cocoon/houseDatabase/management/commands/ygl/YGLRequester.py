@@ -134,7 +134,8 @@ class YGLRequester(object):
 
                         new_listing.furnished = word_scraper.word_finder(["furnished"])
                         new_listing.hardwood_floors = word_scraper.look_for_hardwood_floors()
-                        new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
+                        new_listing.dishwasher = word_scraper.word_finder(["dishwasher"]) \
+                            or word_scraper.word_finder(['dish', 'washer'])
 
                         if (word_scraper.word_finder(["air", "conditioning"])) \
                                 or word_scraper.word_finder(["ac"])\

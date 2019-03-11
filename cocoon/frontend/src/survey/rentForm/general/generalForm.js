@@ -25,7 +25,8 @@ export default class GeneralForm extends Component {
             price_error_range: 'The price must be between $0 and $4000',
             price_error_weight: 'You must choose how much you care about the price.',
             date_error: 'You must select an earliest and latest move in date.',
-            num_bedrooms_error_undefined: 'You must choose the number of bedrooms you need.'
+            num_bedrooms_error_undefined: 'You must choose the number of bedrooms you need.',
+            move_weight: 'You must select how badly you need to move.'
         }
     };
 
@@ -137,8 +138,18 @@ export default class GeneralForm extends Component {
 
     handleUrgencyValidation() {
         let valid = true;
-        if (this.props.generalInfo.move_weight < 0) {
+        if (this.props.generalInfo.move_weight === undefined) {
+            document.querySelector('#move_weight_error').style.display = 'block';
+            document.querySelector('#move_weight_error').innerText = this.state.errorMessages.move_weight;
+            document.querySelector('input[name=move_weight]').parentNode.scrollIntoView(true)
+            alert(this.state.errorMessages.move_weight);
             valid = false
+        }
+        if(valid) {
+            let selection = document.querySelector('#move_weight_error');
+            if (selection) {
+                selection.style.display = 'none';
+            }
         }
         return valid
     }
@@ -331,7 +342,7 @@ export default class GeneralForm extends Component {
     renderUrgencyQuestion() {
         return(
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How badly do you <span>need to move</span>?</h2>
+                <h2>How badly do you <span>need to find</span> an apartment?</h2>
                 <span className="col-md-12 survey-error-message" id="move_weight_error">You must select an option.</span>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="0" checked={this.props.generalInfo.move_weight === 0} onChange={() => {}} />
@@ -343,7 +354,7 @@ export default class GeneralForm extends Component {
                 </label>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="2" checked={this.props.generalInfo.move_weight === 2} onChange={() => {}} />
-                    <div>Moving soon</div>
+                    <div>Looking to sign</div>
                 </label>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="3" checked={this.props.generalInfo.move_weight === 3} onChange={() => {}} />
