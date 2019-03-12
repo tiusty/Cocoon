@@ -36,8 +36,8 @@ def send_new_itinerary_marketplace_email(agent):
 
 def send_new_itinerary_referred_email(agent):
     """
-    Sends an email when a new itinerary is created to inform all the agents to check out the
-        marketplace
+    Sends an email when a new itinerary is created and the client had a referred agent. This notifies
+        that agent that their client created an Itinerary and sends them to their agent portal.
     :param agent:  (MyUser model) -> A user that has is_broker set to true.
     """
     if hasattr(settings, 'DEFAULT_DOMAIN'):
