@@ -52,7 +52,7 @@ export default class PopUp extends Component {
 
     determinePopupType = () => {
         const { homeList } = this.props;
-        if (homeList.length <= 15) {
+        if (homeList.length <= 10) {
             this.setState({
                 popupType: 'error',
                 popupReason: 'Low Number of Homes'
@@ -64,7 +64,7 @@ export default class PopUp extends Component {
                 popupReason: 'Low Scores'
             })
             return;
-        } else if (homeList && this.getNumberOfGreatMatches(homeList) > 30) {
+        } else if (homeList && this.getNumberOfGreatMatches(homeList) > 15) {
             this.setState({
                 popupType: 'info',
                 popupReason: 'Protip'
@@ -109,9 +109,8 @@ export default class PopUp extends Component {
             return (
                 <p>After checking your results we noticed that you have only {homeCount} {homeCount > 1 ? 'homes ' : 'home '}
                     above 50. This is due to not being able to find homes that meet
-                    your constraints. Please make changes to increase the scoring/add
-                    more homes such as increasing the price range,
-                    reducing amenities requirements, changing commute requirements etc.
+                    your constraints. Please make changes to increase the scoring
+                    such as increasing the price range, reducing amenities requirements, changing commute requirements etc.
                 </p>
             );
         } else if (popupReason === 'Low Number of Homes') {
@@ -119,22 +118,22 @@ export default class PopUp extends Component {
                 return <p>
                     After checking your results we noticed that not many homes
                     showed up for your criteria. Since you’re not in a rush, we
-                    recommend that you subscribe to this survey so you’re notified
-                    the moment something comes online!
+                    recommend that you subscribe to this survey by clicking
+                    "Keep me updated" so you’re notified the moment something comes online!
                 </p>
             } else {
                 return (
                     <p>After checking your results we noticed that not many homes
-                    showed up for your criteria. To fix this please increase
+                    showed up for your criteria. To fix this please increase the
                     price range, commute range/type, polygons etc to add more
-                    homes or subscribe to the survey on the left and you will
-                    be notified when more homes show up.</p>
+                    homes. Alternatively you may subscribe to the survey by clicking
+                    "Keep me updated" and you will be notified when more homes show up.</p>
                 );
             }
         } else if (popupReason === 'Protip') {
             return (
                 <p>
-                    We noticed you had a ton of great matches. To seperate them
+                    We noticed you had a ton of great matches. To separate them
                     out more you should increase the restrictions of your survey
                     so your perfect home stands out!
                 </p>
