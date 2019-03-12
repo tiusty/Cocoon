@@ -31,7 +31,7 @@ export default class ResultsPage extends Component {
         super(props);
         this.state = {
             googleApiLoaded: false,
-            // homeList: undefined,
+            homeList: undefined,
             survey_name: undefined,
             survey: undefined,
             favorites: [],
@@ -120,7 +120,8 @@ export default class ResultsPage extends Component {
             .then(response => {
                 this.setState({
                     homeList: response.data,
-                    isLoading: false
+                    isLoading: false,
+                    isViewingPopup: true
                 });
             })
     };
@@ -395,7 +396,7 @@ export default class ResultsPage extends Component {
     }
 
     renderPopup = () => {
-        if (this.state.isViewingPopup === true && this.state.homeList) {
+        if (this.state.isViewingPopup === true && this.state.homeList && this.state.survey && this.state.isLoading === false) {
             return (
                 <PopUp
                     survey={this.state.survey}
