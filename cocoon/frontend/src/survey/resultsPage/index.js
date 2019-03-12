@@ -31,7 +31,7 @@ export default class ResultsPage extends Component {
         super(props);
         this.state = {
             googleApiLoaded: false,
-            homeList: undefined,
+            // homeList: undefined,
             survey_name: undefined,
             survey: undefined,
             favorites: [],
@@ -43,6 +43,7 @@ export default class ResultsPage extends Component {
             isEditing: false,
             isLoading: true,
             center: undefined,
+            isViewingPopup: true,
             verificationEmailSent: false,
             verificationEmailLoading: false,
         }
@@ -277,6 +278,7 @@ export default class ResultsPage extends Component {
         **/
         this.setState({
             isEditing: !this.state.isEditing,
+            isViewingPopup: false,
             clicked_home: undefined,
             viewing_home: false
         }, () => this.state.isEditing ? document.querySelector('.results-wrapper').scrollTop = 0 : null)
@@ -386,6 +388,27 @@ export default class ResultsPage extends Component {
         }
     }
 
+    handlePopupClose = () => {
+        this.setState({
+            isViewingPopup: false
+        })
+    }
+
+    renderPopup = () => {
+        if (this.state.isViewingPopup === true && this.state.homeList) {
+            return (
+                <PopUp
+                    survey={this.state.survey}
+                    homeList={this.state.homeList}
+                    handlePopupClose={this.handlePopupClose}
+                    editSurvey={this.toggleEditing}
+                />
+            );
+        } else {
+            return null;
+        }
+    }
+
     handleVerification = () => {
         /**
          *  If the user is verified this will render the normal page.
@@ -394,7 +417,7 @@ export default class ResultsPage extends Component {
         if (this.props.is_verified) {
             return (
                 <div id="results-page">
-                    <PopUp survey={this.state.survey} homeList={this.state.homeList} />
+                    {this.renderPopup()}
                     <div className={this.setResultsWrapperClass()}>
                         <div className="not-optimized">
                             <p>Please use a laptop/desktop to use the map features of this page</p>
