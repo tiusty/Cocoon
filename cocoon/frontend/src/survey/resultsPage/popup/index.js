@@ -95,10 +95,8 @@ export default class PopUp extends Component {
     handleButtonStyle = () => {
         const { popupType } = this.state;
         let style = { background: 'var(--red)' };
-        if (popupType === 'success') {
+        if (popupType === 'success' || popupType === 'info') {
             style = { background: 'var(--teal)' };
-        } else if (popupType === 'info') {
-            style = { background: 'var(--darkBlue)' };
         }
         return style;
     }
