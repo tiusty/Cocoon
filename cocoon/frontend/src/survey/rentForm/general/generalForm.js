@@ -15,6 +15,8 @@ import DrawingManager from "react-google-maps/lib/components/drawing/DrawingMana
 
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
+import Help from '../help';
+
 export default class GeneralForm extends Component {
     state = {
         home_type_options: [],
@@ -170,7 +172,16 @@ export default class GeneralForm extends Component {
     renderNumberOfPeopleQuestion() {
         return (
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How many people are you <span>searching with</span>?</h2>
+                <h2>How many people are you <span>searching with</span>?
+                    <Help
+                        helpElement={document.getElementById('number_of_tenant_help')}
+                    />
+                </h2>
+                <div className="help-box" id="number_of_tenant_help">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mi tortor, pellentesque sit amet ante
+                    sed, aliquet varius mi. Vestibulum tempor nulla vitae faucibus hendrerit. Praesent hendrerit
+                    convallis nibh sed elementum.
+                </div>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
                     <div>Just Me</div>
