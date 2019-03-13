@@ -52,6 +52,8 @@ class WordScraper:
                     if (word_num + j) not in list_index[j]:
                         return False
             return True
+        else:
+            return False
 
     def look_for_laundry_in_building(self):
         """
@@ -65,7 +67,8 @@ class WordScraper:
                 or self.word_finder(["w", "/", "d", "in", "building"]) \
                 or self.word_finder(["washer", "&", "dryer", "in", "building"]) \
                 or self.word_finder(["wd", "in", "building"])\
-                or self.word_finder(["common", "laundry", "room"]):
+                or self.word_finder(["common", "laundry", "room"])\
+                or self.word_finder(['common', 'laundry']):
             return True
         return False
 

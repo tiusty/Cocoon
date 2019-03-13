@@ -19,7 +19,7 @@ import HomeTile from '../../common/homeTile/homeTile';
 import HomeTileLarge from '../../common/homeTile/homeTileLarge';
 import Map from './map/map';
 import RentForm from '../../survey/rentForm/main';
-
+import PopUp from './popup';
 
 // Necessary XSRF headers for posting form
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -43,6 +43,7 @@ export default class ResultsPage extends Component {
             isEditing: false,
             isLoading: true,
             center: undefined,
+            isViewingPopup: true,
             verificationEmailSent: false,
             verificationEmailLoading: false,
         }
@@ -91,7 +92,7 @@ export default class ResultsPage extends Component {
         /**
          * Retrieves the Survey by passing the survey url
          */
-        axios.get(survey_endpoints['rentSurvey'] + this.getSurveyUrl(), {params: {type: 'by_url'}})
+        axios.get(survey_endpoints['rentSurvey'] + this.getSurveyUrl() + '/', {params: {type: 'by_url'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
@@ -114,12 +115,13 @@ export default class ResultsPage extends Component {
         /**
          * Retrieve the survey results
          */
-        axios.get(survey_endpoints['rentResult'] + this.getSurveyUrl())
+        axios.get(survey_endpoints['rentResult'] + this.getSurveyUrl() + '/', {params: {type: 'by_url'}})
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
                     homeList: response.data,
-                    isLoading: false
+                    isLoading: false,
+                    isViewingPopup: true
                 });
             })
     };
@@ -277,6 +279,7 @@ export default class ResultsPage extends Component {
         **/
         this.setState({
             isEditing: !this.state.isEditing,
+            isViewingPopup: false,
             clicked_home: undefined,
             viewing_home: false
         }, () => this.state.isEditing ? document.querySelector('.results-wrapper').scrollTop = 0 : null)
@@ -386,6 +389,27 @@ export default class ResultsPage extends Component {
         }
     }
 
+    handlePopupClose = () => {
+        this.setState({
+            isViewingPopup: false
+        })
+    }
+
+    renderPopup = () => {
+        if (this.state.isViewingPopup === true && this.state.homeList && this.state.survey && this.state.isLoading === false) {
+            return (
+                <PopUp
+                    survey={this.state.survey}
+                    homeList={this.state.homeList}
+                    handlePopupClose={this.handlePopupClose}
+                    editSurvey={this.toggleEditing}
+                />
+            );
+        } else {
+            return null;
+        }
+    }
+
     handleVerification = () => {
         /**
          *  If the user is verified this will render the normal page.
@@ -394,6 +418,7 @@ export default class ResultsPage extends Component {
         if (this.props.is_verified) {
             return (
                 <div id="results-page">
+                    {this.renderPopup()}
                     <div className={this.setResultsWrapperClass()}>
                         <div className="not-optimized">
                             <p>Please use a laptop/desktop to use the map features of this page</p>
