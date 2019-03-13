@@ -6,11 +6,11 @@ from .models import RentingSurveyModel, TenantModel
 
 # Import Third party modules
 from cocoon.houseDatabase.serializers import RentDatabaseSerializer, RentDatabaseSerializerBroker
-from cocoon.commutes.serializers import CommuteTypeSerializerJustId
+from cocoon.commutes.serializers import CommuteTypeSerializer
 
 
 class TenantSerializer(serializers.HyperlinkedModelSerializer):
-    commute_type = CommuteTypeSerializerJustId()
+    commute_type = CommuteTypeSerializer()
 
     class Meta:
         model = TenantModel
