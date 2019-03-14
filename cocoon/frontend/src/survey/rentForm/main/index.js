@@ -22,90 +22,12 @@ export default class RentForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            step: 1,
-            loading: false,
-            isEditing: false,
-            googleApiLoaded: false,
-            google_autocomplete_errors: "",
 
-            // General Form Fields
-            generalInfo: {
-                number_of_tenants: 1,
-                home_type: [],
-                move_weight: undefined,
-                num_bedrooms: [],
-                polygon_filter_type: 0,
-                polygons: [],
-                desired_price: 1000,
-                max_price: 3000,
-                price_weight: 2,
-                earliest_move_in: undefined,
-                latest_move_in: undefined,
-            },
-
-            // Amenities Form Fields
-            amenitiesInfo: {
-                wants_laundry_in_unit: false,
-                laundry_in_unit_weight: 0,
-                wants_laundry_in_building: false,
-                laundry_in_building_weight: 0,
-                wants_laundry_nearby: false,
-                laundry_nearby_weight: 0,
-                wants_parking: false,
-                number_of_cars: 0,
-                wants_furnished: false,
-                furnished_weight: 0,
-                wants_dogs: false,
-                dog_weight: 0,
-                number_of_dogs: 0,
-                service_dogs: false,
-                dog_size: '',
-                breed_of_dogs: '',
-                wants_cats: false,
-                cat_weight: 0,
-                wants_hardwood_floors: false,
-                hardwood_floors_weight: 0,
-                wants_AC: false,
-                AC_weight: 0,
-                wants_dishwasher: false,
-                dishwasher_weight: 0,
-                wants_patio: false,
-                patio_weight: 0,
-                wants_pool: false,
-                pool_weight: 0,
-                wants_gym: false,
-                gym_weight: 0,
-                wants_storage: false,
-                storage_weight: 0,
-            },
-
-            // Tenant form fields
-            tenants: [],
-        };
-
-        // Necessary form management fields for Django formsets
-        this.state['tenants-INITIAL_FORMS'] = 0;
-        this.state['tenants-MAX_NUM_FORMS'] = 1000;
-        this.state['tenants-MIN_NUM_FORMS'] = 0;
-        this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
-    }
-
-    componentDidMount() {
-        /**
-         * If a survey prop is passed in, then the data for the survey is populated
-         *  via the survey prop
-         *
-         * Otherwise the data is assumed to be blank
-         */
-        if (this.props.survey) {
+        // Set the state if the survey is being loaded
+        if (props.survey) {
             // Do a deep copy... otherwise it is a memory reference and causes issues
             //  when the component is unmounted
-            let survey = JSON.parse(JSON.stringify(this.props.survey));
-
-            // We need to set the initial forms to the current number of tenants so
-            //  tenants are not duplicated
-            this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;
+            let survey = JSON.parse(JSON.stringify(props.survey));
 
             // Make sure the tenants are sorted in the order of creation
             // (the most recently created has the lowest id)
@@ -141,13 +63,111 @@ export default class RentForm extends Component {
                 survey.generalInfo.latest_move_in = undefined
             }
 
-            this.setState({
-                amenitiesInfo: survey.amenitiesInfo,
-                generalInfo: survey.generalInfo,
-                tenants,
+            this.state = {
+                step: 1,
+                loading: false,
                 isEditing: true,
-            })
-        }
+                googleApiLoaded: false,
+                google_autocomplete_errors: "",
+
+                // General Form Fields
+                generalInfo: survey.generalInfo,
+
+                // Amenities Form Fields
+                amenitiesInfo: survey.amenitiesInfo,
+
+                // Tenant form fields
+                tenants: tenants,
+            };
+
+            // Necessary form management fields for Django formsets
+            // We need to set the initial forms to the current number of tenants so
+            //  tenants are not duplicated
+            this.state['tenants-INITIAL_FORMS'] = survey.tenants.length;
+            this.state['tenants-MAX_NUM_FORMS'] = 1000;
+            this.state['tenants-MIN_NUM_FORMS'] = 0;
+            this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
+
+        // Set the state if it is a new survey
+        } else {
+            this.state = {
+                step: 1,
+                loading: false,
+                isEditing: false,
+                googleApiLoaded: false,
+                google_autocomplete_errors: "",
+
+                // General Form Fields
+                generalInfo: {
+                    number_of_tenants: 1,
+                    home_type: [],
+                    move_weight: undefined,
+                    num_bedrooms: [],
+                    polygon_filter_type: 0,
+                    polygons: [],
+                    desired_price: 1000,
+                    max_price: 3000,
+                    price_weight: 2,
+                    earliest_move_in: undefined,
+                    latest_move_in: undefined,
+                },
+
+                // Amenities Form Fields
+                amenitiesInfo: {
+                    wants_laundry_in_unit: false,
+                    laundry_in_unit_weight: 0,
+                    wants_laundry_in_building: false,
+                    laundry_in_building_weight: 0,
+                    wants_laundry_nearby: false,
+                    laundry_nearby_weight: 0,
+                    wants_parking: false,
+                    number_of_cars: 0,
+                    wants_furnished: false,
+                    furnished_weight: 0,
+                    wants_dogs: false,
+                    dog_weight: 0,
+                    number_of_dogs: 0,
+                    service_dogs: false,
+                    dog_size: '',
+                    breed_of_dogs: '',
+                    wants_cats: false,
+                    cat_weight: 0,
+                    wants_hardwood_floors: false,
+                    hardwood_floors_weight: 0,
+                    wants_AC: false,
+                    AC_weight: 0,
+                    wants_dishwasher: false,
+                    dishwasher_weight: 0,
+                    wants_patio: false,
+                    patio_weight: 0,
+                    wants_pool: false,
+                    pool_weight: 0,
+                    wants_gym: false,
+                    gym_weight: 0,
+                    wants_storage: false,
+                    storage_weight: 0,
+                },
+
+                // Tenant form fields
+                tenants: [],
+            }
+
+            // Necessary form management fields for Django formsets
+            this.state['tenants-INITIAL_FORMS'] = 0;
+            this.state['tenants-MAX_NUM_FORMS'] = 1000;
+            this.state['tenants-MIN_NUM_FORMS'] = 0;
+            this.state['tenants-TOTAL_FORMS'] = this.state.generalInfo.number_of_tenants;
+        };
+
+    }
+
+    componentDidMount() {
+        /**
+         * If a survey prop is passed in, then the data for the survey is populated
+         *  via the survey prop
+         *
+         * Otherwise the data is assumed to be blank
+         */
 
         // This interval checks every .3 seconds to see if the google api loaded.
         this.interval = setInterval(() => this.checkGoogleApi(), 300);

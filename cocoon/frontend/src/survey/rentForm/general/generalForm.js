@@ -366,7 +366,6 @@ export default class GeneralForm extends Component {
     }
 
     renderDatePickingQuestion() {
-        console.log(new Date(this.props.generalInfo.latest_move_in));
         if (this.props.generalInfo.move_weight !== 3) {
             return (
                 <div className="survey-question">
@@ -379,6 +378,7 @@ export default class GeneralForm extends Component {
                         <DayPicker
                             onDayClick={this.props.handleEarliestClick}
                             selectedDays={!this.props.generalInfo.earliest_move_in ? null : new Date(this.props.generalInfo.earliest_move_in)}
+                            initialMonth={!this.props.generalInfo.earliest_move_in ? new Date() : new Date(this.props.generalInfo.earliest_move_in)}
                         />
                     </div>
                     <div className="col-md-6 date-wrapper">
@@ -388,6 +388,7 @@ export default class GeneralForm extends Component {
                         <DayPicker
                             onDayClick={this.props.handleLatestClick}
                             selectedDays={!this.props.generalInfo.latest_move_in ? null : new Date(this.props.generalInfo.latest_move_in)}
+                            initialMonth={!this.props.generalInfo.latest_move_in ? new Date() : new Date(this.props.generalInfo.latest_move_in)}
                         />
                     </div>
                 </div>
