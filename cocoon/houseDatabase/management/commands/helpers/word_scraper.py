@@ -52,20 +52,31 @@ class WordScraper:
                     if (word_num + j) not in list_index[j]:
                         return False
             return True
+        else:
+            return False
 
     def look_for_laundry_in_building(self):
         """
         Looks for laundry in building using multiple synonyms and abbreviations. Returns True if any one of the
         conditions match, returns False otherwise
         """
-        if self.word_finder(["laundry", "in", "building"]) \
-                or self.word_finder(["laundry", "in", "bldg"]) \
-                or self.word_finder(["washer", "dryer", "in", "building"]) \
-                or self.word_finder(["washer", "and", "dryer", "in", "building"]) \
-                or self.word_finder(["w", "/", "d", "in", "building"]) \
-                or self.word_finder(["washer", "&", "dryer", "in", "building"]) \
-                or self.word_finder(["wd", "in", "building"])\
-                or self.word_finder(["common", "laundry", "room"]):
+        if self.word_finder(["laundry", "in", "building"]):
+            return True
+        if self.word_finder(["laundry", "in", "bldg"]):
+            return True
+        if self.word_finder(["washer", "dryer", "in", "building"]):
+            return True
+        if self.word_finder(["washer", "and", "dryer", "in", "building"]):
+            return True
+        if self.word_finder(["w", "/", "d", "in", "building"]):
+            return True
+        if self.word_finder(["washer", "&", "dryer", "in", "building"]):
+            return True
+        if self.word_finder(["wd", "in", "building"]):
+            return True
+        if self.word_finder(["common", "laundry", "room"]):
+            return True
+        if self.word_finder(['common', 'laundry']):
             return True
         return False
 

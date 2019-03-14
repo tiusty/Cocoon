@@ -1,0 +1,17 @@
+{% extends "base_email_button.html" %}
+
+{% block headline %}
+    A Client Scheduled an Itinerary!
+{% endblock %}
+
+{% block greeting %}
+    Hey {{ agent_name }}!
+{% endblock %}
+
+{% block content %}
+    One of your clients created an Itinerary! Click below to view the Itinerary.
+{% endblock %}
+
+{% block buttonLink %}{{ domain }}{% url 'scheduler:agentSchedulerPortal' %}{% endblock %}
+
+{% block buttonText %}View Agent Portal{% endblock %}

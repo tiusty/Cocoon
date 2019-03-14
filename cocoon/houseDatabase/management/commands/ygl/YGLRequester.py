@@ -109,6 +109,17 @@ class YGLRequester(object):
                             new_listing.currently_available = True
                         else:
                             new_listing.currently_available = False
+                    elif element.tag == 'Pet':
+                        if 'Dog Ok' in element.text:
+                            new_listing.dogs_allowed = True
+                        elif 'Cat Ok' in element.text:
+                            new_listing.cats_allowed = True
+                        elif 'Pet Friendly' in element.text:
+                            new_listing.dogs_allowed = True
+                            new_listing.cats_allowed = True
+                        elif 'Negotiable' in element.text:
+                            new_listing.dogs_allowed = True
+                            new_listing.cats_allowed = True
                     elif element.tag == 'Parking':
                         if element.text == 'Included':
                             new_listing.parking_spot = True
@@ -123,29 +134,22 @@ class YGLRequester(object):
 
                         new_listing.furnished = word_scraper.word_finder(["furnished"])
                         new_listing.hardwood_floors = word_scraper.look_for_hardwood_floors()
-                        new_listing.dishwasher = word_scraper.word_finder(["dishwasher"])
+                        new_listing.dishwasher = word_scraper.word_finder(["dishwasher"]) \
+                            or word_scraper.word_finder(['dish', 'washer'])
 
                         if (word_scraper.word_finder(["air", "conditioning"])) \
                                 or word_scraper.word_finder(["ac"])\
                                 or word_scraper.word_finder(["a", "/", "c"]):
                             new_listing.air_conditioning = True
 
-                        if word_scraper.word_finder(["dogs", "allowed"]) and not word_scraper.word_finder(
-                                ["no", "dogs", "allowed"]):
-                            new_listing.dogs_allowed = True
-
-                        if word_scraper.word_finder(["cats", "allowed"]) and not word_scraper.word_finder(
-                                ["no", "cats", "allowed"]):
-                            new_listing.cats_allowed = True
-
-                        new_listing.laundry_in_building = word_scraper.look_for_laundry_in_unit()
-
                         if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot", "tub"]):
                             new_listing.pool = True
                         if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
                             new_listing.patio_balcony = True
 
+                        new_listing.laundry_in_building = word_scraper.look_for_laundry_in_building()
                         new_listing.laundry_in_unit = word_scraper.look_for_laundry_in_unit()
+
                         new_listing.gym = word_scraper.word_finder(["gym"]) or word_scraper.word_finder(
                             ["fitness", "center"])
                         new_listing.storage = word_scraper.word_finder(["storage"])

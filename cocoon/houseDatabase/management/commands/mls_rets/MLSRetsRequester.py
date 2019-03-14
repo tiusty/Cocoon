@@ -110,6 +110,8 @@ class MLSRetsRequester(object):
             new_listing.listing_provider = HomeProviderModel.objects.get_or_create(provider=HomeProviderModel.MLSPIN)[0]
 
             # Amenities
+            new_listing.dogs_allowed = 'yes' in home['PETS_ALLOWED'].lower()
+            new_listing.cats_allowed = 'yes' in home['PETS_ALLOWED'].lower()
             word_scraper_remarks = WordScraper(new_listing.remarks)
             word_scraper_appliances = WordScraper(home['Appliances'])
             new_listing.air_conditioning = home['AIR_CONDITION'] == 'Yes'
@@ -124,8 +126,6 @@ class MLSRetsRequester(object):
                                      or word_scraper_appliances.word_finder(["dishwasher"])
             new_listing.laundry_in_building = word_scraper_remarks.look_for_laundry_in_building() \
                                               or word_scraper_appliances.look_for_laundry_in_building()
-            new_listing.dogs_allowed = home['PETS_ALLOWED'] == 'Yes'
-            new_listing.cats_allowed = home['PETS_ALLOWED'] == 'YES'
             if word_scraper_remarks.word_finder(["pool"]) or word_scraper_remarks.word_finder(["hot","tub"]):
                 new_listing.pool = True
             if word_scraper_remarks.word_finder(["balcony"]) or word_scraper_remarks.word_finder(["patio"]):

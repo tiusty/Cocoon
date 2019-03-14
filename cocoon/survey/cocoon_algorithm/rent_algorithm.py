@@ -261,6 +261,10 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
             self.handle_weighted_question('air_conditioning', survey.AC_weight, home_score, home_score.home.air_conditioning)
         if survey.wants_dishwasher:
             self.handle_weighted_question('dishwasher', survey.dishwasher_weight, home_score, home_score.home.dishwasher)
+        if survey.wants_dogs:
+            self.handle_weighted_question('dogs_allowed', survey.dog_weight, home_score, home_score.home.dogs_allowed)
+        if survey.wants_cats:
+            self.handle_weighted_question('cats_allowed', survey.cat_weight, home_score, home_score.home.cats_allowed)
 
     def run_compute_weighted_score_exterior_amenities(self, survey, home_score):
         """
@@ -284,6 +288,16 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         """
         self.homes = self.python_sort(self.homes)
 
+    def remove_eliminated_homes(self):
+        """
+        Checks all the homes in the list and removes any homes that have been marked for elimination
+        """
+        filter_homes = []
+        for home in self.homes:
+            if not home.eliminated:
+                filter_homes.append(home)
+        self.homes = filter_homes
+
     def run(self, survey):
         """
         STEP 1: Populate the rent_algorithm with all the information from the survey
@@ -300,6 +314,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         STEP 3: Remove homes that are too far away using approximate commutes
         """
         self.run_compute_approximate_commute_filter()
+        self.remove_eliminated_homes()
 
         """
         STEP 4: Generate scores based on hybrid questions

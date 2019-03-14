@@ -215,6 +215,12 @@ class InteriorAmenitiesForm(ModelForm):
         required=False,
     )
 
+    dog_weight = forms.IntegerField(
+        required=False,
+        max_value=HYBRID_WEIGHT_MAX,
+        min_value=0,
+    )
+
     service_dogs = forms.BooleanField(
         required=False,
     )
@@ -229,7 +235,6 @@ class InteriorAmenitiesForm(ModelForm):
 
     number_of_dogs = forms.IntegerField(
         required=False,
-        min_value=0,
     )
 
     wants_cats = forms.BooleanField(
@@ -275,9 +280,9 @@ class InteriorAmenitiesForm(ModelForm):
     class Meta:
         model = InteriorAmenitiesModel
         fields = ('wants_laundry_in_unit', 'laundry_in_unit_weight', 'wants_furnished', 'furnished_weight',
-                  'wants_dogs', 'service_dogs', 'dog_size', 'breed_of_dogs', 'number_of_dogs', 'wants_cats',
-                  'cat_weight', 'wants_hardwood_floors', 'hardwood_floors_weight', 'wants_AC', 'AC_weight',
-                  'wants_dishwasher', 'dishwasher_weight')
+                  'wants_dogs', 'dog_weight', 'service_dogs', 'dog_size', 'breed_of_dogs', 'number_of_dogs',
+                  'wants_cats', 'cat_weight', 'wants_hardwood_floors', 'hardwood_floors_weight', 'wants_AC',
+                  'AC_weight', 'wants_dishwasher', 'dishwasher_weight')
 
 
 class RentSurveyForm(InteriorAmenitiesForm, ExteriorAmenitiesForm, HouseNearbyAmenitiesForm, PriceInformationForm,

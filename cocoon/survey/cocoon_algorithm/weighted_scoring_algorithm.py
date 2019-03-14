@@ -59,7 +59,7 @@ class WeightScoringAlgorithm(object):
         :param does_home_contain_item: (Boolean): Boolean of whether or not the home as the item
         """
         if not (self.compute_weighted_question_filter(user_scale_factor, does_home_contain_item)):
-            home.eliminate_home(amenity_name)
+            home.add_missing_amenity(amenity_name)
         self.handle_weighted_question_score(user_scale_factor, home, does_home_contain_item)
 
     def handle_laundry_weight_question(self, survey, home_score):

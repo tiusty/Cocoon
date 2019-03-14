@@ -8,7 +8,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.text import slugify
 
 # Import cocoon models
-
 from cocoon.userAuth.models import MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.survey.models import RentingSurveyModel
