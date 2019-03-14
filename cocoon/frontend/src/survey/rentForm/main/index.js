@@ -130,13 +130,13 @@ export default class RentForm extends Component {
 
             // Set the earliest and latest move in fields to moments
             if (survey.generalInfo.earliest_move_in) {
-                survey.generalInfo.earliest_move_in = survey.generalInfo.earliest_move_in
+                survey.generalInfo.earliest_move_in = moment(survey.generalInfo.earliest_move_in)
             } else {
                 survey.generalInfo.earliest_move_in = undefined
             }
 
             if (survey.generalInfo.latest_move_in) {
-                survey.generalInfo.latest_move_in = survey.generalInfo.latest_move_in
+                survey.generalInfo.latest_move_in = moment(survey.generalInfo.latest_move_in)
             } else {
                 survey.generalInfo.latest_move_in = undefined
             }
@@ -231,12 +231,12 @@ export default class RentForm extends Component {
 
         // Make sure the earliest_move_in is in the correct format for django forms
         if (this.state.generalInfo.earliest_move_in) {
-            data['generalInfo'].earliest_move_in = moment(new Date(this.state.generalInfo.earliest_move_in)).format('YYYY-MM-DD HH:mm')
+            data['generalInfo'].earliest_move_in = this.state.generalInfo.earliest_move_in.format('YYYY-MM-DD HH:mm')
         }
 
         // Make sure the latest_move_in is in the right format for django to add to the form
         if (this.state.generalInfo.latest_move_in) {
-            data['generalInfo'].latest_move_in = moment(new Date(this.state.generalInfo.latest_move_in)).format('YYYY-MM-DD HH:mm')
+            data['generalInfo'].latest_move_in = this.state.generalInfo.latest_move_in.format('YYYY-MM-DD HH:mm')
         }
 
         /**             Amenities data                     **/
@@ -445,13 +445,13 @@ export default class RentForm extends Component {
 
     handleEarliestClick = (day, {selected}) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['earliest_move_in'] = selected ? null : new Date(day);
+        generalInfo['earliest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 
     handleLatestClick = (day, { selected }) => {
         let generalInfo = this.state.generalInfo;
-        generalInfo['latest_move_in'] = selected ? null : new Date(day);
+        generalInfo['latest_move_in'] = selected ? null : moment(day);
         this.setState({generalInfo});
     };
 

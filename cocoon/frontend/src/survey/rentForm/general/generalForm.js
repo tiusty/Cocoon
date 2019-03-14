@@ -366,6 +366,7 @@ export default class GeneralForm extends Component {
     }
 
     renderDatePickingQuestion() {
+        console.log(new Date(this.props.generalInfo.latest_move_in));
         if (this.props.generalInfo.move_weight !== 3) {
             return (
                 <div className="survey-question">
