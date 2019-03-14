@@ -21,6 +21,11 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 export default class RentForm extends Component {
 
     constructor(props) {
+        /**
+         * Depending on whether a survey is passed in or not
+         * (i.e editing or starting a new survey. Set the state variables
+         *  accordingly
+         */
         super(props);
 
         // Set the state if the survey is being loaded
@@ -163,10 +168,7 @@ export default class RentForm extends Component {
 
     componentDidMount() {
         /**
-         * If a survey prop is passed in, then the data for the survey is populated
-         *  via the survey prop
-         *
-         * Otherwise the data is assumed to be blank
+         * Start an interval to check for the google maps api existing
          */
 
         // This interval checks every .3 seconds to see if the google api loaded.
