@@ -1,39 +1,59 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import './help.css';
 
 export default class Help extends Component {
 
     /*
-    * this.props.helpElement(el) = The html element to toggle.
-    *       Pass down using document.getElementById('el')
-    *       i.e. <Help helpElement={document.getElementById('number_of_tenant_help')} />
+    * this.props.helpText(string) = Text to be used inside of help box
     */
 
     constructor(props) {
         super(props);
         this.state = {
-            viewingHelp: false
+            viewingHelp: false,
+            targetElement: undefined
         }
+    }
+
+    componentDidMount() {
+        let targetElement = findDOMNode(this).parentNode;
+        this.setState({
+            targetElement: targetElement
+        })
     }
 
     componentDidUpdate(prevState) {
         if (this.state.viewingHelp !== prevState.viewingHelp) {
-            this.toggleHelpDiv();
+            this.toggleHelpBlock();
         }
     }
 
     toggleHelp = () => {
         this.setState({
             viewingHelp: !this.state.viewingHelp
-        }, () => console.log('viewingHelp: ' + this.state.viewingHelp))
+        })
     }
 
-    toggleHelpDiv = () => {
-        if (this.props.helpElement && this.state.viewingHelp) {
-            this.props.helpElement.style.display = 'block';
+    toggleHelpBlock = () => {
+        if (this.state.targetElement && this.state.viewingHelp) {
+            this.createHelpBlock();
         } else {
-            this.props.helpElement.style.display = 'none';
+            this.removeHelpBlock();
+        }
+    }
+
+    createHelpBlock = () => {
+        const div = document.createElement("div");
+        div.className = 'help-box';
+        div.innerText = this.props.helpText;
+        this.state.targetElement.parentNode.insertBefore(div, this.state.targetElement.nextSibling);
+    }
+
+    removeHelpBlock = () => {
+        if (this.state.targetElement.parentNode.querySelector('.help-box')) {
+            this.state.targetElement.parentNode.removeChild(this.state.targetElement.parentNode.querySelector('.help-box'));
         }
     }
 
@@ -64,5 +84,5 @@ export default class Help extends Component {
 }
 
 Help.propTypes = {
-    helpElement: PropTypes.any.isRequired
+    helpText: PropTypes.string.isRequired
 };

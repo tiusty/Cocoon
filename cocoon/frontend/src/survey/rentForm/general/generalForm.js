@@ -174,14 +174,11 @@ export default class GeneralForm extends Component {
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
                 <h2>How many people are you <span>searching with</span>?
                     <Help
-                        helpElement={document.getElementById('number_of_tenant_help')}
+                        helpText=" Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mi tortor, pellentesque sit amet ante
+                    sed, aliquet varius mi. Vestibulum tempor nulla vitae faucibus hendrerit. Praesent hendrerit
+                    convallis nibh sed elementum."
                     />
                 </h2>
-                <div className="help-box" id="number_of_tenant_help">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mi tortor, pellentesque sit amet ante
-                    sed, aliquet varius mi. Vestibulum tempor nulla vitae faucibus hendrerit. Praesent hendrerit
-                    convallis nibh sed elementum.
-                </div>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
                     <div>Just Me</div>

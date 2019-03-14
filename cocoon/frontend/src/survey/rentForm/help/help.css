@@ -15,7 +15,7 @@
     padding: 15px;
     color: #7b7b7b;
     border-radius: 10px;
-    display: none;
+    display: block;
     animation: showHelp .3s ease forwards;
 }
 
