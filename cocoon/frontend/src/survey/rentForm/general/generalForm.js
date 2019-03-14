@@ -373,7 +373,7 @@ export default class GeneralForm extends Component {
                     <span className="col-md-12 survey-error-message" id="date_error"></span>
                     <div className="col-md-6 date-wrapper">
                         <span className="date-info">
-                            Earliest You'd like to move in: {!this.props.generalInfo.earliest_move_in ? '(Select a date below.)' : moment(new Date(this.props.generalInfo.earliest_move_in)).format('MM/DD/YYYY')}
+                            Earliest You'd like to move in: {!this.props.generalInfo.earliest_move_in ? '(Select a date below.)' : this.props.generalInfo.earliest_move_in.format('MM/DD/YYYY')}
                         </span>
                         <DayPicker
                             onDayClick={this.props.handleEarliestClick}
@@ -383,7 +383,7 @@ export default class GeneralForm extends Component {
                     </div>
                     <div className="col-md-6 date-wrapper">
                         <span className="date-info">
-                            Latest You'd like to move in: {!this.props.generalInfo.latest_move_in ? '(Select a date below.)' : moment(new Date(this.props.generalInfo.latest_move_in)).format('MM/DD/YYYY')}
+                            Latest You'd like to move in: {!this.props.generalInfo.latest_move_in ? '(Select a date below.)' : this.props.generalInfo.latest_move_in.format('MM/DD/YYYY')}
                         </span>
                         <DayPicker
                             onDayClick={this.props.handleLatestClick}
