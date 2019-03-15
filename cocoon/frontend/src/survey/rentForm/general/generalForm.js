@@ -15,7 +15,7 @@ import DrawingManager from "react-google-maps/lib/components/drawing/DrawingMana
 
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
-import Help from '../help';
+import SurveyQuestion from '../surveyQuestion';
 
 export default class GeneralForm extends Component {
     state = {
@@ -172,13 +172,11 @@ export default class GeneralForm extends Component {
     renderNumberOfPeopleQuestion() {
         return (
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How many people are you <span>searching with</span>?
-                    <Help
-                        helpText=" Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mi tortor, pellentesque sit amet ante
-                    sed, aliquet varius mi. Vestibulum tempor nulla vitae faucibus hendrerit. Praesent hendrerit
-                    convallis nibh sed elementum."
-                    />
-                </h2>
+                <SurveyQuestion
+                    surveyQuestion={'How many people are you <span>searching with</span>?'}
+                    hasHelp={true}
+                    surveyQuestionHelpText={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mi tortor, pellentesque sit amet ante sed, aliquet varius mi.'}
+                />
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
                     <div>Just Me</div>
@@ -317,7 +315,9 @@ export default class GeneralForm extends Component {
     renderPriceWeightQuestion() {
         return (
             <div className="survey-question" onChange={(e) =>this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How <span>important is the price</span>?</h2>
+                <SurveyQuestion
+                    surveyQuestion={'How <span>important is the price</span>?'}
+                />
                 <span className="col-md-12 survey-error-message" id="price_weight_error"></span>
                 <label className="col-md-4 survey-label">
                     <input type="radio" name="price_weight" value="0" checked={this.props.generalInfo.price_weight === 0} onChange={() => {}} />

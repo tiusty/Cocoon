@@ -1,3 +1,17 @@
+.survey-question h2 {
+    color: var(--darkBlue);
+    display: block;
+}
+
+.survey-question h2 span {
+    font-weight: 800;
+}
+
+.checkbox-helper-text {
+    font-size: 12px;
+    color: var(--grey);
+}
+
 .survey-question i {
     font-weight: bold;
     font-size: 17px;
@@ -5,11 +19,11 @@
     color: rgba(59, 72, 82, 0.5);
     cursor: pointer;
     line-height: 21px;
-    vertical-align: middle;
+    vertical-align: text-bottom;
 }
 
 .help-box {
-    margin-bottom: 15px;
+    margin: 10px 0;
     font-size: 12px;
     background: #f7f7f7;
     padding: 15px;

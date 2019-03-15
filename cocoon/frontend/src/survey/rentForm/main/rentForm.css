@@ -21,22 +21,13 @@
     padding: 10px 0px;
 }
 
+.survey-question #priceHelp {
+    display: block;
+}
+
 .survey-question .survey-label {
     display: block;
     padding: 5px;
-}
-
-.survey-question h2 {
-    color: var(--darkBlue);
-}
-
-.survey-question h2 span {
-    font-weight: 800;
-}
-
-.checkbox-helper-text {
-    font-size: 12px;
-    color: var(--grey);
 }
 
 .filter-delete-button {
