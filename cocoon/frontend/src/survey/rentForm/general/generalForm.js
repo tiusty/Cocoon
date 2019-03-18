@@ -15,7 +15,7 @@ import DrawingManager from "react-google-maps/lib/components/drawing/DrawingMana
 
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
 
-import SurveyQuestion from '../surveyQuestion';
+import SurveyQuestionHeader from '../surveyQuestionHeader';
 
 export default class GeneralForm extends Component {
     state = {
@@ -172,7 +172,7 @@ export default class GeneralForm extends Component {
     renderNumberOfPeopleQuestion() {
         return (
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <SurveyQuestion
+                <SurveyQuestionHeader
                     surveyQuestion={'How many people are you <span>searching with</span>?'}
                     hasHelp={true}
                     surveyQuestionHelpText={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mi tortor, pellentesque sit amet ante sed, aliquet varius mi.'}

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import './surveyQuestion.css';
+import './surveyQuestionHeader.css';
 
-export default class SurveyQuestion extends Component {
+export default class SurveyQuestionHeader extends Component {
 
     /*
     * this.props.surveyQuestion(string) = Text to be used for Survey question
