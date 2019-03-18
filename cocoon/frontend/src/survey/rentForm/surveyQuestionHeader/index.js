@@ -86,7 +86,7 @@ export default class SurveyQuestionHeader extends Component {
 
 }
 
-SurveyQuestion.propTypes = {
+SurveyQuestionHeader.propTypes = {
     surveyQuestion: PropTypes.string.isRequired,
     hasHelp: PropTypes.bool,
     surveyQuestionHelpText: PropTypes.string,
