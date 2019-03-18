@@ -20,6 +20,7 @@ import HomeTileLarge from '../../common/homeTile/homeTileLarge';
 import Map from './map/map';
 import RentForm from '../../survey/rentForm/main';
 import PopUp from './popup';
+import MobileToggleButton from './mobileToggleButton';
 
 // Necessary XSRF headers for posting form
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -46,6 +47,7 @@ export default class ResultsPage extends Component {
             isViewingPopup: true,
             verificationEmailSent: false,
             verificationEmailLoading: false,
+            isMobile: false
         }
     }
 
@@ -53,11 +55,41 @@ export default class ResultsPage extends Component {
         // This interval checks every .3 seconds to see if the google api loaded.
         this.interval = setInterval(() => this.checkGoogleApi(), 300);
         this.setPageHeight();
+        this.getPageWidth();
         if (this.props.is_verified) {
             this.getSurvey();
             this.getResults();
         }
     };
+
+    getPageWidth = () => {
+        /*
+         * Gets initial page width to determine whether or not user is on mobile (screen size < 768px)
+         * Adds event listener to listen for screen resize to check if screen changes to < 768
+         */
+        if (window.innerWidth < 768) {
+            this.setState({
+                isMobile: true
+            })
+        } else {
+            this.setState({
+                isMobile: false
+            })
+        }
+
+        window.addEventListener('resize', e => {
+            if (e.target.innerWidth < 768) {
+                this.setState({
+                    isMobile: true
+                })
+            } else {
+                this.setState({
+                    isMobile: false
+                })
+            }
+        })
+
+    }
 
     checkGoogleApi() {
         /**
@@ -420,21 +452,26 @@ export default class ResultsPage extends Component {
                 <div id="results-page">
                     {this.renderPopup()}
                     <div className={this.setResultsWrapperClass()}>
-                        <div className="not-optimized">
-                            <p>Please use a laptop/desktop to use the map features of this page</p>
-                        </div>
                         {this.renderButtonRow()}
                         {this.renderMainComponent()}
                     </div>
                     <div className="map-wrapper">
                         {this.state.homeList !== undefined && this.state.googleApiLoaded ?
                             <Map homes={this.state.homeList}
+                                 clicked_home={this.state.clicked_home}
                                  handleHomeClick={this.handleHomeClick}
                                  hover_id={this.state.hover_id}
                                  setHoverId={this.setHoverId}
                                  removeHoverId={this.removeHoverId}
                                  survey={this.state.survey} />
                             : null}
+
+                            <MobileToggleButton
+                                isMobile={this.state.isMobile}
+                                isEditing={this.state.isEditing}
+                                isViewingPopup={this.state.isViewingPopup}
+                                viewing_home={this.state.viewing_home} />
+
                     </div>
                 </div>
             );

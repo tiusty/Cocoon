@@ -1,5 +1,5 @@
 // Import React Components
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
 
@@ -10,6 +10,11 @@ import { compose, withProps } from "recompose";
 
 export default class Map extends Component {
 
+    constructor(props) {
+        super(props);
+        this.map = createRef();
+    }
+
     static defaultProps = {
         center: {
             lat: 42.36,
@@ -17,6 +22,23 @@ export default class Map extends Component {
         },
         zoom: 11
     };
+
+    componentDidMount() {
+        console.log(this.map)
+        this.createBounds();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+
+        if (this.props.clicked_home !== prevProps.clicked_home && this.props.clicked_home !== undefined) {
+            this.centerMarker(this.props.clicked_home);
+        }
+
+        if (this.props.homes !== prevProps.homes) {
+            this.createBounds();
+        }
+
+    }
 
     createMapOptions(maps) {
         const mapStyle = [ { "featureType": "all", "elementType": "labels", "stylers": [ { "visibility": "off" } ] }, { "featureType": "administrative", "elementType": "all", "stylers": [ { "visibility": "simplified" }, { "color": "#5b6571" }, { "lightness": "35" } ] }, { "featureType": "administrative.neighborhood", "elementType": "all", "stylers": [ { "visibility": "off" } ] }, { "featureType": "landscape", "elementType": "all", "stylers": [ { "visibility": "on" } ] }, { "featureType": "landscape.man_made", "elementType": "geometry", "stylers": [ { "weight": 0.9 }, { "visibility": "off" } ] }, { "featureType": "poi.park", "elementType": "geometry.fill", "stylers": [ { "visibility": "on" }, { "color": "#83cead" } ] }, { "featureType": "road", "elementType": "all", "stylers": [ { "visibility": "on" }, { "color": "#ffffff" } ] }, { "featureType": "road", "elementType": "labels", "stylers": [ { "visibility": "on" }, { "color": "#9a6868" } ] }, { "featureType": "road", "elementType": "labels.text", "stylers": [ { "visibility": "on" } ] }, { "featureType": "road", "elementType": "labels.text.fill", "stylers": [ { "color": "#454545" } ] }, { "featureType": "road", "elementType": "labels.text.stroke", "stylers": [ { "visibility": "off" } ] }, { "featureType": "road.highway", "elementType": "all", "stylers": [ { "visibility": "on" }, { "color": "#fee379" } ] }, { "featureType": "road.highway", "elementType": "geometry", "stylers": [ { "visibility": "on" } ] }, { "featureType": "road.highway", "elementType": "labels", "stylers": [ { "visibility": "on" } ] }, { "featureType": "road.highway", "elementType": "labels.text.fill", "stylers": [ { "visibility": "on" }, { "color": "#222121" } ] }, { "featureType": "road.highway", "elementType": "labels.text.stroke", "stylers": [ { "visibility": "off" } ] }, { "featureType": "road.highway", "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] }, { "featureType": "road.highway.controlled_access", "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] }, { "featureType": "road.arterial", "elementType": "all", "stylers": [ { "visibility": "simplified" }, { "color": "#ffffff" } ] }, { "featureType": "road.arterial", "elementType": "labels", "stylers": [ { "visibility": "off" } ] }, { "featureType": "road.arterial", "elementType": "labels.icon", "stylers": [ { "visibility": "off" } ] }, { "featureType": "transit", "elementType": "labels", "stylers": [ { "visibility": "on" } ] }, { "featureType": "water", "elementType": "all", "stylers": [ { "visibility": "on" }, { "color": "#7fc8ed" } ] } ];
@@ -43,6 +65,7 @@ export default class Map extends Component {
             homesCopy.reverse().map(home => {
                 let newMarker = (
                     <MapMarker
+                        home={home}
                         lat={home.home.latitude}
                         lng={home.home.longitude}
                         score={home.percent_match}
@@ -84,8 +107,42 @@ export default class Map extends Component {
         return mapMarkers;
     };
 
-    render() {
+    createBounds = () => {
+        /* ! IN PROGRESS
+        *   To resize/zoom/center the map to show all map markers
+        *   uses google maps fitBounds()
+        */
+        let mapBounds = [];
+        if (this.props.homes) {
+            this.props.homes.map(home => {
+            const { latitude, longitude } = home.home;
+            const newCoords = {
+                lat: latitude,
+                lng: longitude
+            }
+                mapBounds.push(newCoords)
+            })
+        }
+        // console.log(mapBounds)
+        // this.map.fitBounds(mapBounds);
+    }
 
+    centerMarker = (homeId) => {
+        /*
+        * ! IN PROGRESS
+        *   Used to pan to the center of the map on home click
+        */
+        const home = this.props.homes.find(home => home.home.id === homeId);
+        const { latitude, longitude } = home.home;
+        const centerCoords = {
+            lat: parseFloat(latitude),
+            lng: parseFloat(longitude)
+        }
+        // this.map.panTo(centerCoords)
+        // return centerCoords;
+    }
+
+    render() {
         return (
             <GoogleMapReact
                 defaultCenter={this.props.center}
@@ -94,7 +151,8 @@ export default class Map extends Component {
                 handleHomeClick={this.props.handleHomeClick}
                 hover_id={this.props.hover_id}
                 setHoverId={this.props.setHoverId}
-                removeHoverId={this.props.removeHoverId}>
+                removeHoverId={this.props.removeHoverId}
+                ref={this.map}>
                 {this.renderMapMarkers()}
             </GoogleMapReact>
         )
