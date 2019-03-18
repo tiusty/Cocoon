@@ -30,6 +30,7 @@
     color: #7b7b7b;
     border-radius: 10px;
     display: block;
+    white-space: pre-line;
     animation: showHelp .3s ease forwards;
 }
 

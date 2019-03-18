@@ -175,7 +175,10 @@ export default class GeneralForm extends Component {
                 <SurveyQuestionHeader
                     surveyQuestion={'How many people are you <span>searching with</span>?'}
                     hasHelp={true}
-                    surveyQuestionHelpText={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla mi tortor, pellentesque sit amet ante sed, aliquet varius mi.'}
+                    surveyQuestionHelpText={`Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nulla mi tortor, pellentesque sit amet ante sed, aliquet varius mi.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. `}
                 />
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
@@ -315,7 +318,7 @@ export default class GeneralForm extends Component {
     renderPriceWeightQuestion() {
         return (
             <div className="survey-question" onChange={(e) =>this.props.onGeneralInputChange(e, 'number')}>
-                <SurveyQuestion
+                <SurveyQuestionHeader
                     surveyQuestion={'How <span>important is the price</span>?'}
                 />
                 <span className="col-md-12 survey-error-message" id="price_weight_error"></span>
