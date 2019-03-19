@@ -1,7 +1,8 @@
 // Import React Components
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
+import { fitBounds } from 'google-map-react/utils';
 
 import MapMarker from './mapMarker';
 import CommuteMarker from './commuteMarker';
@@ -12,30 +13,23 @@ export default class Map extends Component {
 
     constructor(props) {
         super(props);
-        this.map = createRef();
+        this.state = {
+            center: {
+                lat: 42.36,
+                lng: -71.05
+            },
+            zoom: 10
+        }
     }
 
-    static defaultProps = {
-        center: {
-            lat: 42.36,
-            lng: -71.05
-        },
-        zoom: 11
-    };
-
     componentDidMount() {
-        console.log(this.map)
-        this.createBounds();
+        console.log(this.refs.map)
     }
 
     componentDidUpdate(prevProps, prevState) {
 
         if (this.props.clicked_home !== prevProps.clicked_home && this.props.clicked_home !== undefined) {
             this.centerMarker(this.props.clicked_home);
-        }
-
-        if (this.props.homes !== prevProps.homes) {
-            this.createBounds();
         }
 
     }
@@ -113,47 +107,38 @@ export default class Map extends Component {
         *   To resize/zoom/center the map to show all map markers
         *   uses google maps fitBounds()
         */
-        let mapBounds = [];
         if (this.props.homes) {
-            this.props.homes.map(home => {
-            const { latitude, longitude } = home.home;
-            const newCoords = {
-                lat: latitude,
-                lng: longitude
-            }
-                mapBounds.push(newCoords)
-            })
+            const bounds = new window.google.maps.LatLngBounds();
+            this.props.homes.forEach(home => bounds.extend(new window.google.maps.LatLng(parseFloat(home.home.latitude), parseFloat(home.home.longitude))));
+            console.log(bounds)
+            // this.refs.map.fitBounds(bounds);
         }
-        // console.log(mapBounds)
-        // this.map.fitBounds(mapBounds);
     }
 
     centerMarker = (homeId) => {
-        /*
-        * ! IN PROGRESS
-        *   Used to pan to the center of the map on home click
-        */
         const home = this.props.homes.find(home => home.home.id === homeId);
         const { latitude, longitude } = home.home;
         const centerCoords = {
             lat: parseFloat(latitude),
             lng: parseFloat(longitude)
         }
-        // this.map.panTo(centerCoords)
-        // return centerCoords;
+        this.setState({
+            center: centerCoords
+        })
     }
 
     render() {
         return (
             <GoogleMapReact
-                defaultCenter={this.props.center}
-                defaultZoom={this.props.zoom}
+                center={this.state.center}
+                defaultZoom={this.state.zoom}
                 options={this.createMapOptions}
                 handleHomeClick={this.props.handleHomeClick}
                 hover_id={this.props.hover_id}
                 setHoverId={this.props.setHoverId}
                 removeHoverId={this.props.removeHoverId}
-                ref={this.map}>
+                onTilesLoaded={() => this.createBounds()}
+                ref="map">
                 {this.renderMapMarkers()}
             </GoogleMapReact>
         )
