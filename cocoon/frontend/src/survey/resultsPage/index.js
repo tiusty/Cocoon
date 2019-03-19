@@ -47,7 +47,11 @@ export default class ResultsPage extends Component {
             isViewingPopup: true,
             verificationEmailSent: false,
             verificationEmailLoading: false,
-            isMobile: false
+
+            /* State for mobile devices */
+            isMobile: false,
+            viewingMobileResults: false,
+            viewingMobileMap: false
         }
     }
 
@@ -69,25 +73,82 @@ export default class ResultsPage extends Component {
          */
         if (window.innerWidth < 768) {
             this.setState({
-                isMobile: true
+                isMobile: true,
+                viewingMobileResults: true,
+                viewingMobileMap: false
             })
         } else {
             this.setState({
-                isMobile: false
+                isMobile: false,
+                viewingMobileResults: false,
+                viewingMobileMap: false
             })
         }
 
         window.addEventListener('resize', e => {
             if (e.target.innerWidth < 768) {
                 this.setState({
-                    isMobile: true
+                    isMobile: true,
+                    viewingMobileResults: true,
+                    viewingMobileMap: false
                 })
             } else {
                 this.setState({
-                    isMobile: false
+                    isMobile: false,
+                    viewingMobileResults: false,
+                    viewingMobileMap: false
                 })
             }
         })
+
+    }
+
+    handleMobileButtonClick = (link) => {
+        if (link === 'list') {
+            this.setState({
+                viewingMobileResults: true,
+                viewingMobileMap: false
+            })
+        } else if (link === 'map') {
+            this.setState({
+                viewingMobileResults: false,
+                viewingMobileMap: true
+            })
+        }
+    }
+
+    handleMobileResultsStyle = () => {
+
+        let style = {
+            display: 'block'
+        }
+
+        if (this.state.isMobile && this.state.viewingMobileResults) {
+            return style;
+        } else if (this.state.isMobile && !this.state.viewingMobileResults) {
+            style = {
+                display: 'none'
+            }
+        }
+
+        return style;
+    }
+
+    handleMobileMapStyle = () => {
+
+        let style = {
+            display: 'block'
+        }
+
+        if (this.state.isMobile && this.state.viewingMobileMap) {
+            return style;
+        } else if (this.state.isMobile && !this.state.viewingMobileMap) {
+            style = {
+                display: 'none'
+            }
+        }
+
+        return style;
 
     }
 
@@ -270,8 +331,12 @@ export default class ResultsPage extends Component {
             this.saveScrollPosition();
             this.setState({
                 clicked_home: id,
-                viewing_home: true
+                viewing_home: true,
             });
+
+            /* Change to list view to view home tile*/
+            this.handleMobileButtonClick('list');
+
             document.querySelector('.results-wrapper').scrollTop = 0;
         }
     };
@@ -451,11 +516,11 @@ export default class ResultsPage extends Component {
             return (
                 <div id="results-page">
                     {this.renderPopup()}
-                    <div className={this.setResultsWrapperClass()}>
+                    <div style={this.handleMobileResultsStyle()} className={this.setResultsWrapperClass()}>
                         {this.renderButtonRow()}
                         {this.renderMainComponent()}
                     </div>
-                    <div className="map-wrapper">
+                    <div style={this.handleMobileMapStyle()} className="map-wrapper">
                         {this.state.homeList !== undefined && this.state.googleApiLoaded ?
                             <Map homes={this.state.homeList}
                                  clicked_home={this.state.clicked_home}
@@ -467,6 +532,7 @@ export default class ResultsPage extends Component {
                             : null}
 
                             <MobileToggleButton
+                                handleMobileButtonClick={this.handleMobileButtonClick}
                                 isMobile={this.state.isMobile}
                                 isEditing={this.state.isEditing}
                                 isViewingPopup={this.state.isViewingPopup}

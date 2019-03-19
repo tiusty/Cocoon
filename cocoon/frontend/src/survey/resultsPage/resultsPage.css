@@ -134,7 +134,7 @@
         overflow: auto !important;
     }
     .map-wrapper {
-        display: none;
+        width: 100%;
     }
     .not-optimized {
         display: block;
@@ -142,6 +142,9 @@
     .results-wrapper {
         overflow: inherit;
         width: 100%;
+    }
+    .results-wrapper .expanded-wrapper {
+        margin-bottom: 50px;
     }
     .results {
         grid-template-columns: 1fr 1fr;

@@ -72,6 +72,7 @@ export default class Map extends Component {
                         key={home.home.id}
                         id={home.home.id}
                         hover_id={this.props.hover_id}
+                        clicked_home={this.props.clicked_home}
                         handleHomeClick={this.props.handleHomeClick}
                         setHoverId={this.props.setHoverId}
                         removeHoverId={this.props.removeHoverId}

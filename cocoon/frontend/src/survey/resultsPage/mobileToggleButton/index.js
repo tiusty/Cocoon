@@ -13,17 +13,17 @@ export default class MobileToggleButton extends Component {
     }
 
     render() {
-        if (this.props.isMobile && !this.props.isEditing && !this.props.viewing_home && !this.props.isViewingPopup) {
+        if (this.props.isMobile && !this.props.isEditing && !this.props.isViewingPopup) {
             return (
                 createPortal(
                     <div className="mobile-toggle-wrapper">
-                        <div className="toggle-btn">
+                        <div onClick={() => this.props.handleMobileButtonClick('list')} className="toggle-btn">
                             <i className="material-icons">
                                 format_list_bulleted
                             </i> List
                         </div>
 
-                        <div className="toggle-btn">
+                        <div onClick={() => this.props.handleMobileButtonClick('map')} className="toggle-btn">
                             <i className="material-icons">
                                 place
                             </i> Map
