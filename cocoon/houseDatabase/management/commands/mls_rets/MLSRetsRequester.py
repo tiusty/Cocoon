@@ -1,6 +1,7 @@
 # Django Imports
 from django.utils import timezone
 from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 
 # Python Imports
 from rets import Session
@@ -182,9 +183,12 @@ class MLSRetsRequester(object):
             # Since the apartments are the same
             #   Update the existing apartment with the fields stored in the new listing
             existing_apartment.update(new_listing)
-            existing_apartment.save()
-            print("[ UPDATED ] {0}".format(existing_apartment.full_address))
-            self.num_updated_homes += 1
+            try:
+                existing_apartment.save()
+                print("[ UPDATED ] {0}".format(existing_apartment.full_address))
+                self.num_updated_homes += 1
+            except ValidationError:
+                print('Validation error')
 
         # Tests if the home exists within another provider
         #   If so mark it as a duplicate and don't add it
@@ -206,5 +210,7 @@ class MLSRetsRequester(object):
             except IntegrityError:
                 print("[ Integrity Error ] ")
                 self.num_integrity_errors += 1
+            except ValidationError:
+                print("[ Validation Error ] ")
 
 
