@@ -18,18 +18,22 @@ export default class Map extends Component {
                 lat: 42.36,
                 lng: -71.05
             },
-            zoom: 10
+            zoom: 9
         }
     }
 
     componentDidMount() {
-        console.log(this.refs.map)
+        this.createBounds();
     }
 
     componentDidUpdate(prevProps, prevState) {
 
         if (this.props.clicked_home !== prevProps.clicked_home && this.props.clicked_home !== undefined) {
             this.centerMarker(this.props.clicked_home);
+        }
+
+        if (this.props.homes !== prevProps.homes) {
+            this.createBounds();
         }
 
     }
@@ -103,16 +107,61 @@ export default class Map extends Component {
     };
 
     createBounds = () => {
-        /* ! IN PROGRESS
-        *   To resize/zoom/center the map to show all map markers
-        *   uses google maps fitBounds()
+        /*
+        *   To zoom/center the map to show all map markers
+        *
+        *   using the google maps fitBounds() doesn't seem to work with the google maps react component
+        *   so we have to calculate the center ourselves
         */
-        if (this.props.homes) {
-            const bounds = new window.google.maps.LatLngBounds();
-            this.props.homes.forEach(home => bounds.extend(new window.google.maps.LatLng(parseFloat(home.home.latitude), parseFloat(home.home.longitude))));
-            console.log(bounds)
-            // this.refs.map.fitBounds(bounds);
+
+        // fitBounds() does not work
+        // if (this.props.homes) {
+        //     const bounds = new window.google.maps.LatLngBounds();
+        //     this.props.homes.forEach(home => bounds.extend(new window.google.maps.LatLng(parseFloat(home.home.latitude), parseFloat(home.home.longitude))));
+        //     console.log(bounds);
+        //     // this.refs.map.fitBounds(bounds);
+        // }
+
+
+        if (!(this.props.homes.length > 0)){
+            return false;
         }
+
+        const num_coords = this.props.homes.length;
+
+        let X = 0.0;
+        let Y = 0.0;
+        let Z = 0.0;
+
+        for(let i = 0; i < this.props.homes.length; i++){
+            let lat = this.props.homes[i].home.latitude * Math.PI / 180;
+            let lon = this.props.homes[i].home.longitude * Math.PI / 180;
+
+            let a = Math.cos(lat) * Math.cos(lon);
+            let b = Math.cos(lat) * Math.sin(lon);
+            let c = Math.sin(lat);
+
+            X += a;
+            Y += b;
+            Z += c;
+        }
+
+        X /= num_coords;
+        Y /= num_coords;
+        Z /= num_coords;
+
+        let lon = Math.atan2(Y, X);
+        let hyp = Math.sqrt(X * X + Y * Y);
+        let lat = Math.atan2(Z, hyp);
+
+        let newX = (lat * 180 / Math.PI);
+        let newY = (lon * 180 / Math.PI);
+        this.setState({
+            center: {
+                lat: newX,
+                lng: newY
+            }
+        })
     }
 
     centerMarker = (homeId) => {
@@ -137,7 +186,6 @@ export default class Map extends Component {
                 hover_id={this.props.hover_id}
                 setHoverId={this.props.setHoverId}
                 removeHoverId={this.props.removeHoverId}
-                onTilesLoaded={() => this.createBounds()}
                 ref="map">
                 {this.renderMapMarkers()}
             </GoogleMapReact>
