@@ -38,6 +38,7 @@ class MLSRetsRequester(object):
         self.num_updated_homes = 0
         self.num_integrity_errors = 0
         self.num_available_in_future = 0
+        self.num_validation_error = 0
 
     def run(self):
         homes = self.pull_rets_feed()
@@ -58,7 +59,8 @@ class MLSRetsRequester(object):
                     "Number of value errors: {0}\n".format(self.num_of_value_errors) +
                     "Number of failed updated houses: {0}\n".format(self.num_failed_to_update) +
                     "Number of future homes: {0}\n".format(self.num_available_in_future) +
-                    "Number of integrity error is: {0}\n".format(self.num_integrity_errors))
+                    "Number of integrity error is: {0}\n".format(self.num_integrity_errors) +
+                    "Number of validation error is: {0}\n".format(self.num_validation_error))
 
     def pull_rets_feed(self):
         offset = 0
@@ -189,6 +191,7 @@ class MLSRetsRequester(object):
                 self.num_updated_homes += 1
             except ValidationError:
                 print('Validation error')
+                self.num_validation_error += 1
 
         # Tests if the home exists within another provider
         #   If so mark it as a duplicate and don't add it
@@ -212,5 +215,6 @@ class MLSRetsRequester(object):
                 self.num_integrity_errors += 1
             except ValidationError:
                 print("[ Validation Error ] ")
+                self.num_validation_error += 1
 
 
