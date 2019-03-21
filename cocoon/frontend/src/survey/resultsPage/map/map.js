@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import GoogleMapReact from 'google-map-react';
-import { fitBounds } from 'google-map-react/utils';
 
 import MapMarker from './mapMarker';
 import CommuteMarker from './commuteMarker';
@@ -113,15 +112,6 @@ export default class Map extends Component {
         *   using the google maps fitBounds() doesn't seem to work with the google maps react component
         *   so we have to calculate the center ourselves
         */
-
-        // fitBounds() does not work
-        // if (this.props.homes) {
-        //     const bounds = new window.google.maps.LatLngBounds();
-        //     this.props.homes.forEach(home => bounds.extend(new window.google.maps.LatLng(parseFloat(home.home.latitude), parseFloat(home.home.longitude))));
-        //     console.log(bounds);
-        //     // this.refs.map.fitBounds(bounds);
-        // }
-
 
         if (!(this.props.homes.length > 0)){
             return false;
