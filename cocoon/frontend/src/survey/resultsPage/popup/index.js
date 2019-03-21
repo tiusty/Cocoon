@@ -115,12 +115,20 @@ export default class PopUp extends Component {
             );
         } else if (popupReason === 'Low Number of Homes') {
             if (this.props.survey.generalInfo.move_weight === 0 || this.props.survey.generalInfo.move_weight === 1) {
-                return <p>
-                    After checking your results we noticed that not many homes
-                    showed up for your criteria. Since you’re not in a rush, we
-                    recommend that you subscribe to this survey by clicking
-                    "Keep me updated" so you’re notified the moment something comes online!
-                </p>
+                return (
+                    <>
+                        <p>
+                            After checking your results we noticed that not many homes
+                            showed up for your criteria. Since you’re not in a rush, we
+                            recommend that you subscribe to this survey by clicking
+                            "Keep me updated" so you’re notified the moment something comes online!
+                        </p>
+                        <p>Alternatively, to fix this please increase the
+                            price range, commute range/type, polygons etc to add more
+                            homes.
+                        </p>
+                    </>
+                );
             } else {
                 return (
                     <p>After checking your results we noticed that not many homes

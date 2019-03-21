@@ -57,13 +57,18 @@ class HomeScore(object):
         """
         self._eliminated = is_eliminated
 
-    def eliminate_home(self, missing_amenity=None):
+    def add_missing_amenity(self, missing_amenity):
+        """
+        Adds a missing amenity if the amenity is not found in the home and user set as need
+        :param missing_amenity: (string) -> The name of the missing amenity
+        """
+        if missing_amenity not in self.missing_amenities:
+            self.missing_amenities.append(missing_amenity)
+
+    def eliminate_home(self):
         """
         Eliminates the homes
         """
-        if missing_amenity is not None:
-            if missing_amenity not in self.missing_amenities:
-                self.missing_amenities.append(missing_amenity)
         self.eliminated = True
 
     @property

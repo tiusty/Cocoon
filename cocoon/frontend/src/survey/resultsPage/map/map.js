@@ -57,18 +57,27 @@ export default class Map extends Component {
                 mapMarkers.push(newMarker);
             })
         }
+
+        // Unclean way to make sure it gracefully fails if none of the values exist
         if (this.props.survey) {
             if (this.props.survey.tenants) {
                 this.props.survey.tenants.map(t => {
-                    let newMarker = (
-                        <CommuteMarker
-                            lat={t.latitude}
-                            lng={t.longitude}
-                            name={t.first_name}
-                            key={t.id}
-                        />
-                    );
-                    mapMarkers.push(newMarker);
+                    if (t.commute_type) {
+                        if (t.commute_type.commute_type) {
+                            // If the user put Work From Home then we don't want the destination to render
+                            if (t.commute_type.commute_type !== "Work From Home") {
+                                let newMarker = (
+                                    <CommuteMarker
+                                        lat={t.latitude}
+                                        lng={t.longitude}
+                                        name={t.first_name}
+                                        key={t.id}
+                                    />
+                                );
+                                mapMarkers.push(newMarker);
+                            }
+                        }
+                    }
                 })
             }
         }
