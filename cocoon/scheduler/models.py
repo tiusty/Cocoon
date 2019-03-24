@@ -31,14 +31,12 @@ class ItineraryModel(models.Model):
            self.agent: (ForeignKey('MyUser') -> The agent that will be conducting the tour for the client
            self.tour_duration_seconds: (IntegerField) -> The tour duration stored in seconds
            self.selected_start_time (OneToOneField) -> Stores the selected time that the agent selected for the tour
-           self.homes (ManytoManyField) -> Stores the homes that are associated with this itinerary
     """
     client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
     survey = models.ForeignKey(RentingSurveyModel, related_name='itinerary', on_delete=models.SET_NULL, null=True)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
-    homes = models.ManyToManyField(RentDatabaseModel, blank=True)
     finished = models.BooleanField(default=False)
     url = models.SlugField(max_length=100, unique=True)
 
@@ -239,6 +237,14 @@ class ItineraryModel(models.Model):
         # send confirmation email to user
         email.send()
 
+class HomeVisitModel(models.Model):
+    """
+        Model wrapper around RentDatabase
+    """
+    home = models.ForeignKey(RentDatabaseModel, on_delete=models.CASCADE)
+    itinerary = models.ForeignKey(ItineraryModel, related_name="homes", on_delete=models.CASCADE)
+    time_to_successor = models.IntegerField(default=null, null=True)
+    visit_number = models.IntegerField()
 
 class TimeModel(models.Model):
     """

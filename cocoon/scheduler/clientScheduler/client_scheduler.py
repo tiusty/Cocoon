@@ -120,6 +120,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
                 itinerary_model.survey = survey
                 itinerary_model.save()
 
+                ordered_visit_list = [home_distance[0]]
+
                 # Add 20 minutes to each home
                 for home in homes_list:
                     itinerary_model.homes.add(home)
