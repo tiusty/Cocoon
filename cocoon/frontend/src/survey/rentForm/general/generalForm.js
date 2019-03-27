@@ -229,9 +229,9 @@ export default class GeneralForm extends Component {
     renderNameQuestion() {
         let question_text = "";
         if (this.props.number_of_tenants <= 1) {
-            question_text = "What <span> is your name </span>?"
+            question_text = "What <span> is your name</span>?"
         } else {
-            question_text = "What <span> are your names </span>?"
+            question_text = "What <span> are your names</span>?"
         }
         return (
             <div className="survey-question" id="tenant_names">
@@ -309,7 +309,13 @@ export default class GeneralForm extends Component {
     renderPriceQuestion() {
         return(
             <div className="survey-question">
-                <h2>How much rent do you <span>want to pay</span>?</h2>
+                <SurveyQuestionHeader
+                    surveyQuestion={`How much rent do you <span>want to pay</span>?`}
+                    hasHelp={true}
+                    surveyQuestionHelpText={`Please select the desired price range as the total price per month for the apartment.\n
+                    The left dot is your desired price, i.e how much you would like to spend.
+                    The right dot is your maximum price, i.e the max you are willing to spend on an apartment.`}
+                />
                 <small id="priceHelp" className="form-text text-muted">Please select your desired price with the left dot and the maximum price you are willing to pay with the right
                 </small>
                 <span className="col-md-12 survey-error-message" id="price_error"></span>
@@ -366,7 +372,7 @@ export default class GeneralForm extends Component {
                 <SurveyQuestionHeader
                     surveyQuestion={`How badly do you <span>need to find</span> an apartment?`}
                     hasHelp={true}
-                    surveyQuestionHelpText={`Please select how badly you need to move.\n
+                    surveyQuestionHelpText={`Please select how badly you need to move:\n
                     Just browsing: Just seeing what is currently on market\n
                     I've got some time: I am looking to go on tours/sign sometime in the near future but I am in no rush.\n
                     Looking to sign: I am looking to go on tours/sign on an apartment.\n
@@ -522,7 +528,13 @@ export default class GeneralForm extends Component {
          */
         return (
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <h2>Do you have <span>areas</span> where you would like to live?</h2>
+                <SurveyQuestionHeader
+                    surveyQuestion={`Do you have <span>areas</span> where you would like to live?`}
+                    hasHelp={true}
+                    surveyQuestionHelpText={`If you know of certain areas you would want to live in, please select "Draw on Map" and draw the shapes on the map.\n
+                    Please select areas you would like to live by drawing shapes on the map. You may draw as many shapes as you like.
+                    The only requirement is to have at least 3 points and close the shape by clicking on the start point. The homes will be chosen within all the shapes you draw.`}
+                />
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="polygon_filter_type" value="1" checked={this.props.generalInfo.polygon_filter_type === 1}
                            onChange={() => {
