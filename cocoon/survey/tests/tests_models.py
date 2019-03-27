@@ -7,6 +7,7 @@ from cocoon.survey.models import HomeInformationModel, SurveyUpdateInformation, 
 # Import Cocoon Modules
 from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.models import MyUser
+from cocoon.survey.home_data.home_score import HomeScore
 
 
 class TestHomeInformationModel(TestCase):
@@ -182,3 +183,123 @@ class TestSurveyUpdateInformation(TestCase):
 
         # Assert
         self.assertFalse(result)
+
+    def test_determine_threshold_trigger_is_triggered_all_homes(self):
+        """
+        Tests if an email should be trigger based on the user criteria
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_home_threshold=3, score_threshold=70)
+        home = HomeScore(RentDatabaseModel.create_house_database())
+        home1 = HomeScore(RentDatabaseModel.create_house_database())
+        home2 = HomeScore(RentDatabaseModel.create_house_database())
+
+        # Give each home a score of 100
+        home.accumulated_points = 50
+        home.total_possible_points = 50
+
+        home1.accumulated_points = 50
+        home1.total_possible_points = 50
+
+        home2.accumulated_points = 50
+        home2.total_possible_points = 50
+
+        # Act
+        result = survey.determine_threshold_trigger([home, home1, home2])
+
+        # Assert
+        self.assertEqual(result, [home, home1, home2])
+
+    def test_determine_threshold_trigger_not_triggered_not_enough_homes(self):
+        """
+        Tests if an email should be trigger based on the user criteria
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_home_threshold=3, score_threshold=70)
+        home = HomeScore(RentDatabaseModel.create_house_database())
+        home1 = HomeScore(RentDatabaseModel.create_house_database())
+
+        # Give each home a score of 100
+        home.accumulated_points = 50
+        home.total_possible_points = 50
+
+        home1.accumulated_points = 50
+        home1.total_possible_points = 50
+
+        # Act
+        result = survey.determine_threshold_trigger([home, home1])
+
+        # Assert
+        self.assertEqual(result, [])
+
+    def test_determine_threshold_trigger_is_triggered_some_homes(self):
+        """
+        Tests if an email should be trigger based on the user criteria
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_home_threshold=3, score_threshold=70)
+        home = HomeScore(RentDatabaseModel.create_house_database())
+        home1 = HomeScore(RentDatabaseModel.create_house_database())
+        home2 = HomeScore(RentDatabaseModel.create_house_database())
+        home3 = HomeScore(RentDatabaseModel.create_house_database())
+        home4 = HomeScore(RentDatabaseModel.create_house_database())
+
+        # Give each home a score of 100
+        home.accumulated_points = 10
+        home.total_possible_points = 50
+
+        home1.accumulated_points = 50
+        home1.total_possible_points = 50
+
+        home2.accumulated_points = 50
+        home2.total_possible_points = 50
+
+        home3.accumulated_points = 20
+        home3.total_possible_points = 50
+
+        home4.accumulated_points = 50
+        home4.total_possible_points = 50
+
+        # Act
+        result = survey.determine_threshold_trigger([home, home1, home2, home3, home4])
+
+        # Assert
+        self.assertEqual(result, [home1, home2, home4])
+
+    def test_determine_threshold_trigger_not_triggered(self):
+        """
+        Tests if an email should be trigger based on the user criteria
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_home_threshold=3, score_threshold=70)
+        home = HomeScore(RentDatabaseModel.create_house_database())
+        home1 = HomeScore(RentDatabaseModel.create_house_database())
+        home2 = HomeScore(RentDatabaseModel.create_house_database())
+        home3 = HomeScore(RentDatabaseModel.create_house_database())
+        home4 = HomeScore(RentDatabaseModel.create_house_database())
+
+        # Give each home a score of 100
+        home.accumulated_points = 10
+        home.total_possible_points = 50
+
+        home1.accumulated_points = 20
+        home1.total_possible_points = 50
+
+        home2.accumulated_points = 50
+        home2.total_possible_points = 50
+
+        home3.accumulated_points = 20
+        home3.total_possible_points = 50
+
+        home4.accumulated_points = 50
+        home4.total_possible_points = 50
+
+        # Act
+        result = survey.determine_threshold_trigger([home, home1, home2, home3, home4])
+
+        # Assert
+        self.assertEqual(result, [])

@@ -82,6 +82,24 @@ class SurveyUpdateInformation(models.Model):
         """
         return self.blacklisted_homes.filter(id=home.id).exists()
 
+    def determine_threshold_trigger(self, home_scores):
+        """
+        Determines if the threshold trigger is reached and if so then it
+            returns those homes
+        :param home_scores: (list(HomeScore)) -> A list of the homes
+        :return:
+        """
+        homes_over_threshold = []
+        if len(home_scores) >= self.num_home_threshold:
+            for home in home_scores:
+                if home.percent_match >= self.score_threshold:
+                    homes_over_threshold.append(home)
+
+        if len(homes_over_threshold) >= self.num_home_threshold:
+            return homes_over_threshold
+        else:
+            return []
+
     def ready_to_update_user(self):
         """
         Determines if the survey is ready to be updated based on the last time the user was
@@ -159,7 +177,6 @@ class HomeInformationModel(models.Model):
         for num in set(num_bedrooms_list):
             binary_mask += 2 ** num
         self.num_bedrooms_bit_masked = binary_mask
-
 
     @property
     def home_types(self):
