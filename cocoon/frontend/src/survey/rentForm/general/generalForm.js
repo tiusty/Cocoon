@@ -176,10 +176,8 @@ export default class GeneralForm extends Component {
                 <SurveyQuestionHeader
                     surveyQuestion={'How many people are you <span>searching with</span>?'}
                     hasHelp={true}
-                    surveyQuestionHelpText={`Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Nulla mi tortor, pellentesque sit amet ante sed, aliquet varius mi.
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. `}
+                    surveyQuestionHelpText={`Please select the number of people you want to live with.\n
+                    You will not be able to change the number of people once the survey is complete but you can always take another survey at any time if the number of people you are living with change.`}
                 />
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
@@ -229,9 +227,20 @@ export default class GeneralForm extends Component {
     }
 
     renderNameQuestion() {
+        let question_text = "";
+        if (this.props.number_of_tenants <= 1) {
+            question_text = "What <span> is your name </span>?"
+        } else {
+            question_text = "What <span> are your names </span>?"
+        }
         return (
             <div className="survey-question" id="tenant_names">
-                <h2>What <span>{this.props.number_of_tenants <= 1 ? ' is your name' : ' are your names'}</span>?</h2>
+                <SurveyQuestionHeader
+                    surveyQuestion={question_text}
+                    hasHelp={true}
+                    surveyQuestionHelpText={`Please add the names of the people you are going to live with.\n
+                    You will be able to change the names of your roommates at any time on the survey snapshot section of the tour setup page later on.`}
+                />
                 <span className="col-md-12 survey-error-message" id="name_of_tenants_error"></span>
                 <div className="name-input-wrapper">
                     <input type="text"
