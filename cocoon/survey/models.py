@@ -73,6 +73,15 @@ class SurveyUpdateInformation(models.Model):
         """
         self.blacklisted_homes.add(home)
 
+    def check_home_in_blacklist(self, home):
+        """
+        Checks to see if a home is in the blacklist
+        :param home: (RentDataBaseModel) -> The home that is being checked
+        :return: (Boolean) -> True: The home is in the blacklist
+                              False: The home is not in the blacklist
+        """
+        return self.blacklisted_homes.filter(id=home.id).exists()
+
     def ready_to_update_user(self):
         """
         Determines if the survey is ready to be updated based on the last time the user was

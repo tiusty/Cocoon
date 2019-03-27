@@ -134,3 +134,51 @@ class TestSurveyUpdateInformation(TestCase):
         # Assert
         self.assertEqual(survey.blacklisted_homes.count(), 1)
         self.assertTrue(survey.blacklisted_homes.filter(id=home.id).exists())
+
+    def tests_check_home_in_blacklist_is_in_blacklist(self):
+        """
+        Tests that if a home exists in the blacklist then the function returns true
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile)
+        home = RentDatabaseModel.create_house_database()
+        survey.blacklisted_homes.add(home)
+
+        # Act
+        result = survey.check_home_in_blacklist(home)
+
+        # Assert
+        self.assertTrue(result)
+
+    def tests_check_home_in_blacklist_is_not_in_blacklist(self):
+        """
+        Tests that if a home is not in the blacklist then the function returns false
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile)
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
+        survey.blacklisted_homes.add(home)
+
+        # Act
+        result = survey.check_home_in_blacklist(home1)
+
+        # Assert
+        self.assertFalse(result)
+
+    def tests_check_home_in_blacklist_black_list_empty(self):
+        """
+        Tests that if the black list is empty the function returns false
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile)
+        home = RentDatabaseModel.create_house_database()
+
+        # Act
+        result = survey.check_home_in_blacklist(home)
+
+        # Assert
+        self.assertFalse(result)
