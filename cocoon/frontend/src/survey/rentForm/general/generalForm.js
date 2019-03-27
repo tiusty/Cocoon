@@ -1,8 +1,9 @@
 import React from 'react';
 import { Component } from 'react';
 import axios from "axios";
+import moment from 'moment';
 import InputRange from 'react-input-range';
-import DayPickerInput from 'react-day-picker/DayPickerInput';
+import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 
 import { compose, withProps } from "recompose";
@@ -14,6 +15,8 @@ import {
 import DrawingManager from "react-google-maps/lib/components/drawing/DrawingManager"
 
 import houseDatabase_endpoints from "../../../endpoints/houseDatabase_endpoints";
+
+import SurveyQuestionHeader from '../surveyQuestionHeader';
 
 export default class GeneralForm extends Component {
     state = {
@@ -170,7 +173,14 @@ export default class GeneralForm extends Component {
     renderNumberOfPeopleQuestion() {
         return (
             <div className="survey-question" onChange={(e) => this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How many people are you <span>searching with</span>?</h2>
+                <SurveyQuestionHeader
+                    surveyQuestion={'How many people are you <span>searching with</span>?'}
+                    hasHelp={true}
+                    surveyQuestionHelpText={`Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nulla mi tortor, pellentesque sit amet ante sed, aliquet varius mi.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. `}
+                />
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="number_of_tenants" value="1" checked={this.props.number_of_tenants === 1} onChange={() => {}} />
                     <div>Just Me</div>
@@ -309,7 +319,9 @@ export default class GeneralForm extends Component {
     renderPriceWeightQuestion() {
         return (
             <div className="survey-question" onChange={(e) =>this.props.onGeneralInputChange(e, 'number')}>
-                <h2>How <span>important is the price</span>?</h2>
+                <SurveyQuestionHeader
+                    surveyQuestion={'How <span>important is the price</span>?'}
+                />
                 <span className="col-md-12 survey-error-message" id="price_weight_error"></span>
                 <label className="col-md-4 survey-label">
                     <input type="radio" name="price_weight" value="0" checked={this.props.generalInfo.price_weight === 0} onChange={() => {}} />
@@ -371,28 +383,24 @@ export default class GeneralForm extends Component {
                     <h2>When do you want to <span>move in</span>?</h2>
                     <span className="col-md-12 survey-error-message" id="date_error"></span>
                     <div className="col-md-6 date-wrapper">
-                        <DayPickerInput
-                            placeholder={'Earliest'}
-                            onDayChange={this.props.handleEarliestClick}
-                            value=
-                                {this.props.generalInfo.earliest_move_in  === undefined ?
-                                    ""
-                                    :
-                                    this.props.generalInfo.earliest_move_in.format('MMMM Do YYYY')
-                                }
-                            onChange={() => {}} />
+                        <span className="date-info">
+                            Earliest You'd like to move in: {!this.props.generalInfo.earliest_move_in ? '(Select a date below.)' : this.props.generalInfo.earliest_move_in.format('MM/DD/YYYY')}
+                        </span>
+                        <DayPicker
+                            onDayClick={this.props.handleEarliestClick}
+                            selectedDays={!this.props.generalInfo.earliest_move_in ? null : new Date(this.props.generalInfo.earliest_move_in)}
+                            initialMonth={!this.props.generalInfo.earliest_move_in ? new Date() : new Date(this.props.generalInfo.earliest_move_in)}
+                        />
                     </div>
                     <div className="col-md-6 date-wrapper">
-                        <DayPickerInput
-                            placeholder={'Latest'}
-                            onDayChange={this.props.handleLatestClick}
-                            value =
-                                {this.props.generalInfo.latest_move_in  === undefined ?
-                                ""
-                                :
-                                this.props.generalInfo.latest_move_in.format('MMMM Do YYYY')
-                            }
-                            onChange={() => {}} />
+                        <span className="date-info">
+                            Latest You'd like to move in: {!this.props.generalInfo.latest_move_in ? '(Select a date below.)' : this.props.generalInfo.latest_move_in.format('MM/DD/YYYY')}
+                        </span>
+                        <DayPicker
+                            onDayClick={this.props.handleLatestClick}
+                            selectedDays={!this.props.generalInfo.latest_move_in ? null : new Date(this.props.generalInfo.latest_move_in)}
+                            initialMonth={!this.props.generalInfo.latest_move_in ? new Date() : new Date(this.props.generalInfo.latest_move_in)}
+                        />
                     </div>
                 </div>
             );
