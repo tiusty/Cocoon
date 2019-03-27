@@ -150,10 +150,10 @@ export default class MySurveys extends Component {
         /**
          * Retrieves the hunter doc template id for the pre tour forms
          */
-        // axios.get(signature_endpoints['hunterdoctemplate'], {params: {type: 'pre_tour'}})
-        //     .catch(error => console.log('bad', error))
+        // axios.get(signature_endpoints['hunterDocTemplate'], {params: {type: 'pre_tour'}})
+        //     .catch(error => console.log('Bad', error))
         //     .then(response => {
-        //         this.setstate({pre_tour_template_id: response.data[0].id})
+        //         this.setState({pre_tour_template_id: response.data[0].id})
         //     });
 
         /**
