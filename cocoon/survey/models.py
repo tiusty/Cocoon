@@ -62,6 +62,16 @@ class SurveyUpdateInformation(models.Model):
     wants_update = models.BooleanField(default=False)
     score_threshold = models.IntegerField(default=70)
     num_home_threshold = models.IntegerField(default=7)
+    blacklisted_homes = models.ManyToManyField(RentDatabaseModel, related_name="blacklisted_homes", blank=True)
+
+    def blacklist_home(self, home):
+        """
+        Adds a home to the blacklist field.
+
+        That way that home won't trigger an email again.
+        :param home: (RentDatabaseModel) -> The home that is being blacklisted
+        """
+        self.blacklisted_homes.add(home)
 
     def ready_to_update_user(self):
         """

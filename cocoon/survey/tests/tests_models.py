@@ -2,7 +2,11 @@
 from django.test import TestCase
 
 # Import Survey Models and forms
-from cocoon.survey.models import HomeInformationModel
+from cocoon.survey.models import HomeInformationModel, SurveyUpdateInformation, RentingSurveyModel
+
+# Import Cocoon Modules
+from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.userAuth.models import MyUser
 
 
 class TestHomeInformationModel(TestCase):
@@ -77,6 +81,56 @@ class TestHomeInformationModel(TestCase):
         self.assertEqual(31, survey.num_bedrooms_bit_masked)
 
 
+class TestSurveyUpdateInformation(TestCase):
 
+    def test_blacklisting_homes(self):
+        """
+        Tests just adding a home to the blacklisted_homes list and making sure it exists in field
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile)
+        home = RentDatabaseModel.create_house_database()
 
+        # Act
+        survey.blacklist_home(home)
 
+        # Assert
+        self.assertEqual(survey.blacklisted_homes.count(), 1)
+        self.assertTrue(survey.blacklisted_homes.filter(id=home.id).exists())
+
+    def test_blacklist_home_homes_already_exist(self):
+        """
+        Tests adding a home when a home already exists and makes sure both homes are in the list after wards
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile)
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
+        survey.blacklisted_homes.add(home)
+
+        # Act
+        survey.blacklist_home(home1)
+
+        # Assert
+        self.assertEqual(survey.blacklisted_homes.count(), 2)
+        self.assertTrue(survey.blacklisted_homes.filter(id=home.id).exists())
+        self.assertTrue(survey.blacklisted_homes.filter(id=home1.id).exists())
+
+    def tests_adding_same_home_does_not_add_duplicate(self):
+        """
+        Tests that adding a duplicate home will not cause 2 homes to be in the list
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile)
+        home = RentDatabaseModel.create_house_database()
+        survey.blacklisted_homes.add(home)
+
+        # Act
+        survey.blacklist_home(home)
+
+        # Assert
+        self.assertEqual(survey.blacklisted_homes.count(), 1)
+        self.assertTrue(survey.blacklisted_homes.filter(id=home.id).exists())
