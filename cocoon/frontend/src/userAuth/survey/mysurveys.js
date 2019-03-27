@@ -25,11 +25,18 @@ export default class MySurveys extends Component {
 
     state = {
         // State regarding the document
+        // Commenting out old values so we can easily revert it when we want the pre tour docuemnts back
+        // hunter_doc_manager_id: null,
+        // pre_tour_template_id: null,
+        // is_pre_tour_signed: false,
+        // refreshing_document_status: false,
+        // pre_tour_forms_created: false,
+        // last_resend_request_pre_tour: undefined,
         hunter_doc_manager_id: null,
         pre_tour_template_id: null,
-        is_pre_tour_signed: false,
+        is_pre_tour_signed: true,
         refreshing_document_status: false,
-        pre_tour_forms_created: false,
+        pre_tour_forms_created: true,
         last_resend_request_pre_tour: undefined,
 
         // Handles opening a large survey
@@ -128,43 +135,45 @@ export default class MySurveys extends Component {
         /**
          Retrieves the users HunterDocManager
          */
-        axios.get(this.state.signature_endpoint)
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({
-                    hunter_doc_manager_id: response.data[0].id,
-                    pre_tour_forms_created: response.data[0].pre_tour_forms_created,
-                    is_pre_tour_signed: response.data[0].is_pre_tour_signed,
-                })
-            });
+        // Note: Everything that happens with pre tour documents is commented out due to
+        //  wanting to remove it. It may want to be added back later and thus we aren't removing the code
+        // axios.get(this.state.signature_endpoint)
+        //     .catch(error => console.log('Bad', error))
+        //     .then(response => {
+        //         this.setState({
+        //             hunter_doc_manager_id: response.data[0].id,
+        //             pre_tour_forms_created: response.data[0].pre_tour_forms_created,
+        //             is_pre_tour_signed: response.data[0].is_pre_tour_signed,
+        //         })
+        //     });
 
         /**
          * Retrieves the hunter doc template id for the pre tour forms
          */
-        axios.get(signature_endpoints['hunterDocTemplate'], {params: {type: 'pre_tour'}})
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({pre_tour_template_id: response.data[0].id})
-            });
+        // axios.get(signature_endpoints['hunterdoctemplate'], {params: {type: 'pre_tour'}})
+        //     .catch(error => console.log('bad', error))
+        //     .then(response => {
+        //         this.setstate({pre_tour_template_id: response.data[0].id})
+        //     });
 
         /**
          * Updates the users pre_tour_docs and checks to see if it is signed.
          *  Since the id for the url doesn't matter, null can be passed so the
          *  update function is called
          */
-        let endPoint = this.state.signature_endpoint + 'null' + '/';
-        axios.put(endPoint,
-            {
-                type: 'pre_tour_check',
-            })
-            .catch(error => console.log('BAD', error))
-            .then(response => {
-                this.setState({
-                    // loaded: true,
-                    is_pre_tour_signed: response.data.is_pre_tour_signed,
-                    pre_tour_forms_created: response.data.pre_tour_forms_created,
-                })
-            });
+        // let endPoint = this.state.signature_endpoint + 'null' + '/';
+        // axios.put(endPoint,
+        //     {
+        //         type: 'pre_tour_check',
+        //     })
+        //     .catch(error => console.log('BAD', error))
+        //     .then(response => {
+        //         this.setState({
+        //             // loaded: true,
+        //             is_pre_tour_signed: response.data.is_pre_tour_signed,
+        //             pre_tour_forms_created: response.data.pre_tour_forms_created,
+        //         })
+        //     });
 
         // Determines if an itinerary exists yet already or not
         axios.get(scheduler_endpoints['itineraryClient'])
