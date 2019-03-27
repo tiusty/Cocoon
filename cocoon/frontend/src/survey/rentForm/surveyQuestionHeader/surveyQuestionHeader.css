@@ -1,0 +1,52 @@
+.survey-question h2 {
+    color: var(--darkBlue);
+    display: block;
+}
+
+.survey-question h2 span {
+    font-weight: 800;
+}
+
+.checkbox-helper-text {
+    font-size: 12px;
+    color: var(--grey);
+}
+
+.survey-question i {
+    font-weight: bold;
+    font-size: 17px;
+    padding-left: 3px;
+    color: rgba(59, 72, 82, 0.5);
+    cursor: pointer;
+    line-height: 21px;
+    vertical-align: text-bottom;
+}
+
+.help-box {
+    margin: 10px 0;
+    font-size: 12px;
+    background: #f7f7f7;
+    padding: 15px;
+    color: #7b7b7b;
+    border-radius: 10px;
+    display: block;
+    white-space: pre-line;
+    animation: showHelp .3s ease forwards;
+}
+
+@keyframes showHelp {
+    from {
+        -webkit-transform: scale(.6);
+        -moz-transform: scale(.6);
+        -ms-transform: scale(.6);
+        -o-transform: scale(.6);
+        transform: scale(.6);
+    }
+    to {
+        -webkit-transform: scale(1);
+        -moz-transform: scale(1);
+        -ms-transform: scale(1);
+        -o-transform: scale(1);
+        transform: scale(1);
+    }
+}
