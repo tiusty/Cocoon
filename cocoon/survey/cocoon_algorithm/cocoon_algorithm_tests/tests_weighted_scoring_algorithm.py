@@ -239,7 +239,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Assert
         self.assertEqual(home.accumulated_points, 0)
         self.assertEqual(home.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home.eliminated)
+        self.assertFalse(home.eliminated)
 
         self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home1.home.laundry_in_unit))
         self.assertEqual(home1.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
@@ -247,7 +247,7 @@ class TestLaundryWeightingQuestion(TestCase):
 
         self.assertEqual(home2.accumulated_points, 0)
         self.assertEqual(home2.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home2.eliminated)
+        self.assertFalse(home2.eliminated)
 
         self.assertEqual(home3.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home3.home.laundry_in_unit))
         self.assertEqual(home3.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
@@ -327,7 +327,7 @@ class TestLaundryWeightingQuestion(TestCase):
         # Assert
         self.assertEqual(home.accumulated_points, 0)
         self.assertEqual(home.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home.eliminated)
+        self.assertFalse(home.eliminated)
 
         self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home1.home.laundry_in_unit))
         self.assertEqual(home1.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight)
@@ -417,7 +417,7 @@ class TestLaundryWeightingQuestion(TestCase):
         self.assertEqual(home.accumulated_points, 0)
         self.assertEqual(home.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight
                          + abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home.eliminated)
+        self.assertFalse(home.eliminated)
 
         self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home1.home.laundry_in_unit))
         self.assertEqual(home1.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
@@ -463,7 +463,7 @@ class TestLaundryWeightingQuestion(TestCase):
         self.assertEqual(home.accumulated_points, 0)
         self.assertEqual(home.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight
                          + abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home.eliminated)
+        self.assertFalse(home.eliminated)
 
         self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home1.home.laundry_in_unit))
         self.assertEqual(home1.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
@@ -472,7 +472,7 @@ class TestLaundryWeightingQuestion(TestCase):
         self.assertEqual(home2.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home2.home.laundry_in_building))
         self.assertEqual(home2.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight
                          + abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home2.eliminated)
+        self.assertFalse(home2.eliminated)
 
         self.assertEqual(home3.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home3.home.laundry_in_unit))
         self.assertEqual(home3.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
@@ -508,7 +508,7 @@ class TestLaundryWeightingQuestion(TestCase):
         self.assertEqual(home.accumulated_points, 0)
         self.assertEqual(home.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight
                          + abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home.eliminated)
+        self.assertFalse(home.eliminated)
 
         self.assertEqual(home1.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home1.home.laundry_in_unit))
         self.assertEqual(home1.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
@@ -517,7 +517,7 @@ class TestLaundryWeightingQuestion(TestCase):
         self.assertEqual(home2.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_building_weight, home2.home.laundry_in_building))
         self.assertEqual(home2.total_possible_points, abs(in_building_weight) * weighted_algorithm.hybrid_question_weight
                          + abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
-        self.assertTrue(home2.eliminated)
+        self.assertFalse(home2.eliminated)
 
         self.assertEqual(home3.accumulated_points, weighted_algorithm.compute_weighted_question_score(in_unit_weight, home3.home.laundry_in_unit))
         self.assertEqual(home3.total_possible_points, abs(in_unit_weight) * weighted_algorithm.hybrid_question_weight)
