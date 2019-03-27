@@ -71,7 +71,7 @@ def email_user(survey, num_homes):
     html_message = render_to_string(
         'survey/emails/survey_notification.html', {
             'user': survey.user_profile.user,
-            'num_homes': survey.num_home_threshold,
+            'num_homes': num_homes,
             'score_threshold': survey.score_threshold,
             'surveyUrl': survey.url,
             'domain': domain,
