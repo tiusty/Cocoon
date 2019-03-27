@@ -60,8 +60,8 @@ class SurveyUpdateInformation(models.Model):
     last_updated = models.DateField(default=timezone.now)
     update_frequency = models.IntegerField(default=2)
     wants_update = models.BooleanField(default=False)
-    score_threshold = models.IntegerField(default=50)
-    num_home_threshold = models.IntegerField(default=5)
+    score_threshold = models.IntegerField(default=70)
+    num_home_threshold = models.IntegerField(default=7)
 
     def ready_to_update_user(self):
         """
