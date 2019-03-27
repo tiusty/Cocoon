@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    Thank you for signing up for survey notifications :). We are glad to have found <b>{{ num_homes }}</b> new homes
+    Thank you for signing up for survey notifications :). We are glad to have found <b>{{ num_homes }}</b> new {% if num_homes == 1 %}home{% else %}homes{% endif %}
         that met your threshold of <b>{{ score_threshold }}</b>!
     <br>
     <br>

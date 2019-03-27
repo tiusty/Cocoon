@@ -48,10 +48,10 @@ def notify_user_survey_updates():
                     # Blacklist the homes that triggered the email
                     for home_score in triggered_homes:
                         survey.blacklist_home(home_score.home)
-                    email_user(survey)
+                    email_user(survey, len(triggered_homes))
 
 
-def email_user(survey):
+def email_user(survey, num_homes):
 
     if hasattr(settings, 'DEFAULT_DOMAIN'):
         domain = settings.DEFAULT_DOMAIN
@@ -62,7 +62,7 @@ def email_user(survey):
     text_message = render_to_string(
         'survey/emails/survey_notification.html', {
             'user': survey.user_profile.user,
-            'num_homes': survey.num_home_threshold,
+            'num_homes': num_homes,
             'score_threshold': survey.score_threshold,
             'surveyUrl': survey.url,
             'domain': domain,
