@@ -41,20 +41,14 @@ def notify_user_survey_updates():
                 # Compute the algorithm
                 rent_algorithm = RentAlgorithm()
                 rent_algorithm.run(survey)
+                triggered_homes = survey.determine_threshold_trigger(rent_algorithm.homes)
 
-                # Determine if there is enough homes over the score threshold determined
-                #   by the client
-                homes_over_threshold = True
-
-                if len(rent_algorithm.homes) >= survey.num_home_threshold:
-                    for home in rent_algorithm.homes[:survey.num_home_threshold]:
-                        if home.percent_match < survey.score_threshold:
-                            homes_over_threshold = False
-                            break
-
-                    # If there is then email the client!
-                    if homes_over_threshold:
-                        email_user(survey)
+                # If there is then email the client!
+                if triggered_homes:
+                    # Blacklist the homes that triggered the email
+                    for home_score in triggered_homes:
+                        survey.blacklist_home(home_score.home)
+                    email_user(survey)
 
 
 def email_user(survey):
@@ -64,7 +58,7 @@ def email_user(survey):
     else:
         domain = "https://bostoncocoon.com/"
 
-    mail_subject = 'We found homes that match your Requirements!'
+    mail_subject = 'We found new homes that match your requirements!'
     text_message = render_to_string(
         'survey/emails/survey_notification.html', {
             'user': survey.user_profile.user,

@@ -303,3 +303,81 @@ class TestSurveyUpdateInformation(TestCase):
 
         # Assert
         self.assertEqual(result, [])
+
+    def test_determine_threshold_trigger_homes_in_blacklist_do_not_trigger(self):
+        """
+        Tests that if homes are in the blacklist then they are not counted as part of the trigger criteria.
+            This specifically tests that if there was 5 homes that fit but 3 are in the blacklist then
+                the criteria is not hit and thus returns empty list
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_home_threshold=3, score_threshold=70)
+        home = HomeScore(RentDatabaseModel.create_house_database())
+        home1 = HomeScore(RentDatabaseModel.create_house_database())
+        home2 = HomeScore(RentDatabaseModel.create_house_database())
+        home3 = HomeScore(RentDatabaseModel.create_house_database())
+        home4 = HomeScore(RentDatabaseModel.create_house_database())
+        survey.blacklist_home(home.home)
+        survey.blacklist_home(home2.home)
+        survey.blacklist_home(home3.home)
+
+        # Give each home a score of 100
+        home.accumulated_points = 50
+        home.total_possible_points = 50
+
+        home1.accumulated_points = 50
+        home1.total_possible_points = 50
+
+        home2.accumulated_points = 50
+        home2.total_possible_points = 50
+
+        home3.accumulated_points = 50
+        home3.total_possible_points = 50
+
+        home4.accumulated_points = 50
+        home4.total_possible_points = 50
+
+        # Act
+        result = survey.determine_threshold_trigger([home, home1, home2, home3, home4])
+
+        # Assert
+        self.assertEqual(result, [])
+
+    def test_determine_threshold_trigger_homes_in_blacklist_not_returned(self):
+        """
+        Tests that if there are still enough homes after the blacklist homes are removed then
+            homes not in the blacklist are returned
+        """
+        # Arrange
+        user = MyUser.objects.create(email="test@test.com")
+        survey = RentingSurveyModel.create_survey(user.userProfile, num_home_threshold=3, score_threshold=70)
+        home = HomeScore(RentDatabaseModel.create_house_database())
+        home1 = HomeScore(RentDatabaseModel.create_house_database())
+        home2 = HomeScore(RentDatabaseModel.create_house_database())
+        home3 = HomeScore(RentDatabaseModel.create_house_database())
+        home4 = HomeScore(RentDatabaseModel.create_house_database())
+        survey.blacklist_home(home.home)
+        survey.blacklist_home(home3.home)
+
+        # Give each home a score of 100
+        home.accumulated_points = 50
+        home.total_possible_points = 50
+
+        home1.accumulated_points = 50
+        home1.total_possible_points = 50
+
+        home2.accumulated_points = 50
+        home2.total_possible_points = 50
+
+        home3.accumulated_points = 50
+        home3.total_possible_points = 50
+
+        home4.accumulated_points = 50
+        home4.total_possible_points = 50
+
+        # Act
+        result = survey.determine_threshold_trigger([home, home1, home2, home3, home4])
+
+        # Assert
+        self.assertEqual(result, [home1, home2, home4])

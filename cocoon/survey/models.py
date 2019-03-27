@@ -18,6 +18,10 @@ from datetime import timedelta
 # Import app constants
 from .constants import MIN_PRICE_DELTA
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
 
 class InitialSurveyModel(models.Model):
     """
@@ -92,8 +96,9 @@ class SurveyUpdateInformation(models.Model):
         homes_over_threshold = []
         if len(home_scores) >= self.num_home_threshold:
             for home in home_scores:
-                if home.percent_match >= self.score_threshold:
-                    homes_over_threshold.append(home)
+                if not self.check_home_in_blacklist(home.home):
+                    if home.percent_match >= self.score_threshold:
+                        homes_over_threshold.append(home)
 
         if len(homes_over_threshold) >= self.num_home_threshold:
             return homes_over_threshold
