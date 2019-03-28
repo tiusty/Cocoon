@@ -31,14 +31,15 @@ export default class TourChecklist extends  Component {
                 checklistActiveItem: 5
             })
         }
-        else if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed) {
-            this.setState({
-                checklistActiveItem: 4
-            })
-        }
+        // Skipping step 3 since we are disabling the pre tour documents for now
+        // else if (this.props.pre_tour_forms_created && this.props.is_pre_tour_signed) {
+        //     this.setState({
+        //         checklistActiveItem: 4
+        //     })
+        // }
         else if (this.props.favorites.length > 0) {
             this.setState({
-                checklistActiveItem: 3
+                checklistActiveItem: 4
             })
         }
         else if (this.props.surveys.length > 0) {
@@ -151,7 +152,7 @@ export default class TourChecklist extends  Component {
                 <div className="tour-checklist-items">
                     {this.renderSurveyCheck()}
                     {this.renderFavoritesCheck()}
-                    {this.renderDocCheck()}
+                    {/*{this.renderDocCheck()}*/}
                     {this.renderVisitsCheck()}
                     {this.renderScheduleCheck()}
                     {this.renderItineraryCheck()}
