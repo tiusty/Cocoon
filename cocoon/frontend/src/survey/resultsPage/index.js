@@ -222,7 +222,7 @@ export default class ResultsPage extends Component {
                     homeList: response.data,
                     isLoading: false,
                     isViewingPopup: true
-                });
+                }, this.handleMobileButtonClick('map'));
             })
     };
 
