@@ -52,7 +52,7 @@ export default class ResultsPage extends Component {
             /* State for mobile devices */
             isMobile: false,
             viewingMobileResults: false,
-            viewingMobileMap: false
+            viewingMobileMap: true,
         }
     }
 
