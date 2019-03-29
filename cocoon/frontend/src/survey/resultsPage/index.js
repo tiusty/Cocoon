@@ -108,11 +108,10 @@ export default class ResultsPage extends Component {
     }
 
     scrollMapToTop() {
-        console.log('in function')
         let selection = document.querySelector('.map-wrapper');
         if (selection) {
-            console.log('selection exists')
-            selection.scrollTop = 0
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
         }
     }
 
