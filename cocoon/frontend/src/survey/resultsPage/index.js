@@ -142,6 +142,7 @@ export default class ResultsPage extends Component {
         }
 
         if (this.state.isMobile && this.state.viewingMobileResults) {
+            style['overflow'] = 'auto'
             return style;
         } else if (this.state.isMobile && !this.state.viewingMobileResults) {
             style = {
@@ -497,6 +498,7 @@ export default class ResultsPage extends Component {
     saveScrollPosition = () => {
         if (document.querySelector('.homelist-wrapper')) {
             const homeList = document.querySelector('.homelist-wrapper');
+            console.log(homeList.scrollTop)
             this.setState({
                 scroll_position: homeList.scrollTop
             })
@@ -504,7 +506,6 @@ export default class ResultsPage extends Component {
     };
 
     setScrollPosition = () => {
-        console.log('set scroll position')
         const homeList = document.querySelector('.results-wrapper');
         homeList.scrollTop = this.state.scroll_position;
     };

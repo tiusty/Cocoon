@@ -166,7 +166,6 @@ export default class Map extends Component {
     }
 
     centerMarker = (homeId) => {
-        console.log('center maker')
         const home = this.props.homes.find(home => home.home.id === homeId);
         const { latitude, longitude } = home.home;
         const centerCoords = {
@@ -245,7 +244,6 @@ export default class Map extends Component {
 
 // Fit map to its bounds after the api is loaded
 const apiIsLoaded = (map, maps, places) => {
-    console.log('api is loaded')
   // Get bounds by our places
   const bounds = getMapBounds(map, maps, places);
   // Fit map to bounds
