@@ -122,7 +122,7 @@ export default class SurveySubscribe extends Component {
                 <div className="subscribe-options">
                     Send me an email when
                     <input type="number" value={this.state.num_home_threshold} name="num_home_threshold" onChange={this.saveValue} onBlur={this.updateSurveyData} />
-                    homes have a score of at least
+                    {this.state.num_home_threshold === 1 ? 'home has' : 'homes have'} a score of at least
                     <input type="number" value={this.state.score_threshold} name="score_threshold" onChange={this.saveValue} onBlur={this.updateSurveyData} />
                 </div>
             );

@@ -437,6 +437,10 @@ class RentResultViewSet(viewsets.ViewSet):
         # Save the response
         data = [x for x in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED] if x.percent_score() >= 0]
 
+        # Blacklist homes that show up to the user
+        for home_score in rent_algorithm.homes[:NUMBER_OF_HOMES_RETURNED]:
+            survey.blacklist_home(home_score.home)
+
         # Serialize the response
         serializer = HomeScoreSerializer(data, many=True, context={'user': user_profile.user})
 

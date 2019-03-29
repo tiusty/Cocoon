@@ -18,6 +18,10 @@ from datetime import timedelta
 # Import app constants
 from .constants import MIN_PRICE_DELTA
 
+# Load the logger
+import logging
+logger = logging.getLogger(__name__)
+
 
 class InitialSurveyModel(models.Model):
     """
@@ -62,6 +66,44 @@ class SurveyUpdateInformation(models.Model):
     wants_update = models.BooleanField(default=False)
     score_threshold = models.IntegerField(default=70)
     num_home_threshold = models.IntegerField(default=7)
+    blacklisted_homes = models.ManyToManyField(RentDatabaseModel, related_name="blacklisted_homes", blank=True)
+
+    def blacklist_home(self, home):
+        """
+        Adds a home to the blacklist field.
+
+        That way that home won't trigger an email again.
+        :param home: (RentDatabaseModel) -> The home that is being blacklisted
+        """
+        self.blacklisted_homes.add(home)
+
+    def check_home_in_blacklist(self, home):
+        """
+        Checks to see if a home is in the blacklist
+        :param home: (RentDataBaseModel) -> The home that is being checked
+        :return: (Boolean) -> True: The home is in the blacklist
+                              False: The home is not in the blacklist
+        """
+        return self.blacklisted_homes.filter(id=home.id).exists()
+
+    def determine_threshold_trigger(self, home_scores):
+        """
+        Determines if the threshold trigger is reached and if so then it
+            returns those homes
+        :param home_scores: (list(HomeScore)) -> A list of the homes
+        :return:
+        """
+        homes_over_threshold = []
+        if len(home_scores) >= self.num_home_threshold:
+            for home in home_scores:
+                if not self.check_home_in_blacklist(home.home):
+                    if home.percent_match >= self.score_threshold:
+                        homes_over_threshold.append(home)
+
+        if len(homes_over_threshold) >= self.num_home_threshold:
+            return homes_over_threshold
+        else:
+            return []
 
     def ready_to_update_user(self):
         """
@@ -140,7 +182,6 @@ class HomeInformationModel(models.Model):
         for num in set(num_bedrooms_list):
             binary_mask += 2 ** num
         self.num_bedrooms_bit_masked = binary_mask
-
 
     @property
     def home_types(self):
