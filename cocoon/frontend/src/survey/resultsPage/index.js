@@ -573,6 +573,40 @@ export default class ResultsPage extends Component {
         }
     }
 
+    renderMapComponent() {
+        /**
+         * Renders a loading symbol until the map is ready to load
+         */
+        if (this.state.isLoading) {
+            return <Preloader color={'var(--teal)'} size={12}/>
+        } else {
+            return(
+                <div style={this.handleMobileMapStyle()} className="map-wrapper">
+                    {this.state.homeList !== undefined && this.state.googleApiLoaded ?
+                        <Map homes={this.state.homeList}
+                             clicked_home={this.state.clicked_home}
+                             handleHomeClick={this.handleHomeClick}
+                             handleHomeMarkerClick={this.handleHomeMarkerClick}
+                             hover_id={this.state.hover_id}
+                             setHoverId={this.setHoverId}
+                             removeHoverId={this.removeHoverId}
+                             survey={this.state.survey} />
+                        : null}
+
+                    <MobileToggleButton
+                        handleMobileButtonClick={this.handleMobileButtonClick}
+                        viewingMobileResults={this.state.viewingMobileResults}
+                        viewingMobileMap={this.state.viewingMobileMap}
+                        isMobile={this.state.isMobile}
+                        isEditing={this.state.isEditing}
+                        isViewingPopup={this.state.isViewingPopup}
+                        viewing_home={this.state.viewing_home} />
+
+                </div>
+            );
+        }
+    }
+
     handleVerification = () => {
         /**
          *  If the user is verified this will render the normal page.
@@ -586,28 +620,7 @@ export default class ResultsPage extends Component {
                         {this.renderButtonRow()}
                         {this.renderMainComponent()}
                     </div>
-                    <div style={this.handleMobileMapStyle()} className="map-wrapper">
-                        {this.state.homeList !== undefined && this.state.googleApiLoaded ?
-                            <Map homes={this.state.homeList}
-                                 clicked_home={this.state.clicked_home}
-                                 handleHomeClick={this.handleHomeClick}
-                                 handleHomeMarkerClick={this.handleHomeMarkerClick}
-                                 hover_id={this.state.hover_id}
-                                 setHoverId={this.setHoverId}
-                                 removeHoverId={this.removeHoverId}
-                                 survey={this.state.survey} />
-                            : null}
-
-                            <MobileToggleButton
-                                handleMobileButtonClick={this.handleMobileButtonClick}
-                                viewingMobileResults={this.state.viewingMobileResults}
-                                viewingMobileMap={this.state.viewingMobileMap}
-                                isMobile={this.state.isMobile}
-                                isEditing={this.state.isEditing}
-                                isViewingPopup={this.state.isViewingPopup}
-                                viewing_home={this.state.viewing_home} />
-
-                    </div>
+                    {this.renderMapComponent()}
                 </div>
             );
         } else {

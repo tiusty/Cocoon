@@ -47,14 +47,12 @@ export default class Map extends Component {
             // Disables street view
             streetViewControl: false,
 
-            zoomControl: true,
-            zoomControlOptions: {
-                position: maps.ControlPosition.LEFT_BOTTOM,
-            }
+            zoomControl: false,
         };
     }
 
     renderMapMarkers = () => {
+        console.log('render map markers')
         let mapMarkers = [];
         if (this.props.homes) {
             let homesCopy = [...this.props.homes];
