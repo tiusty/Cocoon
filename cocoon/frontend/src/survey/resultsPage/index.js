@@ -116,6 +116,7 @@ export default class ResultsPage extends Component {
                     lastViewedMap: false,
                 }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
             } else if (link === 'map') {
+                document.querySelector('.results-wrapper').scrollTop = 0;
                 this.setState({
                     viewingMobileResults: false,
                     viewingMobileMap: true,
