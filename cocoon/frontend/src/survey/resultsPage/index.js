@@ -367,7 +367,8 @@ export default class ResultsPage extends Component {
                         this.handleMobileButtonClick('list');
 
                         // Set lastViewedMap to true since the user just came from the map view
-                        // This must ocurr after
+                        // This must occur after handleMobileButton Click because in that it sets
+                        //  lastviewmap to false
                         this.setState({
                             lastViewedMap: true,
                         })
@@ -399,7 +400,9 @@ export default class ResultsPage extends Component {
         /**
          *  Clears the clicked_home id and renders the home list
         **/
-        this.removeHoverId();
+        if (!this.state.isMobile) {
+            this.removeHoverId();
+        }
         this.setState({
             clicked_home: undefined,
             viewing_home: false
