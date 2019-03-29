@@ -46,6 +46,7 @@ export default class Map extends Component {
             },
 
             gestureHandling: 'greedy',
+            fullscreenControl: false,
 
             // Disables street view
             streetViewControl: false,
