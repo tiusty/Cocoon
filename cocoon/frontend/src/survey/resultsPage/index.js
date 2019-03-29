@@ -342,48 +342,29 @@ export default class ResultsPage extends Component {
          *  version which is why this wrapper function is necessary
          */
         if (this.state.isMobile) {
-            this.handleHomeClick(id, true)
+            /* Change to list view to view home tile*/
+            this.handleMobileButtonClick('list');
+
+            this.setState({
+                clicked_home: id,
+                viewing_home: true,
+                lastViewedMap: true,
+            });
         }
     };
 
-    handleHomeClick = (id, load_home=true) => {
-        /**
-         * On the click of a homeTile or map marker, this sets the clicked_home id
-         * to the target id to be used to render the large home tile.
-        **/
+
+handleHomePinClick = (id) => {
         if (!this.state.isEditing) {
-            this.saveScrollPosition();
-
             if (this.state.isMobile) {
-                if (!this.state.hover_id) {
+                if (this.state.hover_id === id) {
+                    this.setState({
+                        hover_id: undefined,
+                    })
+                } else {
                     this.setState({
                         hover_id: id,
                     })
-                } else if (this.state.hover_id !== id) {
-                    this.setState({
-                        hover_id: id,
-                    })
-                } else if (this.state.hover_id === id) {
-                    if (load_home) {
-                        this.setState({
-                            clicked_home: id,
-                            viewing_home: true,
-                        });
-
-                        /* Change to list view to view home tile*/
-                        this.handleMobileButtonClick('list');
-
-                        // Set lastViewedMap to true since the user just came from the map view
-                        // This must occur after handleMobileButton Click because in that it sets
-                        //  lastviewmap to false
-                        this.setState({
-                            lastViewedMap: true,
-                        })
-                    } else {
-                        this.setState({
-                            hover_id: undefined,
-                        })
-                    }
                 }
             } else {
                 if (this.state.clicked_home === id) {
@@ -398,6 +379,23 @@ export default class ResultsPage extends Component {
                     });
                 }
             }
+
+            document.querySelector('.results-wrapper').scrollTop = 0;
+        }
+    }
+
+    handleHomeClick = (id) => {
+        /**
+         * On the click of a homeTile or map marker, this sets the clicked_home id
+         * to the target id to be used to render the large home tile.
+        **/
+        if (!this.state.isEditing) {
+            this.saveScrollPosition();
+
+            this.setState({
+                clicked_home: id,
+                viewing_home: true,
+            });
 
             document.querySelector('.results-wrapper').scrollTop = 0;
         }
@@ -590,7 +588,7 @@ export default class ResultsPage extends Component {
                     {this.state.homeList !== undefined && this.state.googleApiLoaded ?
                         <Map homes={this.state.homeList}
                              clicked_home={this.state.clicked_home}
-                             handleHomeClick={this.handleHomeClick}
+                             handleHomePinClick={this.handleHomePinClick}
                              handleHomeMarkerClick={this.handleHomeMarkerClick}
                              hover_id={this.state.hover_id}
                              setHoverId={this.setHoverId}
