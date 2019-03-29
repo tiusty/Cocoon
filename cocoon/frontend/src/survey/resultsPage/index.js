@@ -335,22 +335,43 @@ export default class ResultsPage extends Component {
          * to the target id to be used to render the large home tile.
         **/
         if (!this.state.isEditing) {
+            console.log('clicked')
             this.saveScrollPosition();
 
-            if (this.state.clicked_home === id) {
-                this.setState({
-                    clicked_home: undefined,
-                    viewing_home: false,
-                });
-            } else {
-                this.setState({
-                    clicked_home: id,
-                    viewing_home: true,
-                });
-            }
+            if (this.state.isMobile) {
+                if (!this.state.hover_id) {
+                    console.log('state 1')
+                    this.setState({
+                        hover_id: id,
+                    })
+                } else if (this.state.hover_id !== id) {
+                    console.log('state 2')
+                    this.setState({
+                        hover_id: id,
+                    })
+                } else if (this.state.hover_id === id) {
+                    console.log('state 3')
+                    this.setState({
+                        clicked_home: id,
+                        viewing_home: true,
+                    })
 
-            /* Change to list view to view home tile*/
-            this.handleMobileButtonClick('list');
+                    /* Change to list view to view home tile*/
+                    this.handleMobileButtonClick('list');
+                }
+            } else {
+                if (this.state.clicked_home === id) {
+                    this.setState({
+                        clicked_home: undefined,
+                        viewing_home: false,
+                    });
+                } else {
+                    this.setState({
+                        clicked_home: id,
+                        viewing_home: true,
+                    });
+                }
+            }
 
             document.querySelector('.results-wrapper').scrollTop = 0;
         }
