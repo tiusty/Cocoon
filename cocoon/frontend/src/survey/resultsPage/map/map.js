@@ -30,11 +30,6 @@ export default class Map extends Component {
         if (this.props.clicked_home !== prevProps.clicked_home && this.props.clicked_home !== undefined) {
             this.centerMarker(this.props.clicked_home);
         }
-
-        if (this.props.homes !== prevProps.homes) {
-            this.createBounds();
-        }
-
     }
 
     createMapOptions(maps) {
@@ -63,23 +58,26 @@ export default class Map extends Component {
         if (this.props.homes) {
             let homesCopy = [...this.props.homes];
             homesCopy.reverse().map(home => {
-                let newMarker = (
-                    <MapMarker
-                        home={home}
-                        lat={home.home.latitude}
-                        lng={home.home.longitude}
-                        score={home.percent_match}
-                        key={home.home.id}
-                        id={home.home.id}
-                        hover_id={this.props.hover_id}
-                        clicked_home={this.props.clicked_home}
-                        handleHomeClick={this.props.handleHomeClick}
-                        handleHomeMarkerClick={this.props.handleHomeMarkerClick}
-                        setHoverId={this.props.setHoverId}
-                        removeHoverId={this.props.removeHoverId}
-                    />
-                );
-                mapMarkers.push(newMarker);
+                // Don't add the marker if the lat and lng is 0,0
+                if (parseFloat(home.home.latitude) && parseFloat(home.home.longitude)) {
+                    let newMarker = (
+                        <MapMarker
+                            home={home}
+                            lat={home.home.latitude}
+                            lng={home.home.longitude}
+                            score={home.percent_match}
+                            key={home.home.id}
+                            id={home.home.id}
+                            hover_id={this.props.hover_id}
+                            clicked_home={this.props.clicked_home}
+                            handleHomeClick={this.props.handleHomeClick}
+                            handleHomeMarkerClick={this.props.handleHomeMarkerClick}
+                            setHoverId={this.props.setHoverId}
+                            removeHoverId={this.props.removeHoverId}
+                        />
+                    );
+                    mapMarkers.push(newMarker);
+                }
             })
         }
 
@@ -91,15 +89,18 @@ export default class Map extends Component {
                         if (t.commute_type.commute_type) {
                             // If the user put Work From Home then we don't want the destination to render
                             if (t.commute_type.commute_type !== "Work From Home") {
-                                let newMarker = (
-                                    <CommuteMarker
-                                        lat={t.latitude}
-                                        lng={t.longitude}
-                                        name={t.first_name}
-                                        key={t.id}
-                                    />
-                                );
-                                mapMarkers.push(newMarker);
+                                // Don't add the marker if the lattiude is 0,0
+                                if (parseFloat(t.latitude) && parseFloat(t.longitude)) {
+                                    let newMarker = (
+                                        <CommuteMarker
+                                            lat={t.latitude}
+                                            lng={t.longitude}
+                                            name={t.first_name}
+                                            key={t.id}
+                                        />
+                                    );
+                                    mapMarkers.push(newMarker);
+                                }
                             }
                         }
                     }
@@ -182,9 +183,45 @@ export default class Map extends Component {
                 hover_id={this.props.hover_id}
                 setHoverId={this.props.setHoverId}
                 removeHoverId={this.props.removeHoverId}
+                yesIWantToUseGoogleMapApiInternals
+                onGoogleApiLoaded={({ map, maps }) => apiIsLoaded(map, maps, this.renderMapMarkers())}
                 ref="map">
                 {this.renderMapMarkers()}
             </GoogleMapReact>
         )
     }
 }
+
+// Fit map to its bounds after the api is loaded
+const apiIsLoaded = (map, maps, places) => {
+  // Get bounds by our places
+  const bounds = getMapBounds(map, maps, places);
+  // Fit map to bounds
+  map.fitBounds(bounds);
+  // Bind the resize listener
+  bindResizeListener(map, maps, bounds);
+};
+
+
+// Return map bounds based on list of places
+const getMapBounds = (map, maps, places) => {
+  const bounds = new maps.LatLngBounds();
+  places.forEach((place) => {
+      if (place.props.lat && place.props.lng) {
+          bounds.extend(new maps.LatLng(
+              place.props.lat,
+              place.props.lng,
+          ));
+      }
+  });
+  return bounds;
+};
+
+// Re-center map when resizing the window
+const bindResizeListener = (map, maps, bounds) => {
+  maps.event.addDomListenerOnce(map, 'idle', () => {
+    maps.event.addDomListener(window, 'resize', () => {
+      map.fitBounds(bounds);
+    });
+  });
+};

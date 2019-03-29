@@ -208,7 +208,7 @@ export default class ResultsPage extends Component {
          * Whenever the results are being retrieved remove the old list first
          */
         this.setState({
-            homeList: [],
+            homeList: undefined,
             isLoading: true
         });
 
