@@ -107,6 +107,15 @@ export default class ResultsPage extends Component {
 
     }
 
+    scrollMapToTop() {
+        console.log('in function')
+        let selection = document.querySelector('.map-wrapper');
+        if (selection) {
+            console.log('selection exists')
+            selection.scrollTop = 0
+        }
+    }
+
     handleMobileButtonClick = (link) => {
         if (this.state.isMobile) {
             if (link === 'list') {
@@ -116,17 +125,13 @@ export default class ResultsPage extends Component {
                     lastViewedMap: false,
                 }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
             } else if (link === 'map') {
-                let selection = document.querySelector('.map_wrapper');
-                if (selection) {
-                    selection.scrollTop = 0;
-                }
                 this.setState({
                     viewingMobileResults: false,
                     viewingMobileMap: true,
                     lastViewedMap: false,
                     clicked_home: undefined,
                     viewing_home: false,
-                });
+                }, this.scrollMapToTop);
             }
         }
     }
