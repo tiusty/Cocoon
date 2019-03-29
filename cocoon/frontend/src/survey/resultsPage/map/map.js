@@ -23,7 +23,6 @@ export default class Map extends Component {
     }
 
     componentDidMount() {
-        console.log('mounting mpa')
         this.createBounds();
     }
 
@@ -116,7 +115,6 @@ export default class Map extends Component {
     };
 
     createBounds = () => {
-        console.log('create bounds called')
         /*
         *   Function from stack overflow to center the map to show all map markers
         *

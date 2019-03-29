@@ -43,7 +43,6 @@ export default class ResultsPage extends Component {
             scroll_position: undefined,
             isEditing: false,
             isLoading: true,
-            center: undefined,
             isViewingPopup: true,
             verificationEmailSent: false,
             verificationEmailLoading: false,
@@ -68,7 +67,6 @@ export default class ResultsPage extends Component {
     };
 
     getPageWidth = () => {
-        console.log('getpageWidth')
         /*
          * Gets initial page width to determine whether or not user is on mobile (screen size < 768px)
          * Adds event listener to listen for screen resize to check if screen changes to < 768
@@ -139,7 +137,9 @@ export default class ResultsPage extends Component {
             return style;
         } else if (this.state.isMobile && !this.state.viewingMobileResults) {
             style = {
-                display: 'none'
+              position: 'absolute',
+                top: -9999,
+                left: -9999,
             }
         }
 
@@ -156,7 +156,9 @@ export default class ResultsPage extends Component {
             return style;
         } else if (this.state.isMobile && !this.state.viewingMobileMap) {
             style = {
-                display: 'none'
+                position: 'absolute',
+                top: -9999,
+                left: -9999,
             }
         }
 
@@ -495,8 +497,8 @@ export default class ResultsPage extends Component {
 
     setScrollPosition = () => {
         console.log('set scroll position')
-        // const homeList = document.querySelector('.results-wrapper');
-        // homeList.scrollTop = this.state.scroll_position;
+        const homeList = document.querySelector('.results-wrapper');
+        homeList.scrollTop = this.state.scroll_position;
     };
 
     setResultsWrapperClass = () => {
@@ -623,6 +625,14 @@ export default class ResultsPage extends Component {
                         {this.renderMainComponent()}
                     </div>
                     {this.renderMapComponent()}
+                    <MobileToggleButton
+                        handleMobileButtonClick={this.handleMobileButtonClick}
+                        viewingMobileResults={this.state.viewingMobileResults}
+                        viewingMobileMap={this.state.viewingMobileMap}
+                        isMobile={this.state.isMobile}
+                        isEditing={this.state.isEditing}
+                        isViewingPopup={this.state.isViewingPopup}
+                        viewing_home={this.state.viewing_home}/>
                 </div>
             );
         } else {
