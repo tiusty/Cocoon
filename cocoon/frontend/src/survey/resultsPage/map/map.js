@@ -116,6 +116,7 @@ export default class Map extends Component {
     };
 
     createBounds = () => {
+        console.log('create bounds called')
         /*
         *   Function from stack overflow to center the map to show all map markers
         *
@@ -167,6 +168,7 @@ export default class Map extends Component {
     }
 
     centerMarker = (homeId) => {
+        console.log('center maker')
         const home = this.props.homes.find(home => home.home.id === homeId);
         const { latitude, longitude } = home.home;
         const centerCoords = {

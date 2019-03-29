@@ -68,6 +68,7 @@ export default class ResultsPage extends Component {
     };
 
     getPageWidth = () => {
+        console.log('getpageWidth')
         /*
          * Gets initial page width to determine whether or not user is on mobile (screen size < 768px)
          * Adds event listener to listen for screen resize to check if screen changes to < 768
@@ -109,17 +110,14 @@ export default class ResultsPage extends Component {
     }
 
     handleMobileButtonClick = (link) => {
-        console.log('in mobile button click')
         if (this.state.isMobile) {
             if (link === 'list') {
-                console.log('click list')
                 this.setState({
                     viewingMobileResults: true,
                     viewingMobileMap: false,
                     lastViewedMap: false,
                 }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
             } else if (link === 'map') {
-                console.log('click map')
                 this.setState({
                     viewingMobileResults: false,
                     viewingMobileMap: true,
@@ -408,7 +406,6 @@ export default class ResultsPage extends Component {
         /**
          *  Clears the clicked_home id and renders the home list
         **/
-        console.log('in handle close home tile')
         if (!this.state.isMobile) {
             this.removeHoverId();
         }
@@ -418,7 +415,6 @@ export default class ResultsPage extends Component {
         }, !this.state.isMobile || this.state.viewingMobileResults ? () => this.setScrollPosition() : null);
         if (this.state.isMobile) {
             if (this.state.lastViewedMap) {
-                console.log('in last viewed map')
                 this.handleMobileButtonClick('map');
             }
         }
@@ -498,8 +494,9 @@ export default class ResultsPage extends Component {
     };
 
     setScrollPosition = () => {
-        const homeList = document.querySelector('.results-wrapper');
-        homeList.scrollTop = this.state.scroll_position;
+        console.log('set scroll position')
+        // const homeList = document.querySelector('.results-wrapper');
+        // homeList.scrollTop = this.state.scroll_position;
     };
 
     setResultsWrapperClass = () => {
