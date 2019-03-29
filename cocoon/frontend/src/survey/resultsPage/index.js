@@ -121,7 +121,7 @@ export default class ResultsPage extends Component {
                     viewingMobileResults: false,
                     viewingMobileMap: true,
                     lastViewedMap: false,
-                }, this.state.viewing_home ? this.handleCloseHomeTileLarge : null);
+                }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
             }
         }
     }
