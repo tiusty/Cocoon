@@ -121,9 +121,7 @@ export default class ResultsPage extends Component {
                     viewingMobileResults: false,
                     viewingMobileMap: true,
                     lastViewedMap: false,
-                    clicked_home: undefined,
-                    viewing_home: false,
-                })
+                }, this.state.viewing_home ? this.handleCloseHomeTileLarge : null);
             }
         }
     }
@@ -410,7 +408,7 @@ export default class ResultsPage extends Component {
         this.setState({
             clicked_home: undefined,
             viewing_home: false
-        }, () => this.setScrollPosition())
+        }, () => this.setScrollPosition());
         if (this.state.isMobile) {
             if (this.state.lastViewedMap) {
                 this.handleMobileButtonClick('map');
@@ -601,7 +599,6 @@ export default class ResultsPage extends Component {
                         isEditing={this.state.isEditing}
                         isViewingPopup={this.state.isViewingPopup}
                         viewing_home={this.state.viewing_home} />
-
                 </div>
             );
         }
