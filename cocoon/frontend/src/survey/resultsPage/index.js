@@ -109,14 +109,17 @@ export default class ResultsPage extends Component {
     }
 
     handleMobileButtonClick = (link) => {
+        console.log('in mobile button click')
         if (this.state.isMobile) {
             if (link === 'list') {
+                console.log('click list')
                 this.setState({
                     viewingMobileResults: true,
                     viewingMobileMap: false,
                     lastViewedMap: false,
                 }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
             } else if (link === 'map') {
+                console.log('click map')
                 this.setState({
                     viewingMobileResults: false,
                     viewingMobileMap: true,
@@ -408,7 +411,7 @@ export default class ResultsPage extends Component {
         this.setState({
             clicked_home: undefined,
             viewing_home: false
-        }, () => this.setScrollPosition());
+        }, !this.state.isMobile || this.state.viewingMobileResults ? () => this.setScrollPosition() : null);
         if (this.state.isMobile) {
             if (this.state.lastViewedMap) {
                 this.handleMobileButtonClick('map');
