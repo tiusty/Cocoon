@@ -30,7 +30,7 @@ export default class MapMarker extends Component {
     renderMapMarkerInfo = () => {
         if (this.props.hover_id === this.props.id || (this.props.clicked_home && this.props.clicked_home === this.props.id)) {
             return (
-                <MapMarkerInfo home={this.props.home.home} />
+                <MapMarkerInfo onClick={() => this.props.handleHomeClick(this.props.id)} home={this.props.home.home} />
                 );
         } else {
             return null;
