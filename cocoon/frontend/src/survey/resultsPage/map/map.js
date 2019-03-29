@@ -107,10 +107,12 @@ export default class Map extends Component {
 
     createBounds = () => {
         /*
-        *   To zoom/center the map to show all map markers
+        *   Function from stack overflow to center the map to show all map markers
         *
-        *   using the google maps fitBounds() doesn't seem to work with the google maps react component
-        *   so we have to calculate the center ourselves
+        *   Ideally we'd be using the google maps fitBounds() method but it doesn't
+        *   seem to work with the google maps react component
+        *   so we have to calculate the center of the home list coordinates ourselves
+        *
         */
 
         if (!(this.props.homes.length > 0)){
