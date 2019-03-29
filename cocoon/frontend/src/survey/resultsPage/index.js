@@ -104,19 +104,23 @@ export default class ResultsPage extends Component {
     }
 
     handleMobileButtonClick = (link) => {
-        if (link === 'list') {
-            this.setState({
-                viewingMobileResults: true,
-                viewingMobileMap: false
-            });
-            if (this.state.viewing_home) {
-                this.handleCloseHomeTileLarge();
+        if (this.state.isMobile) {
+            if (link === 'list') {
+                this.setState({
+                    viewingMobileResults: true,
+                    viewingMobileMap: false
+                });
+                if (this.state.viewing_home) {
+                    this.handleCloseHomeTileLarge();
+                }
+            } else if (link === 'map') {
+                this.setState({
+                    viewingMobileResults: false,
+                    viewingMobileMap: true,
+                    clicked_home: undefined,
+                    viewing_home: false,
+                })
             }
-        } else if (link === 'map') {
-            this.setState({
-                viewingMobileResults: false,
-                viewingMobileMap: true
-            })
         }
     }
 
@@ -332,10 +336,18 @@ export default class ResultsPage extends Component {
         **/
         if (!this.state.isEditing) {
             this.saveScrollPosition();
-            this.setState({
-                clicked_home: id,
-                viewing_home: true,
-            });
+
+            if (this.state.clicked_home === id) {
+                this.setState({
+                    clicked_home: undefined,
+                    viewing_home: false,
+                });
+            } else {
+                this.setState({
+                    clicked_home: id,
+                    viewing_home: true,
+                });
+            }
 
             /* Change to list view to view home tile*/
             this.handleMobileButtonClick('list');
