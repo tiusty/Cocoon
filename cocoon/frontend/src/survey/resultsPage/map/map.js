@@ -22,6 +22,7 @@ export default class Map extends Component {
     }
 
     componentDidMount() {
+        console.log('mounting mpa')
         this.createBounds();
     }
 
@@ -194,6 +195,7 @@ export default class Map extends Component {
 
 // Fit map to its bounds after the api is loaded
 const apiIsLoaded = (map, maps, places) => {
+    console.log('api is loaded')
   // Get bounds by our places
   const bounds = getMapBounds(map, maps, places);
   // Fit map to bounds
