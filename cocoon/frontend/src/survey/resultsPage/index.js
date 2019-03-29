@@ -354,7 +354,10 @@ export default class ResultsPage extends Component {
     };
 
 
-handleHomePinClick = (id) => {
+    handleHomePinClick = (id) => {
+        /**
+         * Handles what happens when the home pin is clicked. This differs from mobile to desktop
+         */
         if (!this.state.isEditing) {
             if (this.state.isMobile) {
                 if (this.state.hover_id === id) {
@@ -377,16 +380,16 @@ handleHomePinClick = (id) => {
                         clicked_home: id,
                         viewing_home: true,
                     });
+                    document.querySelector('.results-wrapper').scrollTop = 0;
                 }
             }
 
-            document.querySelector('.results-wrapper').scrollTop = 0;
         }
     }
 
     handleHomeClick = (id) => {
         /**
-         * On the click of a homeTile or map marker, this sets the clicked_home id
+         * On the click of a homeTile, this sets the clicked_home id
          * to the target id to be used to render the large home tile.
         **/
         if (!this.state.isEditing) {

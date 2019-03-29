@@ -17,13 +17,17 @@ export default class Map extends Component {
                 lat: 42.36,
                 lng: -71.05
             },
-            zoom: 9
+            zoom: 9,
+            markers: [],
         }
     }
 
     componentDidMount() {
         console.log('mounting mpa')
         this.createBounds();
+        this.setState({
+            markers: this.renderMapMarkers(),
+        })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -183,9 +187,9 @@ export default class Map extends Component {
                 setHoverId={this.props.setHoverId}
                 removeHoverId={this.props.removeHoverId}
                 yesIWantToUseGoogleMapApiInternals
-                onGoogleApiLoaded={({ map, maps }) => apiIsLoaded(map, maps, this.renderMapMarkers())}
+                onGoogleApiLoaded={({ map, maps }) => apiIsLoaded(map, maps, this.state.markers)}
                 ref="map">
-                {this.renderMapMarkers()}
+                {this.state.markers}
             </GoogleMapReact>
         )
     }
