@@ -47,6 +47,7 @@ export default class ResultsPage extends Component {
             isViewingPopup: true,
             verificationEmailSent: false,
             verificationEmailLoading: false,
+            lastViewedMap: false,
 
             /* State for mobile devices */
             isMobile: false,
@@ -108,15 +109,14 @@ export default class ResultsPage extends Component {
             if (link === 'list') {
                 this.setState({
                     viewingMobileResults: true,
-                    viewingMobileMap: false
-                });
-                if (this.state.viewing_home) {
-                    this.handleCloseHomeTileLarge();
-                }
+                    viewingMobileMap: false,
+                    lastViewedMap: false,
+                }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
             } else if (link === 'map') {
                 this.setState({
                     viewingMobileResults: false,
                     viewingMobileMap: true,
+                    lastViewedMap: false,
                     clicked_home: undefined,
                     viewing_home: false,
                 })
@@ -365,6 +365,12 @@ export default class ResultsPage extends Component {
 
                         /* Change to list view to view home tile*/
                         this.handleMobileButtonClick('list');
+
+                        // Set lastViewedMap to true since the user just came from the map view
+                        // This must ocurr after
+                        this.setState({
+                            lastViewedMap: true,
+                        })
                     } else {
                         this.setState({
                             hover_id: undefined,
@@ -398,6 +404,11 @@ export default class ResultsPage extends Component {
             clicked_home: undefined,
             viewing_home: false
         }, () => this.setScrollPosition())
+        if (this.state.isMobile) {
+            if (this.state.lastViewedMap) {
+                this.handleMobileButtonClick('map');
+            }
+        }
     };
 
     renderLargeHome = () => {
