@@ -361,7 +361,8 @@ export default class ResultsPage extends Component {
                         this.setState({
                             clicked_home: id,
                             viewing_home: true,
-                        })
+                        });
+
                         /* Change to list view to view home tile*/
                         this.handleMobileButtonClick('list');
                     } else {
