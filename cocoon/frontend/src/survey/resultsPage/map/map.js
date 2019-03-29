@@ -17,7 +17,7 @@ export default class Map extends Component {
                 lat: 42.36,
                 lng: -71.05
             },
-            zoom: 9,
+            zoom: 10,
             markers: [],
         }
     }
@@ -25,9 +25,6 @@ export default class Map extends Component {
     componentDidMount() {
         console.log('mounting mpa')
         this.createBounds();
-        this.setState({
-            markers: this.renderMapMarkers(),
-        })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -56,7 +53,12 @@ export default class Map extends Component {
     }
 
     renderMapMarkers = () => {
-        console.log('render map markers')
+        /**
+         * This function no longer renders the markers on the google map, instead
+         *  this is still used on the googleapiload so that fitbounds as all the markers
+         *      so it can properly size the map
+         * @type {Array}
+         */
         let mapMarkers = [];
         if (this.props.homes) {
             let homesCopy = [...this.props.homes];
@@ -176,6 +178,8 @@ export default class Map extends Component {
         })
     }
 
+
+
     render() {
         return (
             <GoogleMapReact
@@ -187,9 +191,53 @@ export default class Map extends Component {
                 setHoverId={this.props.setHoverId}
                 removeHoverId={this.props.removeHoverId}
                 yesIWantToUseGoogleMapApiInternals
-                onGoogleApiLoaded={({ map, maps }) => apiIsLoaded(map, maps, this.state.markers)}
+                onGoogleApiLoaded={({ map, maps }) => apiIsLoaded(map, maps, this.renderMapMarkers())}
                 ref="map">
-                {this.state.markers}
+                {[...this.props.homes].reverse().map(home => {
+                    if (parseFloat(home.home.latitude) && parseFloat(home.home.longitude)) {
+                        return (
+                            <MapMarker
+                                home={home}
+                                lat={home.home.latitude}
+                                lng={home.home.longitude}
+                                score={home.percent_match}
+                                key={home.home.id}
+                                id={home.home.id}
+                                clicked_home={this.props.clicked_home}
+                                handleHomePinClick={this.props.handleHomePinClick}
+                                handleHomeMarkerClick={this.props.handleHomeMarkerClick}
+                                hover_id={this.props.hover_id}
+                                setHoverId={this.props.setHoverId}
+                                removeHoverId={this.props.removeHoverId}
+                            />
+                        );
+                    }
+                })}
+                {this.props.survey ?
+                    this.props.survey.tenants.map(t => {
+                            if (t.commute_type) {
+                                if (t.commute_type.commute_type) {
+                                    // If the user put Work From Home then we don't want the destination to render
+                                    if (t.commute_type.commute_type !== "Work From Home") {
+                                        // Don't add the marker if the lattiude is 0,0
+                                        if (parseFloat(t.latitude) && parseFloat(t.longitude)) {
+                                            return (
+                                                <CommuteMarker
+                                                    lat={t.latitude}
+                                                    lng={t.longitude}
+                                                    name={t.first_name}
+                                                    key={t.id}
+                                                />
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    )
+                    :
+                    null
+                }
             </GoogleMapReact>
         )
     }
