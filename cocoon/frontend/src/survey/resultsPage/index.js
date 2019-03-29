@@ -115,6 +115,13 @@ export default class ResultsPage extends Component {
         }
     }
 
+    scrollResultsToTop() {
+        let selection = document.querySelector('.results-wrapper');
+        if (selection) {
+            selection.scrollTop = 0;
+        }
+    }
+
     handleMobileButtonClick = (link) => {
         if (this.state.isMobile) {
             if (link === 'list') {
@@ -358,7 +365,7 @@ export default class ResultsPage extends Component {
                 clicked_home: id,
                 viewing_home: true,
                 lastViewedMap: true,
-            });
+            }, this.scrollResultsToTop);
         }
     };
 
