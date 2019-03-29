@@ -52,7 +52,7 @@ export default class ResultsPage extends Component {
             /* State for mobile devices */
             isMobile: false,
             viewingMobileResults: false,
-            viewingMobileMap: true,
+            viewingMobileMap: false,
         }
     }
 
@@ -88,11 +88,15 @@ export default class ResultsPage extends Component {
 
         window.addEventListener('resize', e => {
             if (e.target.innerWidth < 768) {
-                this.setState({
-                    isMobile: true,
-                    viewingMobileResults: true,
-                    viewingMobileMap: false
-                })
+                // Only change the state values if it wasn't already
+                //  mobile. This prevents weird spamming of changing the page
+                if (!this.state.isMobile) {
+                    this.setState({
+                        isMobile: true,
+                        viewingMobileResults: false,
+                        viewingMobileMap: true
+                    })
+                }
             } else {
                 this.setState({
                     isMobile: false,
