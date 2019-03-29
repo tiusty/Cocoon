@@ -286,6 +286,12 @@
     background: rgb(219, 242, 241);
     padding: .5em;
     border-radius: .25em;
+    font-size: 3rem;
+}
+
+.DayPicker-NavButton {
+    font-size: 2rem;
+    top: 1em!important;
 }
 
 .DayPickerInput, .DayPickerInput input {
