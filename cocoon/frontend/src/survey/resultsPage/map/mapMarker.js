@@ -30,7 +30,9 @@ export default class MapMarker extends Component {
     renderMapMarkerInfo = () => {
         if (this.props.hover_id === this.props.id || (this.props.clicked_home && this.props.clicked_home === this.props.id)) {
             return (
-                <MapMarkerInfo onClick={() => this.props.handleHomeClick(this.props.id)} home={this.props.home.home} />
+                <MapMarkerInfo
+                    onClickMarker={this.props.handleHomeMarkerClick}
+                    home={this.props.home.home} />
                 );
         } else {
             return null;
@@ -95,7 +97,7 @@ class MapMarkerInfo extends Component {
 
     render() {
         return (
-            <div className="map-marker-info-wrapper">
+            <div className="map-marker-info-wrapper" onClick={() => this.props.onClickMarker(this.props.home.id)}>
                 <div className="map-marker-info_img" style={this.renderImage(this.props.home)}></div>
                 <div className="map-marker-info">
                     <div className="map-marker-info_price">

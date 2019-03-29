@@ -329,6 +329,16 @@ export default class ResultsPage extends Component {
         );
     };
 
+    handleHomeMarkerClick = (id) => {
+        /**
+         * Handles clicks the home marker. The home marker should only be able to be clicked on the mobile
+         *  version which is why this wrapper function is necessary
+         */
+        if (this.state.isMobile) {
+            this.handleHomeClick(id)
+        }
+    };
+
     handleHomeClick = (id) => {
         /**
          * On the click of a homeTile or map marker, this sets the clicked_home id
@@ -561,6 +571,7 @@ export default class ResultsPage extends Component {
                             <Map homes={this.state.homeList}
                                  clicked_home={this.state.clicked_home}
                                  handleHomeClick={this.handleHomeClick}
+                                 handleHomeMarkerClick={this.handleHomeMarkerClick}
                                  hover_id={this.state.hover_id}
                                  setHoverId={this.setHoverId}
                                  removeHoverId={this.removeHoverId}
