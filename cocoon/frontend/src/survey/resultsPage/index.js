@@ -75,8 +75,8 @@ export default class ResultsPage extends Component {
         if (window.innerWidth < 768) {
             this.setState({
                 isMobile: true,
-                viewingMobileResults: true,
-                viewingMobileMap: false
+                viewingMobileResults: false,
+                viewingMobileMap: true,
             })
         } else {
             this.setState({
