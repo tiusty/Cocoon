@@ -124,7 +124,9 @@ export default class ResultsPage extends Component {
                     viewingMobileResults: false,
                     viewingMobileMap: true,
                     lastViewedMap: false,
-                }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
+                    clicked_home: undefined,
+                    viewing_home: false,
+                });
             }
         }
     }
@@ -415,7 +417,7 @@ export default class ResultsPage extends Component {
         }, !this.state.isMobile || this.state.viewingMobileResults ? () => this.setScrollPosition() : null);
         if (this.state.isMobile) {
             if (this.state.lastViewedMap) {
-                consoel.log('in lastviewed map')
+                console.log('in last viewed map')
                 this.handleMobileButtonClick('map');
             }
         }
