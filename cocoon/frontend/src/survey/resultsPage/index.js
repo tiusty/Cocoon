@@ -108,7 +108,10 @@ export default class ResultsPage extends Component {
             this.setState({
                 viewingMobileResults: true,
                 viewingMobileMap: false
-            })
+            });
+            if (this.state.viewing_home) {
+                this.handleCloseHomeTileLarge();
+            }
         } else if (link === 'map') {
             this.setState({
                 viewingMobileResults: false,
