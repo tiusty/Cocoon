@@ -362,15 +362,13 @@ export default class ResultsPage extends Component {
                             clicked_home: id,
                             viewing_home: true,
                         })
+                        /* Change to list view to view home tile*/
+                        this.handleMobileButtonClick('list');
                     } else {
                         this.setState({
                             hover_id: undefined,
                         })
                     }
-
-
-                    /* Change to list view to view home tile*/
-                    this.handleMobileButtonClick('list');
                 }
             } else {
                 if (this.state.clicked_home === id) {
