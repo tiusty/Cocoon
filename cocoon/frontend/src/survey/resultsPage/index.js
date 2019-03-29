@@ -536,6 +536,8 @@ export default class ResultsPage extends Component {
 
                             <MobileToggleButton
                                 handleMobileButtonClick={this.handleMobileButtonClick}
+                                viewingMobileResults={this.state.viewingMobileResults}
+                                viewingMobileMap={this.state.viewingMobileMap}
                                 isMobile={this.state.isMobile}
                                 isEditing={this.state.isEditing}
                                 isViewingPopup={this.state.isViewingPopup}
