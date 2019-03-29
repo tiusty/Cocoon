@@ -22,7 +22,7 @@ class PolygonInLine(admin.TabularInline):
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
     readonly_fields = ("created", 'id', 'url', 'survey_name', 'num_bedrooms')
-    raw_id_fields = ("favorites", "visit_list")
+    raw_id_fields = ("favorites", "visit_list", "blacklisted_homes")
     # noinspection SpellCheckingInspection
     fieldsets = (
         (None, {'fields': ('survey_name', 'user_profile')}),
@@ -41,7 +41,7 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
 
         ('Created', {'fields': ('created', 'id', 'url')}),
         ('Homes', {'fields': ('favorites', 'visit_list', 'polygon_filter_type',)}),
-        ('Update Info', {'fields': ('last_updated', 'update_frequency', 'wants_update', 'score_threshold', 'num_home_threshold',)})
+        ('Update Info', {'fields': ('last_updated', 'update_frequency', 'wants_update', 'score_threshold', 'num_home_threshold', 'blacklisted_homes')})
     )
     list_display = ('survey_name', 'user_profile',)
     list_filter = ['user_profile']
