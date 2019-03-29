@@ -405,6 +405,7 @@ export default class ResultsPage extends Component {
         /**
          *  Clears the clicked_home id and renders the home list
         **/
+        console.log('in handle close home tile')
         if (!this.state.isMobile) {
             this.removeHoverId();
         }
@@ -414,6 +415,7 @@ export default class ResultsPage extends Component {
         }, !this.state.isMobile || this.state.viewingMobileResults ? () => this.setScrollPosition() : null);
         if (this.state.isMobile) {
             if (this.state.lastViewedMap) {
+                consoel.log('in lastviewed map')
                 this.handleMobileButtonClick('map');
             }
         }
