@@ -335,36 +335,39 @@ export default class ResultsPage extends Component {
          *  version which is why this wrapper function is necessary
          */
         if (this.state.isMobile) {
-            this.handleHomeClick(id)
+            this.handleHomeClick(id, true)
         }
     };
 
-    handleHomeClick = (id) => {
+    handleHomeClick = (id, load_home=true) => {
         /**
          * On the click of a homeTile or map marker, this sets the clicked_home id
          * to the target id to be used to render the large home tile.
         **/
         if (!this.state.isEditing) {
-            console.log('clicked')
             this.saveScrollPosition();
 
             if (this.state.isMobile) {
                 if (!this.state.hover_id) {
-                    console.log('state 1')
                     this.setState({
                         hover_id: id,
                     })
                 } else if (this.state.hover_id !== id) {
-                    console.log('state 2')
                     this.setState({
                         hover_id: id,
                     })
                 } else if (this.state.hover_id === id) {
-                    console.log('state 3')
-                    this.setState({
-                        clicked_home: id,
-                        viewing_home: true,
-                    })
+                    if (load_home) {
+                        this.setState({
+                            clicked_home: id,
+                            viewing_home: true,
+                        })
+                    } else {
+                        this.setState({
+                            hover_id: undefined,
+                        })
+                    }
+
 
                     /* Change to list view to view home tile*/
                     this.handleMobileButtonClick('list');
