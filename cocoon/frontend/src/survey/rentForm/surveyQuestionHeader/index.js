@@ -61,7 +61,7 @@ export default class SurveyQuestionHeader extends Component {
         if (this.props.hasHelp && this.props.surveyQuestionHelpText !== '') {
             return (
                 <i
-                    className="material-icons"
+                    className="material-icons survey-question-help-icon"
                     style={this.helpStyle()}
                     onClick={this.toggleHelp}>
                     help_outline
