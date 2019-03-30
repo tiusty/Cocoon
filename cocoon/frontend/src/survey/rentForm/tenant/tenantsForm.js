@@ -41,7 +41,7 @@ export default class TenantsForm extends Component {
     handleValidation = (index, show_errors) => {
         let valid = true;
         valid = this.handleOccupationValidation(index, show_errors) && valid;
-        valid = this.handleOccupationFollowupValidation(index, show_errors) && valid;
+        // valid = this.handleOccupationFollowupValidation(index, show_errors) && valid;
         valid = this.handleCommuteTypeValidation(index, show_errors) && valid;
         // valid = this.handleFinancialValidation(index, show_errors) && valid;
 

@@ -558,17 +558,22 @@ export default class ResultsPage extends Component {
     }
 
     renderButtonRow = () => {
-        if (!this.state.viewing_home) {
-            return (
-                <div className="results-btn-row">
-                    <div className="schedule-tour-div">
-                        {this.renderScheduleButton()}
-                    </div>
-                    <span onClick={this.toggleEditing}><i className="material-icons">edit</i> {this.renderEditingText()}</span>
-                </div>
-            );
+        if (this.state.isLoading) {
+            return null
         } else {
-            return null;
+            if (!this.state.viewing_home) {
+                return (
+                    <div className="results-btn-row">
+                        <div className="schedule-tour-div">
+                            {this.renderScheduleButton()}
+                        </div>
+                        <span onClick={this.toggleEditing}><i
+                            className="material-icons">edit</i> {this.renderEditingText()}</span>
+                    </div>
+                );
+            } else {
+                return null;
+            }
         }
     }
 
