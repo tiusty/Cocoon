@@ -121,7 +121,7 @@ export default class TenantForm extends Component {
                     </label>
                 </div>
                 {/*After asking about the occupation, ask the follow up questions*/}
-                {this.renderOccupationFollowupQuestions(name)}
+                {/*{this.renderOccupationFollowupQuestions(name)}*/}
             </>
         );
     }
