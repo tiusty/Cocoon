@@ -233,7 +233,7 @@ export default class ResultsPage extends Component {
         this.setState({
             homeList: undefined,
             isLoading: true
-        });
+        }, this.handleMobileButtonClick('map'));
 
         /**
          * Retrieve the survey results
