@@ -214,7 +214,7 @@ const NewUser = (props) => (
             </div>
             <div className="col-sm-6 col-xs-12">
                 <button className="col-sm-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
-                    {props.loading ? 'Loading' : 'Check out my places'}
+                    {props.loading ? 'Loading' : 'View'}
                 </button>
             </div>
         </div>
@@ -234,7 +234,7 @@ const CurrentUser = (props) => (
             </div>
             <div className="col-xs-6">
                 <button className="col-sm-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
-                    {props.loading ? 'Loading' : 'Check out my places'}
+                    {props.loading ? 'Loading' : 'View'}
                 </button>
             </div>
         </div>

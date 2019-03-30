@@ -9,7 +9,7 @@ from ..models import RentingSurveyModel
 from ..tasks import notify_user_survey_updates
 
 # Import Cocoon Modules
-from cocoon.houseDatabase.models import HomeTypeModel
+from cocoon.houseDatabase.models import HomeTypeModel, RentDatabaseModel
 from cocoon.userAuth.models import MyUser
 from cocoon.survey.home_data.home_score import HomeScore
 
@@ -32,13 +32,15 @@ class TestNofityUserSurveyUpdates(TestCase):
                                                   update_frequency=0,
                                                   score_threshold=100,
                                                   num_home_threshold=1)
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
 
         # Create homes that will return from the algorithm
-        home = HomeScore()
+        home = HomeScore(home)
         home.accumulated_points = 100
         home.total_possible_points = 100
 
-        home1 = HomeScore()
+        home1 = HomeScore(home1)
         home1.accumulated_points = 50
         home1.total_possible_points = 100
 
@@ -49,7 +51,7 @@ class TestNofityUserSurveyUpdates(TestCase):
         notify_user_survey_updates()
 
         # Assert
-        mock_os.assert_called_once_with(survey)
+        mock_os.assert_called_once_with(survey, 1)
 
     @patch('cocoon.survey.tasks.RentAlgorithm')
     @patch('cocoon.survey.tasks.email_user')
@@ -67,13 +69,15 @@ class TestNofityUserSurveyUpdates(TestCase):
                                                   update_frequency=0,
                                                   score_threshold=100,
                                                   num_home_threshold=3)
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
 
         # Create homes that will return from the algorithm
-        home = HomeScore()
+        home = HomeScore(home)
         home.accumulated_points = 100
         home.total_possible_points = 100
 
-        home1 = HomeScore()
+        home1 = HomeScore(home1)
         home1.accumulated_points = 50
         home1.total_possible_points = 100
 
@@ -101,13 +105,15 @@ class TestNofityUserSurveyUpdates(TestCase):
                                                   update_frequency=0,
                                                   score_threshold=100,
                                                   num_home_threshold=1)
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
 
         # Create homes that will return from the algorithm
-        home = HomeScore()
+        home = HomeScore(home)
         home.accumulated_points = 100
         home.total_possible_points = 100
 
-        home1 = HomeScore()
+        home1 = HomeScore(home1)
         home1.accumulated_points = 50
         home1.total_possible_points = 100
 
@@ -144,12 +150,15 @@ class TestNofityUserSurveyUpdates(TestCase):
                                                   score_threshold=100,
                                                   num_home_threshold=1)
 
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
+
         # Create homes that will return from the algorithm
-        home = HomeScore()
+        home = HomeScore(home)
         home.accumulated_points = 100
         home.total_possible_points = 100
 
-        home1 = HomeScore()
+        home1 = HomeScore(home1)
         home1.accumulated_points = 50
         home1.total_possible_points = 100
 
@@ -162,8 +171,8 @@ class TestNofityUserSurveyUpdates(TestCase):
         # Assert
         mock_os.assert_has_calls(
             [
-                call(survey),
-                call(survey1)
+                call(survey, 1),
+                call(survey1, 1)
             ]
 
         )
@@ -192,12 +201,15 @@ class TestNofityUserSurveyUpdates(TestCase):
                                                    score_threshold=100,
                                                    num_home_threshold=1)
 
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
+
         # Create homes that will return from the algorithm
-        home = HomeScore()
+        home = HomeScore(home)
         home.accumulated_points = 100
         home.total_possible_points = 100
 
-        home1 = HomeScore()
+        home1 = HomeScore(home1)
         home1.accumulated_points = 50
         home1.total_possible_points = 100
 
@@ -210,7 +222,7 @@ class TestNofityUserSurveyUpdates(TestCase):
         # Assert
         mock_os.assert_has_calls(
             [
-                call(survey1)
+                call(survey1, 1)
             ]
 
         )
@@ -231,12 +243,15 @@ class TestNofityUserSurveyUpdates(TestCase):
                                                   score_threshold=100,
                                                   num_home_threshold=3)
 
+        home = RentDatabaseModel.create_house_database()
+        home1 = RentDatabaseModel.create_house_database()
+
         # Create homes that will return from the algorithm
-        home = HomeScore()
+        home = HomeScore(home)
         home.accumulated_points = 100
         home.total_possible_points = 100
 
-        home1 = HomeScore()
+        home1 = HomeScore(home1)
         home1.accumulated_points = 50
         home1.total_possible_points = 100
 

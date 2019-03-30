@@ -20,6 +20,7 @@ import HomeTileLarge from '../../common/homeTile/homeTileLarge';
 import Map from './map/map';
 import RentForm from '../../survey/rentForm/main';
 import PopUp from './popup';
+import MobileToggleButton from './mobileToggleButton';
 
 // Necessary XSRF headers for posting form
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -42,10 +43,15 @@ export default class ResultsPage extends Component {
             scroll_position: undefined,
             isEditing: false,
             isLoading: true,
-            center: undefined,
             isViewingPopup: true,
             verificationEmailSent: false,
             verificationEmailLoading: false,
+            lastViewedMap: false,
+
+            /* State for mobile devices */
+            isMobile: false,
+            viewingMobileResults: false,
+            viewingMobileMap: false,
         }
     }
 
@@ -53,11 +59,128 @@ export default class ResultsPage extends Component {
         // This interval checks every .3 seconds to see if the google api loaded.
         this.interval = setInterval(() => this.checkGoogleApi(), 300);
         this.setPageHeight();
+        this.getPageWidth();
         if (this.props.is_verified) {
             this.getSurvey();
             this.getResults();
         }
     };
+
+    getPageWidth = () => {
+        /*
+         * Gets initial page width to determine whether or not user is on mobile (screen size < 768px)
+         * Adds event listener to listen for screen resize to check if screen changes to < 768
+         */
+        if (window.innerWidth < 768) {
+            this.setState({
+                isMobile: true,
+                viewingMobileResults: false,
+                viewingMobileMap: true,
+            })
+        } else {
+            this.setState({
+                isMobile: false,
+                viewingMobileResults: false,
+                viewingMobileMap: false
+            })
+        }
+
+        window.addEventListener('resize', e => {
+            if (e.target.innerWidth < 768) {
+                // Only change the state values if it wasn't already
+                //  mobile. This prevents weird spamming of changing the page
+                if (!this.state.isMobile) {
+                    this.setState({
+                        isMobile: true,
+                        viewingMobileResults: false,
+                        viewingMobileMap: true
+                    })
+                }
+            } else {
+                this.setState({
+                    isMobile: false,
+                    viewingMobileResults: false,
+                    viewingMobileMap: false
+                })
+            }
+        })
+
+    }
+
+    scrollMapToTop() {
+        let selection = document.querySelector('.map-wrapper');
+        if (selection) {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    }
+
+    scrollResultsToTop() {
+        let selection = document.querySelector('.results-wrapper');
+        if (selection) {
+            selection.scrollTop = 0;
+        }
+    }
+
+    handleMobileButtonClick = (link) => {
+        if (this.state.isMobile) {
+            if (link === 'list') {
+                this.setState({
+                    viewingMobileResults: true,
+                    viewingMobileMap: false,
+                    lastViewedMap: false,
+                }, this.state.viewing_home ? this.handleCloseHomeTileLarge() : null);
+            } else if (link === 'map') {
+                this.setState({
+                    viewingMobileResults: false,
+                    viewingMobileMap: true,
+                    lastViewedMap: false,
+                    clicked_home: undefined,
+                    viewing_home: false,
+                }, this.scrollMapToTop);
+            }
+        }
+    }
+
+    handleMobileResultsStyle = () => {
+
+        let style = {
+            display: 'block'
+        }
+
+        if (this.state.isMobile && this.state.viewingMobileResults && !this.state.isEditing) {
+            style['overflow'] = 'auto'
+            return style;
+        } else if (this.state.isMobile && !this.state.viewingMobileResults) {
+            style = {
+              position: 'absolute',
+                top: -9999,
+                left: -9999,
+            }
+        }
+
+        return style;
+    }
+
+    handleMobileMapStyle = () => {
+
+        let style = {
+            display: 'block'
+        }
+
+        if (this.state.isMobile && this.state.viewingMobileMap) {
+            return style;
+        } else if (this.state.isMobile && !this.state.viewingMobileMap) {
+            style = {
+                position: 'absolute',
+                top: -9999,
+                left: -9999,
+            }
+        }
+
+        return style;
+
+    }
 
     checkGoogleApi() {
         /**
@@ -108,9 +231,9 @@ export default class ResultsPage extends Component {
          * Whenever the results are being retrieved remove the old list first
          */
         this.setState({
-            homeList: [],
+            homeList: undefined,
             isLoading: true
-        });
+        }, this.handleMobileButtonClick('map'));
 
         /**
          * Retrieve the survey results
@@ -122,7 +245,7 @@ export default class ResultsPage extends Component {
                     homeList: response.data,
                     isLoading: false,
                     isViewingPopup: true
-                });
+                }, this.handleMobileButtonClick('map'));
             })
     };
 
@@ -229,17 +352,70 @@ export default class ResultsPage extends Component {
         );
     };
 
+    handleHomeMarkerClick = (id) => {
+        /**
+         * Handles clicks the home marker. The home marker should only be able to be clicked on the mobile
+         *  version which is why this wrapper function is necessary
+         */
+        if (this.state.isMobile) {
+            /* Change to list view to view home tile*/
+            this.handleMobileButtonClick('list');
+
+            this.setState({
+                clicked_home: id,
+                viewing_home: true,
+                lastViewedMap: true,
+            }, this.scrollResultsToTop);
+        }
+    };
+
+
+    handleHomePinClick = (id) => {
+        /**
+         * Handles what happens when the home pin is clicked. This differs from mobile to desktop
+         */
+        if (!this.state.isEditing) {
+            if (this.state.isMobile) {
+                if (this.state.hover_id === id) {
+                    this.setState({
+                        hover_id: undefined,
+                    })
+                } else {
+                    this.setState({
+                        hover_id: id,
+                    })
+                }
+            } else {
+                if (this.state.clicked_home === id) {
+                    this.setState({
+                        clicked_home: undefined,
+                        viewing_home: false,
+                    });
+                } else {
+                    this.setState({
+                        clicked_home: id,
+                        viewing_home: true,
+                    });
+                    document.querySelector('.results-wrapper').scrollTop = 0;
+                }
+            }
+
+        }
+    }
+
     handleHomeClick = (id) => {
         /**
-         * On the click of a homeTile or map marker, this sets the clicked_home id
+         * On the click of a homeTile, this sets the clicked_home id
          * to the target id to be used to render the large home tile.
         **/
         if (!this.state.isEditing) {
             this.saveScrollPosition();
+
             this.setState({
                 clicked_home: id,
-                viewing_home: true
+                viewing_home: true,
             });
+
             document.querySelector('.results-wrapper').scrollTop = 0;
         }
     };
@@ -248,11 +424,18 @@ export default class ResultsPage extends Component {
         /**
          *  Clears the clicked_home id and renders the home list
         **/
-        this.removeHoverId();
+        if (!this.state.isMobile) {
+            this.removeHoverId();
+        }
         this.setState({
             clicked_home: undefined,
             viewing_home: false
-        }, () => this.setScrollPosition())
+        }, !this.state.isMobile || this.state.viewingMobileResults ? () => this.setScrollPosition() : null);
+        if (this.state.isMobile) {
+            if (this.state.lastViewedMap) {
+                this.handleMobileButtonClick('map');
+            }
+        }
     };
 
     renderLargeHome = () => {
@@ -375,17 +558,22 @@ export default class ResultsPage extends Component {
     }
 
     renderButtonRow = () => {
-        if (!this.state.viewing_home) {
-            return (
-                <div className="results-btn-row">
-                    <div className="schedule-tour-div">
-                        {this.renderScheduleButton()}
-                    </div>
-                    <span onClick={this.toggleEditing}><i className="material-icons">edit</i> {this.renderEditingText()}</span>
-                </div>
-            );
+        if (this.state.isLoading) {
+            return null
         } else {
-            return null;
+            if (!this.state.viewing_home) {
+                return (
+                    <div className="results-btn-row">
+                        <div className="schedule-tour-div">
+                            {this.renderScheduleButton()}
+                        </div>
+                        <span onClick={this.toggleEditing}><i
+                            className="material-icons">edit</i> {this.renderEditingText()}</span>
+                    </div>
+                );
+            } else {
+                return null;
+            }
         }
     }
 
@@ -410,6 +598,39 @@ export default class ResultsPage extends Component {
         }
     }
 
+    renderMapComponent() {
+        /**
+         * Renders a loading symbol until the map is ready to load
+         */
+        if (this.state.isLoading) {
+            return <Preloader color={'var(--teal)'} size={12}/>
+        } else {
+            return(
+                <div style={this.handleMobileMapStyle()} className="map-wrapper">
+                    {this.state.homeList !== undefined && this.state.googleApiLoaded ?
+                        <Map homes={this.state.homeList}
+                             clicked_home={this.state.clicked_home}
+                             handleHomePinClick={this.handleHomePinClick}
+                             handleHomeMarkerClick={this.handleHomeMarkerClick}
+                             hover_id={this.state.hover_id}
+                             setHoverId={this.setHoverId}
+                             removeHoverId={this.removeHoverId}
+                             survey={this.state.survey} />
+                        : null}
+
+                    <MobileToggleButton
+                        handleMobileButtonClick={this.handleMobileButtonClick}
+                        viewingMobileResults={this.state.viewingMobileResults}
+                        viewingMobileMap={this.state.viewingMobileMap}
+                        isMobile={this.state.isMobile}
+                        isEditing={this.state.isEditing}
+                        isViewingPopup={this.state.isViewingPopup}
+                        viewing_home={this.state.viewing_home} />
+                </div>
+            );
+        }
+    }
+
     handleVerification = () => {
         /**
          *  If the user is verified this will render the normal page.
@@ -419,23 +640,19 @@ export default class ResultsPage extends Component {
             return (
                 <div id="results-page">
                     {this.renderPopup()}
-                    <div className={this.setResultsWrapperClass()}>
-                        <div className="not-optimized">
-                            <p>Please use a laptop/desktop to use the map features of this page</p>
-                        </div>
+                    <div style={this.handleMobileResultsStyle()} className={this.setResultsWrapperClass()}>
                         {this.renderButtonRow()}
                         {this.renderMainComponent()}
                     </div>
-                    <div className="map-wrapper">
-                        {this.state.homeList !== undefined && this.state.googleApiLoaded ?
-                            <Map homes={this.state.homeList}
-                                 handleHomeClick={this.handleHomeClick}
-                                 hover_id={this.state.hover_id}
-                                 setHoverId={this.setHoverId}
-                                 removeHoverId={this.removeHoverId}
-                                 survey={this.state.survey} />
-                            : null}
-                    </div>
+                    {this.renderMapComponent()}
+                    <MobileToggleButton
+                        handleMobileButtonClick={this.handleMobileButtonClick}
+                        viewingMobileResults={this.state.viewingMobileResults}
+                        viewingMobileMap={this.state.viewingMobileMap}
+                        isMobile={this.state.isMobile}
+                        isEditing={this.state.isEditing}
+                        isViewingPopup={this.state.isViewingPopup}
+                        viewing_home={this.state.viewing_home}/>
                 </div>
             );
         } else {

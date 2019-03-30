@@ -1,0 +1,35 @@
+.mobile-toggle-wrapper {
+    position: fixed;
+    bottom: 10px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 50%;
+    background: white;
+    padding: 10px;
+    border-radius: 20px;
+    transform: translateX(-50%);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--darkBlue);
+    z-index: 999;
+}
+
+.toggle-btn {
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-btn:nth-of-type(1) {
+    border-right: 1px solid var(--borderColor);
+}
+
+.toggle-btn i {
+    padding-right: 4px;
+    opacity: .5;
+    font-size: 16px;
+}

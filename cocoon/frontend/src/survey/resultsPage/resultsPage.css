@@ -13,7 +13,12 @@
     height: 100%;
 }
 
+.results-wrapper {
+    /*width: 40%;*/
+}
+
 .map-wrapper {
+    /*width: 60%;*/
     background: var(--borderColor);
 }
 
@@ -134,7 +139,7 @@
         overflow: auto !important;
     }
     .map-wrapper {
-        display: none;
+        width: 100%;
     }
     .not-optimized {
         display: block;
@@ -142,6 +147,9 @@
     .results-wrapper {
         overflow: inherit;
         width: 100%;
+    }
+    .results-wrapper .expanded-wrapper {
+        margin-bottom: 50px;
     }
     .results {
         grid-template-columns: 1fr 1fr;
@@ -160,30 +168,18 @@
     font-weight: 800;
     border-radius: 7px;
     background: var(--teal);
-    width: 40px;
-    font-size: 16px;
+    width: 35px;
+    font-size: 14px;
     z-index: 999;
-    padding: 5px 7px;
+    padding: 5px;
     text-align: center;
     display: inline-block;
     position: relative;
     font-family: 'Montserrat', sans-serif;
     box-shadow: 0 2px 7px rgba(0, 0, 0, 0.2);
     cursor: pointer;
+    border: 3px solid transparent;
 }
-
-/*.map-marker::before {*/
-    /*content: '';*/
-    /*height: 10px;*/
-    /*width: 10px;*/
-    /*transform: rotate(45deg);*/
-    /*position: absolute;*/
-    /*background: var(--teal);*/
-    /*bottom: -4px;*/
-    /*left: 0;*/
-    /*right: 0;*/
-    /*margin: 0 auto;*/
-/*}*/
 
 .commute-marker {
     width: auto;
@@ -226,26 +222,60 @@
     background: #264653;
 }
 
-.map-marker_hover,
-.map-marker_hover::before {
+.map-marker_hover {
+    border: 3px solid rgba(0, 0, 0, 0.2);
+}
+
+.map-marker-info-wrapper {
+    position: absolute;
+    transform: translate(-50%, -145%);
+    background: white;
+    width: 200px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--darkBlue);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     z-index: 10000;
 }
 
-.map-marker_hover {
-    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
-    animation: growMarker .25s ease forwards;
+.map-marker-info-wrapper::before {
+    content: '';
+    height: 10px;
+    width: 10px;
+    transform: rotate(45deg);
+    position: absolute;
+    background: white;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
 }
 
-@keyframes growMarker {
-    0% {
-        transform: translate(-50%, -50%) scale(.7);
-    }
-    75% {
-        transform: translate(-50%, -50%) scale(2);
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1.5);
-    }
+.map-marker-info_img {
+    width: 60px;
+    background: grey;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    border-radius: 5px 0 0 5px;
+}
+
+.map-marker-info {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 10px;
+}
+
+.map-marker-info_price span {
+    font-size: 10px;
+}
+
+.map-marker-info_rooms {
+    font-size: 12px;
+    color: var(--grey);
 }
 
 .results-wrapper .survey-wrapper {
