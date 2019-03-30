@@ -148,7 +148,7 @@ export default class ResultsPage extends Component {
             display: 'block'
         }
 
-        if (this.state.isMobile && this.state.viewingMobileResults) {
+        if (this.state.isMobile && this.state.viewingMobileResults && !this.state.isEditing) {
             style['overflow'] = 'auto'
             return style;
         } else if (this.state.isMobile && !this.state.viewingMobileResults) {
@@ -233,7 +233,7 @@ export default class ResultsPage extends Component {
         this.setState({
             homeList: undefined,
             isLoading: true
-        });
+        }, this.handleMobileButtonClick('map'));
 
         /**
          * Retrieve the survey results
@@ -505,7 +505,6 @@ export default class ResultsPage extends Component {
     saveScrollPosition = () => {
         if (document.querySelector('.homelist-wrapper')) {
             const homeList = document.querySelector('.homelist-wrapper');
-            console.log(homeList.scrollTop)
             this.setState({
                 scroll_position: homeList.scrollTop
             })
