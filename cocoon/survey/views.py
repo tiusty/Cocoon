@@ -5,6 +5,7 @@ from django.contrib.auth import login
 from django.views.generic import TemplateView, DetailView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 # Import Survey algorithm modules
 from .cocoon_algorithm.rent_algorithm import RentAlgorithm
@@ -62,7 +63,7 @@ class RentingResultTemplate(DetailView):
         The survey must be associated with the currently logged in user
         """
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+        return retrieve_survey_queryset(user_profile)
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -96,7 +97,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
     def get_queryset(self):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
-        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+        return retrieve_survey_queryset(user_profile)
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -123,9 +124,9 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
 
         if retrieve_type == 'by_url':
             # Retrieve the associated survey with the request
-            survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, url=pk)
+            survey = retrieve_survey(user_profile, url=pk)
         else:
-            survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
+            survey = retrieve_survey(user_profile, pk=pk)
 
         if data_type == 'survey_subscribe':
             serializer = SurveySubscribeSerializer(survey)
@@ -293,7 +294,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         pk = kwargs.pop('pk', None)
 
         # Retrieve the associated survey with the request
-        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+        survey = retrieve_survey(user_profile, pk=pk)
 
         # Case if a visit list home is being removed or added
         if 'visit_toggle' in self.request.data['type']:
@@ -424,7 +425,7 @@ class RentResultViewSet(viewsets.ViewSet):
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
 
         # Retrieve the survey
-        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, url=pk)
+        survey = retrieve_survey(user_profile, url=pk)
 
         # Run the Rent Algorithm
         rent_algorithm = RentAlgorithm()
@@ -465,7 +466,7 @@ class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
         pk = kwargs.pop('pk', None)
 
         # Retrieve the associated survey with the request
-        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+        survey = retrieve_survey(user_profile, pk=pk)
 
         tenant_data = self.request.data['data']
 
@@ -478,6 +479,46 @@ class TenantViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
             tenants.save()
 
         # Retrieve the associated survey with the request
-        survey = get_object_or_404(RentingSurveyModel, user_profile=user_profile, pk=pk)
+        survey = retrieve_survey(user_profile, pk=pk)
         serializer = RentSurveySerializer(survey, context={'user': user_profile.user})
         return Response(serializer.data)
+
+
+def retrieve_survey_queryset(user_profile):
+    """
+    Retrieves the correct queryset for the survey. If the user is an admin then any survey can
+        be retrieved. Otherwise the user is limited to their own surveys.
+    :param user_profile: (UserProfile Model) -> The user associated with the request
+    :return: (RentingSurveyModel Queryset) -> The queryset that the user is allowed to choose from
+    """
+    if user_profile.user.is_admin:
+        return RentingSurveyModel.objects.all()
+    else:
+        return RentingSurveyModel.objects.filter(user_profile=user_profile)
+
+
+def retrieve_survey(user_profile, url=None, pk=None):
+    """
+    Retrieves a survey depending on the arguments that are given. If the pk is given it used that by
+        default. If not then if the url is given then it will try to get the survey based off of that.
+        If neither is given then a 404 is returned
+    :param user_profile: (UserProfile Model) -> The user associated with the request
+    :param url: (string) -> The user of the survey
+    :param pk: (int) -> The id of the survey
+    :return: The survey or a 404
+    """
+    if pk is not None:
+        if user_profile.user.is_admin:
+            return get_object_or_404(RentingSurveyModel, id=pk)
+        else:
+            return get_object_or_404(RentingSurveyModel, user_profile=user_profile, id=pk)
+    elif url is not None:
+        if user_profile.user.is_admin:
+            return get_object_or_404(RentingSurveyModel, url=url)
+        else:
+            return get_object_or_404(RentingSurveyModel, user_profile=user_profile, url=url)
+    else:
+        raise Http404
+
+
+
