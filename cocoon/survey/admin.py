@@ -21,11 +21,11 @@ class PolygonInLine(admin.TabularInline):
 
 
 class RentingSurveyModelAdmin(admin.ModelAdmin):
-    readonly_fields = ("created", 'id', 'url', 'survey_name', 'num_bedrooms')
+    readonly_fields = ("created", 'id', 'url', 'survey_name', 'num_bedrooms', 'survey_url_full')
     raw_id_fields = ("favorites", "visit_list", "blacklisted_homes")
     # noinspection SpellCheckingInspection
     fieldsets = (
-        (None, {'fields': ('survey_name', 'user_profile')}),
+        (None, {'fields': ('survey_name', 'user_profile', 'survey_url_full')}),
         ('Survey', {'fields': ('home_type', 'desired_price', 'max_price', 'price_weight', 'min_bathrooms',
                                'max_bathrooms', 'move_weight', 'num_bedrooms', 'earliest_move_in', 'latest_move_in',)}),
         ('Nearby Amenities', {'fields': ('wants_laundry_nearby', 'laundry_nearby_weight',)}),
@@ -39,13 +39,13 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
             'wants_hardwood_floors', 'hardwood_floors_weight', 'wants_AC', 'AC_weight', 'wants_dishwasher',
             'dishwasher_weight',)}),
 
-        ('Created', {'fields': ('created', 'id', 'url')}),
+        ('Created', {'fields': ('created', 'id', 'url',)}),
         ('Homes', {'fields': ('favorites', 'visit_list', 'polygon_filter_type',)}),
         ('Update Info', {'fields': ('last_updated', 'update_frequency', 'wants_update', 'score_threshold', 'num_home_threshold', 'blacklisted_homes')})
     )
-    list_display = ('survey_name', 'user_profile',)
-    list_filter = ['user_profile']
-    search_fields = ('name',)
+    list_display = ('survey_name', 'user_profile', 'move_weight', 'created',)
+    list_filter = ['created', 'move_weight']
+    search_fields = ('user_profile__user__email', 'user_profile__user__first_name', 'user_profile__user__last_name')
     inlines = [TenantInLine, PolygonInLine]
 
 

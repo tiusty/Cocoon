@@ -30,10 +30,10 @@ export default class PopUp extends Component {
         }
     }
 
-    getNumberOfScoresOverFifty = (homes) => {
+    getNumberOfScoresOverFourty = (homes) => {
         let number_of_scores_above_fifty = 0;
         for (let i = 0; i < homes.length; i++) {
-            if (homes[i].percent_match >= 50) {
+            if (homes[i].percent_match >= 40) {
                 number_of_scores_above_fifty += 1;
             }
         }
@@ -43,7 +43,7 @@ export default class PopUp extends Component {
     getNumberOfGreatMatches = (homes) => {
         let number_of_great_matches = 0;
         for (let i = 0; i < homes.length; i++) {
-            if (homes[i].percent_match >= 90) {
+            if (homes[i].percent_match >= 70) {
                 number_of_great_matches += 1;
             }
         }
@@ -58,7 +58,7 @@ export default class PopUp extends Component {
                 popupReason: 'Low Number of Homes'
             })
             return;
-        } else if (homeList && this.getNumberOfScoresOverFifty(homeList) <= 5) {
+        } else if (homeList && this.getNumberOfScoresOverFourty(homeList) <= 5) {
             this.setState({
                 popupType: 'error',
                 popupReason: 'Low Scores'
@@ -105,7 +105,7 @@ export default class PopUp extends Component {
         const { popupReason } = this.state;
         const { homeList } = this.props;
         if (popupReason === 'Low Scores') {
-            let homeCount = this.getNumberOfScoresOverFifty(homeList);
+            let homeCount = this.getNumberOfScoresOverFourty(homeList);
             return (
                 <p>After checking your results we noticed that you have only {homeCount} {homeCount > 1 ? 'homes ' : 'home '}
                     above 50. This is due to not being able to find homes that meet
