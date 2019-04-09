@@ -63,9 +63,9 @@ class SurveyUpdateInformation(models.Model):
     """
     last_updated = models.DateField(default=timezone.now)
     update_frequency = models.IntegerField(default=2)
-    wants_update = models.BooleanField(default=False)
-    score_threshold = models.IntegerField(default=70)
-    num_home_threshold = models.IntegerField(default=2)
+    wants_update = models.BooleanField(default=True)
+    score_threshold = models.IntegerField(default=50)
+    num_home_threshold = models.IntegerField(default=1)
     blacklisted_homes = models.ManyToManyField(RentDatabaseModel, related_name="blacklisted_homes", blank=True)
 
     def blacklist_home(self, home):
