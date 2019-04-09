@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
+from django.conf import settings
 
 # Import cocoon models
 from cocoon.userAuth.models import UserProfile
@@ -52,6 +53,17 @@ class InitialSurveyModel(models.Model):
 
         # Now return the has has the url
         return slugify(m.hexdigest())
+
+    def survey_url_full(self):
+        """
+        Creates the full url as a hyperlink so that it can easily be clicked on the admin page
+        """
+        if hasattr(settings, 'DEFAULT_DOMAIN'):
+            domain = settings.DEFAULT_DOMAIN
+        else:
+            domain = "https://bostoncocoon.com/"
+        return '<a href="{0}/survey/rent/{1}/">{0}/survey/rent/{1}/</a>'.format(domain, self.url)
+    survey_url_full.allow_tags = True
 
     class Meta:
         abstract = True
