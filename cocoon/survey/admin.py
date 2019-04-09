@@ -43,8 +43,8 @@ class RentingSurveyModelAdmin(admin.ModelAdmin):
         ('Homes', {'fields': ('favorites', 'visit_list', 'polygon_filter_type',)}),
         ('Update Info', {'fields': ('last_updated', 'update_frequency', 'wants_update', 'score_threshold', 'num_home_threshold', 'blacklisted_homes')})
     )
-    list_display = ('survey_name', 'user_profile', 'move_weight',)
-    list_filter = ['move_weight']
+    list_display = ('survey_name', 'user_profile', 'move_weight', 'created',)
+    list_filter = ['created', 'move_weight']
     search_fields = ('user_profile__user__email', 'user_profile__user__first_name', 'user_profile__user__last_name')
     inlines = [TenantInLine, PolygonInLine]
 
