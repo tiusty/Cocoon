@@ -14,6 +14,12 @@ export default class ItineraryDateSelector extends Component {
         }
     }
 
+    getMinDate = () => {
+        let date = new Date();
+        date.setDate(date.getDate() + this.props.day_increment);
+        return date;
+    }
+
     getMaxDate = () => {
         let date = new Date();
         date.setDate(date.getDate() + 10);
@@ -32,7 +38,7 @@ export default class ItineraryDateSelector extends Component {
                 <Calendar
                     minDetail="month"
                     maxDetail="month"
-                    minDate={new Date()}
+                    minDate={this.getMinDate()}
                     maxDate={this.getMaxDate()}
                     value={this.props.date}
                     onChange={this.handleDate}
