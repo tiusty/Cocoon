@@ -78,6 +78,8 @@ class ClientScheduler extends Component {
     setDate = (date) => {
         let dateCopy = this.state.date;
         dateCopy.setDate(date.getDate());
+        dateCopy.setMonth(date.getMonth());
+        dateCopy.setFullYear(date.getFullYear());
         this.setState({
             date: dateCopy
         }, () => this.state.date)
