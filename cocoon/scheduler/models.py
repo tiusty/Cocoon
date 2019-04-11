@@ -34,7 +34,7 @@ class ItineraryModel(models.Model):
            self.homes (ManytoManyField) -> Stores the homes that are associated with this itinerary
     """
     client = models.ForeignKey(MyUser, related_name='my_tours', on_delete=models.CASCADE)
-    survey = models.OneToOneField(RentingSurveyModel, related_name='itinerary', on_delete=models.SET_NULL, null=True)
+    survey = models.ForeignKey(RentingSurveyModel, related_name='itinerary', on_delete=models.SET_NULL, null=True)
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
