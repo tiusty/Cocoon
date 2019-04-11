@@ -19,19 +19,39 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
 
 class ClientScheduler extends Component {
-    state = {
-        id: null,
-        loaded: false,
-        is_claimed: false,
-        is_scheduled: false,
-        is_pending: false,
 
-        is_canceling: false,
-        tour_duration_seconds: 0,
-        date: new Date(),
-        time_available_seconds: 0,
-        days: []
-    };
+    constructor(props) {
+        super(props);
+        // This determines the earliest someone can schedule a tour. Normally it is the next day
+        //  i.e +1, but if it is after a certain time of the day, then they can't schedule for the next
+        //  day and have to schedule for the day after, i.e + 2.
+        let day_increment = 1;
+        if (new Date().getHours() >= 5) {
+            day_increment = 2
+        }
+
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + day_increment);
+
+        this.state = {
+            id: null,
+            loaded: false,
+            is_claimed: false,
+            is_scheduled: false,
+            is_pending: false,
+
+            is_canceling: false,
+            tour_duration_seconds: 0,
+            date: tomorrow,
+            time_available_seconds: 0,
+            days: [],
+
+            // The increment amount for the min date, i.e if it is past a certain time,
+            //  then the user can no longer register a tour for the next day and the increment
+            //  becomes 2 days instead of 1
+            day_increment: day_increment,
+        };
+    }
 
     parseData(data) {
         /**
@@ -267,7 +287,7 @@ class ClientScheduler extends Component {
                             will slow down how quickly we can find a home for you!</p>
                         </div>
                         <div className="itinerary-date-time-wrapper">
-                            <ItineraryDateSelector date={this.state.date} setDate={this.setDate} />
+                            <ItineraryDateSelector date={this.state.date} setDate={this.setDate} day_increment={this.state.day_increment}/>
                             <ItineraryTimeSelector date={this.state.date} formatTimeAvailable={this.formatTimeAvailable} tour_duration_seconds={this.state.tour_duration_seconds} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
                         </div>
                         <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
