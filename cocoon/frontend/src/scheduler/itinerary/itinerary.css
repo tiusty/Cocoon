@@ -118,9 +118,15 @@
     color: white !important;
 }
 
-.itinerary-date-time-wrapper .react-calendar__month-view__days__day--weekend {
+.itinerary-date-time-wrapper .react-calendar__month-view__days__day--weekend:not(.react-calendar__month-view__days__day--neighboringMonth) {
     color: inherit;
 }
+
+
+.react-calendar__month-view__days__day--neighboringMonth {
+    color: #969696;
+}
+
 
 .itinerary-date-time-wrapper .react-calendar__tile:disabled {
     text-decoration: line-through;

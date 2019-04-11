@@ -19,19 +19,39 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css'
 
 class ClientScheduler extends Component {
-    state = {
-        id: null,
-        loaded: false,
-        is_claimed: false,
-        is_scheduled: false,
-        is_pending: false,
 
-        is_canceling: false,
-        tour_duration_seconds: 0,
-        date: new Date(),
-        time_available_seconds: 0,
-        days: []
-    };
+    constructor(props) {
+        super(props);
+        // This determines the earliest someone can schedule a tour. Normally it is the next day
+        //  i.e +1, but if it is after a certain time of the day, then they can't schedule for the next
+        //  day and have to schedule for the day after, i.e + 2.
+        let day_increment = 1;
+        if (new Date().getHours() >= 5) {
+            day_increment = 2
+        }
+
+        let first_date = new Date();
+        first_date.setDate(first_date.getDate() + day_increment);
+
+        this.state = {
+            id: null,
+            loaded: false,
+            is_claimed: false,
+            is_scheduled: false,
+            is_pending: false,
+
+            is_canceling: false,
+            tour_duration_seconds: 0,
+            date: first_date,
+            time_available_seconds: 0,
+            days: [],
+
+            // The increment amount for the min date, i.e if it is past a certain time,
+            //  then the user can no longer register a tour for the next day and the increment
+            //  becomes 2 days instead of 1
+            day_increment: day_increment,
+        };
+    }
 
     parseData(data) {
         /**
@@ -78,6 +98,8 @@ class ClientScheduler extends Component {
     setDate = (date) => {
         let dateCopy = this.state.date;
         dateCopy.setDate(date.getDate());
+        dateCopy.setMonth(date.getMonth());
+        dateCopy.setFullYear(date.getFullYear());
         this.setState({
             date: dateCopy
         }, () => this.state.date)
@@ -85,6 +107,9 @@ class ClientScheduler extends Component {
 
     setTime = (hour, minute, period) => {
         let dateCopy = this.state.date;
+        if (hour === 12) {
+            hour = 0;
+        }
         let hours = period === 'AM' ? hour : hour + 12;
         dateCopy.setHours(hours);
         dateCopy.setMinutes(minute);
@@ -138,7 +163,7 @@ class ClientScheduler extends Component {
                 days: daysCopy,
             });
             this.setState({
-                date: new Date()
+                date: new Date(this.state.date)
             });
         }
     };
@@ -262,7 +287,7 @@ class ClientScheduler extends Component {
                             will slow down how quickly we can find a home for you!</p>
                         </div>
                         <div className="itinerary-date-time-wrapper">
-                            <ItineraryDateSelector date={this.state.date} setDate={this.setDate} />
+                            <ItineraryDateSelector date={this.state.date} setDate={this.setDate} day_increment={this.state.day_increment}/>
                             <ItineraryTimeSelector date={this.state.date} formatTimeAvailable={this.formatTimeAvailable} tour_duration_seconds={this.state.tour_duration_seconds} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
                         </div>
                         <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
