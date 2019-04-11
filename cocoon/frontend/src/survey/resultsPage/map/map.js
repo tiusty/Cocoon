@@ -22,10 +22,6 @@ export default class Map extends Component {
         }
     }
 
-    componentDidMount() {
-        this.createBounds();
-    }
-
     componentDidUpdate(prevProps, prevState) {
 
         if (this.props.clicked_home !== prevProps.clicked_home && this.props.clicked_home !== undefined) {
@@ -114,57 +110,6 @@ export default class Map extends Component {
         return mapMarkers;
     };
 
-    createBounds = () => {
-        /*
-        *   Function from stack overflow to center the map to show all map markers
-        *
-        *   Ideally we'd be using the google maps fitBounds() method but it doesn't
-        *   seem to work with the google maps react component
-        *   so we have to calculate the center of the home list coordinates ourselves
-        *
-        */
-
-        if (!(this.props.homes.length > 0)){
-            return false;
-        }
-
-        const num_coords = this.props.homes.length;
-
-        let X = 0.0;
-        let Y = 0.0;
-        let Z = 0.0;
-
-        for(let i = 0; i < this.props.homes.length; i++){
-            let lat = this.props.homes[i].home.latitude * Math.PI / 180;
-            let lon = this.props.homes[i].home.longitude * Math.PI / 180;
-
-            let a = Math.cos(lat) * Math.cos(lon);
-            let b = Math.cos(lat) * Math.sin(lon);
-            let c = Math.sin(lat);
-
-            X += a;
-            Y += b;
-            Z += c;
-        }
-
-        X /= num_coords;
-        Y /= num_coords;
-        Z /= num_coords;
-
-        let lon = Math.atan2(Y, X);
-        let hyp = Math.sqrt(X * X + Y * Y);
-        let lat = Math.atan2(Z, hyp);
-
-        let newX = (lat * 180 / Math.PI);
-        let newY = (lon * 180 / Math.PI);
-        this.setState({
-            center: {
-                lat: newX,
-                lng: newY
-            }
-        })
-    }
-
     centerMarker = (homeId) => {
         const home = this.props.homes.find(home => home.home.id === homeId);
         const { latitude, longitude } = home.home;
@@ -176,8 +121,6 @@ export default class Map extends Component {
             center: centerCoords
         })
     }
-
-
 
     render() {
         return (
@@ -244,26 +187,47 @@ export default class Map extends Component {
 
 // Fit map to its bounds after the api is loaded
 const apiIsLoaded = (map, maps, places) => {
-  // Get bounds by our places
-  const bounds = getMapBounds(map, maps, places);
-  // Fit map to bounds
-  map.fitBounds(bounds);
-  // Bind the resize listener
-  bindResizeListener(map, maps, bounds);
+    // Get bounds by our places
+    const bounds = getMapBounds(map, maps, places);
+
+    // This sets a minimum zoom.
+    // This is achieved to see if the zoom size is 0 and then if it is then it adds a slight
+    //  lat and lng offset which is the "minimum zoom"
+    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+        var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + 0.01, bounds.getNorthEast().lng() + 0.01);
+        var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - 0.01, bounds.getNorthEast().lng() - 0.01);
+        bounds.extend(extendPoint1);
+        bounds.extend(extendPoint2);
+    }
+    // Fit map to bounds
+    map.fitBounds(bounds);
+    // Bind the resize listener
+    bindResizeListener(map, maps, bounds);
 };
 
 
 // Return map bounds based on list of places
 const getMapBounds = (map, maps, places) => {
   const bounds = new maps.LatLngBounds();
-  places.forEach((place) => {
-      if (place.props.lat && place.props.lng) {
-          bounds.extend(new maps.LatLng(
-              place.props.lat,
-              place.props.lng,
-          ));
-      }
-  });
+  // This checks to see if there are any places on the map, if there
+  // isn't then it just shows the center of Boston
+  if (places.length === 0) {
+      bounds.extend(
+          new maps.LatLng(
+              42.3601,
+              -71.0589,
+          )
+      )
+  } else {
+      places.forEach((place) => {
+          if (place.props.lat && place.props.lng) {
+              bounds.extend(new maps.LatLng(
+                  place.props.lat,
+                  place.props.lng,
+              ));
+          }
+      });
+  }
   return bounds;
 };
 
