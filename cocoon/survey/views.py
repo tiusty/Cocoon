@@ -99,6 +99,21 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         user_profile = get_object_or_404(UserProfile, user=self.request.user)
         return retrieve_survey_queryset(user_profile)
 
+    def list(self, request, *args, **kwargs):
+        """
+        When the surveys are being listed, only return the surveys that belong to the user.
+        This is needed because the queryset if the user is an admin now includes all surveys,
+            therefore when the list api is requested, just returns that users surveys
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        qs = RentingSurveyModel.objects.filter(user_profile=user_profile)
+        serializer = RentSurveySerializer(qs, many=True)
+        return Response(serializer.data)
+
     def retrieve(self, request, *args, **kwargs):
         """
         Retrieves a survey based on either the id or the survey url

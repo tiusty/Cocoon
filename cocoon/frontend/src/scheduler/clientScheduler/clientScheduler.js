@@ -78,6 +78,8 @@ class ClientScheduler extends Component {
     setDate = (date) => {
         let dateCopy = this.state.date;
         dateCopy.setDate(date.getDate());
+        dateCopy.setMonth(date.getMonth());
+        dateCopy.setFullYear(date.getFullYear());
         this.setState({
             date: dateCopy
         }, () => this.state.date)
@@ -85,6 +87,9 @@ class ClientScheduler extends Component {
 
     setTime = (hour, minute, period) => {
         let dateCopy = this.state.date;
+        if (hour === 12) {
+            hour = 0;
+        }
         let hours = period === 'AM' ? hour : hour + 12;
         dateCopy.setHours(hours);
         dateCopy.setMinutes(minute);
@@ -138,7 +143,7 @@ class ClientScheduler extends Component {
                 days: daysCopy,
             });
             this.setState({
-                date: new Date()
+                date: new Date(this.state.date)
             });
         }
     };
