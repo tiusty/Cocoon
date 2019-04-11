@@ -30,8 +30,8 @@ class ClientScheduler extends Component {
             day_increment = 2
         }
 
-        let tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + day_increment);
+        let first_date = new Date();
+        first_date.setDate(first_date.getDate() + day_increment);
 
         this.state = {
             id: null,
@@ -42,7 +42,7 @@ class ClientScheduler extends Component {
 
             is_canceling: false,
             tour_duration_seconds: 0,
-            date: tomorrow,
+            date: first_date,
             time_available_seconds: 0,
             days: [],
 
