@@ -141,7 +141,7 @@ class ClientScheduler extends Component {
                 days: daysCopy,
             });
             this.setState({
-                date: new Date()
+                date: new Date(this.state.date)
             });
         }
     };
