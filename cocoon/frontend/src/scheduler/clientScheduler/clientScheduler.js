@@ -85,6 +85,9 @@ class ClientScheduler extends Component {
 
     setTime = (hour, minute, period) => {
         let dateCopy = this.state.date;
+        if (hour === 12) {
+            hour = 0;
+        }
         let hours = period === 'AM' ? hour : hour + 12;
         dateCopy.setHours(hours);
         dateCopy.setMinutes(minute);
