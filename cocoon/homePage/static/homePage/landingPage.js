@@ -91,14 +91,11 @@ const VideoModal = (function() {
   function toggleVideo(e) {
     e.stopPropagation();
     e.preventDefault();
-    console.log(e)
     if (videoWrapper.style.display === 'none') {
-      // show video
       window.scrollTo(0,0);
       videoWrapper.style.display = 'flex';
       document.querySelector('body').style.overflow = 'hidden';
     } else {
-      // hide video
       videoWrapper.style.display = 'none';
       document.querySelector('body').style.overflow = 'auto';
     }
