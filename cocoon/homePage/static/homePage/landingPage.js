@@ -79,13 +79,47 @@ const Slider = (function() {
 
 })();
 
+const VideoModal = (function() {
+
+  const videoWrapper = document.querySelector('.video-wrapper');
+
+  function addListeners() {
+    document.querySelector('.toggle-video').addEventListener('click', toggleVideo);
+    document.querySelector('.close-video ').addEventListener('click', toggleVideo);
+  }
+
+  function toggleVideo(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log(e)
+    if (videoWrapper.style.display === 'none') {
+      // show video
+      window.scrollTo(0,0);
+      videoWrapper.style.display = 'flex';
+      document.querySelector('body').style.overflow = 'hidden';
+    } else {
+      // hide video
+      videoWrapper.style.display = 'none';
+      document.querySelector('body').style.overflow = 'auto';
+    }
+  }
+  return {
+    init: function() {
+      addListeners();
+    }
+  }
+
+})();
+
 (function() {
   /**
     * Runs on load and calls functions that's needed for landing page
     * handleMenu -> creates mobile menu that can toggle
     * AOS -> scroll reveal elements
+    * VideoModal adds ability to toggle video modal
     * Slider -> options for onboarding slider
   **/
   AOS.init();
+  VideoModal.init();
   Slider.init();
 })();
