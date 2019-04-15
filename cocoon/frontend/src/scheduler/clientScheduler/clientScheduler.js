@@ -288,7 +288,7 @@ class ClientScheduler extends Component {
                         </div>
                         <div className="itinerary-date-time-wrapper">
                             <ItineraryDateSelector date={this.state.date} setDate={this.setDate} day_increment={this.state.day_increment}/>
-                            <ItineraryTimeSelector date={this.state.date} formatTimeAvailable={this.formatTimeAvailable} tour_duration_seconds={this.state.tour_duration_seconds} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
+                            <ItineraryTimeSelector date={this.state.date} time_available_seconds={this.state.time_available_seconds} formatTimeAvailable={this.formatTimeAvailable} tour_duration_seconds={this.state.tour_duration_seconds} setTimeAvailable={this.setTimeAvailable} setTime={this.setTime} />
                         </div>
                         <button className="itinerary-button" onClick={this.handleAddDate}>Add date</button>
                         <button className="btn itinerary-button" disabled={this.disableSaveItinerary()} onClick={this.handleSaveItinerary}>Save Itinerary</button>
