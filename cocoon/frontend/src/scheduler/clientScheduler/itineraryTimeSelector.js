@@ -106,7 +106,7 @@ export default class ItineraryTimeSelector extends Component {
         // this.props.date;
         let date = new moment(this.props.date);
         date = date.add(this.props.time_available_seconds, 'seconds');
-        return `Tour ends @ ${date.format("hh:mm A")}`;
+        return `Free until @ ${date.format("hh:mm A")}`;
     }
 
     render() {
