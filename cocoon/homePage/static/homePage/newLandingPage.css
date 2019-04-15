@@ -189,12 +189,12 @@ img {
 
 .steps-wrapper .img-wrapper {
   width: 50%;
-  flex-grow: 1;
 }
 
 .steps-wrapper .img-wrapper img {
   object-fit: cover;
   display: block;
+  max-height: 100vh;
 }
 
 .steps-wrapper .how-to-wrapper {
@@ -236,6 +236,8 @@ img {
 .step-box .step-text p {
   color: var(--grey);
   padding: 15px 0px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .step-box .step-text span {

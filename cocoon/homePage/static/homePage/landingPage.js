@@ -82,6 +82,7 @@ const Slider = (function() {
 const VideoModal = (function() {
 
   const videoWrapper = document.querySelector('.video-wrapper');
+  const videoLink = 'https://www.youtube.com/embed/IC8MJXVoT_g';
 
   function addListeners() {
     document.querySelector('.toggle-video').addEventListener('click', toggleVideo);
@@ -98,6 +99,12 @@ const VideoModal = (function() {
     } else {
       videoWrapper.style.display = 'none';
       document.querySelector('body').style.overflow = 'auto';
+
+      // Removes the video src to stop it from playing on close
+      document.querySelector('iframe').src = '';
+
+      // Adds the video link back to the iframe src
+      document.querySelector('iframe').src = videoLink;
     }
   }
   return {
