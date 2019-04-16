@@ -229,6 +229,15 @@ p.time-available-error {
     color: var(--black);
 }
 
+.end-time {
+    font-size: 12px;
+    text-align: center;
+    padding: 10px;
+    background: rgba(57, 177, 167, 0.2);
+    color: var(--teal);
+    font-weight: bold;
+}
+
 @media screen and (max-width: 724px) {
     .itinerary-main-wrapper {
         margin-bottom: 20px;
