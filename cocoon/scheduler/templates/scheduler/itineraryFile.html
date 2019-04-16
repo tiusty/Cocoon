@@ -193,9 +193,9 @@
             <td class="right">
               
               {% if home.listing_provider.provider == 'MLSPIN' %}
-                <a class="listing-agent-link" target="_blank" href="{{ home.listing_agent|agent_to_link:home.listing_provider.provider }}">{{ home.listing_agent|try_string:"-" }}</a>
+                <a class="listing-agent-link" target="_blank" href="{{ home.listing_agent_id|agent_to_link:home.listing_provider.provider }}">{{ home.listing_agent_id|try_string:"-" }}</a>
               {% else %}
-                {{ home.listing_agent|try_string:"-" }}
+                {{ home.listing_agent_id|try_string:"-" }}
               {% endif %}
             </td>
           </tr>

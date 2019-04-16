@@ -222,3 +222,7 @@ class YGLRequester(object):
                     "Number of duplicates: {0}\n".format(num_of_duplicates) +
                     "Number of value errors: {0}\n".format(num_of_value_errors) +
                     "Number of integrity error is: {0}\n".format(num_integrity_error))
+
+
+def pull_listing_info():
+    pass

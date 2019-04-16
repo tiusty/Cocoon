@@ -104,8 +104,8 @@ class RentDatabaseSerializerBroker(RentDatabaseSerializer):
         return {
             'full_address': obj.full_address,
             'listing_number': obj.listing_number,
-            'listing_agent': obj.listing_agent,
-            'listing_office': obj.listing_office,
+            'listing_agent_id': obj.listing_agent_id,
+            'listing_office_id': obj.listing_office_id,
             'listing_provider': obj.listing_provider.provider
         }
 

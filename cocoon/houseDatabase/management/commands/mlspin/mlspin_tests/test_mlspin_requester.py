@@ -64,9 +64,9 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home1.num_bedrooms, 2)
         self.assertEqual(home1.num_bathrooms, 1)
         self.assertEqual(home1.listing_number, 71811023)
-        self.assertEqual(home1.listing_agent, "BB808729")
+        self.assertEqual(home1.listing_agent_id, "BB808729")
         self.assertEqual(home1.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
-        self.assertEqual(home1.listing_office, "AN1037")
+        self.assertEqual(home1.listing_office_id, "AN1037")
         self.assertTrue(home1.parking_spot)
 
         # asserts for the second home
@@ -81,9 +81,9 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home2.num_bedrooms, 1)
         self.assertEqual(home2.num_bathrooms, 1)
         self.assertEqual(home2.listing_number, 71738853)
-        self.assertEqual(home2.listing_agent, "BB808729")
+        self.assertEqual(home2.listing_agent_id, "BB808729")
         self.assertEqual(home2.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
-        self.assertEqual(home2.listing_office, "AN1037")
+        self.assertEqual(home2.listing_office_id, "AN1037")
         self.assertFalse(home2.parking_spot)
 
         # asserts for the third home
@@ -98,7 +98,7 @@ class TestPullMlspin(TestCase):
         self.assertEqual(home3.num_bedrooms, 1)
         self.assertEqual(home3.num_bathrooms, 1)
         self.assertEqual(home3.listing_number, 72080819)
-        self.assertEqual(home3.listing_agent, "BB808729")
+        self.assertEqual(home3.listing_agent_id, "BB808729")
         self.assertEqual(home3.listing_provider, HomeProviderModel.objects.get(provider="MLSPIN"))
-        self.assertEqual(home3.listing_office, "AN1037")
+        self.assertEqual(home3.listing_office_id, "AN1037")
         self.assertTrue(home3.parking_spot)

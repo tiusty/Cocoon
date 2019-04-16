@@ -230,11 +230,11 @@ class ItineraryAgent extends Component {
                 </div>
                 <div className="itinerary-section-item">
                     <span className="item-left-text">Listing Agent</span>
-                    <span className="item-right-text">{home.broker_info.listing_agent}</span>
+                    <span className="item-right-text">{home.broker_info.listing_agent_id}</span>
                 </div>
                 <div className="itinerary-section-item">
                     <span className="item-left-text">Listing Office</span>
-                    <span className="item-right-text">{home.broker_info.listing_office}</span>
+                    <span className="item-right-text">{home.broker_info.listing_office_id}</span>
                 </div>
             </div>
         );

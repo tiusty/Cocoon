@@ -108,8 +108,8 @@ class MLSRetsRequester(object):
             # MLS listing information
             new_listing.remarks = home['PublicRemarks']
             new_listing.listing_number = home['ListingId']
-            new_listing.listing_agent = home['ListAgentMlsId']
-            new_listing.listing_office = home['ListOfficeMlsId']
+            new_listing.listing_agent_id = home['ListAgentMlsId']
+            new_listing.listing_office_id = home['ListOfficeMlsId']
             new_listing.listing_provider = HomeProviderModel.objects.get_or_create(provider=HomeProviderModel.MLSPIN)[0]
 
             # Amenities

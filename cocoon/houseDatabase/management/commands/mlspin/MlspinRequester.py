@@ -167,8 +167,8 @@ class MlspinRequester(object):
                 new_listing.remarks = cells[REMARKS]
                 new_listing.listing_number = int(cells[LIST_NO])
                 new_listing.listing_provider = HomeProviderModel.objects.get(provider=HomeProviderModel.MLSPIN)
-                new_listing.listing_agent = cells[LIST_AGENT]
-                new_listing.listing_office = cells[LIST_OFFICE]
+                new_listing.listing_agent_id = cells[LIST_AGENT]
+                new_listing.listing_office_id = cells[LIST_OFFICE]
                 new_listing.last_updated = self.update_timestamp
 
                 # Set RentDatabaseModel fields

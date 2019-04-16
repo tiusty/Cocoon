@@ -47,7 +47,7 @@ class TestYGLRequester(TestCase):
         self.assertEqual(home1.num_bathrooms, 1)
         self.assertEqual(home1.listing_number, 121307521)
         self.assertEqual(home1.listing_provider, HomeProviderModel.objects.get(provider="YGL"))
-        self.assertEqual(home1.listing_office, '')
+        self.assertEqual(home1.listing_office_id, '')
 
         # Assert second home
         self.assertEqual(home2.street_address, "16 Wadsworth St")
@@ -62,7 +62,7 @@ class TestYGLRequester(TestCase):
         self.assertEqual(home2.num_bathrooms, 2)
         self.assertEqual(home2.listing_number, 121307525)
         self.assertEqual(home2.listing_provider, HomeProviderModel.objects.get(provider="YGL"))
-        self.assertEqual(home2.listing_office, '')
+        self.assertEqual(home2.listing_office_id, '')
 
         # Assert third home
         self.assertEqual(home3.street_address, "31 Claymoss Rd")
@@ -77,5 +77,5 @@ class TestYGLRequester(TestCase):
         self.assertEqual(home3.num_bathrooms, 1)
         self.assertEqual(home3.listing_number, 121307530)
         self.assertEqual(home3.listing_provider, HomeProviderModel.objects.get(provider="YGL"))
-        self.assertEqual(home3.listing_office, '')
+        self.assertEqual(home3.listing_office_id, '')
 

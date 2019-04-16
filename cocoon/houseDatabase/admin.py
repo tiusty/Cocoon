@@ -22,8 +22,8 @@ class HouseAdmin(admin.ModelAdmin):
         ('Provider Data',
          {'fields': (
              'listing_provider',
-             'listing_agent',
-             'listing_office',
+             'listing_agent_id',
+             'listing_office_id',
              'listing_number',
              'remarks',
          )}

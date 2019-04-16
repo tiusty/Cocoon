@@ -48,8 +48,8 @@ class TestUpdateFunction(TestCase):
             remarks="hi",
             listing_number='123',
             listing_provider=HomeProviderModel.objects.get(provider="MLSPIN"),
-            listing_agent='The agent',
-            listing_office='The office',
+            listing_agent_id='The agent',
+            listing_office_id='The office',
             last_updated=timezone.now(),
             price=2000,
             home_type=self.home_type,
@@ -73,8 +73,8 @@ class TestUpdateFunction(TestCase):
             remarks="the",
             listing_number='456',
             listing_provider=HomeProviderModel.objects.get(provider="YGL"),
-            listing_agent='The agent 2',
-            listing_office='The office 2',
+            listing_agent_id='The agent 2',
+            listing_office_id='The office 2',
             last_updated=timezone.now() + timezone.timedelta(days=1),
             price=2400,
             home_type=self.home_type1,
@@ -105,8 +105,8 @@ class TestUpdateFunction(TestCase):
         self.assertEqual(home.remarks, 'the')
         self.assertEqual(home.listing_number, 456)
         self.assertEqual(home.listing_provider, HomeProviderModel.objects.get(provider="YGL"))
-        self.assertEqual(home.listing_agent, 'The agent 2')
-        self.assertEqual(home.listing_office, 'The office 2')
+        self.assertEqual(home.listing_agent_id, 'The agent 2')
+        self.assertEqual(home.listing_office_id, 'The office 2')
         self.assertEqual(home.last_updated, (timezone.now() + timezone.timedelta(days=1)).date())
         self.assertEqual(home.price, 2400)
         self.assertEqual(home.home_type, self.home_type1)

@@ -190,8 +190,13 @@ class HouseManagementModel(UpdateBase, models.Model):
     remarks = models.TextField(default="", blank=True)
     listing_number = models.IntegerField(default=-1)  # The id of the home
     listing_provider = models.ForeignKey(HomeProviderModel)
-    listing_agent = models.CharField(max_length=200, default="", blank=True)
-    listing_office = models.CharField(max_length=200, default="", blank=True)  # The listing office, i.e William Raveis
+    listing_office_id = models.CharField(max_length=200, default="", blank=True)
+    listing_agent_id = models.CharField(max_length=200, default="", blank=True)
+    listing_agent_name = models.CharField(max_length=200, default="", blank=True)
+    listing_agent_phone_1 = models.CharField(max_length=200, default="", blank=True)
+    listing_agent_phone_2 = models.CharField(max_length=200, default="", blank=True)
+    listing_agent_email = models.CharField(max_length=200, default="", blank=True)
+    broker_notes = models.CharField(max_length=200, default="", blank=True)
     last_updated = models.DateField(default=timezone.now)
 
     def update(self, update_model):
@@ -203,8 +208,13 @@ class HouseManagementModel(UpdateBase, models.Model):
         self.remarks = update_model.remarks
         self.listing_number = update_model.listing_number
         self.listing_provider = update_model.listing_provider
-        self.listing_agent = update_model.listing_agent
-        self.listing_office = update_model.listing_office
+        self.listing_agent_id = update_model.listing_agent_id
+        self.listing_office_id = update_model.listing_office_id
+        self.listing_agent_name = update_model.listing_agent_name
+        self.listing_agent_phone_1 = update_model.listing_agent_phone_1
+        self.listing_agent_phone_2 = update_model.listing_agent_phone_2
+        self.listing_agent_email = update_model.listing_agent_email
+        self.broker_notes = update_model.broker_notes
         self.last_updated = update_model.last_updated
 
     class Meta:
