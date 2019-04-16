@@ -8,6 +8,7 @@ from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.houseDatabase.models import HomeProviderModel, HomeTypeModel
 from cocoon.houseDatabase.management.commands.helpers.data_input_normalization import normalize_street_address
 from cocoon.houseDatabase.management.commands.helpers.word_scraper import WordScraper
+from cocoon.houseDatabase.management.commands.ygl.ylg_files.YglLandlordInfo import YglLandlordInfo
 
 # Import third party libraries
 import os
@@ -160,6 +161,10 @@ class YGLRequester(object):
                     num_of_value_errors += 1
                     continue
 
+            # Retrieve lanlord information
+            landlord_info = YglLandlordInfo()
+            # new_listing.listing_agent_name = landlord_info.retrieve_landlord()
+
             new_listing.home_type = HomeTypeModel.objects.get(home_type=HomeTypeModel.APARTMENT)
             new_listing.listing_provider = HomeProviderModel.objects.get(provider="YGL")
             new_listing.last_updated = self.update_timestamp
@@ -222,7 +227,3 @@ class YGLRequester(object):
                     "Number of duplicates: {0}\n".format(num_of_duplicates) +
                     "Number of value errors: {0}\n".format(num_of_value_errors) +
                     "Number of integrity error is: {0}\n".format(num_integrity_error))
-
-
-def pull_listing_info():
-    pass
