@@ -40,29 +40,45 @@ export default class DetailsForm extends Component {
             } else if (!errors.user_form_errors.email) { document.querySelector('#email_error').style.display = 'none'; }
 
             // Password errors
-            if (errors.user_form_errors.password2) {
-                document.querySelector('#password_error').style.display = 'block';
-                document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
-                valid = false;
-            } else if (!errors.user_form_errors.password2) {
-                document.querySelector('#password_error').style.display = 'none';
-            }
+                if (errors.user_form_errors.password1) {
+                    document.querySelector('#password_error').style.display = 'block';
+                    document.querySelector('#password_error').innerText = errors.user_form_errors.password1[0];
+                    valid = false;
+                } else if (!errors.user_form_errors.password1) {
+                    document.querySelector('#password_error').style.display = 'none';
+                }
 
-            // Agent Referral errors
-            if (errors.user_form_errors.agent_referral) {
-                document.querySelector('#agent_referral_error').style.display = 'block';
-                document.querySelector('#agent_referral_error').innerText = errors.user_form_errors.agent_referral[0];
-                valid = false;
-            } else if (!errors.user_form_errors.agent_referral) {
-                document.querySelector('#agent_referral_error').style.display = 'none';
+
+            if (!this.state.user_logging_in) {
+                // Agent Referral errors
+                if (errors.user_form_errors.agent_referral) {
+                    document.querySelector('#agent_referral_error').style.display = 'block';
+                    document.querySelector('#agent_referral_error').innerText = errors.user_form_errors.agent_referral[0];
+                    valid = false;
+                } else if (!errors.user_form_errors.agent_referral) {
+                    document.querySelector('#agent_referral_error').style.display = 'none';
+                }
+
+                // Password errors
+                if (errors.user_form_errors.password2) {
+                    document.querySelector('#password_error').style.display = 'block';
+                    document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
+                    valid = false;
+                } else if (!errors.user_form_errors.password2) {
+                    document.querySelector('#password_error').style.display = 'none';
+                }
             }
         }
         return valid;
     }
 
     handleValidation = () => {
-        return this.validateEmail() && this.validatePhone() && this.validatePassword() && this.validatePasswordMatch();
-    }
+        if (this.state.user_logging_in) {
+            return this.validateEmail();
+        } else {
+            return this.validateEmail() && this.validatePhone() && this.validatePassword() && this.validatePasswordMatch();
+        }
+    };
 
     validateEmail = () => {
         const re = /\S+@\S+\.\S+/;
@@ -170,16 +186,11 @@ export default class DetailsForm extends Component {
                         onSubmit={this.props.onSubmit}
                         onUserCreation={this.setUserCreation}
                         validateEmail={this.validateEmail}
-                        validatePhone={this.validatePhone}
                         handleValidation={this.handleValidation}
                         handleInputChange={this.handleInputChange}
-                        validatePassword={this.validatePassword}
-                        validatePasswordMatch={this.validatePasswordMatch}
                         handlePrevStep={this.props.handlePrevStep}
                         handleSubmit={this.handleSubmit}
                         loading={this.props.loading}
-                        phone_number={this.state.phone_number}
-                        onUpdatePhoneNumber={this.handleUpdatePhoneNumber}
                     />
                 );
             } else {
@@ -189,7 +200,7 @@ export default class DetailsForm extends Component {
                         onUserLoggingIn={this.setUserLoggingIn}
                         validateEmail={this.validateEmail}
                         validatePhone={this.validatePhone}
-                        handleValidation={this.handleValidation}
+                        handleValidation={this.handleValidationCreation}
                         handleInputChange={this.handleInputChange}
                         validatePassword={this.validatePassword}
                         validatePasswordMatch={this.validatePasswordMatch}
