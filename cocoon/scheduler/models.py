@@ -243,7 +243,7 @@ class HomeVisitModel(models.Model):
     """
     home = models.ForeignKey(RentDatabaseModel, on_delete=models.CASCADE)
     itinerary = models.ForeignKey(ItineraryModel, related_name="homes", on_delete=models.CASCADE)
-    time_to_successor = models.IntegerField(default=null, null=True)
+    time_to_successor = models.IntegerField(default=None, null=True)
     visit_number = models.IntegerField()
 
 class TimeModel(models.Model):

@@ -105,8 +105,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
     def save_itinerary(self, homes_list, user, survey):
         """
 
-        :param: (list) homes_list: The matrix calculated using DistanceWrapper() with distances between every pair
-                                    of homes in visit list
+        :param: (list) homes_list: List of RentDatabaseModel's relevant to the itinerary. Typically sourced from an
+        itinerary visit list
         :param: (request.user) user: user
         :return: (boolean) -> True: The itinerary was created successfully
                               False: The itinerary was not created
@@ -119,8 +119,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
                 itinerary_model.tour_duration_seconds = total_time_secs
                 itinerary_model.survey = survey
                 itinerary_model.save()
-
-                ordered_visit_list = [home_distance[0]]
 
                 # Add 20 minutes to each home
                 for home in homes_list:
