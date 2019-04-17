@@ -7,7 +7,7 @@ from django.db import transaction
 
 # App imports
 from ..clientScheduler.base_algorithm import clientSchedulerAlgorithm
-from ..models import ItineraryModel
+from ..models import ItineraryModel, HomeVisitModel
 
 # import distance matrix wrapper
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute_client_scheduler, retrieve_approximate_commute_client_scheduler
@@ -96,15 +96,20 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         if not ItineraryModel.retrieve_unfinished_itinerary(user).exists():
             with transaction.atomic():
-                total_time_secs, interpreted_route = self.calculate_duration(homes_list)
+                total_time_secs, home_time_tour = self.calculate_duration(homes_list)
                 itinerary_model = ItineraryModel(client=user)
                 itinerary_model.tour_duration_seconds = total_time_secs
                 itinerary_model.survey = survey
                 itinerary_model.save()
 
-                # Add 20 minutes to each home
-                for home in homes_list:
-                    itinerary_model.homes.add(home)
+                for (home, time), i in enumerate(home_time_tour):
+                    home_visit, created = HomeVisitModel.objects.get_or_create(
+                        home=home,
+                        itinerary=itinerary_model,
+                        travel_time=time,
+                        visit_index=i
+                    )
+                    itinerary_model.homes.add(home) # left for faster hashing
             return True
         return False
 
