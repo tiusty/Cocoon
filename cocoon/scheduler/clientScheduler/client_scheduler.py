@@ -1,3 +1,6 @@
+# import python modules
+import math
+
 # import django modules
 from django.core.files.base import ContentFile
 from django.db import transaction
@@ -50,7 +53,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
                     if time_seconds is not None and distance_meters is not None:
                         home_distances.append(time_seconds)
                     else:
-                        home_distances.append(-1)
+                        home_distances.append(math.inf)
             else:
                 update_commutes_cache_client_scheduler(homes_list,
                                                        home,
@@ -63,24 +66,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
             homes_matrix.append(home_distances)
 
         return homes_matrix
-
-    def interpret_algorithm_output(self, homes_list, shortest_path):
-
-        """
-        Interprets the shortest path using the home list to make it ready for output onto the main site
-        args:
-        :param (list) homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
-        :param (list) shortest_path: List of indices that denote the shortest path, which is the output of the algorithm
-        :return: (list): interpreted_route List of strings containing the addresses in order of the shortest possible path, human readable
-        """
-
-        interepreted_route = []
-
-        for item in shortest_path:
-
-            interepreted_route.append((homes_list[item[0]], item[1]))
-
-        return interepreted_route
 
     def run_client_scheduler_algorithm(self, homes_list):
 
@@ -130,15 +115,12 @@ class ClientScheduler(clientSchedulerAlgorithm):
         :param: (list) homes_list: The list of RentDatabaseModel objects, whose pairwise distances will be calculated
         """
 
-        shortest_path = self.run_client_scheduler_algorithm(homes_list)
-        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
+        home_time_tour = self.run_client_scheduler_algorithm(homes_list)
 
-        # Create a string so that it can be passed into ContentFile, which is readable in the FileSystem operation
         # Add 20 minutes to each home
         total_time_secs = 0
-        for item in interpreted_route:
-            total_time_secs = 20 * 60 + item[1] + total_time_secs
+        for home, time in home_time_tour:
+            total_time_secs = 20 * 60 + time + total_time_secs
 
-        # Update Itinerary Model
         # File name is unique based on user and current time (making it impossible to have duplicates)
-        return total_time_secs, interpreted_route
+        return total_time_secs, home_time_tour
