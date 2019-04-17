@@ -9,7 +9,7 @@ class clientSchedulerAlgorithm:
         Find the global minimum of the homes_matrix, basically by just finding the smallest point in the matrix and
         returning its index
         :param homes_matrix: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in
-        favorited list
+        visit list
         :return: (int): starting_point - the Global Minimum. This is the smallest possible distance, so the algorithm will start
         from this address
         '''
@@ -17,7 +17,7 @@ class clientSchedulerAlgorithm:
         starting_point = -1
         for i in range(len(homes_matrix)):
             for j in range(len(homes_matrix[0])):
-                if homes_matrix[i][j] < min_time and homes_matrix[i][j] != 0:
+                if homes_matrix[i][j] < min_time and i != j:
                     min_time = homes_matrix[i][j]
                     starting_point = i
 
