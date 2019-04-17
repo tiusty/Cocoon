@@ -1,7 +1,11 @@
 from django.contrib import admin
 from .models import ItineraryModel
 from .models import TimeModel
+from .models import HomeVisitModel
 
+class VisitInline(admin.StackedInline):
+    model = HomeVisitModel
+    extra = 0
 
 
 class TimeInline(admin.StackedInline):
@@ -15,7 +19,14 @@ class ItineraryAdmin(admin.ModelAdmin):
     search_fields = ('client__email',)
     list_filter = ['client', 'finished', ]
 
-    inlines = [TimeInline]
+    inlines = [VisitInline, TimeInline]
+
+
+class VisitAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Home',
+         {'fields': ('home', 'travel_time', 'visit_index')}),
+    ]
 
 
 class TimeAdmin(admin.ModelAdmin):
@@ -27,3 +38,4 @@ class TimeAdmin(admin.ModelAdmin):
 
 admin.site.register(ItineraryModel, ItineraryAdmin)
 admin.site.register(TimeModel, TimeAdmin)
+admin.site.register(HomeVisitModel, VisitAdmin)

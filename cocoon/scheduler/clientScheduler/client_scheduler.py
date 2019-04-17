@@ -102,7 +102,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
                 itinerary_model.survey = survey
                 itinerary_model.save()
 
-                for (home, time), i in enumerate(home_time_tour):
+                for i, (home, time) in enumerate(home_time_tour):
                     home_visit, created = HomeVisitModel.objects.get_or_create(
                         home=home,
                         itinerary=itinerary_model,
@@ -128,4 +128,4 @@ class ClientScheduler(clientSchedulerAlgorithm):
             total_time_secs = 20 * 60 + time + total_time_secs
 
         # File name is unique based on user and current time (making it impossible to have duplicates)
-        return total_time_secs, home_time_tour
+        return (total_time_secs, home_time_tour)

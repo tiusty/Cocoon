@@ -37,6 +37,7 @@ class ItineraryModel(models.Model):
     agent = models.ForeignKey(MyUser, related_name='scheduled_tours', on_delete=models.SET_NULL, blank=True, null=True)
     tour_duration_seconds = models.IntegerField(default=0)
     selected_start_time = models.DateTimeField(default=None, blank=True, null=True)
+    homes = models.ManyToManyField(RentDatabaseModel, blank=True)
     finished = models.BooleanField(default=False)
     url = models.SlugField(max_length=100, unique=True)
 
@@ -242,9 +243,9 @@ class HomeVisitModel(models.Model):
         Model wrapper around RentDatabase
     """
     home = models.ForeignKey(RentDatabaseModel, on_delete=models.CASCADE)
-    itinerary = models.ForeignKey(ItineraryModel, related_name="homes", on_delete=models.CASCADE)
+    itinerary = models.ForeignKey(ItineraryModel, related_name="ordered_homes", on_delete=models.CASCADE)
     travel_time = models.IntegerField(default=None, null=True)
-    visit_number = models.IntegerField()
+    visit_index = models.IntegerField()
 
 class TimeModel(models.Model):
     """

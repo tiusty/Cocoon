@@ -40,6 +40,7 @@ class ItineraryFileView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         itinerary_slug = kwargs.get('itinerary_slug')
         self.itinerary = get_object_or_404(ItineraryModel, url=itinerary_slug)
+        self.tour_ordered_homes = [visit.home for visit in self.itinerary.ordered_homes.order_by("visit_index")]
         return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -64,7 +65,7 @@ class ItineraryFileView(TemplateView):
             'tour_duration': friendly_duration,
             'is_scheduled': False if self.itinerary.selected_start_time is None else True,
             'start_time': self.itinerary.selected_start_time,
-            'homes': self.itinerary.homes.all(),
+            'homes': self.tour_ordered_homes,
             'is_finished': self.itinerary.finished,
         })
         return context
