@@ -25,8 +25,9 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
         builds the homes matrix using the DistanceWrapper for now. Basically computes the distances using the Google Distance Matrix API and stores it.
 
-        :param (list) homes_list: List of strings containing home addresses used to compute the optimal itinerary
-        :return: (list): homes_matrix a nxn matrix of distances found using the DistanceWrapper() to indicate the distances betweeen any two homes
+        :param (list) homes_list: List of RentDatabaseModel objects included in the homes matrix
+        :return: (list) homes_matrix: a square matrix of travel times found using the DistanceWrapper() indicating pairwise home distances,
+        where the row and column indices are preserved from the input order
         """
 
         # Matrix that contains every home and the duration it takes to get to every other home in the list
@@ -48,6 +49,8 @@ class ClientScheduler(clientSchedulerAlgorithm):
                     distance_meters = commute[0][1]
                     if time_seconds is not None and distance_meters is not None:
                         home_distances.append(time_seconds)
+                    else:
+                        home_distances.append(-1)
             else:
                 update_commutes_cache_client_scheduler(homes_list,
                                                        home,
@@ -84,8 +87,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
         Creates the home matrix and calls the calculation algorithm to find the shortest path
         args:
-        :param homes_list: The matrix calculated using DistanceWrapper() with distances between every pair of homes in
-            favourited list
+        :param homes_list: List of RentDatabaseModel objects from which shortest path will be deduced
         :return: (list): shortest_path List of indices that denote the shortest path, which is the output of the
             algorithms
         """
@@ -130,7 +132,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
         Algorithm runner
         args:
-        :param: (list) homes_list: The list of homes, whose pairwise distances will be calculated
+        :param: (list) homes_list: The list of RentDatabaseModel objects, whose pairwise distances will be calculated
         """
 
         shortest_path = self.run_client_scheduler_algorithm(homes_list)
