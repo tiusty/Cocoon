@@ -16,6 +16,7 @@ export default class DetailsForm extends Component {
             password_error_match: 'Passwords must match.',
         },
         phone_number: '',
+        user_logging_in: false,
     }
 
     componentDidUpdate = (prevProps) => {
@@ -123,6 +124,18 @@ export default class DetailsForm extends Component {
         }
     }
 
+    setUserLoggingIn = () => {
+        this.setState({
+            user_logging_in: true
+        })
+    }
+
+    setUserCreation = () => {
+        this.setState({
+            user_logging_in: false
+        })
+    }
+
     handleSubmit = (e) => {
         /**
          * Does a validation check before attempting to send form to backend
@@ -149,12 +162,13 @@ export default class DetailsForm extends Component {
         })
     }
 
-    render(){
-        return (
-            <>
-                {!this.props.is_authenticated ?
-                    <NewUser
+    render() {
+        if (!this.props.is_authenticated) {
+            if (this.state.user_logging_in) {
+                return (
+                    <LoginUser
                         onSubmit={this.props.onSubmit}
+                        onUserCreation={this.setUserCreation}
                         validateEmail={this.validateEmail}
                         validatePhone={this.validatePhone}
                         handleValidation={this.handleValidation}
@@ -166,23 +180,70 @@ export default class DetailsForm extends Component {
                         loading={this.props.loading}
                         phone_number={this.state.phone_number}
                         onUpdatePhoneNumber={this.handleUpdatePhoneNumber}
-                    /> :
-                    <CurrentUser
+                    />
+                );
+            } else {
+                return (
+                    <NewUser
                         onSubmit={this.props.onSubmit}
+                        onUserLoggingIn={this.setUserLoggingIn}
+                        validateEmail={this.validateEmail}
+                        validatePhone={this.validatePhone}
+                        handleValidation={this.handleValidation}
+                        handleInputChange={this.handleInputChange}
+                        validatePassword={this.validatePassword}
+                        validatePasswordMatch={this.validatePasswordMatch}
                         handlePrevStep={this.props.handlePrevStep}
                         handleSubmit={this.handleSubmit}
                         loading={this.props.loading}
-                    />}
-            </>
-        );
+                        phone_number={this.state.phone_number}
+                        onUpdatePhoneNumber={this.handleUpdatePhoneNumber}
+                    />
+                );
+            }
+        } else {
+            return (
+                <CurrentUser
+                    onSubmit={this.props.onSubmit}
+                    handlePrevStep={this.props.handlePrevStep}
+                    handleSubmit={this.handleSubmit}
+                    loading={this.props.loading}
+                />
+            );
+        }
     }
-
 }
+
+const LoginUser = (props) => (
+    <>
+        <div className="survey-question">
+            <h2>Login to see <span>your results</span>! <small>(or click <a className="login-toggle" onClick={props.onUserCreation}>here</a> to sign up)</small></h2>
+
+            <span className="col-md-12 survey-error-message" id="email_error"></span>
+            <input className="col-md-12 survey-input" type="email" name="email" placeholder="Email address" maxLength={30} onBlur={(e) => {props.validateEmail(e) && props.handleInputChange(e, 'string')} } required/>
+
+            <span className="col-md-12 survey-error-message" id="password_error"></span>
+            <input className="col-md-12 survey-input" type="password" name="password1" placeholder="Password" required onChange={props.validatePassword} onBlur={(e) => {props.validatePassword && props.handleInputChange(e, 'string')} } />
+        </div>
+        <div className="row survey-btn-wrapper">
+            <div className="col-sm-6 col-xs-12">
+                <button className="col-sm-12 survey-btn survey-btn_back" style={{marginTop: '30px'}} onClick={(e) => {props.handlePrevStep(e)}}>
+                    Back
+                </button>
+            </div>
+            <div className="col-sm-6 col-xs-12">
+                <button className="col-sm-12 survey-btn" onClick={(e) => { props.handleSubmit(e); }}>
+                    {props.loading ? 'Loading' : 'View'}
+                </button>
+            </div>
+        </div>
+    </>
+)
 
 const NewUser = (props) => (
     <>
         <div className="survey-question">
-            <h2>Finish signing up to see <span>your results</span>!</h2>
+            <h2>Finish signing up to see <span>your results</span>! <small>(or click <a className="login-toggle" onClick={props.onUserLoggingIn}>here</a> to login)</small></h2>
 
             <span className="col-md-12 survey-error-message" id="email_error"></span>
             <input className="col-md-12 survey-input" type="email" name="email" placeholder="Email address" maxLength={30} onBlur={(e) => {props.validateEmail(e) && props.handleInputChange(e, 'string')} } required/>

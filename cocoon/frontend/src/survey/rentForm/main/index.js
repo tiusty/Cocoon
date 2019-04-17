@@ -96,7 +96,7 @@ export default class RentForm extends Component {
         // Set the state if it is a new survey
         } else {
             this.state = {
-                step: 1,
+                step: 4,
                 loading: false,
                 isEditing: false,
                 googleApiLoaded: false,

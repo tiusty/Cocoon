@@ -444,3 +444,13 @@
 .survey-progress-bar .progress-bar-step_active:after {
     background-color: var(--teal);
 }
+
+
+a.login-toggle{
+    cursor: pointer;
+
+}
+
+a.login-toggle:hover {
+    color: #a13718;
+}
