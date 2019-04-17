@@ -10,7 +10,7 @@ class TestWordScraper(TestCase):
         basic_test_3 = "laundromat nearby, a/c, cats allowed, furnished, storage unit"
         hard_test_1 = "laundromat near unit, no AC, dogs not allowed, fitness center, pool in leasing office"
         hard_test_2 = "no laundry in unit or building, air conditioning available, not furnished, no patio, no storage"
-        hard_test_3 = "laundry in building, air conditioned unit, no hardwood floors, pool closed permanently"
+        hard_test_3 = "laundry in building, laundry in unit, air conditioned unit, no hardwood floors, pool closed permanently"
 
         self.scraper1_easy = WordScraper(basic_test_1)
         self.scraper2_easy = WordScraper(basic_test_2)
@@ -55,7 +55,7 @@ class TestWordScraper(TestCase):
 
         self.assertEqual(scraper1_hard, False)
         self.assertEqual(scraper2_hard, True) # EDGE CASE
-        self.assertEqual(scraper3_hard, False) # EDGE CASE
+        self.assertEqual(scraper3_hard, True) # EDGE CASE
 
     def test_word_laundry_in_building(self):
         scraper_1_basic = False

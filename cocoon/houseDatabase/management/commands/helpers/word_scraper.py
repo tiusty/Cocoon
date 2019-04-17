@@ -39,19 +39,22 @@ class WordScraper:
         for item in word_list:
             if item in self.input_dictionary:
                 list_index.append(self.input_dictionary[item])
-
         if len(list_index) == 0:
             return False
         elif len(list_index) == 1 and len(word_list) == 1:
             return True
         elif len(list_index) == len(word_list) and len(list_index) > 1:
             first_word = list_index[0]
-
+            found = True
             for word_num in first_word:
                 for j in range(1, len(word_list)):
+                    found = True
                     if (word_num + j) not in list_index[j]:
-                        return False
-            return True
+                        found = False
+
+                if found == True:
+                    return found
+            return found
         else:
             return False
 
