@@ -1,6 +1,7 @@
 // Import React Components
 import React from 'react'
 import { Component } from 'react';
+import moment from 'moment';
 
 export default class ItineraryTimeSelector extends Component {
 
@@ -100,6 +101,14 @@ export default class ItineraryTimeSelector extends Component {
 
     }
 
+    getEndTime = () => {
+        // this.props.time_available_seconds;
+        // this.props.date;
+        let date = new moment(this.props.date);
+        date = date.add(this.props.time_available_seconds, 'seconds');
+        return `Free until @ ${date.format("hh:mm A")}`;
+    }
+
     render() {
         return (
             <div className="time-wrapper">
@@ -132,6 +141,10 @@ export default class ItineraryTimeSelector extends Component {
                 <div className="time-available-wrapper">
                     <p>How long are you free for?</p>
                     {this.renderAvailableOptions()}
+                </div>
+
+                <div className="end-time">
+                    {this.getEndTime()}
                 </div>
 
             </div>
