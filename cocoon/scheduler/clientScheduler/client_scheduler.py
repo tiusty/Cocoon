@@ -130,8 +130,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
         """
         Algorithm runner
         args:
-        :param: (list) homes_list: The matrix calculated using DistanceWrapper() with distances between every pair
-                                    of homes in visit list
+        :param: (list) homes_list: The list of homes, whose pairwise distances will be calculated
         """
 
         shortest_path = self.run_client_scheduler_algorithm(homes_list)
