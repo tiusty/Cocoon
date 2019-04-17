@@ -88,21 +88,16 @@ class ClientScheduler(clientSchedulerAlgorithm):
         Creates the home matrix and calls the calculation algorithm to find the shortest path
         args:
         :param homes_list: List of RentDatabaseModel objects from which shortest path will be deduced
-        :return: (list): shortest_path List of indices that denote the shortest path, which is the output of the
-            algorithms
+        :return: (list (home, time)): Ordered list of tuples containing the next home to visit on the tour and the
+        driving time to that home (seconds) to that home from the previous (First entry takes 0 time)
         """
 
         homes_matrix = self.build_homes_matrix(homes_list)
         shortest_path = self.calculate_path(homes_matrix)
+        ordered_homes = [homes_list[i] for i in shortest_path]
         edge_weights = self.get_edge_weights()
 
-        tuple_list_edges = []
-
-        for i in range(len(shortest_path)):
-            temp_tuple = (shortest_path[i], edge_weights[i])
-            tuple_list_edges.append(temp_tuple)
-
-        return tuple_list_edges
+        return list(zip(ordered_homes, edge_weights))
 
     def save_itinerary(self, homes_list, user, survey):
         """
