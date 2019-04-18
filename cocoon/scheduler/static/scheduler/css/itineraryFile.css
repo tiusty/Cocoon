@@ -156,6 +156,20 @@ table > tbody > tr > td.glyphicon-remove {
     color: red;
 }
 
+#listing-number-button {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    font: inherit;
+    border-bottom: 1px solid var(--teal);
+    cursor: pointer;
+    color: var(--teal);
+}
+
+#listing-number-button:hover {
+    cursor: pointer;
+}
+
 .expand-button {
     display: block;
     width: 100%;

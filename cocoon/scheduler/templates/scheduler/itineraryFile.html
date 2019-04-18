@@ -188,7 +188,13 @@
                 </tr>
                 <tr>
                     <td class="left header">Listing No.</td>
-                    <td class="right">{{ home.listing_number|listing_to_link:home.listing_provider.provider}}</td>
+                    <td class="right">
+                        {% if home.listing_provider.provider == "MLSPIN" %}
+                            <button id="listing-number-button" onclick="copyAndRedirect({{ home.listing_number }})">{{ home.listing_number }}</button>
+                        {% elif home.listing_provider.provider == "YGL"%}
+                            <a href="{{ home.listing_number|listing_to_ygl }}">{{ home.listing_number }}</a>
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
                     <td class="left header">Agent ID</td>
@@ -210,11 +216,11 @@
                     <td class="right">{{ home.listing_office }}</td>
                 </tr>
                 <tr>
-                    <td class="left header">Showing Instructions</td>
+                    <td class="left header">Showing instructions</td>
                     <td class="right">[ insert showing instructions ]</td>
                 </tr>
                 <tr>
-                    <td class="left header">Office ID</td>
+                    <td class="left header">Showing remarks</td>
                     <td class="right">[ insert showing remarks ]</td>
                 </tr>
                 <tr>
@@ -352,6 +358,22 @@
     function horizontalLayout() {
         $(".home-list-container").addClass('horizontal');
         $(".home-list-container").removeClass('vertical');
+    }
+
+    function copyAndRedirect(listingNumber) {
+
+        var tempInput = document.createElement("input");
+        tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+        tempInput.value = listingNumber;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+
+        alert("Copied listing ID, redirecting to MLSPIN search...");
+        setTimeout(function(){
+            window.open('https://h3v.mlspin.com/MLS.Pinergy/Search/Main/Index', '_blank');
+        }, 1000);
     }
 
 </script>
