@@ -118,7 +118,8 @@ class MLSRetsRequester(object):
             word_scraper_remarks = WordScraper(new_listing.remarks)
             word_scraper_appliances = WordScraper(home['Appliances'])
             new_listing.air_conditioning = home['AIR_CONDITION'] == 'Yes'
-            new_listing.air_conditioning = word_scraper_remarks.look_for_ac()
+            if word_scraper_remarks.look_for_ac() or word_scraper_appliances.look_for_ac():
+                new_listing.air_conditioning = True
 
             new_listing.furnished = word_scraper_remarks.look_for_furnished() \
                                     or word_scraper_appliances.look_for_furnished()
