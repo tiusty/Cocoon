@@ -167,6 +167,12 @@ table > tbody > tr > td.glyphicon-remove {
 }
 
 #listing-number-button:hover {
+    border-bottom: none;
+    color: var(--black);
+    margin-bottom: 1px;
+}
+
+#listing-number-button:hover {
     cursor: pointer;
 }
 
