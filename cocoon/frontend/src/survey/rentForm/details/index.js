@@ -115,7 +115,6 @@ export default class DetailsForm extends Component {
     }
 
     validatePassword = () => {
-        console.log('calling validate')
         if (this.state.user_logging_in) {
             return this.validatePasswordLogin()
         } else {
@@ -172,7 +171,6 @@ export default class DetailsForm extends Component {
 
     handleInputChange = (e, type) => {
         const { name, value } = e.target;
-        console.log(name + value)
         if(type === 'number') {
             this.setState({
                 [name]: parseInt(value)
