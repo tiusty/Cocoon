@@ -313,7 +313,7 @@
     color: var(--red);
     font-size: 12px;
     font-weight: bold;
-    display: none;
+    /*display: none;*/
     padding-bottom: 5px;
 }
 .survey-google-autocomplete-error-message {

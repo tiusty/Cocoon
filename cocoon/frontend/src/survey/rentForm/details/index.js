@@ -7,16 +7,20 @@ import PhoneInput from 'react-phone-number-input/basic-input'
 
 export default class DetailsForm extends Component {
     state = {
-        errorMessages: {
-            email_error: 'You must enter a valid email address.',
-            phone_error: 'Enter a valid phone number. ex. (555) 555-5555',
-            agent_referral_error: 'The Agent Url is not valid, please confirm with you agent that you have the right number',
-            password_error_number: 'The password must contain at least 1 number',
-            password_error_length: 'Password must be at least 8 characters.',
-            password_error_match: 'Passwords must match.',
-        },
+        email: "",
+        password1: "",
+        password2: "",
         phone_number: '',
         user_logging_in: false,
+
+        // errors
+        login_error: "",
+        email_error: "",
+        password1_error: "",
+        agent_referral_error: "",
+        password2_error: "",
+        phone_error: "",
+
     }
 
     componentDidUpdate = (prevProps) => {
@@ -30,51 +34,55 @@ export default class DetailsForm extends Component {
          * Handles errors returned from the backend
          * @type {boolean}
          */
-        let valid = true;
+        let email_error = "";
+        let password1_error = "";
+        let agent_referral_error = "";
+        let password2_error = "";
+        let login_error = "";
+
+
         if (errors.user_form_errors) {
+            // Tests if there was a login error
+            if (errors.user_form_errors.sign_in_failure) {
+                login_error = errors.user_form_errors.sign_in_failure
+            }
+
             // Email Errors
             if (errors.user_form_errors.email) {
-                document.querySelector('#email_error').style.display = 'block';
-                document.querySelector('#email_error').innerText = errors.user_form_errors.email[0];
-                valid = false;
-            } else if (!errors.user_form_errors.email) { document.querySelector('#email_error').style.display = 'none'; }
+                email_error = errors.user_form_errors.email[0]
+            }
 
             // Password errors
-                if (errors.user_form_errors.password1) {
-                    document.querySelector('#password_error').style.display = 'block';
-                    document.querySelector('#password_error').innerText = errors.user_form_errors.password1[0];
-                    valid = false;
-                } else if (!errors.user_form_errors.password1) {
-                    document.querySelector('#password_error').style.display = 'none';
-                }
-
+            if (errors.user_form_errors.password1) {
+                password1_error = errors.user_form_errors.password[0];
+            } else if (errors.user_form_errors.password) {
+                password1_error = errors.user_form_errors.password[0];
+            }
 
             if (!this.state.user_logging_in) {
                 // Agent Referral errors
                 if (errors.user_form_errors.agent_referral) {
-                    document.querySelector('#agent_referral_error').style.display = 'block';
-                    document.querySelector('#agent_referral_error').innerText = errors.user_form_errors.agent_referral[0];
-                    valid = false;
-                } else if (!errors.user_form_errors.agent_referral) {
-                    document.querySelector('#agent_referral_error').style.display = 'none';
+                    agent_referral_error = errors.user_form_errors.agent_referral[0];
                 }
 
                 // Password errors
                 if (errors.user_form_errors.password2) {
-                    document.querySelector('#password_error').style.display = 'block';
-                    document.querySelector('#password_error').innerText = errors.user_form_errors.password2[0];
-                    valid = false;
-                } else if (!errors.user_form_errors.password2) {
-                    document.querySelector('#password_error').style.display = 'none';
+                    password2_error = errors.user_form_errors.password2[0];
                 }
             }
         }
-        return valid;
-    }
+        this.setState({
+            email_error,
+            password1_error,
+            agent_referral_error,
+            password2_error,
+            login_error,
+        })
+    };
 
     handleValidation = () => {
         if (this.state.user_logging_in) {
-            return this.validateEmail();
+            return this.validateEmail() && this.validatePassword();
         } else {
             return this.validateEmail() && this.validatePhone() && this.validatePassword() && this.validatePasswordMatch();
         }
@@ -82,53 +90,89 @@ export default class DetailsForm extends Component {
 
     validateEmail = () => {
         const re = /\S+@\S+\.\S+/;
+        let email_error =  "";
         const email = document.querySelector('input[type=email]').value;
         if (!re.test(email)) {
-            document.querySelector('#email_error').style.display = 'block';
-            document.querySelector('#email_error').innerText = this.state.errorMessages.email_error;
-        } else if (re.test(email)) { document.querySelector('#email_error').style.display = 'none'; }
+            email_error = "You must enter in a valid email";
+        }
+        this.setState({
+            email_error
+        })
         return re.test(email);
     }
 
     validatePhone = () => {
         const re = /^(\([0-9]{3}\)\s*|[0-9]{3}\-)[0-9]{3}-[0-9]{4}$/;
+        let phone_error = "";
         const phone = document.querySelector('input[type=tel]').value;
         if (!re.test(phone)) {
-            document.querySelector('#phone_error').style.display = 'block';
-            document.querySelector('#phone_error').innerText = this.state.errorMessages.phone_error;
-        } else if (re.test(phone)) { document.querySelector('#phone_error').style.display = 'none'; }
+            phone_error = "Enter a valid phone number. ex. (555) 555-5555";
+        }
+        this.setState({
+            phone_error
+        })
         return re.test(phone);
     }
 
     validatePassword = () => {
+        console.log('calling validate')
+        if (this.state.user_logging_in) {
+            return this.validatePasswordLogin()
+        } else {
+            return this.validatePasswordUserCreation()
+        }
+    }
+
+    validatePasswordLogin() {
         const password = document.querySelector('input[name=password1]').value;
+        let password1_error = "";
+        let valid = true;
+        if (password.length <= 0) {
+            password1_error = "Please enter your password";
+            valid = false;
+        }
+        this.setState({
+            password1_error
+        });
+        return valid;
+    }
+
+    validatePasswordUserCreation() {
+        const password = document.querySelector('input[name=password1]').value;
+        let password1_error = "";
+        let valid = true;
         const numberMatch = /[0-9]/;
         if (password.length < 8) {
-            document.querySelector('#password_error').style.display = 'block';
-            document.querySelector('#password_error').innerText = this.state.errorMessages.password_error_length;
-            return false;
+            password1_error = "Password must be at least 8 characters.";
+            valid = false;
         } else if (!numberMatch.test(password)) {
-            document.querySelector('#password_error').style.display = 'block';
-            document.querySelector('#password_error').innerText = this.state.errorMessages.password_error_number;
-            return false;
+            password1_error = "The password must contain at least 1 number";
+            valid = false;
         }
-        if (numberMatch.test(password) && !password.length < 8) { document.querySelector('#password_error').style.display = 'none'; }
-        return true;
+        this.setState({
+            password1_error
+        })
+        return valid;
     }
 
     validatePasswordMatch = () => {
         const password = document.querySelector('input[name=password1]').value;
         const confirmPassword = document.querySelector('input[name=password2]').value;
+        let password2_error = "";
+        let valid = true;
         if (password !== confirmPassword) {
-            document.querySelector('#password_match_error').style.display = 'block';
-            document.querySelector('#password_match_error').innerText = this.state.errorMessages.password_error_match;
-            return false;
-        } else if (password === confirmPassword) { document.querySelector('#password_match_error').style.display = 'none'; }
-        return true;
+            password2_error = "Passwords must match";
+            valid = false;
+        }
+        this.setState({
+            password2_error
+        });
+        return valid;
     }
 
     handleInputChange = (e, type) => {
         const { name, value } = e.target;
+        console.log(name + value)
         if(type === 'number') {
             this.setState({
                 [name]: parseInt(value)
@@ -142,13 +186,17 @@ export default class DetailsForm extends Component {
 
     setUserLoggingIn = () => {
         this.setState({
-            user_logging_in: true
+            user_logging_in: true,
+            password1: "",
+            password2: "",
         })
     }
 
     setUserCreation = () => {
         this.setState({
-            user_logging_in: false
+            user_logging_in: false,
+            password1: "",
+            password2: "",
         })
     }
 
@@ -183,10 +231,15 @@ export default class DetailsForm extends Component {
             if (this.state.user_logging_in) {
                 return (
                     <LoginUser
+                        login_error={this.state.login_error}
+                        email_error={this.state.email_error}
+                        password1_error={this.state.password1_error}
+
+                        errors={this.state.user_form_errors}
                         onSubmit={this.props.onSubmit}
                         onUserCreation={this.setUserCreation}
                         validateEmail={this.validateEmail}
-                        handleValidation={this.handleValidation}
+                        validatePassword={this.validatePassword}
                         handleInputChange={this.handleInputChange}
                         handlePrevStep={this.props.handlePrevStep}
                         handleSubmit={this.handleSubmit}
@@ -196,11 +249,17 @@ export default class DetailsForm extends Component {
             } else {
                 return (
                     <NewUser
+                        email_error={this.state.email_error}
+                        password1_error={this.state.password1_error}
+                        agent_referral_error={this.state.agent_referral_error}
+                        password2_error={this.state.password2_error}
+                        phone_error={this.state.phone_error}
+
+
                         onSubmit={this.props.onSubmit}
                         onUserLoggingIn={this.setUserLoggingIn}
                         validateEmail={this.validateEmail}
                         validatePhone={this.validatePhone}
-                        handleValidation={this.handleValidationCreation}
                         handleInputChange={this.handleInputChange}
                         validatePassword={this.validatePassword}
                         validatePasswordMatch={this.validatePasswordMatch}
@@ -229,11 +288,18 @@ const LoginUser = (props) => (
     <>
         <div className="survey-question">
             <h2>Login to see <span>your results</span>! <small>(or click <a className="login-toggle" onClick={props.onUserCreation}>here</a> to sign up)</small></h2>
+            <p className="col-md-12 survey-error-message">
+            {props.login_error ? props.login_error : null}
+            </p>
 
-            <span className="col-md-12 survey-error-message" id="email_error"></span>
+            <span className="col-md-12 survey-error-message">
+            {props.email_error ? props.email_error : null}
+            </span>
             <input className="col-md-12 survey-input" type="email" name="email" placeholder="Email address" maxLength={30} onBlur={(e) => {props.validateEmail(e) && props.handleInputChange(e, 'string')} } required/>
 
-            <span className="col-md-12 survey-error-message" id="password_error"></span>
+            <span className="col-md-12 survey-error-message">
+            {props.password1_error ? props.password1_error : null}
+            </span>
             <input className="col-md-12 survey-input" type="password" name="password1" placeholder="Password" required onChange={props.validatePassword} onBlur={(e) => {props.validatePassword && props.handleInputChange(e, 'string')} } />
         </div>
         <div className="row survey-btn-wrapper">
@@ -256,10 +322,14 @@ const NewUser = (props) => (
         <div className="survey-question">
             <h2>Finish signing up to see <span>your results</span>! <small>(or click <a className="login-toggle" onClick={props.onUserLoggingIn}>here</a> to login)</small></h2>
 
-            <span className="col-md-12 survey-error-message" id="email_error"></span>
+            <span className="col-md-12 survey-error-message">
+            {props.email_error ? props.email_error : null}
+            </span>
             <input className="col-md-12 survey-input" type="email" name="email" placeholder="Email address" maxLength={30} onBlur={(e) => {props.validateEmail(e) && props.handleInputChange(e, 'string')} } required/>
 
-            <span className="col-md-12 survey-error-message" id="phone_error"></span>
+            <span className="col-md-12 survey-error-message">
+            {props.phone_error ? props.phone_error : null}
+            </span>
             <PhoneInput
                 country="US"
                 className="col-md-12 survey-input"
@@ -270,12 +340,19 @@ const NewUser = (props) => (
                 }
             />
 
-            <span className="col-md-12 survey-error-message" id="agent_referral_error"></span>
+            <span className="col-md-12 survey-error-message">
+            {props.agent_referral_error ? props.agent_referral_error : null}
+            </span>
             <input className="col-md-12 survey-input" type="text" name="agent_referral" placeholder="Agent Referral - Optional" onBlur={(e) => {props.handleInputChange(e, 'string')} } />
 
-            <span className="col-md-12 survey-error-message" id="password_error"></span>
+            <span className="col-md-12 survey-error-message">
+            {props.password1_error ? props.password1_error : null}
+            </span>
             <input className="col-md-12 survey-input" type="password" name="password1" placeholder="Password" required onChange={props.validatePassword} onBlur={(e) => {props.validatePassword && props.handleInputChange(e, 'string')} } />
-            <span className="col-md-12 survey-error-message" id="password_match_error"></span>
+
+            <span className="col-md-12 survey-error-message">
+            {props.password2_error ? props.password2_error : null}
+            </span>
             <input className="col-md-12 survey-input" type="password" name="password2" placeholder="Confirm Your Password" required onChange={props.validatePasswordMatch} onBlur={(e) => {props.validatePasswordMatch && props.handleInputChange(e, 'string')} } />
         </div>
         <div className="row survey-btn-wrapper">

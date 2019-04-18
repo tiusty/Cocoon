@@ -155,7 +155,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         """
         Retrieves all the data from the frontend
         Then the data is parsed to each of the sections
-        If all the forms are valid, they are saved and the redirct url is returned
+        If all the forms are valid, they are saved and the redirect url is returned
         Otherwise the form errors are returned
         :param request:
         :param args:
@@ -189,6 +189,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             user = None
         user_signing_in = False
 
+        # Determines if the user is trying to sign in or create a new account and creates
+        #   the corresponding form
         if not self.request.user.is_authenticated():
             if user_data.get('user_logging_in', False):
                 user_signing_in = True
@@ -204,10 +206,12 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         forms_valid = form.is_valid() and tenants.is_valid() and user_form.is_valid() if user_form is not None else True
 
         # Only bother checking if all the forms are valid and there is a user_form
+        # Called after checking to see if all the forms are valid
         if forms_valid and user_form is not None:
+            # If the user is trying to login then authenticate them, otherwise try to create a new user
             if user_signing_in:
                 user = authenticate(username=user_form.cleaned_data.get('username'),
-                                    password=user_form.cleaned_data.get('password1'))
+                                    password=user_form.cleaned_data.get('password'))
                 if user is not None:
                     login(request, user)
             else:
@@ -252,9 +256,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             tenants_errors = ""
             sign_failure = ""
 
-            if user is None and user_data.get('user_logging_in', False):
-                sign_failure = "Login failed, please retry your credentials"
-
             if tenants is not None:
                 tenants.is_valid()
                 tenants_errors = tenants.errors
@@ -262,6 +263,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             if user_form is not None:
                 user_form.is_valid()
                 user_form_errors = user_form.errors
+                if user is None and user_data.get('user_logging_in', False):
+                    user_form_errors['sign_in_failure'] = "Login failed, please retry your credentials"
                 logger.error("In Survey creation:\n"
                              "User: {0} {1}.\n"
                              "Had errors form errors:{2}\n"
@@ -284,7 +287,6 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             # Return a result false if the form was not valid
             return Response({
                 'result': False,
-                'sign_in_failure': sign_failure,
                 'survey_errors': form_errors,
                 'tenants_errors': tenants_errors,
                 'user_form_errors': user_form_errors
