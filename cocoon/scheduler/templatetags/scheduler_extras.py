@@ -34,3 +34,11 @@ def gmap_from_address(value):
 def agent_to_link(value, provider):
     if provider == "MLSPIN":
         return "https://h3b.mlspin.com/tools/roster/agent.asp?aid={0}&nomenu=true".format(value)
+
+@register.filter(name="listing_to_link")
+@stringfilter
+def listing_to_link(value, provider):
+    if provider == "MLSPIN":
+        pass
+    elif provider == "YGL":
+        return "https://app.yougotlistings.com/rentals/{0}".format(value)

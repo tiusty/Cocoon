@@ -188,7 +188,7 @@
                 </tr>
                 <tr>
                     <td class="left header">Listing No.</td>
-                    <td class="right">{{ home.listing_number }}</td>
+                    <td class="right">{{ home.listing_number|listing_to_link:home.listing_provider.provider}}</td>
                 </tr>
                 <tr>
                     <td class="left header">Agent ID</td>
