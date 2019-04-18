@@ -221,7 +221,8 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         # If the forms are valid and the user is successfully, logged in either via creating, signing up or already
         #   been logged in, then start the process of saving the survey
         if forms_valid and user is not None:
-            # If the user is signing up then save that form and return the user to log them in
+
+            # Save the form information
             with transaction.atomic():
 
                 # Save the rent survey
