@@ -101,6 +101,14 @@
     cursor: unset;
 }
 
+.tour-cta .tour-warning {
+    color: #C09B00;
+    padding-top: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: unset;
+}
+
 /* TOUR PICKER */
 .tour-picker {
     max-height: 287px;
