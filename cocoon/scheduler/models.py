@@ -260,7 +260,7 @@ class ViableTourTimeModel(models.Model):
 
     """
     home_visit = models.ForeignKey(HomeVisitModel, related_name="viable_times", on_delete=models.CASCADE)
-    visit_time = models.DateTimeField(default=None)
+    visit_time = models.DateTimeField(default=timezone.now)
 
     UNAVAILABLE = "n"
     AVAILABLE = "y"

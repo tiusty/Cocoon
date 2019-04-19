@@ -50,20 +50,16 @@ class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
 
 class HomeVisitSerializer(serializers.HyperlinkedModelSerializer):
 
-    home = RentDatabaseSerializer(read_only=True)
-    itinerary = ItinerarySerializer(read_only=True)
     travel_time = serializers.IntegerField(read_only=True)
     visit_index = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = HomeVisitModel
-        fields = ('id', 'home', 'itinerary', 'travel_time', 'visit_index')
+        fields = ('id', 'travel_time', 'visit_index')
 
 
 class ViableTourTimeSerializer(serializers.HyperlinkedModelSerializer):
-    home_visit = HomeVisitSerializer(read_only=False)
-    visit_time = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = ViableTourTimeModel
-        fields = ('id', 'home_visit', 'visit_time', 'availability')
+        fields = ('id', 'availability')

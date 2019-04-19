@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.http import Http404
 
 # App Models
-from .models import ItineraryModel, TimeModel, ViableTourTimeModel
+from .models import ItineraryModel, TimeModel, ViableTourTimeModel, HomeVisitModel
 from .serializers import ItinerarySerializer, ViableTourTimeSerializer
 from .helpers.send_emails import send_new_itinerary_marketplace_email, send_new_itinerary_referred_email
 
@@ -57,7 +57,7 @@ class ItineraryFileView(TemplateView):
                 destinations.append(t.full_address)
 
         visit_times = [
-            list(ViableTourTimeModel.objects.filter(home_visit=home_visit).all()) for home_visit in self.tour_ordered_visits
+            list(ViableTourTimeModel.objects.filter(home_visit=home_visit).order_by("visit_time").all()) for home_visit in self.tour_ordered_visits
         ]
 
         start_times = self.itinerary.start_times
@@ -133,13 +133,21 @@ class AgentSchedulerMarketplaceView(TemplateView):
         return data
 
 
-@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_broker or u.is_admin), name='dispatch')
-class VisitTimeViewset(viewsets.ModelViewSet):
-    """
-    Used on the ItineraryFile page to update whether a visit slot is viable after consulting property manager
-    """
-    serializer_class = ViableTourTimeSerializer
-    queryset = ViableTourTimeModel.objects.all()
+# @method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_broker or u.is_admin), name='dispatch')
+# class VisitTimeViewset(viewsets.ModelViewSet):
+#     """
+#     Used on the ItineraryFile page to update whether a visit slot is viable after consulting property manager
+#     """
+#     serializer_class = ViableTourTimeSerializer
+#     queryset = ViableTourTimeModel.objects.all()
+#
+#     def create(self, request, *args, **kwargs):
+#         if "visit_id" in self.request.data:
+#             visit_id = self.request.data["visit_id"]
+#             home_visit = get_object_or_404(HomeVisitModel, id=visit_id)
+#             visit_time = ViableTourTimeModel(home_visit=home_visit)
+#         else:
+#             Http404
 
 class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
     """
@@ -441,5 +449,31 @@ def unschedule_itinerary(request):
                                 )
     else:
         return HttpResponse(json.dumps({"result": "1"}),
+                            content_type="application/json",
+                            )
+
+@login_required
+def update_visit_time(request):
+    visit_id = request.POST.get('id')
+    visit_time = get_object_or_404(ViableTourTimeModel, id=visit_id)
+    current_profile = get_object_or_404(UserProfile, user=request.user)
+    if current_profile.user.is_broker or current_profile.user.is_admin:
+        try:
+            availability = request.POST.get('availability')
+            if availability in ['y', 'n', 'm']:
+                visit_time.availability = availability
+                visit_time.save()
+                return HttpResponse(json.dumps({"result": "0"}),
+                                    content_type="application/json",
+                                    )
+            else:
+                return HttpResponse(json.dumps({"result": "1"}),
+                             content_type="application/json",
+                             )
+        except KeyError:
+            return HttpResponse(json.dumps({"result": "1"}),
+                         content_type="application/json",
+                         )
+    return HttpResponse(json.dumps({"result": "1"}),
                             content_type="application/json",
                             )

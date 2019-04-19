@@ -6,7 +6,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'itinerary', views.ItineraryViewset, base_name='itinerary')
-router.register(r'visitTime', views.VisitTimeViewset, base_name='visitTime')
+# router.register(r'visitTime', views.VisitTimeViewset, base_name='visitTime')
 router.register(r'itineraryClient', views.ItineraryClientViewSet, base_name='itineraryClient')
 router.register(r'itineraryAgent', views.ItineraryAgentViewSet, base_name='itineraryAgent')
 router.register(r'itineraryMarket', views.ItineraryMarketViewSet, base_name='itineraryMarket')
@@ -21,6 +21,7 @@ urlpatterns = [
 
     # AJAX requests below
     url(r'^unscheduleItinerary/$', views.unschedule_itinerary, name="unscheduleItinerary"),
+    url(r'^updateVisitTime/$', views.update_visit_time, name="updateVisitTime"),
 
     # Api
     url(r'^api/', include(router.urls))
