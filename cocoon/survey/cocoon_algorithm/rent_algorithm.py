@@ -254,17 +254,23 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         :param home_score: (HomeScore) -> The home that is currently being calaculated
         """
         if survey.wants_furnished:
-            self.handle_weighted_question('furnished', survey.furnished_weight, home_score, home_score.home.furnished)
+            self.handle_weighted_question('furnished', survey.furnished_weight, home_score,
+                                          home_score.home.furnished)
         if survey.wants_hardwood_floors:
-            self.handle_weighted_question('hardwood_floors', survey.hardwood_floors_weight, home_score, home_score.home.hardwood_floors)
+            self.handle_weighted_question('hardwood_floors', survey.hardwood_floors_weight,
+                                          home_score, home_score.home.hardwood_floors)
         if survey.wants_AC:
-            self.handle_weighted_question('air_conditioning', survey.AC_weight, home_score, home_score.home.air_conditioning)
+            self.handle_weighted_question('air_conditioning', survey.AC_weight, home_score,
+                                          home_score.home.air_conditioning)
         if survey.wants_dishwasher:
-            self.handle_weighted_question('dishwasher', survey.dishwasher_weight, home_score, home_score.home.dishwasher)
+            self.handle_weighted_question('dishwasher', survey.dishwasher_weight, home_score,
+                                          home_score.home.dishwasher)
         if survey.wants_dogs:
-            self.handle_weighted_question('dogs_allowed', survey.dog_weight, home_score, home_score.home.dogs_allowed)
+            self.handle_weighted_question('dogs_allowed', survey.dog_weight, home_score, home_score.home.dogs_allowed,
+                                          can_eliminate=True)
         if survey.wants_cats:
-            self.handle_weighted_question('cats_allowed', survey.cat_weight, home_score, home_score.home.cats_allowed)
+            self.handle_weighted_question('cats_allowed', survey.cat_weight, home_score, home_score.home.cats_allowed,
+                                          can_eliminate=True)
 
     def run_compute_weighted_score_exterior_amenities(self, survey, home_score):
         """
@@ -322,6 +328,7 @@ class RentAlgorithm(SortingAlgorithms, WeightScoringAlgorithm, PriceAlgorithm, C
         self.run_compute_commute_score_approximate()
         self.run_compute_price_score()
         self.run_compute_weighted_questions(survey)
+        self.remove_eliminated_homes()
         """
         STEP 5: Now sort all the homes from best homes to worst home
         """
