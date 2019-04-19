@@ -185,6 +185,8 @@ export default class DetailsForm extends Component {
     setUserLoggingIn = () => {
         this.setState({
             user_logging_in: true,
+            email: "",
+            email_error: "",
             password1: "",
             password2: "",
         })
@@ -193,6 +195,8 @@ export default class DetailsForm extends Component {
     setUserCreation = () => {
         this.setState({
             user_logging_in: false,
+            email_error: "",
+            email: "",
             password1: "",
             password2: "",
         })
