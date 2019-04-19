@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
 from django.http import Http404
+from django.contrib.sites.shortcuts import get_current_site
 
 # App Models
 from .models import ItineraryModel, TimeModel, ViableTourTimeModel, HomeVisitModel
@@ -62,6 +63,10 @@ class ItineraryFileView(TemplateView):
 
         start_times = self.itinerary.start_times
 
+        # Survey load url
+        current_site = get_current_site(self.request)
+        survey_load_url = "https://{0}/survey/rent/{1}/".format(current_site.domain, self.itinerary.survey.url)
+
         context.update({
             'client': self.itinerary.client,
             'survey': self.itinerary.survey,
@@ -75,6 +80,7 @@ class ItineraryFileView(TemplateView):
             'is_finished': self.itinerary.finished,
             'visit_times': visit_times,
             "start_times": start_times,
+            "survey_url": survey_load_url,
         })
         return context
 

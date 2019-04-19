@@ -49,6 +49,10 @@
         <td class="right">{{ client.full_name|try_string:"-" }}</td>
     </tr>
     <tr>
+        <td class="left header">Load Survey</td>
+        <td class="right"><a class="button btn-primary" href="{{ survey_url }}">Load Survey</a></td>
+    </tr>
+    <tr>
         <td class="left header">Phone Number</td>
         <td class="right">
             <a href="tel:{{ client.phone_number }}">{{ client.phone_numner|try_string:"-" }}</a>
@@ -260,11 +264,11 @@
                 </tr>
                 <tr>
                     <td class="left header">Showing instructions</td>
-                    <td class="right">[ insert showing instructions ]</td>
+                    <td class="right">{{ visit.home.showing_instructions }}</td>
                 </tr>
                 <tr>
                     <td class="left header">Showing remarks</td>
-                    <td class="right">[ insert showing remarks ]</td>
+                    <td class="right">{{ visit.home.showing_remarks }}</td>
                 </tr>
                 <tr>
                     <td class="left header">Currently available</td>
