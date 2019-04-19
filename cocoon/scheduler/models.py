@@ -253,7 +253,7 @@ class HomeVisitModel(models.Model):
     visit_index = models.IntegerField()
 
 
-class ViableTourTime(models.Model):
+class ViableTourTimeModel(models.Model):
     """
         Model for a potentially viable tour slot, deduced from a client's availabilities and the distance between
         homes on a tour.

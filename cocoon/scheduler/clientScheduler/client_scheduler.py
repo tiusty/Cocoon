@@ -1,5 +1,6 @@
 # import python modules
 import math
+from datetime import timedelta
 
 # import django modules
 from django.core.files.base import ContentFile
@@ -7,7 +8,7 @@ from django.db import transaction
 
 # App imports
 from ..clientScheduler.base_algorithm import clientSchedulerAlgorithm
-from ..models import ItineraryModel, HomeVisitModel
+from ..models import ItineraryModel, HomeVisitModel, ViableTourTimeModel
 
 # import distance matrix wrapper
 from cocoon.commutes.distance_matrix.commute_retriever import retrieve_exact_commute_client_scheduler, retrieve_approximate_commute_client_scheduler
@@ -23,6 +24,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
     def __init__(self, accuracy=CommuteAccuracy.EXACT):
         super().__init__()
         self.commute_accuracy = accuracy
+        self.home_time_tours = []
 
     def build_homes_matrix(self, homes_list):
         """
@@ -83,6 +85,31 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         return list(zip(ordered_homes, edge_weights))
 
+    def generate_tour_times(self, user):
+        """
+        creates ViableTourTimeModel's given the client's availability, the tour order, and the driving distance
+        between homes on the tour. Should be called in ItineraryClientViewset.update()
+        :param (User) -> User model instance associated with client
+        :return: True for success, False for failure
+        """
+        if ItineraryModel.retrieve_unfinished_itinerary(user).exists():
+            itinerary = ItineraryModel.objects.get(client=user)
+            start_times = itinerary.start_times
+
+            for start_time in start_times:
+                elapsed_time = 0
+                for home_visit in HomeVisitModel.objects.filter(itinerary=itinerary).order_by("visit_index"):
+                    if home_visit.visit_index is not 0:
+                        elapsed_time += 20 * 60
+                    elapsed_time += home_visit.travel_time
+                    time_slot = start_time.time + timedelta(seconds=elapsed_time)
+                    _ = ViableTourTimeModel.objects.get_or_create(
+                        home_visit=home_visit,
+                        time=time_slot)
+            return True
+        return False
+
+
     def save_itinerary(self, homes_list, user, survey):
         """
 
@@ -95,13 +122,13 @@ class ClientScheduler(clientSchedulerAlgorithm):
 
         if not ItineraryModel.retrieve_unfinished_itinerary(user).exists():
             with transaction.atomic():
-                total_time_secs, home_time_tour = self.calculate_duration(homes_list)
+                total_time_secs, home_time_tours = self.calculate_duration(homes_list)
                 itinerary_model = ItineraryModel(client=user)
                 itinerary_model.tour_duration_seconds = total_time_secs
                 itinerary_model.survey = survey
                 itinerary_model.save()
 
-                for i, (home, time) in enumerate(home_time_tour):
+                for i, (home, time) in enumerate(home_time_tours):
                     home_visit, created = HomeVisitModel.objects.get_or_create(
                         home=home,
                         itinerary=itinerary_model,
@@ -109,6 +136,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
                         visit_index=i
                     )
                     itinerary_model.homes.add(home) # left for faster hashing
+                self.home_time_tours = home_time_tours
             return True
         return False
 

@@ -199,8 +199,8 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
-        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
+        self.client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
+        result = self.client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
         if result:
             return Response({
                 'result': True,
@@ -234,6 +234,9 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
                     dt = dateutil.parser.parse(start_time['date'])
                     dt = dt.replace(second=0, microsecond=0)
                     itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
+
+            # Generate potential visit times so agents can coordinate with property managers
+            self.client_scheduler_alg.generate_tour_times(user=user_profile.user)
 
             # Automatically set the agent assigned to the itinerary if the agent has a referred agent
             # Send an email to the appropriate people
