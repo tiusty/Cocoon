@@ -393,7 +393,7 @@ class ItineraryMarketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        return ItineraryModel.objects.filter(agent=None).exclude(finished=True)
+        return ItineraryModel.objects.filter(agent=None).exclude(finished=True).exclude(start_times__isnull=True)
 
 
 ########################################
