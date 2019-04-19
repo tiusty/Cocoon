@@ -74,6 +74,7 @@ export default class RentForm extends Component {
                 isEditing: true,
                 googleApiLoaded: false,
                 google_autocomplete_errors: "",
+                errors: {},
 
                 // General Form Fields
                 generalInfo: survey.generalInfo,
@@ -101,6 +102,7 @@ export default class RentForm extends Component {
                 isEditing: false,
                 googleApiLoaded: false,
                 google_autocomplete_errors: "",
+                errors: {},
 
                 // General Form Fields
                 generalInfo: {
