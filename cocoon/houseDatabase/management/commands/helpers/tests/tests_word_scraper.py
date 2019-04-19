@@ -20,6 +20,22 @@ class TestWordScraper(TestCase):
         self.scraper2_hard = WordScraper(hard_test_2)
         self.scraper3_hard = WordScraper(hard_test_3)
 
+    def test_word_occurs_twice(self):
+        """
+        Tests that if the first word in a search appears twice then make sure it passes, also
+            tests out a bunch of other combinations
+        :return:
+        """
+        sentence = "laundry in unit, something thing, maybe some units, but more importantly laundry in building"
+        scrapper = WordScraper(sentence)
+        self.assertTrue(scrapper.look_for_laundry_in_building())
+        self.assertTrue(scrapper.look_for_laundry_in_unit())
+        self.assertFalse(scrapper.look_for_laundromat())
+        self.assertFalse(scrapper.word_finder(["laundry", "unit"]))
+        self.assertFalse(scrapper.word_finder(["unit", "laundry"]))
+        self.assertFalse(scrapper.word_finder(["laundry", "building"]))
+        self.assertFalse(scrapper.word_finder(["building", "laundry"]))
+
     def test_word_laundry_in_unit(self):
 
         specific_test = "Wide-screen TV, wifi speaker, coffee maker, In-unit washer& dryer."
