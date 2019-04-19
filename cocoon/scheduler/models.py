@@ -17,10 +17,6 @@ import hashlib
 import pytz
 
 
-def itinerary_directory_path(instance, filename):
-    return "itinerary/{0}/{1}".format(instance.client.id, str(instance.id) + "_" + filename)
-
-
 class ItineraryModel(models.Model):
     """
        Model for Itinerary. These are based on the interface designed on the Google Doc.
@@ -238,14 +234,50 @@ class ItineraryModel(models.Model):
         # send confirmation email to user
         email.send()
 
+
 class HomeVisitModel(models.Model):
     """
         Model wrapper around RentDatabase
+
+        Attributes:
+            self.home (ForeignKey) -> The RentDatabaseModel of the home being visited
+            self.itinerary (ForeignKey) -> The ItineraryModel associated with the visit
+            self.travel_time (IntegerField) -> The travel time in seconds required to drive to this visit from the
+                previous home on the tour (Note: for the first home on a tour, the travel_time is 0 since we do not
+                account for the starting location of the agent/client)
+            self.visit_index (IntegerField) -> 0-indexed field for keeping track of the optimal tour order
     """
     home = models.ForeignKey(RentDatabaseModel, on_delete=models.CASCADE)
     itinerary = models.ForeignKey(ItineraryModel, related_name="ordered_homes", on_delete=models.CASCADE)
     travel_time = models.IntegerField(default=None, null=True)
     visit_index = models.IntegerField()
+
+
+class ViableTourTime(models.Model):
+    """
+        Model for a potentially viable tour slot, deduced from a client's availabilities and the distance between
+        homes on a tour.
+
+    """
+    home_visit = models.ForeignKey(HomeVisitModel, related_name="viable_times", on_delete=models.CASCADE)
+    time = models.DateTimeField
+
+    UNAVAILABLE = "n"
+    AVAILABLE = "y"
+    UNDETERMINED = "m"
+    AVAILABILITY = (
+        (UNAVAILABLE, 'unavailable'),
+        (AVAILABLE, 'available'),
+        (UNDETERMINED, 'undetermined'),
+    )
+
+    availability = models.CharField(
+        unique=True,
+        choices=AVAILABILITY,
+        default=UNDETERMINED,
+        max_length=1,
+    )
+
 
 class TimeModel(models.Model):
     """

@@ -68,7 +68,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
         return homes_matrix
 
     def run_client_scheduler_algorithm(self, homes_list):
-
         """
         Creates the home matrix and calls the calculation algorithm to find the shortest path
         args:
