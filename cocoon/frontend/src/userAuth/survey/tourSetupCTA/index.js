@@ -117,6 +117,8 @@ export default class TourSetupCTA extends Component {
             return  <span className="tour-error">There are homes in your visit list that are sold. Remove those to schedule your tour.</span>
         } else if (this.props.last_resend_request_pre_tour !== undefined && !this.props.is_pre_tour_signed && this.props.pre_tour_forms_created && !this.props.itinerary_scheduled) {
             return <span className="tour-error">You can't resend the documents until {moment(this.props.last_resend_request_pre_tour).add({minutes: 16}).format("H:mm A")}</span>
+        } else if (this.props.visit_list.length < 3) {
+            return <span className="tour-warning">We recommend adding at least 3 homes.</span>
         } else {
             return null;
         }
