@@ -1,7 +1,7 @@
 # Import Django modules
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.views.generic import TemplateView, DetailView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -19,6 +19,7 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
 from cocoon.userAuth.models import UserProfile
 from cocoon.houseDatabase.models import RentDatabaseModel
+from cocoon.userAuth.forms import LoginUserForm
 
 # Rest Framework
 from rest_framework import viewsets, mixins
@@ -154,7 +155,7 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
         """
         Retrieves all the data from the frontend
         Then the data is parsed to each of the sections
-        If all the forms are valid, they are saved and the redirct url is returned
+        If all the forms are valid, they are saved and the redirect url is returned
         Otherwise the form errors are returned
         :param request:
         :param args:
@@ -180,95 +181,117 @@ class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
             user_data = data['detailsInfo']
 
         form = RentSurveyForm(survey_data)
-
-        tenants = None
+        tenants = TenantFormSet(tenant_data)
         user_form = None
 
-        if form.is_valid():
+        user = self.request.user
+        if user.is_anonymous():
+            user = None
+        user_signing_in = False
 
-            tenants = TenantFormSet(tenant_data)
-
-            does_user_signup = False
-            sign_up_form_valid = True
-
-            if not self.request.user.is_authenticated():
-                does_user_signup = True
+        # Determines if the user is trying to sign in or create a new account and creates
+        #   the corresponding form
+        if not self.request.user.is_authenticated():
+            if user_data.get('user_logging_in', False):
+                user_signing_in = True
+                user_form_data = {
+                    'username': user_data.get('email'),
+                    'password': user_data.get('password1'),
+                }
+                user_form = LoginUserForm(request, user_form_data)
+            else:
                 user_form = ApartmentHunterSignupForm(user_data)
-                sign_up_form_valid = user_form.is_valid()
 
-            # Makes sure that the tenant form and the signup form are valid before saving
-            if tenants.is_valid() and sign_up_form_valid:
+        # Determines if any of the forms is not valid, and only check user_form if it exists
+        forms_valid = form.is_valid() and tenants.is_valid() and user_form.is_valid() if user_form is not None else True
 
-                user = self.request.user
+        # Only bother checking if all the forms are valid and there is a user_form
+        # Called after checking to see if all the forms are valid
+        if forms_valid and user_form is not None:
+            # If the user is trying to login then authenticate them, otherwise try to create a new user
+            if user_signing_in:
+                user = authenticate(username=user_form.cleaned_data.get('username'),
+                                    password=user_form.cleaned_data.get('password'))
+                if user is not None:
+                    login(request, user)
+            else:
+                user = user_form.save(request=self.request)
+                login(self.request, user)
 
-                # If the user is signing up then save that form and return the user to log them in
-                with transaction.atomic():
-                    if does_user_signup:
-                        user = user_form.save(request=self.request)
-                        login(self.request, user)
+        # If the forms are valid and the user is successfully, logged in either via creating, signing up or already
+        #   been logged in, then start the process of saving the survey
+        if forms_valid and user is not None:
 
-                    # Save the rent survey
-                    form.instance.user_profile = get_object_or_404(UserProfile, user=user)
+            # Save the form information
+            with transaction.atomic():
 
-                    # Now the form can be saved
-                    survey = form.save()
-                    survey.url = survey.generate_slug()
-                    if 'num_bedrooms' in survey_data:
-                        survey.num_bedrooms = survey_data['num_bedrooms']
-                    survey.save()
+                # Save the rent survey
+                form.instance.user_profile = get_object_or_404(UserProfile, user=user)
 
-                    # Save the polygons
-                    if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
-                        save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
+                # Now the form can be saved
+                survey = form.save()
+                survey.url = survey.generate_slug()
+                if 'num_bedrooms' in survey_data:
+                    survey.num_bedrooms = survey_data['num_bedrooms']
+                survey.save()
 
-                    # Now save the the tenants
-                    tenants.instance = survey
-                    tenants.save()
+                # Save the polygons
+                if 'polygons' in survey_data and 'polygon_filter_type' in survey_data:
+                    save_polygons(survey, survey_data['polygons'], survey_data['polygon_filter_type'])
 
-                survey = RentingSurveyModel.objects.get(id=survey.id)
+                # Now save the the tenants
+                tenants.instance = survey
+                tenants.save()
 
-                # Return that the result is True and the redirect url so the page knows
-                #   where to redirect to
-                return Response({'result': True, 'redirect_url': survey.url})
+            survey = RentingSurveyModel.objects.get(id=survey.id)
 
-        # If there were any errors then save the errors so they can be returned
-        form_errors = form.errors
-        user_form_errors = ""
-        tenants_errors = ""
+            # Return that the result is True and the redirect url so the page knows
+            #   where to redirect to
+            return Response({'result': True, 'redirect_url': survey.url})
 
-        if tenants is not None:
-            tenants.is_valid()
-            tenants_errors = tenants.errors
-
-        if user_form is not None:
-            user_form.is_valid()
-            user_form_errors = user_form.errors
-            logger.error("In Survey creation:\n"
-                         "User: {0} {1}.\n"
-                         "Had errors form errors:{2}\n"
-                         "tenant_erorrs: {3}\n"
-                         "user_form errors: {4}\n".format(user_form.data['first_name'],
-                                                          user_form.data['last_name'],
-                                                          form_errors,
-                                                          tenants_errors,
-                                                          user_form_errors))
         else:
-            logger.error("In Survey Creation:\n"
-                         "User: {0} \n"
-                         "Had errors form errors:{1}\n"
-                         "tenant_erorrs: {2}\n"
-                         "user_form errors: {3}\n".format(self.request.user.full_name,
-                                                          form_errors,
-                                                          tenants_errors,
-                                                          user_form_errors))
 
-        # Return a result false if the form was not valid
-        return Response({
-            'result': False,
-            'survey_errors': form_errors,
-            'tenants_errors': tenants_errors,
-            'user_form_errors': user_form_errors
-        })
+            # If there were any errors then save the errors so they can be returned
+            form_errors = form.errors
+            user_form_errors = ""
+            tenants_errors = ""
+            sign_failure = ""
+
+            if tenants is not None:
+                tenants.is_valid()
+                tenants_errors = tenants.errors
+
+            if user_form is not None:
+                user_form.is_valid()
+                user_form_errors = user_form.errors
+                if user is None and user_data.get('user_logging_in', False):
+                    user_form_errors['sign_in_failure'] = "Login failed, please retry your credentials"
+                logger.error("In Survey creation:\n"
+                             "User: {0} {1}.\n"
+                             "Had errors form errors:{2}\n"
+                             "tenant_erorrs: {3}\n"
+                             "user_form errors: {4}\n".format(user_form.data.get('first_name'),
+                                                              user_form.data.get('last_name'),
+                                                              form_errors,
+                                                              tenants_errors,
+                                                              user_form_errors))
+            else:
+                logger.error("In Survey Creation:\n"
+                             "User: {0} \n"
+                             "Had errors form errors:{1}\n"
+                             "tenant_erorrs: {2}\n"
+                             "user_form errors: {3}\n".format(self.request.user.full_name,
+                                                              form_errors,
+                                                              tenants_errors,
+                                                              user_form_errors))
+
+            # Return a result false if the form was not valid
+            return Response({
+                'result': False,
+                'survey_errors': form_errors,
+                'tenants_errors': tenants_errors,
+                'user_form_errors': user_form_errors
+            })
 
     def update(self, request, *args, **kwargs):
         """
