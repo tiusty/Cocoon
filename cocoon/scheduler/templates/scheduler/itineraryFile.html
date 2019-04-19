@@ -191,21 +191,22 @@
                                 <th class="right">Avail.</th>
                             </thead>
                             <tbody>
-                            {% for visit in visit_times|index:visit.visit_index %}
+                            {% for viable_time in visit_times|index:visit.visit_index %}
                     <tr>
-                        <td>{{ visit.visit_time }}</td>
+                        <td>{{ viable_time.visit_time }}</td>
                         <td class="right">
                             <form action="/scheduler/api/visitTime/" method="post">
                                 {% csrf_token %}
-                                <input type="hidden" name="pk" value="{{ visit.id }}">
+                                <input type="hidden" name="id" value="{{ viable_time.id }}">
+                                <input type="hidden" name="home_visit" value="{{ visit.id }}">
                                 <select name="availability">
-                                    <option {% if visit.availability == "y" %} selected="selected" {% endif %}
+                                    <option {% if viable_time.availability == "y" %} selected="selected" {% endif %}
                                                                                value="y">available
                                     </option>
-                                    <option {% if visit.availability == "n" %} selected="selected" {% endif %}
+                                    <option {% if viable_time.availability == "n" %} selected="selected" {% endif %}
                                                                                value="n">unavailable
                                     </option>
-                                    <option {% if visit.availability == "m" %} selected="selected" {% endif %}
+                                    <option {% if viable_time.availability == "m" %} selected="selected" {% endif %}
                                                                                value="m">undetermined
                                     </option>
                                 </select>

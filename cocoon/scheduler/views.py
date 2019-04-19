@@ -138,25 +138,8 @@ class VisitTimeViewset(viewsets.ModelViewSet):
     """
     Used on the ItineraryFile page to update whether a visit slot is viable after consulting property manager
     """
-
     serializer_class = ViableTourTimeSerializer
-
-    def update(self, request, *args, **kwargs):
-        # Retrieve the itinerary id
-        pk = kwargs.pop('pk', None)
-        availability = kwargs.pop('availability', None)
-        tour_time = get_object_or_404(ViableTourTimeModel, pk=pk)
-        if availability is "y":
-            tour_time.availability = ViableTourTimeModel.AVAILABLE
-        elif availability is "n":
-            tour_time.availability = ViableTourTimeModel.UNAVAILABLE
-        elif availability is "m":
-            tour_time.availability = ViableTourTimeModel.UNDETERMINED
-
-        tour_time = get_object_or_404(ViableTourTimeModel, pk=pk)
-        serializer = ViableTourTimeSerializer(tour_time)
-        return Response(serializer.data)
-
+    queryset = ViableTourTimeModel.objects.all()
 
 class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
     """
