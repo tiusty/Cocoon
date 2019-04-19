@@ -220,7 +220,7 @@ class ItineraryModel(models.Model):
         domain = kwargs.pop('request', None)
         current_site = get_current_site(domain)
         message = render_to_string(
-            'scheduler/email/itinerary_cancellation_email.html',
+            'scheduler/email/itinerary_start_time_cancellation.html',
             {
                 'user': self.client.first_name,
                 'agent_name': self.agent.first_name,
