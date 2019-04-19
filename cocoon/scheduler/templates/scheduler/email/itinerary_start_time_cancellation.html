@@ -1,0 +1,22 @@
+{% extends "base_email.html" %}
+
+{% block headline %}
+    Your tour has been cancelled.
+{% endblock %}
+
+{% block greeting %}
+    Hey {{ agent_name }}!
+{% endblock %}
+
+{% block content %}
+    Your tour with {{ user }} for {{ start_time }} has been cancelled.
+    <br><br>
+    You still have the tour claimed, so please click the link below to
+    select a different available time.
+{% endblock %}
+
+{% block buttonLink %}http://{{ domain }}{% url 'scheduler:myTours' %}{% endblock %}
+
+{% block buttonText %}Select New Time{% endblock %}
+
+{% block smallText %}{% endblock %}
