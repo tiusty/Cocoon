@@ -92,7 +92,7 @@ class ClientScheduler(clientSchedulerAlgorithm):
         :return: True for success, False for failure
         """
         if ItineraryModel.retrieve_unfinished_itinerary(user).exists():
-            itinerary = ItineraryModel.objects.get(client=user)
+            itinerary = ItineraryModel.objects.exclude(finished=True).get(client=user)
             start_times = itinerary.start_times
 
             for start_time in start_times.all():
