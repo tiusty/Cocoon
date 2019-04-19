@@ -24,7 +24,6 @@ class ClientScheduler(clientSchedulerAlgorithm):
     def __init__(self, accuracy=CommuteAccuracy.EXACT):
         super().__init__()
         self.commute_accuracy = accuracy
-        self.home_time_tours = []
 
     def build_homes_matrix(self, homes_list):
         """
@@ -96,16 +95,16 @@ class ClientScheduler(clientSchedulerAlgorithm):
             itinerary = ItineraryModel.objects.get(client=user)
             start_times = itinerary.start_times
 
-            for start_time in start_times:
+            for start_time in start_times.all():
                 elapsed_time = 0
-                for home_visit in HomeVisitModel.objects.filter(itinerary=itinerary).order_by("visit_index"):
+                for home_visit in HomeVisitModel.objects.filter(itinerary=itinerary).order_by("visit_index").all():
                     if home_visit.visit_index is not 0:
                         elapsed_time += 20 * 60
                     elapsed_time += home_visit.travel_time
                     time_slot = start_time.time + timedelta(seconds=elapsed_time)
                     _ = ViableTourTimeModel.objects.get_or_create(
                         home_visit=home_visit,
-                        time=time_slot)
+                        visit_time=time_slot)
             return True
         return False
 

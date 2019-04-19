@@ -32,6 +32,7 @@
 </head>
 <p class="absolute-logo">Cocoon</p>
 <body>
+
 <table class="client-information-table" id="client-information-table">
     <thead>
     <tr>
@@ -167,7 +168,7 @@
 
 <div class="home-list-container">
 
-    {% for home in homes %}
+    {% for visit in home_visits %}
 
         <div class="itinerary-home-table-wrapper">
             <table class="itinerary-home-table" id="itinerary-home-table-{{ forloop.counter }}">
@@ -177,33 +178,71 @@
                             class="home-table-count">{{ forloop.counter }}</span></th>
                     <th class="right">
                         <a target="_blank" class="map-link"
-                           href="{{ home.full_address|gmaps_from_address }}">{{ home.full_address }}</a>
+                           href="{{ visit.home.full_address|gmaps_from_address }}">{{ visit.home.full_address }}</a>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
+                    <td colspan="2">
+                        <table class="inner-time-table">
+                            <thead>
+                                <th>Time</th>
+                                <th class="right">Avail.</th>
+                            </thead>
+                            <tbody>
+                            {% for visit in visit_times|index:visit.visit_index %}
+                    <tr>
+                        <td>{{ visit.visit_time }}</td>
+                        <td class="right">
+                            <form action="/scheduler/api/visitTime/" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="pk" value="{{ visit.id }}">
+                                <select name="availability">
+                                    <option {% if visit.availability == "y" %} selected="selected" {% endif %}
+                                                                               value="y">available
+                                    </option>
+                                    <option {% if visit.availability == "n" %} selected="selected" {% endif %}
+                                                                               value="n">unavailable
+                                    </option>
+                                    <option {% if visit.availability == "m" %} selected="selected" {% endif %}
+                                                                               value="m">undetermined
+                                    </option>
+                                </select>
+                                <br><br>
+                                <input type="submit">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
                     <td class="left header">Price</td>
-                    <td class="right">${% replace home.price "-1" "-" %}</td>
+                    <td class="right">${% replace visit.home.price "-1" "-" %}</td>
                 </tr>
                 <tr>
                     <td class="left header">Listing No.</td>
                     <td class="right">
-                        {% if home.listing_provider.provider == "MLSPIN" %}
-                            <button id="listing-number-button" onclick="copyAndRedirect({{ home.listing_number }})">{{ home.listing_number }}</button>
-                        {% elif home.listing_provider.provider == "YGL"%}
-                            <a href="{{ home.listing_number|listing_to_ygl }}">{{ home.listing_number }}</a>
+                        {% if visit.home.listing_provider.provider == "MLSPIN" %}
+                            <button id="listing-number-button"
+                                    onclick="copyAndRedirect({{ visit.home.listing_number }})">{{ visit.home.listing_number }}</button>
+                        {% elif visit.home.listing_provider.provider == "YGL" %}
+                            <a href="{{ visit.home.listing_number|listing_to_ygl }}">{{ visit.home.listing_number }}</a>
                         {% endif %}
                     </td>
                 </tr>
                 <tr>
                     <td class="left header">Agent ID</td>
                     <td class="right">
-                        {% if home.listing_provider.provider == 'MLSPIN' %}
+                        {% if visit.home.listing_provider.provider == 'MLSPIN' %}
                             <a class="listing-agent-link" target="_blank"
-                               href="{{ home.listing_agent|agent_to_link:home.listing_provider.provider }}">{{ home.listing_agent|try_string:"-" }}</a>
+                               href="{{ visit.home.listing_agent|agent_to_link:visit.home.listing_provider.provider }}">{{ visit.home.listing_agent|try_string:"-" }}</a>
                         {% else %}
-                            {{ home.listing_agent|try_string:"-" }}
+                            {{ visit.home.listing_agent|try_string:"-" }}
                         {% endif %}
                     </td>
                 </tr>
@@ -213,7 +252,7 @@
                 </tr>
                 <tr>
                     <td class="left header">Office ID</td>
-                    <td class="right">{{ home.listing_office }}</td>
+                    <td class="right">{{ visit.home.listing_office }}</td>
                 </tr>
                 <tr>
                     <td class="left header">Showing instructions</td>
@@ -225,65 +264,65 @@
                 </tr>
                 <tr>
                     <td class="left header">Currently available</td>
-                    <td class="right glyphicon {% condition home.on_market "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.on_market "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr>
                     <td class="left header">Listing provider</td>
-                    <td class="right">{{ home.listing_provider.provider }}</td>
+                    <td class="right">{{ visit.home.listing_provider.provider }}</td>
                 </tr>
 
                 {# Fields below are hidden by default#}
 
                 <tr class="extra-home-info hidden">
                     <td class="left header">Date available</td>
-                    <td class="right">{{ home.date_available }}</td>
+                    <td class="right">{{ visit.home.date_available }}</td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Listing remarks</td>
-                    <td class="right listing-remarks">{{ home.remarks }}</td>
+                    <td class="right listing-remarks">{{ visit.home.remarks }}</td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Number of bathrooms</td>
-                    <td class="right">{{ home.num_bathrooms }}</td>
+                    <td class="right">{{ visit.home.num_bathrooms }}</td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Number of bedrooms</td>
-                    <td class="right">{{ home.num_bedrooms }}</td>
+                    <td class="right">{{ visit.home.num_bedrooms }}</td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Furnished</td>
-                    <td class="right glyphicon {% condition home.furnished "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.furnished "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Hardwood floors</td>
-                    <td class="right glyphicon {% condition home.hardwood_floors "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.hardwood_floors "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">AC</td>
-                    <td class="right glyphicon {% condition home.air_conditioning "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.air_conditioning "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Allows dogs</td>
-                    <td class="right glyphicon {% condition home.dogs_allowed "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.dogs_allowed "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Allows cats</td>
-                    <td class="right glyphicon {% condition home.cats_allowed "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.cats_allowed "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">In-unit laundry</td>
-                    <td class="right glyphicon {% condition home.laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.laundry_in_unit "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">In-building landury</td>
-                    <td class="right glyphicon {% condition home.laundry_in_building "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.laundry_in_building "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 {#          <tr>#}
@@ -292,28 +331,28 @@
                 {#          </tr>#}
                 <tr class="extra-home-info hidden">
                     <td class="left header">Pool</td>
-                    <td class="right glyphicon {% condition home.pool "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.pool "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Patio / Balcony</td>
-                    <td class="right glyphicon {% condition home.patio_balcony "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.patio_balcony "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Gym</td>
-                    <td class="right glyphicon {% condition home.gym "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.gym "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 <tr class="extra-home-info hidden">
                     <td class="left header">Storage</td>
-                    <td class="right glyphicon {% condition home.storage "glyphicon-ok" "glyphicon-remove" %}"
+                    <td class="right glyphicon {% condition visit.home.storage "glyphicon-ok" "glyphicon-remove" %}"
                         aria-hidden="true"></td>
                 </tr>
                 </tbody>
             </table>
             <span type="button" id="expand-home-info-button-{{ forloop.counter }}" class="expand-button"
-                  onclick="showMoreHomeInfo({{ forloop.counter }})">more</span>
+                  onclick="showMorevisit.homeInfo({{ forloop.counter }})">more</span>
         </div>
 
     {% endfor %}
@@ -371,7 +410,7 @@
         document.body.removeChild(tempInput);
 
         alert("Copied listing ID, redirecting to MLSPIN search...");
-        setTimeout(function(){
+        setTimeout(function () {
             window.open('https://h3v.mlspin.com/MLS.Pinergy/Search/Main/Index', '_blank');
         }, 1000);
     }

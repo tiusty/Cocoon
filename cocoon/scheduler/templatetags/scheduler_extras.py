@@ -35,6 +35,9 @@ def agent_to_link(value, provider):
     if provider == "MLSPIN":
         return "https://h3b.mlspin.com/tools/roster/agent.asp?aid={0}&nomenu=true".format(value)
 
+@register.filter
+def index(List, i):
+    return List[int(i)]
 
 @register.filter(name="listing_to_ygl")
 @stringfilter

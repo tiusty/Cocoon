@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.http import Http404
 
 # App Models
-from .models import ItineraryModel, TimeModel
-from .serializers import ItinerarySerializer
+from .models import ItineraryModel, TimeModel, ViableTourTimeModel
+from .serializers import ItinerarySerializer, ViableTourTimeSerializer
 from .helpers.send_emails import send_new_itinerary_marketplace_email, send_new_itinerary_referred_email
 
 # Cocoon Modules
@@ -40,7 +40,7 @@ class ItineraryFileView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         itinerary_slug = kwargs.get('itinerary_slug')
         self.itinerary = get_object_or_404(ItineraryModel, url=itinerary_slug)
-        self.tour_ordered_homes = [visit.home for visit in self.itinerary.ordered_homes.order_by("visit_index")]
+        self.tour_ordered_visits = [visit for visit in self.itinerary.ordered_homes.order_by("visit_index")]
         return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -56,6 +56,12 @@ class ItineraryFileView(TemplateView):
             for t in tenants.all():
                 destinations.append(t.full_address)
 
+        visit_times = [
+            list(ViableTourTimeModel.objects.filter(home_visit=home_visit).all()) for home_visit in self.tour_ordered_visits
+        ]
+
+        start_times = self.itinerary.start_times
+
         context.update({
             'client': self.itinerary.client,
             'survey': self.itinerary.survey,
@@ -65,8 +71,10 @@ class ItineraryFileView(TemplateView):
             'tour_duration': friendly_duration,
             'is_scheduled': False if self.itinerary.selected_start_time is None else True,
             'start_time': self.itinerary.selected_start_time,
-            'homes': self.tour_ordered_homes,
+            'home_visits': self.tour_ordered_visits,
             'is_finished': self.itinerary.finished,
+            'visit_times': visit_times,
+            "start_times": start_times,
         })
         return context
 
@@ -123,6 +131,31 @@ class AgentSchedulerMarketplaceView(TemplateView):
         # Tells React which component to load onto the page
         data['component'] = AgentSchedulerMarketplaceView.__name__
         return data
+
+
+@method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_broker or u.is_admin), name='dispatch')
+class VisitTimeViewset(viewsets.ModelViewSet):
+    """
+    Used on the ItineraryFile page to update whether a visit slot is viable after consulting property manager
+    """
+
+    serializer_class = ViableTourTimeSerializer
+
+    def update(self, request, *args, **kwargs):
+        # Retrieve the itinerary id
+        pk = kwargs.pop('pk', None)
+        availability = kwargs.pop('availability', None)
+        tour_time = get_object_or_404(ViableTourTimeModel, pk=pk)
+        if availability is "y":
+            tour_time.availability = ViableTourTimeModel.AVAILABLE
+        elif availability is "n":
+            tour_time.availability = ViableTourTimeModel.UNAVAILABLE
+        elif availability is "m":
+            tour_time.availability = ViableTourTimeModel.UNDETERMINED
+
+        tour_time = get_object_or_404(ViableTourTimeModel, pk=pk)
+        serializer = ViableTourTimeSerializer(tour_time)
+        return Response(serializer.data)
 
 
 class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
@@ -199,8 +232,8 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
             homes_list.append(home)
 
         # Run client_scheduler algorithm
-        self.client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
-        result = self.client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
+        client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
+        result = client_scheduler_alg.save_itinerary(homes_list, self.request.user, survey)
         if result:
             return Response({
                 'result': True,
@@ -236,7 +269,8 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
                     itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
 
             # Generate potential visit times so agents can coordinate with property managers
-            self.client_scheduler_alg.generate_tour_times(user=user_profile.user)
+            client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
+            client_scheduler_alg.generate_tour_times(user=user_profile.user)
 
             # Automatically set the agent assigned to the itinerary if the agent has a referred agent
             # Send an email to the appropriate people

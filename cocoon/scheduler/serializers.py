@@ -4,6 +4,7 @@ from rest_framework import serializers
 # Import App modules
 from .models import ItineraryModel
 from .models import TimeModel
+from .models import ViableTourTimeModel
 
 # Import Third party modules
 from cocoon.userAuth.serializers import MyUserSerializer
@@ -15,6 +16,12 @@ class TimeModelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TimeModel
         fields = ('id', 'time', 'time_available_seconds')
+
+
+class ViableTourTimeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ViableTourTimeModel
+        fields = ('id', 'visit_time', 'availability')
 
 
 class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
