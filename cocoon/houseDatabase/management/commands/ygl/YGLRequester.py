@@ -129,30 +129,22 @@ class YGLRequester(object):
                         # Initialize word scraper
                         word_scraper = WordScraper(element.text)
 
-                        if word_scraper.word_finder(["laundromat"]):
-                            new_listing.laundromat_nearby = True
+                        new_listing.laundromat_nearby = word_scraper.look_for_laundromat()
 
-                        new_listing.furnished = word_scraper.word_finder(["furnished"])
+                        new_listing.furnished = word_scraper.look_for_furnished()
                         new_listing.hardwood_floors = word_scraper.look_for_hardwood_floors()
-                        new_listing.dishwasher = word_scraper.word_finder(["dishwasher"]) \
-                            or word_scraper.word_finder(['dish', 'washer'])
+                        new_listing.dishwasher = word_scraper.look_for_dishwasher()
 
-                        if (word_scraper.word_finder(["air", "conditioning"])) \
-                                or word_scraper.word_finder(["ac"])\
-                                or word_scraper.word_finder(["a", "/", "c"]):
-                            new_listing.air_conditioning = True
+                        new_listing.air_conditioning = word_scraper.look_for_ac()
 
-                        if word_scraper.word_finder(["pool"]) or word_scraper.word_finder(["hot", "tub"]):
-                            new_listing.pool = True
-                        if word_scraper.word_finder(["balcony"]) or word_scraper.word_finder(["patio"]):
-                            new_listing.patio_balcony = True
+                        new_listing.pool = word_scraper.look_for_pool()
+                        new_listing.patio_balcony = word_scraper.look_for_balcony()
 
                         new_listing.laundry_in_building = word_scraper.look_for_laundry_in_building()
                         new_listing.laundry_in_unit = word_scraper.look_for_laundry_in_unit()
 
-                        new_listing.gym = word_scraper.word_finder(["gym"]) or word_scraper.word_finder(
-                            ["fitness", "center"])
-                        new_listing.storage = word_scraper.word_finder(["storage"])
+                        new_listing.gym = word_scraper.look_for_gym()
+                        new_listing.storage = word_scraper.look_for_storage()
                         new_listing.remarks = element.text
 
                 except ValueError:
