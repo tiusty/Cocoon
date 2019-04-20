@@ -5,6 +5,24 @@ from cocoon.commutes.constants import CommuteAccuracy
 
 class TestClientScheduler(TestCase):
 
+    def interpret_algorithm_output(self, homes_list, shortest_path):
+
+        """
+        Utility function to interpret the shortest path using the home list to make it ready for output onto the main site
+        args:
+        :param (list) homes_list: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in favorited list
+        :param (list) shortest_path: List of indices that denote the shortest path, which is the output of the algorithm
+        :return: (list): interpreted_route List of strings containing the addresses in order of the shortest possible path, human readable
+        """
+
+        interepreted_route = []
+
+        for item in shortest_path:
+
+            interepreted_route.append((homes_list[item[0]], item[1]))
+
+        return interepreted_route
+
     def setUp(self):
         self.clientScheduler = ClientScheduler(accuracy=CommuteAccuracy.EXACT)
 
@@ -105,7 +123,7 @@ class TestClientScheduler(TestCase):
         mock_edge_weights.return_value = [0,5,3]
 
         tuple_list = self.clientScheduler.run_client_scheduler_algorithm(homes_list)
-        self.assertEqual(tuple_list, [(1,0),(2,5),(0,3)])
+        self.assertEqual(tuple_list, [("home2",0),("home3",5),("home1",3)])
 
     def test_interpret_algorithm_output_increasing(self):
         '''
@@ -115,7 +133,7 @@ class TestClientScheduler(TestCase):
 
         homes_list = ["home1", "home2", "home3"]
         shortest_path = [(0,0), (1,2), (2,3)]
-        interpreted_route = self.clientScheduler.interpret_algorithm_output(homes_list, shortest_path)
+        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
         self.assertEqual(interpreted_route, [("home1",0), ("home2",2), ("home3",3)])
 
     def test_interpret_algorithm_output_decreasing(self):
@@ -126,7 +144,7 @@ class TestClientScheduler(TestCase):
 
         homes_list = ["home1", "home2", "home3"]
         shortest_path = [(2,0), (1,2), (0,1)]
-        interpreted_route = self.clientScheduler.interpret_algorithm_output(homes_list, shortest_path)
+        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
         self.assertEqual(interpreted_route, [("home3",0), ("home2",2), ("home1",1)])
 
     def test_interpret_algorithm_output_random(self):
@@ -137,5 +155,5 @@ class TestClientScheduler(TestCase):
 
         homes_list = ["home1", "home2", "home3"]
         shortest_path = [(1,0),(0,1),(2,3)]
-        interpreted_route = self.clientScheduler.interpret_algorithm_output(homes_list, shortest_path)
+        interpreted_route = self.interpret_algorithm_output(homes_list, shortest_path)
         self.assertEqual(interpreted_route, [("home2",0), ("home1",1), ("home3",3)])

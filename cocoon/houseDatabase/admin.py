@@ -26,6 +26,8 @@ class HouseAdmin(admin.ModelAdmin):
              'listing_office',
              'listing_number',
              'remarks',
+             'showing_instructions',
+             'showing_remarks',
          )}
         ),
     ]

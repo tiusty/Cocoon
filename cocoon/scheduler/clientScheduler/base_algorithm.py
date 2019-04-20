@@ -1,3 +1,6 @@
+# import python modules
+import math
+
 class clientSchedulerAlgorithm:
 
 
@@ -9,15 +12,15 @@ class clientSchedulerAlgorithm:
         Find the global minimum of the homes_matrix, basically by just finding the smallest point in the matrix and
         returning its index
         :param homes_matrix: The matrix calcualted using DistanceWrapper() with distances between every pair of homes in
-        favorited list
+        visit list
         :return: (int): starting_point - the Global Minimum. This is the smallest possible distance, so the algorithm will start
         from this address
         '''
-        min_time = 1000000
+        min_time = math.inf
         starting_point = -1
         for i in range(len(homes_matrix)):
             for j in range(len(homes_matrix[0])):
-                if homes_matrix[i][j] < min_time and homes_matrix[i][j] != 0:
+                if homes_matrix[i][j] < min_time and i != j:
                     min_time = homes_matrix[i][j]
                     starting_point = i
 
@@ -41,7 +44,7 @@ class clientSchedulerAlgorithm:
         while (len(shortest_path) != len(homes_matrix)):
             self.edge_weights.append(local_min)
             shortest_path.append(global_minimum)
-            local_min = 10000000
+            local_min = math.inf
             global_min_temp = global_minimum
             for i in range(len(homes_matrix[global_min_temp])):
                 if i not in shortest_path:

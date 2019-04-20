@@ -2,6 +2,7 @@
 from django.utils import timezone
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.db.utils import DataError
 
 # Python Imports
 from rets import Session
@@ -111,6 +112,8 @@ class MLSRetsRequester(object):
             new_listing.listing_agent = home['ListAgentMlsId']
             new_listing.listing_office = home['ListOfficeMlsId']
             new_listing.listing_provider = HomeProviderModel.objects.get_or_create(provider=HomeProviderModel.MLSPIN)[0]
+            new_listing.showing_instructions = home['ShowingInstructions']
+            new_listing.showing_remarks = home['FIRM_RMK1']
 
             # Amenities
             new_listing.dogs_allowed = 'yes' in home['PETS_ALLOWED'].lower()

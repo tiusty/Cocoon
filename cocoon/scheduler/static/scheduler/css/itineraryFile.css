@@ -14,7 +14,7 @@ table {
     max-width: 700px;
 }
 
-.itinerary-home-table {
+.itinerary-home-table-wrapper {
     margin: 50px auto;
 }
 
@@ -26,7 +26,7 @@ table {
     justify-content: space-between;
 }
 
-.home-list-container.horizontal > table {
+.home-list-container.horizontal > .itinerary-home-table-wrapper {
     min-width: 600px;
     margin: 40px 40px;
 }
@@ -47,12 +47,12 @@ table {
     border-radius: 50%;
 }
 
-.map-link, .mail-link, .listing-agent-link {
+.map-link, .mail-link, .listing-agent-link, .survey-link {
     text-decoration: underline;
     color: var(--teal);
 }
 
-.map-link:visited, .mail-link:visited, listing-agent-link:visited {
+.map-link:visited, .mail-link:visited, listing-agent-link:visited, survey-link:visited {
     text-decoration: underline;
     color: var(--grey);
 }
@@ -111,9 +111,8 @@ table > tbody > tr > td:nth-child(even) {
 }
 
 table > thead > tr > th {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
-    text-decoration: underline;
     padding: 8px;
     text-align: left;
     position: relative;
@@ -155,6 +154,26 @@ table > tbody > tr > td.glyphicon-ok {
 
 table > tbody > tr > td.glyphicon-remove {
     color: red;
+}
+
+#listing-number-button {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    font: inherit;
+    border-bottom: 1px solid var(--teal);
+    cursor: pointer;
+    color: var(--teal);
+}
+
+#listing-number-button:hover {
+    border-bottom: none;
+    color: var(--black);
+    margin-bottom: 1px;
+}
+
+#listing-number-button:hover {
+    cursor: pointer;
 }
 
 .expand-button {
