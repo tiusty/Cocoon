@@ -6,10 +6,11 @@ from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
 from django.http import Http404
+from django.contrib.sites.shortcuts import get_current_site
 
 # App Models
-from .models import ItineraryModel, TimeModel
-from .serializers import ItinerarySerializer
+from .models import ItineraryModel, TimeModel, ViableTourTimeModel, HomeVisitModel
+from .serializers import ItinerarySerializer, ViableTourTimeSerializer
 from .helpers.send_emails import send_new_itinerary_marketplace_email, send_new_itinerary_referred_email
 
 # Cocoon Modules
@@ -40,6 +41,7 @@ class ItineraryFileView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         itinerary_slug = kwargs.get('itinerary_slug')
         self.itinerary = get_object_or_404(ItineraryModel, url=itinerary_slug)
+        self.tour_ordered_visits = [visit for visit in self.itinerary.ordered_homes.order_by("visit_index")]
         return super(ItineraryFileView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -55,6 +57,16 @@ class ItineraryFileView(TemplateView):
             for t in tenants.all():
                 destinations.append(t.full_address)
 
+        visit_times = [
+            list(ViableTourTimeModel.objects.filter(home_visit=home_visit).order_by("visit_time").all()) for home_visit in self.tour_ordered_visits
+        ]
+
+        start_times = self.itinerary.start_times
+
+        # Survey load url
+        current_site = get_current_site(self.request)
+        survey_load_url = "https://{0}/survey/rent/{1}/".format(current_site.domain, self.itinerary.survey.url)
+
         context.update({
             'client': self.itinerary.client,
             'survey': self.itinerary.survey,
@@ -64,8 +76,11 @@ class ItineraryFileView(TemplateView):
             'tour_duration': friendly_duration,
             'is_scheduled': False if self.itinerary.selected_start_time is None else True,
             'start_time': self.itinerary.selected_start_time,
-            'homes': self.itinerary.homes.all(),
+            'home_visits': self.tour_ordered_visits,
             'is_finished': self.itinerary.finished,
+            'visit_times': visit_times,
+            "start_times": start_times,
+            "survey_url": survey_load_url,
         })
         return context
 
@@ -234,6 +249,10 @@ class ItineraryClientViewSet(viewsets.ModelViewSet):
                     dt = dt.replace(second=0, microsecond=0)
                     itinerary.start_times.create(time=dt, time_available_seconds=time_available_seconds)
 
+            # Generate potential visit times so agents can coordinate with property managers
+            client_scheduler_alg = ClientScheduler(CommuteAccuracy.EXACT)
+            client_scheduler_alg.generate_tour_times(user=user_profile.user)
+
             # Automatically set the agent assigned to the itinerary if the agent has a referred agent
             # Send an email to the appropriate people
             if user_profile.referred_agent is not None:
@@ -393,7 +412,7 @@ class ItineraryMarketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        return ItineraryModel.objects.filter(agent=None).exclude(finished=True)
+        return ItineraryModel.objects.filter(agent=None).exclude(finished=True).exclude(start_times__isnull=True)
 
 
 ########################################
@@ -420,5 +439,31 @@ def unschedule_itinerary(request):
                                 )
     else:
         return HttpResponse(json.dumps({"result": "1"}),
+                            content_type="application/json",
+                            )
+
+@login_required
+def update_visit_time(request):
+    visit_id = request.POST.get('id')
+    visit_time = get_object_or_404(ViableTourTimeModel, id=visit_id)
+    current_profile = get_object_or_404(UserProfile, user=request.user)
+    if current_profile.user.is_broker or current_profile.user.is_admin:
+        try:
+            availability = request.POST.get('availability')
+            if availability in ['y', 'n', 'm']:
+                visit_time.availability = availability
+                visit_time.save()
+                return HttpResponse(json.dumps({"result": "0"}),
+                                    content_type="application/json",
+                                    )
+            else:
+                return HttpResponse(json.dumps({"result": "1"}),
+                             content_type="application/json",
+                             )
+        except KeyError:
+            return HttpResponse(json.dumps({"result": "1"}),
+                         content_type="application/json",
+                         )
+    return HttpResponse(json.dumps({"result": "1"}),
                             content_type="application/json",
                             )

@@ -378,7 +378,7 @@ export default class GeneralForm extends Component {
                     Looking to sign: I am looking to go on tours/sign on an apartment.\n
                     I gotta move ASAP: I am looking to go on tours/sign on an apartment and I am looking to move in as soon as I can.`}
                 />
-                <span className="col-md-12 survey-error-message" id="move_weight_error">You must select an option.</span>
+                <span className="col-md-12 survey-error-message" id="move_weight_error"></span>
                 <label className="col-md-6 survey-label">
                     <input type="radio" name="move_weight" value="0" checked={this.props.generalInfo.move_weight === 0} onChange={() => {}} />
                     <div>Just browsing</div>

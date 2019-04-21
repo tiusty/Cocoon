@@ -2,6 +2,7 @@
 from django.utils import timezone
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.db.utils import DataError
 
 # Python Imports
 from rets import Session
@@ -111,6 +112,8 @@ class MLSRetsRequester(object):
             new_listing.listing_agent = home['ListAgentMlsId']
             new_listing.listing_office = home['ListOfficeMlsId']
             new_listing.listing_provider = HomeProviderModel.objects.get_or_create(provider=HomeProviderModel.MLSPIN)[0]
+            new_listing.showing_instructions = home['ShowingInstructions']
+            new_listing.showing_remarks = home['FIRM_RMK1']
 
             # Amenities
             new_listing.dogs_allowed = 'yes' in home['PETS_ALLOWED'].lower()
@@ -121,19 +124,17 @@ class MLSRetsRequester(object):
             if word_scraper_remarks.look_for_ac() or word_scraper_appliances.look_for_ac():
                 new_listing.air_conditioning = True
 
-            new_listing.furnished = word_scraper_remarks.word_finder(["furnished"]) \
-                                    or word_scraper_appliances.word_finder(["furnished"])
+            new_listing.furnished = word_scraper_remarks.look_for_furnished() \
+                                    or word_scraper_appliances.look_for_furnished()
             new_listing.hardwood_floors = word_scraper_remarks.look_for_hardwood_floors() \
                                           or word_scraper_appliances.look_for_hardwood_floors()
-            new_listing.dishwasher = word_scraper_remarks.word_finder(["dishwasher"]) \
-                                     or word_scraper_appliances.word_finder(["dishwasher"])
+            new_listing.dishwasher = word_scraper_remarks.look_for_dishwasher() \
+                                     or word_scraper_appliances.look_for_dishwasher()
             new_listing.laundry_in_building = word_scraper_remarks.look_for_laundry_in_building() \
                                               or word_scraper_appliances.look_for_laundry_in_building()
-            if word_scraper_remarks.word_finder(["pool"]) or word_scraper_remarks.word_finder(["hot","tub"]):
-                new_listing.pool = True
-            if word_scraper_remarks.word_finder(["balcony"]) or word_scraper_remarks.word_finder(["patio"]):
-                new_listing.patio_balcony = True
-            new_listing.storage = word_scraper_remarks.word_finder(["storage"])
+            new_listing.pool = word_scraper_remarks.look_for_pool()
+            new_listing.patio_balcony = word_scraper_remarks.look_for_balcony()
+            new_listing.storage = word_scraper_remarks.look_for_storage()
 
             new_listing.last_updated = self.update_timestamp
 

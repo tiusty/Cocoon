@@ -4,6 +4,8 @@ from rest_framework import serializers
 # Import App modules
 from .models import ItineraryModel
 from .models import TimeModel
+from .models import ViableTourTimeModel
+from .models import HomeVisitModel
 
 # Import Third party modules
 from cocoon.userAuth.serializers import MyUserSerializer
@@ -44,3 +46,20 @@ class ItinerarySerializer(serializers.HyperlinkedModelSerializer):
                   'tour_duration_seconds', 'selected_start_time', 'homes',
                   'is_claimed', 'is_scheduled', 'start_times', 'is_pending', 'finished', 'hash',
                   'url')
+
+
+class HomeVisitSerializer(serializers.HyperlinkedModelSerializer):
+
+    travel_time = serializers.IntegerField(read_only=True)
+    visit_index = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = HomeVisitModel
+        fields = ('id', 'travel_time', 'visit_index')
+
+
+class ViableTourTimeSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = ViableTourTimeModel
+        fields = ('id', 'availability')

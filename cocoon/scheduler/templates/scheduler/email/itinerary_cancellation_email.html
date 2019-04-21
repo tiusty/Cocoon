@@ -1,22 +1,16 @@
-{% extends "base_email_button.html" %}
+{% extends "base_email.html" %}
 
 {% block headline %}
-    Your tour has been cancelled.
+    Your Client's Itinerary has been Cancelled
 {% endblock %}
 
 {% block greeting %}
-    Hey {{ agent_name }}!
+    Hey {{ agent }},
 {% endblock %}
 
 {% block content %}
-    Your tour with {{ user }} for {{ start_time }} has been cancelled.
+    Your itinerary with {{ client }} has been cancelled.
     <br><br>
-    You still have the tour claimed, so please click the link below to
-    select a different available time.
+    Unfortunately, the client had to cancelled the tour scheduled with you.
+    <br><br>
 {% endblock %}
-
-{% block buttonLink %}http://{{ domain }}{% url 'scheduler:myTours' %}{% endblock %}
-
-{% block buttonText %}Select New Time{% endblock %}
-
-{% block smallText %}{% endblock %}

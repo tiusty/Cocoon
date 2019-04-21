@@ -39,19 +39,22 @@ class WordScraper:
         for item in word_list:
             if item in self.input_dictionary:
                 list_index.append(self.input_dictionary[item])
-
         if len(list_index) == 0:
             return False
         elif len(list_index) == 1 and len(word_list) == 1:
             return True
         elif len(list_index) == len(word_list) and len(list_index) > 1:
             first_word = list_index[0]
-
+            found = True
             for word_num in first_word:
                 for j in range(1, len(word_list)):
+                    found = True
                     if (word_num + j) not in list_index[j]:
-                        return False
-            return True
+                        found = False
+
+                if found == True:
+                    return found
+            return found
         else:
             return False
 
@@ -125,9 +128,70 @@ class WordScraper:
         return False
 
     def look_for_ac(self):
+        """
+        Looks for air conditioning using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
         if (self.word_finder(["air", "conditioning"])) \
                 or self.word_finder(["ac"]) \
                 or self.word_finder(["a", "/", "c"]):
             return True
         return False
 
+    def look_for_laundromat(self):
+        """
+        Looks for laundromat using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder(["laundromat"])
+
+    def look_for_furnished(self):
+        """
+        Looks for furnished using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder(["furnished"])
+
+    def look_for_dishwasher(self):
+        """
+        Looks for dishwasher using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder(["dishwasher"]) \
+                or self.word_finder(['dish', 'washer'])
+
+    def look_for_pets(self, pet):
+        """
+        Looks for pets using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder([pet, "allowed"]) and not self.word_finder(["no",pet, "allowed"])
+
+    def look_for_pool(self):
+        """
+        Looks for pool using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder(["pool"]) or self.word_finder(["hot", "tub"])
+
+    def look_for_balcony(self):
+        """
+        Looks for balcony using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder(["balcony"]) or self.word_finder(["patio"])
+
+    def look_for_gym(self):
+        """
+        Looks for gym using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder(["gym"]) or self.word_finder(
+                            ["fitness", "center"])
+
+    def look_for_storage(self):
+        """
+        Looks for storage using multiple synonyms and abbreviations. Returns True if any one of the
+        conditions match, returns False otherwise
+        """
+        return self.word_finder(["storage"])

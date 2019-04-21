@@ -191,7 +191,10 @@ class HouseManagementModel(UpdateBase, models.Model):
     listing_number = models.IntegerField(default=-1)  # The id of the home
     listing_provider = models.ForeignKey(HomeProviderModel)
     listing_agent = models.CharField(max_length=200, default="", blank=True)
+    listing_agent_phone = models.CharField(max_length=200, default="", blank=True)
     listing_office = models.CharField(max_length=200, default="", blank=True)  # The listing office, i.e William Raveis
+    showing_instructions = models.TextField(default="", blank=True)
+    showing_remarks = models.TextField(default="", blank=True)
     last_updated = models.DateField(default=timezone.now)
 
     def update(self, update_model):

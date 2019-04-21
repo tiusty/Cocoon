@@ -50,7 +50,7 @@ class WeightScoringAlgorithm(object):
         home.accumulated_points = self.compute_weighted_question_score(user_scale_factor, does_home_contain_item)
         home.total_possible_points = abs(user_scale_factor) * self.hybrid_question_weight
 
-    def handle_weighted_question(self, amenity_name, user_scale_factor, home, does_home_contain_item):
+    def handle_weighted_question(self, amenity_name, user_scale_factor, home, does_home_contain_item, can_eliminate=False):
         """
         Handles weighted question scoring and filtering.
         Handles the weighted question score based on a scale factor and the home
@@ -58,8 +58,10 @@ class WeightScoringAlgorithm(object):
         :param home: (HomeScore) -> The home that is being judged
         :param does_home_contain_item: (Boolean): Boolean of whether or not the home as the item
         """
-        if not (self.compute_weighted_question_filter(user_scale_factor, does_home_contain_item)):
+        if not self.compute_weighted_question_filter(user_scale_factor, does_home_contain_item):
             home.add_missing_amenity(amenity_name)
+            if can_eliminate:
+                home.eliminate_home()
         self.handle_weighted_question_score(user_scale_factor, home, does_home_contain_item)
 
     def handle_laundry_weight_question(self, survey, home_score):
