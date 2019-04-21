@@ -102,8 +102,6 @@ export default class ItineraryTimeSelector extends Component {
     }
 
     getEndTime = () => {
-        // this.props.time_available_seconds;
-        // this.props.date;
         let date = new moment(this.props.date);
         date = date.add(this.props.time_available_seconds, 'seconds');
         return `Free until @ ${date.format("hh:mm A")}`;

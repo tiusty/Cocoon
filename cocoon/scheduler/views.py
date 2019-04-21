@@ -139,22 +139,6 @@ class AgentSchedulerMarketplaceView(TemplateView):
         return data
 
 
-# @method_decorator(user_passes_test(lambda u: u.is_hunter or u.is_broker or u.is_admin), name='dispatch')
-# class VisitTimeViewset(viewsets.ModelViewSet):
-#     """
-#     Used on the ItineraryFile page to update whether a visit slot is viable after consulting property manager
-#     """
-#     serializer_class = ViableTourTimeSerializer
-#     queryset = ViableTourTimeModel.objects.all()
-#
-#     def create(self, request, *args, **kwargs):
-#         if "visit_id" in self.request.data:
-#             visit_id = self.request.data["visit_id"]
-#             home_visit = get_object_or_404(HomeVisitModel, id=visit_id)
-#             visit_time = ViableTourTimeModel(home_visit=home_visit)
-#         else:
-#             Http404
-
 class ItineraryViewset(viewsets.ReadOnlyModelViewSet):
     """
     Used for retrieving a generic itinerary. Base on the account type the user

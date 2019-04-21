@@ -1,5 +1,5 @@
 # Django module imports
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -19,6 +19,21 @@ def itinerary_model_save(instance, *args, **kwargs):
     if instance.url is '':
         instance.url = instance.generate_slug()
         instance.save()
+
+
+@receiver(pre_delete, sender=ItineraryModel)
+def itinerary_model_pre_delete(instance, *args, **kwards):
+    """
+    Issues with models.CASCADE occur with multiple levels of relationships, with race conditions on deleting.
+        Therefore on the pre delete, delete all the home_vist models so that the delete can properly occur
+    :param instance:
+    :param args:
+    :param kwards:
+    :return:
+    """
+    # Delete all the home visit models if they already exist
+    if instance.ordered_homes.exists():
+        instance.ordered_homes.all().delete()
 
 
 @receiver(post_delete, sender=ItineraryModel)
