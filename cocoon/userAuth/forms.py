@@ -208,6 +208,16 @@ class BrokerSignupForm(BaseRegisterForm):
         )
     )
 
+    agent_license = forms.CharField(
+        label="Please enter your agent license number",
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'license#',
+            }
+        )
+    )
+
     def is_valid(self):
         valid = super(BrokerSignupForm, self).is_valid()
 
@@ -224,7 +234,7 @@ class BrokerSignupForm(BaseRegisterForm):
 
     class Meta:
         model = MyUser
-        fields = ['email', 'first_name', 'last_name', 'password1', 'password2']
+        fields = ['email', 'first_name', 'last_name', 'password1', 'password2', 'agent_license']
 
     @transaction.atomic
     def save(self, **kwargs):

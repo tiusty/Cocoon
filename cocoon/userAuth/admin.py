@@ -17,7 +17,7 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_admin', 'is_hunter', 'is_broker',)
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number',)}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number', 'agent_license',)}),
         ('Joined', {'fields': ('joined',)}),
         ('Permissions', {'fields': ('is_active', 'is_admin', 'is_hunter', 'is_broker', 'is_verified',)}),
     )
