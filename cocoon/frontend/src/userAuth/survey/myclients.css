@@ -1,0 +1,225 @@
+.tour-setup-container {
+    width: 95%;
+    margin: 0 auto;
+    max-width: 1920px;
+    padding-top: 30px;
+    display: grid;
+    grid-template-columns: 2fr 4fr;
+    grid-gap: 15px;
+}
+
+.tour-setup-sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+.tour-setup-container h3,
+.tour-top-bar a {
+    color: var(--darkBlue);
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+.tour-setup-container .helper-text {
+    color: var(--grey);
+    display: inline-block;
+}
+
+.tour-setup-container .helper-link {
+    font-size: 11px;
+    font-weight: 700;
+    color: #bfbfbf;
+    text-decoration: underline;
+    padding-left: 5px;
+}
+
+.tour-box {
+    border: 1px solid var(--borderColor);
+    border-radius: var(--borderRadius);
+    margin-bottom: 15px;
+}
+
+.tour-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    padding-bottom: 0;
+}
+
+/* TOUR CALL TO ACTION */
+.tour-cta {
+    padding: 15px;
+}
+
+.tour-cta button,
+.tour-cta a {
+    all: unset;
+}
+
+.tour-cta span,
+.tour-cta button,
+.tour-cta a,
+.tour-top-bar a {
+    display: flex;
+    align-items: center;
+    color: var(--teal);
+    cursor: pointer;
+}
+
+.tour-cta span i:not(tour-error),
+.tour-cta button i,
+.tour-cta a i {
+    font-size: 14px;
+    background: rgba(57, 177, 167,  .15);
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 7px;
+    margin-right: 10px;
+}
+
+.tour-cta button[disabled] {
+    background: white !important;
+    color: var(--grey);
+}
+
+.tour-cta button[disabled] i {
+    background: var(--borderColor);
+    color: var(--grey);
+}
+
+.tour-cta .tour-error {
+    color: var(--red);
+    padding-top: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: unset;
+}
+
+.tour-cta .tour-warning {
+    color: #C09B00;
+    padding-top: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: unset;
+}
+
+/* TOUR PICKER */
+.tour-picker {
+    max-height: 287px;
+    overflow-y: auto;
+}
+
+.tour-picker-top-bar a {
+    color: var(--teal);
+}
+
+.survey-item {
+    padding: 20px 15px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+}
+
+.survey-item:hover,
+.survey-active {
+    border-left: 2px solid var(--teal);
+    background: var(--tealOpacity);
+}
+
+.survey-item:last-of-type {
+    border-radius: 0 0 var(--borderRadius) var(--borderRadius);
+}
+
+/* TOUR CHECKLIST */
+.tour-checklist-items {
+    padding: 0 15px 15px;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.checklist-item:last-of-type {
+    padding-bottom: 0;
+}
+
+.checklist-item p {
+    margin: 0;
+}
+
+.checklist-item a {
+    /*display: contents;*/
+}
+
+.checklist-item i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.checklist-item p,
+.checklist-item i {
+    color: #C6C6C6;
+}
+
+.checklist-item a,
+.checklist-item span {
+    color: inherit !important;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.checklist-item_checked p,
+.checklist-item_checked a,
+.checklist-item_checked span {
+    text-decoration: line-through;
+}
+
+.checklist-item_checked p,
+.checklist-item_checked i {
+    color: var(--teal);
+}
+
+.checklist-item_checked i {
+    text-decoration: none !important;
+}
+
+.checklist-item_active p,
+.checklist-item_active i {
+    color: var(--darkBlue);
+}
+
+.no-surveys-wrapper {
+    width: 100%;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    text-align: center;
+}
+
+.no-surveys-wrapper h1 {
+    color: var(--darkBlue);
+}
+
+.no-surveys-wrapper a {
+    color: var(--teal);
+    text-decoration: underline;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 728px) {
+    .tour-setup-container {
+        display: flex;
+        flex-direction: column;
+    }
+}
