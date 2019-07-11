@@ -11,6 +11,7 @@ import survey_endpoints from "../../endpoints/survey_endpoints";
 import Preloader from '../../common/preloader';
 import TourSetupCTA from './tourSetupCTA';
 import SurveyPicker from './surveyPicker';
+import UserPicker from './userPicker';
 import TourChecklist from './tourChecklist';
 import TourSetupContent from './tourSetupMainContent';
 
@@ -548,6 +549,11 @@ export default class MyClients extends Component {
                             onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
                             onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
                             onHandleOnClickResendDocument={this.handleOnClickResendDocument}
+                        />
+                        <UserPicker
+                            survey_id={this.state.survey_clicked_id}
+                            surveys={this.state.surveys}
+                            handleClickSurvey={this.handleClickSurvey}
                         />
                         <SurveyPicker
                             survey_id={this.state.survey_clicked_id}

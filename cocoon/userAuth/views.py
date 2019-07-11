@@ -20,12 +20,13 @@ from .forms import LoginUserForm, ApartmentHunterSignupForm, ProfileForm, Broker
 from .tokens import account_activation_token
 from .models import UserProfile, MyUser
 from .helpers.send_verification_email import send_verification_email
+from .serializers import MyUserSerializer
 
 # Import Cocoon Modules
 from cocoon.survey.models import RentingSurveyModel
 
 # Rest Framework
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 
 
@@ -294,3 +295,31 @@ def user_profile(request):
     context['userProfile'] = user_prof
     context['form'] = form
     return render(request, 'userAuth/user_profile.html', context)
+
+
+class RetrieveClientsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+
+    serializer_class = MyUserSerializer
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        if user_profile.user.is_broker:
+            referred_profile_clients = user_profile.user.referred_clients.all()
+            referred_clients = MyUser.objects.filter(userProfile__in=referred_profile_clients)
+            itinerary_clients = user_profile.user.scheduled_tours.all().filter(finished=False)
+            aquired_clients = MyUser.objects.filter(my_tours=itinerary_clients)
+            agent_queryset =  aquired_clients | referred_clients
+            return agent_queryset
+        else:
+            raise 404
+
+    def list(self, request, *args, **kwargs):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        referred_profile_clients = user_profile.user.referred_clients.all()
+        referred_clients = MyUser.objects.filter(userProfile__in=referred_profile_clients)
+        itinerary_clients = user_profile.user.scheduled_tours.all().filter(finished=False)
+        aquired_clients = MyUser.objects.filter(my_tours=itinerary_clients)
+        agent_queryset =  aquired_clients | referred_clients
+        serializer = MyUserSerializer(agent_queryset, many=True)
+        return Response(serializer.data)
+

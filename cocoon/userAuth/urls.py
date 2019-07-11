@@ -6,6 +6,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'resendVerificationEmail', views.ResendVerificationEmail, base_name='userAuth-resend-verification')
+router.register(r'agentClients', views.RetrieveClientsViewSet, base_name='userAuth-retrieve-clients')
 
 app_name = 'userAuth'
 urlpatterns = [
