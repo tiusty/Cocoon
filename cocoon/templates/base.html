@@ -53,7 +53,13 @@
             {% else %}
                 {% comment %}Authorized Links{% endcomment %}
                 <div>
-                    <a href="{% url 'userAuth:tour_setup' %}">Tour Setup</a>
+                    {% if user.is_hunter %}
+                        <a href="{% url 'userAuth:tour_setup' %}">Tour Setup</a>
+                    {% endif %}
+                    <span>/</span>
+                    {% if user.is_broker %}
+                        <a href="{% url 'userAuth:my_clients' %}">My Clients</a>
+                    {% endif %}
                     <span>/</span>
                     <a href="{% url 'scheduler:clientScheduler' %}">My Itinerary</a>
                     <span>/</span>

@@ -44,6 +44,17 @@ class TourSetup(TemplateView):
         return data
 
 
+@method_decorator(login_required, name='dispatch')
+class MyClients(TemplateView):
+
+    template_name = 'userAuth/my_clients.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(MyClients, self).get_context_data(**kwargs)
+        data['component'] = 'MyClients'
+        return data
+
+
 def loginPage(request):
     form = LoginUserForm()
     context = {
