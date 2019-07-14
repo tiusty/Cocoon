@@ -123,6 +123,16 @@ export default class MyClients extends Component {
             });
     }
 
+    get_client_itinerary_status = () => {
+        axios.get(scheduler_endpoints['itineraryClientStatus'] + this.state.client_clicked_id +'/')
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                this.setState({
+                    itinerary_scheduled: response.data,
+                })
+            });
+    }
+
     checkUrl = () => {
         const urlString = window.location.href;
         const url = new URL(urlString);
@@ -209,10 +219,6 @@ export default class MyClients extends Component {
         }
     }
 
-
-    clearSurvey() {
-    }
-
     loadClients = () => {
         /*
         * Looks for a param: survey_url to determine which to load
@@ -260,6 +266,7 @@ export default class MyClients extends Component {
             viewing_snapshot: false
         }, () => {
             this.handleCloseHomeTileLarge();
+            this.get_client_itinerary_status();
             this.get_client_surveys(id);
         });
     };

@@ -418,6 +418,37 @@ class ItineraryMarketViewSet(viewsets.ModelViewSet):
         return ItineraryModel.objects.filter(agent=None).exclude(finished=True).exclude(start_times__isnull=True)
 
 
+@method_decorator(user_passes_test(lambda u: u.is_broker or u.is_admin), name='dispatch')
+class RetrieveClientItineraryStatus(viewsets.ViewSet):
+    """
+    Given a client, determines if they have an active tour
+    """
+
+    @staticmethod
+    def list(request, *args, **kwargs):
+        return Response({'message': 'List not implemented'})
+
+    def retrieve(self, request, *args, **kwargs):
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Retrieve the survey id/url
+        pk = kwargs.pop('pk', None)
+
+        user = get_object_or_404(MyUser, id=pk)
+
+        tours = user.my_tours.all()
+        active_tour = False
+        for tour in tours:
+            if not tour.finished:
+                active_tour = True
+        return Response(active_tour)
+
+
+
+
+
+
 ########################################
 # AJAX Request Handlers
 ########################################

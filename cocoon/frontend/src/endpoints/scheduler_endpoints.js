@@ -14,6 +14,7 @@ const scheduler_endpoints = {
     'itineraryMarket': api_path + '/itineraryMarket/',
     'unscheduleItinerary': '/scheduler/unscheduleItinerary',
     'itineraryDuration': api_path + '/itineraryDuration/',
+    'itineraryClientStatus': api_path + '/itineraryClientStatus/',
     'clientScheduler': '/scheduler/clientScheduler',
     'itineraryPage': '/scheduler/itineraryPage/',
     'agentSchedulerPortal': '/scheduler/agentSchedulerPortal/'

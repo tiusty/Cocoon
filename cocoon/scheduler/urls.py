@@ -11,6 +11,7 @@ router.register(r'itineraryClient', views.ItineraryClientViewSet, base_name='iti
 router.register(r'itineraryAgent', views.ItineraryAgentViewSet, base_name='itineraryAgent')
 router.register(r'itineraryMarket', views.ItineraryMarketViewSet, base_name='itineraryMarket')
 router.register(r'itineraryDuration', views.ClientItineraryCalculateDuration, base_name='itineraryDuration')
+router.register(r'itineraryClientStatus', views.RetrieveClientItineraryStatus, base_name='itineraryClientStatus')
 
 app_name = 'scheduler'
 urlpatterns = [
