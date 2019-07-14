@@ -13,7 +13,7 @@ import Preloader from '../../common/preloader';
 import TourSetupCTA from './tourSetupCTA';
 import SurveyPicker from './surveyPicker';
 import UserPicker from './userPicker';
-import TourChecklist from './tourChecklist';
+import AgentChecklist from './agentChecklist';
 import TourSetupContent from './tourSetupMainContent';
 
 // Import styling
@@ -400,7 +400,7 @@ export default class MyClients extends Component {
                             surveys={this.state.surveys}
                             handleClickSurvey={this.handleClickSurvey}
                         />
-                        <TourChecklist
+                        <AgentChecklist
                             surveys={this.state.surveys}
                             pre_tour_forms_created={this.state.pre_tour_forms_created}
                             is_pre_tour_signed={this.state.is_pre_tour_signed}

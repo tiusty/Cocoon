@@ -9,7 +9,7 @@ def get_agent_client_queryset(user_profile):
 
         # Retrieve all the clients that have an active itinerary with this agent
         itinerary_clients = user_profile.user.scheduled_tours.all().filter(finished=False)
-        aquired_clients = MyUser.objects.filter(my_tours=itinerary_clients)
+        aquired_clients = MyUser.objects.filter(my_tours__in=itinerary_clients)
 
         # Get the union of the querysets
         agent_queryset = aquired_clients.union(referred_clients)
