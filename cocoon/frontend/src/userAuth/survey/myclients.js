@@ -42,6 +42,7 @@ export default class MyClients extends Component {
         last_resend_request_pre_tour: undefined,
 
         // Handles opening a large survey
+        activeSurvey: undefined,
         survey_clicked_id: undefined,
         client_clicked_id: undefined,
         visit_list: [],
@@ -182,24 +183,26 @@ export default class MyClients extends Component {
         * Looks for a param: key=snapshot to determine if to load snapshot view
         * If neither exists, loads the most recent survey
         */
-        let id;
-        if (this.state.survey_url_param) {
-            let survey_match = this.state.surveys.find(survey => survey.url === this.state.survey_url_param);
-            if (survey_match) {
-                id = survey_match.id
+
+        if (this.state.surveys.length > 0) {
+            let id;
+            if (this.state.survey_url_param) {
+                let survey_match = this.state.surveys.find(survey => survey.url === this.state.survey_url_param);
+                if (survey_match) {
+                    id = survey_match.id
+                } else {
+                    id = this.state.surveys[0].id
+                }
             } else {
                 id = this.state.surveys[0].id
             }
-        } else {
-            id =  this.state.surveys[0].id
+
+            this.handleClickSurvey(id);
+
+            if (this.state.key_param === 'snapshot') {
+                this.handleSnapshotClick();
+            }
         }
-
-        this.handleClickSurvey(id);
-
-        if (this.state.key_param === 'snapshot') {
-            this.handleSnapshotClick();
-        }
-
     }
 
     loadClients = () => {
@@ -222,20 +225,6 @@ export default class MyClients extends Component {
 
     }
 
-    handleClickClient = (id) => {
-        /**
-         * Handles click on the expand button for a survey
-         *
-         * After the survey id is set, it will retrieve the visit list for that survey
-         */
-        this.setState({
-            client_clicked_id: id,
-            viewing_snapshot: false
-        }, () => {
-            this.handleCloseHomeTileLarge();
-        });
-    };
-
     handleClickSurvey = (id) => {
         /**
          * Handles click on the expand button for a survey
@@ -247,6 +236,8 @@ export default class MyClients extends Component {
             viewing_snapshot: false
         }, () => {
             this.handleCloseHomeTileLarge();
+            this.retrieveHomes();
+            this.setActiveResults();
         });
     };
 
@@ -261,8 +252,32 @@ export default class MyClients extends Component {
             viewing_snapshot: false
         }, () => {
             this.handleCloseHomeTileLarge();
-            this.get_client_surveys(id)
+            this.get_client_surveys(id);
+            this.loadSurvey();
         });
+    };
+
+    setActiveResults = () => {
+        let activeSurvey = this.state.surveys.find(s => s.id === this.state.survey_clicked_id);
+        let url = survey_endpoints['rentSurveyResult'] + activeSurvey.url;
+        this.setState({
+            activeResultsUrl: url,
+            activeSurvey: activeSurvey,
+            loaded: true
+        })
+    }
+
+    retrieveHomes = () => {
+        let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id;
+        axios.get(endpoint)
+            .catch(error => console.log('BAD', error))
+            .then(response => {
+                    this.setState({
+                        visit_list: response.data.visit_list,
+                        favorites: response.data.favorites
+                    })
+                }
+            )
     };
 
     handleHomeClick = (id) => {
@@ -393,23 +408,23 @@ export default class MyClients extends Component {
                         />
                     </div>
                     <div className="tour-box tour-setup-main">
-                        {/*<TourSetupContent*/}
-                            {/*activeResultsUrl={this.state.activeResultsUrl}*/}
-                            {/*activeSurvey={this.state.activeSurvey}*/}
-                            {/*favorites={this.state.favorites}*/}
-                            {/*survey_clicked_id={this.state.survey_clicked_id}*/}
-                            {/*visit_list={this.state.visit_list}*/}
-                            {/*handleVisitClick={this.handleVisitClick}*/}
-                            {/*handleFavoriteClick={this.handleFavoriteClick}*/}
-                            {/*handleHomeClick={this.handleHomeClick}*/}
-                            {/*handleCloseHomeTileLarge={this.handleCloseHomeTileLarge}*/}
-                            {/*clicked_home={this.state.clicked_home}*/}
-                            {/*viewing_home={this.state.viewing_home}*/}
-                            {/*viewing_snapshot={this.state.viewing_snapshot}*/}
-                            {/*handleSnapshotClick={this.handleSnapshotClick}*/}
-                            {/*deleteSurvey={this.deleteSurvey}*/}
-                            {/*key_param={this.state.key_param}*/}
-                        {/*/>*/}
+                        <TourSetupContent
+                            activeResultsUrl={this.state.activeResultsUrl}
+                            activeSurvey={this.state.activeSurvey}
+                            favorites={this.state.favorites}
+                            survey_clicked_id={this.state.survey_clicked_id}
+                            visit_list={this.state.visit_list}
+                            handleVisitClick={this.handleVisitClick}
+                            handleFavoriteClick={this.handleFavoriteClick}
+                            handleHomeClick={this.handleHomeClick}
+                            handleCloseHomeTileLarge={this.handleCloseHomeTileLarge}
+                            clicked_home={this.state.clicked_home}
+                            viewing_home={this.state.viewing_home}
+                            viewing_snapshot={this.state.viewing_snapshot}
+                            handleSnapshotClick={this.handleSnapshotClick}
+                            deleteSurvey={this.deleteSurvey}
+                            key_param={this.state.key_param}
+                        />
                     </div>
                 </div>
             );
