@@ -16,6 +16,7 @@ const scheduler_endpoints = {
     'itineraryDuration': api_path + '/itineraryDuration/',
     'clientScheduler': '/scheduler/clientScheduler',
     'itineraryPage': '/scheduler/itineraryPage/',
+    'agentSchedulerPortal': '/scheduler/agentSchedulerPortal/'
 };
 
 export default scheduler_endpoints;

@@ -60,7 +60,7 @@ export default class TourChecklist extends  Component {
         }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Have user take a Survey</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Have your client take a Survey</p>
             </div>
         );
     }
@@ -137,7 +137,7 @@ export default class TourChecklist extends  Component {
         }
         return (
             <div className={checkListClass}>
-                <i className="material-icons">{checkListIcon}</i> <p> Your client already has a tour scheduled view by going to your agent portal page.</p>
+                <i className="material-icons">{checkListIcon}</i> <p> Your client already has a tour scheduled view by going to the agent portal <a href={scheduler_endpoints['agentSchedulerPortal']}>page</a>.</p>
 
             </div>
         );
