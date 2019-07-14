@@ -394,7 +394,10 @@ class ClientItineraryCalculateDuration(viewsets.ViewSet):
         # Retrieve the survey id
         pk = kwargs.pop('pk', None)
 
-        survey = get_object_or_404(RentingSurveyModel, pk=pk, user_profile=user_prof)
+        if user_prof.user.is_broker:
+            survey = get_object_or_404(RentingSurveyModel, pk=pk)
+        else:
+            survey = get_object_or_404(RentingSurveyModel, pk=pk, user_profile=user_prof)
         homes_list = []
         for home in survey.visit_list.all():
             homes_list.append(home)
