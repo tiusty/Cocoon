@@ -107,7 +107,6 @@ export default class MyClients extends Component {
         axios.get(user_auth_endpoints['agentClients'])
             .catch(error => console.log('Bad', error))
             .then(response => {
-                console.log(response.data)
                 this.setState({
                     clients: response.data
                 }, () => this.sortUsers());
@@ -118,6 +117,7 @@ export default class MyClients extends Component {
         axios.get(survey_endpoints['rentSurveyAgent'] + id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
+                console.log(response.data)
                 this.setState({
                     surveys: this.parseData(response.data)
                 }, () => this.sortSurveys());
@@ -162,6 +162,7 @@ export default class MyClients extends Component {
         /*
          *  Sorts surveys by descending order then determines which to load
         */
+        console.log('in sort survey')
         if (this.state.surveys.length !== 0) {
             let surveyCopy = [...this.state.surveys];
             surveyCopy.sort((a, b) => b.id - a.id);
@@ -175,6 +176,7 @@ export default class MyClients extends Component {
                 loaded: true
             })
         }
+        this.loadSurvey();
     };
 
     loadSurvey = () => {
@@ -183,7 +185,7 @@ export default class MyClients extends Component {
         * Looks for a param: key=snapshot to determine if to load snapshot view
         * If neither exists, loads the most recent survey
         */
-
+        console.log('in loadsurvey')
         if (this.state.surveys.length > 0) {
             let id;
             if (this.state.survey_url_param) {
@@ -202,7 +204,17 @@ export default class MyClients extends Component {
             if (this.state.key_param === 'snapshot') {
                 this.handleSnapshotClick();
             }
+        } else {
+            console.log('load survey here')
+            this.setState({
+                survey_clicked_id: undefined,
+                activeSurvey: undefined,
+            })
         }
+    }
+
+
+    clearSurvey() {
     }
 
     loadClients = () => {
@@ -253,7 +265,6 @@ export default class MyClients extends Component {
         }, () => {
             this.handleCloseHomeTileLarge();
             this.get_client_surveys(id);
-            this.loadSurvey();
         });
     };
 
@@ -268,6 +279,7 @@ export default class MyClients extends Component {
     }
 
     retrieveHomes = () => {
+        console.log('in retrieve homes')
         let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id;
         axios.get(endpoint)
             .catch(error => console.log('BAD', error))
@@ -275,7 +287,7 @@ export default class MyClients extends Component {
                     this.setState({
                         visit_list: response.data.visit_list,
                         favorites: response.data.favorites
-                    })
+                    }, () => console.log('after'))
                 }
             )
     };
@@ -358,7 +370,6 @@ export default class MyClients extends Component {
     }
 
     checkForSurvey = () => {
-        console.log(this.state)
         if (this.state.clients.length === 0) {
             return (
                 <div className="no-surveys-wrapper">
