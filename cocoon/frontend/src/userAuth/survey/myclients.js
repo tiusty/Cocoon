@@ -7,6 +7,7 @@ import axios from 'axios';
 import signature_endpoints from "../../endpoints/signatures_endpoints";
 import scheduler_endpoints from "../../endpoints/scheduler_endpoints";
 import survey_endpoints from "../../endpoints/survey_endpoints";
+import user_auth_endpoints from "../../endpoints/userAuth_endpoints"
 
 import Preloader from '../../common/preloader';
 import TourSetupCTA from './tourSetupCTA';
@@ -42,10 +43,12 @@ export default class MyClients extends Component {
 
         // Handles opening a large survey
         survey_clicked_id: undefined,
+        client_clicked_id: undefined,
         visit_list: [],
         favorites: [],
 
         // Stores the ids of all the surveys associated with the user
+        clients: [],
         surveys: [],
         loaded: false,
 
@@ -90,31 +93,6 @@ export default class MyClients extends Component {
         return survey_ids
     }
 
-    determineActiveItinerary(data) {
-        /**
-         * Determines if there is an active itinerary are not
-         *  An active itinerary is one that finished is not true
-         *
-         *  Arguments:
-         *      data: list(ItinerarySerializer)
-         *
-         *  return (boolean):
-         *      true -> If an unfinished itinerary exists
-         *      false -> If there are no unfinished itineraries
-         */
-        let result = false;
-
-        // Determine if any of the itineraries are not finished
-        data.map(i => {
-                if (!i.finished) {
-                    result = true
-                }
-            }
-        );
-
-        return result
-    }
-
     componentDidMount() {
 
         /**
@@ -125,204 +103,24 @@ export default class MyClients extends Component {
         /**
          *  Retrieves all the surveys associated with the user
          */
-        axios.get(this.state.survey_endpoint)
+        axios.get(user_auth_endpoints['agentClients'])
+            .catch(error => console.log('Bad', error))
+            .then(response => {
+                console.log(response.data)
+                this.setState({
+                    clients: response.data
+                }, () => this.sortUsers());
+            });
+    }
+
+    get_client_surveys = (id) => {
+        axios.get(survey_endpoints['rentSurveyAgent'] + id + '/')
             .catch(error => console.log('Bad', error))
             .then(response => {
                 this.setState({
                     surveys: this.parseData(response.data)
                 }, () => this.sortSurveys());
             });
-
-        /**
-         Retrieves the users HunterDocManager
-         */
-        // Note: Everything that happens with pre tour documents is commented out due to
-        //  wanting to remove it. It may want to be added back later and thus we aren't removing the code
-        // axios.get(this.state.signature_endpoint)
-        //     .catch(error => console.log('Bad', error))
-        //     .then(response => {
-        //         this.setState({
-        //             hunter_doc_manager_id: response.data[0].id,
-        //             pre_tour_forms_created: response.data[0].pre_tour_forms_created,
-        //             is_pre_tour_signed: response.data[0].is_pre_tour_signed,
-        //         })
-        //     });
-
-        /**
-         * Retrieves the hunter doc template id for the pre tour forms
-         */
-        // axios.get(signature_endpoints['hunterDocTemplate'], {params: {type: 'pre_tour'}})
-        //     .catch(error => console.log('Bad', error))
-        //     .then(response => {
-        //         this.setState({pre_tour_template_id: response.data[0].id})
-        //     });
-
-        /**
-         * Updates the users pre_tour_docs and checks to see if it is signed.
-         *  Since the id for the url doesn't matter, null can be passed so the
-         *  update function is called
-         */
-        // let endPoint = this.state.signature_endpoint + 'null' + '/';
-        // axios.put(endPoint,
-        //     {
-        //         type: 'pre_tour_check',
-        //     })
-        //     .catch(error => console.log('BAD', error))
-        //     .then(response => {
-        //         this.setState({
-        //             // loaded: true,
-        //             is_pre_tour_signed: response.data.is_pre_tour_signed,
-        //             pre_tour_forms_created: response.data.pre_tour_forms_created,
-        //         })
-        //     });
-
-        // Determines if an itinerary exists yet already or not
-        axios.get(scheduler_endpoints['itineraryClient'])
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({
-                    itinerary_scheduled: this.determineActiveItinerary(response.data),
-                })
-            });
-    }
-
-    handleDelete = (survey_id) => {
-        /**
-         * When a survey wants to be deleted, it passes it to the backend and then
-         *  the list of surveys is returned again and the data is repopulated with the new
-         *  list of surveys.
-         *
-         *  Note: If no data race conditions happen, then the returned list of surveys should
-         *      be just the same list of surveys with the deleted one gone.
-         * @type {string} The survey id that is being deleted
-         */
-
-            // The survey id is appended to the survey_endpoint since the put request expects the survey id as
-            //  part of the url
-        let endpoint = this.state.survey_endpoint + survey_id + "/";
-
-        // Passes the survey id and the put type to the backend
-        axios.put(endpoint,
-            {
-                survey_id: survey_id,
-                type: 'survey_delete',
-            })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({
-                    surveys: this.parseData(response.data),
-                    survey_clicked_id: undefined
-                })
-            });
-    };
-
-    createDocument = () => {
-        /**
-         * Sends an API request to create the document specified by the template type
-         */
-        this.setState({
-            refreshing_document_status: true,
-        });
-        let endpoint = signature_endpoints['hunterDoc'];
-        axios.post(endpoint,
-            {
-                template_type_id: this.state.pre_tour_template_id,
-            })
-            .catch(error => {
-                this.setState({
-                    refreshing_document_status: false,
-                });
-                console.log('Bad', error)
-            })
-            .then(response =>
-                this.setState({
-                    is_pre_tour_signed: response.data.is_signed,
-                    pre_tour_forms_created: true,
-                    refreshing_document_status: false,
-                })
-            );
-    };
-
-    refreshDocumentStatus = () => {
-        /**
-         * Sends an API request to update the status of the current document
-         */
-        this.setState({
-            refreshing_document_status: true,
-        });
-        let endpoint = signature_endpoints['hunterDoc'] + this.state.pre_tour_template_id + '/';
-        axios.put(endpoint,
-            {
-                'type': 'update'
-            })
-            .catch(error => {
-                this.setState({
-                    refreshing_document_status: false,
-                });
-                console.log('Bad', error)
-            })
-            .then(response =>
-                this.setState({
-                    is_pre_tour_signed: response.data.is_signed,
-                    last_resend_request_pre_tour: response.data.last_resend,
-                    refreshing_document_status: false,
-                })
-            );
-    };
-
-    resendDocument = () => {
-        /**
-         * Sends an API request to resend the current document
-         */
-        this.setState({
-            refreshing_document_status: true,
-        });
-        let endpoint = signature_endpoints['hunterDoc'] + this.state.pre_tour_template_id + '/';
-        axios.put(endpoint,
-            {
-                'type': 'resend'
-            })
-            .catch(error => {
-                this.setState({
-                    refreshing_document_status: false,
-                });
-                console.log('Bad', error)
-            })
-            .then(response => {
-                    this.setState({
-                        id: response.data.id,
-                        is_pre_tour_signed: response.data.is_signed,
-                        last_resend_request_pre_tour: response.data.last_resend,
-                        created: true,
-                        refreshing_document_status: false,
-                    })
-                }
-            );
-    };
-
-    handleOnClickRefreshDocument = () => {
-        if (this.state.refreshing_document_status) {
-            return false
-        } else {
-            this.refreshDocumentStatus()
-        }
-    };
-
-
-    handleOnClickCreateDocument = () => {
-        if (this.state.refreshing_document_status) {
-            return false
-        } else {
-            this.createDocument()
-        }
-    };
-
-    handleOnClickResendDocument = () => {
-        if (this.state.refreshing_document_status) {
-            return false
-        } else {
-            this.resendDocument()
-        }
     }
 
     checkUrl = () => {
@@ -339,6 +137,25 @@ export default class MyClients extends Component {
             })
         }
     }
+
+    sortUsers = () => {
+        /*
+         *  Sorts clients by descending order then determines which to load
+        */
+        if (this.state.clients.length !== 0) {
+            let clientCopy = [...this.state.clients];
+            clientCopy.sort((a, b) => b.id - a.id);
+            this.setState({
+                clients: clientCopy
+            }, () => {
+                this.loadClients();
+            })
+        } else {
+            this.setState({
+                loaded: true
+            })
+        }
+    };
 
     sortSurveys = () => {
         /*
@@ -385,6 +202,40 @@ export default class MyClients extends Component {
 
     }
 
+    loadClients = () => {
+        /*
+        * Looks for a param: survey_url to determine which to load
+        * Looks for a param: key=snapshot to determine if to load snapshot view
+        * If neither exists, loads the most recent survey
+        */
+        let id;
+        id = this.state.clients[0].id;
+        this.handleClickClient(id);
+
+        if (this.state.key_param === 'snapshot') {
+            this.handleSnapshotClick();
+        }
+
+        this.setState({
+            loaded:true
+        })
+
+    }
+
+    handleClickClient = (id) => {
+        /**
+         * Handles click on the expand button for a survey
+         *
+         * After the survey id is set, it will retrieve the visit list for that survey
+         */
+        this.setState({
+            client_clicked_id: id,
+            viewing_snapshot: false
+        }, () => {
+            this.handleCloseHomeTileLarge();
+        });
+    };
+
     handleClickSurvey = (id) => {
         /**
          * Handles click on the expand button for a survey
@@ -396,20 +247,23 @@ export default class MyClients extends Component {
             viewing_snapshot: false
         }, () => {
             this.handleCloseHomeTileLarge();
-            this.retrieveHomes();
-            this.setActiveResults();
         });
     };
 
-    setActiveResults = () => {
-        let activeSurvey = this.state.surveys.find(s => s.id === this.state.survey_clicked_id);
-        let url = survey_endpoints['rentSurveyResult'] + activeSurvey.url;
+    handleClickClient = (id) => {
+        /**
+         * Handles click on the expand button for a client
+         *
+         * After the survey id is set, it will retrieve the visit list for that survey
+         */
         this.setState({
-            activeResultsUrl: url,
-            activeSurvey: activeSurvey,
-            loaded: true
-        })
-    }
+            client_clicked_id: id,
+            viewing_snapshot: false
+        }, () => {
+            this.handleCloseHomeTileLarge();
+            this.get_client_surveys(id)
+        });
+    };
 
     handleHomeClick = (id) => {
         this.setState({
@@ -482,50 +336,15 @@ export default class MyClients extends Component {
             );
     }
 
-    retrieveHomes = () => {
-        let endpoint = survey_endpoints['rentSurvey'] + this.state.survey_clicked_id;
-        axios.get(endpoint)
-            .catch(error => console.log('BAD', error))
-            .then(response => {
-                    this.setState({
-                        visit_list: response.data.visit_list,
-                        favorites: response.data.favorites
-                    })
-                }
-            )
-    };
-
     handleSnapshotClick = () => {
         this.setState({
             viewing_snapshot: !this.state.viewing_snapshot
         })
     }
 
-    deleteSurvey = (id) => {
-        let endpoint = this.state.survey_endpoint + id + "/";
-
-        // Passes the survey id and the put type to the backend
-        axios.put(endpoint,
-            {
-                survey_id: id,
-                type: 'survey_delete',
-            })
-            .catch(error => console.log('Bad', error))
-            .then(response => {
-                this.setState({
-                    surveys: this.parseData(response.data),
-                    activeResultsUrl: undefined,
-                    viewing_snapshot: false,
-                    clicked_home: undefined,
-                    viewing_home: false,
-                }, () => {
-                    this.sortSurveys();
-                })
-            });
-    };
-
     checkForSurvey = () => {
-        if (this.state.surveys.length === 0) {
+        console.log(this.state)
+        if (this.state.clients.length === 0) {
             return (
                 <div className="no-surveys-wrapper">
                     <h1>You haven't taken a survey yet!</h1>
@@ -536,25 +355,25 @@ export default class MyClients extends Component {
             return (
                 <div className="tour-setup-container">
                     <div className="tour-setup-sidebar">
-                        <TourSetupCTA
-                            survey_id={this.state.survey_clicked_id}
-                            activeSurvey={this.state.activeSurvey}
-                            visit_list={this.state.visit_list}
-                            loaded={this.state.loaded}
-                            pre_tour_forms_created={this.state.pre_tour_forms_created}
-                            is_pre_tour_signed={this.state.is_pre_tour_signed}
-                            itinerary_scheduled={this.state.itinerary_scheduled}
-                            last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}
-                            refreshing_document_status={this.state.refreshing_document_status}
-                            onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}
-                            onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}
-                            onHandleOnClickResendDocument={this.handleOnClickResendDocument}
-                        />
+                        {/*<TourSetupCTA*/}
+                            {/*survey_id={this.state.survey_clicked_id}*/}
+                            {/*activeSurvey={this.state.activeSurvey}*/}
+                            {/*visit_list={this.state.visit_list}*/}
+                            {/*loaded={this.state.loaded}*/}
+                            {/*pre_tour_forms_created={this.state.pre_tour_forms_created}*/}
+                            {/*is_pre_tour_signed={this.state.is_pre_tour_signed}*/}
+                            {/*itinerary_scheduled={this.state.itinerary_scheduled}*/}
+                            {/*last_resend_request_pre_tour={this.state.last_resend_request_pre_tour}*/}
+                            {/*refreshing_document_status={this.state.refreshing_document_status}*/}
+                            {/*onHandleOnClickCreateDocument={this.handleOnClickCreateDocument}*/}
+                            {/*onHandleOnClickRefreshDocument={this.handleOnClickRefreshDocument}*/}
+                            {/*onHandleOnClickResendDocument={this.handleOnClickResendDocument}*/}
+                        {/*/>*/}
                         <UserPicker
-                            survey_id={this.state.survey_clicked_id}
-                            surveys={this.state.surveys}
-                            handleClickSurvey={this.handleClickSurvey}
-                        />
+                            client_id={this.state.client_clicked_id}
+                            clients={this.state.clients}
+                            handleClickClient={this.handleClickClient}
+                       />
                         <SurveyPicker
                             survey_id={this.state.survey_clicked_id}
                             surveys={this.state.surveys}
@@ -574,23 +393,23 @@ export default class MyClients extends Component {
                         />
                     </div>
                     <div className="tour-box tour-setup-main">
-                        <TourSetupContent
-                            activeResultsUrl={this.state.activeResultsUrl}
-                            activeSurvey={this.state.activeSurvey}
-                            favorites={this.state.favorites}
-                            survey_clicked_id={this.state.survey_clicked_id}
-                            visit_list={this.state.visit_list}
-                            handleVisitClick={this.handleVisitClick}
-                            handleFavoriteClick={this.handleFavoriteClick}
-                            handleHomeClick={this.handleHomeClick}
-                            handleCloseHomeTileLarge={this.handleCloseHomeTileLarge}
-                            clicked_home={this.state.clicked_home}
-                            viewing_home={this.state.viewing_home}
-                            viewing_snapshot={this.state.viewing_snapshot}
-                            handleSnapshotClick={this.handleSnapshotClick}
-                            deleteSurvey={this.deleteSurvey}
-                            key_param={this.state.key_param}
-                        />
+                        {/*<TourSetupContent*/}
+                            {/*activeResultsUrl={this.state.activeResultsUrl}*/}
+                            {/*activeSurvey={this.state.activeSurvey}*/}
+                            {/*favorites={this.state.favorites}*/}
+                            {/*survey_clicked_id={this.state.survey_clicked_id}*/}
+                            {/*visit_list={this.state.visit_list}*/}
+                            {/*handleVisitClick={this.handleVisitClick}*/}
+                            {/*handleFavoriteClick={this.handleFavoriteClick}*/}
+                            {/*handleHomeClick={this.handleHomeClick}*/}
+                            {/*handleCloseHomeTileLarge={this.handleCloseHomeTileLarge}*/}
+                            {/*clicked_home={this.state.clicked_home}*/}
+                            {/*viewing_home={this.state.viewing_home}*/}
+                            {/*viewing_snapshot={this.state.viewing_snapshot}*/}
+                            {/*handleSnapshotClick={this.handleSnapshotClick}*/}
+                            {/*deleteSurvey={this.deleteSurvey}*/}
+                            {/*key_param={this.state.key_param}*/}
+                        {/*/>*/}
                     </div>
                 </div>
             );

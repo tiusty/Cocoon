@@ -13,6 +13,7 @@ const userAuth_endpoints = {
 
     // Api urls
     'resendVerificationEmail': api_path + '/resendVerificationEmail/',
+    'agentClients': api_path + '/agentClients/',
 };
 
 export default userAuth_endpoints;

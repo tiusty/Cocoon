@@ -232,7 +232,7 @@ eval("__webpack_require__.r(__webpack_exports__);\nvar houseDatabase_endpoints =
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the survey app\n *\n * The format/naming should match the urls.py\n */\nvar app_name = '/survey';\nvar api_path = app_name + '/api';\nvar survey_endpoints = {\n  'rentSurveyResult': '/survey/rent/',\n  'rentingSurvey': '/survey/rent/',\n  'rentSurvey': api_path + '/rentSurvey/',\n  'rentResult': api_path + '/rentResult/',\n  'tenants': api_path + '/tenants/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (survey_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/survey_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the survey app\n *\n * The format/naming should match the urls.py\n */\nvar app_name = '/survey';\nvar api_path = app_name + '/api';\nvar survey_endpoints = {\n  'rentSurveyResult': '/survey/rent/',\n  'rentingSurvey': '/survey/rent/',\n  'rentSurvey': api_path + '/rentSurvey/',\n  'rentSurveyAgent': api_path + '/rentSurveyAgent/',\n  'rentResult': api_path + '/rentResult/',\n  'tenants': api_path + '/tenants/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (survey_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/survey_endpoints.js?");
 
 /***/ }),
 
@@ -244,7 +244,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the userAuth app\n *\n * The format/naming should match the urls.py\n */\nvar app_name = '/userAuth';\nvar api_path = app_name + '/api';\nvar userAuth_endpoints = {\n  // Template urls\n  'tourSetup': app_name + '/tourSetup/',\n  // Api urls\n  'resendVerificationEmail': api_path + '/resendVerificationEmail/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (userAuth_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/userAuth_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the userAuth app\n *\n * The format/naming should match the urls.py\n */\nvar app_name = '/userAuth';\nvar api_path = app_name + '/api';\nvar userAuth_endpoints = {\n  // Template urls\n  'tourSetup': app_name + '/tourSetup/',\n  // Api urls\n  'resendVerificationEmail': api_path + '/resendVerificationEmail/',\n  'agentClients': api_path + '/agentClients/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (userAuth_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/userAuth_endpoints.js?");
 
 /***/ }),
 

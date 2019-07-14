@@ -162,7 +162,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the userAuth app\n *\n * The format/naming should match the urls.py\n */\nvar app_name = '/userAuth';\nvar api_path = app_name + '/api';\nvar userAuth_endpoints = {\n  // Template urls\n  'tourSetup': app_name + '/tourSetup/',\n  // Api urls\n  'resendVerificationEmail': api_path + '/resendVerificationEmail/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (userAuth_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/userAuth_endpoints.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/**\n * Contains the URLS for the userAuth app\n *\n * The format/naming should match the urls.py\n */\nvar app_name = '/userAuth';\nvar api_path = app_name + '/api';\nvar userAuth_endpoints = {\n  // Template urls\n  'tourSetup': app_name + '/tourSetup/',\n  // Api urls\n  'resendVerificationEmail': api_path + '/resendVerificationEmail/',\n  'agentClients': api_path + '/agentClients/'\n};\n/* harmony default export */ __webpack_exports__[\"default\"] = (userAuth_endpoints);\n\n//# sourceURL=webpack:///./cocoon/frontend/src/endpoints/userAuth_endpoints.js?");
 
 /***/ }),
 

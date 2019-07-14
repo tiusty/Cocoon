@@ -17,7 +17,7 @@ from .constants import NUMBER_OF_HOMES_RETURNED
 
 # Cocoon Modules
 from cocoon.userAuth.forms import ApartmentHunterSignupForm
-from cocoon.userAuth.models import UserProfile
+from cocoon.userAuth.models import UserProfile, MyUser
 from cocoon.houseDatabase.models import RentDatabaseModel
 from cocoon.userAuth.forms import LoginUserForm
 
@@ -70,6 +70,55 @@ class RentingResultTemplate(DetailView):
         data = super().get_context_data(**kwargs)
         data['component'] = RentingResultTemplate.__name__
         return data
+
+
+class RentSurveyAgentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+
+    serializer_class = RentSurveySerializer
+
+    def get_serializer_context(self):
+        """
+        Gets the context data for the serializer so that broker accounts get the information regarding
+            the home
+        """
+        return {'user': self.request.user}
+
+    def get_queryset(self):
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+        if user_profile.user.is_broker:
+            return retrieve_survey_queryset(user_profile)
+        else:
+            raise 404
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Retrieves a survey based on either the id or the survey url
+        :param request:
+        :param args:
+        :param kwargs:
+            type: 'by_url' -> The survey is retrieved by using the survey url
+                   other -> Anything else will default the request to retrieve the survey via id
+            data_type: 'survey_subscribe' -> Returns the data just for the survey subscribe data
+                        other -> Returns the Survey Serialized data
+            pk: Stores either the survey url or the survey depending on the type
+        :return: A serialized response with the survey that was retrieved
+        """
+        # Retrieve the user profile
+        user_profile = get_object_or_404(UserProfile, user=self.request.user)
+
+        # Determine the method for getting the survey
+        retrieve_type = self.request.query_params.get('type', None)
+        data_type = self.request.query_params.get('data_type', None)
+
+        # Retrieve the survey id/url
+        pk = kwargs.pop('pk', None)
+
+        client = get_object_or_404(MyUser, id=pk)
+
+        surveys = RentingSurveyModel.objects.filter(user_profile=client.userProfile)
+
+        serializer = RentSurveySerializer(surveys, context={'user': user_profile.user}, many=True)
+        return Response(serializer.data)
 
 
 class RentSurveyViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.ListModelMixin,
