@@ -2,7 +2,7 @@ from enum import Enum
 from datetime import time
 
 # Controls how many days until the zip codes need to be refreshed
-ZIP_CODE_TIMEDELTA_VALUE = 60
+ZIP_CODE_TIMEDELTA_VALUE = 200
 
 
 # Google Distance Matrix Api naming convention
