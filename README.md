@@ -17,3 +17,12 @@ Things disabled that will need renabling
 - Google Places API
 - Google Maps Javascript API
 - YGL
+
+Video of Client Functionality:
+https://www.youtube.com/watch?v=JVgKUnjla74
+View of Agent Functionality
+https://www.youtube.com/watch?v=h9GApNe5se0
+
+Webiste was hosted at:
+https://bostoncocoon.com
+but was taken down in early november due to end of finances.
